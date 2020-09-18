@@ -12,23 +12,24 @@ import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Integer, SubIdStatement>
+final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Uint32, SubIdStatement>
         implements SubIdEffectiveStatement, SubIdSchemaNode {
 
     private final SchemaPath path;
 
-    SubIdEffectiveStatementImpl(final StmtContext<Integer, SubIdStatement, ?> ctx) {
+    SubIdEffectiveStatementImpl(final StmtContext<Uint32, SubIdStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override
-    public int getArgument() {
-        return argument().intValue();
+    public Uint32 getArgument() {
+        return argument();
     }
 
     @Override

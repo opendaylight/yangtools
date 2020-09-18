@@ -11,13 +11,14 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
 public final class SubIdStatementSupport
-        extends AbstractStatementSupport<Integer, SubIdStatement, SubIdEffectiveStatement> {
+        extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.SUB_ID).build();
     private static final SubIdStatementSupport INSTANCE = new SubIdStatementSupport();
@@ -31,8 +32,8 @@ public final class SubIdStatementSupport
     }
 
     @Override
-    public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Integer.parseUnsignedInt(value);
+    public Uint32 parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return Uint32.valueOf(value);
     }
 
     @Override
@@ -41,13 +42,13 @@ public final class SubIdStatementSupport
     }
 
     @Override
-    public SubIdStatement createDeclared(final StmtContext<Integer, SubIdStatement, ?> ctx) {
+    public SubIdStatement createDeclared(final StmtContext<Uint32, SubIdStatement, ?> ctx) {
         return new SubIdStatementImpl(ctx);
     }
 
     @Override
     public SubIdEffectiveStatement createEffective(
-            final StmtContext<Integer, SubIdStatement, SubIdEffectiveStatement> ctx) {
+            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx) {
         return new SubIdEffectiveStatementImpl(ctx);
     }
 }

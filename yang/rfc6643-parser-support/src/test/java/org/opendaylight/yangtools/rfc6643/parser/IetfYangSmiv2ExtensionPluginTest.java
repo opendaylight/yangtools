@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -103,9 +104,9 @@ public class IetfYangSmiv2ExtensionPluginTest {
         assertTrue(testNumberLeaf.getUnknownSchemaNodes().size() == 3);
         testNumberLeaf.getUnknownSchemaNodes().forEach(unknownSchemaNode -> {
             if (unknownSchemaNode instanceof SubIdSchemaNode) {
-                assertEquals(((SubIdSchemaNode) unknownSchemaNode).getArgument(), 2);
+                assertEquals(Uint32.TWO, ((SubIdSchemaNode) unknownSchemaNode).getArgument());
             } else if (unknownSchemaNode instanceof DefValSchemaNode) {
-                assertEquals(((DefValSchemaNode) unknownSchemaNode).getArgument(), "0");
+                assertEquals("0", ((DefValSchemaNode) unknownSchemaNode).getArgument());
             }
         });
     }

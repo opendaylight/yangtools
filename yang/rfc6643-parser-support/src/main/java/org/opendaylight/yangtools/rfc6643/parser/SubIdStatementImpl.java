@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class SubIdStatementImpl extends AbstractDeclaredStatement<Integer> implements SubIdStatement {
-    SubIdStatementImpl(final StmtContext<Integer, SubIdStatement, ?> context) {
+final class SubIdStatementImpl extends AbstractDeclaredStatement<Uint32> implements SubIdStatement {
+    SubIdStatementImpl(final StmtContext<Uint32, SubIdStatement, ?> context) {
         super(context);
     }
 }
