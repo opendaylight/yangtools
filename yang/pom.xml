@@ -102,6 +102,10 @@
         <module>rfc8528-data-util</module>
         <module>rfc8528-model-api</module>
         <module>rfc8528-parser-support</module>
+
+        <!-- RFC8791 (structure) metamodel support -->
+        <module>rfc8791-model-api</module>
+        <module>rfc8791-parser-support</module>
     </modules>
 
 </project>
