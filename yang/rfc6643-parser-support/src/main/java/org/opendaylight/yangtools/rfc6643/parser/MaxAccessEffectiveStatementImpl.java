@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6643.parser;
 
 import java.util.Objects;
+import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
@@ -16,18 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, MaxAccessStatement>
+final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBase<MaxAccess, MaxAccessStatement>
         implements MaxAccessEffectiveStatement, MaxAccessSchemaNode {
 
     private final SchemaPath path;
 
-    MaxAccessEffectiveStatementImpl(final StmtContext<String, MaxAccessStatement, ?> ctx) {
+    MaxAccessEffectiveStatementImpl(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override
-    public String getArgument() {
+    public MaxAccess getArgument() {
         return argument();
     }
 

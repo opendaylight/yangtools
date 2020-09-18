@@ -9,8 +9,12 @@ package org.opendaylight.yangtools.rfc6643.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
-public interface MaxAccessEffectiveStatement extends EffectiveStatement<String, MaxAccessStatement> {
-
+public interface MaxAccessEffectiveStatement extends EffectiveStatement<MaxAccess, MaxAccessStatement> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return IetfYangSmiv2ExtensionsMapping.MAX_ACCESS;
+    }
 }

@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
+import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MaxAccessStatementImpl extends AbstractDeclaredStatement<String> implements MaxAccessStatement {
-    MaxAccessStatementImpl(final StmtContext<String, MaxAccessStatement, ?> context) {
+final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> implements MaxAccessStatement {
+    MaxAccessStatementImpl(final StmtContext<MaxAccess, MaxAccessStatement, ?> context) {
         super(context);
     }
 }

@@ -9,15 +9,17 @@ package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
+import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class MaxAccessStatementSupport
-        extends AbstractStatementSupport<String, MaxAccessStatement, MaxAccessEffectiveStatement> {
+        extends AbstractStatementSupport<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS).build();
     private static final MaxAccessStatementSupport INSTANCE = new MaxAccessStatementSupport();
@@ -31,8 +33,18 @@ public final class MaxAccessStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public MaxAccess parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final MaxAccess val = MaxAccess.forStringLiteral(value);
+        if (val == null) {
+            throw new SourceException(ctx.getStatementSourceReference(), "Invalid max-access value '%s'", value);
+        }
+        return val;
+    }
+
+    @Override
+    public String internArgument(final String rawArgument) {
+        final MaxAccess val = MaxAccess.forStringLiteral(rawArgument);
+        return val == null ? rawArgument : val.stringLiteral();
     }
 
     @Override
@@ -41,13 +53,13 @@ public final class MaxAccessStatementSupport
     }
 
     @Override
-    public MaxAccessStatement createDeclared(final StmtContext<String, MaxAccessStatement, ?> ctx) {
+    public MaxAccessStatement createDeclared(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx) {
         return new MaxAccessStatementImpl(ctx);
     }
 
     @Override
     public MaxAccessEffectiveStatement createEffective(
-            final StmtContext<String, MaxAccessStatement, MaxAccessEffectiveStatement> ctx) {
+            final StmtContext<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> ctx) {
         return new MaxAccessEffectiveStatementImpl(ctx);
     }
 }
