@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -19,12 +18,7 @@ final class AliasStatementImpl extends AbstractDeclaredStatement<String> impleme
     }
 
     @Override
-    public String getArgument() {
-        return argument();
-    }
-
-    @Override
-    public @NonNull OidStatement getOidStatement() {
+    public OidStatement getOidStatement() {
         return findFirstDeclaredSubstatement(OidStatement.class).get();
     }
 }

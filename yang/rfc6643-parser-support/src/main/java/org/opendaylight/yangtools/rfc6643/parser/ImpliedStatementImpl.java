@@ -15,9 +15,4 @@ final class ImpliedStatementImpl extends AbstractDeclaredStatement<String> imple
     ImpliedStatementImpl(final StmtContext<String, ImpliedStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public String getArgument() {
-        return argument();
-    }
 }

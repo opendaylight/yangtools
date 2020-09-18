@@ -15,9 +15,4 @@ final class SubIdStatementImpl extends AbstractDeclaredStatement<Integer> implem
     SubIdStatementImpl(final StmtContext<Integer, SubIdStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public Integer getArgument() {
-        return argument();
-    }
 }

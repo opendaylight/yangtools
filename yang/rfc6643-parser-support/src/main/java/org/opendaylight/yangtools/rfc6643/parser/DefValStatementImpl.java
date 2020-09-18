@@ -15,9 +15,4 @@ final class DefValStatementImpl extends AbstractDeclaredStatement<String> implem
     DefValStatementImpl(final StmtContext<String, DefValStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public String getArgument() {
-        return argument();
-    }
 }
