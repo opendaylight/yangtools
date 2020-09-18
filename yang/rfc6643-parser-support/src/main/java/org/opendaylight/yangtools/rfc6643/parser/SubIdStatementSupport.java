@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -37,11 +36,6 @@ public final class SubIdStatementSupport
     @Override
     public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return Integer.parseUnsignedInt(value);
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<Integer, SubIdStatement, SubIdEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
     }
 
     @Override

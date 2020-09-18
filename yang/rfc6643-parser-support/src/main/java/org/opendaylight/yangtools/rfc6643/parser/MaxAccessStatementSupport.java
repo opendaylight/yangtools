@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -32,11 +31,6 @@ public final class MaxAccessStatementSupport
 
     public static MaxAccessStatementSupport getInstance() {
         return INSTANCE;
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, MaxAccessStatement, MaxAccessEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
     }
 
     @Override

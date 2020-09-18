@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
@@ -38,12 +37,6 @@ public final class AliasStatementSupport
 
     public static AliasStatementSupport getInstance() {
         return INSTANCE;
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, AliasStatement, AliasEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
-        getSubstatementValidator().validate(stmt);
     }
 
     @Override
@@ -74,6 +67,4 @@ public final class AliasStatementSupport
             final StmtContext<String, AliasStatement, AliasEffectiveStatement> ctx, final AliasStatement declared) {
         return createEffective(ctx, declared, ImmutableList.of());
     }
-
-
 }

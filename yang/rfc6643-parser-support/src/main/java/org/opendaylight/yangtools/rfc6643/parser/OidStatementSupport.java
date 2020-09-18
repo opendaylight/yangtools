@@ -40,12 +40,6 @@ public final class OidStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(
-            final StmtContext.Mutable<ObjectIdentifier, OidStatement, OidEffectiveStatement> stmt) {
-        stmt.addToNs(IetfYangSmiv2Namespace.class, stmt, "Ietf-yang-smiv2 namespace.");
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
