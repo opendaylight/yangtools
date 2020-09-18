@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.WritableObject;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 /**
  * An OID, or ObjectIdentifier, as defined by ITU and ISO/IEC.
@@ -39,7 +40,8 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
     }
 
     /**
-     * Create an {@link ObjectIdentifier} from its integer components.
+     * Create an {@link ObjectIdentifier} from its integer components. Each component is interpreted as an unsigned
+     * integer.
      *
      * @param components OID items
      * @return An ObjectIdentifier.
@@ -122,7 +124,7 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
         final String[] splitOid = SPLIT_PATTERN.split(objectId);
         final int[] oid = new int[splitOid.length];
         for (int index = 0; index < splitOid.length; index ++) {
-            oid[index] = Integer.parseInt(splitOid[index]);
+            oid[index] = Uint32.valueOf(splitOid[index]).intValue();
         }
         return oid;
     }

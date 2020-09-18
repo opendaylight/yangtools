@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
 public final class SubIdStatementSupport
-        extends BaseStatementSupport<Integer, SubIdStatement, SubIdEffectiveStatement> {
+        extends BaseStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.SUB_ID).build();
     private static final SubIdStatementSupport INSTANCE = new SubIdStatementSupport();
@@ -34,8 +35,8 @@ public final class SubIdStatementSupport
     }
 
     @Override
-    public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Integer.parseUnsignedInt(value);
+    public Uint32 parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return Uint32.valueOf(value);
     }
 
     @Override
@@ -44,26 +45,26 @@ public final class SubIdStatementSupport
     }
 
     @Override
-    protected SubIdStatement createDeclared(final StmtContext<Integer, SubIdStatement, ?> ctx,
+    protected SubIdStatement createDeclared(final StmtContext<Uint32, SubIdStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new SubIdStatementImpl(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
-    protected SubIdStatement createEmptyDeclared(final StmtContext<Integer, SubIdStatement, ?> ctx) {
+    protected SubIdStatement createEmptyDeclared(final StmtContext<Uint32, SubIdStatement, ?> ctx) {
         return createDeclared(ctx, ImmutableList.of());
     }
 
     @Override
     protected SubIdEffectiveStatement createEffective(
-            final StmtContext<Integer, SubIdStatement, SubIdEffectiveStatement> ctx,
+            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx,
             final SubIdStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new SubIdEffectiveStatementImpl(ctx, substatements);
     }
 
     @Override
     protected SubIdEffectiveStatement createEmptyEffective(
-            final StmtContext<Integer, SubIdStatement, SubIdEffectiveStatement> ctx, final SubIdStatement declared) {
+            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx, final SubIdStatement declared) {
         return createEffective(ctx, declared, ImmutableList.of());
     }
 }
