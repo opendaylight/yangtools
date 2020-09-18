@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.WritableObject;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 /**
  * An OID, or ObjectIdentifier, as defined by ITU and ISO/IEC.
@@ -39,7 +40,8 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
     }
 
     /**
-     * Create an {@link ObjectIdentifier} from its integer components.
+     * Create an {@link ObjectIdentifier} from its integer components. Each component is interpreted as an unsigned
+     * integer.
      *
      * @param components OID items
      * @return An ObjectIdentifier.
@@ -76,8 +78,8 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
      * @throws IOException If an I/O error is reported
      */
     public static ObjectIdentifier readFrom(final DataInput in) throws IOException {
-        final int count = in.readInt();
-        checkArgument(count >= 0, "Illegal item count");
+        final int count = in.readUnsignedByte();
+        checkArgument(count >= 0 && count <= 128, "Illegal item count %s", count);
 
         final int[] oid = new int[count];
         for (int index = 0; index < count; ++index) {
@@ -89,7 +91,7 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
-        out.writeInt(components.length);
+        out.writeByte(components.length);
         for (int i : components) {
             out.writeInt(i);
         }
@@ -120,9 +122,11 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
         checkArgument(CHECK_OID_PATTERN.matcher(objectId).matches(), "Wrong format for OID: '%s'", objectId);
 
         final String[] splitOid = SPLIT_PATTERN.split(objectId);
+        checkArgument(splitOid.length <= 128, "Object Identifier can have at most 128 sub-identifiers");
+
         final int[] oid = new int[splitOid.length];
         for (int index = 0; index < splitOid.length; index ++) {
-            oid[index] = Integer.parseInt(splitOid[index]);
+            oid[index] = Uint32.valueOf(splitOid[index]).intValue();
         }
         return oid;
     }
