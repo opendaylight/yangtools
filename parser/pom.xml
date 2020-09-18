@@ -54,6 +54,7 @@
         <module>rfc8040-parser-support</module>
         <module>rfc8528-parser-support</module>
         <module>rfc8639-parser-support</module>
+        <module>rfc8791-parser-support</module>
         <module>rfc8819-parser-support</module>
 
         <!-- Support for OpenDaylight YANG extensions -->
