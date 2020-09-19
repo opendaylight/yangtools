@@ -14,15 +14,15 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
  * A context of either an explicit (RFC8528 Schema Mount instance) or implicit (system root). It encapsulates a data
- * {@link org.opendaylight.yangtools.yang.model.api.SchemaContext} and information resident in {@code schema-mounts}
- * within this hierarchy.
+ * {@link org.opendaylight.yangtools.yang.model.api.EffectiveModelContext} and information resident in
+ * {@code schema-mounts} within this hierarchy.
  *
  * <p>
  * Note this interface should be part of yang-data-api, as it really defines how a NormalizedNode-containerized data
  * operates w.r.t. mount points. Further evolution is expected.
  */
 /*
- * FIXME: 6.0.0: consider yang-data-api integration
+ * FIXME: 7.0.0: consider yang-data-api integration
  *
  * The above note does not give the subject enough attention. RFC8528 redefines the YANG data metamodel is significant
  * ways in that it ties it with RFC8525/RFC7895. The content of 'schema-mounts' is critical to interpreting
@@ -45,6 +45,13 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
  * To support this case, MountPointContext really wants to be Identifiable<MountPointIdentifier>, where it would also
  * provide a 'default NodeIdentifier getRootIdentifier()' method. In PathArgument contexts, MountPointIdentifier is
  * directly usable anyway.
+ *
+ * 6.0.0-timeframe review:
+ *
+ * The idea with Identifiable is not really that grand, as it goes against our desire to peel identifiers from nodes,
+ * as detailed in YANGTOOLS-1074. This will end up meaning that the root of a NormalizedNode tree does not have to have
+ * an identifier and very much can live on its own -- solving both the SchemaContext name problem as well as NETCONF
+ * interoperability.
  */
 @Beta
 public interface MountPointContext extends EffectiveModelContextProvider {

@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
  * seamless.
  */
 /*
- * FIXME: 6.0.0: The above is not quite right. DataTree instances should be able to handle mount points and correctly
+ * FIXME: 7.0.0: The above is not quite right. DataTree instances should be able to handle mount points and correctly
  *               handle them, provided they get enough support from MountPointContext.
  */
 @Beta
