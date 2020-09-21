@@ -1,0 +1,10 @@
+module foo {
+  yang-version 1;
+  namespace "foo";
+  prefix foo;
+
+  container status {
+    config false;
+  }
+}
+
