@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -100,9 +101,9 @@ public class Uint16Test {
         assertEquals(Uint64.valueOf(65535), Uint16.MAX_VALUE.toUint64());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testToUint8() {
-        Uint16.MAX_VALUE.toUint8();
+        assertThrows(IllegalArgumentException.class, () -> Uint16.MAX_VALUE.toUint8());
     }
 
     @Test
@@ -121,38 +122,38 @@ public class Uint16Test {
         assertSame(source, read);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNegativeByte() {
-        Uint16.valueOf((byte)-1);
+        assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf((byte)-1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNegativeShort() {
-        Uint16.valueOf((short)-1);
+        assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf((short)-1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNegativeInt() {
-        Uint16.valueOf(-1);
+        assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(-1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNegativeLong() {
-        Uint16.valueOf(-1L);
+        assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(-1L));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBigInt() {
-        Uint16.valueOf(65536);
+        assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(65536));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBigLong() {
-        Uint16.valueOf(65536L);
+        assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(65536L));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullValueOfString() {
-        Uint16.valueOf((String) null);
+        assertThrows(NullPointerException.class, () -> Uint16.valueOf((String) null));
     }
 }
