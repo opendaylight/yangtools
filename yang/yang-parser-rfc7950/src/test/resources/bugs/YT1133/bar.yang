@@ -1,0 +1,18 @@
+module bar {
+  yang-version 1;
+  namespace "bar";
+  prefix bar;
+
+  import foo {
+    prefix foo;
+  }
+
+  augment "/foo:status" {
+    list values {
+      leaf somevalue {
+        type string;
+      }
+    }
+  }
+}
+
