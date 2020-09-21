@@ -1,6 +1,7 @@
 # UUID                                                                   	Group Name
 #
 0005e400a3f992732c5d824c6aec342f676f722a                                 	Release Engineering Team
+1f2a81e86d1dc4bdc5062233fe731f2ce29f9224                                 	saml/odl-gerrit-yangtools-committers
 c9025ab9ddc1e3171919e085449f22c54f8f7b54                                 	GitHub Replication
 global:Project-Owners                                                    	Project Owners
 ldap:cn=odl-gerrit-yangtools-committers,ou=Groups,dc=freestandards,dc=org	ldap/odl-gerrit-yangtools-committers
