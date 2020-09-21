@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.rfc6643.parser;
 
+import static org.junit.Assert.assertThrows;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 
 public class ObjectIdentifierTest {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testObjectIdentifierCreationWithBadOID() {
-        ObjectIdentifier.forString("bad oid");
+        assertThrows(IllegalArgumentException.class, () -> ObjectIdentifier.forString("bad oid"));
     }
 }

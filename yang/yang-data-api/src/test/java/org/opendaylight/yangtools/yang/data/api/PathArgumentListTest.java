@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.UnmodifiableIterator;
 import java.net.URI;
@@ -29,7 +29,7 @@ public class PathArgumentListTest {
     private static final class TestClass extends PathArgumentList {
         @Override
         public UnmodifiableIterator<PathArgument> iterator() {
-            return new UnmodifiableIterator<PathArgument>() {
+            return new UnmodifiableIterator<>() {
                 @Override
                 public boolean hasNext() {
                     return false;
@@ -62,47 +62,12 @@ public class PathArgumentListTest {
     public void testProtections() {
         final PathArgumentList l = new TestClass();
 
-        try {
-            l.remove(null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // Expected
-        }
-
-        try {
-            l.addAll(Collections.emptyList());
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // Expected
-        }
-
-        try {
-            l.removeAll(Collections.emptyList());
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // Expected
-        }
-
-        try {
-            l.retainAll(Collections.emptyList());
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // Expected
-        }
-
-        try {
-            l.clear();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // Expected
-        }
-
-        try {
-            l.addAll(0, null);
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // Expected
-        }
+        assertThrows(UnsupportedOperationException.class, () -> l.remove(null));
+        assertThrows(UnsupportedOperationException.class, () -> l.addAll(Collections.emptyList()));
+        assertThrows(UnsupportedOperationException.class, () -> l.removeAll(Collections.emptyList()));
+        assertThrows(UnsupportedOperationException.class, () -> l.retainAll(Collections.emptyList()));
+        assertThrows(UnsupportedOperationException.class, () -> l.clear());
+        assertThrows(UnsupportedOperationException.class, () -> l.addAll(0, null));
     }
 
     @Test
@@ -147,11 +112,6 @@ public class PathArgumentListTest {
         assertEquals(stackedYangInstanceIdentifier, stackedYangInstanceIdentifierClone);
         assertEquals(stackedReversePathArguments, yangInstanceIdentifier1.getReversePathArguments());
 
-        try {
-            stackedYangInstanceIdentifier.getAncestor(12);
-            fail();
-        } catch (IllegalArgumentException e) {
-            // Expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> stackedYangInstanceIdentifier.getAncestor(12));
     }
 }

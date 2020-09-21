@@ -14,6 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
@@ -148,11 +149,11 @@ public class YangInstanceIdentifierTest {
         assertFalse("isPresent", relative.isPresent());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testContainsNull() {
         final YangInstanceIdentifier id = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME1));
 
-        id.contains(null);
+        assertThrows(IllegalArgumentException.class, () -> id.contains(null));
     }
 
     @Test
@@ -327,10 +328,10 @@ public class YangInstanceIdentifierTest {
         assertNotNull(node1.toString());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAugmentationIdentifierNodeType() {
         AugmentationIdentifier node1 = new AugmentationIdentifier(ImmutableSet.of(NODENAME1, NODENAME2));
-        node1.getNodeType();
+        assertThrows(UnsupportedOperationException.class, () -> node1.getNodeType());
     }
 
     @Test
