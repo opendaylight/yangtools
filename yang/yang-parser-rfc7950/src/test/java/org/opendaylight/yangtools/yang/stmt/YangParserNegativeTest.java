@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class YangParserNegativeTest {
 
     @Before
     public void setUp() throws UnsupportedEncodingException {
-        System.setOut(new PrintStream(output, true, "UTF-8"));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
     }
 
     @After

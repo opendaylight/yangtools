@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
@@ -15,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class Bug5335Test {
 
     @Before
     public void setUp() throws UnsupportedEncodingException {
-        System.setOut(new PrintStream(output, true, "UTF-8"));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
     }
 
     @After

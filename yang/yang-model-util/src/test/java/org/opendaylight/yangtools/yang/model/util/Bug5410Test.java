@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.Test;
 
@@ -150,7 +151,7 @@ public class Bug5410Test {
             throws UnsupportedEncodingException {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(output, true, "UTF-8"));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
 
         RegexUtils.getJavaRegexFromXSD(xsdRegex);
 
