@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -80,12 +79,7 @@ public class CountingRejectedExecutionHandlerTest {
 
         int tasks = 5;
         for (int i = 0; i < tasks - 1; i++) {
-            try {
-                executor.execute(new Task(null, null, null, null, 0));
-                fail("Expected RejectedExecutionException");
-            } catch (RejectedExecutionException e) {
-                // Expected
-            }
+            assertThrows(RejectedExecutionException.class, () -> executor.execute(new Task(null, null, null, null, 0)));
         }
 
         assertEquals("getRejectedTaskCount", tasks - 1, countingHandler.getRejectedTaskCount());

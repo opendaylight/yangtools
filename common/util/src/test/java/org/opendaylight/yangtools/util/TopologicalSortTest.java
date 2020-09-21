@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,7 @@ import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
 
 public class TopologicalSortTest {
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test() {
         Set<Node> nodes = new HashSet<>();
 
@@ -33,8 +34,7 @@ public class TopologicalSortTest {
         node2.addEdge(node3);
         node3.addEdge(node1);
 
-        // We expect an IllegalStateException here
-        TopologicalSort.sort(nodes);
+        assertThrows(IllegalStateException.class, () -> TopologicalSort.sort(nodes));
     }
 
     @Test

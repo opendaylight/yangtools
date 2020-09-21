@@ -12,8 +12,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -51,9 +52,9 @@ public class OffsetMapTest {
         OffsetMapCache.invalidateCache();
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testWrongImmutableConstruction() {
-        new ImmutableOffsetMap.Ordered<>(ImmutableMap.of(), new String[1]);
+        assertThrows(IllegalArgumentException.class,
+            () -> new ImmutableOffsetMap.Ordered<>(ImmutableMap.of(), new String[1]));
     }
 
     @Test
@@ -123,123 +124,37 @@ public class OffsetMapTest {
     public void testImmutableGuards() {
         final Map<String, String> map = createMap();
 
-        try {
-            map.values().add("v1");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        final Collection<String> values = map.values();
+        assertThrows(UnsupportedOperationException.class, () -> values.add("v1"));
+        assertThrows(UnsupportedOperationException.class, () -> values.remove("v1"));
+        assertThrows(UnsupportedOperationException.class, () -> values.clear());
 
-        try {
-            map.values().remove("v1");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        final Iterator<String> vit = values.iterator();
+        vit.next();
+        assertThrows(UnsupportedOperationException.class, () -> vit.remove());
 
-        try {
-            map.values().clear();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        final Set<String> keySet = map.keySet();
+        assertThrows(UnsupportedOperationException.class, () -> keySet.add("k1"));
+        assertThrows(UnsupportedOperationException.class, () -> keySet.clear());
+        assertThrows(UnsupportedOperationException.class, () -> keySet.remove("k1"));
 
-        try {
-            final Iterator<String> it = map.values().iterator();
-            it.next();
-            it.remove();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        final Iterator<String> kit = keySet.iterator();
+        kit.next();
+        assertThrows(UnsupportedOperationException.class, () -> kit.remove());
 
-        try {
-            map.keySet().add("k1");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        final Set<Entry<String, String>> entrySet = map.entrySet();
+        assertThrows(UnsupportedOperationException.class, () -> entrySet.clear());
+        assertThrows(UnsupportedOperationException.class, () -> entrySet.add(new SimpleEntry<>("k1", "v1")));
+        assertThrows(UnsupportedOperationException.class, () -> entrySet.remove(new SimpleEntry<>("k1", "v1")));
 
-        try {
-            map.keySet().clear();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        final Iterator<Entry<String, String>> eit = entrySet.iterator();
+        eit.next();
+        assertThrows(UnsupportedOperationException.class, () -> eit.remove());
 
-        try {
-            map.keySet().remove("k1");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            final Iterator<String> it = map.keySet().iterator();
-            it.next();
-            it.remove();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.entrySet().clear();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.entrySet().add(new SimpleEntry<>("k1", "v1"));
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.entrySet().remove(new SimpleEntry<>("k1", "v1"));
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            final Iterator<Entry<String, String>> it = map.entrySet().iterator();
-            it.next();
-            it.remove();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.clear();
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.put("k1", "fail");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.putAll(ImmutableMap.of("k1", "fail"));
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
-
-        try {
-            map.remove("k1");
-            fail();
-        } catch (UnsupportedOperationException e) {
-            // OK
-        }
+        assertThrows(UnsupportedOperationException.class, () -> map.clear());
+        assertThrows(UnsupportedOperationException.class, () -> map.put("k1", "fail"));
+        assertThrows(UnsupportedOperationException.class, () -> map.putAll(ImmutableMap.of("k1", "fail")));
+        assertThrows(UnsupportedOperationException.class, () -> map.remove("k1"));
     }
 
     @Test
@@ -552,8 +467,8 @@ public class OffsetMapTest {
         assertTrue(result.needClone());
 
         // Creates a immutable view, which shares the array
-        final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source
-                .toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> immutable =
+                (ImmutableOffsetMap<String, String>) source.toUnmodifiableMap();
         assertTrue(source.needClone());
         assertSame(source.array(), immutable.objects());
     }
@@ -582,24 +497,9 @@ public class OffsetMapTest {
     }
 
     private static void assertIteratorBroken(final Iterator<?> it) {
-        try {
-            it.hasNext();
-            fail();
-        } catch (ConcurrentModificationException e) {
-            // OK
-        }
-        try {
-            it.next();
-            fail();
-        } catch (ConcurrentModificationException e) {
-            // OK
-        }
-        try {
-            it.remove();
-            fail();
-        } catch (ConcurrentModificationException e) {
-            // OK
-        }
+        assertThrows(ConcurrentModificationException.class, () -> it.hasNext());
+        assertThrows(ConcurrentModificationException.class, () -> it.next());
+        assertThrows(ConcurrentModificationException.class, () -> it.remove());
     }
 
     @Test
@@ -626,12 +526,7 @@ public class OffsetMapTest {
         final Iterator<Entry<String, String>> it = map.entrySet().iterator();
 
         // Not advanced, remove should fail
-        try {
-            it.remove();
-            fail();
-        } catch (IllegalStateException e) {
-            // OK
-        }
+        assertThrows(IllegalStateException.class, () -> it.remove());
 
         assertTrue(it.hasNext());
         assertEquals("k1", it.next().getKey());
@@ -640,12 +535,7 @@ public class OffsetMapTest {
         assertFalse(it.hasNext());
 
         // Check end-of-iteration throw
-        try {
-            it.next();
-            fail();
-        } catch (NoSuchElementException e) {
-            // OK
-        }
+        assertThrows(NoSuchElementException.class, () -> it.next());
     }
 
     @Test

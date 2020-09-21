@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
@@ -45,19 +46,22 @@ public class ReflectiveExceptionMapperTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNoArgumentsContructor() {
-        ReflectiveExceptionMapper.create("no arguments", NoArgumentCtorException.class);
+        assertThrows(IllegalArgumentException.class,
+            () -> ReflectiveExceptionMapper.create("no arguments", NoArgumentCtorException.class));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPrivateContructor() {
-        ReflectiveExceptionMapper.create("private constructor", PrivateCtorException.class);
+        assertThrows(IllegalArgumentException.class,
+            () -> ReflectiveExceptionMapper.create("private constructor", PrivateCtorException.class));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFailingContructor() {
-        ReflectiveExceptionMapper.create("failing constructor", FailingCtorException.class);
+        assertThrows(IllegalArgumentException.class,
+            () -> ReflectiveExceptionMapper.create("failing constructor", FailingCtorException.class));
     }
 
     @Test

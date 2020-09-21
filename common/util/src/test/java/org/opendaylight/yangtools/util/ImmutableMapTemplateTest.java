@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -27,20 +27,8 @@ public class ImmutableMapTemplateTest {
 
     @Test
     public void testEmpty() {
-        ImmutableMapTemplate<?> template;
-        try {
-            template = ImmutableMapTemplate.ordered(ImmutableList.of());
-            fail("Returned template " + template);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-
-        try {
-            template = ImmutableMapTemplate.unordered(ImmutableList.of());
-            fail("Returned template " + template);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> ImmutableMapTemplate.ordered(ImmutableList.of()));
+        assertThrows(IllegalArgumentException.class, () -> ImmutableMapTemplate.unordered(ImmutableList.of()));
     }
 
     @Test
@@ -71,48 +59,22 @@ public class ImmutableMapTemplateTest {
         assertEquals("{foo=foo}", map.toString());
 
         // Null transformation
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(FOO, BAR), (key, value) -> null);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(FOO, BAR), (key, value) -> null));
 
         // Empty input
-        try {
-            map = template.instantiateWithValues();
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(), (key, value) -> key);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> template.instantiateWithValues());
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(), (key, value) -> key));
 
         // Two-item input
-        try {
-            map = template.instantiateWithValues(FOO, BAR);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(FOO, FOO, BAR, BAR), (key, value) -> key);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> template.instantiateWithValues(FOO, BAR));
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(FOO, FOO, BAR, BAR), (key, value) -> key));
 
         // Mismatched input
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(BAR, FOO), (key, value) -> key);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(BAR, FOO), (key, value) -> key));
     }
 
     private static void assertTwo(final ImmutableMapTemplate<String> template, final Class<?> mapClass) {
@@ -131,39 +93,17 @@ public class ImmutableMapTemplateTest {
         assertEquals("{foo=foo, bar=bar}", map.toString());
 
         // Empty input
-        try {
-            map = template.instantiateWithValues();
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(), (key, value) -> key);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> template.instantiateWithValues());
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(), (key, value) -> key));
 
         // One-item input
-        try {
-            map = template.instantiateWithValues(FOO);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(FOO, BAR), (key, value) -> key);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> template.instantiateWithValues(FOO));
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(FOO, BAR), (key, value) -> key));
 
         // Mismatched input
-        try {
-            map = template.instantiateTransformed(ImmutableMap.of(FOO, BAR, BAZ, FOO), (key, value) -> key);
-            fail("Returned map " + map);
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class,
+            () -> template.instantiateTransformed(ImmutableMap.of(FOO, BAR, BAZ, FOO), (key, value) -> key));
     }
 }

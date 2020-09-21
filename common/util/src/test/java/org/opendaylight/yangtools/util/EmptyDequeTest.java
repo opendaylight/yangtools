@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.util.NoSuchElementException;
 import org.junit.Test;
@@ -44,60 +44,14 @@ public class EmptyDequeTest {
         assertFalse(deque.removeFirstOccurrence(null));
         assertFalse(deque.removeLastOccurrence(null));
 
-        try {
-            deque.push(null);
-            fail();
-        } catch (IllegalStateException e) {
-            // expeced
-        }
-        try {
-            deque.addFirst(null);
-            fail();
-        } catch (IllegalStateException e) {
-            // expeced
-        }
-        try {
-            deque.addLast(null);
-            fail();
-        } catch (IllegalStateException e) {
-            // expeced
-        }
-
-        try {
-            deque.getFirst();
-            fail();
-        } catch (NoSuchElementException e) {
-            // expeced
-        }
-        try {
-            deque.getLast();
-            fail();
-        } catch (NoSuchElementException e) {
-            // expeced
-        }
-        try {
-            deque.pop();
-            fail();
-        } catch (NoSuchElementException e) {
-            // expeced
-        }
-        try {
-            deque.remove();
-            fail();
-        } catch (NoSuchElementException e) {
-            // expeced
-        }
-        try {
-            deque.removeFirst();
-            fail();
-        } catch (NoSuchElementException e) {
-            // expeced
-        }
-        try {
-            deque.removeLast();
-            fail();
-        } catch (NoSuchElementException e) {
-            // expeced
-        }
+        assertThrows(IllegalStateException.class, () -> deque.push(null));
+        assertThrows(IllegalStateException.class, () -> deque.addFirst(null));
+        assertThrows(IllegalStateException.class, () -> deque.addLast(null));
+        assertThrows(NoSuchElementException.class, () -> deque.getFirst());
+        assertThrows(NoSuchElementException.class, () -> deque.getLast());
+        assertThrows(NoSuchElementException.class, () -> deque.pop());
+        assertThrows(NoSuchElementException.class, () -> deque.remove());
+        assertThrows(NoSuchElementException.class, () -> deque.removeFirst());
+        assertThrows(NoSuchElementException.class, () -> deque.removeLast());
     }
 }
