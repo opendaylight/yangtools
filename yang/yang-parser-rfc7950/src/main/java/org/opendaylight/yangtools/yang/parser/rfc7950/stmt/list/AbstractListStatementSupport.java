@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
@@ -141,10 +142,24 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
     }
 
     private static boolean isInstantied(final StmtContext<?, ?, ?> ctx) {
-        for (StmtContext<?, ?, ?> parent = ctx.getParentContext(); parent != null; parent = parent.getParentContext()) {
-            if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parent.getPublicDefinition())) {
+        StmtContext<?, ?, ?> parent = ctx.getParentContext();
+        while (parent != null) {
+            final StatementDefinition parentDef = parent.getPublicDefinition();
+            if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parentDef)) {
                 return false;
             }
+
+            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
+            if (YangStmtMapping.AUGMENT == parentDef && grandParent != null) {
+                // If this is an augment statement and its parent is either a 'module' or 'submodule' statement, we are
+                // dealing with an uninstantiated context.
+                final StatementDefinition grandParentDef = grandParent.getPublicDefinition();
+                if (YangStmtMapping.MODULE == grandParentDef || YangStmtMapping.SUBMODULE == grandParentDef) {
+                    return false;
+                }
+            }
+
+            parent = grandParent;
         }
         return true;
     }
