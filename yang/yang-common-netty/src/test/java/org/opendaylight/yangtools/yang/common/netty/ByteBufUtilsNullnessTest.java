@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.common.netty;
 
+import static org.junit.Assert.assertThrows;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import org.junit.Before;
@@ -24,105 +26,103 @@ public class ByteBufUtilsNullnessTest {
         buf = Unpooled.buffer();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testReadUint8() {
-        ByteBufUtils.readUint8(null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.readUint8(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testReadUint16() {
-        ByteBufUtils.readUint16(null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.readUint16(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testReadUint32() {
-        ByteBufUtils.readUint8(null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.readUint8(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testReadUint64() {
-        ByteBufUtils.readUint64(null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.readUint64(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNullBuf8() {
-        ByteBufUtils.write(null, Uint8.ONE);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(null, Uint8.ONE));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNullBuf16() {
-        ByteBufUtils.write(null, Uint16.ONE);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(null, Uint16.ONE));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNullBuf32() {
-        ByteBufUtils.write(null, Uint32.ONE);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(null, Uint32.ONE));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNullBuf64() {
-        ByteBufUtils.write(null, Uint64.ONE);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(null, Uint64.ONE));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNull8() {
-        ByteBufUtils.write(buf, (Uint8) null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(buf, (Uint8) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNull16() {
-        ByteBufUtils.write(buf, (Uint16) null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(buf, (Uint16) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNull32() {
-        ByteBufUtils.write(buf, (Uint32) null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(buf, (Uint32) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testWriteNull64() {
-        ByteBufUtils.write(null, (Uint64) null);
+        assertThrows(NullPointerException.class, () -> ByteBufUtils.write(null, (Uint64) null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryByte() {
-        ByteBufUtils.writeMandatory(buf, (Byte) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Byte) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryShort() {
-        ByteBufUtils.writeMandatory(buf, (Short) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Short) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryInt() {
-        ByteBufUtils.writeMandatory(buf, (Integer) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Integer) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryLong() {
-        ByteBufUtils.writeMandatory(buf, (Long) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Long) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryUint8() {
-        ByteBufUtils.writeMandatory(buf, (Uint8) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Uint8) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryUint16() {
-        ByteBufUtils.writeMandatory(buf, (Uint16) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Uint16) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryUint32() {
-        ByteBufUtils.writeMandatory(buf, (Uint32) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Uint32) null, "name"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteMandatoryUint64() {
-        ByteBufUtils.writeMandatory(buf, (Uint64) null, "name");
+        assertThrows(IllegalArgumentException.class, () -> ByteBufUtils.writeMandatory(buf, (Uint64) null, "name"));
     }
-
-
 }
