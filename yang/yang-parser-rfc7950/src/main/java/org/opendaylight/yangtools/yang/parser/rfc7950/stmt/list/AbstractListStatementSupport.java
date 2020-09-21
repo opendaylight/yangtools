@@ -140,6 +140,8 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
 
     private static boolean isInstantied(final StmtContext<?, ?, ?> ctx) {
         for (StmtContext<?, ?, ?> parent = ctx.getParentContext(); parent != null; parent = parent.getParentContext()) {
+            // FIXME: YANGTOOLS-1133: we also need to treat 'augment' as a non-instantiated parent, but must not confuse
+            //        it with 'uses foo { augment bar }'.
             if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parent.getPublicDefinition())) {
                 return false;
             }
