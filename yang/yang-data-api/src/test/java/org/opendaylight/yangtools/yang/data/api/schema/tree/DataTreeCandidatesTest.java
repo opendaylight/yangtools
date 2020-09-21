@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
@@ -200,11 +200,8 @@ public class DataTreeCandidatesTest {
 
         doReturn(ModificationType.APPEARED).when(mockedDataTreeCandidateNode).getModificationType();
 
-        try {
-            DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
-            fail("An IllegalArgumentException should have been thrown!");
-        } catch (IllegalArgumentException ex) {
-            assertTrue(ex.getMessage().contains("Unsupported modification"));
-        }
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate));
+        assertThat(ex.getMessage(), containsString("Unsupported modification"));
     }
 }

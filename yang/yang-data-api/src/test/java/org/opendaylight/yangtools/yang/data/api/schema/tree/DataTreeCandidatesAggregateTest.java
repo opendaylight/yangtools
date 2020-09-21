@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -92,7 +93,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLeafUnmodifiedDeleteWithoutDataBefore() {
         DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
                 ModificationType.UNMODIFIED);
@@ -102,10 +103,11 @@ public class DataTreeCandidatesAggregateTest {
                 ModificationType.DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLeafUnmodifiedSubtreeModifiedWithoutDataBefore() {
         DataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
                 ModificationType.UNMODIFIED);
@@ -115,7 +117,8 @@ public class DataTreeCandidatesAggregateTest {
                 ModificationType.SUBTREE_MODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -237,7 +240,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().getValue());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLeafDeleteDelete() {
         NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
 
@@ -249,10 +252,11 @@ public class DataTreeCandidatesAggregateTest {
                 ModificationType.DELETE);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLeafDeleteDisappear() {
         NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
 
@@ -264,10 +268,11 @@ public class DataTreeCandidatesAggregateTest {
                 ModificationType.DISAPPEARED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLeafDeleteSubtreeModified() {
         NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
 
@@ -279,7 +284,8 @@ public class DataTreeCandidatesAggregateTest {
                 ModificationType.SUBTREE_MODIFIED);
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -356,7 +362,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnmodifiedSubtreeModifiedWithoutDataBefore() {
         NormalizedNode<?, ?> parentNode = normalizedNode("container");
         NormalizedNode<?, ?> childNode = normalizedNode("child");
@@ -375,7 +381,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     //FIXME
@@ -405,7 +412,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnmodifiedAppearedWithDataBefore() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
         NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
@@ -426,7 +433,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     //FIXME
@@ -454,7 +462,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.APPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnmodifiedDisappearWithoutDataBefore() {
         NormalizedNode<?, ?> parentNode = normalizedNode("container");
         NormalizedNode<?, ?> childNode = normalizedNode("child");
@@ -473,7 +481,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -704,7 +713,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testWriteAppear() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
         NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
@@ -726,7 +735,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -884,7 +894,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSubtreeModifiedAppear() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
         NormalizedNode<?, ?> parentNode2 = normalizedNode("value2");
@@ -906,7 +916,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -1033,7 +1044,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.APPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAppearedAppeared() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
         NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
@@ -1052,7 +1063,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -1103,7 +1115,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.DISAPPEARED, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDisappearedDelete() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
         NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
@@ -1122,7 +1134,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -1151,7 +1164,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDisappearedSubtreeModified() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
         NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
@@ -1171,7 +1184,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     @Test
@@ -1200,7 +1214,7 @@ public class DataTreeCandidatesAggregateTest {
         assertEquals(ModificationType.SUBTREE_MODIFIED, aggregationResult.getRootNode().getModificationType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDisappearedDisappear() {
         NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
         NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
@@ -1219,7 +1233,8 @@ public class DataTreeCandidatesAggregateTest {
         setChildNodes(node2, Collections.singletonList(child2));
         DataTreeCandidate candidate2 = new DefaultDataTreeCandidate(ROOT_PATH, node2);
 
-        DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
+        assertThrows(IllegalArgumentException.class,
+            () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
     private static NormalizedNode<?, ?> normalizedNode(final String value) {

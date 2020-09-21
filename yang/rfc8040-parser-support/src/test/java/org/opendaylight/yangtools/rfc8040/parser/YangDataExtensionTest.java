@@ -5,13 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.rfc8040.parser;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
@@ -39,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class YangDataExtensionTest {
 
@@ -185,38 +188,29 @@ public class YangDataExtensionTest {
 
     @Test
     public void testYangDataWithMissingTopLevelContainer() {
-        try {
-            reactor.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE).buildEffective();
-            fail("Exception should have been thrown because of missing top-level container in yang-data statement.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof MissingSubstatementException);
-            assertTrue(cause.getMessage().startsWith("YANG_DATA is missing CONTAINER. Minimal count is 1."));
-        }
+        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
+        final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(MissingSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("YANG_DATA is missing CONTAINER. Minimal count is 1."));
     }
 
     @Test
     public void testYangDataWithTwoTopLevelContainers() {
-        try {
-            reactor.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE).buildEffective();
-            fail("Exception should have been thrown because of two top-level containers in yang-data statement.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("Maximal count of CONTAINER for YANG_DATA is 1, detected 2."));
-        }
+        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
+        final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertTrue(cause.getMessage().startsWith("Maximal count of CONTAINER for YANG_DATA is 1, detected 2."));
     }
 
     @Test
     public void testYangDataWithInvalidToplevelNode() {
-        try {
-            reactor.newBuild().addSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE).buildEffective();
-            fail("Exception should have been thrown because of invalid top-level node in yang-data statement.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidSubstatementException);
-            assertTrue(cause.getMessage().startsWith("LEAF is not valid for YANG_DATA."));
-        }
+        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE);
+        final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidSubstatementException.class));
+        assertThat(cause.getMessage(), startsWith("LEAF is not valid for YANG_DATA."));
     }
 
     private static StatementStreamSource sourceForResource(final String resourceName) {

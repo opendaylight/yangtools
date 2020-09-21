@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -70,13 +70,9 @@ public class NormalizedNodeWriterTest {
 
         assertEquals(loggingNormalizedNodeStreamWriter, orderedNormalizedNodeWriter.getWriter());
 
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
-        try {
-            orderedNormalizedNodeWriter.write(mockedNormalizedNode);
-            fail("An IllegalStateException should have been thrown!");
-        } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().startsWith("It wasn't possible to serialize node"));
-        }
+        final IllegalStateException ex = assertThrows(IllegalStateException.class,
+            () -> orderedNormalizedNodeWriter.write(mock(NormalizedNode.class)));
+        assertTrue(ex.getMessage().startsWith("It wasn't possible to serialize node"));
 
         final NormalizedNode<?, ?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
         doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).getIdentifier();
