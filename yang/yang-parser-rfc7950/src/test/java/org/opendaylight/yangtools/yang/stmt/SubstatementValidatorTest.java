@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +32,7 @@ public class SubstatementValidatorTest {
 
     @Before
     public void setUp() throws UnsupportedEncodingException {
-        System.setOut(new PrintStream(output, true, "UTF-8"));
+        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
     }
 
     @After
