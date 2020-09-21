@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
@@ -64,7 +67,7 @@ public class SharedSingletonMapTest {
         assertFalse(m.equals(ImmutableMap.of("k1", "v1", "k2", "v2")));
 
         final Set<String> set = m.keySet();
-        assertTrue(set instanceof SingletonSet);
+        assertThat(set, instanceOf(SingletonSet.class));
         assertTrue(set.contains("k1"));
     }
 
@@ -84,33 +87,33 @@ public class SharedSingletonMapTest {
         assertTrue(m.equals(t));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testEmptyOrderedCopyOf() {
-        SharedSingletonMap.orderedCopyOf(ImmutableMap.of());
+        assertThrows(IllegalArgumentException.class, () -> SharedSingletonMap.orderedCopyOf(ImmutableMap.of()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testEmptyUnorderedCopyOf() {
-        SharedSingletonMap.unorderedCopyOf(ImmutableMap.of());
+        assertThrows(IllegalArgumentException.class, () -> SharedSingletonMap.unorderedCopyOf(ImmutableMap.of()));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testClear() {
-        create().clear();
+        assertThrows(UnsupportedOperationException.class, () -> create().clear());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testPut() {
-        create().put(null, null);
+        assertThrows(UnsupportedOperationException.class, () -> create().put(null, null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testPutAll() {
-        create().putAll(Collections.singletonMap("", ""));
+        assertThrows(UnsupportedOperationException.class, () -> create().putAll(Collections.singletonMap("", "")));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemove() {
-        create().remove(null);
+        assertThrows(UnsupportedOperationException.class, () -> create().remove(null));
     }
 }

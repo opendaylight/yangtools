@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -70,14 +69,9 @@ public class TrackingLinkedBlockingQueueTest {
         assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
         assertEquals("size", 2, queue.size());
 
-        try {
-            queue.add("3");
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            // Expected
-            assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
-            assertEquals("size", 2, queue.size());
-        }
+        assertThrows(IllegalStateException.class, () -> queue.add("3"));
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
     }
 
     @Test
@@ -88,13 +82,8 @@ public class TrackingLinkedBlockingQueueTest {
         assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
         assertEquals("size", 2, queue.size());
 
-        try {
-            queue.addAll(Arrays.asList("3", "4"));
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            // Expected
-            assertEquals("getLargestQueueSize", 3, queue.getLargestQueueSize());
-            assertEquals("size", 3, queue.size());
-        }
+        assertThrows(IllegalStateException.class, () -> queue.addAll(Arrays.asList("3", "4")));
+        assertEquals("getLargestQueueSize", 3, queue.getLargestQueueSize());
+        assertEquals("size", 3, queue.size());
     }
 }

@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -73,39 +74,39 @@ public class SingletonSetTest {
         assertFalse(it.hasNext());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRejectedAdd() {
         final SingletonSet<?> s = nullSet();
-        s.add(null);
+        assertThrows(UnsupportedOperationException.class, () -> s.add(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRejectedAddAll() {
         final SingletonSet<?> s = nullSet();
-        s.addAll(null);
+        assertThrows(UnsupportedOperationException.class, () -> s.addAll(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRejectedClear() {
         final SingletonSet<?> s = nullSet();
-        s.clear();
+        assertThrows(UnsupportedOperationException.class, () -> s.clear());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRejectedRemove() {
         final SingletonSet<?> s = nullSet();
-        s.remove(null);
+        assertThrows(UnsupportedOperationException.class, () -> s.remove(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRejectedRemoveAll() {
         final SingletonSet<?> s = nullSet();
-        s.removeAll(null);
+        assertThrows(UnsupportedOperationException.class, () -> s.removeAll(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRejectedRetainAll() {
         final SingletonSet<?> s = nullSet();
-        s.retainAll(null);
+        assertThrows(UnsupportedOperationException.class, () -> s.retainAll(null));
     }
 }
