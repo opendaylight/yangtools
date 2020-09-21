@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import org.junit.Test;
@@ -20,8 +21,8 @@ public class YangNamesTest {
         assertEquals(new SimpleImmutableEntry<>("foo@bar", "baz"), YangNames.parseFilename("foo@bar@baz"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testParseFileNameNull() {
-        YangNames.parseFilename(null);
+        assertThrows(NullPointerException.class, () -> YangNames.parseFilename(null));
     }
 }

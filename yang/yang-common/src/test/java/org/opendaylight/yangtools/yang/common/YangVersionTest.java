@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -27,9 +28,9 @@ public class YangVersionTest {
         assertEquals(Optional.of(YangVersion.VERSION_1_1), YangVersion.parse("1.1"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testParseNull() {
-        YangVersion.parse(null);
+        assertThrows(NullPointerException.class, () -> YangVersion.parse(null));
     }
 
     @Test

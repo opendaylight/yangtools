@@ -9,81 +9,81 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import org.junit.Test;
 
 public class Decimal64Test {
-
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseEmpty() {
-        Decimal64.valueOf("");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf(""));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseSingleIllegal() {
-        Decimal64.valueOf("a");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("a"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseSingleHighIllegal() {
-        Decimal64.valueOf(":");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf(":"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseZeroIllegal() {
-        Decimal64.valueOf("0a");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0a"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseZeroHighIllegal() {
-        Decimal64.valueOf("0:");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0:"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseZeroPointIllegal() {
-        Decimal64.valueOf("0.a");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0.a"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseZeroPointHighIllegal() {
-        Decimal64.valueOf("0.:");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0.:"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParsePointIllegal() {
-        Decimal64.valueOf(".a");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf(".a"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseMinus() {
-        Decimal64.valueOf("-");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("-"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParsePlus() {
-        Decimal64.valueOf("+");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("+"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParsePeriod() {
-        Decimal64.valueOf(".");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("."));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseTwoPeriods() {
-        Decimal64.valueOf("..");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf(".."));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseTrailingPeriod() {
-        Decimal64.valueOf("0.");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0."));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseMultiplePeriods() {
-        Decimal64.valueOf("0.1.");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0.1."));
     }
 
     @Test
@@ -96,14 +96,14 @@ public class Decimal64Test {
         Decimal64.valueOf("0.12345678901234568");
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseTooLongString() {
-        Decimal64.valueOf("1234567890123456789");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("1234567890123456789"));
     }
 
-    @Test(expected = NumberFormatException.class)
+    @Test
     public void testParseTooLongDecimal() {
-        Decimal64.valueOf("0.123456789012345689");
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0.123456789012345689"));
     }
 
     @Test
@@ -224,14 +224,16 @@ public class Decimal64Test {
         assertEquals(Byte.MAX_VALUE, Decimal64.valueOf(Byte.MAX_VALUE).byteValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testByteValueExactFrac() {
-        Decimal64.valueOf("1.1").byteValueExact();
+        final Decimal64 dec = Decimal64.valueOf("1.1");
+        assertThrows(ArithmeticException.class, () -> dec.byteValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testByteValueExactRange() {
-        Decimal64.valueOf(Byte.MAX_VALUE + 1).byteValueExact();
+        final Decimal64 dec = Decimal64.valueOf(Byte.MAX_VALUE + 1);
+        assertThrows(ArithmeticException.class, () -> dec.byteValueExact());
     }
 
     @Test
@@ -240,14 +242,16 @@ public class Decimal64Test {
         assertEquals(Short.MAX_VALUE, Decimal64.valueOf(Short.MAX_VALUE).shortValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testShortValueExactFrac() {
-        Decimal64.valueOf("1.1").shortValueExact();
+        final Decimal64 dec = Decimal64.valueOf("1.1");
+        assertThrows(ArithmeticException.class, () -> dec.shortValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testShortValueExactRange() {
-        Decimal64.valueOf(Short.MAX_VALUE + 1).shortValueExact();
+        final Decimal64 dec = Decimal64.valueOf(Short.MAX_VALUE + 1);
+        assertThrows(ArithmeticException.class, () -> dec.shortValueExact());
     }
 
     @Test
@@ -256,19 +260,22 @@ public class Decimal64Test {
         assertEquals(Integer.MAX_VALUE, Decimal64.valueOf(Integer.MAX_VALUE).intValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testIntValueExactFrac() {
-        Decimal64.valueOf("1.1").intValueExact();
+        final Decimal64 dec = Decimal64.valueOf("1.1");
+        assertThrows(ArithmeticException.class, () -> dec.intValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testIntValueExactRange() {
-        Decimal64.valueOf(Integer.MAX_VALUE + 1L).intValueExact();
+        final Decimal64 dec = Decimal64.valueOf(Integer.MAX_VALUE + 1L);
+        assertThrows(ArithmeticException.class, () -> dec.intValueExact());
     }
 
-    @Test(expected = ArithmeticException.class)
+    @Test
     public void testLongValueExactFrac() {
-        Decimal64.valueOf("1.1").longValueExact();
+        final Decimal64 dec = Decimal64.valueOf("1.1");
+        assertThrows(ArithmeticException.class, () -> dec.longValueExact());
     }
 
     private static void assertCanonicalVariants(final String str, final long intPart, final long fracPart,

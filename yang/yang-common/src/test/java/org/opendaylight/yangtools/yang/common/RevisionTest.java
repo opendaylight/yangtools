@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -26,34 +27,34 @@ public class RevisionTest {
         assertEquals("2017-12-25", Revision.of("2017-12-25").toString());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testOfNull() {
-        Revision.of(null);
+        assertThrows(NullPointerException.class, () -> Revision.of(null));
     }
 
-    @Test(expected = DateTimeParseException.class)
+    @Test
     public void testOfEmpty() {
-        Revision.of("");
+        assertThrows(DateTimeParseException.class, () -> Revision.of(""));
     }
 
-    @Test(expected = DateTimeParseException.class)
+    @Test
     public void testOfInvalid() {
-        Revision.of("invalid");
+        assertThrows(DateTimeParseException.class, () -> Revision.of("invalid"));
     }
 
-    @Test(expected = DateTimeParseException.class)
+    @Test
     public void testOfInvalidDate1() {
-        Revision.of("2017-13-01");
+        assertThrows(DateTimeParseException.class, () -> Revision.of("2017-13-01"));
     }
 
-    @Test(expected = DateTimeParseException.class)
+    @Test
     public void testOfInvalidDate2() {
-        Revision.of("2017-12-00");
+        assertThrows(DateTimeParseException.class, () -> Revision.of("2017-12-00"));
     }
 
-    @Test(expected = DateTimeParseException.class)
+    @Test
     public void testOfInvalidDate3() {
-        Revision.of("2017-12-32");
+        assertThrows(DateTimeParseException.class, () -> Revision.of("2017-12-32"));
     }
 
     @Test
