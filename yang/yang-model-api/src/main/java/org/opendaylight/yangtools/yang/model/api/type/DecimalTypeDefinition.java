@@ -29,7 +29,7 @@ public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<Dec
     int getFractionDigits();
 
     static int hashCode(final DecimalTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getFractionDigits(),
             type.getRangeConstraint().orElse(null));
     }

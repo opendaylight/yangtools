@@ -27,7 +27,7 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
     @NonNull Set<? extends IdentitySchemaNode> getIdentities();
 
     static int hashCode(final @NonNull IdentityrefTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getIdentities());
     }
 
