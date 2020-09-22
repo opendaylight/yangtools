@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -452,21 +453,22 @@ public class TypeTest {
         assertEquals(invalidEnumDefinitionException.getOffendingEnum(), enumPair);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void identityrefTypeBuilderException() {
-        BaseTypes.identityrefTypeBuilder(SCHEMA_PATH).build();
+        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
+        assertThrows(IllegalStateException.class, () -> builder.build());
     }
 
-    @Test(expected = InvalidBitDefinitionException.class)
+    @Test
     public void invalidBitDefinitionExceptionTest() {
         final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(SCHEMA_PATH)
                 .addBit(BIT_A)
                 .addBit(BitBuilder.create("test-name-1", Uint32.valueOf(55)).build());
 
-        bitsTypeBuilder.build();
+        assertThrows(InvalidBitDefinitionException.class, () -> bitsTypeBuilder.build());
     }
 
-    @Test(expected = InvalidEnumDefinitionException.class)
+    @Test
     public void invalidEnumDefinitionExceptionTest() {
         final UnknownSchemaNode unknown = mock(UnknownSchemaNode.class);
         final EnumPair enumPair1 = EnumPairBuilder.create("enum1", 1).setDescription("description")
@@ -476,7 +478,8 @@ public class TypeTest {
         final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(SCHEMA_PATH);
         enumerationTypeBuilder.addEnum(enumPair1);
         enumerationTypeBuilder.addEnum(enumPair2);
-        enumerationTypeBuilder.build();
+
+        assertThrows(InvalidEnumDefinitionException.class, () -> enumerationTypeBuilder.build());
     }
 
     private static void hashCodeEqualsToStringTest(final TypeDefinition<?> type1, final TypeDefinition<?> type2) {

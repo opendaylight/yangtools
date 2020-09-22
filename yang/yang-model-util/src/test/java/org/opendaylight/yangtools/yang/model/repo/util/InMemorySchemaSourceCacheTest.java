@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -19,7 +22,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class InMemorySchemaSourceCacheTest {
 
     private static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
@@ -59,7 +61,7 @@ public class InMemorySchemaSourceCacheTest {
     public void inMemorySchemaSourceCacheTest1() {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
             InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
-        Assert.assertNotNull(inMemorySchemaSourceCache);
+        assertNotNull(inMemorySchemaSourceCache);
         inMemorySchemaSourceCache.close();
     }
 
@@ -67,7 +69,7 @@ public class InMemorySchemaSourceCacheTest {
     public void inMemorySchemaSourceCacheTest2() {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
             InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
-        Assert.assertNotNull(inMemorySchemaSourceCache);
+        assertNotNull(inMemorySchemaSourceCache);
         inMemorySchemaSourceCache.close();
     }
 
@@ -81,22 +83,24 @@ public class InMemorySchemaSourceCacheTest {
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
         final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource = inMemorySchemaSourceCache
                 .getSource(sourceIdentifier);
-        Assert.assertNotNull(checkedSource);
+        assertNotNull(checkedSource);
         final YangSchemaSourceRepresentation yangSchemaSourceRepresentation = checkedSource.get();
-        Assert.assertNotNull(yangSchemaSourceRepresentation);
-        Assert.assertEquals(sourceIdentifier, yangSchemaSourceRepresentation.getIdentifier());
+        assertNotNull(yangSchemaSourceRepresentation);
+        assertEquals(sourceIdentifier, yangSchemaSourceRepresentation.getIdentifier());
         inMemorySchemaSourceCache.close();
     }
 
-    @Test(expected = ExecutionException.class)
+    @Test
     public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
             InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
         final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource =
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
-        Assert.assertNotNull(checkedSource);
-        checkedSource.get();
+        assertNotNull(checkedSource);
+
+
+        assertThrows(ExecutionException.class, () -> checkedSource.get());
         inMemorySchemaSourceCache.close();
     }
 
@@ -117,10 +121,10 @@ public class InMemorySchemaSourceCacheTest {
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
         final ListenableFuture<? extends SchemaSourceRepresentation> checkedSource2 =
             inMemorySchemaSourceCache2.getSource(sourceIdentifier);
-        Assert.assertNotNull(checkedSource);
-        Assert.assertNotNull(checkedSource2);
+        assertNotNull(checkedSource);
+        assertNotNull(checkedSource2);
 
-        Assert.assertEquals(checkedSource.get(), checkedSource2.get());
+        assertEquals(checkedSource.get(), checkedSource2.get());
         inMemorySchemaSourceCache.close();
         inMemorySchemaSourceCache2.close();
     }

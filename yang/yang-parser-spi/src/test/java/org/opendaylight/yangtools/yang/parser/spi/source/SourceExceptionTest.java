@@ -9,19 +9,23 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SourceExceptionTest {
+    @Mock
     private StatementSourceReference mock;
 
     @Before
     public void before() {
-        mock = mock(StatementSourceReference.class);
         doReturn("mock").when(mock).toString();
     }
 
@@ -30,24 +34,24 @@ public class SourceExceptionTest {
         SourceException.throwIf(false, mock, "");
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testThrowIfTrueMockNull() {
-        SourceException.throwIf(true, mock, null);
+        assertThrows(NullPointerException.class, () -> SourceException.throwIf(true, mock, null));
     }
 
-    @Test(expected = SourceException.class)
+    @Test
     public void testThrowIfTrueMockEmpty() {
-        SourceException.throwIf(true, mock, "");
+        assertThrows(SourceException.class, () -> SourceException.throwIf(true, mock, ""));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testThrowIfNullNullMockNull() {
-        SourceException.throwIfNull(null, mock, null);
+        assertThrows(NullPointerException.class, () -> SourceException.throwIfNull(null, mock, null));
     }
 
-    @Test(expected = SourceException.class)
+    @Test
     public void testThrowIfNullNullMockEmpty() {
-        SourceException.throwIfNull(null, mock, "");
+        assertThrows(SourceException.class, () -> SourceException.throwIfNull(null, mock, ""));
     }
 
     @Test
@@ -60,8 +64,8 @@ public class SourceExceptionTest {
         assertEquals("test", SourceException.unwrap(Optional.of("test"), mock, ""));
     }
 
-    @Test(expected = SourceException.class)
+    @Test
     public void testUnwrapAbsent() {
-        SourceException.unwrap(Optional.empty(), mock, "");
+        assertThrows(SourceException.class, () -> SourceException.unwrap(Optional.empty(), mock, ""));
     }
 }

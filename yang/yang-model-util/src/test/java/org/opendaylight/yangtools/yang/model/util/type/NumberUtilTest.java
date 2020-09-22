@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -90,14 +91,14 @@ public class NumberUtilTest {
         assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testRangeCoveredForUnsupportedNumberType() {
         final double min = 100.0;
         final double superMin = 50.0;
         final double max = 200.0;
         final double superMax = 300.0;
 
-        NumberUtil.isRangeCovered(min, max, superMin, superMax);
+        assertThrows(IllegalArgumentException.class, () -> NumberUtil.isRangeCovered(min, max, superMin, superMax));
     }
 
     @Test

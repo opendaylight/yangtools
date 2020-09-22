@@ -13,6 +13,9 @@ import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
@@ -31,11 +34,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -45,6 +48,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class FilesystemSchemaSourceCacheTest {
 
     @Mock
@@ -55,7 +59,6 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
         this.storageDir = Files.createTempDir();
         doReturn(this.registration).when(this.registry).registerSchemaSource(any(SchemaSourceProvider.class),
             any(PotentialSchemaSource.class));
@@ -148,7 +151,7 @@ public class FilesystemSchemaSourceCacheTest {
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
                 YangTextSchemaSource.class, sourceIdToFile);
-        Assert.assertNotNull(cache);
+        assertNotNull(cache);
         final List<File> storedFiles = Arrays.asList(sourceIdToFile.listFiles());
         assertEquals(0, storedFiles.size());
     }
@@ -164,7 +167,7 @@ public class FilesystemSchemaSourceCacheTest {
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier,
                 this.storageDir);
-        Assert.assertNotNull(sourceIdToFile);
+        assertNotNull(sourceIdToFile);
         final List<File> storedFiles = Arrays.asList(this.storageDir.listFiles());
         assertEquals(1, storedFiles.size());
     }
@@ -181,7 +184,7 @@ public class FilesystemSchemaSourceCacheTest {
 
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
-        Assert.assertNotNull(sourceIdToFile);
+        assertNotNull(sourceIdToFile);
         final List<File> storedFiles = Arrays.asList(this.storageDir.listFiles());
         assertEquals(2, storedFiles.size());
     }
@@ -196,13 +199,13 @@ public class FilesystemSchemaSourceCacheTest {
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2013-12-12"));
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
-        Assert.assertNotNull(checked);
+        assertNotNull(checked);
         final YangTextSchemaSource checkedGet = checked.get();
-        Assert.assertEquals(sourceIdentifier, checkedGet.getIdentifier());
-        Assert.assertTrue(checked.isDone());
+        assertEquals(sourceIdentifier, checkedGet.getIdentifier());
+        assertTrue(checked.isDone());
     }
 
-    @Test(expected = ExecutionException.class)
+    @Test
     public void test1() throws Exception {
 
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
@@ -212,8 +215,8 @@ public class FilesystemSchemaSourceCacheTest {
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1", Revision.of("2012-12-12"));
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
-        Assert.assertNotNull(checked);
-        checked.get();
+        assertNotNull(checked);
+        assertThrows(ExecutionException.class, () -> checked.get());
     }
 
     private List<File> getFilesFromCache() {

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
@@ -20,19 +21,19 @@ public class QNameToStatementDefinitionMapTest {
     private final QNameToStatementDefinitionMap map = new QNameToStatementDefinitionMap();
     private final StatementSupport<?, ?, ?> support = mock(StatementSupport.class);
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testPutNullNull() {
-        map.put(null, null);
+        assertThrows(NullPointerException.class, () -> map.put(null, null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testPutNullSome() {
-        map.put(null, mock(StatementSupport.class));
+        assertThrows(NullPointerException.class, () -> map.put(null, mock(StatementSupport.class)));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testPutSomeNull() {
-        map.put(QName.create("", "a"), null);
+        assertThrows(NullPointerException.class, () -> map.put(QName.create("", "a"), null));
     }
 
     @Test

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import java.net.URI;
 import org.junit.AfterClass;
@@ -38,36 +39,41 @@ public class IdentityCodecUtilTest {
             IdentityCodecUtilTest::resolvePrefix));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNonExistent() {
-        IdentityCodecUtil.parseIdentity("yt846:bar", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix);
+        assertThrows(IllegalArgumentException.class,
+            () -> IdentityCodecUtil.parseIdentity("yt846:bar", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testEmptyLocalName() {
-        IdentityCodecUtil.parseIdentity("yt846:", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix);
+        assertThrows(IllegalArgumentException.class,
+            () -> IdentityCodecUtil.parseIdentity("yt846:", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testEmptyString() {
-        IdentityCodecUtil.parseIdentity("", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix);
+        assertThrows(IllegalStateException.class,
+            () -> IdentityCodecUtil.parseIdentity("", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testNoPrefix() {
-        IdentityCodecUtil.parseIdentity("foo", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix);
+        assertThrows(IllegalStateException.class,
+            () -> IdentityCodecUtil.parseIdentity("foo", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testEmptyPrefix() {
-        IdentityCodecUtil.parseIdentity(":foo", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix);
+        assertThrows(IllegalStateException.class,
+            () -> IdentityCodecUtil.parseIdentity(":foo", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testColon() {
-        IdentityCodecUtil.parseIdentity(":", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix);
+        assertThrows(IllegalStateException.class,
+            () -> IdentityCodecUtil.parseIdentity(":", SCHEMA_CONTEXT, IdentityCodecUtilTest::resolvePrefix));
     }
-
 
     private static QNameModule resolvePrefix(final String prefix) {
         // TODO: QNameCodecUtil should deal with some of the malformed stuff here by throwing IAE. We throw an ISE

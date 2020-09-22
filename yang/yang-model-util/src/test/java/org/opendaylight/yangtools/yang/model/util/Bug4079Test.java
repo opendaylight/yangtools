@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.function.Predicate;
@@ -108,30 +109,30 @@ public class Bug4079Test {
         assertNotNull(Pattern.compile(fixedUnicodeScriptPattern));
     }
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testInvalidPattern() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\p{IsBasicLatin})*+");
         assertEquals("^(?:(\\\\p{IsBasicLatin})*+)$", fixedUnicodeScriptPattern);
         // should throw exception
-        Pattern.compile(fixedUnicodeScriptPattern);
+        assertThrows(PatternSyntaxException.class, () -> Pattern.compile(fixedUnicodeScriptPattern));
     }
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testInvalidPattern2() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
             "(\\p{IsSpecials}|\\\\\\\\p{IsBasicLatin})*+");
         assertEquals("^(?:(\\p{InSpecials}|\\\\\\\\p{IsBasicLatin})*+)$", fixedUnicodeScriptPattern);
         // should throw exception
-        Pattern.compile(fixedUnicodeScriptPattern);
+        assertThrows(PatternSyntaxException.class, () -> Pattern.compile(fixedUnicodeScriptPattern));
     }
 
-    @Test(expected = PatternSyntaxException.class)
+    @Test
     public void testInvalidPattern3() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
             "(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+");
         assertEquals("^(?:(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+)$", fixedUnicodeScriptPattern);
         // should throw exception
-        Pattern.compile(fixedUnicodeScriptPattern);
+        assertThrows(PatternSyntaxException.class, () -> Pattern.compile(fixedUnicodeScriptPattern));
     }
 
     @Test

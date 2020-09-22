@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
@@ -133,16 +134,14 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     @Test
     public void leafNamesakes() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/namesakes.json");
-        try {
-            //second parameter isn't necessary because error will be raised before it is used.
-            verifyTransformationToNormalizedNode(inputJson, null);
-            fail("Expected exception not raised");
-        } catch (final IllegalStateException e) {
-            final String errorMessage = e.getMessage();
-            assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
-            assertTrue(errorMessage.contains("complexjson-augmentation"));
-            assertTrue(errorMessage.contains("complexjson-augmentation-namesake"));
-        }
+        final IllegalStateException ex = assertThrows(IllegalStateException.class,
+            // second parameter isn't necessary because error will be raised before it is used.
+            () -> verifyTransformationToNormalizedNode(inputJson, null));
+
+        final String errorMessage = ex.getMessage();
+        assertThat(errorMessage, containsString("Choose suitable module name for element lf11-namesake:"));
+        assertThat(errorMessage, containsString("complexjson-augmentation"));
+        assertThat(errorMessage, containsString("complexjson-augmentation-namesake"));
     }
 
     @Test
@@ -160,12 +159,11 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     @Test
     public void parsingNotExistingElement() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/not-existing-element.json");
-        try {
+        final IllegalStateException ex = assertThrows(IllegalStateException.class,
             //second parameter isn't necessary because error will be raised before it is used.
-            verifyTransformationToNormalizedNode(inputJson, null);
-        } catch (final IllegalStateException e) {
-            assertTrue(e.getMessage().contains("Schema node with name dummy-element was not found"));
-        }
+            () -> verifyTransformationToNormalizedNode(inputJson, null));
+
+        assertThat(ex.getMessage(), containsString("Schema node with name dummy-element was not found"));
     }
 
     /**
