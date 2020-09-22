@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.collect.ImmutableSet;
@@ -62,8 +62,7 @@ public class Bug4501Test {
         final Optional<DataContainerChild<? extends PathArgument, ?>> lrsBits = hop.getChild(0).getChild(
                 NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
-        final ImmutableSet<String> expectedValue = ImmutableSet.of("lookup", "rloc-probe", "strict");
-        assertEquals(expectedValue, lrsBits.get().getValue());
+        assertEquals(ImmutableSet.of("lookup", "rloc-probe", "strict"), lrsBits.get().getValue());
     }
 
     @Test
@@ -74,11 +73,9 @@ public class Bug4501Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
 
-        try {
-            jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-            fail("IllegalArgumentException should be thrown.");
-        } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(), "Node '(foo)lrs-bits' has already set its value to '[lookup]'");
-        }
+        final JsonReader reader = new JsonReader(new StringReader(inputJson));
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> jsonParser.parse(reader));
+        assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
     }
 }

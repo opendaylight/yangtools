@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -88,56 +89,60 @@ public class SchemaContextUtilTest {
         assertNull("Should be null.", SchemaContextUtil.findParentModule(mockSchemaContext, int32node));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findDataSchemaNodeFromXPathIllegalArgumentTest() {
-        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), mock(Module.class), null);
+        assertThrows(NullPointerException.class,
+            () -> SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), mock(Module.class), null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
         final SchemaContext mockContext = mock(SchemaContext.class);
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
-        SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath);
+        assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
         final Module module = mock(Module.class);
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
-        SchemaContextUtil.findDataSchemaNode(null, module, xpath);
+        assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(null, module, xpath));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void findDataSchemaNodeFromXPathIllegalArgumentTest4() {
         final SchemaContext mockContext = mock(SchemaContext.class);
         final Module module = mock(Module.class);
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
 
-        SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath);
+        assertThrows(IllegalArgumentException.class,
+            () -> SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findParentModuleIllegalArgumentTest() {
-        SchemaContextUtil.findParentModule(mock(SchemaContext.class), null);
+        assertThrows(NullPointerException.class,
+            () -> SchemaContextUtil.findParentModule(mock(SchemaContext.class), null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findParentModuleIllegalArgumentTest2() {
         doReturn(SchemaPath.create(true, QName.create("foo", "bar"))).when(schemaNode).getPath();
-        SchemaContextUtil.findParentModule(null, schemaNode);
+        assertThrows(NullPointerException.class, () -> SchemaContextUtil.findParentModule(null, schemaNode));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findDataSchemaNodeIllegalArgumentTest() {
-        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), (SchemaPath) null);
+        assertThrows(NullPointerException.class,
+            () -> SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), (SchemaPath) null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void findDataSchemaNodeIllegalArgumentTest2() {
-        SchemaContextUtil.findDataSchemaNode(null, SchemaPath.create(true,
-            QName.create(URI.create("uri:my-module"), Revision.of("2014-10-07"), "foo")));
+        assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(null,
+            SchemaPath.create(true, QName.create(URI.create("uri:my-module"), Revision.of("2014-10-07"), "foo"))));
     }
 
     @Test
