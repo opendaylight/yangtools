@@ -33,7 +33,7 @@ public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<Bin
     }
 
     static int hashCode(final @NonNull BinaryTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null));
     }
 

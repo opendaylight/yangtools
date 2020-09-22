@@ -20,12 +20,12 @@ final class TypeDefinitions {
     }
 
     static int basicHashCode(final @NonNull TypeDefinition<?> type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null));
     }
 
     static int hashCode(final @NonNull RangeRestrictedTypeDefinition<?, ?> type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
     }
 
@@ -50,7 +50,7 @@ final class TypeDefinitions {
         }
 
         final @NonNull T other = clazz.cast(obj);
-        return Objects.equals(type.getPath(), other.getPath())
+        return Objects.equals(type.getQName(), other.getQName())
                 && Objects.equals(type.getBaseType(), other.getBaseType())
                 && Objects.equals(type.getDefaultValue(), other.getDefaultValue())
                 && Objects.equals(type.getUnknownSchemaNodes(), other.getUnknownSchemaNodes())
@@ -59,7 +59,7 @@ final class TypeDefinitions {
 
     static @NonNull ToStringHelper toStringHelper(final @NonNull TypeDefinition<?> type) {
         return MoreObjects.toStringHelper(type).omitNullValues()
-                .add("path", type.getPath())
+                .add("name", type.getQName())
                 .add("baseType", type.getBaseType())
                 .add("default", type.getDefaultValue().orElse(null))
                 .add("description", type.getDescription().orElse(null))

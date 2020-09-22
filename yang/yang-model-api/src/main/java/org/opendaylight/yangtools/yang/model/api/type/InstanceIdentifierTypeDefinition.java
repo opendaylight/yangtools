@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
 public interface InstanceIdentifierTypeDefinition
         extends RequireInstanceRestrictedTypeDefinition<InstanceIdentifierTypeDefinition> {
     static int hashCode(final @NonNull InstanceIdentifierTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());
     }
 
