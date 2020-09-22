@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.booleanType;
 
 import java.util.Collections;
@@ -19,19 +20,16 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 public class BooleanTypeTest {
-
     @Test
     public void canCreateBooleanType() {
         final BooleanTypeDefinition boolType = booleanType();
-        final String stringBoolType = boolType.toString();
 
         assertEquals("getPath gives List of BOOLEAN_QNAME",
                 Collections.singletonList(BaseTypes.BOOLEAN_QNAME), boolType.getPath().getPathFromRoot());
         assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
         assertFalse(boolType.getDescription().isPresent());
 
-        final String strPath = boolType.getPath().toString();
-        assertTrue("Should contain string of getPath", stringBoolType.contains(strPath));
+        assertThat(boolType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)boolean"));
         assertEquals(Optional.empty(), boolType.getUnits());
         assertEquals("Base type is null", null, boolType.getBaseType());
         assertEquals(Optional.empty(), boolType.getDefaultValue());
