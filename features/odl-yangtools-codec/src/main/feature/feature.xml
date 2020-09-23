@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-yangtools-codec">
     <feature name="odl-yangtools-codec">
-        <feature version="[7,8)">odl-gson</feature>
-        <feature version="[7,8)">odl-stax2-api</feature>
+        <feature version="[8,9)">odl-gson</feature>
+        <feature version="[8,9)">odl-stax2-api</feature>
     </feature>
 </features>
