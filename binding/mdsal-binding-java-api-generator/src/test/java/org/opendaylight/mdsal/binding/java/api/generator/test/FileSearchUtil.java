@@ -31,18 +31,19 @@ final class FileSearchUtil {
     }
 
     static Map<String, File> getFiles(final File path) {
-        return getFiles(path, new HashMap<>());
+        final Map<String, File> ret = new HashMap<>();
+        getFiles(path, ret);
+        return ret;
     }
 
-    private static Map<String, File> getFiles(final File path, final Map<String, File> files) {
+    private static void getFiles(final File path, final Map<String, File> files) {
         final File [] dirFiles = path.listFiles();
         for (File file : dirFiles) {
             if (file.isDirectory()) {
-                return getFiles(file, files);
+                getFiles(file, files);
             }
 
             files.put(file.getName(), file);
         }
-        return files;
     }
 }
