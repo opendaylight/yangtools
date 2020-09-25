@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -68,7 +69,7 @@ public class Bug5446Test {
         final JsonParser parser = new JsonParser();
         final JsonElement serializedJson = parser.parse(jsonOutput);
         final JsonElement expextedJson = parser.parse(new FileReader(new File(getClass().getResource(
-                "/bug5446/json/foo.json").toURI())));
+                "/bug5446/json/foo.json").toURI()), StandardCharsets.UTF_8));
 
         assertEquals(expextedJson, serializedJson);
     }

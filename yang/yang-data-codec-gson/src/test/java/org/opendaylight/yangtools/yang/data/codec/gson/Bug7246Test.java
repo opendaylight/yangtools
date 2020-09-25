@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -40,7 +41,8 @@ public class Bug7246Test {
                 YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
         final JsonParser parser = new JsonParser();
         final JsonElement expextedJson = parser
-                .parse(new FileReader(new File(getClass().getResource("/bug7246/json/expected-output.json").toURI())));
+                .parse(new FileReader(new File(getClass().getResource("/bug7246/json/expected-output.json").toURI()),
+                    StandardCharsets.UTF_8));
 
         final DataContainerChild<? extends PathArgument, ?> inputStructure = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(qN("my-name")))

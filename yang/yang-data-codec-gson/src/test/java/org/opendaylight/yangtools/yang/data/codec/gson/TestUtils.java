@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLStreamReader;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -39,7 +40,7 @@ public final class TestUtils {
     }
 
     static String loadTextFile(final File file) throws IOException {
-        final FileReader fileReader = new FileReader(file);
+        final FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8);
         final BufferedReader bufReader = new BufferedReader(fileReader);
 
         String line = null;

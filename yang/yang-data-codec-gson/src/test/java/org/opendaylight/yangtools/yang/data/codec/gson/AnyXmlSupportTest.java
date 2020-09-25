@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
@@ -156,8 +157,8 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertTrue(data.isPresent());
         final String jsonOutput = normalizedNodesToJsonString(data.get(), schemaContext, SchemaPath.ROOT);
         final JsonParser parser = new JsonParser();
-        final JsonElement expextedJson = parser
-                .parse(new FileReader(new File(getClass().getResource(expectedJsonFile).toURI())));
+        final JsonElement expextedJson = parser.parse(new FileReader(
+            new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8));
         final JsonElement serializedJson = parser.parse(jsonOutput);
         assertEquals(expextedJson, serializedJson);
     }

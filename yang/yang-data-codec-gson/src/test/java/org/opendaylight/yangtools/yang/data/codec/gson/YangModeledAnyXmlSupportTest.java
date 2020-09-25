@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -108,7 +109,7 @@ public class YangModeledAnyXmlSupportTest {
         final JsonParser parser = new JsonParser();
         final JsonElement serializedJson = parser.parse(jsonOutput);
         final JsonElement expextedJson = parser.parse(new FileReader(new File(getClass().getResource(
-                "/yang-modeled-anyxml/json/baz.json").toURI())));
+                "/yang-modeled-anyxml/json/baz.json").toURI()), StandardCharsets.UTF_8));
 
         assertEquals(expextedJson, serializedJson);
     }
