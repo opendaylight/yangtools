@@ -1,0 +1,17 @@
+module mdsal553 {
+    yang-version 1;
+    namespace "lal";
+    prefix "lal";
+
+    container foo {
+        list bar {
+            key id;
+            leaf id {
+                type int32;
+            }
+            leaf name {
+                type string;
+            }
+        }
+    }
+}
