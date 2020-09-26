@@ -101,7 +101,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @throws NullPointerException if {@code target} is null
      */
     @SuppressWarnings("unchecked")
-    public final <N extends DataObject> @NonNull InstanceIdentifier<N> verifyTarget(final Class<N> target) {
+    public final <N extends DataObject> @NonNull InstanceIdentifier<N> verifyTarget(final Class<@NonNull N> target) {
         verify(target.equals(targetType), "Cannot adapt %s to %s", this, target);
         return (InstanceIdentifier<N>) this;
     }
@@ -217,7 +217,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return trimmed instance identifier, or null if the component type
      *         is not present.
      */
-    public final <I extends DataObject> @Nullable InstanceIdentifier<I> firstIdentifierOf(final Class<I> type) {
+    public final <I extends DataObject> @Nullable InstanceIdentifier<I> firstIdentifierOf(
+            final Class<@NonNull I> type) {
         int count = 1;
         for (final PathArgument a : pathArguments) {
             if (type.equals(a.getType())) {
@@ -242,7 +243,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      *         is not present.
      */
     public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> @Nullable K firstKeyOf(
-            final Class<N> listItem) {
+            final Class<@NonNull N> listItem) {
         for (final PathArgument i : pathArguments) {
             if (listItem.equals(i.getType())) {
                 @SuppressWarnings("unchecked")
@@ -341,7 +342,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return An InstanceIdentifier.
      * @throws NullPointerException if {@code container} is null
      */
-    public final <N extends ChildOf<? super T>> @NonNull InstanceIdentifier<N> child(final Class<N> container) {
+    public final <N extends ChildOf<? super T>> @NonNull InstanceIdentifier<N> child(
+            final Class<@NonNull N> container) {
         return childIdentifier(Item.of(container));
     }
 
@@ -358,7 +360,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     @SuppressWarnings("unchecked")
     public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>>
-            @NonNull KeyedInstanceIdentifier<N, K> child(final Class<N> listItem, final K listKey) {
+            @NonNull KeyedInstanceIdentifier<N, K> child(final Class<@NonNull N> listItem, final K listKey) {
         return (KeyedInstanceIdentifier<N, K>) childIdentifier(IdentifiableItem.of(listItem, listKey));
     }
 
@@ -373,8 +375,9 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return An InstanceIdentifier.
      * @throws NullPointerException if any argument is null
      */
+    // FIXME: add a proper caller
     public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>>
-            @NonNull InstanceIdentifier<N> child(final Class<C> caze, final Class<N> container) {
+            @NonNull InstanceIdentifier<N> child(final Class<@NonNull C> caze, final Class<@NonNull N> container) {
         return childIdentifier(Item.of(caze, container));
     }
 
@@ -391,10 +394,11 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return An InstanceIdentifier.
      * @throws NullPointerException if any argument is null
      */
+    // FIXME: add a proper caller
     @SuppressWarnings("unchecked")
     public final <C extends ChoiceIn<? super T> & DataObject, K extends Identifier<N>,
         N extends Identifiable<K> & ChildOf<? super C>> @NonNull KeyedInstanceIdentifier<N, K> child(
-                final Class<C> caze, final Class<N> listItem, final K listKey) {
+                final Class<@NonNull C> caze, final Class<@NonNull N> listItem, final K listKey) {
         return (KeyedInstanceIdentifier<N, K>) childIdentifier(IdentifiableItem.of(caze, listItem, listKey));
     }
 
@@ -408,7 +412,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @throws NullPointerException if {@code container} is null
      */
     public final <N extends DataObject & Augmentation<? super T>> @NonNull InstanceIdentifier<N> augmentation(
-            final Class<N> container) {
+            final Class<@NonNull N> container) {
         return childIdentifier(Item.of(container));
     }
 
@@ -558,7 +562,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return InstanceIdentifier instance
      */
     @SuppressWarnings("unchecked")
-    public static <T extends DataObject> @NonNull InstanceIdentifier<T> create(final Class<T> type) {
+    public static <T extends DataObject> @NonNull InstanceIdentifier<T> create(final Class<@NonNull T> type) {
         return (InstanceIdentifier<T>) create(ImmutableList.of(Item.of(type)));
     }
 
@@ -872,7 +876,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
          * @throws NullPointerException if any argument is null
          */
         <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>>
-                @NonNull InstanceIdentifierBuilder<N> child(Class<N> listItem, K listKey);
+                @NonNull InstanceIdentifierBuilder<N> child(Class<@NonNull N> listItem, K listKey);
 
         /**
          * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This

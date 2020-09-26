@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import java.io.ObjectStreamException;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An {@link InstanceIdentifier}, which has a list key attached at its last path element.
@@ -20,8 +21,8 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
     private static final long serialVersionUID = 2L;
     private final K key;
 
-    KeyedInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final boolean wildcarded,
-        final int hash, final K key) {
+    KeyedInstanceIdentifier(final Class<@NonNull T> type, final Iterable<PathArgument> pathArguments,
+            final boolean wildcarded, final int hash, final K key) {
         super(type, pathArguments, wildcarded, hash);
         this.key = key;
     }

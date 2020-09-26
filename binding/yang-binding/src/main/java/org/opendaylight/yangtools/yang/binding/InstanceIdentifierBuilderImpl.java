@@ -71,7 +71,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
 
     @Override
     public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N>
-            child(final Class<N> listItem, final K listKey) {
+            child(final Class<@NonNull N> listItem, final K listKey) {
         return addNode(IdentifiableItem.of(listItem, listKey));
     }
 
