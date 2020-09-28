@@ -30,6 +30,18 @@ public class Uint8Test {
     }
 
     @Test
+    public void testSaturatedOf() {
+        assertEquals(127, Uint8.saturatedOf((byte) 127).byteValue());
+        assertEquals(127, Uint8.saturatedOf((short) 127).byteValue());
+        assertEquals(127, Uint8.saturatedOf(127).byteValue());
+        assertEquals(127, Uint8.saturatedOf(127L).byteValue());
+
+        assertEquals(255, Uint8.saturatedOf((short) 255).intValue());
+        assertEquals(255, Uint8.saturatedOf(255).intValue());
+        assertEquals(255L, Uint8.saturatedOf(255L).longValue());
+    }
+
+    @Test
     public void testCompareTo() {
         final Uint8 five = Uint8.valueOf(5);
         final Uint8 zero = Uint8.valueOf(0);
@@ -119,6 +131,11 @@ public class Uint8Test {
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((short)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(-1));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(-1L));
+
+        assertEquals(Uint8.ZERO, Uint8.saturatedOf((byte)-1));
+        assertEquals(Uint8.ZERO, Uint8.saturatedOf((short)-1));
+        assertEquals(Uint8.ZERO, Uint8.saturatedOf(-1));
+        assertEquals(Uint8.ZERO, Uint8.saturatedOf(-1L));
     }
 
     @Test
@@ -126,6 +143,10 @@ public class Uint8Test {
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((short)256));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(256));
         assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(256L));
+
+        assertEquals(Uint8.MAX_VALUE, Uint8.saturatedOf(Short.MAX_VALUE));
+        assertEquals(Uint8.MAX_VALUE, Uint8.saturatedOf(Integer.MAX_VALUE));
+        assertEquals(Uint8.MAX_VALUE, Uint8.saturatedOf(Long.MAX_VALUE));
     }
 
     @Test

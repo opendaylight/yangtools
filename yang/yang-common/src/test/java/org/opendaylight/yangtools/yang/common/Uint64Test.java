@@ -35,6 +35,19 @@ public class Uint64Test {
     }
 
     @Test
+    public void testSaturatedOf() {
+        assertEquals(127, Uint64.saturatedOf((byte) 127).byteValue());
+        assertEquals(127, Uint64.saturatedOf((short) 127).byteValue());
+        assertEquals(127, Uint64.saturatedOf(127).byteValue());
+        assertEquals(127, Uint64.saturatedOf(127L).byteValue());
+
+        assertEquals(255, Uint64.saturatedOf((short) 255).intValue());
+        assertEquals(255, Uint64.saturatedOf(255).intValue());
+        assertEquals(255L, Uint64.saturatedOf(255L).longValue());
+        assertEquals(2170205184637009920L, Uint64.saturatedOf(new BigInteger("2170205184637009920")).longValue());
+    }
+
+    @Test
     public void testCompareTo() {
         final Uint64 five = Uint64.valueOf(5);
         final Uint64 zero = Uint64.valueOf(0);
@@ -144,12 +157,20 @@ public class Uint64Test {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1));
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1L));
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(new BigInteger("-1")));
+
+        assertEquals(Uint64.ZERO, Uint64.saturatedOf((byte)-1));
+        assertEquals(Uint64.ZERO, Uint64.saturatedOf((short)-1));
+        assertEquals(Uint64.ZERO, Uint64.saturatedOf(-1));
+        assertEquals(Uint64.ZERO, Uint64.saturatedOf(-1L));
+        assertEquals(Uint64.ZERO, Uint64.saturatedOf(new BigInteger("-1")));
     }
 
     @Test
     public void testLargeValues() {
         final BigInteger big = new BigInteger("10000000000000000", 16);
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(big));
+
+        assertEquals(Uint64.MAX_VALUE, Uint64.saturatedOf(big));
     }
 
     @Test
