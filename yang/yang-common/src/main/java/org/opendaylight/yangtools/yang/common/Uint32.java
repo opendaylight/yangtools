@@ -245,6 +245,28 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return instanceFor(Integer.parseUnsignedInt(requireNonNull(string), radix));
     }
 
+    public static Uint32 saturatedOf(final byte byteVal) {
+        return byteVal < 0 ? Uint32.ZERO : instanceFor(byteVal);
+    }
+
+    public static Uint32 saturatedOf(final short shortVal) {
+        return shortVal < 0 ? Uint32.ZERO : instanceFor(shortVal);
+    }
+
+    public static Uint32 saturatedOf(final int intVal) {
+        return intVal < 0 ? Uint32.ZERO : instanceFor(intVal);
+    }
+
+    public static Uint32 saturatedOf(final long longVal) {
+        if (longVal < 0) {
+            return Uint32.ZERO;
+        }
+        if (longVal >= MAX_VALUE_LONG) {
+            return Uint32.MAX_VALUE;
+        }
+        return instanceFor((int) longVal);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -343,6 +365,16 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     public final Uint64 toUint64() {
         return Uint64.fromLongBits(longValue());
     }
+
+    public final Uint8 toSaturatedUint8() {
+        return Uint8.saturatedOf(toJava());
+    }
+
+    public final Uint16 toSaturatedUint16() {
+        return Uint16.saturatedOf(toJava());
+    }
+
+    // FIXME: more saturated conversions
 
     @Override
     public final int hashCode() {

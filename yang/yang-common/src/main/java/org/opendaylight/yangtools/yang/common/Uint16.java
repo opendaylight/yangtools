@@ -234,6 +234,34 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         return valueOf(Integer.parseInt(requireNonNull(string), radix));
     }
 
+    public static Uint16 saturatedOf(final byte byteVal) {
+        return byteVal < 0 ? Uint16.ZERO : instanceFor(byteVal);
+    }
+
+    public static Uint16 saturatedOf(final short shortVal) {
+        return shortVal < 0 ? Uint16.ZERO : instanceFor(shortVal);
+    }
+
+    public static Uint16 saturatedOf(final int intVal) {
+        if (intVal < 0) {
+            return Uint16.ZERO;
+        }
+        if (intVal >= MAX_VALUE_INT) {
+            return Uint16.MAX_VALUE;
+        }
+        return instanceFor((short) intVal);
+    }
+
+    public static Uint16 saturatedOf(final long longVal) {
+        if (longVal < 0) {
+            return Uint16.ZERO;
+        }
+        if (longVal >= MAX_VALUE_INT) {
+            return Uint16.MAX_VALUE;
+        }
+        return instanceFor((short) longVal);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -326,6 +354,10 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      */
     public final Uint64 toUint64() {
         return Uint64.fromLongBits(longValue());
+    }
+
+    public final Uint8 toSaturatedUint8() {
+        return Uint8.saturatedOf(toJava());
     }
 
     @Override

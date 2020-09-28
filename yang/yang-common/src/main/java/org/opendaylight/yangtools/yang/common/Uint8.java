@@ -218,6 +218,72 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     }
 
     /**
+     * Returns an {@code Uint8} corresponding to a given {@code byteVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param byteVal byte value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     */
+    public static Uint8 saturatedOf(final byte byteVal) {
+        return byteVal < 0 ? Uint8.ZERO : instanceFor(byteVal);
+    }
+
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code shortVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned. If the value is greater than 255, {@link #MAX_VALUE} will be returned.
+     *
+     * @param shortVal short value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     */
+    public static Uint8 saturatedOf(final short shortVal) {
+        if (shortVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (shortVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor((byte) shortVal);
+    }
+
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code intVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned. If the value is greater than 255, {@link #MAX_VALUE} will be returned.
+     *
+     * @param intVal int value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     */
+    public static Uint8 saturatedOf(final int intVal) {
+        if (intVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (intVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor((byte) intVal);
+    }
+
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code longVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned. If the value is greater than 255, {@link #MAX_VALUE} will be returned.
+     *
+     * @param longVal long value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     */
+    public static Uint8 saturatedOf(final long longVal) {
+        if (longVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (longVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor((byte) longVal);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * <p>
