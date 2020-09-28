@@ -32,6 +32,18 @@ public class Uint32Test {
     }
 
     @Test
+    public void testSaturatedOf() {
+        assertEquals(127, Uint32.saturatedOf((byte) 127).byteValue());
+        assertEquals(127, Uint32.saturatedOf((short) 127).byteValue());
+        assertEquals(127, Uint32.saturatedOf(127).byteValue());
+        assertEquals(127, Uint32.saturatedOf(127L).byteValue());
+
+        assertEquals(255, Uint32.saturatedOf((short) 255).intValue());
+        assertEquals(255, Uint32.saturatedOf(255).intValue());
+        assertEquals(255L, Uint32.saturatedOf(255L).longValue());
+    }
+
+    @Test
     public void testCompareTo() {
         final Uint32 five = Uint32.valueOf(5);
         final Uint32 zero = Uint32.valueOf(0);
@@ -134,11 +146,18 @@ public class Uint32Test {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf((short)-1));
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(-1));
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(-1L));
+
+        assertEquals(Uint32.ZERO, Uint32.saturatedOf((byte)-1));
+        assertEquals(Uint32.ZERO, Uint32.saturatedOf((short)-1));
+        assertEquals(Uint32.ZERO, Uint32.saturatedOf(-1));
+        assertEquals(Uint32.ZERO, Uint32.saturatedOf(-1L));
     }
 
     @Test
     public void testLargeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(4294967296L));
+
+        assertEquals(Uint32.MAX_VALUE, Uint32.saturatedOf(4294967296L));
     }
 
     @Test

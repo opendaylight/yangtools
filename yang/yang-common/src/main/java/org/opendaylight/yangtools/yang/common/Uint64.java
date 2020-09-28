@@ -260,6 +260,66 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return instanceFor(Long.parseUnsignedLong(requireNonNull(string), radix));
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code byteVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param byteVal byte value
+     * @return A Uint64 instance
+     */
+    public static Uint64 saturatedOf(final byte byteVal) {
+        return byteVal < 0 ? Uint64.ZERO : instanceFor(byteVal);
+    }
+
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code shortVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param shortVal short value
+     * @return A Uint32 instance
+     */
+    public static Uint64 saturatedOf(final short shortVal) {
+        return shortVal < 0 ? Uint64.ZERO : instanceFor(shortVal);
+    }
+
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code intVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param intVal int value
+     * @return A Uint64 instance
+     */
+    public static Uint64 saturatedOf(final int intVal) {
+        return intVal < 0 ? Uint64.ZERO : instanceFor(intVal);
+    }
+
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code longVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param longVal long value
+     * @return A Uint64 instance
+     */
+    public static Uint64 saturatedOf(final long longVal) {
+        return longVal < 0 ? Uint64.ZERO : instanceFor(longVal);
+    }
+
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code longVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned. If the value is greater than 18446744073709551615, {@link #MAX_VALUE}
+     * will be returned.
+     *
+     * @param bigInt BigInteger value
+     * @return A Uint64 instance
+     * @throws NullPointerException if bigInt is null
+     */
+    public static Uint64 saturatedOf(final BigInteger bigInt) {
+        if (bigInt.signum() < 0) {
+            return Uint64.ZERO;
+        }
+        return bigInt.bitLength() > Long.SIZE ? Uint64.MAX_VALUE : instanceFor(bigInt.longValue());
+    }
+
     @Override
     public final int intValue() {
         return (int)value;

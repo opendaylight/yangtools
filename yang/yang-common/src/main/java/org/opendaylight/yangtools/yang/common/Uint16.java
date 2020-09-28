@@ -235,6 +235,62 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     }
 
     /**
+     * Returns an {@code Uint16} corresponding to a given {@code byteVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param byteVal byte value
+     * @return A Uint16 instance
+     */
+    public static Uint16 saturatedOf(final byte byteVal) {
+        return byteVal < 0 ? Uint16.ZERO : instanceFor(byteVal);
+    }
+
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code shortVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned.
+     *
+     * @param shortVal short value
+     * @return A Uint16 instance
+     */
+    public static Uint16 saturatedOf(final short shortVal) {
+        return shortVal < 0 ? Uint16.ZERO : instanceFor(shortVal);
+    }
+
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code intVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned. If the value is greater than 65535, {@link #MAX_VALUE} will be returned.
+     *
+     * @param intVal int value
+     * @return A Uint16 instance
+     */
+    public static Uint16 saturatedOf(final int intVal) {
+        if (intVal < 0) {
+            return Uint16.ZERO;
+        }
+        if (intVal >= MAX_VALUE_INT) {
+            return Uint16.MAX_VALUE;
+        }
+        return instanceFor((short) intVal);
+    }
+
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code longVal} if it is representable. If the value is
+     * negative {@link #ZERO} will be returned. If the value is greater than 65535, {@link #MAX_VALUE} will be returned.
+     *
+     * @param longVal long value
+     * @return A Uint16 instance
+     */
+    public static Uint16 saturatedOf(final long longVal) {
+        if (longVal < 0) {
+            return Uint16.ZERO;
+        }
+        if (longVal >= MAX_VALUE_INT) {
+            return Uint16.MAX_VALUE;
+        }
+        return instanceFor((short) longVal);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * <p>
@@ -326,6 +382,10 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      */
     public final Uint64 toUint64() {
         return Uint64.fromLongBits(longValue());
+    }
+
+    public final Uint8 toSaturatedUint8() {
+        return Uint8.saturatedOf(toJava());
     }
 
     @Override
