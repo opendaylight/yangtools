@@ -217,6 +217,46 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return valueOf(Short.parseShort(requireNonNull(string), radix));
     }
 
+    public static Uint8 saturatedOf(final byte byteVal) {
+        if (byteVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (byteVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor(byteVal);
+    }
+
+    public static Uint8 saturatedOf(final short shortVal) {
+        if (shortVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (shortVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor((byte) shortVal);
+    }
+
+    public static Uint8 saturatedOf(final int intVal) {
+        if (intVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (intVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor((byte) intVal);
+    }
+
+    public static Uint8 saturatedOf(final long longVal) {
+        if (longVal < 0) {
+            return Uint8.ZERO;
+        }
+        if (longVal >= MAX_VALUE_SHORT) {
+            return Uint8.MAX_VALUE;
+        }
+        return instanceFor((byte) longVal);
+    }
+
     /**
      * {@inheritDoc}
      *
