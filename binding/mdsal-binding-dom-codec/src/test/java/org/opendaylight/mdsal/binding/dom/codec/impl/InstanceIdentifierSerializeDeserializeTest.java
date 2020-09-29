@@ -137,7 +137,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
             InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
             NodeIdentifier.create(ContChoice.QNAME),
-            NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))), contAug);
+            NodeIdentifier.create(GrpCont.QNAME.bindTo(ContAug.QNAME.getModule()))), contAug);
 
         // Legacy: downcast the child to Class, losing type safety but still working. Faced with ambiguity, it will
         //         select the lexically-lower class
@@ -154,7 +154,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
         final YangInstanceIdentifier rootAug = codecContext.toYangInstanceIdentifier(
             InstanceIdentifier.builder(RootAug.class, GrpCont.class).build());
         assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
-            NodeIdentifier.create(GrpCont.QNAME.withModule(RootAug.QNAME.getModule()))), rootAug);
+            NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))), rootAug);
     }
 
     @Test
@@ -166,7 +166,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
         final InstanceIdentifier<?> contAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME), NodeIdentifier.create(ContChoice.QNAME),
-                NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))));
+                NodeIdentifier.create(GrpCont.QNAME.bindTo(ContAug.QNAME.getModule()))));
         assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
 
         final InstanceIdentifier<?> rootBase = codecContext.fromYangInstanceIdentifier(
@@ -175,7 +175,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
 
         final InstanceIdentifier<?> rootAug = codecContext.fromYangInstanceIdentifier(
             YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
-                NodeIdentifier.create(GrpCont.QNAME.withModule(RootAug.QNAME.getModule()))));
+                NodeIdentifier.create(GrpCont.QNAME.bindTo(RootAug.QNAME.getModule()))));
         assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
     }
 }
