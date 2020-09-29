@@ -18,16 +18,15 @@ final class FileSearchUtil {
         // Hidden on purpose
     }
 
-    static boolean findInFile(final File file, final String searchText) throws FileNotFoundException {
+    static void assertFileContains(final File file, final String searchText) throws FileNotFoundException {
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
-                final String nextLine = scanner.nextLine();
-                if (nextLine.contains(searchText)) {
-                    return true;
+                if (scanner.nextLine().contains(searchText)) {
+                    return;
                 }
             }
         }
-        return false;
+        throw new AssertionError("File " + file + " does not contain '" + searchText + "'");
     }
 
     static Map<String, File> getFiles(final File path) {

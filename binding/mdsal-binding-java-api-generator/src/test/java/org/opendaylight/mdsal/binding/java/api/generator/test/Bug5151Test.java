@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -37,14 +36,13 @@ public class Bug5151Test extends BaseCompilationTest {
 
         final File fooContainerFile = generatedFiles.get("FooContainer.java");
         assertNotNull(fooContainerFile);
-        assertTrue(FileSearchUtil.findInFile(fooContainerFile,
-                "@return <code>java.lang.String</code> <code>fooInContainer</code>, "
-                        + "or <code>null</code> if not present"));
+        FileSearchUtil.assertFileContains(fooContainerFile,
+            "@return <code>java.lang.String</code> <code>fooInContainer</code>, or <code>null</code> if not present");
 
         final File fooDataFile = generatedFiles.get("FooData.java");
         assertNotNull(fooDataFile);
-        assertTrue(FileSearchUtil.findInFile(fooDataFile,
-            "FooContainer</code> <code>fooContainer</code>, or <code>null</code> if not present"));
+        FileSearchUtil.assertFileContains(fooDataFile,
+            "FooContainer</code> <code>fooContainer</code>, or <code>null</code> if not present");
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
