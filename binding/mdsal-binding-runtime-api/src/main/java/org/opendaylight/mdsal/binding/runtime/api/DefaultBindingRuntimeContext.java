@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 
 /**
@@ -24,38 +25,20 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 @Beta
 public final class DefaultBindingRuntimeContext extends AbstractBindingRuntimeContext {
     private final @NonNull BindingRuntimeTypes runtimeTypes;
-    private final @NonNull ClassLoadingStrategy strategy;
+    private final @NonNull ModuleInfoSnapshot moduleInfos;
 
-    private DefaultBindingRuntimeContext(final BindingRuntimeTypes runtimeTypes, final ClassLoadingStrategy strategy) {
+    public DefaultBindingRuntimeContext(final BindingRuntimeTypes runtimeTypes, final ModuleInfoSnapshot moduleInfos) {
         this.runtimeTypes = requireNonNull(runtimeTypes);
-        this.strategy = requireNonNull(strategy);
-    }
-
-    /**
-     * Creates Binding Runtime Context from supplied class loading strategy and schema context.
-     *
-     * @param strategy Class loading strategy to retrieve generated Binding classes
-     * @param runtimeTypes Binding classes to YANG schema mapping
-     * @return A new instance
-     */
-    public static @NonNull DefaultBindingRuntimeContext create(final BindingRuntimeTypes runtimeTypes,
-            final ClassLoadingStrategy strategy) {
-        return new DefaultBindingRuntimeContext(runtimeTypes, strategy);
-    }
-
-    /**
-     * Returns a class loading strategy associated with this binding runtime context
-     * which is used to load classes.
-     *
-     * @return Class loading strategy.
-     */
-    @Override
-    public @NonNull ClassLoadingStrategy getStrategy() {
-        return strategy;
+        this.moduleInfos = requireNonNull(moduleInfos);
     }
 
     @Override
-    public @NonNull BindingRuntimeTypes getTypes() {
+    public BindingRuntimeTypes getTypes() {
         return runtimeTypes;
+    }
+
+    @Override
+    public <T> Class<T> loadClass(Type type) throws ClassNotFoundException {
+        return moduleInfos.loadClass(type.getFullyQualifiedName());
     }
 }

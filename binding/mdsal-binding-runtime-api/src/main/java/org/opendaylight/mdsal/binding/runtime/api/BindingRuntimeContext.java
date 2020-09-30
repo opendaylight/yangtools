@@ -45,15 +45,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  */
 @Beta
 public interface BindingRuntimeContext extends EffectiveModelContextProvider, Immutable {
-    /**
-     * Returns a class loading strategy associated with this binding runtime context
-     * which is used to load classes.
-     *
-     * @return Class loading strategy.
-     */
-    @NonNull ClassLoadingStrategy getStrategy();
-
     @NonNull BindingRuntimeTypes getTypes();
+
+    @NonNull <T> Class<T> loadClass(Type type) throws ClassNotFoundException;
 
     @Override
     default EffectiveModelContext getEffectiveModelContext() {

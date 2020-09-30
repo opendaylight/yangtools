@@ -51,12 +51,14 @@ final class DefaultModuleInfoSnapshot implements ModuleInfoSnapshot {
     }
 
     @Override
-    public Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
+    public <T> Class<T> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
         final String packageName = BindingReflections.getModelRootPackageName(fullyQualifiedName);
         final ClassLoader loader = classLoaders.get(packageName);
         if (loader == null) {
             throw new ClassNotFoundException("Package " + packageName + " not found");
         }
-        return loader.loadClass(fullyQualifiedName);
+        @SuppressWarnings("unchecked")
+        final Class<T> loaded = (Class<T>) loader.loadClass(fullyQualifiedName);
+        return loaded;
     }
 }

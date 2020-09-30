@@ -27,8 +27,8 @@ import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingClassInLoadingStrategyException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.api.MissingSchemaForClassException;
+import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.runtime.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -211,12 +211,11 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
             throw new MissingSchemaForClassException(childClass);
         }
 
-        final ClassLoadingStrategy strategy = runtimeContext.getStrategy();
         try {
-            strategy.loadClass(childClass.getName());
+            runtimeContext.loadClass(DefaultType.of(childClass));
         } catch (final ClassNotFoundException e) {
             throw new MissingClassInLoadingStrategyException(
-                "User supplied class " + childClass.getName() + " is not available in " + strategy, e);
+                "User supplied class " + childClass.getName() + " is not available in " + runtimeContext, e);
         }
 
         throw IncorrectNestingException.create(message, args);

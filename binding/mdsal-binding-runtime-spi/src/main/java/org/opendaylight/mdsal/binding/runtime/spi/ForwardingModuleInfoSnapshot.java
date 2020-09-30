@@ -22,7 +22,7 @@ public abstract class ForwardingModuleInfoSnapshot extends ForwardingObject impl
     protected abstract ModuleInfoSnapshot delegate();
 
     @Override
-    public Class<?> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
+    public <T> Class<T> loadClass(final String fullyQualifiedName) throws ClassNotFoundException {
         return delegate().loadClass(fullyQualifiedName);
     }
 

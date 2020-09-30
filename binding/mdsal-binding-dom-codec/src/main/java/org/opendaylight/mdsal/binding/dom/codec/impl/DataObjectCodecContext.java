@@ -31,7 +31,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.runtime.api.ClassLoadingStrategy;
+import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -489,19 +489,19 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     }
 
     private DataContainerCodecPrototype<?> getAugmentationPrototype(final Type value) {
-        final ClassLoadingStrategy loader = factory().getRuntimeContext().getStrategy();
-        @SuppressWarnings("rawtypes")
-        final Class augClass;
+        final BindingRuntimeContext ctx = factory().getRuntimeContext();
+
+        final Class<? extends Augmentation<?>> augClass;
         try {
-            augClass = loader.loadClass(value);
+            augClass = ctx.loadClass(value);
         } catch (final ClassNotFoundException e) {
+            // FIXME: MDSAL-578: this is disallowed
             LOG.debug("Failed to load augmentation prototype for {}. Will be retried when needed.", value, e);
             return null;
         }
 
-        @SuppressWarnings("unchecked")
-        final Entry<AugmentationIdentifier, AugmentationSchemaNode> augSchema = factory().getRuntimeContext()
-                .getResolvedAugmentationSchema(getSchema(), augClass);
+        final Entry<AugmentationIdentifier, AugmentationSchemaNode> augSchema =
+                ctx.getResolvedAugmentationSchema(getSchema(), augClass);
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
     }
 

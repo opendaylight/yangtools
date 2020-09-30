@@ -102,7 +102,7 @@ public final class OSGiBindingRuntime {
 
             instances.put(snapshot, factory.newInstance(OSGiBindingRuntimeContextImpl.props(
                 snapshot.getGeneration(), snapshot.getServiceRanking(),
-                DefaultBindingRuntimeContext.create(types, context))));
+                new DefaultBindingRuntimeContext(types, context))));
         }
 
         @Override

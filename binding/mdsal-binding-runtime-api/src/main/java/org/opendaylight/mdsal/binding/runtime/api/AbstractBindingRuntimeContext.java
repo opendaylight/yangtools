@@ -72,7 +72,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
                 final Optional<Type> identityType = getTypes().findIdentity(key);
                 checkArgument(identityType.isPresent(), "Supplied QName %s is not a valid identity", key);
                 try {
-                    return getStrategy().loadClass(identityType.get());
+                    return loadClass(identityType.get());
                 } catch (final ClassNotFoundException e) {
                     throw new IllegalArgumentException("Required class " + identityType + "was not found.", e);
                 }
@@ -268,7 +268,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         final Set<Class<?>> ret = new HashSet<>(cazes.size());
         for (final Type caze : cazes) {
             try {
-                ret.add(getStrategy().loadClass(caze));
+                ret.add(loadClass(caze));
             } catch (final ClassNotFoundException e) {
                 LOG.warn("Failed to load class for case {}, ignoring it", caze, e);
             }
@@ -284,7 +284,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
             childSchema, origSchema);
 
         try {
-            return getStrategy().loadClass(clazzType.get());
+            return loadClass(clazzType.get());
         } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }

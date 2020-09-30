@@ -52,7 +52,7 @@ public final class BindingRuntimeHelpers {
     public static @NonNull BindingRuntimeContext createRuntimeContext() {
         final ModuleInfoSnapshot infos = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE,
             BindingReflections.loadModuleInfos());
-        return DefaultBindingRuntimeContext.create(ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(
+        return new DefaultBindingRuntimeContext(ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(
             infos.getEffectiveModelContext()), infos);
     }
 
@@ -71,8 +71,7 @@ public final class BindingRuntimeHelpers {
         final ModuleInfoSnapshot infos = prepareContext(parserFactory, classes.stream()
             .map(BindingRuntimeHelpers::extractYangModuleInfo)
             .collect(Collectors.toList()));
-        return DefaultBindingRuntimeContext.create(
-            generator.generateTypeMapping(infos.getEffectiveModelContext()), infos);
+        return new DefaultBindingRuntimeContext(generator.generateTypeMapping(infos.getEffectiveModelContext()), infos);
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")

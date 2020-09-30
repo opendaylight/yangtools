@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 
 @Beta
-public interface ModuleInfoSnapshot extends Immutable, ClassLoadingStrategy, EffectiveModelContextProvider,
+public interface ModuleInfoSnapshot extends Immutable, EffectiveModelContextProvider,
         SchemaSourceProvider<YangTextSchemaSource> {
 
+    <T> Class<T> loadClass(String fullyQualifiedName) throws ClassNotFoundException;
 }
