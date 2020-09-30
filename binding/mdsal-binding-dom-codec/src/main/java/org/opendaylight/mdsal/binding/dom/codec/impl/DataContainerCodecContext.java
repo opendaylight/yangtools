@@ -192,7 +192,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
 
     private IllegalArgumentException childNullException(final QName child, final String message, final Object... args) {
         final QNameModule module = child.getModule();
-        if (!factory().getRuntimeContext().getSchemaContext().findModule(module).isPresent()) {
+        if (!factory().getRuntimeContext().getEffectiveModelContext().findModule(module).isPresent()) {
             throw new MissingSchemaException("Module " + module + " is not present in current schema context.");
         }
         throw IncorrectNestingException.create(message, args);

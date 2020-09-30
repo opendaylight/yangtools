@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
@@ -32,7 +32,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         private final @NonNull Class<T> bindingClass;
 
         OfTypeObject(final LeafSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
-                final String getterName, final SchemaContext schemaContext, final Class<T> bindingClass) {
+                final String getterName, final EffectiveModelContext schemaContext, final Class<T> bindingClass) {
             super(schema, codec, getterName, schemaContext);
             this.bindingClass = requireNonNull(bindingClass);
         }
@@ -54,12 +54,12 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     }
 
     LeafNodeCodecContext(final LeafSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
-            final String getterName, final SchemaContext schemaContext) {
+            final String getterName, final EffectiveModelContext schemaContext) {
         super(schema, codec, getterName, createDefaultObject(schema, codec, schemaContext));
     }
 
     static LeafNodeCodecContext of(final LeafSchemaNode schema, final IllegalArgumentCodec<Object, Object> codec,
-            final String getterName, final Class<?> valueType, final SchemaContext schemaContext) {
+            final String getterName, final Class<?> valueType, final EffectiveModelContext schemaContext) {
         return TypeObject.class.isAssignableFrom(valueType)
                 ? new OfTypeObject<>(schema, codec, getterName, schemaContext, valueType.asSubclass(TypeObject.class))
                         : new LeafNodeCodecContext(schema, codec, getterName, schemaContext);
@@ -72,7 +72,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
     private static Object createDefaultObject(final LeafSchemaNode schema,
                                               final IllegalArgumentCodec<Object, Object> codec,
-                                              final SchemaContext schemaContext) {
+                                              final EffectiveModelContext schemaContext) {
         Optional<? extends Object> defaultValue = schema.getType().getDefaultValue();
         TypeDefinition<?> type = schema.getType();
         if (defaultValue.isPresent()) {
@@ -98,7 +98,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
     private static Object qnameDomValueFromString(final IllegalArgumentCodec<Object, Object> codec,
                                                   final DataSchemaNode schema, final String defaultValue,
-                                                  final SchemaContext schemaContext) {
+                                                  final EffectiveModelContext schemaContext) {
         int prefixEndIndex = defaultValue.indexOf(':');
         QName qname;
         if (prefixEndIndex != -1) {

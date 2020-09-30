@@ -175,7 +175,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     }
 
     static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
-        final SchemaContext schema = factory.getRuntimeContext().getSchemaContext();
+        final SchemaContext schema = factory.getRuntimeContext().getEffectiveModelContext();
         final NodeIdentifier arg = NodeIdentifier.create(schema.getQName());
         return new DataContainerCodecPrototype<>(DataRoot.class, arg, schema, factory);
     }

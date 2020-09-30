@@ -15,10 +15,10 @@ import java.util.concurrent.Callable;
 import org.opendaylight.mdsal.binding.generator.util.BaseYangTypesProvider;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -73,7 +73,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
     private static void addLeafrefValueCodec(final Class<?> unionCls, final UnionTypeDefinition unionType,
             final BindingCodecContext bindingCodecContext, final Set<UnionValueOptionContext> values,
             final TypeDefinition<?> subtype) throws NoSuchMethodException {
-        final SchemaContext schemaContext = bindingCodecContext.getRuntimeContext().getSchemaContext();
+        final EffectiveModelContext schemaContext = bindingCodecContext.getRuntimeContext().getEffectiveModelContext();
         final Module module = schemaContext.findModule(subtype.getQName().getModule()).get();
         final PathExpression xpath = ((LeafrefTypeDefinition) subtype).getPathStatement();
         // find schema node in schema context by xpath of leafref

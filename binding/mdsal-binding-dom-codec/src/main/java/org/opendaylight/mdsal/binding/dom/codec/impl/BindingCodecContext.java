@@ -369,7 +369,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     final Class<?> valueType = method.getReturnType();
                     final IllegalArgumentCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
                     valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
-                        context.getSchemaContext());
+                        context.getEffectiveModelContext());
                 } else if (schema instanceof LeafListSchemaNode) {
                     final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
                         method.getGenericReturnType());
@@ -574,7 +574,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
     public ContainerNode toNormalizedNodeRpcData(final DataContainer data) {
         // FIXME: Should the cast to DataObject be necessary?
-        return serializeDataObject((DataObject) data, (ctx, iface, domWriter) -> ctx.newRpcWriter(iface, domWriter));
+        return serializeDataObject((DataObject) data, @NonNull BindingNormalizedNodeWriterFactory::newRpcWriter);
     }
 
     @Override
