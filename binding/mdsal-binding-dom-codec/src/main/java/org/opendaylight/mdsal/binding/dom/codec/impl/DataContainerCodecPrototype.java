@@ -164,22 +164,19 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         return new DataContainerCodecPrototype<>(DataRoot.class, arg, schema, factory);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     static <T extends DataSchemaNode> DataContainerCodecPrototype<T> from(final Class<?> cls, final T schema,
             final CodecContextFactory factory) {
-        return new DataContainerCodecPrototype(cls, NodeIdentifier.create(schema.getQName()), schema, factory);
+        return new DataContainerCodecPrototype<>(cls, NodeIdentifier.create(schema.getQName()), schema, factory);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     static <T extends DataSchemaNode> DataContainerCodecPrototype<T> from(final Item<?> bindingArg, final T schema,
             final CodecContextFactory factory) {
-        return new DataContainerCodecPrototype(bindingArg, NodeIdentifier.create(schema.getQName()), schema, factory);
+        return new DataContainerCodecPrototype<>(bindingArg, NodeIdentifier.create(schema.getQName()), schema, factory);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    static DataContainerCodecPrototype<?> from(final Class<?> augClass, final AugmentationIdentifier arg,
-            final AugmentationSchemaNode schema, final CodecContextFactory factory) {
-        return new DataContainerCodecPrototype(augClass, arg, schema, factory);
+    static DataContainerCodecPrototype<AugmentationSchemaNode> from(final Class<?> augClass,
+            final AugmentationIdentifier arg, final AugmentationSchemaNode schema, final CodecContextFactory factory) {
+        return new DataContainerCodecPrototype<>(augClass, arg, schema, factory);
     }
 
     static DataContainerCodecPrototype<NotificationDefinition> from(final Class<?> augClass,
@@ -188,7 +185,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         return new DataContainerCodecPrototype<>(augClass,arg, schema, factory);
     }
 
-    protected T getSchema() {
+    T getSchema() {
         return schema;
     }
 
@@ -196,23 +193,23 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         return childAddressabilitySummary;
     }
 
-    protected QNameModule getNamespace() {
+    QNameModule getNamespace() {
         return namespace;
     }
 
-    protected CodecContextFactory getFactory() {
+    CodecContextFactory getFactory() {
         return factory;
     }
 
-    protected Class<?> getBindingClass() {
+    Class<?> getBindingClass() {
         return bindingArg.getType();
     }
 
-    protected Item<?> getBindingArg() {
+    Item<?> getBindingArg() {
         return bindingArg;
     }
 
-    protected PathArgument getYangArg() {
+    PathArgument getYangArg() {
         return yangArg;
     }
 
@@ -229,7 +226,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    // This method is required to allow concurrent invocation.
+    // This method must allow concurrent loading, i.e. nothing in it may have effects outside of the loaded object
     private @NonNull DataContainerCodecContext<?, T> createInstance() {
         // FIXME: make protected abstract
         if (schema instanceof ContainerSchemaNode) {

@@ -574,7 +574,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
     public ContainerNode toNormalizedNodeRpcData(final DataContainer data) {
         // FIXME: Should the cast to DataObject be necessary?
-        return serializeDataObject((DataObject) data, @NonNull BindingNormalizedNodeWriterFactory::newRpcWriter);
+        return serializeDataObject((DataObject) data, BindingNormalizedNodeWriterFactory::newRpcWriter);
     }
 
     @Override
