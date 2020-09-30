@@ -235,8 +235,8 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     @Override
     public final ImmutableMap<AugmentationIdentifier, Type> getAvailableAugmentationTypes(
             final DataNodeContainer container) {
-        final Map<AugmentationIdentifier, Type> identifierToType = new HashMap<>();
         if (container instanceof AugmentationTarget) {
+            final Map<AugmentationIdentifier, Type> identifierToType = new HashMap<>();
             final BindingRuntimeTypes types = getTypes();
             for (final AugmentationSchemaNode augment : ((AugmentationTarget) container).getAvailableAugmentations()) {
                 // Augmentation must have child nodes if is to be used with Binding classes
@@ -252,9 +252,10 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
                     }
                 }
             }
+            return ImmutableMap.copyOf(identifierToType);
         }
 
-        return ImmutableMap.copyOf(identifierToType);
+        return ImmutableMap.of();
     }
 
     @Override
