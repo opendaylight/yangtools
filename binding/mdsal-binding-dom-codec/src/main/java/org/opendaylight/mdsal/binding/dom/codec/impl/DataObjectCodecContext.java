@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,16 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
+    private static final VarHandle MISMATCHED_AUGMENTED;
+
+    static {
+        try {
+            MISMATCHED_AUGMENTED = MethodHandles.lookup().findVarHandle(DataObjectCodecContext.class,
+                "mismatchedAugmented", ImmutableMap.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
@@ -75,7 +86,8 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     private final MethodHandle proxyConstructor;
 
     // Note this the content of this field depends only of invariants expressed as this class's fields or
-    // BindingRuntimeContext.
+    // BindingRuntimeContext. It is only accessed via MISMATCHED_AUGMENTED above.
+    @SuppressWarnings("unused")
     private volatile ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
     DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
@@ -306,20 +318,25 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
 
     private @Nullable DataContainerCodecPrototype<?> augmentationByClass(final @NonNull Class<?> childClass) {
         final DataContainerCodecPrototype<?> childProto = augmentationByStream.get(childClass);
-        if (childProto != null) {
-            return childProto;
-        }
+        return childProto != null ? childProto : mismatchedAugmentationByClass(childClass);
+    }
 
+    private @Nullable DataContainerCodecPrototype<?> mismatchedAugmentationByClass(final @NonNull Class<?> childClass) {
         /*
          * It is potentially mismatched valid augmentation - we look up equivalent augmentation using reflection
          * and walk all stream child and compare augmentations classes if they are equivalent. When we find a match
          * we'll cache it so we do not need to perform reflection operations again.
          */
-        final DataContainerCodecPrototype<?> mismatched = mismatchedAugmented.get(childClass);
-        if (mismatched != null) {
-            return mismatched;
-        }
+        final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> local =
+                (ImmutableMap<Class<?>, DataContainerCodecPrototype<?>>) MISMATCHED_AUGMENTED.getAcquire(this);
+        final DataContainerCodecPrototype<?> mismatched = local.get(childClass);
+        return mismatched != null ? mismatched : loadMismatchedAugmentation(local, childClass);
 
+    }
+
+    private @Nullable DataContainerCodecPrototype<?> loadMismatchedAugmentation(
+            final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> oldMismatched,
+            final @NonNull Class<?> childClass) {
         @SuppressWarnings("rawtypes")
         final Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
         // Do not bother with proposals which are not augmentations of our class, or do not match what the runtime
@@ -328,7 +345,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             for (final DataContainerCodecPrototype<?> realChild : augmentationByStream.values()) {
                 if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
                         && BindingReflections.isSubstitutionFor(childClass, realChild.getBindingClass())) {
-                    return cacheMismatched(childClass, realChild);
+                    return cacheMismatched(oldMismatched, childClass, realChild);
                 }
             }
         }
@@ -336,24 +353,31 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         return null;
     }
 
-    // TODO: can we ditch this synchronized block?
-    private synchronized DataContainerCodecPrototype<?> cacheMismatched(final Class<?> childClass,
-            final DataContainerCodecPrototype<?> prototype) {
-        // Original access was unsynchronized, we need to perform additional checking
-        final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> local = mismatchedAugmented;
-        final DataContainerCodecPrototype<?> existing = local.get(childClass);
-        if (existing != null) {
-            return existing;
+    private @NonNull DataContainerCodecPrototype<?> cacheMismatched(
+            final @NonNull ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> oldMismatched,
+            final @NonNull Class<?> childClass, final @NonNull DataContainerCodecPrototype<?> prototype) {
+
+        ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> expected = oldMismatched;
+        while (true) {
+            final Map<Class<?>, DataContainerCodecPrototype<?>> newMismatched =
+                    ImmutableMap.<Class<?>, DataContainerCodecPrototype<?>>builderWithExpectedSize(expected.size() + 1)
+                        .putAll(expected)
+                        .put(childClass, prototype)
+                        .build();
+
+            final Object witness = MISMATCHED_AUGMENTED.compareAndExchangeRelease(this, expected, newMismatched);
+            if (witness == expected) {
+                LOG.trace("Cached mismatched augmentation {} -> {} in {}", childClass, prototype, this);
+                return prototype;
+            }
+
+            expected = (ImmutableMap<Class<?>, DataContainerCodecPrototype<?>>) witness;
+            final DataContainerCodecPrototype<?> existing = expected.get(childClass);
+            if (existing != null) {
+                LOG.trace("Using raced mismatched augmentation {} -> {} in {}", childClass, existing, this);
+                return existing;
+            }
         }
-
-        final Builder<Class<?>, DataContainerCodecPrototype<?>> builder = ImmutableMap.builderWithExpectedSize(
-            local.size() + 1);
-        builder.putAll(local);
-        builder.put(childClass, prototype);
-
-        mismatchedAugmented = builder.build();
-        LOG.trace("Cached mismatched augmentation {} -> {} in {}", childClass, prototype, this);
-        return prototype;
     }
 
     private boolean belongsToRuntimeContext(final Class<?> cls) {
