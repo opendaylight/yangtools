@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
@@ -20,21 +19,17 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -64,40 +59,23 @@ import org.slf4j.LoggerFactory;
 @Beta
 public abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeContainer & WithStatus>
         extends DataContainerCodecContext<D, T> {
-    private static final class Augmentations implements Immutable {
-        final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYang;
-        final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStream;
-
-        Augmentations(final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYang,
-            final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStream) {
-            this.byYang = requireNonNull(byYang);
-            this.byStream = requireNonNull(byStream);
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
-    private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
 
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
-    private final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
+    private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> augmentationByYang;
+    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> augmentationByStream;
     private final @NonNull Class<? extends CodecDataObject<?>> generatedClass;
     private final MethodHandle proxyConstructor;
 
-    // FIXME: the presence of these two volatile fields may be preventing us from being able to improve
-    //        DataContainerCodecPrototype.get() publication.
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<DataObjectCodecContext, Augmentations>
-        AUGMENTATIONS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(DataObjectCodecContext.class,
-            Augmentations.class, "augmentations");
-    private volatile Augmentations augmentations = EMPTY_AUGMENTATIONS;
-
+    // Note this the content of this field depends only of invariants expressed as this class's fields or
+    // BindingRuntimeContext.
     private volatile ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
     DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
@@ -159,16 +137,33 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         this.byBindingArgClass = byStreamClassBuilder.equals(byBindingArgClassBuilder) ? this.byStreamClass
                 : ImmutableMap.copyOf(byBindingArgClassBuilder);
 
+        final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
-            this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
+            possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
             generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
                 bindingClass, tmpLeaves, tmpDataObjects, keyMethod);
         } else {
-            this.possibleAugmentations = ImmutableMap.of();
+            possibleAugmentations = ImmutableMap.of();
             generatedClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(), bindingClass,
                 tmpLeaves, tmpDataObjects, keyMethod);
         }
-        reloadAllAugmentations();
+
+        // Iterate over all possible augmentations, indexing them as needed
+        final Map<PathArgument, DataContainerCodecPrototype<?>> augByYang = new HashMap<>();
+        final Map<Class<?>, DataContainerCodecPrototype<?>> augByStream = new HashMap<>();
+        for (final Type augment : possibleAugmentations.values()) {
+            final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment);
+            final PathArgument augYangArg = augProto.getYangArg();
+            if (augByYang.putIfAbsent(augYangArg, augProto) == null) {
+                LOG.trace("Discovered new YANG mapping {} -> {} in {}", augYangArg, augProto, this);
+            }
+            final Class<?> augBindingClass = augProto.getBindingClass();
+            if (augByStream.putIfAbsent(augBindingClass, augProto) == null) {
+                LOG.trace("Discovered new class mapping {} -> {} in {}", augBindingClass, augProto, this);
+            }
+        }
+        augmentationByYang = ImmutableMap.copyOf(augByYang);
+        augmentationByStream = ImmutableMap.copyOf(augByStream);
 
         final MethodHandle ctor;
         try {
@@ -178,84 +173,6 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         }
 
         proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
-    }
-
-    // This method could be synchronized, but that would mean that concurrent attempts to load an invalid augmentation
-    // would end up being unnecessarily contended -- blocking real progress and not being able to run concurrently
-    // while producing no effect. We therefore use optimistic read + CAS.
-    private void reloadAllAugmentations() {
-        // Load current values
-        Augmentations oldAugmentations = augmentations;
-
-        // FIXME: can we detect when we have both maps fully populated and skip all of this?
-
-        // Scratch space for additions
-        final Map<PathArgument, DataContainerCodecPrototype<?>> addByYang = new HashMap<>();
-        final Map<Class<?>, DataContainerCodecPrototype<?>> addByStream = new HashMap<>();
-
-        // Iterate over all possibilities, checking for modifications.
-        for (final Type augment : possibleAugmentations.values()) {
-            final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment);
-            if (augProto != null) {
-                final PathArgument yangArg = augProto.getYangArg();
-                final Class<?> bindingClass = augProto.getBindingClass();
-                if (!oldAugmentations.byYang.containsKey(yangArg)) {
-                    if (addByYang.putIfAbsent(yangArg, augProto) == null) {
-                        LOG.trace("Discovered new YANG mapping {} -> {} in {}", yangArg, augProto, this);
-                    }
-                }
-                if (!oldAugmentations.byStream.containsKey(bindingClass)) {
-                    if (addByStream.putIfAbsent(bindingClass, augProto) == null) {
-                        LOG.trace("Discovered new class mapping {} -> {} in {}", bindingClass, augProto, this);
-                    }
-                }
-            }
-        }
-
-        while (true) {
-            if (addByYang.isEmpty() && addByStream.isEmpty()) {
-                LOG.trace("No new augmentations discovered in {}", this);
-                return;
-            }
-
-            // We have some additions, propagate them out
-            final Augmentations newAugmentations = new Augmentations(concatMaps(oldAugmentations.byYang, addByYang),
-                concatMaps(oldAugmentations.byStream, addByStream));
-            if (AUGMENTATIONS_UPDATER.compareAndSet(this, oldAugmentations, newAugmentations)) {
-                // Success, we are done
-                return;
-            }
-
-            // We have raced installing new augmentations, read them again, remove everything present in the installed
-            // once and try again. This may mean that we end up not doing anything, but that's fine.
-            oldAugmentations = augmentations;
-
-            // We could use Map.removeAll(oldAugmentations.byYang.keySet()), but that forces the augmentation's keyset
-            // to be materialized, which we otherwise do not need. Hence we do this the other way around, instantiating
-            // our temporary maps' keySets and iterating over them. That's fine as we'll be throwing those maps away.
-            removeMapKeys(addByYang, oldAugmentations.byYang);
-            removeMapKeys(addByStream, oldAugmentations.byStream);
-        }
-    }
-
-    private static <K, V> ImmutableMap<K, V> concatMaps(final ImmutableMap<K, V> old, final Map<K, V> add) {
-        if (add.isEmpty()) {
-            return old;
-        }
-
-        final Builder<K, V> builder = ImmutableMap.builderWithExpectedSize(old.size() + add.size());
-        builder.putAll(old);
-        builder.putAll(add);
-        return builder.build();
-    }
-
-    private static <K, V> void removeMapKeys(final Map<K, V> removeFrom, final ImmutableMap<K, V> map) {
-        final Iterator<K> it = removeFrom.keySet().iterator();
-        while (it.hasNext()) {
-            if (map.containsKey(it.next())) {
-                it.remove();
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -326,7 +243,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         if (arg instanceof NodeIdentifierWithPredicates) {
             childSupplier = byYang.get(new NodeIdentifier(arg.getNodeType()));
         } else if (arg instanceof AugmentationIdentifier) {
-            childSupplier = yangAugmentationChild((AugmentationIdentifier) arg);
+            childSupplier = augmentationByYang.get(arg);
         } else {
             childSupplier = byYang.get(arg);
         }
@@ -387,60 +304,8 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         return Item.of((Class<? extends DataObject>) childClass);
     }
 
-    private DataContainerCodecPrototype<?> yangAugmentationChild(final AugmentationIdentifier arg) {
-        final DataContainerCodecPrototype<?> firstTry = augmentations.byYang.get(arg);
-        if (firstTry != null) {
-            return firstTry;
-        }
-        if (possibleAugmentations.containsKey(arg)) {
-            // Try to load augmentations, which will potentially update knownAugmentations, hence we re-load that field
-            // again.
-            reloadAllAugmentations();
-            return augmentations.byYang.get(arg);
-        }
-        return null;
-    }
-
     private @Nullable DataContainerCodecPrototype<?> augmentationByClass(final @NonNull Class<?> childClass) {
-        DataContainerCodecPrototype<?> lookup = augmentationByClassOrEquivalentClass(childClass);
-        if (lookup != null || !isPotentialAugmentation(childClass)) {
-            return lookup;
-        }
-
-        // Attempt to reload all augmentations using TCCL and lookup again
-        reloadAllAugmentations();
-        lookup = augmentationByClassOrEquivalentClass(childClass);
-        if (lookup != null) {
-            return lookup;
-        }
-
-        // Still no result, this can be caused by TCCL not being set up properly -- try the class's ClassLoader
-        // if it is present
-        final ClassLoader loader = childClass.getClassLoader();
-        if (loader == null) {
-            return null;
-        }
-
-        LOG.debug("Class {} not loaded via TCCL, attempting to recover", childClass);
-        ClassLoaderUtils.runWithClassLoader(loader, this::reloadAllAugmentations);
-        return augmentationByClassOrEquivalentClass(childClass);
-    }
-
-    private boolean isPotentialAugmentation(final Class<?> childClass) {
-        final JavaTypeName name = JavaTypeName.create(childClass);
-        for (Type type : possibleAugmentations.values()) {
-            if (name.equals(type.getIdentifier())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private @Nullable DataContainerCodecPrototype<?> augmentationByClassOrEquivalentClass(
-            final @NonNull Class<?> childClass) {
-        // Perform a single load, so we can reuse it if we end up going to the reflection-based slow path
-        final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> local = augmentations.byStream;
-        final DataContainerCodecPrototype<?> childProto = local.get(childClass);
+        final DataContainerCodecPrototype<?> childProto = augmentationByStream.get(childClass);
         if (childProto != null) {
             return childProto;
         }
@@ -457,8 +322,10 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
 
         @SuppressWarnings("rawtypes")
         final Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
-        if (getBindingClass().equals(augTarget)) {
-            for (final DataContainerCodecPrototype<?> realChild : local.values()) {
+        // Do not bother with proposals which are not augmentations of our class, or do not match what the runtime
+        // context would load.
+        if (getBindingClass().equals(augTarget) && belongsToRuntimeContext(childClass)) {
+            for (final DataContainerCodecPrototype<?> realChild : augmentationByStream.values()) {
                 if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
                         && BindingReflections.isSubstitutionFor(childClass, realChild.getBindingClass())) {
                     return cacheMismatched(childClass, realChild);
@@ -469,6 +336,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         return null;
     }
 
+    // TODO: can we ditch this synchronized block?
     private synchronized DataContainerCodecPrototype<?> cacheMismatched(final Class<?> childClass,
             final DataContainerCodecPrototype<?> prototype) {
         // Original access was unsynchronized, we need to perform additional checking
@@ -488,16 +356,26 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         return prototype;
     }
 
-    private DataContainerCodecPrototype<?> getAugmentationPrototype(final Type value) {
+    private boolean belongsToRuntimeContext(final Class<?> cls) {
+        final BindingRuntimeContext ctx = factory().getRuntimeContext();
+        final Class<?> loaded;
+        try {
+            loaded = ctx.loadClass(DefaultType.of(cls));
+        } catch (ClassNotFoundException e) {
+            LOG.debug("Proposed {} cannot be loaded in {}", cls, ctx);
+            return false;
+        }
+        return cls.equals(loaded);
+    }
+
+    private @NonNull DataContainerCodecPrototype<?> getAugmentationPrototype(final Type value) {
         final BindingRuntimeContext ctx = factory().getRuntimeContext();
 
         final Class<? extends Augmentation<?>> augClass;
         try {
             augClass = ctx.loadClass(value);
         } catch (final ClassNotFoundException e) {
-            // FIXME: MDSAL-578: this is disallowed
-            LOG.debug("Failed to load augmentation prototype for {}. Will be retried when needed.", value, e);
-            return null;
+            throw new IllegalStateException("RuntimeContext references type " + value + " but failed to its class", e);
         }
 
         final Entry<AugmentationIdentifier, AugmentationSchemaNode> augSchema =
@@ -525,14 +403,14 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         for (final NormalizedNode<?, ?> childValue : data.getValue()) {
             if (childValue instanceof AugmentationNode) {
                 final AugmentationNode augDomNode = (AugmentationNode) childValue;
-                final DataContainerCodecPrototype<?> codecProto = yangAugmentationChild(augDomNode.getIdentifier());
+                final DataContainerCodecPrototype<?> codecProto = augmentationByYang.get(augDomNode.getIdentifier());
                 if (codecProto != null) {
                     final DataContainerCodecContext<?, ?> codec = codecProto.get();
                     map.put(codec.getBindingClass(), codec.deserializeObject(augDomNode));
                 }
             }
         }
-        for (final DataContainerCodecPrototype<?> value : augmentations.byStream.values()) {
+        for (final DataContainerCodecPrototype<?> value : augmentationByStream.values()) {
             final Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
             if (augData.isPresent()) {
                 map.put(value.getBindingClass(), value.get().deserializeObject(augData.get()));

@@ -67,13 +67,9 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
      * concurrent loads. This improves safety a bit (by forcing a synchronized() block), as we expect prototypes to be
      * long-lived.
      *
-     * In terms of safe publication, we have two volatile fields in DataObjectCodecContext to worry about, so given
-     * above access trade-off, we opt for the additional safety.
-     *
-     * TODO: all we need is safe publish semantics here, we can most probably tolerate concurrent value loads -- and
-     *       everything except the the above volatiles seems to be ready. Those volatile should disappear once we have
-     *       constant class loader visibility (and thus can discover all valid augmentations and aliases). That would
-     *       mean dropping @Holding from createInstance().
+     * FIXME: MDSAL-579: all we need is safe publish semantics here, we can most probably tolerate concurrent value
+     *                   loads -- and everything seems to be ready. This means loadInstance() should not be
+     *                   synchronized, createInstance() should not have @Holding.
      */
     @SuppressWarnings("unused")
     private volatile DataContainerCodecContext<?, T> instance;
