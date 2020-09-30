@@ -72,10 +72,9 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
      * schema.
      *
      * @param augClass Augmentation class
-     * @return Schema of augmentation or null if augmentaiton is not known in this context
-     * @throws IllegalArgumentException If supplied class is not an augmentation
+     * @return Schema of augmentation or null if augmentation is not known in this context
      */
-    @Nullable AugmentationSchemaNode getAugmentationDefinition(Class<?> augClass);
+    <T extends Augmentation<?>> @Nullable AugmentationSchemaNode getAugmentationDefinition(Class<T> augClass);
 
     /**
      * Returns defining {@link DataSchemaNode} for supplied class.

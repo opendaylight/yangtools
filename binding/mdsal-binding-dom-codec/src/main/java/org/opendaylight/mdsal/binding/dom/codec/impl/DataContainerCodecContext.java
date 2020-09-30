@@ -203,7 +203,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         final BindingRuntimeContext runtimeContext = factory().getRuntimeContext();
         final WithStatus schema;
         if (Augmentation.class.isAssignableFrom(childClass)) {
-            schema = runtimeContext.getAugmentationDefinition(childClass);
+            schema = runtimeContext.getAugmentationDefinition(childClass.asSubclass(Augmentation.class));
         } else {
             schema = runtimeContext.getSchemaDefinition(childClass);
         }

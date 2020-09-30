@@ -43,7 +43,7 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     }
 
     @Override
-    public AugmentationSchemaNode getAugmentationDefinition(final Class<?> augClass) {
+    public <T extends Augmentation<?>> AugmentationSchemaNode getAugmentationDefinition(final Class<T> augClass) {
         return delegate().getAugmentationDefinition(augClass);
     }
 

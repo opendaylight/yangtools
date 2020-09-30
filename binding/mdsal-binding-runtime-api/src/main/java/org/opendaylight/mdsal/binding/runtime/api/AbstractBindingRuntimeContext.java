@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
@@ -46,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
@@ -79,47 +77,11 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
             }
         });
 
-    /**
-     * Returns schema of augmentation.
-     *
-     * <p>Returned schema is schema definition from which augmentation class was generated.
-     * This schema is isolated from other augmentations. This means it contains
-     * augmentation definition as was present in original YANG module.
-     *
-     * <p>Children of returned schema does not contain any additional augmentations,
-     * which may be present in runtime for them, thus returned schema is unsuitable
-     * for use for validation of data.
-     *
-     * <p>For retrieving {@link AugmentationSchemaNode}, which will contains
-     * full model for child nodes, you should use method
-     * {@link #getResolvedAugmentationSchema(DataNodeContainer, Class)}
-     * which will return augmentation schema derived from supplied augmentation target
-     * schema.
-     *
-     * @param augClass Augmentation class
-     * @return Schema of augmentation or null if augmentaiton is not known in this context
-     * @throws IllegalArgumentException If supplied class is not an augmentation
-     */
     @Override
-    public final @Nullable AugmentationSchemaNode getAugmentationDefinition(final Class<?> augClass) {
-        checkArgument(Augmentation.class.isAssignableFrom(augClass),
-            "Class %s does not represent augmentation", augClass);
+    public final <T extends Augmentation<?>> AugmentationSchemaNode getAugmentationDefinition(final Class<T> augClass) {
         return getTypes().findAugmentation(DefaultType.of(augClass)).orElse(null);
     }
 
-    /**
-     * Returns defining {@link DataSchemaNode} for supplied class.
-     *
-     * <p>Returned schema is schema definition from which class was generated.
-     * This schema may be isolated from augmentations, if supplied class
-     * represent node, which was child of grouping or augmentation.
-     *
-     * <p>For getting augmentation schema from augmentation class use
-     * {@link #getAugmentationDefinition(Class)} instead.
-     *
-     * @param cls Class which represents list, container, choice or case.
-     * @return Schema node, from which class was generated.
-     */
     @Override
     public final DataSchemaNode getSchemaDefinition(final Class<?> cls) {
         checkArgument(!Augmentation.class.isAssignableFrom(cls), "Supplied class must not be an augmentation (%s is)",
@@ -178,15 +140,6 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         return new SimpleEntry<>(identifier, proxy);
     }
 
-    /**
-     * Returns resolved case schema for supplied class.
-     *
-     * @param schema Resolved parent choice schema
-     * @param childClass Class representing case.
-     * @return Optionally a resolved case schema,.empty if the choice is not legal in
-     *         the given context.
-     * @throws IllegalArgumentException If supplied class does not represent case.
-     */
     @Override
     public final Optional<CaseSchemaNode> getCaseSchemaDefinition(final ChoiceSchemaNode schema,
             final Class<?> childClass) {
@@ -202,17 +155,6 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         return findInstantiatedCase(schema, (CaseSchemaNode) origSchema);
     }
 
-    /**
-     * Returns schema ({@link DataSchemaNode}, {@link AugmentationSchemaNode} or {@link TypeDefinition})
-     * from which supplied class was generated. Returned schema may be augmented with
-     * additional information, which was not available at compile type
-     * (e.g. third party augmentations).
-     *
-     * @param type Binding Class for which schema should be retrieved.
-     * @return Instance of generated type (definition of Java API), along with
-     *     {@link DataSchemaNode}, {@link AugmentationSchemaNode} or {@link TypeDefinition}
-     *     which was used to generate supplied class.
-     */
     @Override
     public final Entry<GeneratedType, WithStatus> getTypeWithSchema(final Class<?> type) {
         return getTypeWithSchema(getTypes(), DefaultType.of(type));
