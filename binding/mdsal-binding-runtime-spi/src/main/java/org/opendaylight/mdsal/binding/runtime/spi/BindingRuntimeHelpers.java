@@ -86,8 +86,6 @@ public final class BindingRuntimeHelpers {
 
     private static @NonNull ModuleInfoSnapshot prepareContext(final YangParserFactory parserFactory,
             final Iterable<? extends YangModuleInfo> moduleInfos) {
-        final ModuleInfoSnapshotBuilder ctx = new ModuleInfoSnapshotBuilder("helper", parserFactory);
-        ctx.registerModuleInfos(moduleInfos);
-        return ctx.build();
+        return new ModuleInfoSnapshotBuilder("helper", parserFactory).add(moduleInfos).build();
     }
 }

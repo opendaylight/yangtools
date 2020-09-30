@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
@@ -53,13 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base class for things that create an EffectiveModuleContext or similar things from a (dynamic) set of
- * YangModuleInfo objects.
- *
- * <p>
- * Note this class has some locking quirks and may end up being further refactored.
+ * A dynamic registry of {@link YangModuleInfo} objects, capable of combining them into an
+ * {@link ModuleInfoSnapshot}. If you need a one-shot way of creating an ModuleInfoSnapshot, prefer
+ * {@link ModuleInfoSnapshotBuilder} instead.
  */
-abstract class AbstractModuleInfoTracker implements Mutable {
+@Beta
+public final class ModuleInfoSnapshotResolver implements Mutable {
     private static final class RegisteredModuleInfo {
         final YangTextSchemaSourceRegistration reg;
         final YangModuleInfo info;
@@ -89,7 +90,7 @@ abstract class AbstractModuleInfoTracker implements Mutable {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractModuleInfoTracker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ModuleInfoSnapshotResolver.class);
 
     private final YangTextSchemaContextResolver ctxResolver;
 
@@ -99,11 +100,11 @@ abstract class AbstractModuleInfoTracker implements Mutable {
     @GuardedBy("this")
     private @Nullable ModuleInfoSnapshot currentSnapshot;
 
-    AbstractModuleInfoTracker(final YangTextSchemaContextResolver resolver) {
-        this.ctxResolver = requireNonNull(resolver);
+    public ModuleInfoSnapshotResolver(final String name, final YangParserFactory parserFactory) {
+        ctxResolver = YangTextSchemaContextResolver.create(name, parserFactory);
     }
 
-    public final synchronized List<ObjectRegistration<YangModuleInfo>> registerModuleInfos(
+    public synchronized List<ObjectRegistration<YangModuleInfo>> registerModuleInfos(
             final Iterable<? extends YangModuleInfo> moduleInfos) {
         final List<ObjectRegistration<YangModuleInfo>> ret = new ArrayList<>();
         for (YangModuleInfo yangModuleInfo : moduleInfos) {
@@ -158,8 +159,7 @@ abstract class AbstractModuleInfoTracker implements Mutable {
         return regInfo;
     }
 
-    @Holding("this")
-    final @NonNull ModuleInfoSnapshot updateSnapshot() {
+    public synchronized @NonNull ModuleInfoSnapshot takeSnapshot() {
         final EffectiveModelContext effectiveModel = ctxResolver.getEffectiveModelContext().orElseThrow();
         final ModuleInfoSnapshot local = currentSnapshot;
         if (local != null && local.getEffectiveModelContext().equals(effectiveModel)) {
