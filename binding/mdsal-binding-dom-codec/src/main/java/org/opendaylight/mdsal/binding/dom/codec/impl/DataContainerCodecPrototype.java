@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import com.google.common.collect.Iterables;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
@@ -59,18 +58,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     private final PathArgument yangArg;
     private final ChildAddressabilitySummary childAddressabilitySummary;
 
-    /*
-     * This field is now utterly in the hot path of CodecDataObject's instantiation of data. It is a volatile support
-     * double-checked locking, as detailed in https://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
-     *
-     * We are opting for the document Java 9 equivalent, forsaking our usual CAS-based approach, where we'd re-assert
-     * concurrent loads. This improves safety a bit (by forcing a synchronized() block), as we expect prototypes to be
-     * long-lived.
-     *
-     * FIXME: MDSAL-579: all we need is safe publish semantics here, we can most probably tolerate concurrent value
-     *                   loads -- and everything seems to be ready. This means loadInstance() should not be
-     *                   synchronized, createInstance() should not have @Holding.
-     */
+    // Accessed via INSTANCE
     @SuppressWarnings("unused")
     private volatile DataContainerCodecContext<?, T> instance;
 
@@ -230,27 +218,18 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
 
     @Override
     public DataContainerCodecContext<?, T> get() {
-        final DataContainerCodecContext<?, T> existing = getInstance();
+        final DataContainerCodecContext<?, T> existing = (DataContainerCodecContext<?, T>) INSTANCE.getAcquire(this);
         return existing != null ? existing : loadInstance();
     }
 
-    private synchronized @NonNull DataContainerCodecContext<?, T> loadInstance() {
-        // re-acquire under lock
-        DataContainerCodecContext<?, T> tmp = getInstance();
-        if (tmp == null) {
-            tmp = createInstance();
-            INSTANCE.setRelease(this, tmp);
-        }
-        return tmp;
+    private @NonNull DataContainerCodecContext<?, T> loadInstance() {
+        final DataContainerCodecContext<?, T> tmp = createInstance();
+        final Object witness = INSTANCE.compareAndExchangeRelease(this, null, tmp);
+        return witness == null ? tmp : (DataContainerCodecContext<?, T>) witness;
     }
 
-    // Helper for getAcquire access to instance
-    private DataContainerCodecContext<?, T> getInstance() {
-        return (DataContainerCodecContext<?, T>) INSTANCE.getAcquire(this);
-    }
-
-    @Holding("this")
     @SuppressWarnings({ "rawtypes", "unchecked" })
+    // This method is required to allow concurrent invocation.
     private @NonNull DataContainerCodecContext<?, T> createInstance() {
         // FIXME: make protected abstract
         if (schema instanceof ContainerSchemaNode) {
