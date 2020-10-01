@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
@@ -271,14 +270,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         checkArgument(Notification.class.isAssignableFrom(notificationType));
         checkArgument(notificationType.isInterface(), "Supplied class must be interface.");
         final QName qname = BindingReflections.findQName(notificationType);
-        /**
-         *  FIXME: After Lithium cleanup of yang-model-api, use direct call on schema context
-         *  to retrieve notification via index.
-         */
-        final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(),
-                SchemaPath.create(true, qname));
-        checkArgument(schema != null, "Supplied %s is not valid notification", notificationType);
-
+        final NotificationDefinition schema = getSchema().findNotification(qname).orElseThrow(
+            () -> new IllegalArgumentException("Supplied " + notificationType + " is not valid notification"));
         return new NotificationCodecContext<>(notificationType, schema, factory());
     }
 
