@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal552.norev.Mdsal552Data.OutputA;
 import org.opendaylight.yang.gen.v1.mdsal552.norev.RefTestOutput;
@@ -26,7 +25,7 @@ public class Mdsal552Test extends AbstractBindingCodecTest {
     private static final QName OUTPUTREF = QName.create(RefTestOutput.QNAME, "outputref");
 
     @Test
-    public void testLeafrefEnumerationToNormalized() throws IOException {
+    public void testLeafrefEnumerationToNormalized() {
         assertEquals(Builders.containerBuilder()
             .withNodeIdentifier(new NodeIdentifier(RefTestOutput.QNAME))
             .withChild(ImmutableNodes.leafNode(OUTPUTREF, OutputA.DownTest.getName()))
@@ -35,7 +34,7 @@ public class Mdsal552Test extends AbstractBindingCodecTest {
     }
 
     @Test
-    public void testLeafrefEnumerationFromNormalized() throws IOException {
+    public void testLeafrefEnumerationFromNormalized() {
         assertEquals(new RefTestOutputBuilder().setOutputref(OutputA.DownTest).build(),
             codecContext.fromNormalizedNodeRpcData(OUTPUT_PATH, Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(RefTestOutput.QNAME))
