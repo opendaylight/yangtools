@@ -225,7 +225,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @return A Uint8 instance
      */
     public static Uint8 saturatedOf(final byte byteVal) {
-        return byteVal < 0 ? Uint8.ZERO : instanceFor(byteVal);
+        return byteVal <= 0 ? Uint8.ZERO : instanceFor(byteVal);
     }
 
     /**
@@ -236,7 +236,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @return A Uint8 instance
      */
     public static Uint8 saturatedOf(final short shortVal) {
-        if (shortVal < 0) {
+        if (shortVal <= 0) {
             return Uint8.ZERO;
         }
         if (shortVal >= MAX_VALUE_SHORT) {
@@ -253,7 +253,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @return A Uint8 instance
      */
     public static Uint8 saturatedOf(final int intVal) {
-        if (intVal < 0) {
+        if (intVal <= 0) {
             return Uint8.ZERO;
         }
         if (intVal >= MAX_VALUE_SHORT) {
@@ -270,7 +270,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @return A Uint8 instance
      */
     public static Uint8 saturatedOf(final long longVal) {
-        if (longVal < 0) {
+        if (longVal <= 0) {
             return Uint8.ZERO;
         }
         if (longVal >= MAX_VALUE_SHORT) {
