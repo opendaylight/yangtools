@@ -268,7 +268,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @return A Uint64 instance
      */
     public static Uint64 saturatedOf(final byte byteVal) {
-        return byteVal < 0 ? Uint64.ZERO : instanceFor(byteVal);
+        return byteVal <= 0 ? Uint64.ZERO : instanceFor(byteVal);
     }
 
     /**
@@ -279,7 +279,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @return A Uint32 instance
      */
     public static Uint64 saturatedOf(final short shortVal) {
-        return shortVal < 0 ? Uint64.ZERO : instanceFor(shortVal);
+        return shortVal <= 0 ? Uint64.ZERO : instanceFor(shortVal);
     }
 
     /**
@@ -290,7 +290,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @return A Uint64 instance
      */
     public static Uint64 saturatedOf(final int intVal) {
-        return intVal < 0 ? Uint64.ZERO : instanceFor(intVal);
+        return intVal <= 0 ? Uint64.ZERO : instanceFor(intVal);
     }
 
     /**
@@ -301,7 +301,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @return A Uint64 instance
      */
     public static Uint64 saturatedOf(final long longVal) {
-        return longVal < 0 ? Uint64.ZERO : instanceFor(longVal);
+        return longVal <= 0 ? Uint64.ZERO : instanceFor(longVal);
     }
 
     /**
@@ -314,7 +314,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @throws NullPointerException if bigInt is null
      */
     public static Uint64 saturatedOf(final BigInteger bigInt) {
-        if (bigInt.signum() < 0) {
+        if (bigInt.signum() <= 0) {
             return Uint64.ZERO;
         }
         return bigInt.bitLength() > Long.SIZE ? Uint64.MAX_VALUE : instanceFor(bigInt.longValue());
