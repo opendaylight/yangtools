@@ -123,32 +123,16 @@ public class Uint16Test {
     }
 
     @Test
-    public void testNegativeByte() {
+    public void testNegativeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf((byte)-1));
-    }
-
-    @Test
-    public void testNegativeShort() {
         assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf((short)-1));
-    }
-
-    @Test
-    public void testNegativeInt() {
         assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(-1));
-    }
-
-    @Test
-    public void testNegativeLong() {
         assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(-1L));
     }
 
     @Test
-    public void testBigInt() {
+    public void testLargeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(65536));
-    }
-
-    @Test
-    public void testBigLong() {
         assertThrows(IllegalArgumentException.class, () -> Uint16.valueOf(65536L));
     }
 

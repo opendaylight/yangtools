@@ -138,42 +138,23 @@ public class Uint64Test {
     }
 
     @Test
-    public void testNegativeByte() {
+    public void testNegativeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf((byte)-1));
-    }
-
-    @Test
-    public void testNegativeShort() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf((short)-1));
-    }
-
-    @Test
-    public void testNegativeInt() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1));
-    }
-
-    @Test
-    public void testNegativeLong() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1L));
-    }
-
-    @Test
-    public void testNegativeBigInteger() {
         assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(new BigInteger("-1")));
     }
 
     @Test
-    public void testBigBigInteger() {
-        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(new BigInteger("0x10000000000000000")));
+    public void testLargeValues() {
+        final BigInteger big = new BigInteger("10000000000000000", 16);
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(big));
     }
 
     @Test
-    public void testNullValueOfString() {
+    public void testNullValueOf() {
         assertThrows(NullPointerException.class, () -> Uint64.valueOf((String) null));
-    }
-
-    @Test
-    public void testNullValueOfBigInteger() {
         assertThrows(NullPointerException.class, () -> Uint64.valueOf((BigInteger) null));
     }
 }

@@ -129,27 +129,15 @@ public class Uint32Test {
     }
 
     @Test
-    public void testNegativeByte() {
+    public void testNegativeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf((byte)-1));
-    }
-
-    @Test
-    public void testNegativeShort() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf((short)-1));
-    }
-
-    @Test
-    public void testNegativeInt() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(-1));
-    }
-
-    @Test
-    public void testNegativeLong() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(-1L));
     }
 
     @Test
-    public void testBigLong() {
+    public void testLargeValues() {
         assertThrows(IllegalArgumentException.class, () -> Uint32.valueOf(4294967296L));
     }
 
