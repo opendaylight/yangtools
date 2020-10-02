@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -112,43 +113,23 @@ public class Uint8Test {
         assertSame(source, read);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeByte() {
-        Uint8.valueOf((byte)-1);
+    @Test
+    public void testNegativeValues() {
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((byte)-1));
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((short)-1));
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(-1));
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(-1L));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeShort() {
-        Uint8.valueOf((short)-1);
+    @Test
+    public void testLargeValues() {
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf((short)256));
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(256));
+        assertThrows(IllegalArgumentException.class, () -> Uint8.valueOf(256L));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeInt() {
-        Uint8.valueOf(-1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeLong() {
-        Uint8.valueOf(-1L);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testBigShort() {
-        Uint8.valueOf((short)256);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testBigInt() {
-        Uint8.valueOf(256);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testBigLong() {
-        Uint8.valueOf(256L);
-    }
-
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullValueOfString() {
-        Uint8.valueOf((String) null);
+        assertThrows(NullPointerException.class, () -> Uint8.valueOf((String) null));
     }
 }
