@@ -17,7 +17,7 @@ final class BaseUint8Type extends AbstractRangeRestrictedBaseType<Uint8TypeDefin
     static final @NonNull BaseUint8Type INSTANCE = new BaseUint8Type();
 
     private BaseUint8Type() {
-        super(BaseTypes.UINT8_QNAME, Uint8.valueOf(0), Uint8.valueOf(255));
+        super(BaseTypes.UINT8_QNAME, Uint8.ZERO, Uint8.MAX_VALUE);
     }
 
     @Override

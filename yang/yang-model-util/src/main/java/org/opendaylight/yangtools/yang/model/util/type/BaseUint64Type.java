@@ -17,7 +17,7 @@ final class BaseUint64Type extends AbstractRangeRestrictedBaseType<Uint64TypeDef
     static final @NonNull BaseUint64Type INSTANCE = new BaseUint64Type();
 
     private BaseUint64Type() {
-        super(BaseTypes.UINT64_QNAME, Uint64.valueOf(0), Uint64.valueOf("18446744073709551615"));
+        super(BaseTypes.UINT64_QNAME, Uint64.ZERO, Uint64.MAX_VALUE);
     }
 
     @Override

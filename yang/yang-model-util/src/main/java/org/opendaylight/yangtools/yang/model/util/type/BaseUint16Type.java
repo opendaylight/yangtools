@@ -17,7 +17,7 @@ final class BaseUint16Type extends AbstractRangeRestrictedBaseType<Uint16TypeDef
     static final @NonNull BaseUint16Type INSTANCE = new BaseUint16Type();
 
     private BaseUint16Type() {
-        super(BaseTypes.UINT16_QNAME, Uint16.valueOf(0), Uint16.valueOf(65535));
+        super(BaseTypes.UINT16_QNAME, Uint16.ZERO, Uint16.MAX_VALUE);
     }
 
     @Override

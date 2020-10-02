@@ -17,7 +17,7 @@ final class BaseUint32Type extends AbstractRangeRestrictedBaseType<Uint32TypeDef
     static final @NonNull BaseUint32Type INSTANCE = new BaseUint32Type();
 
     private BaseUint32Type() {
-        super(BaseTypes.UINT32_QNAME, Uint32.valueOf(0), Uint32.valueOf(4294967295L));
+        super(BaseTypes.UINT32_QNAME, Uint32.ZERO, Uint32.MAX_VALUE);
     }
 
     @Override
