@@ -242,7 +242,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @return A Uint16 instance
      */
     public static Uint16 saturatedOf(final byte byteVal) {
-        return byteVal < 0 ? Uint16.ZERO : instanceFor(byteVal);
+        return byteVal <= 0 ? Uint16.ZERO : instanceFor(byteVal);
     }
 
     /**
@@ -253,7 +253,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @return A Uint16 instance
      */
     public static Uint16 saturatedOf(final short shortVal) {
-        return shortVal < 0 ? Uint16.ZERO : instanceFor(shortVal);
+        return shortVal <= 0 ? Uint16.ZERO : instanceFor(shortVal);
     }
 
     /**
@@ -264,7 +264,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @return A Uint16 instance
      */
     public static Uint16 saturatedOf(final int intVal) {
-        if (intVal < 0) {
+        if (intVal <= 0) {
             return Uint16.ZERO;
         }
         if (intVal >= MAX_VALUE_INT) {
@@ -281,7 +281,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @return A Uint16 instance
      */
     public static Uint16 saturatedOf(final long longVal) {
-        if (longVal < 0) {
+        if (longVal <= 0) {
             return Uint16.ZERO;
         }
         if (longVal >= MAX_VALUE_INT) {
