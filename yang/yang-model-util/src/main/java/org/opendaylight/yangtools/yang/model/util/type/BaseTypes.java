@@ -95,57 +95,16 @@ public final class BaseTypes {
         return BaseInt8Type.INSTANCE;
     }
 
-    /**
-     * Check if a particular type definition represents the built-in int8 type.
-     *
-     * @param type Type definition
-     * @return True if the definition is the built-in int8 type.
-     */
-    public static boolean isInt8(final TypeDefinition<?> type) {
-        return BaseInt8Type.INSTANCE.getPath().equals(type.getPath());
-    }
-
     public static @NonNull Int16TypeDefinition int16Type() {
         return BaseInt16Type.INSTANCE;
-    }
-
-    /**
-     * Check if a particular type definition represents the built-in int16 type.
-     *
-     * @param type Type definition
-     * @return True if the definition is the built-in int16 type.
-     */
-    public static boolean isInt16(final TypeDefinition<?> type) {
-        return BaseInt16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static @NonNull Int32TypeDefinition int32Type() {
         return BaseInt32Type.INSTANCE;
     }
 
-    /**
-     * Check if a particular type definition represents the built-in int32 type.
-     *
-     * @param type Type definition
-     * @return True if the definition is the built-in int32 type.
-     */
-
-    public static boolean isInt32(final TypeDefinition<?> type) {
-        return BaseInt32Type.INSTANCE.getPath().equals(type.getPath());
-    }
-
     public static @NonNull Int64TypeDefinition int64Type() {
         return BaseInt64Type.INSTANCE;
-    }
-
-    /**
-     * Check if a particular type definition represents the built-in int64 type.
-     *
-     * @param type Type definition
-     * @return True if the definition is the built-in int64 type.
-     */
-    public static boolean isInt64(final TypeDefinition<?> type) {
-        return BaseInt64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static @NonNull LeafrefTypeBuilder leafrefTypeBuilder(final SchemaPath path) {
@@ -164,60 +123,16 @@ public final class BaseTypes {
         return BaseUint8Type.INSTANCE;
     }
 
-    /**
-     * Check if a particular type is the base type for uint8.
-     *
-     * @param type The type to check
-     * @return If the type corresponds to the base uint8 type.
-     * @throws NullPointerException if type is null
-     */
-    public static boolean isUint8(final @NonNull TypeDefinition<?> type) {
-        return BaseUint8Type.INSTANCE.getPath().equals(type.getPath());
-    }
-
     public static @NonNull Uint16TypeDefinition uint16Type() {
         return BaseUint16Type.INSTANCE;
-    }
-
-    /**
-     * Check if a particular type is the base type for uint16.
-     *
-     * @param type The type to check
-     * @return If the type corresponds to the base uint16 type.
-     * @throws NullPointerException if type is null
-     */
-    public static boolean isUint16(final @NonNull TypeDefinition<?> type) {
-        return BaseUint16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static @NonNull Uint32TypeDefinition uint32Type() {
         return BaseUint32Type.INSTANCE;
     }
 
-    /**
-     * Check if a particular type is the base type for uint32.
-     *
-     * @param type The type to check
-     * @return If the type corresponds to the base uint32 type.
-     * @throws NullPointerException if type is null
-     */
-    public static boolean isUint32(final @NonNull TypeDefinition<?> type) {
-        return BaseUint32Type.INSTANCE.getPath().equals(type.getPath());
-    }
-
     public static @NonNull Uint64TypeDefinition uint64Type() {
         return BaseUint64Type.INSTANCE;
-    }
-
-    /**
-     * Check if a particular type is the base type for uint64.
-     *
-     * @param type The type to check
-     * @return If the type corresponds to the base uint64 type.
-     * @throws NullPointerException if type is null
-     */
-    public static boolean isUint64(final @NonNull TypeDefinition<?> type) {
-        return BaseUint64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     /**

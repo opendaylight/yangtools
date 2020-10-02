@@ -206,10 +206,6 @@ public class TypeTest {
         final Int16TypeDefinition integerTypeDefinition16 = BaseTypes.int16Type();
         final Int32TypeDefinition integerTypeDefinition32 = BaseTypes.int32Type();
         final Int64TypeDefinition integerTypeDefinition64 = BaseTypes.int64Type();
-        assertTrue(BaseTypes.isInt8(integerTypeDefinition8));
-        assertTrue(BaseTypes.isInt16(integerTypeDefinition16));
-        assertTrue(BaseTypes.isInt32(integerTypeDefinition32));
-        assertTrue(BaseTypes.isInt64(integerTypeDefinition64));
         testInstance(BaseInt8Type.INSTANCE, integerTypeDefinition8);
         testInstance(BaseInt16Type.INSTANCE, integerTypeDefinition16);
         testInstance(BaseInt32Type.INSTANCE, integerTypeDefinition32);
@@ -225,10 +221,6 @@ public class TypeTest {
         final Uint16TypeDefinition integerTypeDefinitionu16 = BaseTypes.uint16Type();
         final Uint32TypeDefinition integerTypeDefinitionu32 = BaseTypes.uint32Type();
         final Uint64TypeDefinition integerTypeDefinitionu64 = BaseTypes.uint64Type();
-        assertTrue(BaseTypes.isUint8(integerTypeDefinitionu8));
-        assertTrue(BaseTypes.isUint16(integerTypeDefinitionu16));
-        assertTrue(BaseTypes.isUint32(integerTypeDefinitionu32));
-        assertTrue(BaseTypes.isUint64(integerTypeDefinitionu64));
         testInstance(BaseUint8Type.INSTANCE, integerTypeDefinitionu8);
         testInstance(BaseUint16Type.INSTANCE, integerTypeDefinitionu16);
         testInstance(BaseUint32Type.INSTANCE, integerTypeDefinitionu32);
