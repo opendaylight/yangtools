@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.primitives.UnsignedLong;
@@ -105,19 +106,19 @@ public class Uint64Test {
         assertEquals(Uint32.TEN, Uint64.TEN.toUint32());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testToUint8() {
-        Uint64.MAX_VALUE.toUint8();
+        assertThrows(IllegalArgumentException.class, () -> Uint64.MAX_VALUE.toUint8());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testToUint16() {
-        Uint64.MAX_VALUE.toUint16();
+        assertThrows(IllegalArgumentException.class, () -> Uint64.MAX_VALUE.toUint16());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testToUint32() {
-        Uint64.MAX_VALUE.toUint32();
+        assertThrows(IllegalArgumentException.class, () -> Uint64.MAX_VALUE.toUint32());
     }
 
     @Test
@@ -136,43 +137,24 @@ public class Uint64Test {
         assertSame(source, read);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeByte() {
-        Uint64.valueOf((byte)-1);
+    @Test
+    public void testNegativeValues() {
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf((byte)-1));
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf((short)-1));
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1));
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(-1L));
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(new BigInteger("-1")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeShort() {
-        Uint64.valueOf((short)-1);
+    @Test
+    public void testLargeValues() {
+        final BigInteger big = new BigInteger("10000000000000000", 16);
+        assertThrows(IllegalArgumentException.class, () -> Uint64.valueOf(big));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeInt() {
-        Uint64.valueOf(-1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeLong() {
-        Uint64.valueOf(-1L);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeBigInteger() {
-        Uint64.valueOf(new BigInteger("-1"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testBigBigInteger() {
-        Uint64.valueOf(new BigInteger("0x10000000000000000"));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testNullValueOfString() {
-        Uint64.valueOf((String) null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testNullValueOfBigInteger() {
-        Uint64.valueOf((BigInteger) null);
+    @Test
+    public void testNullValueOf() {
+        assertThrows(NullPointerException.class, () -> Uint64.valueOf((String) null));
+        assertThrows(NullPointerException.class, () -> Uint64.valueOf((BigInteger) null));
     }
 }
