@@ -27,20 +27,20 @@ import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
-        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements SchemaContextProvider {
+        extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
     private final SchemaTracker tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
-    SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
+    SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final EffectiveModelContext context,
             final SchemaTracker tracker) {
         super(writer);
         this.tracker = requireNonNull(tracker);
@@ -57,8 +57,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
             throws XMLStreamException {
-        final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(streamUtils.getSchemaContext(),
-            qname);
+        final Optional<AnnotationSchemaNode> optAnnotation =
+            AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
         if (optAnnotation.isPresent()) {
             final AnnotationSchemaNode schema = optAnnotation.get();
             return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule());
@@ -150,8 +150,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
-        return streamUtils.getSchemaContext();
+    public EffectiveModelContext getEffectiveModelContext() {
+        return streamUtils.getEffectiveModelContext();
     }
 
     @Override

@@ -21,13 +21,13 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class IdentityrefXmlCodec implements XmlCodec<QName> {
-    private final SchemaContext schemaContext;
+    private final EffectiveModelContext schemaContext;
     private final QNameModule parentModule;
 
-    IdentityrefXmlCodec(final SchemaContext context, final QNameModule parentModule) {
+    IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule) {
         this.schemaContext = requireNonNull(context);
         this.parentModule = requireNonNull(parentModule);
     }

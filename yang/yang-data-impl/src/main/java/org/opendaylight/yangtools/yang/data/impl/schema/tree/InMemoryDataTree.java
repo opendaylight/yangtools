@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,17 +57,18 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
     private volatile DataTreeState state;
 
     InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
-            final SchemaContext schemaContext) {
+            final EffectiveModelContext schemaContext) {
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
         maskMandatory = true;
         state = DataTreeState.createInitial(rootNode);
         if (schemaContext != null) {
-            setSchemaContext(schemaContext);
+            setEffectiveModelContext(schemaContext);
         }
     }
 
     InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
-            final SchemaContext schemaContext, final DataSchemaNode rootSchemaNode, final boolean maskMandatory) {
+            final EffectiveModelContext schemaContext, final DataSchemaNode rootSchemaNode,
+            final boolean maskMandatory) {
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
         this.maskMandatory = maskMandatory;
 
@@ -94,12 +94,6 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         }
     }
 
-    @Deprecated
-    @Override
-    public void setSchemaContext(final SchemaContext newSchemaContext) {
-        internalSetSchemaContext(newSchemaContext);
-    }
-
     @Override
     public void setEffectiveModelContext(final EffectiveModelContext newModelContext) {
         internalSetSchemaContext(newModelContext);
@@ -109,7 +103,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
      * This method is synchronized to guard against user attempting to install
      * multiple contexts. Otherwise it runs in a lock-free manner.
      */
-    private synchronized void internalSetSchemaContext(final SchemaContext newSchemaContext) {
+    private synchronized void internalSetSchemaContext(final EffectiveModelContext newSchemaContext) {
         requireNonNull(newSchemaContext);
 
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);

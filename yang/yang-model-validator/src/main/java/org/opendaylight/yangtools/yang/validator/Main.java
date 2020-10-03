@@ -28,7 +28,7 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,7 +168,7 @@ public final class Main {
         LOG.info("Yang model files: {} ", yangFiles);
         LOG.info("Supported features: {} ", supportedFeatures);
 
-        SchemaContext context = null;
+        EffectiveModelContext context = null;
 
         printMemoryInfo("start");
         final Stopwatch stopWatch = Stopwatch.createStarted();

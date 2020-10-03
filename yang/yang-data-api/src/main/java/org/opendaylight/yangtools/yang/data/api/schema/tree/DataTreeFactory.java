@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * Factory interface for creating data trees.
@@ -23,7 +23,7 @@ public interface DataTreeFactory {
      * <p>
      * Correctness note: this method may not accurately initialize the root node in certain non-root scenarios due to
      * the impossibility to accurately derive root type from plain YangInstanceIdentifier. Using
-     * {@link #create(DataTreeConfiguration, SchemaContext)} is recommended, as it does not suffer from this
+     * {@link #create(DataTreeConfiguration, EffectiveModelContext)} is recommended, as it does not suffer from this
      * shortcoming.
      *
      * @param treeConfig
@@ -45,7 +45,7 @@ public interface DataTreeFactory {
      * @throws IllegalArgumentException if tree configuration does not match the SchemaContext, for example by root path
      *                                  referring to a node which does not exist in the SchemaContext
      */
-    @NonNull DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext);
+    @NonNull DataTree create(DataTreeConfiguration treeConfig, EffectiveModelContext initialSchemaContext);
 
     /**
      * Create a new data tree based on specified configuration, with the specified node.
@@ -57,6 +57,6 @@ public interface DataTreeFactory {
      * @throws NullPointerException if any of the arguments are null
      * @throws IllegalArgumentException if a mismatch between the arguments is detected
      */
-    @NonNull DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext,
+    @NonNull DataTree create(DataTreeConfiguration treeConfig, EffectiveModelContext initialSchemaContext,
             NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException;
 }

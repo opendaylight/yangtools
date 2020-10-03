@@ -29,10 +29,10 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 /**
@@ -197,7 +197,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
         return new UnorderedLeafListMixinContextNode(potential);
     }
 
-    public static DataSchemaContextNode<?> from(final SchemaContext ctx) {
+    public static DataSchemaContextNode<?> from(final EffectiveModelContext ctx) {
         return new ContainerContextNode(ctx);
     }
 }
