@@ -42,7 +42,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         }
 
         @Override
-        public void addChild(final AbstractNodeDataWithSchema<?> newChild) {
+        void addChild(final AbstractNodeDataWithSchema<?> newChild) {
             final DataSchemaNode childSchema = newChild.getSchema();
             if (childSchema instanceof LeafSchemaNode) {
                 final QName childName = childSchema.getQName();
@@ -87,9 +87,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         super(schema);
     }
 
-    // FIXME: 6.0.0: hide this method
-    @Deprecated
-    public static @NonNull ListEntryNodeDataWithSchema forSchema(final ListSchemaNode schema) {
+    static @NonNull ListEntryNodeDataWithSchema forSchema(final ListSchemaNode schema) {
         final List<QName> keyDef = schema.getKeyDefinition();
         return keyDef.isEmpty() ? new Unkeyed(schema) :  new Keyed(schema, keyDef);
     }
