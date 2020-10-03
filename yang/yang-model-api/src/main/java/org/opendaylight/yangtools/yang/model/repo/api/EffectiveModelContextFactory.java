@@ -8,22 +8,18 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Arrays;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * An asynchronous factory for building {@link SchemaContext} instances based on a specification of what
+ * An asynchronous factory for building {@link EffectiveModelContext} instances based on a specification of what
  * {@link SourceIdentifier}s are required and dynamic recursive resolution.
  */
 @Beta
-// FIXME: 6.0.0: evaluate if we still need to extend SchemaContext here
-public interface EffectiveModelContextFactory extends SchemaContextFactory {
+public interface EffectiveModelContextFactory {
     /**
      * Create a new schema context containing specified sources, pulling in any dependencies they may have.
      *
@@ -37,13 +33,5 @@ public interface EffectiveModelContextFactory extends SchemaContextFactory {
     default @NonNull ListenableFuture<EffectiveModelContext> createEffectiveModelContext(
             final SourceIdentifier... requiredSources) {
         return createEffectiveModelContext(Arrays.asList(requiredSources));
-    }
-
-    @Override
-    @Deprecated
-    default ListenableFuture<SchemaContext> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources) {
-        return Futures.transform(createEffectiveModelContext(requiredSources), ctx -> ctx,
-            MoreExecutors.directExecutor());
     }
 }

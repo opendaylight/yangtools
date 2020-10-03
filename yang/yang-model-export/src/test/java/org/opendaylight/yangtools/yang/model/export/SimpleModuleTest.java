@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -67,7 +67,7 @@ public class SimpleModuleTest {
     }
 
     private void testSetOfModules(final Collection<SourceIdentifier> source) throws Exception {
-        final SchemaContext schemaContext = schemaContextFactory.createSchemaContext(source).get();
+        final EffectiveModelContext schemaContext = schemaContextFactory.createEffectiveModelContext(source).get();
         final File outDir = new File("target/collection");
         outDir.mkdirs();
         for (final Module module : schemaContext.getModules()) {
