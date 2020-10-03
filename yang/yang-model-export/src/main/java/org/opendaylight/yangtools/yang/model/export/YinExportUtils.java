@@ -68,14 +68,30 @@ public final class YinExportUtils {
      *                                  representation is not available.
      * @throws NullPointerException if any of of the parameters is null
      * @throws XMLStreamException if an input-output error occurs
+     * @deprecated Prefer {@link #writeModuleAsYinText(ModuleEffectiveStatement, OutputStream)}.
      */
     @Beta
+    @Deprecated
     public static void writeModuleAsYinText(final Module module, final OutputStream output) throws XMLStreamException {
         requireNonNull(module);
         checkArgument(module instanceof ModuleEffectiveStatement, "Module %s is not a ModuleEffectiveStatement",
             module);
-        final ModuleEffectiveStatement effective = (ModuleEffectiveStatement) module;
-        writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(effective), output);
+        writeModuleAsYinText((ModuleEffectiveStatement) module, output);
+    }
+
+    /**
+     * Write a module as a YIN text into specified {@link OutputStream}. Supplied module must have the
+     * {@link ModuleEffectiveStatement} trait.
+     *
+     * @param module Module to be exported
+     * @throws IllegalArgumentException if the module's declared representation is not available.
+     * @throws NullPointerException if any of of the parameters is null
+     * @throws XMLStreamException if an input-output error occurs
+     */
+    @Beta
+    public static void writeModuleAsYinText(final ModuleEffectiveStatement module, final OutputStream output)
+            throws XMLStreamException {
+        writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(module), output);
     }
 
     /**
@@ -88,8 +104,11 @@ public final class YinExportUtils {
      *                                  a SubmoduleEffectiveStatement or if its declared representation is not available
      * @throws NullPointerException if any of of the parameters is null
      * @throws XMLStreamException if an input-output error occurs
+     * @deprecated Prefer {@link #writeSubmoduleAsYinText(ModuleEffectiveStatement, SubmoduleEffectiveStatement,
+     *             OutputStream)}.
      */
     @Beta
+    @Deprecated
     public static void writeSubmoduleAsYinText(final Module parentModule, final Module submodule,
             final OutputStream output) throws XMLStreamException {
         requireNonNull(parentModule);
@@ -98,8 +117,25 @@ public final class YinExportUtils {
         requireNonNull(submodule);
         checkArgument(submodule instanceof SubmoduleEffectiveStatement,
             "Submodule %s is not a SubmoduleEffectiveStatement", submodule);
-        writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(
-            (ModuleEffectiveStatement) parentModule, (SubmoduleEffectiveStatement)submodule), output);
+        writeSubmoduleAsYinText((ModuleEffectiveStatement) parentModule, (SubmoduleEffectiveStatement)submodule,
+            output);
+    }
+
+    /**
+     * Write a submodule as a YIN text into specified {@link OutputStream}. Supplied submodule must have the
+     * {@link SubmoduleEffectiveStatement} trait.
+     *
+     * @param parentModule Parent module
+     * @param submodule Submodule to be exported
+     * @throws IllegalArgumentException if the parent module's or submodule's declared representation is not available
+     * @throws NullPointerException if any of of the parameters is null
+     * @throws XMLStreamException if an input-output error occurs
+     */
+    @Beta
+    public static void writeSubmoduleAsYinText(final ModuleEffectiveStatement parentModule,
+            final SubmoduleEffectiveStatement submodule, final OutputStream output) throws XMLStreamException {
+        writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(parentModule, submodule),
+            output);
     }
 
     private static void writeReaderToOutput(final XMLEventReader reader, final OutputStream output)
