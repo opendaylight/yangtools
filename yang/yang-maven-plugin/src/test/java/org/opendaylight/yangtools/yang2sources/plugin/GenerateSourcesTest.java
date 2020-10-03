@@ -29,8 +29,9 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
@@ -38,6 +39,7 @@ import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.opendaylight.yangtools.yang2sources.spi.ModuleResourceResolver;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class GenerateSourcesTest {
 
     private String yang;
@@ -55,8 +57,6 @@ public class GenerateSourcesTest {
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-
         yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
         outDir = new File("/outputDir");
         final YangProvider mock = mock(YangProvider.class);

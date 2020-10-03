@@ -14,17 +14,17 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class ArgumentsExtractorVerifierTest {
-
     @Mock
     List<String> mockedList;
 
     @Test
     public void test() {
-        MockitoAnnotations.initMocks(this);
         doReturn(Boolean.TRUE).when(this.mockedList).add(any(String.class));
         final String argument = "something";
         this.mockedList.add(argument);
