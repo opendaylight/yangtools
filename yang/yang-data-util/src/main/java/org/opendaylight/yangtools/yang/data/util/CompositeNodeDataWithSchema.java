@@ -117,17 +117,11 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         super(schema);
     }
 
-    @Deprecated
-    public void addChild(final AbstractNodeDataWithSchema<?> newChild) {
+    void addChild(final AbstractNodeDataWithSchema<?> newChild) {
         children.add(newChild);
     }
 
-    @Deprecated
-    public AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas) {
-        return addChild(schemas, ChildReusePolicy.NOOP);
-    }
-
-    public AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas, final ChildReusePolicy policy) {
+    final AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas, final ChildReusePolicy policy) {
         checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
 
         // Pop the first node...
