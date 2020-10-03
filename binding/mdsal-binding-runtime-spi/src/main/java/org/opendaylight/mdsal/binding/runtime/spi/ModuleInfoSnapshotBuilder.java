@@ -7,39 +7,74 @@
  */
 package org.opendaylight.mdsal.binding.runtime.spi;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
+import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.CheckedBuilder;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
 @Beta
-public final class ModuleInfoSnapshotBuilder implements CheckedBuilder<ModuleInfoSnapshot, NoSuchElementException> {
-    private final ModuleInfoSnapshotResolver registry;
+public final class ModuleInfoSnapshotBuilder implements CheckedBuilder<ModuleInfoSnapshot, YangParserException> {
+    private final Set<YangModuleInfo> moduleInfos = new HashSet<>();
+    private final YangParserFactory parserFactory;
 
-    public ModuleInfoSnapshotBuilder(final String name, final YangParserFactory parserFactory) {
-        registry = new ModuleInfoSnapshotResolver(name, parserFactory);
+    public ModuleInfoSnapshotBuilder(final YangParserFactory parserFactory) {
+        this.parserFactory = requireNonNull(parserFactory);
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final YangModuleInfo info) {
-        return add(List.of(info));
+        ModuleInfoSnapshotResolver.flatDependencies(moduleInfos, info);
+        return this;
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final YangModuleInfo... infos) {
-        return add(Arrays.asList(infos));
+        for (YangModuleInfo info : infos) {
+            add(info);
+        }
+        return this;
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final Iterable<? extends YangModuleInfo> infos) {
-        registry.registerModuleInfos(infos);
+        for (YangModuleInfo info : infos) {
+            add(info);
+        }
         return this;
     }
 
     @Override
-    public ModuleInfoSnapshot build() {
-        return registry.takeSnapshot();
+    public ModuleInfoSnapshot build() throws YangParserException {
+        final YangParser parser = parserFactory.createParser();
+        final Map<SourceIdentifier, YangModuleInfo> mappedInfos = new HashMap<>();
+        final Map<String, ClassLoader> classLoaders = new HashMap<>();
+        for (YangModuleInfo info : moduleInfos) {
+            final YangTextSchemaSource source = ModuleInfoSnapshotResolver.toYangTextSource(info);
+            mappedInfos.put(source.getIdentifier(), info);
+
+            final Class<?> infoClass = info.getClass();
+            classLoaders.put(BindingReflections.getModelRootPackageName(infoClass.getPackage()),
+                infoClass.getClassLoader());
+
+            try {
+                parser.addSource(source);
+            } catch (YangSyntaxErrorException | IOException e) {
+                throw new YangParserException("Failed to add source for " + info, e);
+            }
+        }
+
+        return new DefaultModuleInfoSnapshot(parser.buildEffectiveModel(), mappedInfos, classLoaders);
     }
 }

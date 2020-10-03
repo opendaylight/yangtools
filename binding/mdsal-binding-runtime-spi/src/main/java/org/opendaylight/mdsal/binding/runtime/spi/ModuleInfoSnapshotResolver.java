@@ -220,6 +220,11 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         }
     }
 
+    static @NonNull YangTextSchemaSource toYangTextSource(final YangModuleInfo moduleInfo) {
+        return YangTextSchemaSource.delegateForByteSource(sourceIdentifierFrom(moduleInfo),
+            moduleInfo.getYangTextByteSource());
+    }
+
     private static @NonNull YangTextSchemaSource toYangTextSource(final SourceIdentifier identifier,
             final YangModuleInfo moduleInfo) {
         return YangTextSchemaSource.delegateForByteSource(identifier, moduleInfo.getYangTextByteSource());
@@ -239,7 +244,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         return ImmutableList.copyOf(requiredInfos).reverse();
     }
 
-    private static void flatDependencies(final Set<YangModuleInfo> set, final YangModuleInfo moduleInfo) {
+    static void flatDependencies(final Set<YangModuleInfo> set, final YangModuleInfo moduleInfo) {
         if (set.add(moduleInfo)) {
             for (YangModuleInfo dep : moduleInfo.getImportedModules()) {
                 flatDependencies(set, dep);

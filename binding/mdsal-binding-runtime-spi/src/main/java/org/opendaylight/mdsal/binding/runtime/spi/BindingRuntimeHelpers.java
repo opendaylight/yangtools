@@ -20,6 +20,7 @@ import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 
 /**
@@ -41,33 +42,46 @@ public final class BindingRuntimeHelpers {
 
     public static @NonNull EffectiveModelContext createEffectiveModel(
             final Iterable<? extends YangModuleInfo> moduleInfos) {
-        return createEffectiveModel(ServiceLoaderState.ParserFactory.INSTANCE, moduleInfos);
+        try {
+            return createEffectiveModel(ServiceLoaderState.ParserFactory.INSTANCE, moduleInfos);
+        } catch (YangParserException e) {
+            throw new IllegalStateException("Failed to parse models", e);
+        }
     }
 
     public static @NonNull EffectiveModelContext createEffectiveModel(final YangParserFactory parserFactory,
-            final Iterable<? extends YangModuleInfo> moduleInfos) {
+            final Iterable<? extends YangModuleInfo> moduleInfos) throws YangParserException {
         return prepareContext(parserFactory, moduleInfos).getEffectiveModelContext();
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext() {
-        final ModuleInfoSnapshot infos = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE,
-            BindingReflections.loadModuleInfos());
+        final ModuleInfoSnapshot infos;
+        try {
+            infos = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE,
+                BindingReflections.loadModuleInfos());
+        } catch (YangParserException e) {
+            throw new IllegalStateException("Failed to parse models", e);
+        }
         return new DefaultBindingRuntimeContext(ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(
             infos.getEffectiveModelContext()), infos);
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final Class<?>... classes) {
-        return createRuntimeContext(ServiceLoaderState.ParserFactory.INSTANCE, ServiceLoaderState.Generator.INSTANCE,
-            classes);
+        try {
+            return createRuntimeContext(ServiceLoaderState.ParserFactory.INSTANCE,
+                ServiceLoaderState.Generator.INSTANCE, classes);
+        } catch (YangParserException e) {
+            throw new IllegalStateException("Failed to parse models", e);
+        }
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
-            final BindingRuntimeGenerator generator, final Class<?>... classes) {
+            final BindingRuntimeGenerator generator, final Class<?>... classes) throws YangParserException {
         return createRuntimeContext(parserFactory, generator, Arrays.asList(classes));
     }
 
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
-            final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) {
+            final BindingRuntimeGenerator generator, final Collection<Class<?>> classes) throws YangParserException {
         final ModuleInfoSnapshot infos = prepareContext(parserFactory, classes.stream()
             .map(BindingRuntimeHelpers::extractYangModuleInfo)
             .collect(Collectors.toList()));
@@ -85,7 +99,7 @@ public final class BindingRuntimeHelpers {
     }
 
     private static @NonNull ModuleInfoSnapshot prepareContext(final YangParserFactory parserFactory,
-            final Iterable<? extends YangModuleInfo> moduleInfos) {
-        return new ModuleInfoSnapshotBuilder("helper", parserFactory).add(moduleInfos).build();
+            final Iterable<? extends YangModuleInfo> moduleInfos) throws YangParserException {
+        return new ModuleInfoSnapshotBuilder(parserFactory).add(moduleInfos).build();
     }
 }
