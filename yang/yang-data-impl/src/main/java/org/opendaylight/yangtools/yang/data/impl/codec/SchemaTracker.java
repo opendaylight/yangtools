@@ -36,12 +36,12 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
@@ -75,11 +75,11 @@ public final class SchemaTracker {
     /**
      * Create a new writer with the specified context and rooted in the specified schema path.
      *
-     * @param context Associated {@link SchemaContext}
+     * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
      * @return A new {@link NormalizedNodeStreamWriter}
      */
-    public static @NonNull SchemaTracker create(final SchemaContext context, final SchemaPath path) {
+    public static @NonNull SchemaTracker create(final EffectiveModelContext context, final SchemaPath path) {
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
         checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
         if (schemaNodes.size() > 1) {

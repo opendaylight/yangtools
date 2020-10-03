@@ -13,7 +13,7 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * Instances of this class hold the current state of a DataTree instance.
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 final class DataTreeState {
     private final LatestOperationHolder holder;
-    private final SchemaContext schemaContext;
+    private final EffectiveModelContext schemaContext;
     private final @NonNull TreeNode root;
 
     private DataTreeState(final TreeNode root) {
@@ -31,7 +31,8 @@ final class DataTreeState {
         schemaContext = null;
     }
 
-    private DataTreeState(final TreeNode root, final LatestOperationHolder holder, final SchemaContext schemaContext) {
+    private DataTreeState(final TreeNode root, final LatestOperationHolder holder,
+            final EffectiveModelContext schemaContext) {
         // It should be impossible to instantiate a new root without a SchemaContext
         this.schemaContext = requireNonNull(schemaContext);
         this.holder = requireNonNull(holder);
@@ -50,7 +51,8 @@ final class DataTreeState {
         return new InMemoryDataTreeSnapshot(schemaContext, root, holder.newSnapshot());
     }
 
-    DataTreeState withSchemaContext(final SchemaContext newSchemaContext, final ModificationApplyOperation operation) {
+    DataTreeState withSchemaContext(final EffectiveModelContext newSchemaContext,
+            final ModificationApplyOperation operation) {
         holder.setCurrent(operation);
         return new DataTreeState(root, holder, newSchemaContext);
     }

@@ -152,7 +152,9 @@ public interface YangParser {
      *
      * @return An effective schema context comprised of configured models.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
+     * @deprecated Use {@link #buildEffectiveModel()} instead.
      */
+    @Deprecated(forRemoval = true)
     default @NonNull SchemaContext buildSchemaContext() throws YangParserException {
         return buildEffectiveModel();
     }

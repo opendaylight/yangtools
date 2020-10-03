@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.osgi.service.component.annotations.Activate;
@@ -61,12 +62,12 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     @Override
-    public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext) {
+    public DataTree create(final DataTreeConfiguration treeConfig, final EffectiveModelContext initialSchemaContext) {
         return createDataTree(treeConfig, initialSchemaContext, true);
     }
 
     @Override
-    public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
+    public DataTree create(final DataTreeConfiguration treeConfig, final EffectiveModelContext initialSchemaContext,
             final NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
         final DataTree ret = createDataTree(treeConfig, initialSchemaContext, false);
 
@@ -93,7 +94,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     private static @NonNull DataTree createDataTree(final DataTreeConfiguration treeConfig,
-            final SchemaContext initialSchemaContext, final boolean maskMandatory) {
+            final EffectiveModelContext initialSchemaContext, final boolean maskMandatory) {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
         final NormalizedNode<?, ?> rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
@@ -142,7 +143,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         throw new IllegalArgumentException("Unsupported root node " + arg);
     }
 
-    private static DataSchemaNode getRootSchemaNode(final SchemaContext schemaContext,
+    private static DataSchemaNode getRootSchemaNode(final EffectiveModelContext schemaContext,
             final YangInstanceIdentifier rootPath) {
         final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
         final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(rootPath);

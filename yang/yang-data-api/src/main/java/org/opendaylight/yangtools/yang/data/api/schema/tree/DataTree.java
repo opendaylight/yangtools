@@ -8,24 +8,11 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Interface representing a data tree which can be modified in an MVCC fashion.
  */
 public interface DataTree extends DataTreeTip, ReadOnlyDataTree {
-    /**
-     * Make the data tree use a new schema context. The context will be used
-     * only by subsequent operations.
-     *
-     * @param newSchemaContext new SchemaContext
-     * @throws IllegalArgumentException if the new context is incompatible
-     * @throws NullPointerException if newSchemaContext is null
-     * @deprecated Prefer {@link #setEffectiveModelContext(EffectiveModelContext)}.
-     */
-    @Deprecated
-    void setSchemaContext(SchemaContext newSchemaContext);
-
     /**
      * Make the data tree use a new schema context. The context will be used
      * only by subsequent operations.

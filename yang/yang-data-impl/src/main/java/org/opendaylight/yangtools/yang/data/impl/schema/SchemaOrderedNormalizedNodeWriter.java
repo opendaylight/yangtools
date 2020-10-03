@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaOrderedNormalizedNodeWriter.class);
-    private final SchemaContext schemaContext;
+    private final EffectiveModelContext schemaContext;
     private final SchemaNode root;
 
     private SchemaNode currentSchemaNode;
@@ -51,8 +51,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
      * @param path
      *            path
      */
-    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final SchemaPath path) {
+    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
+            final EffectiveModelContext schemaContext, final SchemaPath path) {
         super(writer);
         this.schemaContext = schemaContext;
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(schemaContext, path);

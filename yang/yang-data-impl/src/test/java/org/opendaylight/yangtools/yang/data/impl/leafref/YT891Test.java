@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT891Test {
@@ -40,7 +40,7 @@ public class YT891Test {
     private static final QName LIST_IN_CONTAINER = QName.create(BAZ_TOP, "list-in-container");
     private static final YangInstanceIdentifier BAZ_TOP_ID = YangInstanceIdentifier.of(BAZ_TOP);
 
-    private static SchemaContext schemaContext;
+    private static EffectiveModelContext schemaContext;
     private static LeafRefContext leafRefContext;
 
     private DataTree dataTree;

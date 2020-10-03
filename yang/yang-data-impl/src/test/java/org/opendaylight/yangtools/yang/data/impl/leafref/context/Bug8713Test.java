@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8713Test {
@@ -31,7 +31,7 @@ public class Bug8713Test {
 
     @Test
     public void dataTreeCanditateValidationTest() throws Exception {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug8713/");
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug8713/");
         final LeafRefContext rootLeafRefContext = LeafRefContext.create(context);
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_OPERATIONAL, context);

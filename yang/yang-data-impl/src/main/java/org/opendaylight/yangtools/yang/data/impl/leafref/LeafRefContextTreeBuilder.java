@@ -14,20 +14,20 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class LeafRefContextTreeBuilder {
     private final List<LeafRefContext> leafRefs = new LinkedList<>();
-    private final SchemaContext schemaContext;
+    private final EffectiveModelContext schemaContext;
 
-    LeafRefContextTreeBuilder(final SchemaContext schemaContext) {
+    LeafRefContextTreeBuilder(final EffectiveModelContext schemaContext) {
         this.schemaContext = schemaContext;
     }
 
