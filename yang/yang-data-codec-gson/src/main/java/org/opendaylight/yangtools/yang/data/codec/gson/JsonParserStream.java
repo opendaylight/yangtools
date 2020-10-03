@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
@@ -306,7 +307,7 @@ public final class JsonParserStream implements Closeable, Flushable {
 
 
                     final AbstractNodeDataWithSchema<?> newChild = ((CompositeNodeDataWithSchema<?>) parent)
-                            .addChild(childDataSchemaNodes);
+                            .addChild(childDataSchemaNodes, ChildReusePolicy.NOOP);
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
                     } else {
