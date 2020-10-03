@@ -82,7 +82,8 @@ public class YangTextSchemaContextResolverTest {
                 e.getCause().getMessage());
         }
 
-        Optional<? extends SchemaContext> schemaContextOptional = yangTextSchemaContextResolver.getSchemaContext();
+        Optional<? extends SchemaContext> schemaContextOptional =
+            yangTextSchemaContextResolver.getEffectiveModelContext();
         assertTrue(schemaContextOptional.isPresent());
         SchemaContext schemaContext = schemaContextOptional.get();
         assertEquals(3, schemaContext.getModules().size());
@@ -93,7 +94,7 @@ public class YangTextSchemaContextResolverTest {
 
         assertEquals(0, yangTextSchemaContextResolver.getAvailableSources().size());
 
-        schemaContextOptional = yangTextSchemaContextResolver.getSchemaContext();
+        schemaContextOptional = yangTextSchemaContextResolver.getEffectiveModelContext();
         assertTrue(schemaContextOptional.isPresent());
         schemaContext = schemaContextOptional.get();
         assertEquals(0, schemaContext.getModules().size());
