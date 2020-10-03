@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class YT776Test {
     private static final QName MODULE = QName.create("yt776", "yt776");
@@ -58,7 +58,7 @@ public class YT776Test {
     private static final NodeIdentifier SOME_LIST_ID = new NodeIdentifier(SOME_LIST);
     private static final NodeIdentifierWithPredicates SOME_LIST_ITEM = NodeIdentifierWithPredicates.of(SOME_LIST,
                 ImmutableMap.of(SOME_LEAF, "foo"));
-    private static SchemaContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext SCHEMA_CONTEXT;
 
     private DataTree dataTree;
 

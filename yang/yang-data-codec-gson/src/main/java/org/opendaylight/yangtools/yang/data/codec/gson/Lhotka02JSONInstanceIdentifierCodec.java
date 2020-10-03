@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class Lhotka02JSONInstanceIdentifierCodec extends JSONInstanceIdentifierCodec {
-    Lhotka02JSONInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
+    Lhotka02JSONInstanceIdentifierCodec(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
         super(context, jsonCodecFactory);
     }
 }

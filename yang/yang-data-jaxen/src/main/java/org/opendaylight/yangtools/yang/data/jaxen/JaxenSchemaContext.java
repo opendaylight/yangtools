@@ -19,15 +19,15 @@ import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathExpression;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 @NonNullByDefault
 final class JaxenSchemaContext implements XPathSchemaContext {
     private final DataSchemaContextTree tree;
-    private final SchemaContext context;
+    private final EffectiveModelContext context;
 
-    JaxenSchemaContext(final SchemaContext context) {
+    JaxenSchemaContext(final EffectiveModelContext context) {
         this.context = requireNonNull(context);
         this.tree = DataSchemaContextTree.from(context);
     }

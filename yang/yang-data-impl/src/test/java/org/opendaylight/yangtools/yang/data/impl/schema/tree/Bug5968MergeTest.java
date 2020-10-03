@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class Bug5968MergeTest {
     private static final String NS = "foo";
@@ -40,7 +40,7 @@ public class Bug5968MergeTest {
     private static final QName LIST_ID = QName.create(NS, REV, "list-id");
     private static final QName MANDATORY_LEAF = QName.create(NS, REV, "mandatory-leaf");
     private static final QName COMMON_LEAF = QName.create(NS, REV, "common-leaf");
-    private static SchemaContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void beforeClass() {
@@ -52,7 +52,7 @@ public class Bug5968MergeTest {
         SCHEMA_CONTEXT = null;
     }
 
-    private static DataTree initDataTree(final SchemaContext schemaContext, final boolean withMapNode)
+    private static DataTree initDataTree(final EffectiveModelContext schemaContext, final boolean withMapNode)
             throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
@@ -74,7 +74,7 @@ public class Bug5968MergeTest {
         return inMemoryDataTree;
     }
 
-    private static DataTree emptyDataTree(final SchemaContext schemaContext)
+    private static DataTree emptyDataTree(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
         return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }

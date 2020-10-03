@@ -11,13 +11,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContextFactory;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 @MetaInfServices
 @NonNullByDefault
 public final class JaxenSchemaContextFactory implements XPathSchemaContextFactory {
     @Override
-    public XPathSchemaContext createContext(final SchemaContext context) {
+    public XPathSchemaContext createContext(final EffectiveModelContext context) {
         return new JaxenSchemaContext(context);
     }
 }

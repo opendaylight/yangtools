@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class DerefXPathFunctionTest {
@@ -63,7 +63,7 @@ public class DerefXPathFunctionTest {
 
     @Test
     public void testDerefFunctionForInstanceIdentifier() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
                 "/yang-xpath-functions-test/deref-function-iid/foo.yang");
         assertNotNull(schemaContext);
 
@@ -95,7 +95,7 @@ public class DerefXPathFunctionTest {
     @Test
     public void testDerefFunctionForLeafref() throws Exception {
         // tests absolute and relative leafref that references a leaf node
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
                 "/yang-xpath-functions-test/deref-function-leafref/foo.yang");
         assertNotNull(schemaContext);
 
@@ -137,7 +137,7 @@ public class DerefXPathFunctionTest {
     @Test
     public void testDerefFunctionForLeafref2() throws Exception {
         // tests leafref that references a leaf-list node
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
                 "/yang-xpath-functions-test/deref-function-leafref/foo.yang");
         assertNotNull(schemaContext);
 

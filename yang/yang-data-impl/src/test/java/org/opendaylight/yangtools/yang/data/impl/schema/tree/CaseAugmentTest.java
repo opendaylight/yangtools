@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class CaseAugmentTest {
     private static final QName CHOICE1_QNAME = QName.create(TestModel.TEST_QNAME, "choice1");
@@ -37,7 +37,7 @@ public class CaseAugmentTest {
     private static final AugmentationIdentifier AUGMENT_ID = new AugmentationIdentifier(
         ImmutableSet.of(C1L2_QNAME, C1L3_QNAME));
 
-    private static SchemaContext SCHEMA_CONTEXT;
+    private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void beforeClass() {

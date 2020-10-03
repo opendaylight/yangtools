@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.jaxen.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * A factory for obtaining {@link XPathSchemaContext}s. This is the primary entry point to an XPath evaluation
@@ -22,12 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @NonNullByDefault
 public interface XPathSchemaContextFactory {
     /**
-     * Create an {@link XPathSchemaContext} based on a {@link SchemaContext}. This effectively binds the namespaces
-     * the user expects to map to YANG schema. The {@link XPathExpression} compilation, relocation and optimization
-     * processes can take advantage of the YANG schema provided.
+     * Create an {@link XPathSchemaContext} based on a {@link EffectiveModelContext}. This effectively binds the
+     * namespaces the user expects to map to YANG schema. The {@link XPathExpression} compilation, relocation and
+     * optimization processes can take advantage of the YANG schema provided.
      *
      * @param context SchemaContext associated with the resulting {@link XPathSchemaContext}
      * @return An {@link XPathSchemaContext} instance
      */
-    XPathSchemaContext createContext(SchemaContext context);
+    XPathSchemaContext createContext(EffectiveModelContext context);
 }

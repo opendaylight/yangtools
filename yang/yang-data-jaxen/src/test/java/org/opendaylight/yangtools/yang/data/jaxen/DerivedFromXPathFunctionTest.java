@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class DerivedFromXPathFunctionTest {
@@ -52,9 +52,10 @@ public class DerivedFromXPathFunctionTest {
     @Test
     public void testDerivedFromFunction() throws Exception {
         // also includes test for derived-from-or-self function
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerivedFromXPathFunctionTest.class,
-                "/yang-xpath-functions-test/derived-from-function/foo.yang",
-                "/yang-xpath-functions-test/derived-from-function/bar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            DerivedFromXPathFunctionTest.class,
+            "/yang-xpath-functions-test/derived-from-function/foo.yang",
+            "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -91,8 +92,8 @@ public class DerivedFromXPathFunctionTest {
 
     @Test
     public void testInvalidTypeOfCorrespondingSchemaNode() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerivedFromXPathFunctionTest.class,
-                "/yang-xpath-functions-test/derived-from-function/bar-invalid.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            DerivedFromXPathFunctionTest.class, "/yang-xpath-functions-test/derived-from-function/bar-invalid.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -115,9 +116,10 @@ public class DerivedFromXPathFunctionTest {
 
     @Test
     public void testInvalidNormalizedNodeValueType() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerivedFromXPathFunctionTest.class,
-                "/yang-xpath-functions-test/derived-from-function/foo.yang",
-                "/yang-xpath-functions-test/derived-from-function/bar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            DerivedFromXPathFunctionTest.class,
+            "/yang-xpath-functions-test/derived-from-function/foo.yang",
+            "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -140,9 +142,10 @@ public class DerivedFromXPathFunctionTest {
 
     @Test
     public void shouldFailOnUnknownPrefixOfIdentity() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerivedFromXPathFunctionTest.class,
-                "/yang-xpath-functions-test/derived-from-function/foo.yang",
-                "/yang-xpath-functions-test/derived-from-function/bar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            DerivedFromXPathFunctionTest.class,
+            "/yang-xpath-functions-test/derived-from-function/foo.yang",
+            "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -171,9 +174,10 @@ public class DerivedFromXPathFunctionTest {
 
     @Test
     public void shouldFailOnMalformedIdentityArgument() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerivedFromXPathFunctionTest.class,
-                "/yang-xpath-functions-test/derived-from-function/foo.yang",
-                "/yang-xpath-functions-test/derived-from-function/bar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            DerivedFromXPathFunctionTest.class,
+            "/yang-xpath-functions-test/derived-from-function/foo.yang",
+            "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -201,9 +205,10 @@ public class DerivedFromXPathFunctionTest {
 
     @Test
     public void shouldFailOnUnknownIdentityArgument() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerivedFromXPathFunctionTest.class,
-                "/yang-xpath-functions-test/derived-from-function/foo.yang",
-                "/yang-xpath-functions-test/derived-from-function/bar.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            DerivedFromXPathFunctionTest.class,
+            "/yang-xpath-functions-test/derived-from-function/foo.yang",
+            "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);

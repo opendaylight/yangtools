@@ -11,10 +11,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class RFC7951JSONInstanceIdentifierCodec extends JSONInstanceIdentifierCodec {
-    RFC7951JSONInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
+    RFC7951JSONInstanceIdentifierCodec(final EffectiveModelContext context, final JSONCodecFactory jsonCodecFactory) {
         super(context, jsonCodecFactory);
     }
 

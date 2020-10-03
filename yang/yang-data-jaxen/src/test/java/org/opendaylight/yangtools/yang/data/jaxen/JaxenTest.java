@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.data.jaxen.api.XPathExpression;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathNodesetResult;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathResult;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -65,7 +65,8 @@ public class JaxenTest {
 
     @Before
     public void setup() throws XPathExpressionException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/test/documentTest");
+        final EffectiveModelContext schemaContext =
+            YangParserTestUtils.parseYangResourceDirectory("/test/documentTest");
         assertNotNull(schemaContext);
 
         initQNames();
