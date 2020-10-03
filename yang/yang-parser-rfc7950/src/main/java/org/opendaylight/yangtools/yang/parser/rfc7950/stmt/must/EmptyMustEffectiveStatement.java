@@ -16,10 +16,4 @@ final class EmptyMustEffectiveStatement extends DefaultArgument<RevisionAwareXPa
     EmptyMustEffectiveStatement(final MustStatement declared) {
         super(declared);
     }
-
-    // FIXME: 6.0.0: remove this method
-    @Override
-    public String toString() {
-        return argument().getOriginalString();
-    }
 }

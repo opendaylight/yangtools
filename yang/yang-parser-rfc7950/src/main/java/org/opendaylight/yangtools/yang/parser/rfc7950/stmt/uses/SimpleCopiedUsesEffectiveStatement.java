@@ -76,10 +76,4 @@ class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstat
     public Map<Descendant, SchemaNode> getRefines() {
         return ImmutableMap.of();
     }
-
-    @Override
-    // FIXME: 6.0.0: remove this method
-    public final String toString() {
-        return "UsesEffectiveStatementImpl[sourceGrouping=" + sourceGrouping.getQName() + "]";
-    }
 }
