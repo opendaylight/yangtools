@@ -19,10 +19,4 @@ final class RegularMustEffectiveStatement extends WithSubstatements<RevisionAwar
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
     }
-
-    // FIXME: 6.0.0: remove this method
-    @Override
-    public String toString() {
-        return argument().getOriginalString();
-    }
 }
