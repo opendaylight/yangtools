@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class LeafRefContextTreeBuilderTest {
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefContextTreeBuilderTest.class);
 
-    private static SchemaContext context;
+    private static EffectiveModelContext context;
     private static Module tstMod;
     private static QNameModule tst;
     private static LeafRefContext rootLeafRefContext;

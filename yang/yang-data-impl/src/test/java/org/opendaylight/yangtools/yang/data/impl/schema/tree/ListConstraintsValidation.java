@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ListConstraintsValidation {
@@ -70,7 +70,7 @@ public class ListConstraintsValidation {
     private static final YangInstanceIdentifier UNKEYED_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
 
-    private static SchemaContext schemaContext;
+    private static EffectiveModelContext schemaContext;
 
     private DataTree inMemoryDataTree;
 

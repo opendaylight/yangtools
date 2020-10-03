@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
 
@@ -52,7 +52,7 @@ public final class LeafRefContext extends AbstractSchemaContextProvider {
         this.module = leafRefContextBuilder.getLeafRefContextModule();
     }
 
-    public static LeafRefContext create(final SchemaContext ctx) {
+    public static LeafRefContext create(final EffectiveModelContext ctx) {
         try {
             return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
         } catch (LeafRefYangSyntaxErrorException e) {

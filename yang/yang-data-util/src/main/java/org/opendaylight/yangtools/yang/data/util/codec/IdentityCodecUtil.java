@@ -15,9 +15,9 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Utility methods for implementing string-to-identity codecs.
@@ -41,7 +41,7 @@ public final class IdentityCodecUtil {
      * @return Corresponding IdentitySchemaNode.
      * @throws IllegalArgumentException if the value is invalid or does not refer to an existing identity
      */
-    public static IdentitySchemaNode parseIdentity(final String value, final SchemaContext schemaContext,
+    public static IdentitySchemaNode parseIdentity(final String value, final EffectiveModelContext schemaContext,
             final Function<String, QNameModule> prefixToModule) {
         final QName qname = QNameCodecUtil.decodeQName(value, prefixToModule);
         final Optional<Module> optModule = schemaContext.findModule(qname.getModule());

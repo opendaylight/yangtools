@@ -14,14 +14,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInstanceIdentifierCodec {
     private final @NonNull DataSchemaContextTree schemaTree;
     private final RandomPrefix prefixes;
 
-    RandomPrefixInstanceIdentifierSerializer(final @NonNull SchemaContext schemaContext,
-        final NamespaceContext nsContext) {
+    RandomPrefixInstanceIdentifierSerializer(final @NonNull EffectiveModelContext schemaContext,
+            final NamespaceContext nsContext) {
         schemaTree = DataSchemaContextTree.from(schemaContext);
         prefixes = new RandomPrefix(nsContext);
     }

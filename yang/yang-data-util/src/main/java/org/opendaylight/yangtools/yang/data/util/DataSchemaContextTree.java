@@ -14,31 +14,31 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
- * Semantic tree binding a {@link SchemaContext} to a {@link NormalizedNode} tree. Since the layout of the schema
- * and data has differences, the mapping is not trivial -- which is where this class comes in.
+ * Semantic tree binding a {@link EffectiveModelContext} to a {@link NormalizedNode} tree. Since the layout of the
+ * schema and data has differences, the mapping is not trivial -- which is where this class comes in.
  *
  * @author Robert Varga
  */
 // FIXME: 6.0.0: @NonNullByDefault
 public final class DataSchemaContextTree {
-    private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
-            .weakKeys().weakValues().build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
+    private static final LoadingCache<EffectiveModelContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
+            .weakKeys().weakValues().build(new CacheLoader<EffectiveModelContext, DataSchemaContextTree>() {
                 @Override
-                public DataSchemaContextTree load(final SchemaContext key) throws Exception {
+                public DataSchemaContextTree load(final EffectiveModelContext key) {
                     return new DataSchemaContextTree(key);
                 }
             });
 
     private final DataSchemaContextNode<?> root;
 
-    private DataSchemaContextTree(final SchemaContext ctx) {
+    private DataSchemaContextTree(final EffectiveModelContext ctx) {
         root = DataSchemaContextNode.from(ctx);
     }
 
-    public static @NonNull DataSchemaContextTree from(final @NonNull SchemaContext ctx) {
+    public static @NonNull DataSchemaContextTree from(final @NonNull EffectiveModelContext ctx) {
         return TREES.getUnchecked(ctx);
     }
 

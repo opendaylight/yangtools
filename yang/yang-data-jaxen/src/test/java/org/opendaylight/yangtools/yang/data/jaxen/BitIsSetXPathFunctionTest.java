@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BitIsSetXPathFunctionTest {
@@ -54,8 +54,8 @@ public class BitIsSetXPathFunctionTest {
     public void testBitIsSetFunction() throws Exception {
         final Set<String> setOfBits = ImmutableSet.of("UP", "PROMISCUOUS");
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
-                "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            BitIsSetXPathFunctionTest.class, "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -84,8 +84,8 @@ public class BitIsSetXPathFunctionTest {
     public void testInvalidTypeOfCorrespondingSchemaNode() throws Exception {
         final Set<String> setOfBits = ImmutableSet.of("UP", "PROMISCUOUS");
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
-                "/yang-xpath-functions-test/bit-is-set-function/foo-invalid.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            BitIsSetXPathFunctionTest.class, "/yang-xpath-functions-test/bit-is-set-function/foo-invalid.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -110,8 +110,8 @@ public class BitIsSetXPathFunctionTest {
     public void testInvalidNormalizedNodeValueType() throws Exception {
         final String invalidNodeValueType = "value of invalid type";
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
-                "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            BitIsSetXPathFunctionTest.class, "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -137,8 +137,8 @@ public class BitIsSetXPathFunctionTest {
     public void shouldFailOnUnknownBitArgument() throws Exception {
         final Set<String> setOfBits = ImmutableSet.of("UP", "PROMISCUOUS");
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
-                "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            BitIsSetXPathFunctionTest.class, "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);

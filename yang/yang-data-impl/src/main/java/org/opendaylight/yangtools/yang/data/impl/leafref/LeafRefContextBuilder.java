@@ -15,8 +15,8 @@ import java.util.Map;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class LeafRefContextBuilder implements Builder<LeafRefContext> {
@@ -27,7 +27,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
 
     private final QName currentNodeQName;
     private final SchemaPath currentNodePath;
-    private final SchemaContext schemaContext;
+    private final EffectiveModelContext schemaContext;
 
     private LeafRefPath leafRefTargetPath = null;
     private LeafRefPath absoluteLeafRefTargetPath = null;
@@ -37,7 +37,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     private boolean isReferencing = false;
 
     LeafRefContextBuilder(final QName currentNodeQName, final SchemaPath currentNodePath,
-        final SchemaContext schemaContext) {
+            final EffectiveModelContext schemaContext) {
         this.currentNodeQName = requireNonNull(currentNodeQName);
         this.currentNodePath = requireNonNull(currentNodePath);
         // FIXME: requireNonNull
@@ -112,7 +112,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
         return currentNodeQName;
     }
 
-    SchemaContext getSchemaContext() {
+    EffectiveModelContext getSchemaContext() {
         return schemaContext;
     }
 

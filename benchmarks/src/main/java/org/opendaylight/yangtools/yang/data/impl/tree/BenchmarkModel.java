@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.tree;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
@@ -40,7 +40,7 @@ final class BenchmarkModel {
 
     }
 
-    static SchemaContext createTestContext() {
+    static EffectiveModelContext createTestContext() {
         return YangParserTestUtils.parseYangResource("/odl-datastore-test.yang");
     }
 }

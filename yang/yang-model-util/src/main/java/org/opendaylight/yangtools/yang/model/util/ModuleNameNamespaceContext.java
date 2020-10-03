@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableBiMap.Builder;
@@ -18,9 +16,8 @@ import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
  * Utility {@link YangNamespaceContext} backed by a SchemaContext, resolving namespaces to their module names. This
@@ -34,14 +31,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  * @author Robert Varga
  */
 @Beta
-public final class ModuleNameNamespaceContext implements YangNamespaceContext, SchemaContextProvider {
+public final class ModuleNameNamespaceContext extends AbstractSchemaContextProvider implements YangNamespaceContext {
     private static final long serialVersionUID = 1L;
 
-    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Handled through writeReplace()")
-    private final SchemaContext schemaContext;
-
-    public ModuleNameNamespaceContext(final SchemaContext schemaContext) {
-        this.schemaContext = requireNonNull(schemaContext);
+    @SuppressFBWarnings(value = "SE_NO_SUITABLE_CONSTRUCTOR", justification = "Handled through writeReplace()")
+    public ModuleNameNamespaceContext(final EffectiveModelContext schemaContext) {
+        super(schemaContext);
     }
 
     /**
@@ -51,25 +46,20 @@ public final class ModuleNameNamespaceContext implements YangNamespaceContext, S
      */
     public BiMapYangNamespaceContext toBiMap() {
         final Builder<String, QNameModule> builder = ImmutableBiMap.builder();
-        for (String name : schemaContext.getModules().stream().map(Module::getName).collect(Collectors.toSet())) {
+        for (String name : getSchemaContext().getModules().stream().map(Module::getName).collect(Collectors.toSet())) {
             builder.put(name, findNamespaceForPrefix(name).get());
         }
         return new BiMapYangNamespaceContext(builder.build());
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
-        return schemaContext;
-    }
-
-    @Override
     public Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
-        return schemaContext.findModules(prefix).stream().findFirst().map(Module::getQNameModule);
+        return getSchemaContext().findModules(prefix).stream().findFirst().map(Module::getQNameModule);
     }
 
     @Override
     public Optional<String> findPrefixForNamespace(final QNameModule namespace) {
-        return schemaContext.findModule(namespace).map(Module::getName);
+        return getSchemaContext().findModule(namespace).map(Module::getName);
     }
 
     private Object writeReplace() {

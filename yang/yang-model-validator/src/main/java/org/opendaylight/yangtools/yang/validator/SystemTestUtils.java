@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
@@ -60,7 +60,7 @@ final class SystemTestUtils {
         return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
 
-    static SchemaContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
+    static EffectiveModelContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
             final Set<QName> supportedFeatures, final boolean recursiveSearch) throws IOException, YangParserException {
         /*
          * Current dir "." should be always present implicitly in the list of
@@ -87,7 +87,7 @@ final class SystemTestUtils {
         return parseYangSources(supportedFeatures, testFiles, libFiles);
     }
 
-    static SchemaContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
+    static EffectiveModelContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
             final List<File> libFiles) throws IOException, YangParserException {
         checkArgument(!testFiles.isEmpty(), "No yang sources");
 
@@ -103,7 +103,7 @@ final class SystemTestUtils {
             parser.addLibSource(YangTextSchemaSource.forFile(file));
         }
 
-        return parser.buildSchemaContext();
+        return parser.buildEffectiveModel();
     }
 
     private static File findInFiles(final List<File> libFiles, final String yangTestFile) throws IOException {

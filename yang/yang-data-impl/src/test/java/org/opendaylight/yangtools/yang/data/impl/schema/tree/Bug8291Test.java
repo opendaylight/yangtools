@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class Bug8291Test {
     private static final String NS = "foo";
@@ -33,7 +33,8 @@ public class Bug8291Test {
     private static final QName OUTER_LIST = QName.create(NS, "outer-list");
     private static final QName OUTER_LIST_ID = QName.create(NS, "id");
     private static final QName INNER_LIST = QName.create(NS, "inner-list");
-    private SchemaContext schemaContext;
+
+    private EffectiveModelContext schemaContext;
 
     @Before
     public void init() {
@@ -41,7 +42,7 @@ public class Bug8291Test {
         assertNotNull("Schema context must not be null.", this.schemaContext);
     }
 
-    private static DataTree initDataTree(final SchemaContext schemaContext)
+    private static DataTree initDataTree(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
         final DataTreeConfiguration config = new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setRootPath(
                 YangInstanceIdentifier.of(ROOT).node(OUTER_LIST)).build();

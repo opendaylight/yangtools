@@ -18,7 +18,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug7844Test {
@@ -28,7 +28,7 @@ public class Bug7844Test {
 
     @Test
     public void test() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug7844");
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/bug7844");
         assertNotNull(context);
 
         final LeafRefContext leafRefContext = LeafRefContext.create(context);

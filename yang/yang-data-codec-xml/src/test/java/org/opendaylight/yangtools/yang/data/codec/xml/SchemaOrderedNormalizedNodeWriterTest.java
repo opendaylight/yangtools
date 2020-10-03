@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
@@ -92,7 +92,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
 
-        SchemaContext schemaContext = getSchemaContext("/bug1848/foo.yang");
+        EffectiveModelContext schemaContext = getSchemaContext("/bug1848/foo.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext,
@@ -152,7 +152,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     public void testWriteOrder() throws XMLStreamException, IOException, SAXException {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
-        SchemaContext schemaContext = getSchemaContext("/bug1848/order.yang");
+        EffectiveModelContext schemaContext = getSchemaContext("/bug1848/order.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT)) {
@@ -174,7 +174,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
 
-    private static SchemaContext getSchemaContext(final String filePath) {
+    private static EffectiveModelContext getSchemaContext(final String filePath) {
         return YangParserTestUtils.parseYangResource(filePath);
     }
 

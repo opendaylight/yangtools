@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class Bug5830Test {
     private static final String NS = "foo";
@@ -47,7 +47,7 @@ public class Bug5830Test {
     private static final QName PRESENCE_CONTAINER_2 = QName.create(NS, REV, "presence-container-2");
     private static final QName MANDATORY_LEAF_2 = QName.create(NS, REV, "mandatory-leaf-2");
 
-    private static DataTree initDataTree(final SchemaContext schemaContext)
+    private static DataTree initDataTree(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
         DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
@@ -71,7 +71,7 @@ public class Bug5830Test {
     }
 
     private static void testPresenceContainer() throws DataValidationFailedException {
-        final SchemaContext schemaContext = TestModel.createTestContext("/bug5830/foo-presence.yang");
+        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug5830/foo-presence.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
         testContainerIsNotPresent(schemaContext);
@@ -87,7 +87,7 @@ public class Bug5830Test {
     }
 
     private static void testNonPresenceContainer() throws DataValidationFailedException {
-        final SchemaContext schemaContext = TestModel.createTestContext("/bug5830/foo-non-presence.yang");
+        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug5830/foo-non-presence.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
         try {
@@ -111,7 +111,7 @@ public class Bug5830Test {
     }
 
     private static void testMultipleContainers() throws DataValidationFailedException {
-        final SchemaContext schemaContext = TestModel.createTestContext("/bug5830/foo-multiple.yang");
+        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug5830/foo-multiple.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
         testContainerIsNotPresent(schemaContext);
@@ -145,7 +145,7 @@ public class Bug5830Test {
         }
     }
 
-    private static void testContainerIsNotPresent(final SchemaContext schemaContext)
+    private static void testContainerIsNotPresent(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
@@ -164,7 +164,8 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static void testContainerIsPresent(final SchemaContext schemaContext) throws DataValidationFailedException {
+    private static void testContainerIsPresent(final EffectiveModelContext schemaContext)
+            throws DataValidationFailedException {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
@@ -184,7 +185,7 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static void testMandatoryDataLeafIsPresent(final SchemaContext schemaContext)
+    private static void testMandatoryDataLeafIsPresent(final EffectiveModelContext schemaContext)
             throws DataValidationFailedException {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
@@ -205,7 +206,7 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static void testMandatoryLeaf2IsPresent(final SchemaContext schemaContext,
+    private static void testMandatoryLeaf2IsPresent(final EffectiveModelContext schemaContext,
             final boolean withPresenceContianer) throws DataValidationFailedException {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
