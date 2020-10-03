@@ -19,16 +19,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshotCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot,
-        SchemaContextProvider {
+        EffectiveModelContextProvider {
     private final @NonNull RootApplyStrategy applyOper;
-    private final @NonNull SchemaContext schemaContext;
+    private final @NonNull EffectiveModelContext schemaContext;
     private final @NonNull TreeNode rootNode;
 
-    InMemoryDataTreeSnapshot(final SchemaContext schemaContext, final TreeNode rootNode,
+    InMemoryDataTreeSnapshot(final EffectiveModelContext schemaContext, final TreeNode rootNode,
             final RootApplyStrategy applyOper) {
         this.schemaContext = requireNonNull(schemaContext);
         this.rootNode = requireNonNull(rootNode);
@@ -40,7 +40,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
+    public EffectiveModelContext getEffectiveModelContext() {
         return schemaContext;
     }
 

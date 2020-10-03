@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class EnumValueXPathFunctionTest {
@@ -49,8 +49,8 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void testEnumValueFunction() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
-                "/yang-xpath-functions-test/enum-value-function/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            EnumValueXPathFunctionTest.class, "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -73,8 +73,8 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void testInvalidTypeOfCorrespondingSchemaNode() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
-                "/yang-xpath-functions-test/enum-value-function/foo-invalid.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            EnumValueXPathFunctionTest.class, "/yang-xpath-functions-test/enum-value-function/foo-invalid.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -97,8 +97,8 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void testInvalidNormalizedNodeValueType() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
-                "/yang-xpath-functions-test/enum-value-function/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            EnumValueXPathFunctionTest.class, "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
@@ -121,8 +121,8 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void shouldFailOnUnknownEnumNodeValue() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
-                "/yang-xpath-functions-test/enum-value-function/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(
+            EnumValueXPathFunctionTest.class, "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);

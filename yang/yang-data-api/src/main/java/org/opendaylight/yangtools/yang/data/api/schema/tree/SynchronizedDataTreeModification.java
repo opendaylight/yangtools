@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * A {@link DataTreeModification} implementation which delegates all calls to
@@ -66,7 +66,7 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     }
 
     @Override
-    public synchronized SchemaContext getSchemaContext() {
-        return delegate.getSchemaContext();
+    public synchronized EffectiveModelContext getEffectiveModelContext() {
+        return delegate.getEffectiveModelContext();
     }
 }

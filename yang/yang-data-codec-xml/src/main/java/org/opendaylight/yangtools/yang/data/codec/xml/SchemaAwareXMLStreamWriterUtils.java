@@ -15,17 +15,17 @@ import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
-final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements SchemaContextProvider {
-    private final @NonNull SchemaContext schemaContext;
+final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements EffectiveModelContextProvider {
+    private final @NonNull EffectiveModelContext schemaContext;
 
-    SchemaAwareXMLStreamWriterUtils(final SchemaContext schemaContext) {
+    SchemaAwareXMLStreamWriterUtils(final EffectiveModelContext schemaContext) {
         this.schemaContext = requireNonNull(schemaContext);
     }
 
@@ -50,7 +50,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
+    public EffectiveModelContext getEffectiveModelContext() {
         return schemaContext;
     }
 }

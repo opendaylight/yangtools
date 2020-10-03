@@ -14,27 +14,27 @@ import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
  * Base class for implementing identityref codecs on based on module names.
  */
 @Beta
 public abstract class ModuleStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec
-        implements SchemaContextProvider {
-    private final SchemaContext context;
+        implements EffectiveModelContextProvider {
+    private final EffectiveModelContext context;
     private final QNameModule parentModule;
 
-    protected ModuleStringIdentityrefCodec(final @NonNull SchemaContext context,
+    protected ModuleStringIdentityrefCodec(final @NonNull EffectiveModelContext context,
             final @NonNull QNameModule parentModule) {
         this.context = requireNonNull(context);
         this.parentModule = requireNonNull(parentModule);
     }
 
     @Override
-    public final SchemaContext getSchemaContext() {
+    public final EffectiveModelContext getEffectiveModelContext() {
         return context;
     }
 

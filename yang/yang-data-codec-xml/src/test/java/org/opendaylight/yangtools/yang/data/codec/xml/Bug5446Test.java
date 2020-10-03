@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -55,7 +55,7 @@ public class Bug5446Test extends XMLTestCase {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug5446/yang/foo.yang");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug5446/yang/foo.yang");
         final Document doc = loadDocument("/bug5446/xml/foo.xml");
 
         final ContainerNode docNode = createDocNode();
@@ -94,7 +94,7 @@ public class Bug5446Test extends XMLTestCase {
                 .build();
     }
 
-    private static DOMResult writeNormalizedNode(final ContainerNode normalized, final SchemaContext context)
+    private static DOMResult writeNormalizedNode(final ContainerNode normalized, final EffectiveModelContext context)
             throws IOException, XMLStreamException {
         final Document doc = UntrustedXML.newDocumentBuilder().newDocument();
         final DOMResult result = new DOMResult(doc);

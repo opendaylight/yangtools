@@ -33,7 +33,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
@@ -268,31 +267,6 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         } while (version == ver);
 
         return sc;
-    }
-
-    /**
-     * Try to parse all currently available yang files and build new schema context.
-     *
-     * @return new schema context iif there is at least 1 yang file registered and new schema context was successfully
-     *         built.
-     * @deprecated Use {@link #getEffectiveModelContext()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public Optional<? extends SchemaContext> getSchemaContext() {
-        return getEffectiveModelContext();
-    }
-
-    /**
-     * Try to parse all currently available yang files and build new schema context depending on specified parsing mode.
-     *
-     * @param statementParserMode mode of statement parser
-     * @return new schema context iif there is at least 1 yang file registered and
-     *         new schema context was successfully built.
-     * @deprecated Use {@link #getEffectiveModelContext(StatementParserMode)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public Optional<? extends SchemaContext> getSchemaContext(final StatementParserMode statementParserMode) {
-        return getEffectiveModelContext(statementParserMode);
     }
 
     @Override

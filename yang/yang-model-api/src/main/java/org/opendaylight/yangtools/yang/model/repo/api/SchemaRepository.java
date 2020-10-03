@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
  * Interface exposed by repository implementations. A schema repository is a logically centralized place for model
- * storage and creation of {@link SchemaContext} instances.
+ * storage and creation of {@link EffectiveModelContext} instances.
  */
 @Beta
 public interface SchemaRepository {
     /**
-     * Returns {@link SchemaContextFactory} with supplied configuration.
+     * Returns {@link EffectiveModelContextFactory} with supplied configuration.
      *
      * @param config configuration of schema context factory.
      * @return schema context factory.
@@ -28,7 +28,7 @@ public interface SchemaRepository {
             @NonNull SchemaContextFactoryConfiguration config);
 
     /**
-     * Returns {@link SchemaContextFactory} with {@link SchemaContextFactoryConfiguration#getDefault()}.
+     * Returns {@link EffectiveModelContextFactory} with {@link SchemaContextFactoryConfiguration#getDefault()}.
      *
      * @return schema context factory.
      */

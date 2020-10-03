@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT892Test {
@@ -67,7 +67,7 @@ public class YT892Test {
 
     @Before
     public void setup() {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt892");
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt892");
         leafRefContext = LeafRefContext.create(schemaContext);
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
