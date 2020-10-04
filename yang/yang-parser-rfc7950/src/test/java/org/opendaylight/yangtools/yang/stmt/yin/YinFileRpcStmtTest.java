@@ -13,8 +13,9 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
@@ -43,11 +44,11 @@ public class YinFileRpcStmtTest extends AbstractYinModulesTest {
                 + "<error-tag> is 'operation-failed', and <error-app-tag> is\n"
                 + "'data-not-unique'."), rpc.getDescription());
 
-        ContainerSchemaNode input = rpc.getInput();
+        InputSchemaNode input = rpc.getInput();
         assertNotNull(input);
         assertEquals(3, input.getChildNodes().size());
 
-        ContainerSchemaNode output = rpc.getOutput();
+        OutputSchemaNode output = rpc.getOutput();
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
     }
