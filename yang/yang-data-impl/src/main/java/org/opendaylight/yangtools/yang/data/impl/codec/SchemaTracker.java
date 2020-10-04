@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
@@ -201,9 +201,7 @@ public final class SchemaTracker {
     public SchemaNode startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
         final SchemaNode schema = getSchema(name);
-
-        boolean isAllowed = schema instanceof ContainerSchemaNode;
-        isAllowed |= schema instanceof NotificationDefinition;
+        final boolean isAllowed = schema instanceof ContainerLike | schema instanceof NotificationDefinition;
 
         checkArgument(isAllowed, "Node %s is not a container nor a notification", schema);
         schemaStack.push(schema);

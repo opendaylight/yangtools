@@ -8,12 +8,10 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 final class ContainerContextNode extends DataContainerContextNode<NodeIdentifier> {
-
-    protected ContainerContextNode(final ContainerSchemaNode schema) {
+    protected ContainerContextNode(final ContainerLike schema) {
         super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
-
 }

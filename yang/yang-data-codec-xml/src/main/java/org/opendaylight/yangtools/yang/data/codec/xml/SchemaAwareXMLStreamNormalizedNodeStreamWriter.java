@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -89,7 +89,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             if (parent == schema) {
                 endElement();
             }
-        } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode
+        } else if (schema instanceof ContainerLike || schema instanceof LeafSchemaNode
                 || schema instanceof AnydataSchemaNode || schema instanceof AnyxmlSchemaNode) {
             endElement();
         }
