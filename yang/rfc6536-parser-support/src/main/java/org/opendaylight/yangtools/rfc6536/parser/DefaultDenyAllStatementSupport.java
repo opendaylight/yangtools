@@ -55,6 +55,11 @@ public final class DefaultDenyAllStatementSupport
         public SchemaPath getPath() {
             return path;
         }
+
+        @Override
+        public DefaultDenyAllEffectiveStatement asEffectiveStatement() {
+            return this;
+        }
     }
 
     private static final DefaultDenyAllStatementSupport INSTANCE =

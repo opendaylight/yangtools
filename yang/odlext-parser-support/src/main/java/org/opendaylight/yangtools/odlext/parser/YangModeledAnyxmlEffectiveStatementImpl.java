@@ -115,6 +115,11 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     }
 
     @Override
+    public AnyxmlEffectiveStatement asEffectiveStatement() {
+        return delegateSchemaNode().asEffectiveStatement();
+    }
+
+    @Override
     public String toString() {
         return YangModeledAnyxmlEffectiveStatementImpl.class.getSimpleName() + "["
                + "qname=" + getQName()

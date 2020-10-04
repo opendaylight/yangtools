@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YangModeledAnyXMLDeserializationTest {
@@ -229,6 +230,11 @@ public class YangModeledAnyXMLDeserializationTest {
         @Override
         public Optional<RevisionAwareXPath> getWhenCondition() {
             return Optional.empty();
+        }
+
+        @Override
+        public AnyxmlEffectiveStatement asEffectiveStatement() {
+            throw new UnsupportedOperationException();
         }
     }
 }

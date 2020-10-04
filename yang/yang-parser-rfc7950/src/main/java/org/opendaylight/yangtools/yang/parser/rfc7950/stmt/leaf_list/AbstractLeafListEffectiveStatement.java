@@ -83,6 +83,11 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
+    public final LeafListEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public final String toString() {
         return getClass().getSimpleName() + "[" + getQName() + "]";
     }

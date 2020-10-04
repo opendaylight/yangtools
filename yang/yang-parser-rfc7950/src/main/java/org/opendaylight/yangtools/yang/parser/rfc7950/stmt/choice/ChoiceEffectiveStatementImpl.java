@@ -87,6 +87,11 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
+    public ChoiceEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }

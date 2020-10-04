@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
@@ -17,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  * from a grouping in a "uses" statement.
  */
 public interface AugmentationSchemaNode extends DataNodeContainer, NotificationNodeContainer, ActionNodeContainer,
-        WhenConditionAware, WithStatus {
+        WhenConditionAware, WithStatus, EffectiveStatementEquivalent<AugmentEffectiveStatement> {
     /**
      * Returns augmentation schema path.
      *

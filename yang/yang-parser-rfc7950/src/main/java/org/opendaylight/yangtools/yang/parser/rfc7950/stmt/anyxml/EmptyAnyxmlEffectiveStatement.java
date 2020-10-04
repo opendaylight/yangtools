@@ -52,6 +52,11 @@ class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
     }
 
     @Override
+    public final AnyxmlEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("qname", getQName()).add("path", getPath()).toString();
     }

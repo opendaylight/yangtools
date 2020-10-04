@@ -41,8 +41,14 @@ final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Ui
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public SubIdEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

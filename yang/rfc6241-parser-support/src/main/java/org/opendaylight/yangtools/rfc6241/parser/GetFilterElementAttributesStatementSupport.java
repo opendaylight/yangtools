@@ -63,6 +63,11 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
         public SchemaPath getPath() {
             return path;
         }
+
+        @Override
+        public GetFilterElementAttributesEffectiveStatement asEffectiveStatement() {
+            return this;
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);

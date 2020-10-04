@@ -87,6 +87,11 @@ public final class AnnotationStatementSupport
         public TypeDefinition<?> getTypeDefinition() {
             return type;
         }
+
+        @Override
+        public AnnotationEffectiveStatement asEffectiveStatement() {
+            return this;
+        }
     }
 
     private static final AnnotationStatementSupport INSTANCE = new AnnotationStatementSupport(
