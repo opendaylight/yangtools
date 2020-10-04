@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
@@ -38,7 +39,7 @@ public class Bug7480Test {
         assertTrue(context.findModule(new URI("baz-imp"), Revision.of("2002-01-01")).isPresent());
         final Collection<? extends Module> foo = context.findModules(new URI("foo"));
         assertEquals(1, foo.size());
-        final Collection<? extends Module> subFoos = foo.iterator().next().getSubmodules();
+        final Collection<? extends Submodule> subFoos = foo.iterator().next().getSubmodules();
         assertEquals(1, subFoos.size());
 
         final Module parentMod = context.findModule(new URI("parent-mod-ns"), Revision.of("2017-09-07")).get();

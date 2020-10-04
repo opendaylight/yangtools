@@ -34,8 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -65,7 +65,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>,
         E extends DataTreeAwareEffectiveStatement<String, D>> extends WithSubstatements<String, D, E>
-        implements Module, DocumentedNodeMixin<String, D>, NotificationNodeContainerCompat<String, D, E> {
+        implements ModuleLike, DocumentedNodeMixin<String, D>, NotificationNodeContainerCompat<String, D, E> {
     private final String prefix;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
