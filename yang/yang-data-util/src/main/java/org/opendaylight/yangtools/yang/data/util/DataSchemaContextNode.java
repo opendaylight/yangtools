@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -161,8 +161,8 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     }
 
     public static @Nullable DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
-        if (potential instanceof ContainerSchemaNode) {
-            return new ContainerContextNode((ContainerSchemaNode) potential);
+        if (potential instanceof ContainerLike) {
+            return new ContainerContextNode((ContainerLike) potential);
         } else if (potential instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) potential);
         } else if (potential instanceof LeafSchemaNode) {

@@ -19,14 +19,17 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -62,7 +65,7 @@ public final class SchemaNodeUtils {
      * @param qname input or output QName with namespace same as RPC
      * @return input or output schema. Returns null if RPC does not have input/output specified.
      */
-    public static @Nullable ContainerSchemaNode getRpcDataSchema(final @NonNull RpcDefinition rpc,
+    public static @Nullable ContainerLike getRpcDataSchema(final @NonNull RpcDefinition rpc,
             final @NonNull QName qname) {
         requireNonNull(rpc, "Rpc Schema must not be null");
         switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
@@ -149,11 +152,11 @@ public final class SchemaNodeUtils {
 
         for (RpcDefinition rpcDefinition : module.getRpcs()) {
             aggregator.addTypedefs(rpcDefinition.getTypeDefinitions());
-            ContainerSchemaNode input = rpcDefinition.getInput();
+            InputSchemaNode input = rpcDefinition.getInput();
             if (input != null) {
                 traverse(aggregator, input);
             }
-            ContainerSchemaNode output = rpcDefinition.getOutput();
+            OutputSchemaNode output = rpcDefinition.getOutput();
             if (output != null) {
                 traverse(aggregator, output);
             }

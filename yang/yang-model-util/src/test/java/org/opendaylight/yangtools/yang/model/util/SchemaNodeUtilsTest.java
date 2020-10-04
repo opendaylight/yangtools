@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -138,7 +139,7 @@ public class SchemaNodeUtilsTest {
 
     private static <T extends OperationDefinition> T mockOperationDefinition(final T mock) {
         doReturn(Collections.emptySet()).when(mock).getTypeDefinitions();
-        doReturn(mockDataNodeContainer(ContainerSchemaNode.class)).when(mock).getOutput();
+        doReturn(mockDataNodeContainer(InputSchemaNode.class)).when(mock).getOutput();
         return mock;
     }
 }

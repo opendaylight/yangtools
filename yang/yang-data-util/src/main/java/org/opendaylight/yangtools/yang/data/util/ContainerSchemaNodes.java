@@ -19,11 +19,13 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -44,26 +46,20 @@ public final class ContainerSchemaNodes {
     }
 
     @Beta
-    public static ContainerSchemaNode forNotification(final NotificationDefinition notification) {
+    public static ContainerLike forNotification(final NotificationDefinition notification) {
         return new NotificationContainerSchemaNode(notification);
     }
 
     @Beta
-    public static ContainerSchemaNode forRPC(final RpcDefinition rpc) {
+    public static ContainerLike forRPC(final RpcDefinition rpc) {
         return new RpcContainerSchemaNode(rpc);
     }
 
-    private abstract static class AbstractContainerSchemaNode implements ContainerSchemaNode {
-
+    private abstract static class AbstractContainerSchemaNode implements ContainerLike {
         private final SchemaNode schemaNode;
 
         private AbstractContainerSchemaNode(final SchemaNode schemaNode) {
             this.schemaNode = schemaNode;
-        }
-
-        @Override
-        public boolean isPresenceContainer() {
-            return false;
         }
 
         @Override
@@ -144,8 +140,8 @@ public final class ContainerSchemaNodes {
 
         @Override
         public Collection<? extends DataSchemaNode> getChildNodes() {
-            final ContainerSchemaNode input = rpcDefinition.getInput();
-            final ContainerSchemaNode output = rpcDefinition.getOutput();
+            final InputSchemaNode input = rpcDefinition.getInput();
+            final OutputSchemaNode output = rpcDefinition.getOutput();
             if (input == null && output == null) {
                 return ImmutableList.of();
             } else if (input != null && output != null) {

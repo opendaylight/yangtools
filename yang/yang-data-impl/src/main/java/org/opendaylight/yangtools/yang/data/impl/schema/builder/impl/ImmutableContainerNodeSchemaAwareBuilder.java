@@ -13,30 +13,28 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableContainerNodeBuilder {
     private final DataNodeContainerValidator validator;
 
-    private ImmutableContainerNodeSchemaAwareBuilder(final ContainerSchemaNode schema) {
+    private ImmutableContainerNodeSchemaAwareBuilder(final ContainerLike schema) {
         this.validator = new DataNodeContainerValidator(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    private ImmutableContainerNodeSchemaAwareBuilder(final ContainerSchemaNode schema,
-            final ImmutableContainerNode node) {
+    private ImmutableContainerNodeSchemaAwareBuilder(final ContainerLike schema, final ImmutableContainerNode node) {
         super(node);
         this.validator = new DataNodeContainerValidator(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(
-            final ContainerSchemaNode schema) {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerLike schema) {
         return new ImmutableContainerNodeSchemaAwareBuilder(schema);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(
-            final ContainerSchemaNode schema, final ContainerNode node) {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerLike schema,
+            final ContainerNode node) {
         if (!(node instanceof ImmutableContainerNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
