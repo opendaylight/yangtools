@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 public class Bug9005Test {
     @Test
@@ -32,9 +33,9 @@ public class Bug9005Test {
         assertEquals("bar", imp1.getPrefix());
         assertEquals(Revision.ofNullable("2000-01-02"), imp1.getRevision());
 
-        final Collection<? extends Module> submodules = foo.getSubmodules();
+        final Collection<? extends Submodule> submodules = foo.getSubmodules();
         assertEquals(1, submodules.size());
-        final Module submodule = submodules.iterator().next();
+        final Submodule submodule = submodules.iterator().next();
         final Collection<? extends ModuleImport> subImports = submodule.getImports();
 
         assertEquals(1, subImports.size());

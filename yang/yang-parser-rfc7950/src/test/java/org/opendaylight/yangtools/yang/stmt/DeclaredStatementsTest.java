@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
@@ -245,11 +246,11 @@ public class DeclaredStatementsTest {
         final IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
         assertEquals("child-module-declared-test", includeStatement.getModule());
 
-        final Collection<? extends Module> submodules = testModule.getSubmodules();
+        final Collection<? extends Submodule> submodules = testModule.getSubmodules();
         assertNotNull(submodules);
         assertEquals(1, submodules.size());
 
-        final Module submodule = submodules.iterator().next();
+        final Submodule submodule = submodules.iterator().next();
         final SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatement) submodule).getDeclared();
 
         final String submoduleStatementName = submoduleStatement.getName();

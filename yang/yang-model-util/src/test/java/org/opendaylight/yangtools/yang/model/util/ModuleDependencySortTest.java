@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleDependencySortTest {
@@ -40,7 +41,7 @@ public class ModuleDependencySortTest {
     private Module bar;
 
     @Mock
-    private Module barSubmodule;
+    private Submodule barSubmodule;
 
     @Before
     public void before() {

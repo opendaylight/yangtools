@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -102,7 +103,7 @@ public class IncludedStmtsTest {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        final Module subModule = testModule.getSubmodules().iterator().next();
+        final Submodule subModule = testModule.getSubmodules().iterator().next();
         assertEquals("urn:opendaylight.org/root-module", subModule.getNamespace().toString());
     }
 }

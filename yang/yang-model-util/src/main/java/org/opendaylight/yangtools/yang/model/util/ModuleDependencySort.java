@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +145,7 @@ public final class ModuleDependencySort {
 
         final Collection<ModuleImport> concat = new LinkedHashSet<>();
         concat.addAll(mod.getImports());
-        for (Module sub : mod.getSubmodules()) {
+        for (Submodule sub : mod.getSubmodules()) {
             concat.addAll(sub.getImports());
         }
         return concat;
