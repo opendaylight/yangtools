@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -83,9 +85,9 @@ public final class StmtTestUtils {
         }
     }
 
-    public static void printReferences(final Module module, final boolean isSubmodule, final String indent) {
+    public static void printReferences(final ModuleLike module, final boolean isSubmodule, final String indent) {
         LOG.debug("{}{} {}", indent, isSubmodule ? "Submodule" : "Module", module.getName());
-        for (final Module submodule : module.getSubmodules()) {
+        for (final Submodule submodule : module.getSubmodules()) {
             printReferences(submodule, true, indent + "      ");
             printChilds(submodule.getChildNodes(), indent + "            ");
         }

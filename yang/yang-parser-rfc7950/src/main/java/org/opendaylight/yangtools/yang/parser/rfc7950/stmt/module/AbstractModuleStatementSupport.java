@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -170,11 +170,11 @@ abstract class AbstractModuleStatementSupport
     protected final ModuleEffectiveStatement createEffective(
             final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx,
             final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final List<Module> submodules = new ArrayList<>();
+        final List<Submodule> submodules = new ArrayList<>();
         for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(ctx)) {
             final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
-            verify(submodule instanceof Module, "Submodule statement %s is not a Module", submodule);
-            submodules.add((Module) submodule);
+            verify(submodule instanceof Submodule, "Submodule statement %s is not a Submodule", submodule);
+            submodules.add((Submodule) submodule);
         }
 
         return new ModuleEffectiveStatementImpl(ctx, declared, substatements, submodules);

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 public class Bug3799Test {
 
@@ -31,11 +32,11 @@ public class Bug3799Test {
         assertEquals(1, modules.size());
 
         Module testModule = modules.iterator().next();
-        Collection<? extends Module> subModules = testModule.getSubmodules();
+        Collection<? extends Submodule> subModules = testModule.getSubmodules();
         assertNotNull(subModules);
         assertEquals(1, subModules.size());
 
-        Module testSubmodule = subModules.iterator().next();
+        Submodule testSubmodule = subModules.iterator().next();
 
         Collection<? extends NotificationDefinition> notifications = testSubmodule.getNotifications();
         assertNotNull(notifications);
