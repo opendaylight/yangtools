@@ -31,11 +31,13 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
@@ -103,9 +105,9 @@ public class DeviationResolutionTest {
         assertEquals("c2", myChoice.getDefaultCase().get().getQName().getLocalName());
 
         final RpcDefinition myRpc = barModule.getRpcs().iterator().next();
-        final ContainerSchemaNode input = myRpc.getInput();
+        final InputSchemaNode input = myRpc.getInput();
         assertEquals(2, input.getMustConstraints().size());
-        final ContainerSchemaNode output = myRpc.getOutput();
+        final OutputSchemaNode output = myRpc.getOutput();
         assertEquals(2, output.getMustConstraints().size());
 
         final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();

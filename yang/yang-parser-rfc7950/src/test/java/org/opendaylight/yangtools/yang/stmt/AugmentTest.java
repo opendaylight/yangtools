@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -344,7 +345,7 @@ public class AugmentTest {
 
         final QName submitQName = QName.create(NS_BAR, revision, "submit");
         assertEquals(submitQName, submit.getQName());
-        final ContainerSchemaNode input = submit.getInput();
+        final InputSchemaNode input = submit.getInput();
         final QName inputQName = QName.create(NS_BAR, revision, "input");
         assertEquals(inputQName, input.getQName());
         final ChoiceSchemaNode arguments = (ChoiceSchemaNode) input.getDataChildByName(QName.create(NS_BAR, revision,

@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+
 /**
- * The ContainerSchemaNode is used to define an interior data node in the schema
- * tree. There are two styles of containers, those that exist only for
- * organizing the hierarchy of data nodes, and those whose presence in the
+ * The ContainerSchemaNode is used to define an interior data node in the schema tree. There are two styles of
+ * containers, those that exist only for organizing the hierarchy of data nodes, and those whose presence in the
  * configuration has an explicit meaning.
  */
-// FIXME: YANGTOOLS-1119: We need to specialize this interface for Container use and have others for Input/Output and
-//                        other misuses.
-public interface ContainerSchemaNode extends DataNodeContainer,
-        AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer, MustConstraintAware {
+public interface ContainerSchemaNode extends ContainerLike, EffectiveStatementEquivalent<ContainerEffectiveStatement> {
     /**
      * Returns true if this container is marked as presence.
      *
@@ -24,5 +22,4 @@ public interface ContainerSchemaNode extends DataNodeContainer,
      *         false otherwise
      */
     boolean isPresenceContainer();
-
 }
