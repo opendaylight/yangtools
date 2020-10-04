@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Contains the methods for getting the details about the unknown node.
  */
-public interface UnknownSchemaNode extends SchemaNode, AddedByUsesAware {
+public interface UnknownSchemaNode extends SchemaNode, CopyableNode {
     /**
      * Returns QName instance with the name of the unknown node.
      *
@@ -26,21 +26,6 @@ public interface UnknownSchemaNode extends SchemaNode, AddedByUsesAware {
      * @return string with the name of unknown node.
      */
     String getNodeParameter();
-
-    /**
-     * Describes whether the node was added through <code>augment</code> YANG
-     * statement.
-     *
-     * @return boolean value which is <code>true</code> if the node is added by
-     *         <code>augment</code> YANG statement
-     *
-     * @deprecated This method exposes mechanism of how this node was instantiated. This runs contrary to the idea
-     *             that a SchemaNode is part of the effective model of the world. Examining a node's DeclaredStatement
-     *             world should be sufficient to ascertain its origin.
-     */
-    @Deprecated
-    // FIXME: 6.0.0: rename this to isAugmenting(), unifying this interface with CopyableNode
-    boolean isAddedByAugmentation();
 
     /**
      * Get extension definition which identifies this node.
