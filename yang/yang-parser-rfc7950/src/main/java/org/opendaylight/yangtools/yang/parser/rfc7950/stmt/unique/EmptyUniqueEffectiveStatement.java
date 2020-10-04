@@ -7,24 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
 class EmptyUniqueEffectiveStatement extends DefaultArgument<Set<Descendant>, UniqueStatement>
-        implements UniqueEffectiveStatement, UniqueConstraint {
+        implements UniqueEffectiveStatement {
     EmptyUniqueEffectiveStatement(final UniqueStatement declared) {
         super(declared);
-    }
-
-    @Override
-    public final Set<Descendant> getTag() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
     }
 }

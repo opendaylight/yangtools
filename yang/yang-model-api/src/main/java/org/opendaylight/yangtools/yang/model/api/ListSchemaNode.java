@@ -12,6 +12,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 
 /**
  * Interface describing YANG 'list' statement.
@@ -43,5 +44,5 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      *
      * @return Collection of unique constraints of this list schema node
      */
-    @NonNull Collection<? extends UniqueConstraint> getUniqueConstraints();
+    @NonNull Collection<? extends UniqueEffectiveStatement> getUniqueConstraints();
 }

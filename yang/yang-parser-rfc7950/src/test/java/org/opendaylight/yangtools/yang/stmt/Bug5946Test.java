@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug5946Test {
@@ -45,25 +45,27 @@ public class Bug5946Test {
                 .getResource("/bugs/bug5946/foo.yang").toURI()));
         assertNotNull(context);
 
-        Collection<? extends UniqueConstraint> uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
+        Collection<? extends UniqueEffectiveStatement> uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
         assertNotNull(uniqueConstraints);
         assertTrue(uniqueConstraints.isEmpty());
 
-        Collection<? extends UniqueConstraint> simpleUniqueConstraints = getListConstraints(context, SIMPLE_UNIQUE);
+        Collection<? extends UniqueEffectiveStatement> simpleUniqueConstraints =
+            getListConstraints(context, SIMPLE_UNIQUE);
         assertNotNull(simpleUniqueConstraints);
         assertEquals(1, simpleUniqueConstraints.size());
-        Collection<Descendant> simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().getTag();
+        Collection<Descendant> simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().argument();
         assertTrue(simpleUniqueConstraintTag.contains(L1_ID));
         assertTrue(simpleUniqueConstraintTag.contains(C_L3_ID));
 
-        Collection<? extends UniqueConstraint> multipleUniqueConstraints = getListConstraints(context, MULTIPLE_UNIQUE);
+        Collection<? extends UniqueEffectiveStatement> multipleUniqueConstraints =
+            getListConstraints(context, MULTIPLE_UNIQUE);
         assertNotNull(multipleUniqueConstraints);
         assertEquals(3, multipleUniqueConstraints.size());
         boolean l1l2 = false;
         boolean l1cl3 = false;
         boolean cl3l2 = false;
-        for (UniqueConstraint uniqueConstraint : multipleUniqueConstraints) {
-            Collection<Descendant> uniqueConstraintTag = uniqueConstraint.getTag();
+        for (UniqueEffectiveStatement uniqueConstraint : multipleUniqueConstraints) {
+            Collection<Descendant> uniqueConstraintTag = uniqueConstraint.argument();
             if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(L2_ID)) {
                 l1l2 = true;
             } else if (uniqueConstraintTag.contains(L1_ID) && uniqueConstraintTag.contains(C_L3_ID)) {
@@ -87,8 +89,8 @@ public class Bug5946Test {
         }
     }
 
-    private static @NonNull Collection<? extends UniqueConstraint> getListConstraints(final SchemaContext context,
-            final QName listQName) {
+    private static @NonNull Collection<? extends UniqueEffectiveStatement> getListConstraints(
+            final SchemaContext context, final QName listQName) {
         DataSchemaNode dataChildByName = context.getDataChildByName(listQName);
         assertTrue(dataChildByName instanceof ListSchemaNode);
         return ((ListSchemaNode) dataChildByName).getUniqueConstraints();
