@@ -37,7 +37,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private final ImmutableMap<QNameModule, Module> moduleMap;
@@ -175,7 +177,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     //check for any dependency regarding given string
-    private boolean checkModuleDependency(final Module module, final Collection<ModuleId> rootModules) {
+    private boolean checkModuleDependency(final ModuleLike module, final Collection<ModuleId> rootModules) {
         for (ModuleId rootModule : rootModules) {
             if (rootModule.equals(new ModuleId(module.getName(), module.getRevision()))) {
                 return true;
@@ -190,7 +192,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             }
 
             //submodules handling
-            for (Module moduleSub : module.getSubmodules()) {
+            for (Submodule moduleSub : module.getSubmodules()) {
                 return checkModuleDependency(moduleSub, rootModules);
             }
         }
