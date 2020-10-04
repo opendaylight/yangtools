@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,7 +25,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -45,13 +46,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class SubmoduleEffectiveStatementImpl
         extends AbstractEffectiveModule<SubmoduleStatement, SubmoduleEffectiveStatement>
-        implements SubmoduleEffectiveStatement, MutableStatement {
+        implements Submodule, SubmoduleEffectiveStatement, MutableStatement {
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final QNameModule qnameModule;
 
     private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContexts;
-    private ImmutableSet<Module> submodules;
+    private ImmutableSet<Submodule> submodules;
     private boolean sealed;
 
     SubmoduleEffectiveStatementImpl(final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
@@ -123,17 +124,22 @@ final class SubmoduleEffectiveStatementImpl
     }
 
     @Override
-    public Set<Module> getSubmodules() {
+    public Collection<? extends Submodule> getSubmodules() {
         checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
             qnameModule);
         return submodules;
     }
 
     @Override
+    public SubmoduleEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public void seal() {
         if (!sealed) {
             submodules = ImmutableSet.copyOf(Iterables.transform(submoduleContexts,
-                ctx -> (Module) ctx.buildEffective()));
+                ctx -> (Submodule) ctx.buildEffective()));
             submoduleContexts = ImmutableSet.of();
             sealed = true;
         }

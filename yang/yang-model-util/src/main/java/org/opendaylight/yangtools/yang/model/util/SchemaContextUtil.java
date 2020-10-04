@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
@@ -55,6 +56,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -362,7 +364,7 @@ public final class SchemaContextUtil {
         for (Module module : context.getModules()) {
             ret.add(moduleToIdentifier(module));
 
-            for (Module submodule : module.getSubmodules()) {
+            for (Submodule submodule : module.getSubmodules()) {
                 ret.add(moduleToIdentifier(submodule));
             }
         }
@@ -370,7 +372,7 @@ public final class SchemaContextUtil {
         return ret;
     }
 
-    private static SourceIdentifier moduleToIdentifier(final Module module) {
+    private static SourceIdentifier moduleToIdentifier(final ModuleLike module) {
         return RevisionSourceIdentifier.create(module.getName(), module.getRevision());
     }
 

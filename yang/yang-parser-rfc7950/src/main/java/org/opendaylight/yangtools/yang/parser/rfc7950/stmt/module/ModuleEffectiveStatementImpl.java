@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
@@ -45,7 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
-        implements ModuleEffectiveStatement {
+        implements Module, ModuleEffectiveStatement {
     private final ImmutableMap<String, SubmoduleEffectiveStatement> nameToSubmodule;
     private final ImmutableMap<QName, ExtensionEffectiveStatement> qnameToExtension;
     private final ImmutableMap<QName, FeatureEffectiveStatement> qnameToFeature;
@@ -53,11 +54,11 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
-    private final ImmutableList<Module> submodules;
+    private final ImmutableList<Submodule> submodules;
 
     ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx,
             final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Collection<? extends Module> submodules) {
+            final Collection<? extends Submodule> submodules) {
         super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.getStatementArgument()));
 
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
@@ -107,8 +108,13 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
-    public Collection<? extends Module> getSubmodules() {
+    public Collection<? extends Submodule> getSubmodules() {
         return submodules;
+    }
+
+    @Override
+    public ModuleEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

@@ -33,9 +33,11 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -336,7 +338,7 @@ public class SchemaContextProxyTest {
         Module module2 = mockModule(MODULE2_NAME);
         Module module3 = mockModule(MODULE3_NAME);
         Module module4 = mockModule(MODULE4_NAME);
-        Module module41 = mockModule(MODULE41_NAME);
+        Submodule module41 = mockSubmodule(MODULE41_NAME);
 
         mockSubmodules(module4, module41);
         mockModuleImport(module2, moduleConfig, module3);
@@ -584,14 +586,14 @@ public class SchemaContextProxyTest {
         return moduleIds;
     }
 
-    private static void mockSubmodules(final Module mainModule, final Module... submodules) {
-        Set<Module> submodulesSet = new HashSet<>();
+    private static void mockSubmodules(final Module mainModule, final Submodule... submodules) {
+        Set<Submodule> submodulesSet = new HashSet<>();
         submodulesSet.addAll(Arrays.asList(submodules));
 
         doReturn(submodulesSet).when(mainModule).getSubmodules();
     }
 
-    private static void mockModuleImport(final Module importer, final Module... imports) {
+    private static void mockModuleImport(final ModuleLike importer, final Module... imports) {
         Set<ModuleImport> mockedImports = new HashSet<>();
         for (final Module module : imports) {
             mockedImports.add(new ModuleImport() {
@@ -653,8 +655,18 @@ public class SchemaContextProxyTest {
 
     //mock module with default revision
     private static Module mockModule(final String name) {
-
         Module mockedModule = mock(Module.class);
+        mockModuleLike(mockedModule, name);
+        return mockedModule;
+    }
+
+    private static Submodule mockSubmodule(final String name) {
+        Submodule mockedModule = mock(Submodule.class);
+        mockModuleLike(mockedModule, name);
+        return mockedModule;
+    }
+
+    private static void mockModuleLike(final ModuleLike mockedModule, final String name) {
         doReturn(name).when(mockedModule).getName();
         doReturn(Optional.of(REVISION)).when(mockedModule).getRevision();
         final URI newNamespace = URI.create(NAMESPACE.toString() + ":" + name);
@@ -663,7 +675,5 @@ public class SchemaContextProxyTest {
         doReturn(new HashSet<>()).when(mockedModule).getSubmodules();
         doReturn(mockedModule.getQNameModule().toString()).when(mockedModule).toString();
         mockModuleImport(mockedModule);
-
-        return mockedModule;
     }
 }

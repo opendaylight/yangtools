@@ -16,6 +16,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -33,7 +34,7 @@ final class ContextHolder implements Immutable, ModuleResourceResolver {
     }
 
     @Override
-    public Optional<String> findModuleResourcePath(final Module module,
+    public Optional<String> findModuleResourcePath(final ModuleLike module,
             final Class<? extends SchemaSourceRepresentation> representation) {
         checkArgument(YangTextSchemaSource.class.equals(requireNonNull(representation)),
             "Unsupported representation %s", representation);

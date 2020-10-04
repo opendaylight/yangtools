@@ -24,7 +24,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.slf4j.Logger;
@@ -144,7 +144,7 @@ final class Util {
         return element.isFile() && element.getName().endsWith(".jar");
     }
 
-    static SourceIdentifier moduleToIdentifier(final Module module) {
+    static SourceIdentifier moduleToIdentifier(final ModuleLike module) {
         return RevisionSourceIdentifier.create(module.getName(), module.getRevision());
     }
 }

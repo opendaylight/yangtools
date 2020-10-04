@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -74,7 +75,7 @@ final class ProcessorModuleReactor {
                 LOG.debug("Module {} belongs to current project", module);
                 modules.add(module);
 
-                for (Module sub : module.getSubmodules()) {
+                for (Submodule sub : module.getSubmodules()) {
                     final SourceIdentifier subId = Util.moduleToIdentifier(sub);
                     if (!modelsInProject.containsKey(subId)) {
                         LOG.warn("Submodule {} not found in input files", sub);
