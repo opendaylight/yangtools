@@ -40,8 +40,14 @@ final class DefValEffectiveStatementImpl extends UnknownEffectiveStatementBase<S
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public DefValEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

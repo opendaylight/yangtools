@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
@@ -18,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  * The 'deviation' statement defines a hierarchy of a module that the device does not implement faithfully. Deviations
  * define the way a device deviate from a standard.
  */
-public interface Deviation extends DocumentedNode {
+public interface Deviation extends DocumentedNode, EffectiveStatementEquivalent<DeviationEffectiveStatement> {
     /**
      * Returns target node absolute schema node identifier.
      *

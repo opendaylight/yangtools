@@ -12,11 +12,13 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 /**
  * Contains the methods for getting data and checking properties of the YANG <code>uses</code> substatement.
  */
-public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
+public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode,
+        EffectiveStatementEquivalent<UsesEffectiveStatement> {
     /**
      * Returns the {code grouping} which this node acted upon.
      *

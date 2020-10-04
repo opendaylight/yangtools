@@ -34,8 +34,14 @@ final class DisplayHintEffectiveStatementImpl extends UnknownEffectiveStatementB
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public DisplayHintEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

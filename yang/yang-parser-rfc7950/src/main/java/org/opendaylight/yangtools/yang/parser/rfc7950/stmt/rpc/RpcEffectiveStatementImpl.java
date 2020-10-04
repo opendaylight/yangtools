@@ -44,4 +44,9 @@ final class RpcEffectiveStatementImpl extends WithSubstatements<QName, RpcStatem
     public int flags() {
         return flags;
     }
+
+    @Override
+    public RpcEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }

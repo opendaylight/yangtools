@@ -87,6 +87,11 @@ final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind,
         return findFirstEffectiveSubstatementArgument(UnitsEffectiveStatement.class).orElse(null);
     }
 
+    @Override
+    public DeviateEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
     @SuppressWarnings("unchecked")
     private <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
         return Collection.class.cast(Collections2.filter(effectiveSubstatements(), type::isInstance));
