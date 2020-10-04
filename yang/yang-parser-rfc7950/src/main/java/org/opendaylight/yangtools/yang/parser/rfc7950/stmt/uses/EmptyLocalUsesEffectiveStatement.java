@@ -61,7 +61,12 @@ class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, UsesStatem
     }
 
     @Override
-    public Collection<? extends AugmentationSchemaNode> getAugmentations() {
+    public final UsesEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
+    public final Collection<? extends AugmentationSchemaNode> getAugmentations() {
         return filterEffectiveStatements(AugmentationSchemaNode.class);
     }
 

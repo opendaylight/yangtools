@@ -19,4 +19,9 @@ interface MustDefinitionMixin extends MustDefinition, ConstraintMetaDefinitionMi
     default RevisionAwareXPath getXpath() {
         return argument();
     }
+
+    @Override
+    default MustEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }

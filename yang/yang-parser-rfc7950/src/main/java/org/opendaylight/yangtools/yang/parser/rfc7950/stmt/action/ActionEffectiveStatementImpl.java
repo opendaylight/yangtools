@@ -46,4 +46,9 @@ final class ActionEffectiveStatementImpl extends WithSubstatements<QName, Action
     public int flags() {
         return flags;
     }
+
+    @Override
+    public ActionEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }

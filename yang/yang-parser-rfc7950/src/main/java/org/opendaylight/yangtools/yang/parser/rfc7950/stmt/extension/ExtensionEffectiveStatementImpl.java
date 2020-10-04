@@ -111,6 +111,11 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     }
 
     @Override
+    public ExtensionEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         if (TOSTRING_DETECTOR.check(this)) {
             return recursedToString();

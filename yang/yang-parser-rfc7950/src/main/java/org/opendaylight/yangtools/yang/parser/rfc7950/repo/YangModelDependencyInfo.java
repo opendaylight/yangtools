@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -381,6 +382,7 @@ public abstract class YangModelDependencyInfo {
     /**
      * Utility implementation of {@link ModuleImport} to be used by {@link YangModelDependencyInfo}.
      */
+    // FIXME: this is a rather nasty misuse of APIs :(
     private static final class ModuleImportImpl implements ModuleImport {
 
         private final Revision revision;
@@ -426,6 +428,11 @@ public abstract class YangModelDependencyInfo {
         @Override
         public Optional<String> getReference() {
             return Optional.empty();
+        }
+
+        @Override
+        public ImportEffectiveStatement asEffectiveStatement() {
+            throw new UnsupportedOperationException();
         }
 
         @Override

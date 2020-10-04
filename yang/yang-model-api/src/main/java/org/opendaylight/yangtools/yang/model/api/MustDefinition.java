@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
+
 /**
  * Contains methods for accessing constraint declaration for valid data in form
  * of XPath expressions.<br>
@@ -15,8 +17,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * <code>must "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";</code>
  * </i>
  */
-public interface MustDefinition extends ConstraintMetaDefinition {
-
+public interface MustDefinition extends ConstraintMetaDefinition, EffectiveStatementEquivalent<MustEffectiveStatement> {
     /**
      * Returns XPath expression which contains constraint.
      *

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
+
 /**
- * Contains the methods for getting the data which are part of the YANG
- * <code>extensoion</code> statement.
+ * Contains the methods for getting the data which are part of the YANG {@code extensoion} statement.
  */
-public interface ExtensionDefinition extends SchemaNode {
+public interface ExtensionDefinition extends SchemaNode, EffectiveStatementEquivalent<ExtensionEffectiveStatement> {
     /**
      * Returns the <code>String</code> that is the name of argument to the
      * Keyword. If no argument statement is present the method will return

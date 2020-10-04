@@ -29,11 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
  */
+// FIXME: 7.0.0: re-evaluate the need for this class and potentially its effective statement replacement
 public final class EffectiveAugmentationSchema implements AugmentationSchemaNode {
     private final AugmentationSchemaNode delegate;
     private final ImmutableSet<DataSchemaNode> realChildSchemas;
@@ -146,5 +148,10 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     @Override
     public Optional<NotificationDefinition> findNotification(final QName qname) {
         return delegate.findNotification(qname);
+    }
+
+    @Override
+    public AugmentEffectiveStatement asEffectiveStatement() {
+        return delegate.asEffectiveStatement();
     }
 }

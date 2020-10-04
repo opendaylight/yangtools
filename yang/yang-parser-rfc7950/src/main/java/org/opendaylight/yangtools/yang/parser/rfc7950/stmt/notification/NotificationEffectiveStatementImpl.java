@@ -64,6 +64,10 @@ final class NotificationEffectiveStatementImpl
         return path;
     }
 
+    @Override
+    public NotificationEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 
     @Override
     public String toString() {
