@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
@@ -103,10 +103,10 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
-    public final Collection<UniqueConstraint> getUniqueConstraints() {
+    public final Collection<? extends UniqueEffectiveStatement> getUniqueConstraints() {
         return effectiveSubstatements().stream()
-                .filter(UniqueConstraint.class::isInstance)
-                .map(UniqueConstraint.class::cast)
+                .filter(UniqueEffectiveStatement.class::isInstance)
+                .map(UniqueEffectiveStatement.class::cast)
                 .collect(ImmutableList.toImmutableList());
     }
 

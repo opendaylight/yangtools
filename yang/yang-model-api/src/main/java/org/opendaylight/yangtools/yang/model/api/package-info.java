@@ -216,7 +216,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition}
  *
  * <dt>unique
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.UniqueConstraint}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement}
  *
  * <dt>units
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()}
