@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.openconfig.model.api;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
@@ -17,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * @author Robert Varga
  */
 @Beta
-public interface OpenConfigHashedValueSchemaNode extends UnknownSchemaNode {
+public interface OpenConfigHashedValueSchemaNode
+        extends UnknownSchemaNode, EffectiveStatementEquivalent<OpenConfigHashedValueEffectiveStatement> {
     /**
      * Determine if specified SchemaNode is marked to report its value in hashed form.
      *

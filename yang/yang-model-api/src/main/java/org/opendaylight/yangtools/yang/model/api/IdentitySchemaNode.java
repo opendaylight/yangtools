@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
 /**
  * Interface describing YANG 'identity' statement.
@@ -18,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * is to denote its name, semantics, and existence. The built-in datatype "identityref" can be used to reference
  * identities within a data model.
  */
-public interface IdentitySchemaNode extends SchemaNode {
+public interface IdentitySchemaNode extends SchemaNode, EffectiveStatementEquivalent<IdentityEffectiveStatement> {
     /**
      * Return base identities of this identity. The semantics of differ between RFC6020 and RFC7950 here. YANG 1.0
      * uses single inheritance, where there can be 0..1 base identities. YANG 1.1 uses multiple inheritance, where

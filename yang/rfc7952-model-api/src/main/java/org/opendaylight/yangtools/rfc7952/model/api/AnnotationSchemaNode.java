@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
@@ -24,7 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>, being attached to a SchemaNode.
  */
 @Beta
-public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
+public interface AnnotationSchemaNode
+        extends UnknownSchemaNode, TypeAware, EffectiveStatementEquivalent<AnnotationEffectiveStatement> {
     /**
      * Find specified annotation if it is supported by the specified SchemaContext.
      *
@@ -39,12 +41,12 @@ public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
             return ((AnnotationSchemaNodeAware) context).findAnnotation(qname);
         }
 
-        return context.findModule(qname.getModule()).flatMap(module -> {
-            return module.getUnknownSchemaNodes().stream()
-                    .filter(AnnotationSchemaNode.class::isInstance)
-                    .map(AnnotationSchemaNode.class::cast)
-                    .filter(annotation -> qname.equals(annotation.getQName())).findAny();
-        });
+        return context.findModule(qname.getModule())
+            .flatMap(module -> module.getUnknownSchemaNodes().stream()
+                .filter(AnnotationSchemaNode.class::isInstance)
+                .map(AnnotationSchemaNode.class::cast)
+                .filter(annotation -> qname.equals(annotation.getQName()))
+                .findAny());
     }
 
     /**

@@ -58,6 +58,11 @@ final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, Ca
     }
 
     @Override
+    public CaseEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return UndeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }

@@ -77,6 +77,11 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
         return type;
     }
 
+    @Override
+    public final LeafEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
     private TypeDefinition<?> buildType() {
         final TypeEffectiveStatement<?> typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),

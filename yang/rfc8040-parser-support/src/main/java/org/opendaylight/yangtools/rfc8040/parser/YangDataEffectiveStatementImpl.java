@@ -69,9 +69,14 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     }
 
     @Override
-    public @NonNull ContainerSchemaNode getContainerSchemaNode() {
+    public ContainerSchemaNode getContainerSchemaNode() {
         // Verified in the constructor
         return (ContainerSchemaNode) container;
+    }
+
+    @Override
+    public YangDataEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

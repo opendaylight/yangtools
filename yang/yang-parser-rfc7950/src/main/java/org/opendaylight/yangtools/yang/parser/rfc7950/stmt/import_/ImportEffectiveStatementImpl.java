@@ -54,6 +54,11 @@ final class ImportEffectiveStatementImpl extends WithSubstatements<String, Impor
     }
 
     @Override
+    public ImportEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
                 .add("moduleName", getModuleName())

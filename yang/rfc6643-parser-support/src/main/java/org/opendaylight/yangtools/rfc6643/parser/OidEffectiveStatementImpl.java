@@ -41,8 +41,14 @@ final class OidEffectiveStatementImpl extends UnknownEffectiveStatementBase<Obje
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public OidEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override
