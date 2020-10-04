@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -76,8 +76,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
     }
 
     private ModificationApplyOperation getOperation(final DataSchemaNode rootSchemaNode) {
-        if (rootSchemaNode instanceof ContainerSchemaNode && maskMandatory) {
-            return new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeConfig);
+        if (rootSchemaNode instanceof ContainerLike && maskMandatory) {
+            return new ContainerModificationStrategy((ContainerLike) rootSchemaNode, treeConfig);
         }
         if (rootSchemaNode instanceof ListSchemaNode) {
             final PathArgument arg = treeConfig.getRootPath().getLastPathArgument();

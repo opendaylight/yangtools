@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * with mandatory nodes, as it needs to tap into {@link SchemaAwareApplyOperation}'s operations, or subclassed
  * for the purposes of {@link StructuralContainerModificationStrategy}'s automatic lifecycle.
  */
-class ContainerModificationStrategy extends DataNodeContainerModificationStrategy<ContainerSchemaNode> {
+class ContainerModificationStrategy extends DataNodeContainerModificationStrategy<ContainerLike> {
     private static final class EnforcingMandatory extends ContainerModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
 
@@ -68,7 +69,7 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
             new NormalizedNodeContainerSupport<>(ContainerNode.class, ImmutableContainerNodeBuilder::create,
                     ImmutableContainerNodeBuilder::create);
 
-    ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    ContainerModificationStrategy(final ContainerLike schemaNode, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schemaNode, treeConfig);
     }
 

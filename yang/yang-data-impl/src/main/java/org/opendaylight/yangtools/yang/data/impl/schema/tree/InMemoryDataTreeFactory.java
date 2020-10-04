@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -105,7 +106,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static @NonNull NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
             final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
-            checkArgument(schemaNode instanceof ContainerSchemaNode,
+            checkArgument(schemaNode instanceof ContainerLike,
                 "Conceptual tree root has to be a container, not %s", schemaNode);
             return ROOT_CONTAINER;
         }

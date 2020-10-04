@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +15,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -37,12 +38,12 @@ public class Bug9241Test {
 
         final ActionDefinition actionInCont = actionCont.getActions().iterator().next();
 
-        final ContainerSchemaNode input = actionInCont.getInput();
+        final InputSchemaNode input = actionInCont.getInput();
         assertNotNull(input);
         assertEquals(1, input.getChildNodes().size());
         assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getStatementSource());
 
-        final ContainerSchemaNode output = actionInCont.getOutput();
+        final OutputSchemaNode output = actionInCont.getOutput();
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
         assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getStatementSource());

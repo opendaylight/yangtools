@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 /**
  * Structural containers are special in that they appear when implied by child nodes and disappear whenever they are
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 final class StructuralContainerModificationStrategy extends ContainerModificationStrategy {
     private final ContainerNode emptyNode;
 
-    StructuralContainerModificationStrategy(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    StructuralContainerModificationStrategy(final ContainerLike schema, final DataTreeConfiguration treeConfig) {
         super(schema, treeConfig);
         this.emptyNode = ImmutableNodes.containerNode(schema.getQName());
     }

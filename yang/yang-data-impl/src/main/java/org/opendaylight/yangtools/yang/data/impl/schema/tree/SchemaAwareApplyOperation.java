@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
             return new ValueNodeModificationStrategy<>(AnydataNode.class, (AnydataSchemaNode) schemaNode);
         } else if (schemaNode instanceof AnyxmlSchemaNode) {
             return new ValueNodeModificationStrategy<>(AnyxmlNode.class, (AnyxmlSchemaNode) schemaNode);
+        } else if (schemaNode instanceof SchemaContext) {
+            return new StructuralContainerModificationStrategy((SchemaContext) schemaNode, treeConfig);
         } else {
             throw new IllegalStateException("Unsupported schema " + schemaNode);
         }
