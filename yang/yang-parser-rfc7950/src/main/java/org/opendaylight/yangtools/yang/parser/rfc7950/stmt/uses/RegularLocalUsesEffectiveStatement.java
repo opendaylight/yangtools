@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -36,11 +34,6 @@ final class RegularLocalUsesEffectiveStatement extends EmptyLocalUsesEffectiveSt
     @Override
     public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return unmaskList(substatements);
-    }
-
-    @Override
-    public Collection<? extends AugmentationSchemaNode> getAugmentations() {
-        return filterEffectiveStatements(AugmentationSchemaNode.class);
     }
 
     @Override

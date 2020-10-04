@@ -73,6 +73,11 @@ class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstat
     }
 
     @Override
+    public final UsesEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public Map<Descendant, SchemaNode> getRefines() {
         return ImmutableMap.of();
     }

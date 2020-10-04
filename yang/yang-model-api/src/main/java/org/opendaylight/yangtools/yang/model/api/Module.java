@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 /**
  * This interface contains the methods for getting the data from the YANG module.
  */
+// FIXME: YANGTOOLS-1119: we need specializations for Module and Submodule
 public interface Module extends DataNodeContainer, DocumentedNode, Immutable, NotificationNodeContainer,
         NamespaceRevisionAware {
     /**

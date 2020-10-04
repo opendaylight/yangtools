@@ -40,8 +40,14 @@ final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBas
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public MaxAccessEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

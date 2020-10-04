@@ -59,6 +59,11 @@ public final class MountPointStatementSupport
         public SchemaPath getPath() {
             return path;
         }
+
+        @Override
+        public MountPointEffectiveStatement asEffectiveStatement() {
+            return this;
+        }
     }
 
     private static final MountPointStatementSupport INSTANCE = new MountPointStatementSupport(

@@ -38,6 +38,11 @@ final class DeviationEffectiveStatementImpl extends WithSubstatements<Absolute, 
     }
 
     @Override
+    public DeviationEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return DeviationEffectiveStatementImpl.class.getSimpleName() + "["
                 + "targetPath=" + getTargetPath()

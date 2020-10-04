@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+
 /**
- * Interface describing YANG <code>leaf</code> statement.
- *
- * <p>
- * The 'leaf' statement is used to define a leaf node in the schema tree.
+ * Interface describing YANG {@code leaf} statement. The 'leaf' statement is used to define a leaf node in the schema
+ * tree.
  *
  * <p>
  * Since we are presenting the effective model of the world, the information dictated by 'default' and 'units'
  * substatements is captured in the type returned via {@link #getType()}.
  */
-public interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware, MustConstraintAware {
+public interface LeafSchemaNode extends TypedDataSchemaNode, MandatoryAware, MustConstraintAware,
+        EffectiveStatementEquivalent<LeafEffectiveStatement> {
 
 }
