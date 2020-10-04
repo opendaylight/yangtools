@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -24,6 +23,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 
@@ -73,10 +73,7 @@ public final class YinExportUtils {
     @Beta
     @Deprecated
     public static void writeModuleAsYinText(final Module module, final OutputStream output) throws XMLStreamException {
-        requireNonNull(module);
-        checkArgument(module instanceof ModuleEffectiveStatement, "Module %s is not a ModuleEffectiveStatement",
-            module);
-        writeModuleAsYinText((ModuleEffectiveStatement) module, output);
+        writeModuleAsYinText(module.asEffectiveStatement(), output);
     }
 
     /**
@@ -109,16 +106,9 @@ public final class YinExportUtils {
      */
     @Beta
     @Deprecated
-    public static void writeSubmoduleAsYinText(final Module parentModule, final Module submodule,
+    public static void writeSubmoduleAsYinText(final Module parentModule, final Submodule submodule,
             final OutputStream output) throws XMLStreamException {
-        requireNonNull(parentModule);
-        checkArgument(parentModule instanceof ModuleEffectiveStatement, "Parent %s is not a ModuleEffectiveStatement",
-            parentModule);
-        requireNonNull(submodule);
-        checkArgument(submodule instanceof SubmoduleEffectiveStatement,
-            "Submodule %s is not a SubmoduleEffectiveStatement", submodule);
-        writeSubmoduleAsYinText((ModuleEffectiveStatement) parentModule, (SubmoduleEffectiveStatement)submodule,
-            output);
+        writeSubmoduleAsYinText(parentModule.asEffectiveStatement(), submodule.asEffectiveStatement(), output);
     }
 
     /**

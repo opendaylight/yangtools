@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -80,8 +81,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(3, rootChildNodes.size());
         assertEquals(1, importedChildNodes.size());
 
-        final Collection<? extends Module> rootSubmodules = root.getSubmodules();
-        final Collection<? extends Module> importedSubmodules = imported.getSubmodules();
+        final Collection<? extends Submodule> rootSubmodules = root.getSubmodules();
+        final Collection<? extends Submodule> importedSubmodules = imported.getSubmodules();
 
         assertNotNull(rootSubmodules);
         assertNotNull(importedSubmodules);
@@ -89,9 +90,9 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(2, rootSubmodules.size());
         assertEquals(0, importedSubmodules.size());
 
-        Module sub1 = null;
-        Module sub2 = null;
-        for (final Module rootSubmodule : rootSubmodules) {
+        Submodule sub1 = null;
+        Submodule sub2 = null;
+        for (final Submodule rootSubmodule : rootSubmodules) {
             switch (rootSubmodule.getName()) {
                 case "submodule-1":
                     sub1 = rootSubmodule;
@@ -118,8 +119,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(1, sub1ChildNodes.size());
         assertEquals(1, sub2ChildNodes.size());
 
-        final Collection<? extends Module> sub1Submodules = sub1.getSubmodules();
-        final Collection<? extends Module> sub2Submodules = sub2.getSubmodules();
+        final Collection<? extends Submodule> sub1Submodules = sub1.getSubmodules();
+        final Collection<? extends Submodule> sub2Submodules = sub2.getSubmodules();
 
         assertNotNull(sub1Submodules);
         assertNotNull(sub2Submodules);
@@ -127,8 +128,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(1, sub1Submodules.size());
         assertEquals(0, sub2Submodules.size());
 
-        Module sub1Submodule = null;
-        for (final Module submodule : sub1Submodules) {
+        Submodule sub1Submodule = null;
+        for (final Submodule submodule : sub1Submodules) {
             switch (submodule.getName()) {
                 case "submodule-to-submodule-1":
                     sub1Submodule = submodule;
@@ -145,7 +146,7 @@ public class EffectiveModulesAndSubmodulesTest {
         assertNotNull(sub1SubmoduleChildNodes);
         assertEquals(1, sub1SubmoduleChildNodes.size());
 
-        final Collection<? extends Module> sub1SubmoduleSubmodules = sub1Submodule.getSubmodules();
+        final Collection<? extends Submodule> sub1SubmoduleSubmodules = sub1Submodule.getSubmodules();
         assertNotNull(sub1SubmoduleSubmodules);
         assertEquals(0, sub1SubmoduleSubmodules.size());
 

@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -88,7 +89,7 @@ public class EffectiveModuleTest {
         assertEquals(Optional.of(REVISION), importStmt.getRevision());
         assertEquals("imp-pref", importStmt.getPrefix());
 
-        final Collection<? extends Module> submodules = rootModule.getSubmodules();
+        final Collection<? extends Submodule> submodules = rootModule.getSubmodules();
         assertEquals(1, submodules.size());
         assertEquals("submod", submodules.iterator().next().getName());
 

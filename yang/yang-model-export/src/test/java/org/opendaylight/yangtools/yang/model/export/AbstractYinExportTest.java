@@ -20,6 +20,7 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -34,7 +35,7 @@ abstract class AbstractYinExportTest {
         for (Module module : modules) {
             readAndValidateModule(schemaContext, module, yinDir);
 
-            for (Module submodule : module.getSubmodules()) {
+            for (Submodule submodule : module.getSubmodules()) {
                 readAndValidateSubmodule(schemaContext, module, submodule, yinDir);
             }
         }
@@ -56,7 +57,7 @@ abstract class AbstractYinExportTest {
     }
 
     private void readAndValidateSubmodule(final SchemaContext schemaContext, final Module module,
-            final Module submodule, final String yinDir) throws XMLStreamException, IOException, SAXException {
+            final Submodule submodule, final String yinDir) throws XMLStreamException, IOException, SAXException {
         final String fileName = YinExportUtils.wellFormedYinName(submodule.getName(), submodule.getRevision());
         validateOutput(yinDir, fileName, export(module, submodule));
     }
@@ -67,7 +68,7 @@ abstract class AbstractYinExportTest {
         return new String(bos.toByteArray(), StandardCharsets.UTF_8);
     }
 
-    private static String export(final Module module, final Module submodule) throws XMLStreamException {
+    private static String export(final Module module, final Submodule submodule) throws XMLStreamException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         YinExportUtils.writeSubmoduleAsYinText(module, submodule, bos);
         return new String(bos.toByteArray(), StandardCharsets.UTF_8);
