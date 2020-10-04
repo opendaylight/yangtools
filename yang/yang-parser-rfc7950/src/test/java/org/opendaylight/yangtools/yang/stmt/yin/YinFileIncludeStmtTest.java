@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 import org.xml.sax.SAXException;
@@ -39,9 +40,9 @@ public class YinFileIncludeStmtTest {
         assertNotNull(parentModule);
 
         assertEquals(1, parentModule.getSubmodules().size());
-        Iterator<? extends Module> submodulesIterator = parentModule.getSubmodules().iterator();
+        Iterator<? extends Submodule> submodulesIterator = parentModule.getSubmodules().iterator();
 
-        Module childModule = submodulesIterator.next() ;
+        Submodule childModule = submodulesIterator.next() ;
         assertNotNull(childModule);
         assertEquals("child", childModule.getName());
         assertEquals(new URI("urn:opendaylight/parent"), childModule.getNamespace());

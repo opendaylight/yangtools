@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang2sources.spi;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
@@ -28,5 +28,6 @@ public interface ModuleResourceResolver {
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if the requested representation is not supported by this resolver
      */
-    Optional<String> findModuleResourcePath(Module module, Class<? extends SchemaSourceRepresentation> representation);
+    Optional<String> findModuleResourcePath(ModuleLike module,
+        Class<? extends SchemaSourceRepresentation> representation);
 }
