@@ -318,12 +318,6 @@ public final class EffectiveStatementMixins {
         default String getNodeParameter() {
             return Strings.nullToEmpty(getDeclared().rawArgument());
         }
-
-        @Override
-        @Deprecated
-        default boolean isAddedByAugmentation() {
-            return isAugmenting();
-        }
     }
 
     /**

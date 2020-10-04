@@ -25,7 +25,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         extends AbstractEffectiveDocumentedNodeWithStatus<A, D> implements UnknownSchemaNode {
 
     private final boolean addedByUses;
-    private final boolean addedByAugmentation;
+    private final boolean augmenting;
 
     private final ExtensionDefinition extension;
     private final QName nodeType;
@@ -52,10 +52,10 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.addedByAugmentation = true;
+            this.augmenting = true;
             this.addedByUses = true;
         } else {
-            this.addedByAugmentation = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
+            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
         }
 
@@ -64,8 +64,8 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
 
     @Deprecated
     @Override
-    public boolean isAddedByAugmentation() {
-        return addedByAugmentation;
+    public boolean isAugmenting() {
+        return augmenting;
     }
 
     @Override
