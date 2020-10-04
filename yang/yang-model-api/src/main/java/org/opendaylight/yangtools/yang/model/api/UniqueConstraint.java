@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * leafs exist (for more information see RFC-6020 section 7.8.3.).
  */
 @Beta
-// FIXME: 6.0.0: replace all usages of this class with UniqueEffectiveStatement and remove this
+// FIXME: 6.0.0: YANGTOOLS-1119: replace all usages of this class with UniqueEffectiveStatement and remove this
 public interface UniqueConstraint {
     @NonNull Set<Descendant> getTag();
 }

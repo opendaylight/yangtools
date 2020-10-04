@@ -5,11 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 
 /**
  * Interface describing YANG 'deviate' statement.
@@ -20,7 +20,7 @@ import java.util.Collection;
  * The argument is one of the strings "not-supported", "add", "replace", or "delete".
  */
 @Beta
-public interface DeviateDefinition {
+public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateEffectiveStatement> {
     /**
      * Return deviation kind.
      *

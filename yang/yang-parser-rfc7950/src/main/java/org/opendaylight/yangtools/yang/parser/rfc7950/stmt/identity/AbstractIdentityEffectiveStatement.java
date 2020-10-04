@@ -35,6 +35,11 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
     }
 
     @Override
+    public final IdentityEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("qname", getQName()).add("path", getPath()).toString();
     }
