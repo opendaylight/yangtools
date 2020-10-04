@@ -20,12 +20,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -33,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 @Beta
-public class OperationAsContainer extends ForwardingObject implements ContainerSchemaNode, OperationDefinition {
+public class OperationAsContainer extends ForwardingObject implements ContainerLike, OperationDefinition {
     private final @NonNull OperationDefinition delegate;
 
     OperationAsContainer(final OperationDefinition parentNode) {
@@ -75,12 +77,12 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final ContainerSchemaNode getInput() {
+    public final InputSchemaNode getInput() {
         return delegate.getInput();
     }
 
     @Override
-    public final ContainerSchemaNode getOutput() {
+    public final OutputSchemaNode getOutput() {
         return delegate.getOutput();
     }
 
@@ -122,18 +124,13 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final boolean isPresenceContainer() {
-        return false;
-    }
-
-    @Override
     public final Collection<? extends DataSchemaNode> getChildNodes() {
         final List<DataSchemaNode> ret = new ArrayList<>();
-        final ContainerSchemaNode input = getInput();
-        final ContainerSchemaNode output = getOutput();
+        final InputSchemaNode input = getInput();
         if (input != null) {
             ret.add(input);
         }
+        final OutputSchemaNode output = getOutput();
         if (output != null) {
             ret.add(output);
         }

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import java.io.IOException;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 /**
  * Utility class used for tracking parser state as needed by a StAX-like parser.
@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * <p>
  * Represents a YANG container node.
  */
-public class ContainerNodeDataWithSchema extends AbstractMountPointDataWithSchema<ContainerSchemaNode> {
+public class ContainerNodeDataWithSchema extends AbstractMountPointDataWithSchema<ContainerLike> {
 
-    public ContainerNodeDataWithSchema(final ContainerSchemaNode schema) {
+    public ContainerNodeDataWithSchema(final ContainerLike schema) {
         super(schema);
     }
 

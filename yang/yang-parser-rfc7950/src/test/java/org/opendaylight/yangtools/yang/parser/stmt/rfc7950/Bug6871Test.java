@@ -15,10 +15,11 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -43,12 +44,12 @@ public class Bug6871Test {
         assertEquals(1, rpcs.size());
         final RpcDefinition myRpc = rpcs.iterator().next();
 
-        final ContainerSchemaNode input = myRpc.getInput();
+        final InputSchemaNode input = myRpc.getInput();
         assertNotNull(input);
         mustConstraints = input.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
-        final ContainerSchemaNode output = myRpc.getOutput();
+        final OutputSchemaNode output = myRpc.getOutput();
         assertNotNull(output);
         mustConstraints = output.getMustConstraints();
         assertEquals(2, mustConstraints.size());

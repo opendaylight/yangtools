@@ -47,7 +47,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -226,8 +226,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class ContainerTransformation
-            extends DataContainerNormalizationOperation<NodeIdentifier, ContainerSchemaNode> {
-        ContainerTransformation(final ContainerSchemaNode schema) {
+            extends DataContainerNormalizationOperation<NodeIdentifier, ContainerLike> {
+        ContainerTransformation(final ContainerLike schema) {
             super(NodeIdentifier.create(schema.getQName()), schema);
         }
 

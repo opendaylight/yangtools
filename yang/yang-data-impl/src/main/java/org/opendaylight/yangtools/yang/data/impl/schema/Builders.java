@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYa
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -141,13 +141,12 @@ public final class Builders {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
-            final ContainerSchemaNode schema) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final ContainerLike schema) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
-            final ContainerSchemaNode schema, final ContainerNode node) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final ContainerLike schema,
+            final ContainerNode node) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema, node);
     }
 
