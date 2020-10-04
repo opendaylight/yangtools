@@ -74,6 +74,7 @@ import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.YangModeledAnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -251,8 +252,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (reader.hasNext()) {
             reader.nextTag();
             final AbstractNodeDataWithSchema<?> nodeDataWithSchema;
-            if (parentNode instanceof ContainerSchemaNode) {
-                nodeDataWithSchema = new ContainerNodeDataWithSchema((ContainerSchemaNode) parentNode);
+            if (parentNode instanceof ContainerLike) {
+                nodeDataWithSchema = new ContainerNodeDataWithSchema((ContainerLike) parentNode);
             } else if (parentNode instanceof ListSchemaNode) {
                 nodeDataWithSchema = new ListNodeDataWithSchema((ListSchemaNode) parentNode);
             } else if (parentNode instanceof YangModeledAnyxmlSchemaNode) {

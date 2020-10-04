@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -202,8 +202,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
     }
 
     static InstanceIdToNodes<?> fromDataSchemaNode(final DataSchemaNode potential) {
-        if (potential instanceof ContainerSchemaNode) {
-            return new InstanceIdToCompositeNodes.ContainerTransformation((ContainerSchemaNode) potential);
+        if (potential instanceof ContainerLike) {
+            return new InstanceIdToCompositeNodes.ContainerTransformation((ContainerLike) potential);
         } else if (potential instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) potential);
         } else if (potential instanceof LeafSchemaNode) {

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
@@ -26,19 +24,21 @@ import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
 import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -352,7 +352,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
-            extends ContainerSchemaNode, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
+            extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
                     MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
                     SchemaNodeMixin<QName, D>, CopyableMixin<QName, D> {
         @Override
@@ -382,12 +382,6 @@ public final class EffectiveStatementMixins {
 
         @Override
         default boolean isConfiguration() {
-            return false;
-        }
-
-        @Override
-        default boolean isPresenceContainer() {
-            // FIXME: this should not really be here
             return false;
         }
 
@@ -433,13 +427,13 @@ public final class EffectiveStatementMixins {
         }
 
         @Override
-        default ContainerSchemaNode getInput() {
-            return findAsContainer(this, InputEffectiveStatement.class);
+        default InputSchemaNode getInput() {
+            return findAsContainer(this, InputEffectiveStatement.class, InputSchemaNode.class);
         }
 
         @Override
-        default ContainerSchemaNode getOutput() {
-            return findAsContainer(this, OutputEffectiveStatement.class);
+        default OutputSchemaNode getOutput() {
+            return findAsContainer(this, OutputEffectiveStatement.class, OutputSchemaNode.class);
         }
     }
 
@@ -561,12 +555,9 @@ public final class EffectiveStatementMixins {
     private EffectiveStatementMixins() {
     }
 
-    static ContainerSchemaNode findAsContainer(final EffectiveStatement<?, ?> stmt,
-            final Class<? extends EffectiveStatement<QName, ?>> type) {
-        final EffectiveStatement<?, ?> statement = stmt.findFirstEffectiveSubstatement(type).get();
-        verify(statement instanceof ContainerSchemaNode, "Child statement %s is not a ContainerSchemaNode",
-            statement);
-        return (ContainerSchemaNode) statement;
+    static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
+            final Class<? extends EffectiveStatement<QName, ?>> type, Class<T> target) {
+        return target.cast(stmt.findFirstEffectiveSubstatement(type).get());
     }
 
     static Collection<? extends TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {

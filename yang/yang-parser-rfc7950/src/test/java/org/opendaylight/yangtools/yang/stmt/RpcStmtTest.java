@@ -21,7 +21,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -46,7 +48,7 @@ public class RpcStmtTest {
         final RpcDefinition rpc = testModule.getRpcs().iterator().next();
         assertEquals("get-config", rpc.getQName().getLocalName());
 
-        final ContainerSchemaNode input = rpc.getInput();
+        final InputSchemaNode input = rpc.getInput();
         assertNotNull(input);
         assertEquals(2, input.getChildNodes().size());
 
@@ -57,7 +59,7 @@ public class RpcStmtTest {
             QName.create(testModule.getQNameModule(), "filter"));
         assertNotNull(anyXml);
 
-        final ContainerSchemaNode output = rpc.getOutput();
+        final OutputSchemaNode output = rpc.getOutput();
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
 
@@ -108,12 +110,12 @@ public class RpcStmtTest {
 
         final RpcDefinition barRpc = rpcs.iterator().next();
 
-        final ContainerSchemaNode input = barRpc.getInput();
+        final InputSchemaNode input = barRpc.getInput();
         assertNotNull(input);
         assertEquals(2, input.getChildNodes().size());
         assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getStatementSource());
 
-        final ContainerSchemaNode output = barRpc.getOutput();
+        final OutputSchemaNode output = barRpc.getOutput();
         assertNotNull(output);
         assertEquals(2, output.getChildNodes().size());
         assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getStatementSource());

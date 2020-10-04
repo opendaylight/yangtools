@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -233,8 +233,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             newChild = new ListNodeDataWithSchema((ListSchemaNode) schema);
         } else if (schema instanceof LeafListSchemaNode) {
             newChild = new LeafListNodeDataWithSchema((LeafListSchemaNode) schema);
-        } else if (schema instanceof ContainerSchemaNode) {
-            newChild = new ContainerNodeDataWithSchema((ContainerSchemaNode) schema);
+        } else if (schema instanceof ContainerLike) {
+            newChild = new ContainerNodeDataWithSchema((ContainerLike) schema);
         } else if (schema instanceof YangModeledAnyxmlSchemaNode) {
             newChild = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyxmlSchemaNode)schema);
         } else {
