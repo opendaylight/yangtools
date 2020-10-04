@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
@@ -15,5 +16,10 @@ final class EmptyMustEffectiveStatement extends DefaultArgument<RevisionAwareXPa
         implements MustDefinitionMixin {
     EmptyMustEffectiveStatement(final MustStatement declared) {
         super(declared);
+    }
+
+    @Override
+    public MustEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 }

@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
  * Represents YANG action statement.
@@ -20,5 +20,7 @@ import com.google.common.annotations.Beta;
  * detailed action information.  The argument is the name of the action.
  */
 @Beta
-public interface ActionDefinition extends OperationDefinition, CopyableNode {
+public interface ActionDefinition
+        extends OperationDefinition, CopyableNode, EffectiveStatementEquivalent<ActionEffectiveStatement> {
+    
 }

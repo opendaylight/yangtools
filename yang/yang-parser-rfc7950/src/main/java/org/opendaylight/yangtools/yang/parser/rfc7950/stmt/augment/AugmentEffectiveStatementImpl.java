@@ -81,6 +81,11 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
     }
 
     @Override
+    public AugmentEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + getTargetPath() + ", when="
                 + getWhenCondition() + "]";
