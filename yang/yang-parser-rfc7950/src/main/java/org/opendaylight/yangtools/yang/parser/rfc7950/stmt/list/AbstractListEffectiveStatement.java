@@ -111,6 +111,11 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
+    public final ListEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public final String toString() {
         return "list " + getQName().getLocalName();
     }

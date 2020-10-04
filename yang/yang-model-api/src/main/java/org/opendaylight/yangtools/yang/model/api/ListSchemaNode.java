@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * Interface describing YANG 'list' statement.
@@ -20,7 +21,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  * by the values of the list's keys, if defined.
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
-        NotificationNodeContainer, ActionNodeContainer, ElementCountConstraintAware, MustConstraintAware {
+        NotificationNodeContainer, ActionNodeContainer, ElementCountConstraintAware, MustConstraintAware,
+        EffectiveStatementEquivalent<ListEffectiveStatement> {
     /**
      * Returns the list of leaf identifiers.
      *

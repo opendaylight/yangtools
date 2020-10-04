@@ -39,8 +39,14 @@ final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<St
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public AliasEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
-public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware, ElementCountConstraintAware {
+public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware, ElementCountConstraintAware,
+        EffectiveStatementEquivalent<LeafListEffectiveStatement> {
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries
      * within this leaf-list are determined by the user or the system. If not

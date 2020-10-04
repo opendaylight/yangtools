@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+
 /**
  * Interface describing YANG 'grouping' statement.
  *
@@ -20,6 +22,6 @@ package org.opendaylight.yangtools.yang.model.api;
  *       schema node, but those really are instantiated and typically differ in {@link #getQName()}'s namespace.
  */
 public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
-       ActionNodeContainer, AddedByUsesAware {
+       ActionNodeContainer, AddedByUsesAware, EffectiveStatementEquivalent<GroupingEffectiveStatement> {
 
 }

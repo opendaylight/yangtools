@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.FilteringSchemaContextProxy.ModuleId;
 
 public class SchemaContextProxyTest {
@@ -627,6 +628,11 @@ public class SchemaContextProxyTest {
                 @Override
                 public String toString() {
                     return String.format("Module: %s, revision:%s", module.getName(), module.getRevision());
+                }
+
+                @Override
+                public ImportEffectiveStatement asEffectiveStatement() {
+                    throw new UnsupportedOperationException();
                 }
             });
         }

@@ -40,8 +40,14 @@ final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<
     }
 
     @Override
+    @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public ImpliedEffectiveStatement asEffectiveStatement() {
+        return this;
     }
 
     @Override

@@ -46,6 +46,11 @@ class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
     }
 
     @Override
+    public final FeatureEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public final String toString() {
         return getClass().getSimpleName() + "[name=" + getQName() + "]";
     }

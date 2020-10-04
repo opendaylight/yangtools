@@ -64,6 +64,11 @@ final class GroupingEffectiveStatementImpl
     }
 
     @Override
+    public GroupingEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }

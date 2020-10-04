@@ -13,6 +13,8 @@ package org.opendaylight.yangtools.yang.model.api;
  * organizing the hierarchy of data nodes, and those whose presence in the
  * configuration has an explicit meaning.
  */
+// FIXME: YANGTOOLS-1119: We need to specialize this interface for Container use and have others for Input/Output and
+//                        other misuses.
 public interface ContainerSchemaNode extends DataNodeContainer,
         AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer, MustConstraintAware {
     /**

@@ -61,6 +61,11 @@ class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
     }
 
     @Override
+    public final AnydataEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("qname", getQName()).add("path", getPath()).toString();
     }
