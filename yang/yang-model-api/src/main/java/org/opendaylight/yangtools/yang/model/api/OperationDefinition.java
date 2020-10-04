@@ -35,7 +35,7 @@ public interface OperationDefinition extends SchemaNode {
      * @return Definition of input parameters for this operation.
      *         The substatements of input define nodes under the operation's input node.
      */
-    ContainerSchemaNode getInput();
+    InputSchemaNode getInput();
 
     /**
      * Returns definition of output parameters for this operation.
@@ -43,5 +43,5 @@ public interface OperationDefinition extends SchemaNode {
      * @return Definition of output parameters for this operation. The
      *         substatements of output define nodes under the operation's output node.
      */
-    ContainerSchemaNode getOutput();
+    OutputSchemaNode getOutput();
 }

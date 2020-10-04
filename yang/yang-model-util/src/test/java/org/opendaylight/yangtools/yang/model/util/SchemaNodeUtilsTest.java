@@ -34,10 +34,12 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
@@ -100,7 +102,7 @@ public class SchemaNodeUtilsTest {
         doReturn(notifications).when(mockedModule).getNotifications();
 
         final RpcDefinition mockedRpc = mockOperationDefinition(mock(RpcDefinition.class));
-        final ContainerSchemaNode mockedContainerInRpcInput = mockDataNodeContainer(ContainerSchemaNode.class);
+        final InputSchemaNode mockedContainerInRpcInput = mockDataNodeContainer(InputSchemaNode.class);
         final ListSchemaNode mockedListInRpcInputContainer = mockCopyableNode(false,
             mockDataNodeContainer(ListSchemaNode.class));
         final Set<DataSchemaNode> rpcInputChildNodes = ImmutableSet.of(mockedListInRpcInputContainer);
@@ -138,7 +140,7 @@ public class SchemaNodeUtilsTest {
 
     private static <T extends OperationDefinition> T mockOperationDefinition(final T mock) {
         doReturn(Collections.emptySet()).when(mock).getTypeDefinitions();
-        doReturn(mockDataNodeContainer(ContainerSchemaNode.class)).when(mock).getOutput();
+        doReturn(mockDataNodeContainer(OutputSchemaNode.class)).when(mock).getOutput();
         return mock;
     }
 }

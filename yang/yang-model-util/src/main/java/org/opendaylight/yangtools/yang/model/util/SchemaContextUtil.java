@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -335,7 +335,7 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    public static @Nullable ContainerSchemaNode getRpcDataSchema(final @NonNull SchemaContext schema,
+    public static @Nullable ContainerLike getRpcDataSchema(final @NonNull SchemaContext schema,
             final @NonNull SchemaPath path) {
         requireNonNull(schema, "Schema context must not be null.");
         requireNonNull(path, "Schema path must not be null.");

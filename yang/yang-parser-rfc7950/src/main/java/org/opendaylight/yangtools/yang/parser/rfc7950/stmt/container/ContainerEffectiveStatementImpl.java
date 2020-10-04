@@ -95,6 +95,11 @@ final class ContainerEffectiveStatementImpl
     }
 
     @Override
+    public ContainerEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
+
+    @Override
     public String toString() {
         return "container " + getQName().getLocalName();
     }
