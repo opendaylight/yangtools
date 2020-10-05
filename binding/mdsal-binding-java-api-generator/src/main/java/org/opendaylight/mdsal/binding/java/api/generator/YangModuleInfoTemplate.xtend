@@ -27,6 +27,8 @@ import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext
 import org.opendaylight.yangtools.yang.model.api.Module
+import org.opendaylight.yangtools.yang.model.api.ModuleLike
+import org.opendaylight.yangtools.yang.model.api.Submodule
 
 /**
  * Template for {@link YangModuleInfo} implementation for a particular module. Aside from fulfilling that contract,
@@ -63,7 +65,7 @@ class YangModuleInfoTemplate {
 
     val Module module
     val EffectiveModelContext ctx
-    val Function<Module, Optional<String>> moduleFilePathResolver
+    val Function<ModuleLike, Optional<String>> moduleFilePathResolver
 
     var importedTypes = CORE_IMPORT_STR
 
@@ -73,7 +75,7 @@ class YangModuleInfoTemplate {
     @Accessors
     val String modelBindingProviderName
 
-    new(Module module, EffectiveModelContext ctx, Function<Module, Optional<String>> moduleFilePathResolver) {
+    new(Module module, EffectiveModelContext ctx, Function<ModuleLike, Optional<String>> moduleFilePathResolver) {
         Preconditions.checkArgument(module !== null, "Module must not be null.")
         this.module = module
         this.ctx = ctx
@@ -83,7 +85,7 @@ class YangModuleInfoTemplate {
     }
 
     def String generate() {
-        val Set<Module> submodules = new HashSet
+        val Set<Submodule> submodules = new HashSet
         collectSubmodules(submodules, module)
 
         val body = '''
@@ -129,15 +131,15 @@ class YangModuleInfoTemplate {
         }
     '''
 
-    private static def void collectSubmodules(Set<Module> dest, Module module) {
-        for (Module submodule : module.submodules) {
+    private static def void collectSubmodules(Set<Submodule> dest, ModuleLike module) {
+        for (Submodule submodule : module.submodules) {
             if (dest.add(submodule)) {
                 collectSubmodules(dest, submodule)
             }
         }
     }
 
-    private def CharSequence classBody(Module m, String className, Set<Module> submodules) '''
+    private def CharSequence classBody(ModuleLike m, String className, Set<Submodule> submodules) '''
         private «className»() {
             «IF !m.imports.empty || !submodules.empty»
                 «extendImports»
@@ -191,13 +193,13 @@ class YangModuleInfoTemplate {
         importedTypes = EXT_IMPORT_STR
     }
 
-    private def sourcePath(Module module) {
+    private def sourcePath(ModuleLike module) {
         val opt = moduleFilePathResolver.apply(module)
         Preconditions.checkState(opt.isPresent, "Module %s does not have a file path", module)
         return opt.get
     }
 
-    private def generateSubInfo(Set<Module> submodules) '''
+    private def generateSubInfo(Set<Submodule> submodules) '''
         «FOR submodule : submodules»
             «val className = submodule.name.className»
 
