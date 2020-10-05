@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-final class RegularWhenEffectiveStatement extends WithSubstatements<RevisionAwareXPath, WhenStatement>
+final class RegularWhenEffectiveStatement extends WithSubstatements<QualifiedBound, WhenStatement>
         implements WhenEffectiveStatement {
     RegularWhenEffectiveStatement(final WhenStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

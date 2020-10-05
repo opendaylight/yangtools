@@ -28,11 +28,11 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 @Beta
 public class OperationAsContainer extends ForwardingObject implements ContainerLike, OperationDefinition {
@@ -182,7 +182,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final Optional<RevisionAwareXPath> getWhenCondition() {
+    public final Optional<? extends QualifiedBound> getWhenCondition() {
         return Optional.empty();
     }
 }
