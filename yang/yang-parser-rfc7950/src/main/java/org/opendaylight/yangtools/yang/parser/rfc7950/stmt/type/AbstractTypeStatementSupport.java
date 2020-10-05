@@ -50,7 +50,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
@@ -546,12 +545,7 @@ abstract class AbstractTypeStatementSupport
                 }
             }
             if (stmt instanceof PatternEffectiveStatement) {
-                final PatternConstraint pattern = ((PatternEffectiveStatement)stmt).argument();
-                if (pattern != null) {
-                    builder.addPatternConstraint(pattern);
-                } else {
-                    LOG.debug("Ignoring empty pattern statement {}", stmt);
-                }
+                builder.addPatternConstraint((PatternEffectiveStatement) stmt);
             }
         }
 

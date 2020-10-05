@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
-final class EmptyPatternStatement extends WithArgument<PatternConstraint> implements PatternStatement {
-    EmptyPatternStatement(final StmtContext<PatternConstraint, ?, ?> context) {
-        super(context);
+final class EmptyPatternStatement extends ArgumentToString<PatternExpression> implements PatternStatement {
+    EmptyPatternStatement(final PatternExpression argument) {
+        super(argument);
     }
 }
