@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-final class RegularMustStatement extends WithSubstatements<RevisionAwareXPath> implements MustStatement {
-    RegularMustStatement(final StmtContext<RevisionAwareXPath, ?, ?> context,
+final class RegularMustStatement extends WithSubstatements<QualifiedBound> implements MustStatement {
+    RegularMustStatement(final StmtContext<QualifiedBound, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(context, substatements);
     }

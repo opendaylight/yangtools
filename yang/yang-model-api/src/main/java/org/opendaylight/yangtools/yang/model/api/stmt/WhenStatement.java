@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-public interface WhenStatement extends DocumentedDeclaredStatement<RevisionAwareXPath> {
+public interface WhenStatement extends DocumentedDeclaredStatement<QualifiedBound> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.WHEN;
     }
 
-    default @NonNull RevisionAwareXPath getCondition() {
+    default @NonNull QualifiedBound getCondition() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
