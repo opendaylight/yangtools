@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,9 +20,10 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 public final class WhenStatementSupport
-        extends BaseStatementSupport<RevisionAwareXPath, WhenStatement, WhenEffectiveStatement> {
+        extends BaseStatementSupport<QualifiedBound, WhenStatement, WhenEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.WHEN)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -42,7 +42,7 @@ public final class WhenStatementSupport
     }
 
     @Override
-    public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public QualifiedBound parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return xpathSupport.parseXPath(ctx, value);
     }
 
@@ -52,26 +52,26 @@ public final class WhenStatementSupport
     }
 
     @Override
-    protected WhenStatement createDeclared(final StmtContext<RevisionAwareXPath, WhenStatement, ?> ctx,
+    protected WhenStatement createDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularWhenStatement(ctx, substatements);
     }
 
     @Override
-    protected WhenStatement createEmptyDeclared(final StmtContext<RevisionAwareXPath, WhenStatement, ?> ctx) {
+    protected WhenStatement createEmptyDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx) {
         return new EmptyWhenStatement(ctx);
     }
 
     @Override
     protected WhenEffectiveStatement createEffective(
-            final StmtContext<RevisionAwareXPath, WhenStatement, WhenEffectiveStatement> ctx,
+            final StmtContext<QualifiedBound, WhenStatement, WhenEffectiveStatement> ctx,
             final WhenStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularWhenEffectiveStatement(declared, substatements);
     }
 
     @Override
     protected WhenEffectiveStatement createEmptyEffective(
-            final StmtContext<RevisionAwareXPath, WhenStatement, WhenEffectiveStatement> ctx,
+            final StmtContext<QualifiedBound, WhenStatement, WhenEffectiveStatement> ctx,
             final WhenStatement declared) {
         return new EmptyWhenEffectiveStatement(declared);
     }

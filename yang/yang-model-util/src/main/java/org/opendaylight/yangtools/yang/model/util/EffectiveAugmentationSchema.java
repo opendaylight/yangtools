@@ -24,12 +24,12 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
@@ -70,7 +70,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Optional<RevisionAwareXPath> getWhenCondition() {
+    public Optional<? extends QualifiedBound> getWhenCondition() {
         return delegate.getWhenCondition();
     }
 

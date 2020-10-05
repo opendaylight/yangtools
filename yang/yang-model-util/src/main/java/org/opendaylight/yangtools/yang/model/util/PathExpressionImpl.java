@@ -17,8 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * A simple XPathExpression implementation.
  *
- * @deprecated This is a transitional class to transition from {@link RevisionAwareXPathImpl}. Users are advised to
- *             supply their own implementation of PathExpression.
+ * @deprecated Users are advised to supply their own implementation of PathExpression.
  */
 @Deprecated(forRemoval = true)
 @NonNullByDefault

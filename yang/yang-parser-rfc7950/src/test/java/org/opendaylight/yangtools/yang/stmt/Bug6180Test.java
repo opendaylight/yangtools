@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -70,8 +69,7 @@ public class Bug6180Test {
         final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
-        final RevisionAwareXPath whenCondition = bar.getWhenCondition().get();
-        assertEquals("/foo != \"bar\"", whenCondition.getOriginalString());
+        assertEquals("/foo != \"bar\"", bar.getWhenCondition().orElseThrow().toString());
 
         final Collection<? extends TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
@@ -88,8 +86,7 @@ public class Bug6180Test {
         final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
-        final RevisionAwareXPath whenCondition = bar.getWhenCondition().get();
-        assertEquals("/foo != 'bar'", whenCondition.getOriginalString());
+        assertEquals("/foo != 'bar'", bar.getWhenCondition().orElseThrow().toString());
 
         final Collection<? extends TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());

@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -20,8 +17,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath.WithExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -44,10 +39,7 @@ public class Bug5942Test {
         assertEquals(Optional.of("uses reference"), usesNode.getReference());
         assertEquals(Status.DEPRECATED, usesNode.getStatus());
 
-        final RevisionAwareXPath when = usesNode.getWhenCondition().get();
-        assertFalse(when.isAbsolute());
-        assertThat(when, instanceOf(WithExpression.class));
-        assertEquals("0!=1", when.getOriginalString());
+        assertEquals("0!=1", usesNode.getWhenCondition().orElseThrow().toString());
 
         final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = usesNode.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
