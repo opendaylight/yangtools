@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * The interface represents static view of compiled yang files,
@@ -233,7 +234,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     @Deprecated
-    default Optional<RevisionAwareXPath> getWhenCondition() {
+    default Optional<? extends QualifiedBound> getWhenCondition() {
         return Optional.empty();
     }
 

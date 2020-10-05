@@ -27,14 +27,14 @@ module baz {
     }
 
     augment "/br:interfaces/br:ifEntry" {
-        when "if:ifType='ds0'";
+        when "br:ifType='ds0'";
         container augment-holder {
             description "Description for augment holder";
         }
     }
 
     augment "/br:interfaces/br:ifEntry" {
-        when "if:ifType='ds2'";
+        when "br:ifType='ds2'";
         container augment-holder2 {
             description "Description for augment holder";
         }
