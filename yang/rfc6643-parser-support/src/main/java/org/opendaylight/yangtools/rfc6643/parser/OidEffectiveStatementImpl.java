@@ -31,11 +31,6 @@ final class OidEffectiveStatementImpl extends UnknownEffectiveStatementBase<Obje
     }
 
     @Override
-    public ObjectIdentifier getArgument() {
-        return argument();
-    }
-
-    @Override
     public QName getQName() {
         return getNodeType();
     }

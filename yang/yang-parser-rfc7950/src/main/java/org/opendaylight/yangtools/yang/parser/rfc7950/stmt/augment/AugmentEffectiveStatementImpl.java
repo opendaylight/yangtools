@@ -61,11 +61,6 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
     }
 
     @Override
-    public SchemaNodeIdentifier getTargetPath() {
-        return argument();
-    }
-
-    @Override
     public int flags() {
         return flags;
     }

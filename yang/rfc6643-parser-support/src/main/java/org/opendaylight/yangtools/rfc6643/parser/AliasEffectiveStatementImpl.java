@@ -29,11 +29,6 @@ final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<St
     }
 
     @Override
-    public String getArgument() {
-        return argument();
-    }
-
-    @Override
     public QName getQName() {
         return getNodeType();
     }

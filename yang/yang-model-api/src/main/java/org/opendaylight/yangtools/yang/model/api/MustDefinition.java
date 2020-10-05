@@ -24,5 +24,7 @@ public interface MustDefinition extends ConstraintMetaDefinition, EffectiveState
      * @return XPath expression which represents the value of the argument of
      *         the <code>must</code> YANG substatement
      */
-    RevisionAwareXPath getXpath();
+    default RevisionAwareXPath getXpath() {
+        return asEffectiveStatement().argument();
+    }
 }

@@ -16,11 +16,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 interface MustDefinitionMixin extends MustDefinition, ConstraintMetaDefinitionMixin<RevisionAwareXPath, MustStatement>,
         MustEffectiveStatement {
     @Override
-    default RevisionAwareXPath getXpath() {
-        return argument();
-    }
-
-    @Override
     default MustEffectiveStatement asEffectiveStatement() {
         return this;
     }

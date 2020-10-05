@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @Beta
 public interface DefValSchemaNode extends UnknownSchemaNode, EffectiveStatementEquivalent<DefValEffectiveStatement> {
-
-    String getArgument();
+    default String getArgument() {
+        return asEffectiveStatement().argument();
+    }
 }

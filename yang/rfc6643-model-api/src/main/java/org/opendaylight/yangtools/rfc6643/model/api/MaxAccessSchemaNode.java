@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 @Beta
 public interface MaxAccessSchemaNode
         extends UnknownSchemaNode, EffectiveStatementEquivalent<MaxAccessEffectiveStatement> {
-
-    @NonNull MaxAccess getArgument();
+    default @NonNull MaxAccess getArgument() {
+        return asEffectiveStatement().argument();
+    }
 }

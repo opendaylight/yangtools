@@ -28,7 +28,9 @@ public interface AugmentationSchemaNode extends DataNodeContainer, NotificationN
      *         notification node. It is augmented with the nodes defined as
      *         child nodes of this AugmentationSchema.
      */
-    SchemaNodeIdentifier getTargetPath();
+    default SchemaNodeIdentifier getTargetPath() {
+        return asEffectiveStatement().argument();
+    }
 
     /**
      * Returns Augmentation Definition from which this augmentation is derived

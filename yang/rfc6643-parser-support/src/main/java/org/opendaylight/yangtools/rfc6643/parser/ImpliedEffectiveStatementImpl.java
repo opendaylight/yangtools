@@ -30,11 +30,6 @@ final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<
     }
 
     @Override
-    public String getArgument() {
-        return argument();
-    }
-
-    @Override
     public QName getQName() {
         return getNodeType();
     }
