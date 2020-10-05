@@ -37,11 +37,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 public class YangModeledAnyXMLDeserializationTest {
 
@@ -228,7 +228,7 @@ public class YangModeledAnyXMLDeserializationTest {
         }
 
         @Override
-        public Optional<RevisionAwareXPath> getWhenCondition() {
+        public Optional<? extends QualifiedBound> getWhenCondition() {
             return Optional.empty();
         }
 
