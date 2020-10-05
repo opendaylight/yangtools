@@ -13,78 +13,54 @@ import java.util.regex.PatternSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractPatternStatementSupport
-        extends BaseStatementSupport<PatternConstraint, PatternStatement, PatternEffectiveStatement> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractPatternStatementSupport.class);
-
+        extends BaseStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
     AbstractPatternStatementSupport() {
         super(YangStmtMapping.PATTERN, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override
-    public final PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public final PatternExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final String pattern = RegexUtils.getJavaRegexFromXSD(value);
-
         try {
             Pattern.compile(pattern);
         } catch (final PatternSyntaxException e) {
-            LOG.debug("Pattern \"{}\" failed to compile at {}", pattern, ctx.getStatementSourceReference(), e);
-            return null;
+            throw new SourceException(ctx.getStatementSourceReference(), e,
+                "Pattern \"%s\" failed to compile", pattern);
         }
-
-        return new EmptyPatternConstraint(pattern, value);
+        return PatternExpression.of(value, pattern);
     }
 
     @Override
-    protected final PatternStatement createDeclared(final StmtContext<PatternConstraint, PatternStatement, ?> ctx,
+    protected final PatternStatement createDeclared(final StmtContext<PatternExpression, PatternStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPatternStatement(ctx, substatements);
+        return new RegularPatternStatement(ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
     protected final PatternStatement createEmptyDeclared(
-            final StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
-        return new EmptyPatternStatement(ctx);
+            final StmtContext<PatternExpression, PatternStatement, ?> ctx) {
+        return new EmptyPatternStatement(ctx.coerceStatementArgument());
     }
 
     @Override
     protected final PatternEffectiveStatement createEffective(
-            final StmtContext<PatternConstraint, PatternStatement, PatternEffectiveStatement> ctx,
+            final StmtContext<PatternExpression, PatternStatement, PatternEffectiveStatement> ctx,
             final PatternStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final String description = findFirstArgument(substatements, DescriptionEffectiveStatement.class, null);
-        final String reference = findFirstArgument(substatements, ReferenceEffectiveStatement.class, null);
-        final String errorAppTag = findFirstArgument(substatements, ErrorAppTagEffectiveStatement.class, null);
-        final String errorMessage = findFirstArgument(substatements, ErrorMessageEffectiveStatement.class, null);
-        final ModifierKind modifier = findFirstArgument(substatements, ModifierEffectiveStatement.class, null);
-
-        if (description == null && reference == null && errorAppTag == null && errorMessage == null
-                && modifier == null) {
-            // No customization, just use declared statement for the actual value
-            return new SimplePatternEffectiveStatement(declared, substatements);
-        }
-
-        return new RegularPatternEffectiveStatement(declared, new RegularPatternConstraint(declared.argument(),
-            description, reference, errorAppTag, errorMessage, modifier), substatements);
+        return new RegularPatternEffectiveStatement(declared, substatements);
     }
 
     @Override
     protected final PatternEffectiveStatement createEmptyEffective(
-            final StmtContext<PatternConstraint, PatternStatement, PatternEffectiveStatement> ctx,
+            final StmtContext<PatternExpression, PatternStatement, PatternEffectiveStatement> ctx,
             final PatternStatement declared) {
         return new EmptyPatternEffectiveStatement(declared);
     }
