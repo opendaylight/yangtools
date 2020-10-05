@@ -33,7 +33,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
-        return LazyLeafOperations.getValue(children);
+        return new LazyValues(children);
     }
 
     @Override

@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -89,7 +88,7 @@ public class DerefXPathFunctionTest {
         final Object derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
         assertTrue(derefResult instanceof LeafNode<?>);
-        assertLeafEquals(referencedLeafNode, (LeafNode<?>) derefResult);
+        assertEquals(referencedLeafNode, derefResult);
     }
 
     @Test
@@ -122,7 +121,7 @@ public class DerefXPathFunctionTest {
         Object derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
         assertTrue(derefResult instanceof LeafNode<?>);
-        assertLeafEquals(referencedLeafNode, (LeafNode<?>) derefResult);
+        assertEquals(referencedLeafNode, derefResult);
 
         final YangInstanceIdentifier relLeafrefPath = YangInstanceIdentifier.of(MY_INNER_CONTAINER)
                 .node(REL_LEAFREF_LEAF);
@@ -131,7 +130,7 @@ public class DerefXPathFunctionTest {
         derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
         assertTrue(derefResult instanceof LeafNode<?>);
-        assertLeafEquals(referencedLeafNode, (LeafNode<?>) derefResult);
+        assertEquals(referencedLeafNode, derefResult);
     }
 
     @Test
@@ -272,13 +271,5 @@ public class DerefXPathFunctionTest {
                 .withChild(myListNode)
                 .withChild(myInnerContainerNode).build();
         return myContainerNode;
-    }
-
-    private static void assertLeafEquals(final LeafNode<?> expected, final LeafNode<?> actual) {
-        if (LazyLeafOperations.isEnabled()) {
-            assertEquals(expected, actual);
-        } else {
-            assertSame(expected, actual);
-        }
     }
 }

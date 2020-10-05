@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -20,10 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support utilities for dealing with Maps which would normally hold {@link DataContainerChild} values, but are modified
@@ -42,40 +38,8 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public final class LazyLeafOperations {
-    private static final Logger LOG = LoggerFactory.getLogger(LazyLeafOperations.class);
-
-    // FIXME: 6.0.0: remove this knob
-    private static final String EXPENDABLE_PROP_NAME =
-            "org.opendaylight.yangtools.yang.data.impl.schema.nodes.lazy-leaves";
-
-    /**
-     * Global enabled run-time constant. If set to true, this class will treat {@link LeafNode} and
-     * {@link LeafSetEntryNode} as an expendable object. This constant is controlled by {@value #EXPENDABLE_PROP_NAME}
-     * system property.
-     */
-    // FIXME: 6.0.0: remove this knob
-    private static final boolean EXPENDABLE;
-
-    static {
-        EXPENDABLE = Boolean.parseBoolean(System.getProperty(EXPENDABLE_PROP_NAME, "true"));
-        if (!EXPENDABLE) {
-            LOG.warn("Leaf nodes are treated as regular nodes. This option is deprecated and is schedule for removal.");
-        }
-    }
-
     private LazyLeafOperations() {
-
-    }
-
-    /**
-     * A boolean flag indicating whether leaf nodes are being treated as expendable.
-     *
-     * @return True if NormalizedNode implementations in this artifact are treating leaf nodes as transient, i.e. do
-     *              not retain them.
-     */
-    // FIXME: 6.0.0: remove this method
-    public static boolean isEnabled() {
-        return EXPENDABLE;
+        // Hidden on purpose
     }
 
     public static Optional<DataContainerChild<?, ?>> findChild(final Map<PathArgument, Object> map,
@@ -92,14 +56,7 @@ public final class LazyLeafOperations {
 
     public static void putChild(final Map<PathArgument, Object> map, final DataContainerChild<?, ?> child) {
         final DataContainerChild<?, ?> node = requireNonNull(child);
-        map.put(node.getIdentifier(), EXPENDABLE ? encodeExpendableChild(node) : node);
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static @NonNull Collection<DataContainerChild<?, ?>> getValue(final Map<PathArgument, Object> map) {
-        return EXPENDABLE ? new LazyValues(map)
-                // This is an ugly cast, but it is accurate IFF all modifications are done through this class
-                : (Collection)map.values();
+        map.put(node.getIdentifier(), encodeExpendableChild(node));
     }
 
     static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {
@@ -108,12 +65,12 @@ public final class LazyLeafOperations {
     }
 
     private static @Nullable DataContainerChild<?, ?> decodeChild(final PathArgument key, final @NonNull Object value) {
-        return EXPENDABLE ? decodeExpendableChild(key, value) : verifyCast(value);
+        return decodeExpendableChild(key, value);
     }
 
     private static @NonNull DataContainerChild<?, ?> decodeExpendableChild(final PathArgument key,
             @NonNull final Object value) {
-        return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value  : coerceLeaf(key, value);
+        return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value : coerceLeaf(key, value);
     }
 
     private static @NonNull Object encodeExpendableChild(final @NonNull DataContainerChild<?, ?> node) {
@@ -123,10 +80,5 @@ public final class LazyLeafOperations {
     private static @NonNull Object verifyEncode(final @NonNull Object value) {
         verify(!(value instanceof DataContainerChild), "Unexpected leaf value %s", value);
         return value;
-    }
-
-    private static @NonNull DataContainerChild<?, ?> verifyCast(final @NonNull Object value) {
-        verify(value instanceof DataContainerChild, "Unexpected child %s", value);
-        return (DataContainerChild<?, ?>)value;
     }
 }
