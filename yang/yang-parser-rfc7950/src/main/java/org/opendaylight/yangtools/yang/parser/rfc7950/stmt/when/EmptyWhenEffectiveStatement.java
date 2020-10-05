@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when;
 
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-final class EmptyWhenEffectiveStatement extends DefaultArgument<RevisionAwareXPath, WhenStatement>
+final class EmptyWhenEffectiveStatement extends DefaultArgument<QualifiedBound, WhenStatement>
         implements WhenEffectiveStatement {
     EmptyWhenEffectiveStatement(final WhenStatement declared) {
         super(declared);

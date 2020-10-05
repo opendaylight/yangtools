@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,9 +20,10 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 public final class MustStatementSupport
-        extends BaseStatementSupport<RevisionAwareXPath, MustStatement, MustEffectiveStatement> {
+        extends BaseStatementSupport<QualifiedBound, MustStatement, MustEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .MUST)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -44,7 +44,7 @@ public final class MustStatementSupport
     }
 
     @Override
-    public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public QualifiedBound parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return xpathSupport.parseXPath(ctx, value);
     }
 
@@ -54,26 +54,26 @@ public final class MustStatementSupport
     }
 
     @Override
-    protected MustStatement createDeclared(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx,
+    protected MustStatement createDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularMustStatement(ctx, substatements);
     }
 
     @Override
-    protected MustStatement createEmptyDeclared(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
+    protected MustStatement createEmptyDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx) {
         return new EmptyMustStatement(ctx);
     }
 
     @Override
     protected MustEffectiveStatement createEffective(
-            final StmtContext<RevisionAwareXPath, MustStatement, MustEffectiveStatement> ctx,
+            final StmtContext<QualifiedBound, MustStatement, MustEffectiveStatement> ctx,
             final MustStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularMustEffectiveStatement(declared, substatements);
     }
 
     @Override
     protected MustEffectiveStatement createEmptyEffective(
-            final StmtContext<RevisionAwareXPath, MustStatement, MustEffectiveStatement> ctx,
+            final StmtContext<QualifiedBound, MustStatement, MustEffectiveStatement> ctx,
             final MustStatement declared) {
         return new EmptyMustEffectiveStatement(declared);
     }

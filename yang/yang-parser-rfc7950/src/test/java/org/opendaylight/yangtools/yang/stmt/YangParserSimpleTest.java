@@ -72,7 +72,7 @@ public class YangParserSimpleTest {
         assertFalse(data.isConfiguration());
 
         assertTrue(data.isMandatory());
-        assertEquals("class != 'wheel'", data.getWhenCondition().get().getOriginalString());
+        assertEquals("class != 'wheel'", data.getWhenCondition().orElseThrow().toString());
         final Collection<? extends MustDefinition> mustConstraints = data.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
@@ -82,10 +82,10 @@ public class YangParserSimpleTest {
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
-            if (must1.equals(must.getXpath().getOriginalString())) {
+            if (must1.equals(must.getXpath().toString())) {
                 found1 = true;
                 assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
-            } else if (must2.equals(must.getXpath().getOriginalString())) {
+            } else if (must2.equals(must.getXpath().toString())) {
                 found2 = true;
                 assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
                 assertEquals(Optional.of("anyxml data error-app-tag"), must.getErrorAppTag());
@@ -119,7 +119,7 @@ public class YangParserSimpleTest {
 
         assertTrue(anydata.isMandatory());
         assertTrue(anydata.getWhenCondition().isPresent());
-        assertEquals("class != 'wheel'", anydata.getWhenCondition().get().getOriginalString());
+        assertEquals("class != 'wheel'", anydata.getWhenCondition().orElseThrow().toString());
         final Collection<? extends MustDefinition> mustConstraints = anydata.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
@@ -129,10 +129,10 @@ public class YangParserSimpleTest {
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
-            if (must1.equals(must.getXpath().getOriginalString())) {
+            if (must1.equals(must.getXpath().toString())) {
                 found1 = true;
                 assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
-            } else if (must2.equals(must.getXpath().getOriginalString())) {
+            } else if (must2.equals(must.getXpath().toString())) {
                 found2 = true;
                 assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
                 assertEquals(Optional.of("anydata data error-app-tag"), must.getErrorAppTag());
@@ -160,7 +160,7 @@ public class YangParserSimpleTest {
         assertFalse(nodes.isConfiguration());
 
         // constraints
-        assertEquals("class != 'wheel'", nodes.getWhenCondition().get().getOriginalString());
+        assertEquals("class != 'wheel'", nodes.getWhenCondition().orElseThrow().toString());
         final Collection<? extends MustDefinition> mustConstraints = nodes.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
@@ -171,10 +171,10 @@ public class YangParserSimpleTest {
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
-            if (must1.equals(must.getXpath().getOriginalString())) {
+            if (must1.equals(must.getXpath().toString())) {
                 found1 = true;
                 assertEquals(Optional.of(errMsg1), must.getErrorMessage());
-            } else if (must2.equals(must.getXpath().getOriginalString())) {
+            } else if (must2.equals(must.getXpath().toString())) {
                 found2 = true;
                 assertFalse(must.getErrorMessage().isPresent());
                 assertFalse(must.getErrorAppTag().isPresent());

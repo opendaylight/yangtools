@@ -31,6 +31,6 @@ public class Bug5518Test {
         final Collection<? extends MustDefinition> mustConstraints = root.getMustConstraints();
         assertEquals(1, mustConstraints.size());
         final MustDefinition must = mustConstraints.iterator().next();
-        assertEquals("not(deref(.)/../same-pass)", must.getXpath().getOriginalString());
+        assertEquals("not(deref(.)/../same-pass)", must.getXpath().toString());
     }
 }

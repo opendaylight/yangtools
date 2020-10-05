@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -20,10 +18,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath.WithExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 public class Bug5481Test {
     @Test
@@ -59,9 +56,7 @@ public class Bug5481Test {
         assertEquals(Optional.of("text"), extendedLeaf.getDescription());
         assertEquals(Optional.of("ref"), extendedLeaf.getReference());
 
-        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getWhenCondition().get();
-        assertFalse(whenConditionExtendedLeaf.isAbsolute());
-        assertThat(whenConditionExtendedLeaf, instanceOf(WithExpression.class));
-        assertEquals("module1:top = 'extended'", whenConditionExtendedLeaf.getOriginalString());
+        QualifiedBound whenConditionExtendedLeaf = extendedLeaf.getWhenCondition().orElseThrow();
+        assertEquals("module1:top = 'extended'", whenConditionExtendedLeaf.toString());
     }
 }
