@@ -12,10 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
@@ -33,7 +32,7 @@ public final class XPathSupport {
         this.factory = requireNonNull(factory);
     }
 
-    public RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
+    public QualifiedBound parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
         final boolean isAbsolute = ArgumentUtils.isAbsoluteXPath(xpath);
         final YangXPathParser.QualifiedBound parser = factory.newParser(
             YangNamespaceContextNamespace.computeIfAbsent(ctx));
@@ -41,9 +40,8 @@ public final class XPathSupport {
         try {
             parsed = parser.parseExpression(xpath);
         } catch (XPathExpressionException e) {
-            LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", xpath,
-                ctx.getStatementSourceReference(), e);
-            return new RevisionAwareXPathImpl(xpath, isAbsolute);
+            throw new SourceException(ctx.getStatementSourceReference(), e,
+                "Argument \"%s\" is not valid XPath string", xpath);
         }
 
         if (ctx.getRootVersion().compareTo(parsed.getYangVersion()) < 0) {
@@ -51,6 +49,6 @@ public final class XPathSupport {
                 parsed.getYangVersion().getReference(), ctx.getRootVersion().getReference(), xpath,
                 ctx.getStatementSourceReference());
         }
-        return new WithExpressionImpl(xpath, isAbsolute, parsed);
+        return parsed;
     }
 }

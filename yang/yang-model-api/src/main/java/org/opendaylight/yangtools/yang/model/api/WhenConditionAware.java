@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * Mix-in interface for nodes which can be conditional on a when statement.
@@ -29,6 +30,6 @@ public interface WhenConditionAware {
      *
      * @return XPath condition
      */
-    Optional<RevisionAwareXPath> getWhenCondition();
+    Optional<? extends QualifiedBound> getWhenCondition();
 
 }
