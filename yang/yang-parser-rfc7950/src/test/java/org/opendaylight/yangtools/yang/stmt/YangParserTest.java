@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -280,36 +279,16 @@ public class YangParserTest {
 
     @Test
     public void testTypedefInvalidPatternsResolving() {
-        final LeafSchemaNode invalidPatternStringLeaf = (LeafSchemaNode) foo
-                .getDataChildByName(QName.create(foo.getQNameModule(), "invalid-pattern-string-leaf"));
-        StringTypeDefinition type = (StringTypeDefinition) invalidPatternStringLeaf.getType();
-        assertEquals(QName.create(BAR, "invalid-string-pattern"), type.getQName());
-        assertEquals(Optional.empty(), type.getUnits());
-        assertEquals(Optional.empty(), type.getDefaultValue());
-        List<PatternConstraint> patterns = type.getPatternConstraints();
-        assertTrue(patterns.isEmpty());
-
-        final LeafSchemaNode invalidDirectStringPatternDefLeaf = (LeafSchemaNode) foo
-                .getDataChildByName(QName.create(foo.getQNameModule(), "invalid-direct-string-pattern-def-leaf"));
-        type = (StringTypeDefinition) invalidDirectStringPatternDefLeaf.getType();
-
-        assertEquals(QName.create(YangConstants.RFC6020_YANG_MODULE, "string"), type.getQName());
-        assertEquals(Optional.empty(), type.getUnits());
-        assertEquals(Optional.empty(), type.getDefaultValue());
-        patterns = type.getPatternConstraints();
-        assertTrue(patterns.isEmpty());
-
         final LeafSchemaNode multiplePatternStringLeaf = (LeafSchemaNode) foo
                 .getDataChildByName(QName.create(foo.getQNameModule(), "multiple-pattern-string-leaf"));
-        type = (StringTypeDefinition) multiplePatternStringLeaf.getType();
+        StringTypeDefinition type = (StringTypeDefinition) multiplePatternStringLeaf.getType();
         assertEquals(QName.create(BAR, "multiple-pattern-string"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
-        patterns = type.getPatternConstraints();
-        assertTrue(!patterns.isEmpty());
-        assertEquals(1, patterns.size());
-        final PatternConstraint pattern = patterns.iterator().next();
-        assertEquals("^(?:[e-z]*)$", pattern.getJavaPatternString());
+        List<PatternConstraint> patterns = type.getPatternConstraints();
+        assertEquals(2, patterns.size());
+        assertEquals("^(?:[A-Z]*-%22!\\^\\^)$", patterns.get(0).getJavaPatternString());
+        assertEquals("^(?:[e-z]*)$", patterns.get(1).getJavaPatternString());
         assertEquals(1, type.getLengthConstraint().get().getAllowedRanges().asRanges().size());
 
         final LeafSchemaNode multiplePatternDirectStringDefLeaf = (LeafSchemaNode) foo
@@ -319,20 +298,11 @@ public class YangParserTest {
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
         patterns = type.getPatternConstraints();
-        assertTrue(!patterns.isEmpty());
-        assertEquals(2, patterns.size());
+        assertEquals(3, patterns.size());
 
-        boolean isEZPattern = false;
-        boolean isADPattern = false;
-        for (final PatternConstraint patternConstraint : patterns) {
-            if (patternConstraint.getJavaPatternString().equals("^(?:[e-z]*)$")) {
-                isEZPattern = true;
-            } else if (patternConstraint.getJavaPatternString().equals("^(?:[a-d]*)$")) {
-                isADPattern = true;
-            }
-        }
-        assertTrue(isEZPattern);
-        assertTrue(isADPattern);
+        assertEquals("^(?:[e-z]*)$", patterns.get(0).getJavaPatternString());
+        assertEquals("^(?:[A-Z]*-%22!\\^\\^})$", patterns.get(1).getJavaPatternString());
+        assertEquals("^(?:[a-d]*)$", patterns.get(2).getJavaPatternString());
     }
 
     @Test

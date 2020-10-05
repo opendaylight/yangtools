@@ -467,7 +467,7 @@ public class EffectiveStatementTypeTest {
         assertFalse(patternConstraint.getReference().isPresent());
         assertFalse(patternConstraint.getDescription().isPresent());
         assertEquals(Optional.empty(), patternConstraint.getErrorMessage());
-        assertEquals(Optional.of("invalid-regular-expression"), patternConstraint.getErrorAppTag());
+        assertEquals(Optional.empty(), patternConstraint.getErrorAppTag());
         assertNotNull(patternConstraint.toString());
         assertNotNull(patternConstraint.hashCode());
         assertFalse(patternConstraint.equals(null));

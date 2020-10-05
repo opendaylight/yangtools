@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-final class RegularPatternStatement extends WithSubstatements<PatternConstraint> implements PatternStatement {
-    RegularPatternStatement(final StmtContext<PatternConstraint, ?, ?> context,
+final class RegularPatternStatement extends WithSubstatements<PatternExpression> implements PatternStatement {
+    RegularPatternStatement(final PatternExpression argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(argument, substatements);
     }
 }

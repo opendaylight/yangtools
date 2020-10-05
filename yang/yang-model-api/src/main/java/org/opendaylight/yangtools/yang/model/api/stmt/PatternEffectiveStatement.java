@@ -8,18 +8,33 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 @Beta
-// FIXME: 6.0.0: change the over definition of the argument:
-//               - argument = XSD pattern string
-//               - the statement *implements* PatternConstraint
-public interface PatternEffectiveStatement extends EffectiveStatement<PatternConstraint, PatternStatement> {
+public interface PatternEffectiveStatement
+        extends EffectiveStatement<PatternExpression, PatternStatement>, PatternConstraint {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.PATTERN;
+    }
+
+    @Override
+    default String getJavaPatternString() {
+        return argument().getJavaPatternString();
+    }
+
+    @Override
+    default String getRegularExpressionString() {
+        return argument().getRegularExpressionString();
+    }
+
+    @Override
+    default Optional<ModifierKind> getModifier() {
+        return findFirstEffectiveSubstatementArgument(ModifierEffectiveStatement.class);
     }
 }

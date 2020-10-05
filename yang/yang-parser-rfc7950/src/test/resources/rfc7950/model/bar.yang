@@ -50,15 +50,9 @@ module bar {
         }
     }
 
-    typedef invalid-string-pattern {
-        type string {
-            pattern "[[A-1*-%22!^^}";
-        }
-    }
-
     typedef multiple-pattern-string {
         type string {
-            pattern "[[A-1*-%22!^^}";
+            pattern "[A-Z]*-%22!^^";
             pattern "[e-z]*";
         }
     }

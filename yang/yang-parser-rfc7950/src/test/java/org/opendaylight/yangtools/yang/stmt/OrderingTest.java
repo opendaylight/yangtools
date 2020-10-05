@@ -46,8 +46,7 @@ public class OrderingTest {
     public void testOrderingTypedef() throws Exception {
         final Collection<? extends TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
         final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
-            "string-ext4", "invalid-string-pattern", "multiple-pattern-string", "my-decimal-type", "my-union",
-            "my-union-ext", "nested-union2"
+            "string-ext4", "multiple-pattern-string", "my-decimal-type", "my-union", "my-union-ext", "nested-union2"
         };
         final String[] actualOrder = new String[typedefs.size()];
 
@@ -85,8 +84,7 @@ public class OrderingTest {
     @Test
     public void testOrderingNestedChildNodes1() throws Exception {
         final Collection<? extends DataSchemaNode> childNodes = foo.getChildNodes();
-        final String[] expectedOrder = { "int32-leaf", "string-leaf", "invalid-pattern-string-leaf",
-            "invalid-direct-string-pattern-def-leaf", "multiple-pattern-string-leaf",
+        final String[] expectedOrder = { "int32-leaf", "string-leaf", "multiple-pattern-string-leaf",
             "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
             "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data", "how", "address", "port",
             "addresses", "peer", "id", "foo-id", "sub-ext", "sub-transfer", "sub-datas"
