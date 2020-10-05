@@ -28,7 +28,9 @@ public interface ModuleImport extends DocumentedNode, EffectiveStatementEquivale
      *
      * @return Name of the module to import
      */
-    @NonNull String getModuleName();
+    default @NonNull String getModuleName() {
+        return asEffectiveStatement().argument();
+    }
 
     /**
      * Returns the module revision to import. May be null.

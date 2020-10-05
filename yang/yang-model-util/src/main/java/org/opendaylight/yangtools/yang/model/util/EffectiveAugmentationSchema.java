@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
@@ -88,11 +87,6 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     @Override
     public Status getStatus() {
         return delegate.getStatus();
-    }
-
-    @Override
-    public SchemaNodeIdentifier getTargetPath() {
-        return delegate.getTargetPath();
     }
 
     @Override

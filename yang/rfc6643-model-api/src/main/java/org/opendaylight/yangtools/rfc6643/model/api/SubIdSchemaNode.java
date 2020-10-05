@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @Beta
 public interface SubIdSchemaNode extends UnknownSchemaNode, EffectiveStatementEquivalent<SubIdEffectiveStatement> {
-
-    @NonNull Uint32 getArgument();
+    default @NonNull Uint32 getArgument() {
+        return asEffectiveStatement().argument();
+    }
 }

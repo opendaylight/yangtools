@@ -31,11 +31,6 @@ final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Ui
     }
 
     @Override
-    public Uint32 getArgument() {
-        return argument();
-    }
-
-    @Override
     public QName getQName() {
         return getNodeType();
     }

@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @Beta
 public interface OidSchemaNode extends UnknownSchemaNode, EffectiveStatementEquivalent<OidEffectiveStatement> {
-
-    ObjectIdentifier getArgument();
+    default ObjectIdentifier getArgument() {
+        return asEffectiveStatement().argument();
+    }
 }

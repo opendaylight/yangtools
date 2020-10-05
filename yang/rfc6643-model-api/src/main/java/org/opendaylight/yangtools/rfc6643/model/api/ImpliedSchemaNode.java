@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @Beta
 public interface ImpliedSchemaNode extends UnknownSchemaNode, EffectiveStatementEquivalent<ImpliedEffectiveStatement> {
-
-    String getArgument();
+    default String getArgument() {
+        return asEffectiveStatement().argument();
+    }
 }

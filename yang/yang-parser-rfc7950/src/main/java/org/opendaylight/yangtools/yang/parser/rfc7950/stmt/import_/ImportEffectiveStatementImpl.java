@@ -34,11 +34,6 @@ final class ImportEffectiveStatementImpl extends WithSubstatements<String, Impor
     }
 
     @Override
-    public String getModuleName() {
-        return argument();
-    }
-
-    @Override
     public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
     }

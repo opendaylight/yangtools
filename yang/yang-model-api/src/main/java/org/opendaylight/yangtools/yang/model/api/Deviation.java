@@ -25,7 +25,9 @@ public interface Deviation extends DocumentedNode, EffectiveStatementEquivalent<
      *
      * @return An identifier that points to the node in the schema tree where a deviation from the module occurs.
      */
-    @NonNull Absolute getTargetPath();
+    default @NonNull Absolute getTargetPath() {
+        return asEffectiveStatement().argument();
+    }
 
     /**
      * Returns deviate children.
