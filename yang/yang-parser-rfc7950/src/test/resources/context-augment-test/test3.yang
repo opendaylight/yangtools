@@ -15,7 +15,7 @@ module test3 {
     }
 
     augment "/t4:interfaces/t4:ifEntry" {
-        when "if:ifType='ds0'";
+        when "t4:ifType='ds0'";
         container augment-holder {
             description "Description for augment holder";
         }

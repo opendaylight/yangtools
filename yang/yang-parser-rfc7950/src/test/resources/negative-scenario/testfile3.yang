@@ -8,7 +8,7 @@ module test3 {
     }
     
     augment "/data:unknown" {
-        when "if:ifType='ds0'";
+        when "data:ifType='ds0'";
         leaf interface-id {
             type leafref {
                 path "/data:interfaces/data:interface/data:name";

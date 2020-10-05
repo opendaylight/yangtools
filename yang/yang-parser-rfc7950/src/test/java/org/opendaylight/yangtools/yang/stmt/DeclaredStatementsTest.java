@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -92,8 +90,7 @@ public class DeclaredStatementsTest {
         assertNotNull(name);
 
         final WhenStatement whenStatement = anyxmlStatement.getWhenStatement().get();
-        final RevisionAwareXPath whenRevisionAwareXPath = whenStatement.getCondition();
-        assertNotNull(whenRevisionAwareXPath);
+        assertNotNull(whenStatement.getCondition());
         final DescriptionStatement whenStatementDescription = whenStatement.getDescription().get();
         assertTrue(whenStatement.getReference().isPresent());
 
@@ -107,8 +104,7 @@ public class DeclaredStatementsTest {
         assertNotNull(mustStatements);
         assertEquals(1, mustStatements.size());
         final MustStatement mustStatement = mustStatements.iterator().next();
-        final RevisionAwareXPath mustRevisionAwareXPath = mustStatement.getCondition();
-        assertNotNull(mustRevisionAwareXPath);
+        assertNotNull(mustStatement.getCondition());
         assertTrue(mustStatement.getErrorAppTagStatement().isPresent());
         assertTrue(mustStatement.getErrorMessageStatement().isPresent());
         assertTrue(mustStatement.getDescription().isPresent());

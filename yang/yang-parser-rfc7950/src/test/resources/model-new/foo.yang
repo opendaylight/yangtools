@@ -130,7 +130,7 @@ module foo {
     }
 
     augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
-        when "if:ifType='ds0'";
+        when "br:ifType='ds0'";
         leaf ds0ChannelNumber {
             type string;
         }

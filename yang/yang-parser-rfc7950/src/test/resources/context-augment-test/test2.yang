@@ -20,7 +20,7 @@ module test2 {
     }
 
     augment "/t4:interfaces/t4:ifEntry/t3:augment-holder" {
-        when "if:ifType='ds0'";
+        when "t4:ifType='ds0'";
         leaf ds0ChannelNumber {
             type string;
         }

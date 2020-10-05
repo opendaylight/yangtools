@@ -16,7 +16,7 @@ module testfile7 {
     }
 
     augment "/t8:interfaces/t8:ifEntry" {
-        when "if:leafType='ds1'";
+        when "t8:leafType='ds1'";
         leaf linkleaf {
             mandatory true;
             type binary;

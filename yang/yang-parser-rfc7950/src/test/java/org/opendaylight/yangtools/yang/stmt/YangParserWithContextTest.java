@@ -251,8 +251,7 @@ public class YangParserWithContextTest {
         final Collection<? extends MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
-        assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)",
-            leafMust.getXpath().getOriginalString());
+        assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
 
         // container port
         assertNotNull(refineContainer);

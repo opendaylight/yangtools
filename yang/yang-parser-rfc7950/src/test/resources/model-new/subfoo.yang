@@ -55,7 +55,7 @@ submodule subfoo {
     }
 
     augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
-        when "if:ifType='ds0'";
+        when "br:ifType='ds0'";
         leaf subleaf {
             type string;
         }

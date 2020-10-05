@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-final class EmptyMustEffectiveStatement extends DefaultArgument<RevisionAwareXPath, MustStatement>
+final class EmptyMustEffectiveStatement extends DefaultArgument<QualifiedBound, MustStatement>
         implements MustDefinitionMixin {
     EmptyMustEffectiveStatement(final MustStatement declared) {
         super(declared);
