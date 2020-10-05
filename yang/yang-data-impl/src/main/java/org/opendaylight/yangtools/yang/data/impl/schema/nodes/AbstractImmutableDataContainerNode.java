@@ -28,12 +28,12 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return LazyLeafOperations.findChild(children, child);
+        return Optional.ofNullable(LazyLeafOperations.getChild(children, child));
     }
 
     @Override
     public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
-        return LazyLeafOperations.getValue(children);
+        return new LazyValues(children);
     }
 
     @Override
