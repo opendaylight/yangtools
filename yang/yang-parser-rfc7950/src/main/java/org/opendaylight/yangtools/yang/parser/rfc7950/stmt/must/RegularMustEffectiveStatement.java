@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
-final class RegularMustEffectiveStatement extends WithSubstatements<RevisionAwareXPath, MustStatement>
+final class RegularMustEffectiveStatement extends WithSubstatements<QualifiedBound, MustStatement>
         implements MustDefinitionMixin {
     RegularMustEffectiveStatement(final MustStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -58,6 +57,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * Mix-in interfaces providing services required by SchemaNode et al. These interfaces provide implementations, or
@@ -341,7 +341,7 @@ public final class EffectiveStatementMixins {
      */
     public interface WhenConditionMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, WhenConditionAware {
         @Override
-        default Optional<RevisionAwareXPath> getWhenCondition() {
+        default Optional<QualifiedBound> getWhenCondition() {
             return findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class);
         }
     }
