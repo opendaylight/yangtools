@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 
 public class CachingCodecTest extends AbstractBindingCodecTest {
 
@@ -179,12 +178,8 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         final DataContainerChild<?, ?> second = ((DataContainerNode<?>) secondCont).getChild(LEAF_ARG).get();
         assertTrue(second instanceof LeafNode);
 
-        if (LazyLeafOperations.isEnabled()) {
-            // The leaf nodes are transient, but the values should be the same
-            assertEquals(first, second);
-            assertSame(first.getValue(), second.getValue());
-        } else {
-            assertSame(first, second);
-        }
+        // The leaf nodes are transient, but the values should be the same
+        assertEquals(first, second);
+        assertSame(first.getValue(), second.getValue());
     }
 }

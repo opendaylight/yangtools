@@ -67,6 +67,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -179,7 +180,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         final WithStatus schema = typeAndSchema.getValue();
 
         final StackManipulation startEvent;
-        if (schema instanceof ContainerSchemaNode || schema instanceof NotificationDefinition) {
+        if (schema instanceof ContainerLike || schema instanceof NotificationDefinition) {
             startEvent = classUnknownSizeMethod(START_CONTAINER_NODE, type);
         } else if (schema instanceof ListSchemaNode) {
             startEvent = ((ListSchemaNode) schema).getKeyDefinition().isEmpty() ? START_UNKEYED_LIST_ITEM

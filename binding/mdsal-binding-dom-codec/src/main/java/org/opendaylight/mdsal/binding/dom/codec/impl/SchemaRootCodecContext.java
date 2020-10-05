@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -114,7 +114,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         new CacheLoader<Absolute, RpcInputCodec<?>>() {
             @Override
             public RpcInputCodec<?> load(final Absolute key) {
-                final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key.asSchemaPath());
+                final ContainerLike schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key.asSchemaPath());
                 @SuppressWarnings("unchecked")
                 final Class<? extends DataContainer> cls = (Class<? extends DataContainer>)
                         factory().getRuntimeContext().getClassForSchema(schema);
@@ -257,7 +257,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
              * FIXME: Rework this to have more precise logic regarding Binding Specification.
              */
             if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
-                final ContainerSchemaNode schema = SchemaNodeUtils.getRpcDataSchema(potential, qname);
+                final ContainerLike schema = SchemaNodeUtils.getRpcDataSchema(potential, qname);
                 checkArgument(schema != null, "Schema for %s does not define input / output.", potential.getQName());
                 return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
             }

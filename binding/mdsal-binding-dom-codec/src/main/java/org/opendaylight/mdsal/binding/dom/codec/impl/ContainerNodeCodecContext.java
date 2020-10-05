@@ -11,12 +11,12 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
-final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ContainerSchemaNode>
+final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ContainerLike>
         implements RpcInputCodec<D> {
 
-    ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerSchemaNode> prototype) {
+    ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerLike> prototype) {
         super(prototype);
     }
 

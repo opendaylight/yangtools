@@ -9,26 +9,27 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 
 /**
  * This is not really a codec context, but rather a holder of input and output codec contexts.
  */
 final class ActionCodecContext {
-    private final DataContainerCodecContext<?, ContainerSchemaNode> input;
-    private final DataContainerCodecContext<?, ContainerSchemaNode> output;
+    private final DataContainerCodecContext<?, InputSchemaNode> input;
+    private final DataContainerCodecContext<?, OutputSchemaNode> output;
 
-    ActionCodecContext(final DataContainerCodecContext<?, ContainerSchemaNode> input,
-        final DataContainerCodecContext<?, ContainerSchemaNode> output) {
+    ActionCodecContext(final DataContainerCodecContext<?, InputSchemaNode> input,
+        final DataContainerCodecContext<?, OutputSchemaNode> output) {
         this.input = requireNonNull(input);
         this.output = requireNonNull(output);
     }
 
-    DataContainerCodecContext<?, ContainerSchemaNode> input() {
+    DataContainerCodecContext<?, InputSchemaNode> input() {
         return input;
     }
 
-    DataContainerCodecContext<?, ContainerSchemaNode> output() {
+    DataContainerCodecContext<?, OutputSchemaNode> output() {
         return output;
     }
 }

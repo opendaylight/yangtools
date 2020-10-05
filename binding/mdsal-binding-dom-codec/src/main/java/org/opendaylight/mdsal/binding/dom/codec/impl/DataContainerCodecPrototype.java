@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -229,7 +230,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     // This method must allow concurrent loading, i.e. nothing in it may have effects outside of the loaded object
     private @NonNull DataContainerCodecContext<?, T> createInstance() {
         // FIXME: make protected abstract
-        if (schema instanceof ContainerSchemaNode) {
+        if (schema instanceof ContainerLike) {
             return new ContainerNodeCodecContext(this);
         } else if (schema instanceof ListSchemaNode) {
             return Identifiable.class.isAssignableFrom(getBindingClass())
