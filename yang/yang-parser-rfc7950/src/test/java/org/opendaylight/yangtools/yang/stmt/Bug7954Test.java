@@ -5,10 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -17,7 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug7954Test {
-
     @Test
     public void testParsingTheSameModuleTwice() throws Exception {
         final File yang = new File(getClass().getResource("/bugs/bug7954/foo.yang").toURI());
@@ -27,8 +27,8 @@ public class Bug7954Test {
             fail("An exception should have been thrown because of adding the same YANG module twice.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Module namespace collision: foo-ns."));
+            assertThat(cause, instanceOf(SourceException.class));
+            assertThat(cause.getMessage(), startsWith("Module namespace collision: foo-ns."));
         }
     }
 
@@ -42,8 +42,8 @@ public class Bug7954Test {
             fail("An exception should have been thrown because of adding the same YANG submodule twice.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Submodule name collision: subbar."));
+            assertThat(cause, instanceOf(SourceException.class));
+            assertThat(cause.getMessage(), startsWith("Submodule name collision: subbar."));
         }
     }
 }

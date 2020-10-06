@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
@@ -52,7 +53,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -242,7 +245,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
 
     private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
             final RuntimeException cause) throws SomeModifiersUnresolvedException {
-        final SourceIdentifier sourceId = StmtContextUtils.createSourceIdentifier(source.getRoot());
+        final SourceIdentifier sourceId = createSourceIdentifier(source.getRoot());
         if (!(cause instanceof SourceException)) {
             /*
              * This should not be happening as all our processing should provide SourceExceptions.
@@ -254,6 +257,18 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         }
 
         throw new SomeModifiersUnresolvedException(currentPhase, sourceId, cause);
+    }
+
+    private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
+        final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
+        final String arg = root.coerceRawStatementArgument();
+        if (qNameModule != null) {
+            // creates SourceIdentifier for a module
+            return RevisionSourceIdentifier.create(arg, qNameModule.getRevision());
+        }
+
+        // creates SourceIdentifier for a submodule
+        return RevisionSourceIdentifier.create(arg, StmtContextUtils.getLatestRevision(root.declaredSubstatements()));
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -344,7 +359,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
 
             if (!addedCause) {
                 addedCause = true;
-                final SourceIdentifier sourceId = StmtContextUtils.createSourceIdentifier(failedSource.getRoot());
+                final SourceIdentifier sourceId = createSourceIdentifier(failedSource.getRoot());
                 buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);

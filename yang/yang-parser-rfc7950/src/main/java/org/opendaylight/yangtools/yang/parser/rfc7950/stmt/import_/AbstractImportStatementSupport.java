@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -66,7 +67,9 @@ abstract class AbstractImportStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
-                Verify.verify(moduleName.equals(importedModuleContext.getStatementArgument()));
+                final Object importArgument = importedModuleContext.coerceStatementArgument();
+                Verify.verify(importArgument instanceof UnqualifiedQName, "Unexpected module name %s", importArgument);
+                Verify.verify(moduleName.equals(((UnqualifiedQName) importArgument).getLocalName()));
                 final URI importedModuleNamespace = importedModuleContext.getFromNamespace(ModuleNameToNamespace.class,
                         moduleName);
                 Verify.verifyNotNull(importedModuleNamespace);

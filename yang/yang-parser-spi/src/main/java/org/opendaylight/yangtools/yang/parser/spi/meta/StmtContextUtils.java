@@ -34,8 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -610,18 +608,6 @@ public final class StmtContextUtils {
         }
 
         return null;
-    }
-
-    public static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
-        final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
-        if (qNameModule != null) {
-            // creates SourceIdentifier for a module
-            return RevisionSourceIdentifier.create((String) root.getStatementArgument(), qNameModule.getRevision());
-        }
-
-        // creates SourceIdentifier for a submodule
-        final Optional<Revision> revision = getLatestRevision(root.declaredSubstatements());
-        return RevisionSourceIdentifier.create((String) root.getStatementArgument(), revision);
     }
 
     public static Optional<Revision> getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {

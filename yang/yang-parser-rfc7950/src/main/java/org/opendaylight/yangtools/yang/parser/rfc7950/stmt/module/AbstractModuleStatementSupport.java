@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -55,28 +56,33 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractModuleStatementSupport
-        extends BaseStatementSupport<String, ModuleStatement, ModuleEffectiveStatement> {
+        extends BaseStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
     AbstractModuleStatementSupport() {
         super(YangStmtMapping.MODULE);
     }
 
     @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public final UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        try {
+            return UnqualifiedQName.of(value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(e.getMessage(), ctx.getStatementSourceReference(), e);
+        }
     }
 
     @Override
-    public final void onPreLinkageDeclared(final Mutable<String, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final String moduleName = stmt.getStatementArgument();
+    public final void onPreLinkageDeclared(
+            final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
+        final String moduleName = stmt.coerceStatementArgument().getLocalName();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
         SourceException.throwIfNull(moduleNs, stmt.getStatementSourceReference(),
-            "Namespace of the module [%s] is missing", stmt.getStatementArgument());
+            "Namespace of the module [%s] is missing", moduleName);
         stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
         SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
-            "Prefix of the module [%s] is missing", stmt.getStatementArgument());
+            "Prefix of the module [%s] is missing", moduleName);
         stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs);
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
@@ -85,11 +91,13 @@ abstract class AbstractModuleStatementSupport
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getStatementArgument(), revisionDate));
+        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.coerceStatementArgument().getLocalName(),
+            revisionDate));
     }
 
     @Override
-    public final void onLinkageDeclared(final Mutable<String, ModuleStatement, ModuleEffectiveStatement> stmt) {
+    public final void onLinkageDeclared(
+            final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
 
         final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
@@ -105,8 +113,8 @@ abstract class AbstractModuleStatementSupport
                     qNameModule.getNamespace(), possibleDuplicateModule.getStatementSourceReference());
         }
 
-        final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(stmt.getStatementArgument(),
-                revisionDate);
+        final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(
+            stmt.coerceStatementArgument().getLocalName(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
@@ -117,10 +125,10 @@ abstract class AbstractModuleStatementSupport
             "Prefix of the module [%s] is missing", stmt.getStatementArgument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
-        stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument(), qNameModule);
+        stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument().getLocalName(), qNameModule);
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
         stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
-        stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
+        stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument().getLocalName());
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
 
         if (stmt.isEnabledSemanticVersioning()) {
@@ -130,7 +138,7 @@ abstract class AbstractModuleStatementSupport
 
     @Override
     protected final ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx,
+            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> local =
                 super.buildEffectiveSubstatements(ctx, substatements);
@@ -156,19 +164,19 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    protected final ModuleStatement createDeclared(final StmtContext<String, ModuleStatement, ?> ctx,
+    protected final ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ModuleStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new ModuleStatementImpl(ctx, substatements);
     }
 
     @Override
-    protected final ModuleStatement createEmptyDeclared(final StmtContext<String, ModuleStatement, ?> ctx) {
+    protected final ModuleStatement createEmptyDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx) {
         throw noNamespace(ctx);
     }
 
     @Override
     protected final ModuleEffectiveStatement createEffective(
-            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx,
+            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
             final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final List<Submodule> submodules = new ArrayList<>();
         for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(ctx)) {
@@ -182,7 +190,8 @@ abstract class AbstractModuleStatementSupport
 
     @Override
     protected final ModuleEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx, final ModuleStatement declared) {
+            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
+            final ModuleStatement declared) {
         throw noNamespace(ctx);
     }
 
@@ -197,9 +206,9 @@ abstract class AbstractModuleStatementSupport
     }
 
     private static void addToSemVerModuleNamespace(
-            final Mutable<String, ModuleStatement, ModuleEffectiveStatement> stmt,
+            final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt,
             final SourceIdentifier moduleIdentifier) {
-        final String moduleName = stmt.coerceStatementArgument();
+        final String moduleName = stmt.coerceStatementArgument().getLocalName();
         final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
         final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(moduleName, moduleSemVer);
         stmt.addToNs(SemanticVersionModuleNamespace.class, id, stmt);

@@ -132,7 +132,7 @@ public final class SubstatementValidator {
                 if (ctx.getFromNamespace(ExtensionNamespace.class, key.getStatementName()) == null) {
                     throw new InvalidSubstatementException(ctx.getStatementSourceReference(),
                         "%s is not valid for %s. Error in module %s (%s)", key, currentStatement,
-                        ctx.getRoot().getStatementArgument(),
+                        ctx.getRoot().rawStatementArgument(),
                         ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot()));
                 }
 
@@ -143,7 +143,7 @@ public final class SubstatementValidator {
                 if (cardinality.getMin() > value) {
                     throw new InvalidSubstatementException(ctx.getStatementSourceReference(),
                         "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
-                        cardinality.getMin(), value, ctx.getRoot().getStatementArgument(),
+                        cardinality.getMin(), value, ctx.getRoot().rawStatementArgument(),
                         ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot()));
                 }
 
@@ -153,7 +153,7 @@ public final class SubstatementValidator {
             if (cardinality.getMax() < value) {
                 throw new InvalidSubstatementException(ctx.getStatementSourceReference(),
                     "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
-                    cardinality.getMax(), value, ctx.getRoot().getStatementArgument(),
+                    cardinality.getMax(), value, ctx.getRoot().rawStatementArgument(),
                     ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot()));
             }
         }
@@ -165,7 +165,7 @@ public final class SubstatementValidator {
 
             throw new MissingSubstatementException(ctx.getStatementSourceReference(),
                 "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, e.getKey(),
-                e.getValue().getMin(), root.getStatementArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class,
+                e.getValue().getMin(), root.rawStatementArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class,
                     root));
         }
     }

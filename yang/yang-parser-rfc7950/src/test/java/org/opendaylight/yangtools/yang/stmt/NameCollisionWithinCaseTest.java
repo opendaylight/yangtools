@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -22,8 +24,8 @@ public class NameCollisionWithinCaseTest {
             fail("Expected failure due to node name collision");
         } catch (ReactorException e) {
             final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(
+            assertThat(cause, instanceOf(SourceException.class));
+            assertThat(cause.getMessage(), startsWith(
                 "Cannot add data tree child with name (foo?revision=2018-02-11)bar, a conflicting child already exists "
                         + "[at "));
         }
@@ -36,8 +38,8 @@ public class NameCollisionWithinCaseTest {
             fail("Expected failure due to node name collision");
         } catch (ReactorException e) {
             final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(
+            assertThat(cause, instanceOf(SourceException.class));
+            assertThat(cause.getMessage(), startsWith(
                 "Cannot add data tree child with name (bar?revision=2018-02-11)bar, a conflicting child already exists "
                         + "[at "));
         }
@@ -50,8 +52,8 @@ public class NameCollisionWithinCaseTest {
             fail("Expected failure due to node name collision");
         } catch (ReactorException e) {
             final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(
+            assertThat(cause, instanceOf(SourceException.class));
+            assertThat(cause.getMessage(), startsWith(
                 "Error in module 'baz': cannot add '(baz?revision=2018-02-28)bar'. Node name collision: "));
         }
     }

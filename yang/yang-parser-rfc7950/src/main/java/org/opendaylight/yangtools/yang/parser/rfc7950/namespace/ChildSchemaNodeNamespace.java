@@ -61,7 +61,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
         if (prev != null) {
             throw new SourceException(value.getStatementSourceReference(),
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
-                value.getRoot().getStatementArgument(), key, prev.getStatementArgument(),
+                value.getRoot().rawStatementArgument(), key, prev.getStatementArgument(),
                 prev.getStatementSourceReference());
         }
     }
