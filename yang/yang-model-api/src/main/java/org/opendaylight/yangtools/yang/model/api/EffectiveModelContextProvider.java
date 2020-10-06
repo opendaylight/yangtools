@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @author Robert Varga
  */
 @Beta
-public interface EffectiveModelContextProvider extends SchemaContextProvider {
+public interface EffectiveModelContextProvider {
     /**
      * Return the {@link EffectiveModelContext} attached to this object.
      *
@@ -24,15 +24,4 @@ public interface EffectiveModelContextProvider extends SchemaContextProvider {
      * @throws IllegalStateException if the context is not available.
      */
     @NonNull EffectiveModelContext getEffectiveModelContext();
-
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated Please use {@link #getEffectiveModelContext()} instead.
-     */
-    @Deprecated
-    @Override
-    default SchemaContext getSchemaContext() {
-        return getEffectiveModelContext();
-    }
 }
