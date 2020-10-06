@@ -11,11 +11,12 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface ModuleStatement extends MetaDeclaredStatement<String>, ModuleHeaderGroup, LinkageDeclaredStatement,
-        RevisionAwareDeclaredStatement, BodyDeclaredStatement {
+public interface ModuleStatement extends MetaDeclaredStatement<UnqualifiedQName>, ModuleHeaderGroup,
+        LinkageDeclaredStatement, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MODULE;

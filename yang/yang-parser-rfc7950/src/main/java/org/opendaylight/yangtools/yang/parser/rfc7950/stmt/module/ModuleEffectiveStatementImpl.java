@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -56,10 +57,10 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final @NonNull QNameModule qnameModule;
     private final ImmutableList<Submodule> submodules;
 
-    ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx,
+    ModuleEffectiveStatementImpl(final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
             final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules) {
-        super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.getStatementArgument()));
+        super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.coerceStatementArgument().getLocalName()));
 
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
         this.submodules = ImmutableList.copyOf(submodules);

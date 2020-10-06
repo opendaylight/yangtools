@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 
 @Beta
-public interface BodyDeclaredStatement extends NotificationStatementAwareDeclaredStatement<String>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<String> {
+public interface BodyDeclaredStatement extends NotificationStatementAwareDeclaredStatement<UnqualifiedQName>,
+        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<UnqualifiedQName> {
     default @NonNull Collection<? extends ExtensionStatement> getExtensions() {
         return declaredSubstatements(ExtensionStatement.class);
     }

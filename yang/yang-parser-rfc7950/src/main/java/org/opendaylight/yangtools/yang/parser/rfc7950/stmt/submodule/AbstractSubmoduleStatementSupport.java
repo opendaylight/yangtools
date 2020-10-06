@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -29,26 +30,32 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractSubmoduleStatementSupport
-        extends BaseStatementSupport<String, SubmoduleStatement, SubmoduleEffectiveStatement> {
+        extends BaseStatementSupport<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> {
     AbstractSubmoduleStatementSupport() {
         super(YangStmtMapping.SUBMODULE);
     }
 
     @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public final UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        try {
+            return UnqualifiedQName.of(value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(e.getMessage(), ctx.getStatementSourceReference(), e);
+        }
     }
 
     @Override
     public final void onPreLinkageDeclared(
-            final Mutable<String, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getStatementArgument(),
+            final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
+        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.coerceStatementArgument().getLocalName(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
     }
 
     @Override
-    public final void onLinkageDeclared(final Mutable<String, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.coerceStatementArgument(),
+    public final void onLinkageDeclared(
+            final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
+        final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(
+            stmt.coerceStatementArgument().getLocalName(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
 
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
@@ -72,26 +79,27 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     @Override
-    protected final SubmoduleStatement createDeclared(final StmtContext<String, SubmoduleStatement, ?> ctx,
+    protected final SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new SubmoduleStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new SubmoduleStatementImpl(ctx, substatements);
     }
 
     @Override
-    protected final SubmoduleStatement createEmptyDeclared(final StmtContext<String, SubmoduleStatement, ?> ctx) {
+    protected final SubmoduleStatement createEmptyDeclared(
+            final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx) {
         throw noBelongsTo(ctx);
     }
 
     @Override
     protected final SubmoduleEffectiveStatement createEffective(
-            final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+            final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
             final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new SubmoduleEffectiveStatementImpl(ctx, declared, substatements);
     }
 
     @Override
     protected final SubmoduleEffectiveStatement createEmptyEffective(
-            final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+            final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
             final SubmoduleStatement declared) {
         throw noBelongsTo(ctx);
     }
