@@ -177,9 +177,9 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
             final Optional<Revision> revision = entry.getKey().getRevision();
             final ModuleEffectiveStatement module = entry.getValue();
 
-            sources.add(RevisionSourceIdentifier.create(module.argument(), revision));
+            sources.add(RevisionSourceIdentifier.create(module.argument().getLocalName(), revision));
             module.streamEffectiveSubstatements(SubmoduleEffectiveStatement.class)
-                .map(submodule -> RevisionSourceIdentifier.create(submodule.argument(), revision))
+                .map(submodule -> RevisionSourceIdentifier.create(submodule.argument().getLocalName(), revision))
                 .forEach(sources::add);
         }
 

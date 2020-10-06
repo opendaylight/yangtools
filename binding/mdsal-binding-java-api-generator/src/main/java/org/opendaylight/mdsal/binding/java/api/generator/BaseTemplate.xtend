@@ -282,7 +282,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                 if (node instanceof SchemaNode) {
                     sb.append("The schema path to identify an instance is\n")
                     .append("<i>")
-                    .append(formatSchemaPath(def.module.argument, node.path.pathFromRoot))
+                    .append(formatSchemaPath(def.module.argument.localName, node.path.pathFromRoot))
                     .append("</i>\n")
 
                     if (hasBuilderClass(node)) {
