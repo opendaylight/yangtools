@@ -58,7 +58,7 @@ public final class ThirdPartyExtensionSupport
             final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
             final ThirdPartyExtensionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ThirdPartyExtensionEffectiveStatementImpl(ctx, substatements);
+        return new ThirdPartyExtensionEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

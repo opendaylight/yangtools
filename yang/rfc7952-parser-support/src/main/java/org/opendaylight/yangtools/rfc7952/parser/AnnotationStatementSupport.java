@@ -48,9 +48,10 @@ public final class AnnotationStatementSupport
         private final @NonNull TypeDefinition<?> type;
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<QName, AnnotationStatement, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(ctx, substatements);
+        Effective(final AnnotationStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StmtContext<QName, AnnotationStatement, ?> ctx) {
+            super(ctx.coerceStatementArgument(), declared, substatements, ctx);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
@@ -149,13 +150,13 @@ public final class AnnotationStatementSupport
             final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
             final AnnotationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(ctx, substatements);
+        return new Effective(declared, substatements, ctx);
     }
 
     @Override
     protected AnnotationEffectiveStatement createEmptyEffective(
             final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
             final AnnotationStatement declared) {
-        return new Effective(ctx, ImmutableList.of());
+        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

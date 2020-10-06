@@ -22,10 +22,11 @@ final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<St
         implements AliasEffectiveStatement, AliasSchemaNode {
     private final SchemaPath path;
 
-    AliasEffectiveStatementImpl(final StmtContext<String, AliasStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+    AliasEffectiveStatementImpl(final AliasStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<String, AliasStatement, ?> ctx) {
+        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override

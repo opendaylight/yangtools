@@ -23,18 +23,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public final class AnyxmlSchemaLocationEffectiveStatementImpl
         extends UnknownEffectiveStatementBase<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>
         implements AnyxmlSchemaLocationEffectiveStatement {
-
     private final @NonNull SchemaPath path;
 
-    AnyxmlSchemaLocationEffectiveStatementImpl(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
+    AnyxmlSchemaLocationEffectiveStatementImpl(final AnyxmlSchemaLocationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
+        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
         path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override
-    public @NonNull QName getQName() {
+    public QName getQName() {
         return getNodeType();
     }
 

@@ -67,7 +67,7 @@ public final class OpenConfigVersionSupport
             final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
             final OpenConfigVersionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OpenConfigVersionEffectiveStatementImpl(ctx, substatements);
+        return new OpenConfigVersionEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

@@ -45,12 +45,15 @@ abstract class AbstractHashedValueStatementSupport
     private static final class Effective
             extends UnknownEffectiveStatementBase<Void, OpenConfigHashedValueStatement>
             implements OpenConfigHashedValueEffectiveStatement {
-
+        private @NonNull
+        final StatementDefinition definition;
         private final SchemaPath path;
 
-        Effective(final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(ctx, substatements);
+        Effective(final OpenConfigHashedValueStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
+            super(declared.argument(), declared, substatements, ctx);
+            definition = ctx.getPublicDefinition();
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -64,6 +67,11 @@ abstract class AbstractHashedValueStatementSupport
         @Deprecated
         public SchemaPath getPath() {
             return path;
+        }
+
+        @Override
+        public StatementDefinition statementDefinition() {
+            return definition;
         }
     }
 
@@ -97,7 +105,7 @@ abstract class AbstractHashedValueStatementSupport
             final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
             final OpenConfigHashedValueStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(ctx, substatements);
+        return new Effective(declared, substatements, ctx);
     }
 
     @Override

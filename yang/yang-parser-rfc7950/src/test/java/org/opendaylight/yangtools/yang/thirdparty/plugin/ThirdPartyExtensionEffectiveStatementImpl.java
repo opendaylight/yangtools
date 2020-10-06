@@ -22,9 +22,10 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     private final @NonNull SchemaPath path;
     private final String valueFromNamespace;
 
-    ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
+    ThirdPartyExtensionEffectiveStatementImpl(final ThirdPartyExtensionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
+        super(ctx.getStatementArgument(), declared, substatements, ctx);
         path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
         valueFromNamespace = ctx.getFromNamespace(ThirdPartyNamespace.class, ctx);
     }

@@ -74,7 +74,7 @@ public final class AnyxmlSchemaLocationStatementSupport
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
                 AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AnyxmlSchemaLocationEffectiveStatementImpl(ctx, substatements);
+        return new AnyxmlSchemaLocationEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

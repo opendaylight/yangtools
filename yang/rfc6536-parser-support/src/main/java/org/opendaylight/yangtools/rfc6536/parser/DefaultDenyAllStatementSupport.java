@@ -38,9 +38,10 @@ public final class DefaultDenyAllStatementSupport
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(ctx, substatements);
+        Effective(final DefaultDenyAllStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
+            super(declared.argument(), declared, substatements, ctx);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -97,7 +98,7 @@ public final class DefaultDenyAllStatementSupport
             final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx,
             final DefaultDenyAllStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(ctx, substatements);
+        return new Effective(declared, substatements, ctx);
     }
 
     @Override

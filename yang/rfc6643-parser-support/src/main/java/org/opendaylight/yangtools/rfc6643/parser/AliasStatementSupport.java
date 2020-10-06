@@ -59,7 +59,7 @@ public final class AliasStatementSupport
     protected AliasEffectiveStatement createEffective(
             final StmtContext<String, AliasStatement, AliasEffectiveStatement> ctx, final AliasStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AliasEffectiveStatementImpl(ctx, substatements);
+        return new AliasEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

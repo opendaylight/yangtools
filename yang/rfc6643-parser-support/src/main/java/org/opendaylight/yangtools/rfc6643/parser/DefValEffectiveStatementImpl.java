@@ -20,13 +20,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class DefValEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, DefValStatement>
         implements DefValEffectiveStatement, DefValSchemaNode {
-
     private final SchemaPath path;
 
-    DefValEffectiveStatementImpl(final StmtContext<String, DefValStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+    DefValEffectiveStatementImpl(final DefValStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<String, DefValStatement, ?> ctx) {
+        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override

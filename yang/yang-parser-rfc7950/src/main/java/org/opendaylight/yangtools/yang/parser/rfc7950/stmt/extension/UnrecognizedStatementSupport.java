@@ -70,7 +70,7 @@ final class UnrecognizedStatementSupport
             final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
             final UnrecognizedStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UnrecognizedEffectiveStatementImpl(ctx, substatements);
+        return new UnrecognizedEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

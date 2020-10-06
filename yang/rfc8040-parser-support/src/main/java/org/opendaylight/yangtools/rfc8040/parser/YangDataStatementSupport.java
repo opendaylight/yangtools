@@ -95,7 +95,7 @@ public final class YangDataStatementSupport
         // effective substatement contexts already available - if the node has only a uses statement declared in it,
         // one top-level container node may very well be added to the yang-data as an effective statement
         validator.validate(ctx);
-        return new YangDataEffectiveStatementImpl(ctx, substatements);
+        return new YangDataEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override
