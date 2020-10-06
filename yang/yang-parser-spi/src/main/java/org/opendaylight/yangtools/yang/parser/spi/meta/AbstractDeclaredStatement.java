@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  *
  * @param <A> Argument type.
  */
+// FIXME: 7.0.0: remove this class
 public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A> {
     private final @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements;
     private final @NonNull StatementDefinition definition;
