@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
@@ -73,7 +72,7 @@ abstract class AbstractModuleStatementSupport
     @Override
     public final void onPreLinkageDeclared(
             final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final String moduleName = stmt.coerceStatementArgument().getLocalName();
+        final String moduleName = stmt.coerceRawStatementArgument();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
         SourceException.throwIfNull(moduleNs, stmt.getStatementSourceReference(),
@@ -113,8 +112,8 @@ abstract class AbstractModuleStatementSupport
                     qNameModule.getNamespace(), possibleDuplicateModule.getStatementSourceReference());
         }
 
-        final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(
-            stmt.coerceStatementArgument().getLocalName(), revisionDate);
+        final String moduleName = stmt.coerceRawStatementArgument();
+        final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(moduleName, revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
@@ -125,10 +124,10 @@ abstract class AbstractModuleStatementSupport
             "Prefix of the module [%s] is missing", stmt.getStatementArgument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
-        stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument().getLocalName(), qNameModule);
+        stmt.addToNs(ModuleNameToModuleQName.class, moduleName, qNameModule);
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
         stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
-        stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument().getLocalName());
+        stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, moduleName);
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
 
         if (stmt.isEnabledSemanticVersioning()) {
@@ -208,9 +207,8 @@ abstract class AbstractModuleStatementSupport
     private static void addToSemVerModuleNamespace(
             final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt,
             final SourceIdentifier moduleIdentifier) {
-        final String moduleName = stmt.coerceStatementArgument().getLocalName();
-        final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
-        final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(moduleName, moduleSemVer);
+        final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(stmt.coerceRawStatementArgument(),
+            stmt.getFromNamespace(SemanticVersionNamespace.class, stmt));
         stmt.addToNs(SemanticVersionModuleNamespace.class, id, stmt);
     }
 }

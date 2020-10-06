@@ -60,7 +60,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     ModuleEffectiveStatementImpl(final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
             final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules) {
-        super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.coerceStatementArgument().getLocalName()));
+        super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.coerceRawStatementArgument()));
 
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
         this.submodules = ImmutableList.copyOf(submodules);
