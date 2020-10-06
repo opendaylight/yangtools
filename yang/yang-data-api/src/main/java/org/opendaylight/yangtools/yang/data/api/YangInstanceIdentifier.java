@@ -123,7 +123,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return A optimized equivalent instance.
      */
-    @Beta
     public abstract @NonNull YangInstanceIdentifier toOptimized();
 
     /**
@@ -188,7 +187,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return FixedYangInstanceIdentifier.create(path, hash.build());
     }
 
-    @Beta
     public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
         return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument),
             HashCodeBuilder.nextHashCode(1, pathArgument));
@@ -757,7 +755,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          *
          * @return Predicate set.
          */
-        @Beta
         public abstract @NonNull Set<Entry<QName, Object>> entrySet();
 
         /**
@@ -765,7 +762,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          *
          * @return Predicate values.
          */
-        @Beta
         public abstract @NonNull Set<QName> keySet();
 
         /**
@@ -775,7 +771,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return True if the predicate is present, false otherwise
          * @throws NullPointerException if {@code key} is null
          */
-        @Beta
         public abstract boolean containsKey(QName key);
 
         /**
@@ -783,7 +778,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          *
          * @return Predicate values.
          */
-        @Beta
         public abstract @NonNull Collection<Object> values();
 
         @Beta
@@ -801,7 +795,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          *
          * @return The number of predicates present.
          */
-        @Beta
         public abstract int size();
 
         /**
@@ -813,10 +806,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          *             guidelines. Callers are strongly encouraged to explore {@link #entrySet()}, {@link #size()},
          *             {@link #values()} and {@link #keySet()} as an alternative.
          */
-        @Beta
-        @Deprecated
-        // FIXME: 6.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
-        //               which limits our options.
         public abstract @NonNull Map<QName, Object> asMap();
 
         @Override
@@ -1101,7 +1090,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return this builder
          * @throws NullPointerException if any of the arguments is null
          */
-        @Beta
         @NonNull InstanceIdentifierBuilder append(Collection<? extends PathArgument> args);
 
         /**
@@ -1111,7 +1099,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return this builder
          * @throws NullPointerException if any of the arguments is null
          */
-        @Beta
         default @NonNull InstanceIdentifierBuilder append(final PathArgument... args) {
             return append(Arrays.asList(args));
         }
