@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
+import org.opendaylight.yangtools.yang.model.api.QNameModuleAware;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -30,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentEffectiveStatement, AugmentationSchemaNode, NamespaceRevisionAware,
+        implements AugmentEffectiveStatement, AugmentationSchemaNode, QNameModuleAware,
             DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
             ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
@@ -66,13 +64,8 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
     }
 
     @Override
-    public URI getNamespace() {
-        return rootModuleQName.getNamespace();
-    }
-
-    @Override
-    public Optional<Revision> getRevision() {
-        return rootModuleQName.getRevision();
+    public QNameModule getQNameModule() {
+        return rootModuleQName;
     }
 
     @Override
