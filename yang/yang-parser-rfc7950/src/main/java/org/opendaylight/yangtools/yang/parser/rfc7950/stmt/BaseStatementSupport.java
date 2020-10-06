@@ -143,7 +143,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
          * The reactor would first inline 'uses baz' as that definition is the first one completely resolved and then
          * inline 'uses bar'. Here we are iterating in declaration order re-inline the statements.
          *
-         * FIXME: 6.0.0: this really should be handled by UsesStatementSupport such that 'uses baz' would have a
+         * FIXME: 7.0.0: this really should be handled by UsesStatementSupport such that 'uses baz' would have a
          *               prerequisite of a resolved 'uses bar'.
          */
         final List<StmtContext<?, ?, ?>> substatementsInit = new ArrayList<>();

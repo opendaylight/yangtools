@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
-// FIXME: 6.0.0: hide this class
+// FIXME: 7.0.0: hide this class
 // FIXME: 6.0.0: do not implement SchemaNode
 public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode, DocumentedNodeMixin<Descendant, RefineStatement> {

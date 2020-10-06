@@ -50,7 +50,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * build full declared statement model of source.</li>
  * </ol>
  */
-// FIXME: 6.0.0: this is a push parser, essentially traversing the same tree multiple times. Perhaps we should create
+// FIXME: 7.0.0: this is a push parser, essentially traversing the same tree multiple times. Perhaps we should create
 //               a visitor/filter or perform some explicit argument binding?
 public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
     /**

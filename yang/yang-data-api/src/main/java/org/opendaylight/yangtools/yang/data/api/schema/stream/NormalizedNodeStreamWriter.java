@@ -339,7 +339,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      *                               implementation does not allow resetting the value.
      * @throws IOException if an underlying IO error occurs
      */
-    // FIXME: 6.0.0: this probably should integrated with scalarValue()
+    // FIXME: 7.0.0: this probably should integrated with scalarValue()
     void domSourceValue(DOMSource value) throws IOException;
 
     /**

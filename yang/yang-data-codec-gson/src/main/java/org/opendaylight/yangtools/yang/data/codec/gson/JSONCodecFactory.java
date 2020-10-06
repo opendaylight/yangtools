@@ -147,7 +147,7 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.
     //
-    // FIXME: 6.0.0: this is really ugly, as we should be able to tell if the new context is the same as ours and
+    // FIXME: 7.0.0: this is really ugly, as we should be able to tell if the new context is the same as ours and
     //               whether our cache is thread-safe -- in which case we should just return this.
     //               The supplier/cache/factory layout needs to be reworked so that this call ends up being equivalent
     //               to JSONCodecFactorySupplier.getShared() in case this factory is not thread safe.

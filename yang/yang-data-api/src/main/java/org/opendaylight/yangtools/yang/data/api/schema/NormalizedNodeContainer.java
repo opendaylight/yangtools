@@ -47,7 +47,7 @@ public interface NormalizedNodeContainer<I extends PathArgument, K extends PathA
      *
      * @return Number of child nodes in this container.
      */
-    // FIXME: 6.0.0: consider making this method non-default
+    // FIXME: 7.0.0: consider making this method non-default, but then it will conflict in OrderedLeafSet
     default int size() {
         return getValue().size();
     }

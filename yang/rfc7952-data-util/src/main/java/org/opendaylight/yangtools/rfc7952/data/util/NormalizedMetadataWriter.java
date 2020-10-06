@@ -49,7 +49,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
  * @author Robert Varga
  */
 @Beta
-// FIXME: 6.0.0: consider moving this class to api to keep related stuff together
+// FIXME: 7.0.0: consider moving this class to api to keep related stuff together
 public final class NormalizedMetadataWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final boolean orderKeyLeaves;

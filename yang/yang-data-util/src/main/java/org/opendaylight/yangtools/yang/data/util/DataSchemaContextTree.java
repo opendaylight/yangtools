@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  *
  * @author Robert Varga
  */
-// FIXME: 6.0.0: @NonNullByDefault
 public final class DataSchemaContextTree {
     private static final LoadingCache<EffectiveModelContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys().weakValues().build(new CacheLoader<EffectiveModelContext, DataSchemaContextTree>() {
@@ -53,7 +52,7 @@ public final class DataSchemaContextTree {
         return getRoot().findChild(path);
     }
 
-    public DataSchemaContextNode<?> getRoot() {
+    public @NonNull DataSchemaContextNode<?> getRoot() {
         return root;
     }
 }

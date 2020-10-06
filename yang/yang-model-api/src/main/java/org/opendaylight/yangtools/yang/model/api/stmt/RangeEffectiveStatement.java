@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public interface RangeEffectiveStatement extends EffectiveStatement<List<ValueRange>, RangeStatement>,
-        // FIXME: 6.0.0: reconsider this interface extension
-        // FIXME: 6.0.0: if we are keeping it, consider a default implementation (shared with others effective
+        // FIXME: 7.0.0: reconsider this interface extension
+        // FIXME: 7.0.0: if we are keeping it, consider a default implementation (shared with others effective
         //               statements)
         ConstraintMetaDefinition {
     @Override

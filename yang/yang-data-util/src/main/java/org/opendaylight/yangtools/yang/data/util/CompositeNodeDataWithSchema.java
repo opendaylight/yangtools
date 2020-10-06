@@ -196,7 +196,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             augSchema = null;
         }
 
-        // FIXME: 6.0.0: use policy once we have removed addChild() visibility
+        // FIXME: 7.0.0: use policy to determine if we should reuse or replace the child
 
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);

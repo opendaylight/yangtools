@@ -26,7 +26,7 @@ final class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema<ChoiceS
         super(schema);
     }
 
-    // FIXME: 6.0.0: this should be impossible to hit
+    // FIXME: 7.0.0: this should be impossible to hit
     @Override
     CaseNodeDataWithSchema addCompositeChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         verify(schema instanceof CaseSchemaNode, "Unexpected schema %s", schema);

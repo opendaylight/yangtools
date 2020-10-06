@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-// FIXME: 6.0.0: yang-data-api is tied to yang-model-api, hence it should be opinionated to export exceptions
+// FIXME: 7.0.0: yang-data-api is tied to yang-model-api, hence it should be opinionated to export exceptions
 //               encapsulating YANG-based error information.
 public interface DataStringCodec<T> extends IllegalArgumentCodec<String, T> {
 

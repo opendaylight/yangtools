@@ -30,7 +30,7 @@ public interface TypeStatement extends DeclaredStatement<String> {
     }
 
     @Rfc6020AbnfRule("numerical-restrictions")
-    // FIXME: 6.0.0: this interface does not have an implementation
+    // FIXME: 7.0.0: this interface does not have an implementation
     interface NumericalRestrictions extends TypeStatement {
         default @Nullable RangeStatement getRange() {
             return findFirstDeclaredSubstatement(RangeStatement.class).orElse(null);
@@ -50,7 +50,7 @@ public interface TypeStatement extends DeclaredStatement<String> {
     }
 
     @Rfc6020AbnfRule("string-restrictions")
-    // FIXME: 6.0.0: this interface does not have an implementation
+    // FIXME: 7.0.0: this interface does not have an implementation
     interface StringRestrictions extends TypeStatement {
         default @Nullable LengthStatement getLength() {
             final Optional<LengthStatement> opt = findFirstDeclaredSubstatement(LengthStatement.class);

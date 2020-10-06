@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  * @author Robert Varga
  */
 @Beta
-// FIXME: 6.0.0: evaluate if we still need to extend SchemaContext here
+// FIXME: 7.0.0: evaluate if we still need to extend SchemaContext here
 public interface EffectiveModelContext extends SchemaContext {
 
     Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();

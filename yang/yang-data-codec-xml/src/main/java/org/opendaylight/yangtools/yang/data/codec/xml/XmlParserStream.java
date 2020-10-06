@@ -439,7 +439,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         switch (in.nextTag()) {
             case XMLStreamConstants.START_ELEMENT:
-                // FIXME: 6.0.0: why do we even need this tracker? either document it or remove it.
+                // FIXME: 7.0.0: why do we even need this tracker? either document it or remove it.
                 //               it looks like it is a crude duplicate finder, which should really be handled via
                 //               ChildReusePolicy.REJECT
                 final Set<Entry<String, String>> namesakes = new HashSet<>();
