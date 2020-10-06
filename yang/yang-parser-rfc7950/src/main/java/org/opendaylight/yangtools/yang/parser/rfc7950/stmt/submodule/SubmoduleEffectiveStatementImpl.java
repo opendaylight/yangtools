@@ -25,6 +25,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -51,11 +52,12 @@ final class SubmoduleEffectiveStatementImpl
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final QNameModule qnameModule;
 
-    private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContexts;
+    private Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContexts;
     private ImmutableSet<Submodule> submodules;
     private boolean sealed;
 
-    SubmoduleEffectiveStatementImpl(final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+    SubmoduleEffectiveStatementImpl(
+        final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
             final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, ctx, substatements, findSubmodulePrefix(ctx));
 
@@ -85,11 +87,11 @@ final class SubmoduleEffectiveStatementImpl
         final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = ctx.getAllFromCurrentStmtCtxNamespace(
             IncludedSubmoduleNameToModuleCtx.class);
         if (includedSubmodulesMap != null) {
-            final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
-                submoduleContextsInit = new HashSet<>();
+            final Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContextsInit =
+                new HashSet<>();
             for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
                 submoduleContextsInit.add(
-                    (StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>)submoduleCtx);
+                    (StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>)submoduleCtx);
             }
             submoduleContexts = ImmutableSet.copyOf(submoduleContextsInit);
         } else {
@@ -145,8 +147,8 @@ final class SubmoduleEffectiveStatementImpl
         }
     }
 
-    private static @NonNull String findSubmodulePrefix(final StmtContext<String, ?, ?> ctx) {
-        final String name = ctx.getStatementArgument();
+    private static @NonNull String findSubmodulePrefix(final StmtContext<UnqualifiedQName, ?, ?> ctx) {
+        final String name = ctx.coerceStatementArgument().getLocalName();
         final StmtContext<?, ?, ?> belongsTo = SourceException.throwIfNull(
                 StmtContextUtils.findFirstDeclaredSubstatement(ctx, BelongsToStatement.class),
                 ctx.getStatementSourceReference(), "Unable to find belongs-to statement in submodule %s.", name);

@@ -8,14 +8,16 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveRootStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class SubmoduleStatementImpl extends AbstractDeclaredEffectiveRootStatement<SubmoduleStatement>
         implements SubmoduleStatement {
-    SubmoduleStatementImpl(final String rawArgument,
+    SubmoduleStatementImpl(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+        super(ctx, substatements);
     }
 }

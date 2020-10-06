@@ -26,6 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -63,9 +64,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
-public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>,
-        E extends DataTreeAwareEffectiveStatement<String, D>> extends WithSubstatements<String, D, E>
-        implements ModuleLike, DocumentedNodeMixin<String, D>, NotificationNodeContainerCompat<String, D, E> {
+public abstract class AbstractEffectiveModule<D extends DeclaredStatement<UnqualifiedQName>,
+        E extends DataTreeAwareEffectiveStatement<UnqualifiedQName, D>>
+        extends WithSubstatements<UnqualifiedQName, D, E>
+        implements ModuleLike, DocumentedNodeMixin<UnqualifiedQName, D>,
+            NotificationNodeContainerCompat<UnqualifiedQName, D, E> {
     private final String prefix;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
@@ -73,7 +76,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
     protected AbstractEffectiveModule(final D declared,
-            final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
+            final StmtContext<UnqualifiedQName, D, ? extends EffectiveStatement<UnqualifiedQName, ?>> ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
         super(declared, ctx, substatements);
 
@@ -115,13 +118,13 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     }
 
     @Override
-    public String argument() {
+    public UnqualifiedQName argument() {
         return getDeclared().argument();
     }
 
     @Override
     public String getName() {
-        return argument();
+        return argument().getLocalName();
     }
 
     @Override
