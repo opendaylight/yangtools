@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 //               an ordinary String. We really want this to be a QName, so that we do not need the localQNameModule
 //               bit, but that may be problematic with ModuleStatement, which is getting created before we even know
 //               the namespace :( A type capture of the string may just be sufficient.
-public interface ModuleEffectiveStatement extends DataTreeAwareEffectiveStatement<String, ModuleStatement> {
+public interface ModuleEffectiveStatement extends DataTreeAwareEffectiveStatement<UnqualifiedQName, ModuleStatement> {
     /**
      * Namespace mapping all known prefixes in a module to their modules. Note this namespace includes the module
      * in which it is instantiated.
