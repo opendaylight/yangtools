@@ -38,6 +38,6 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode,
      *
      * @return Map, where key is schema node identifier of refined node and value is refined node.
      */
-    // FIXME: I am not sure I understand why do we need to track these, who are the actual users?
+    // FIXME: 7.0.0: expose only refined paths and let users deal with locating them
     @NonNull Map<Descendant, SchemaNode> getRefines();
 }
