@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * implementations.
  */
 @Beta
+// FIXME: 7.0.0: we should be able to promote this to model.spi.meta package.
 public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
     protected AbstractDeclaredStatement() {
     }
@@ -56,6 +57,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement<A> {
         private final String rawArgument;
 
+        @Deprecated
         protected WithRawArgument(final StmtContext<A, ?, ?> context) {
             this(context.rawStatementArgument());
         }
@@ -86,7 +88,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
         }
 
-        private final QName argument;
+        private final @NonNull QName argument;
 
         protected WithQNameArgument(final QName argument) {
             this.argument = requireNonNull(argument);
@@ -107,6 +109,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         public abstract static class WithSubstatements extends WithRawStringArgument {
             private final @NonNull Object substatements;
 
+            @Deprecated
             protected WithSubstatements(final StmtContext<String, ?, ?> context,
                     final ImmutableList<? extends DeclaredStatement<?>> substatements) {
                 super(context);
@@ -125,6 +128,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
         }
 
+        @Deprecated
         protected WithRawStringArgument(final StmtContext<String, ?, ?> context) {
             super(context);
         }
@@ -143,9 +147,16 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         public abstract static class WithSubstatements<A> extends WithArgument<A> {
             private final @NonNull Object substatements;
 
+            @Deprecated
             protected WithSubstatements(final StmtContext<A, ?, ?> context,
                     final ImmutableList<? extends DeclaredStatement<?>> substatements) {
                 super(context);
+                this.substatements = maskList(substatements);
+            }
+
+            protected WithSubstatements(final String rawArgument, final A argument,
+                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                super(rawArgument, argument);
                 this.substatements = maskList(substatements);
             }
 
@@ -157,9 +168,15 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         private final A argument;
 
+        @Deprecated
         protected WithArgument(final StmtContext<A, ?, ?> context) {
             super(context);
             argument = context.getStatementArgument();
+        }
+
+        protected WithArgument(final String rawArgument, A argument) {
+            super(rawArgument);
+            this.argument = argument;
         }
 
         @Override
