@@ -9,19 +9,21 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BodyDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LinkageDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MetaDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionAwareDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement<String>>
-        extends WithSubstatements implements LinkageDeclaredStatement, MetaDeclaredStatement<String>,
-                RevisionAwareDeclaredStatement, BodyDeclaredStatement {
-    protected AbstractDeclaredEffectiveRootStatement(final String rawArgument,
+public abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement<UnqualifiedQName>>
+        extends WithSubstatements<UnqualifiedQName> implements LinkageDeclaredStatement,
+                MetaDeclaredStatement<UnqualifiedQName>, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
+    protected AbstractDeclaredEffectiveRootStatement(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+        super(ctx, substatements);
     }
 }

@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface RevisionAwareDeclaredStatement extends DeclaredStatement<String> {
+public interface RevisionAwareDeclaredStatement extends DeclaredStatement<UnqualifiedQName> {
     default @NonNull Collection<? extends RevisionStatement> getRevisions() {
         return declaredSubstatements(RevisionStatement.class);
     }
