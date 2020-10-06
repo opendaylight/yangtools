@@ -12,12 +12,12 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableBiMap.Builder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * Utility {@link YangNamespaceContext} backed by a SchemaContext, resolving namespaces to their module names. This
@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * @author Robert Varga
  */
 @Beta
-public final class ModuleNameNamespaceContext extends AbstractSchemaContextProvider implements YangNamespaceContext {
+public final class ModuleNameNamespaceContext extends AbstractEffectiveModelContextProvider
+        implements YangNamespaceContext {
     private static final long serialVersionUID = 1L;
 
     @SuppressFBWarnings(value = "SE_NO_SUITABLE_CONSTRUCTOR", justification = "Handled through writeReplace()")
@@ -46,7 +47,8 @@ public final class ModuleNameNamespaceContext extends AbstractSchemaContextProvi
      */
     public BiMapYangNamespaceContext toBiMap() {
         final Builder<String, QNameModule> builder = ImmutableBiMap.builder();
-        for (String name : getSchemaContext().getModules().stream().map(Module::getName).collect(Collectors.toSet())) {
+        for (ModuleEffectiveStatement module : getEffectiveModelContext().getModuleStatements().values()) {
+            final String name = module.argument().getLocalName();
             builder.put(name, findNamespaceForPrefix(name).get());
         }
         return new BiMapYangNamespaceContext(builder.build());
@@ -54,12 +56,12 @@ public final class ModuleNameNamespaceContext extends AbstractSchemaContextProvi
 
     @Override
     public Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
-        return getSchemaContext().findModules(prefix).stream().findFirst().map(Module::getQNameModule);
+        return getEffectiveModelContext().findModules(prefix).stream().findFirst().map(Module::getQNameModule);
     }
 
     @Override
     public Optional<String> findPrefixForNamespace(final QNameModule namespace) {
-        return getSchemaContext().findModule(namespace).map(Module::getName);
+        return getEffectiveModelContext().findModule(namespace).map(Module::getName);
     }
 
     private Object writeReplace() {

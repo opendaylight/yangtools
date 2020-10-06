@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -410,11 +411,11 @@ final class YangFunctionContext implements FunctionContext {
                 enumName, enumerationType));
     }
 
-    private static SchemaContext getSchemaContext(final NormalizedNodeContext normalizedNodeContext) {
+    private static EffectiveModelContext getSchemaContext(final NormalizedNodeContext normalizedNodeContext) {
         final ContextSupport contextSupport = normalizedNodeContext.getContextSupport();
         verify(contextSupport instanceof NormalizedNodeContextSupport, "Unhandled context support %s",
                 contextSupport.getClass());
-        return ((NormalizedNodeContextSupport) contextSupport).getSchemaContext();
+        return ((NormalizedNodeContextSupport) contextSupport).getEffectiveModelContext();
     }
 
     private static TypedDataSchemaNode getCorrespondingTypedSchemaNode(final NormalizedNodeContext currentNodeContext) {
