@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -19,17 +18,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 @Beta
-public interface YangNamespaceContextNamespace extends IdentifierNamespace<Empty, YangNamespaceContext> {
-    NamespaceBehaviour<Empty, YangNamespaceContext, @NonNull YangNamespaceContextNamespace> BEHAVIOUR =
-            NamespaceBehaviour.rootStatementLocal(YangNamespaceContextNamespace.class);
+public interface YangNamespaceContextNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
+    NamespaceBehaviour<StmtContext<?, ?, ?>, YangNamespaceContext, @NonNull YangNamespaceContextNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(YangNamespaceContextNamespace.class);
 
     static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
         final StmtContext<?, ?, ?> root = ctx.getRoot();
-        YangNamespaceContext ret = root.getFromNamespace(YangNamespaceContextNamespace.class, Empty.getInstance());
+        YangNamespaceContext ret = ctx.getFromNamespace(YangNamespaceContextNamespace.class, root);
         if (ret == null) {
             verify(ctx instanceof Mutable, "Cannot populate namespace context to %s", ctx);
-            ret = new StmtNamespaceContext(ctx);
-            ((Mutable<?, ?, ?>)ctx).addToNs(YangNamespaceContextNamespace.class, Empty.getInstance(), ret);
+            ret = new StmtNamespaceContext(root);
+            ((Mutable<?, ?, ?>)ctx).addToNs(YangNamespaceContextNamespace.class, root, ret);
         }
         return ret;
     }
