@@ -30,13 +30,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
 /**
  * A {@link Navigator} implementation for YANG XPaths instantiated on a particular root {@link NormalizedNode}.
  */
-final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAccessNavigator, SchemaContextProvider {
+final class NormalizedNodeNavigator extends DefaultNavigator
+        implements NamedAccessNavigator, EffectiveModelContextProvider {
     private static final long serialVersionUID = 1L;
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
     private final ConverterNamespaceContext namespaceContext;
@@ -287,8 +288,8 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
-        return document.getSchemaContext();
+    public EffectiveModelContext getEffectiveModelContext() {
+        return document.getEffectiveModelContext();
     }
 
     JaxenDocument getDocument() {
