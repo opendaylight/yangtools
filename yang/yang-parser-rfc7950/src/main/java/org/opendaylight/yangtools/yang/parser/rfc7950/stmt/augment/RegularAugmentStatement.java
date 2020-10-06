@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularAugmentStatement extends WithSubstatements<SchemaNodeIdentifier> implements AugmentStatement {
-    RegularAugmentStatement(final StmtContext<SchemaNodeIdentifier, ?, ?> ctx,
+    RegularAugmentStatement(final @NonNull String rawArgument, final @NonNull SchemaNodeIdentifier argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

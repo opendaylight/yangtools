@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyBelongsToStatement extends WithRawStringArgument implements BelongsToStatement {
-    EmptyBelongsToStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+    EmptyBelongsToStatement(final String rawArgument) {
+        super(rawArgument);
     }
 }

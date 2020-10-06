@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyReferenceStatement extends WithRawStringArgument implements ReferenceStatement {
-    EmptyReferenceStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+    EmptyReferenceStatement(final @NonNull String rawArgument) {
+        super(rawArgument);
     }
 }

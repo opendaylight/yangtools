@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.default_;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularDefaultStatement extends WithSubstatements implements DefaultStatement {
-    RegularDefaultStatement(final StmtContext<String, ?, ?> context,
+    RegularDefaultStatement(final @NonNull String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, substatements);
     }
 }

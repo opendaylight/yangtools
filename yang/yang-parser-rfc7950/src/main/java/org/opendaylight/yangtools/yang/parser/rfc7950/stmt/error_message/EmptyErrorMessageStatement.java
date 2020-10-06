@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyErrorMessageStatement extends WithRawStringArgument implements ErrorMessageStatement {
-    EmptyErrorMessageStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+    EmptyErrorMessageStatement(final @NonNull String rawArgument) {
+        super(rawArgument);
     }
 }

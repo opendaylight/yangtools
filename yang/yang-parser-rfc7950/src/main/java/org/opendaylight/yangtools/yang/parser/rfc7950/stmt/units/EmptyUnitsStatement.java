@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyUnitsStatement extends WithRawStringArgument implements UnitsStatement {
-    EmptyUnitsStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+    EmptyUnitsStatement(final @NonNull String rawArgument) {
+        super(rawArgument);
     }
 }

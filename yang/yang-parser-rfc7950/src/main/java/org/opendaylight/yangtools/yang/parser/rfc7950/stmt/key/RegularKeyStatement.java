@@ -13,14 +13,13 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularKeyStatement extends AbstractKeyStatement {
     private final @NonNull Object substatements;
 
-    RegularKeyStatement(final StmtContext<Set<QName>, ?, ?> context,
+    RegularKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context);
+        super(rawArgument, argument);
         this.substatements = maskList(substatements);
     }
 

@@ -39,12 +39,12 @@ public final class ErrorAppTagStatementSupport
     @Override
     protected ErrorAppTagStatement createDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularErrorAppTagStatement(ctx, substatements);
+        return new RegularErrorAppTagStatement(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override
     protected ErrorAppTagStatement createEmptyDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
-        return new EmptyErrorAppTagStatement(ctx);
+        return new EmptyErrorAppTagStatement(ctx.coerceRawStatementArgument());
     }
 
     @Override

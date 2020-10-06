@@ -44,7 +44,7 @@ public final class PresenceStatementSupport
 
     @Override
     protected PresenceStatement createEmptyDeclared(final StmtContext<String, PresenceStatement, ?> ctx) {
-        return new EmptyPresenceStatement(ctx);
+        return new EmptyPresenceStatement(ctx.coerceRawStatementArgument());
     }
 
     @Override

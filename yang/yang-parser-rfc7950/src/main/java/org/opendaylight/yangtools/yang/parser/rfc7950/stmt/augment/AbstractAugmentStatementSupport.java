@@ -149,13 +149,14 @@ abstract class AbstractAugmentStatementSupport
     @Override
     protected final AugmentStatement createDeclared(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularAugmentStatement(ctx, substatements);
+        return new RegularAugmentStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+            substatements);
     }
 
     @Override
     protected final AugmentStatement createEmptyDeclared(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
-        return new EmptyAugmentStatement(ctx);
+        return new EmptyAugmentStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override

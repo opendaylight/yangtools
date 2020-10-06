@@ -12,14 +12,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractKeyStatement extends WithRawArgument<Set<QName>> implements KeyStatement {
     final @NonNull Object argument;
 
-    AbstractKeyStatement(final StmtContext<Set<QName>, ?, ?> context) {
-        super(context);
-        this.argument = KeyStatementSupport.maskSet(context.coerceStatementArgument());
+    AbstractKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument) {
+        super(rawArgument);
+        this.argument = KeyStatementSupport.maskSet(argument);
     }
 
     @Override

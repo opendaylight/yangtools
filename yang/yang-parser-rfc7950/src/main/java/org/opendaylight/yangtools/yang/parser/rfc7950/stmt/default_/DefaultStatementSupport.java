@@ -39,12 +39,12 @@ public final class DefaultStatementSupport
     @Override
     protected DefaultStatement createDeclared(final StmtContext<String, DefaultStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularDefaultStatement(ctx, substatements);
+        return new RegularDefaultStatement(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override
     protected DefaultStatement createEmptyDeclared(final StmtContext<String, DefaultStatement, ?> ctx) {
-        return new EmptyDefaultStatement(ctx);
+        return new EmptyDefaultStatement(ctx.coerceRawStatementArgument());
     }
 
     @Override

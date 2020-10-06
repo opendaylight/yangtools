@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularOrganizationStatement extends WithSubstatements implements OrganizationStatement {
-    RegularOrganizationStatement(final StmtContext<String, ?, ?> context,
+    RegularOrganizationStatement(final @NonNull String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, substatements);
     }
 }
