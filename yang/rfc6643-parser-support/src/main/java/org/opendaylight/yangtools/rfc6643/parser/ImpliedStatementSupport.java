@@ -53,7 +53,7 @@ public final class ImpliedStatementSupport
     protected ImpliedEffectiveStatement createEffective(
             final StmtContext<String, ImpliedStatement, ImpliedEffectiveStatement> ctx,
             final ImpliedStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ImpliedEffectiveStatementImpl(ctx, substatements);
+        return new ImpliedEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

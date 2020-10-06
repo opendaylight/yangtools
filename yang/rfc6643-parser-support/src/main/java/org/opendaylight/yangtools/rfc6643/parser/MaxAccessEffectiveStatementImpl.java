@@ -23,10 +23,11 @@ final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBas
         implements MaxAccessEffectiveStatement, MaxAccessSchemaNode {
     private final SchemaPath path;
 
-    MaxAccessEffectiveStatementImpl(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+    MaxAccessEffectiveStatementImpl(final MaxAccessStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx) {
+        super(declared.argument(), declared, substatements, ctx);
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override

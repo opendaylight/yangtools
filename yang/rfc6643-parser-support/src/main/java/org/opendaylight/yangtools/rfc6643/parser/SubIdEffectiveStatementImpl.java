@@ -24,10 +24,11 @@ final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Ui
 
     private final SchemaPath path;
 
-    SubIdEffectiveStatementImpl(final StmtContext<Uint32, SubIdStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+    SubIdEffectiveStatementImpl(final SubIdStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<Uint32, SubIdStatement, ?> ctx) {
+        super(declared.argument(), declared, substatements, ctx);
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override

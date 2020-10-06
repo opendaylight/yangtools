@@ -38,9 +38,10 @@ public final class DefaultDenyWriteStatementSupport
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(ctx, substatements);
+        Effective(final DefaultDenyWriteStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
+            super(declared.argument(), declared, substatements, ctx);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -97,7 +98,7 @@ public final class DefaultDenyWriteStatementSupport
             final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
             final DefaultDenyWriteStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(ctx, substatements);
+        return new Effective(declared, substatements, ctx);
     }
 
     @Override

@@ -64,7 +64,7 @@ public final class OidStatementSupport
     protected OidEffectiveStatement createEffective(
             final StmtContext<ObjectIdentifier, OidStatement, OidEffectiveStatement> ctx,
             final OidStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OidEffectiveStatementImpl(ctx, substatements);
+        return new OidEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

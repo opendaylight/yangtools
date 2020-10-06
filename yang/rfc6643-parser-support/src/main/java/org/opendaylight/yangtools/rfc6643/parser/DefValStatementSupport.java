@@ -53,7 +53,7 @@ public final class DefValStatementSupport
     protected DefValEffectiveStatement createEffective(
             final StmtContext<String, DefValStatement, DefValEffectiveStatement> ctx, final DefValStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DefValEffectiveStatementImpl(ctx, substatements);
+        return new DefValEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

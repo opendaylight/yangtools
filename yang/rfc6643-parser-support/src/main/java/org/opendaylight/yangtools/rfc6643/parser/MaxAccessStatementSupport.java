@@ -70,7 +70,7 @@ public final class MaxAccessStatementSupport
     protected MaxAccessEffectiveStatement createEffective(
             final StmtContext<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> ctx,
             final MaxAccessStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MaxAccessEffectiveStatementImpl(ctx, substatements);
+        return new MaxAccessEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

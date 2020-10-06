@@ -43,9 +43,10 @@ public final class MountPointStatementSupport
 
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<QName, MountPointStatement, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(ctx, substatements);
+        Effective(final MountPointStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StmtContext<QName, MountPointStatement, ?> ctx) {
+            super(ctx.coerceStatementArgument(), declared, substatements, ctx);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
         }
 
@@ -123,7 +124,7 @@ public final class MountPointStatementSupport
     protected MountPointEffectiveStatement createEffective(
             final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
             final MountPointStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(ctx, substatements);
+        return new Effective(declared, substatements, ctx);
     }
 
     @Override

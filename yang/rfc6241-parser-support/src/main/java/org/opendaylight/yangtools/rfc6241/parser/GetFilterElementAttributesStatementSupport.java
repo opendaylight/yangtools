@@ -46,9 +46,10 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(ctx, substatements);
+        Effective(final GetFilterElementAttributesStatement declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
+            super(declared.argument(), declared, substatements, ctx);
             path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
@@ -116,7 +117,7 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
                 GetFilterElementAttributesEffectiveStatement> ctx,
             final GetFilterElementAttributesStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(ctx, substatements);
+        return new Effective(declared, substatements, ctx);
     }
 
     @Override

@@ -32,9 +32,10 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     private final @NonNull QName maybeQNameArgument;
     private final @NonNull ContainerEffectiveStatement container;
 
-    YangDataEffectiveStatementImpl(final StmtContext<String, YangDataStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
+    YangDataEffectiveStatementImpl(final YangDataStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<String, YangDataStatement, ?> ctx) {
+        super(ctx.getStatementArgument(), declared, substatements, ctx);
 
         QName maybeQNameArgumentInit;
         try {

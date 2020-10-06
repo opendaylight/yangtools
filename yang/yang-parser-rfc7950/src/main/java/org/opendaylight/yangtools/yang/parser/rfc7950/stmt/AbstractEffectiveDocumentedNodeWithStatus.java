@@ -20,54 +20,35 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * A declared {@link AbstractEffectiveStatement} with DocumentedNode.WithStatus.
  */
 @Beta
 public abstract class AbstractEffectiveDocumentedNodeWithStatus<A, D extends DeclaredStatement<A>>
-        extends AbstractEffectiveStatement<A, D> implements DocumentedNodeMixin<A, D>, DocumentedNode.WithStatus {
+        extends AbstractDeclaredEffectiveStatement<A, D>
+        implements DocumentedNodeMixin<A, D>, DocumentedNode.WithStatus {
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
-    private final @NonNull StatementSource statementSource;
-    private final @NonNull D declaredInstance;
+    private final @NonNull D declared;
     private final A argument;
 
-    /**
-     * Constructor.
-     *
-     * @param ctx context of statement.
-     */
-    protected AbstractEffectiveDocumentedNodeWithStatus(final StmtContext<A, D, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        argument = ctx.getStatementArgument();
-        statementSource = ctx.getStatementSource();
-        declaredInstance = ctx.buildDeclared();
+    protected AbstractEffectiveDocumentedNodeWithStatus(final A argument, final @NonNull D declared,
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        this.argument = argument;
+        this.declared = requireNonNull(declared);
         this.substatements = requireNonNull(substatements);
     }
 
     @Override
-    public final StatementDefinition statementDefinition() {
-        return declaredInstance.statementDefinition();
-    }
-
-    @Override
-    public A argument() {
+    public final A argument() {
         return argument;
     }
 
     @Override
-    public final StatementSource getStatementSource() {
-        return statementSource;
-    }
-
-    @Override
-    public final D getDeclared() {
-        return declaredInstance;
+    public final @NonNull D getDeclared() {
+        return declared;
     }
 
     @Override

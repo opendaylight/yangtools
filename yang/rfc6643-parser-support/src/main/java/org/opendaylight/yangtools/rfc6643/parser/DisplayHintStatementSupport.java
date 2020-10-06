@@ -54,7 +54,7 @@ public final class DisplayHintStatementSupport
             final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx,
             final DisplayHintStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DisplayHintEffectiveStatementImpl(ctx, substatements);
+        return new DisplayHintEffectiveStatementImpl(declared, substatements, ctx);
     }
 
     @Override

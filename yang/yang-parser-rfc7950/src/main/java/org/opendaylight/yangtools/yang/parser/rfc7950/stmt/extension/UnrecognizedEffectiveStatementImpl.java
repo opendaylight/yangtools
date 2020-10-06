@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
@@ -29,9 +30,10 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     private final QName maybeQNameArgument;
     private final @NonNull SchemaPath path;
 
-    UnrecognizedEffectiveStatementImpl(final StmtContext<String, UnrecognizedStatement, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
+    UnrecognizedEffectiveStatementImpl(final @NonNull UnrecognizedStatement declared,
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StmtContext<String, UnrecognizedStatement, ?> ctx) {
+        super(ctx.getStatementArgument(), declared, substatements, ctx);
 
         // FIXME: Remove following section after fixing 4380
         final UnknownSchemaNode original = (UnknownSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
@@ -69,5 +71,10 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     @Deprecated
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public StatementDefinition statementDefinition() {
+        return getDeclared().statementDefinition();
     }
 }
