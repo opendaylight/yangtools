@@ -61,7 +61,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             return config;
         }
 
-        // FIXME: 6.0.0: make this return a set of XPath expressions
+        // FIXME: 7.0.0: make this return a set of XPath expressions
         public ImmutableSet<String> getParentReferences() {
             return parentReferences;
         }
@@ -148,7 +148,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
         return schemaRef.getChild(SHARED_SCHEMA).map(sharedSchema -> {
             checkArgument(sharedSchema instanceof ContainerNode, "Unexpected shared-schema container %s", sharedSchema);
             return ((ContainerNode) sharedSchema).getChild(PARENT_REFERENCE).map(parentRef -> {
-                // FIXME: decode
+                // FIXME: 7.0.0: parse XPaths. Do we have enough context for that?
                 return ImmutableSet.<String>of();
             }).orElseGet(ImmutableSet::of);
         }).orElseGet(() -> {
