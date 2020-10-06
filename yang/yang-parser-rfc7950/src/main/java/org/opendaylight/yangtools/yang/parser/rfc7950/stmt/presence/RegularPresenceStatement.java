@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularPresenceStatement extends WithSubstatements implements PresenceStatement {
-    RegularPresenceStatement(final StmtContext<String, ?, ?> context,
+    RegularPresenceStatement(final @NonNull String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, substatements);
     }
 }

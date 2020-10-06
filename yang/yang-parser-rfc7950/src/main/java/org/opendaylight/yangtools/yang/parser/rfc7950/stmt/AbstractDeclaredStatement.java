@@ -63,10 +63,12 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
 
         protected WithRawArgument(final String rawArgument) {
+            // FIXME: 7.0.0: requireNonNull
             this.rawArgument = rawArgument;
         }
 
         @Override
+        // FIXME: 7.0.0: @NonNull
         public final String rawArgument() {
             return rawArgument;
         }

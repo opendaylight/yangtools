@@ -39,7 +39,7 @@ public final class PresenceStatementSupport
     @Override
     protected PresenceStatement createDeclared(final StmtContext<String, PresenceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPresenceStatement(ctx, substatements);
+        return new RegularPresenceStatement(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

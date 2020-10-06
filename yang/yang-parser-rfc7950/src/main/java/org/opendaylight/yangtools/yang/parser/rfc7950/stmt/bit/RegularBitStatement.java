@@ -11,9 +11,9 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
-final class RegularBitStatement extends WithSubstatements<String> implements BitStatement {
+final class RegularBitStatement extends WithSubstatements implements BitStatement {
     RegularBitStatement(final @NonNull String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
