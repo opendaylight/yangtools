@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 
-final class NormalizedNodeContextSupport extends ContextSupport implements SchemaContextProvider {
+final class NormalizedNodeContextSupport extends ContextSupport implements EffectiveModelContextProvider {
     private static final long serialVersionUID = 1L;
     private final NormalizedNodeContext root;
 
@@ -55,7 +55,7 @@ final class NormalizedNodeContextSupport extends ContextSupport implements Schem
     }
 
     @Override
-    public SchemaContext getSchemaContext() {
-        return getNavigator().getSchemaContext();
+    public EffectiveModelContext getEffectiveModelContext() {
+        return getNavigator().getEffectiveModelContext();
     }
 }

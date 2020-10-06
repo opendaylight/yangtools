@@ -13,9 +13,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
 
-public final class LeafRefContext extends AbstractSchemaContextProvider {
+public final class LeafRefContext extends AbstractEffectiveModelContextProvider {
 
     private final QName currentNodeQName;
     private final SchemaPath currentNodePath;
