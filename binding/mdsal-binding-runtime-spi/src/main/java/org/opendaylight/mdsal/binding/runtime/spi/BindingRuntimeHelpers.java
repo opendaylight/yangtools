@@ -75,6 +75,20 @@ public final class BindingRuntimeHelpers {
         }
     }
 
+    public static @NonNull BindingRuntimeContext createRuntimeContext(
+            final Collection<? extends YangModuleInfo> infos) {
+        final ModuleInfoSnapshot snapshot;
+
+        try {
+            snapshot = prepareContext(ServiceLoaderState.ParserFactory.INSTANCE, infos);
+        } catch (YangParserException e) {
+            throw new IllegalStateException("Failed to parse models", e);
+        }
+
+        return new DefaultBindingRuntimeContext(
+            ServiceLoaderState.Generator.INSTANCE.generateTypeMapping(snapshot.getEffectiveModelContext()), snapshot);
+    }
+
     public static @NonNull BindingRuntimeContext createRuntimeContext(final YangParserFactory parserFactory,
             final BindingRuntimeGenerator generator, final Class<?>... classes) throws YangParserException {
         return createRuntimeContext(parserFactory, generator, Arrays.asList(classes));
