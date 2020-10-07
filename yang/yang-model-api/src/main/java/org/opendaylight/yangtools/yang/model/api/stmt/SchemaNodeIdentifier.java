@@ -86,22 +86,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
             return INTERNER.intern(this);
         }
 
-        /**
-         * Return the first node identifier. This method is equivalent to {@code getNodeIdentifiers().get(0)}, but is
-         * potentially more efficient.
-         *
-         * @return The first node identifier
-         */
-        public abstract @NonNull QName firstNodeIdentifier();
-
-        /**
-         * Return the last node identifier. This method is equivalent to {@code getNodeIdentifiers().get(size - 1)}, but
-         * is potentially more efficient.
-         *
-         * @return The last node identifier
-         */
-        public abstract @NonNull QName lastNodeIdentifier();
-
         @Override
         final SchemaPath implicitSchemaPathParent() {
             return SchemaPath.ROOT;
@@ -209,16 +193,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        public @NonNull QName firstNodeIdentifier() {
-            return qnames.get(0);
-        }
-
-        @Override
-        public @NonNull QName lastNodeIdentifier() {
-            return qnames.get(qnames.size() - 1);
-        }
-
-        @Override
         Object pathObject() {
             return qnames;
         }
@@ -234,6 +208,16 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         @Override
         public ImmutableList<QName> getNodeIdentifiers() {
             return ImmutableList.of(qname);
+        }
+
+        @Override
+        public QName firstNodeIdentifier() {
+            return qname;
+        }
+
+        @Override
+        public QName lastNodeIdentifier() {
+            return qname;
         }
 
         @Override
@@ -278,6 +262,27 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * @return Non-empty sequence of node identifiers
      */
     public abstract @NonNull List<QName> getNodeIdentifiers();
+
+    /**
+     * Return the first node identifier. This method is equivalent to {@code getNodeIdentifiers().get(0)}, but is
+     * potentially more efficient.
+     *
+     * @return The first node identifier
+     */
+    public @NonNull QName firstNodeIdentifier() {
+        return getNodeIdentifiers().get(0);
+    }
+
+    /**
+     * Return the last node identifier. This method is equivalent to {@code getNodeIdentifiers().get(size - 1)}, but
+     * is potentially more efficient.
+     *
+     * @return The last node identifier
+     */
+    public @NonNull QName lastNodeIdentifier() {
+        final List<QName> local = getNodeIdentifiers();
+        return local.get(local.size() - 1);
+    }
 
     /**
      * Create the {@link SchemaPath} equivalent of this identifier.
