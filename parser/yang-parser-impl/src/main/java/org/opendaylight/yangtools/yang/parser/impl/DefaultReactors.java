@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.openconfig.parser.PosixPatternStatementSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
@@ -169,6 +170,8 @@ public final class DefaultReactors {
                     new EncryptedValueStatementSupport(config))
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new HashedValueStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                        PosixPatternStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                         RegexpPosixStatementSupport.getInstance());
     }
