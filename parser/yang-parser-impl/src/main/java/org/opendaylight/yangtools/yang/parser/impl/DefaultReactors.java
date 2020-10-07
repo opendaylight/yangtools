@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.openconfig.parser.PosixPatternStatementSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
 import org.opendaylight.yangtools.rfc8639.parser.SubscriptionStateNotificationStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.openconfig.stmt.RegexpPosixStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -167,6 +169,10 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new EncryptedValueStatementSupport(config))
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new HashedValueStatementSupport(config));
+                    new HashedValueStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                        PosixPatternStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                        RegexpPosixStatementSupport.getInstance());
     }
 }
