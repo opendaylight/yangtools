@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.openconfig.parser.PosixPatternStatementSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
@@ -163,10 +164,9 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new SubscriptionStateNotificationStatementSupport(config))
 
-                // OpenConfig extensions support (except openconfig-version)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new EncryptedValueStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new HashedValueStatementSupport(config));
+                // OpenConfig extensions support (except openconfig-version and regexp-posix)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new EncryptedValueStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new HashedValueStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new PosixPatternStatementSupport(config));
     }
 }
