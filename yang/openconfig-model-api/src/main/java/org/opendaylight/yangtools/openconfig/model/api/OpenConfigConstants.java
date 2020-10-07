@@ -37,6 +37,14 @@ public final class OpenConfigConstants {
     // Revised extension, renames openconfig-encrypted-value to openconfig-hashed-value
     private static final Revision HASHED_VALUE_REVISION = Revision.of("2017-04-11");
 
+    // Revised extension, adds extension for POSIX pattern statements
+    private static final Revision REGEXP_POSIX_REVISION = Revision.of("2020-06-16");
+
+    /**
+    * Runtime identity of model which exposed regexp-posix.
+    */
+    public static final QNameModule REGEXP_POSIX_MODULE = QNameModule.create(MODULE_NAMESPACE, REGEXP_POSIX_REVISION)
+                        .intern();
     /**
      * Runtime identity of initial model.
      */
@@ -72,6 +80,11 @@ public final class OpenConfigConstants {
     public static final SourceIdentifier HASHED_VALUE_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
         HASHED_VALUE_REVISION);
 
+    /**
+     * Original model source name.
+     */
+    public static final SourceIdentifier REGEXP_POSIX_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
+            REGEXP_POSIX_REVISION);
     /**
      * Normative prefix to use when importing {@link #SEMVER_SOURCE} and later.
      */
