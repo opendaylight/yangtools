@@ -27,8 +27,12 @@ public enum OpenConfigStatements implements StatementDefinition {
         null, OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class),
     OPENCONFIG_HASHED_VALUE(QName.create(OpenConfigConstants.HASHED_VALUE_MODULE, "openconfig-hashed-value"), null,
         OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class),
+    OPENCONFIG_POSIX_PATTERN(QName.create(OpenConfigConstants.REGEXP_POSIX_MODULE, "posix-pattern"), "pattern",
+            OpenConfigPosixPatternStatement.class, OpenConfigPosixPatternEffectiveStatement.class),
+    OPENCONFIG_REGEXP_POSIX(QName.create(OpenConfigConstants.REGEXP_POSIX_MODULE, "regexp-posix"), null,
+            OpenConfigRegexpPosixStatement.class, OpenConfigRegexpPosixEffectiveStatement.class),
     OPENCONFIG_VERSION(QName.create(OpenConfigConstants.MODULE_NAMESPACE, "openconfig-version"), "semver",
-        OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class);
+            OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class);
 
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
     private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
