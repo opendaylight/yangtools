@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
@@ -15,5 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  * @author Martin Bobak
  */
 public interface OpenConfigPosixPatternStatement extends UnknownStatement<String> {
-
+    @Override
+    default StatementDefinition statementDefinition() {
+        return OpenConfigStatements.OPENCONFIG_POSIX_PATTERN;
+    }
 }

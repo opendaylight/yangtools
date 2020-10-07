@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement corresponding to openconfig's "posix-pattern".
@@ -15,6 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @author Martin Bobak
  */
 public interface OpenConfigPosixPatternEffectiveStatement
-        extends EffectiveStatement<String, OpenConfigPosixPatternStatement> {
-
+        extends UnknownEffectiveStatement<String, OpenConfigPosixPatternStatement> {
+    @Override
+    default StatementDefinition statementDefinition() {
+        return OpenConfigStatements.OPENCONFIG_POSIX_PATTERN;
+    }
 }

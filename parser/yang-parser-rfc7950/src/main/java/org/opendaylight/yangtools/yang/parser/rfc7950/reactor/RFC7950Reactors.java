@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
+import org.opendaylight.yangtools.yang.parser.openconfig.stmt.RegexpPosixStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
@@ -311,7 +312,10 @@ public final class RFC7950Reactors {
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR)
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionModuleNamespace.BEHAVIOUR)
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE,
-                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR);
+                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR)
+
+                // "regex-posix" support, needs to be present before any "pattern" statement can to be processed
+                .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, new RegexpPosixStatementSupport(config));
     }
 
     /**
