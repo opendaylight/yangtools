@@ -167,6 +167,10 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new EncryptedValueStatementSupport(config))
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new HashedValueStatementSupport(config));
+                    new HashedValueStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                        PosixPatternStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                        RegexpPosixStatementSupport.getInstance());
     }
 }
