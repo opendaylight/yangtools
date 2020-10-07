@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "466a7b66_b7974d20",
+        "filename": "yang/openconfig-parser-support/src/main/java/org/opendaylight/yangtools/openconfig/parser/RegexpPosixStatementSupport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-10-07T19:47:51Z",
+      "side": 1,
+      "message": "we really want this to go into yang-parser-rfc7950. The reason for that is that PatternSupport will need to cross-reference presence of this extension when deciding how to transform the string to java.util.regex.Pattern string",
+      "range": {
+        "startLine": 29,
+        "startChar": 13,
+        "endLine": 29,
+        "endChar": 40
+      },
+      "revId": "bc12c3354cdedbb42daa9872aca9ae347792c2e8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
