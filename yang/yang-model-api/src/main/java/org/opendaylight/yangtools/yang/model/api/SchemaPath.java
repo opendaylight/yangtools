@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -16,11 +17,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Represents unique path to the every node inside the module.
@@ -207,7 +212,7 @@ public abstract class SchemaPath implements Immutable {
      * @return list of <code>qname</code> instances which represents
      *         path from the root to the schema node.
      */
-    public Iterable<QName> getPathFromRoot() {
+    public List<QName> getPathFromRoot() {
         if (qname == null) {
             return ImmutableList.of();
         }
@@ -268,6 +273,46 @@ public abstract class SchemaPath implements Immutable {
      *         absolute.
      */
     public abstract boolean isAbsolute();
+
+    /**
+     * Return this path as a {@link SchemaNodeIdentifier}.
+     *
+     * @return A SchemaNodeIdentifier.
+     * @throws IllegalStateException if this path is empty
+     */
+    public final SchemaNodeIdentifier asSchemaNodeIdentifier() {
+        checkState(qname != null, "Cannot convert empty %s", this);
+        final List<QName> path = getPathFromRoot();
+        return isAbsolute() ? Absolute.of(path) : Descendant.of(path);
+    }
+
+    /**
+     * Return this path as an {@link Absolute} SchemaNodeIdentifier.
+     *
+     * @return An SchemaNodeIdentifier.
+     * @throws IllegalStateException if this path is empty or is not absolute.
+     */
+    public final Absolute asAbsolute() {
+        final SchemaNodeIdentifier ret = asSchemaNodeIdentifier();
+        if (ret instanceof Absolute) {
+            return (Absolute) ret;
+        }
+        throw new IllegalStateException("Path " + this + " is relative");
+    }
+
+    /**
+     * Return this path as an {@link Descendant} SchemaNodeIdentifier.
+     *
+     * @return An SchemaNodeIdentifier.
+     * @throws IllegalStateException if this path is empty or is not relative.
+     */
+    public final Descendant asDescendant() {
+        final SchemaNodeIdentifier ret = asSchemaNodeIdentifier();
+        if (ret instanceof Descendant) {
+            return (Descendant) ret;
+        }
+        throw new IllegalStateException("Path " + this + " is absolute");
+    }
 
     @Override
     public final int hashCode() {
