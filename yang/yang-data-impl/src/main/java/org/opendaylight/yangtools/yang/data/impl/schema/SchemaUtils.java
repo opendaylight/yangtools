@@ -477,10 +477,29 @@ public final class SchemaUtils {
      */
     public static Collection<SchemaNode> findParentSchemaNodesOnPath(final SchemaContext schemaContext,
             final SchemaPath path) {
+        return findParentSchemaNodesOnPath(schemaContext, path.getPathFromRoot());
+    }
+
+    /**
+     * Finds schema node for given path in schema context. This method performs lookup in both the namespace
+     * of groupings and the namespace of all leafs, leaf-lists, lists, containers, choices, rpcs, actions,
+     * notifications, anydatas and anyxmls according to Rfc6050/Rfc7950 section 6.2.1.
+     *
+     * <p>
+     * This method returns collection of SchemaNodes, because name conflicts can occur between the namespace
+     * of groupings and namespace of data nodes. This method finds and collects all schema nodes that matches supplied
+     * SchemaPath and returns them all as collection of schema nodes.
+     *
+     * @param schemaContext schema context
+     * @param path path
+     * @return collection of schema nodes on path
+     */
+    public static Collection<SchemaNode> findParentSchemaNodesOnPath(final SchemaContext schemaContext,
+            final Iterable<QName> path) {
         final Collection<SchemaNode> currentNodes = new ArrayList<>();
         final Collection<SchemaNode> childNodes = new ArrayList<>();
         currentNodes.add(requireNonNull(schemaContext));
-        for (final QName qname : path.getPathFromRoot()) {
+        for (final QName qname : path) {
             for (final SchemaNode current : currentNodes) {
                 childNodes.addAll(findChildSchemaNodesByQName(current, qname));
             }

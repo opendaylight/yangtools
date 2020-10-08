@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +81,22 @@ public final class SchemaTracker {
      * @param path schema path
      * @return A new {@link NormalizedNodeStreamWriter}
      */
+    public static @NonNull SchemaTracker create(final EffectiveModelContext context, final Absolute path) {
+        return create(context, path.getNodeIdentifiers());
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified schema path.
+     *
+     * @param context Associated {@link EffectiveModelContext}
+     * @param path schema path
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
     public static @NonNull SchemaTracker create(final EffectiveModelContext context, final SchemaPath path) {
+        return create(context, path.getPathFromRoot());
+    }
+
+    private static @NonNull SchemaTracker create(final EffectiveModelContext context, final Iterable<QName> path) {
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
         checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
         if (schemaNodes.size() > 1) {
@@ -92,6 +109,19 @@ public final class SchemaTracker {
                 "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
                 path, current);
         return new SchemaTracker(current.get());
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified schema path.
+     *
+     * @param context Associated {@link EffectiveModelContext}
+     * @param operation Operation schema path
+     * @param qname Input/Output container QName
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull SchemaTracker forOperation(final EffectiveModelContext context, final Absolute operation,
+            final QName qname) {
+        return create(context, Iterables.concat(operation.getNodeIdentifiers(), List.of(qname)));
     }
 
     public Object getParent() {
