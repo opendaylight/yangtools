@@ -22,6 +22,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -96,6 +98,53 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final SchemaPath path) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context, path));
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified schema path.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param path path
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final Absolute path) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context, path));
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified operation's input.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param operationPath Parent operation (RPC or action) path.
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter forInputOf(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final Absolute operationPath) {
+        return forOperation(writer, context, operationPath,
+            YangConstants.operationInputQName(operationPath.lastNodeIdentifier().getModule()));
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified operation's output.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param operationPath Parent operation (RPC or action) path.
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter forOutputOf(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final Absolute operationPath) {
+        return forOperation(writer, context, operationPath,
+            YangConstants.operationOutputQName(operationPath.lastNodeIdentifier().getModule()));
+    }
+
+    private static @NonNull NormalizedNodeStreamWriter forOperation(final XMLStreamWriter writer,
+            final EffectiveModelContext context, final Absolute operationPath, final QName qname) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+            SchemaTracker.forOperation(context, operationPath, qname));
     }
 
     /**
