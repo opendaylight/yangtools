@@ -12,12 +12,12 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>5.0.7-SNAPSHOT</version>
+        <version>5.0.8-SNAPSHOT</version>
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
     <artifactId>yang-xpath-antlr</artifactId>
-    <version>5.0.7-SNAPSHOT</version>
+    <version>5.0.8-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>YANG XPath ANTLR grammars</description>
