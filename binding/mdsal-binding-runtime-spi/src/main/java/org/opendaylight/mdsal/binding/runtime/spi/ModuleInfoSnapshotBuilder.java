@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Throwables;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.CheckedBuilder;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
@@ -34,6 +36,27 @@ public final class ModuleInfoSnapshotBuilder implements CheckedBuilder<ModuleInf
 
     public ModuleInfoSnapshotBuilder(final YangParserFactory parserFactory) {
         this.parserFactory = requireNonNull(parserFactory);
+    }
+
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject> clazz) {
+        final YangModuleInfo moduleInfo;
+        try {
+            moduleInfo = BindingReflections.getModuleInfo(clazz);
+        } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new IllegalStateException("Failed to introspect " + clazz, e);
+        }
+
+        return add(moduleInfo);
+    }
+
+    @SuppressWarnings("unchecked")
+    public @NonNull ModuleInfoSnapshotBuilder add(final Class<? extends BindingObject>... classes) {
+        for (Class<? extends BindingObject> clazz : classes) {
+            add(clazz);
+        }
+        return this;
     }
 
     public @NonNull ModuleInfoSnapshotBuilder add(final YangModuleInfo info) {
