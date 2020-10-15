@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.CheckedCallable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,29 @@ public final class ClassLoaderUtils {
     @Beta
     public static <V> V callWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Callable<V> callable)
             throws Exception {
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        currentThread.setContextClassLoader(requireNonNull(cls));
+        try {
+            return requireNonNull(callable).call();
+        } finally {
+            currentThread.setContextClassLoader(oldCls);
+        }
+    }
+
+    /**
+     * Immediately call {@link CheckedCallable#call()} with provided {@link ClassLoader}. This method safely switches
+     * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
+     * method.
+     *
+     * @param cls {@link ClassLoader} to be used.
+     * @param callable Function to be executed.
+     * @return Result of callable invocation.
+     * @throws NullPointerException if class loader or callable is null
+     */
+    @Beta
+    public static <V, E extends Exception> V invokeWithClassLoader(final @NonNull ClassLoader cls,
+            final @NonNull CheckedCallable<V, E> callable) throws E {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
         currentThread.setContextClassLoader(requireNonNull(cls));
@@ -158,6 +182,7 @@ public final class ClassLoaderUtils {
 
             if (isInnerClass(components)) {
                 final int length = components.size() - 1;
+
                 final String outerName = DOT_JOINER.join(Iterables.limit(components, length));
                 final String innerName = outerName + "$" + components.get(length);
                 return cls.loadClass(innerName);
@@ -210,10 +235,8 @@ public final class ClassLoaderUtils {
     @SuppressWarnings("unchecked")
     public static <S, G, P> Optional<Class<P>> findFirstGenericArgument(final Class<S> scannedClass,
             final Class<G> genericType) {
-        return getWithClassLoader(scannedClass.getClassLoader(), () -> {
-            return findParameterizedType(scannedClass, genericType)
-                    .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[0]);
-        });
+        return getWithClassLoader(scannedClass.getClassLoader(), () -> findParameterizedType(scannedClass, genericType)
+                .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[0]));
     }
 
     /**
