@@ -254,7 +254,7 @@ public final class BindingReflections {
             return findQName(clz).getModule();
         }
         try {
-            return BindingReflections.getModuleInfo(clz).getName().getModule();
+            return getModuleInfo(clz).getName().getModule();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to get QName of defining model.", e);
         }
@@ -267,6 +267,7 @@ public final class BindingReflections {
      * @return Instance of {@link YangModuleInfo} associated with model, from
      *         which this class was derived.
      */
+    // FIXME: 8.0.0: do not throw Exception here
     public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
         checkArgument(cls != null);
         String packageName = getModelRootPackageName(cls.getPackage());
