@@ -1,0 +1,31 @@
+module mdsal600 {
+  prefix mdsal600;
+  namespace mdsal600;
+
+  container foo {
+    leaf bar {
+      type enumeration {
+        enum foo {
+          value 0;
+          description "does not even matter";
+        }
+        enum bar {
+          value 1;
+        }
+      }
+    }
+
+    leaf baz {
+      type enumeration {
+        enum foo {
+          value 0;
+        }
+        enum bar {
+          value 1;
+          reference "is useless as well";
+        }
+      }
+    }
+  }
+}
+ 

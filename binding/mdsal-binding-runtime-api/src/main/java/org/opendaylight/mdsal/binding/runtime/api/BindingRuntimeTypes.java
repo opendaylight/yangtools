@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
@@ -20,6 +19,7 @@ import com.google.common.collect.Multimap;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,12 +32,15 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The result of BindingGenerator run. Contains mapping between Types and SchemaNodes.
  */
 @Beta
 public final class BindingRuntimeTypes implements EffectiveModelContextProvider, Immutable {
+    private static final Logger LOG = LoggerFactory.getLogger(BindingRuntimeTypes.class);
     private static final VarHandle TYPE_TO_IDENTIFIER;
 
     static {
@@ -51,9 +54,11 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
 
     private final @NonNull EffectiveModelContext schemaContext;
     private final ImmutableMap<Type, AugmentationSchemaNode> typeToAugmentation;
-    private final ImmutableBiMap<Type, WithStatus> typeToSchema;
+    private final ImmutableMap<Type, WithStatus> typeToSchema;
     private final ImmutableMultimap<Type, Type> choiceToCases;
     private final ImmutableMap<QName, Type> identities;
+    // Not Immutable as we use two different implementations
+    private final Map<WithStatus, Type> schemaToType;
 
     @SuppressWarnings("unused")
     // Accessed via TYPE_TO_IDENTIFIER
@@ -61,13 +66,33 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
 
     public BindingRuntimeTypes(final EffectiveModelContext schemaContext,
             final Map<Type, AugmentationSchemaNode> typeToAugmentation,
-            final BiMap<Type, WithStatus> typeToDefiningSchema, final Multimap<Type, Type> choiceToCases,
-            final Map<QName, Type> identities) {
+            final Map<Type, WithStatus> typeToSchema, final Map<WithStatus, Type> schemaToType,
+            final Multimap<Type, Type> choiceToCases, final Map<QName, Type> identities) {
         this.schemaContext = requireNonNull(schemaContext);
         this.typeToAugmentation = ImmutableMap.copyOf(typeToAugmentation);
-        this.typeToSchema = ImmutableBiMap.copyOf(typeToDefiningSchema);
+        this.typeToSchema = ImmutableMap.copyOf(typeToSchema);
         this.choiceToCases = ImmutableMultimap.copyOf(choiceToCases);
         this.identities = ImmutableMap.copyOf(identities);
+
+        // Careful to use identity for SchemaNodes, but only if needed
+        // FIXME: 8.0.0: YT should be switching to identity for equals(), so this should become unnecessary
+        Map<WithStatus, Type> copy;
+        try {
+            copy = ImmutableMap.copyOf(schemaToType);
+        } catch (IllegalArgumentException e) {
+            LOG.debug("Equality-duplicates found in {}", schemaToType.keySet());
+            copy = new IdentityHashMap<>(schemaToType);
+        }
+
+        this.schemaToType = copy;
+    }
+
+    public BindingRuntimeTypes(final EffectiveModelContext schemaContext,
+            final Map<Type, AugmentationSchemaNode> typeToAugmentation,
+            final BiMap<Type, WithStatus> typeToDefiningSchema,
+            final Multimap<Type, Type> choiceToCases, final Map<QName, Type> identities) {
+        this(schemaContext, typeToAugmentation, typeToDefiningSchema, typeToDefiningSchema.inverse(), choiceToCases,
+            identities);
     }
 
     @Override
@@ -94,7 +119,7 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
     }
 
     public Optional<Type> findType(final WithStatus schema) {
-        return Optional.ofNullable(typeToSchema.inverse().get(schema));
+        return Optional.ofNullable(schemaToType.get(schema));
     }
 
     public Multimap<Type, Type> getChoiceToCases() {
