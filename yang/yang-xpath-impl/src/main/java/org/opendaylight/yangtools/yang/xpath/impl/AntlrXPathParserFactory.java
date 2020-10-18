@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
-import javax.inject.Singleton;
-import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
@@ -22,25 +20,24 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@MetaInfServices
-@Singleton
 @Component(immediate = true)
-public final class AntlrXPathParserFactory implements YangXPathParserFactory {
+public class AntlrXPathParserFactory implements YangXPathParserFactory {
     private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParserFactory.class);
 
     @Override
-    public YangXPathParser newParser(final YangXPathMathMode mathMode) {
+    public final YangXPathParser newParser(final YangXPathMathMode mathMode) {
         return new AntlrXPathParser.Base(mathMode);
     }
 
     @Override
-    public QualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+    public final QualifiedBound newParser(final YangXPathMathMode mathMode,
+            final YangNamespaceContext namespaceContext) {
         return new AntlrXPathParser.Qualified(mathMode, namespaceContext);
     }
 
     @Override
-    public UnqualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
-            final QNameModule defaultNamespace) {
+    public final UnqualifiedBound newParser(final YangXPathMathMode mathMode,
+            final YangNamespaceContext namespaceContext, final QNameModule defaultNamespace) {
         return new AntlrXPathParser.Unqualified(mathMode, namespaceContext, defaultNamespace);
     }
 
