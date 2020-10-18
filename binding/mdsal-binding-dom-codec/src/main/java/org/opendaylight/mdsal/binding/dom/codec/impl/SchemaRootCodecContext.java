@@ -21,6 +21,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -309,11 +310,10 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             final List<PathArgument> builder) {
         final Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
         if (caseType.isPresent()) {
-            // XXX: we use two caseType.get()s because of https://bugs.openjdk.java.net/browse/JDK-8144185,
-            //      which makes JaCoCo blow up if we try using @NonNull on the local variable.
-            final ChoiceNodeCodecContext<?> choice = choicesByClass.getUnchecked(caseType.get());
+            final @NonNull Class<? extends DataObject> type = caseType.orElseThrow();
+            final ChoiceNodeCodecContext<?> choice = choicesByClass.getUnchecked(type);
             choice.addYangPathArgument(arg, builder);
-            final DataContainerCodecContext<?, ?> caze = choice.streamChild(caseType.get());
+            final DataContainerCodecContext<?, ?> caze = choice.streamChild(type);
             caze.addYangPathArgument(arg, builder);
             return caze.bindingPathArgumentChild(arg, builder);
         }
