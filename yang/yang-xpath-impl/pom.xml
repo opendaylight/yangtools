@@ -50,28 +50,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.cmpn</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.xpath.impl</Automatic-Module-Name>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
