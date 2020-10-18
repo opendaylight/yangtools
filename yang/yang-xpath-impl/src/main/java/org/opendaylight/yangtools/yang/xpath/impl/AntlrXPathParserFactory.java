@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.xpath.impl;
 
 import javax.inject.Singleton;
-import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
@@ -22,7 +21,6 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@MetaInfServices
 @Singleton
 @Component(immediate = true)
 public final class AntlrXPathParserFactory implements YangXPathParserFactory {
