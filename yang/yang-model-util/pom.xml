@@ -46,12 +46,13 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.model.util</Automatic-Module-Name>
-                    </instructions>
+                    <argLine>@{argLine}
+                        --add-opens org.opendaylight.yangtools.yang.model.util/org.opendaylight.yangtools.yang.model.util=ALL-UNNAMED
+                        --add-opens org.opendaylight.yangtools.yang.model.util/org.opendaylight.yangtools.yang.model.util.type=ALL-UNNAMED
+                        --add-opens org.opendaylight.yangtools.yang.model.util/org.opendaylight.yangtools.yang.model.repo.util=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>
