@@ -1,0 +1,10 @@
+module foo {
+  namespace "foo";
+  prefix "foo";
+
+  grouping arg-path {
+    anyxml path {
+      mandatory true;
+    }
+  }
+}
