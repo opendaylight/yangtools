@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.binding.test.mock.FooChild;
@@ -33,6 +32,7 @@ import org.opendaylight.yangtools.yang.binding.test.mock.NodeChild;
 import org.opendaylight.yangtools.yang.binding.test.mock.NodeChildKey;
 import org.opendaylight.yangtools.yang.binding.test.mock.NodeKey;
 import org.opendaylight.yangtools.yang.binding.test.mock.Nodes;
+import org.powermock.reflect.Whitebox;
 
 public class InstanceIdentifierTest {
 
@@ -136,24 +136,17 @@ public class InstanceIdentifierTest {
         assertFalse(instanceIdentifier1.equals(object));
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
 
-        final Field pathArgumentsField = InstanceIdentifier.class.getDeclaredField("pathArguments");
-        final Field wildCardField = InstanceIdentifier.class.getDeclaredField("wildcarded");
-        pathArgumentsField.setAccessible(true);
-        wildCardField.setAccessible(true);
-        pathArgumentsField.set(instanceIdentifier2, instanceIdentifier1.pathArguments);
-        wildCardField.set(instanceIdentifier4, true);
+        Whitebox.setInternalState(instanceIdentifier2, "pathArguments", instanceIdentifier1.pathArguments);
+        Whitebox.setInternalState(instanceIdentifier4, "wildcarded", true);
 
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
-
         assertFalse(instanceIdentifier1.equals(instanceIdentifier3));
         assertFalse(instanceIdentifier1.equals(instanceIdentifier4));
-        final InstanceIdentifier<Node> instanceIdentifier5 = InstanceIdentifier.create(Node.class);
-        final Field hashField = InstanceIdentifier.class.getDeclaredField("hash");
-        hashField.setAccessible(true);
-        hashField.set(instanceIdentifier5, instanceIdentifier1.hashCode());
-        wildCardField.set(instanceIdentifier5, false);
 
-        assertFalse(instanceIdentifier1.equals(instanceIdentifier5));
+        final InstanceIdentifier<Node> instanceIdentifier5 = InstanceIdentifier.create(Node.class);
+        Whitebox.setInternalState(instanceIdentifier5, "hash", instanceIdentifier1.hashCode());
+        Whitebox.setInternalState(instanceIdentifier5, "wildcarded", false);
+
         assertNotNull(InstanceIdentifier.create(ImmutableList.copyOf(instanceIdentifier1.getPathArguments())));
         assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class));
         assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class, new NodeKey(5)));
