@@ -124,18 +124,16 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * generated property with data about field which is generated as the getter method
      * @return string with the getter method source code in JAVA format
      */
-    protected def getterMethod(GeneratedProperty field) {
-        '''
-            public «field.returnType.importedName» «field.getterMethodName»() {
-                «val fieldName = field.fieldName»
-                «IF field.returnType.name.endsWith("[]")»
-                return «fieldName» == null ? null : «fieldName».clone();
-                «ELSE»
-                return «fieldName»;
-                «ENDIF»
-            }
-        '''
-    }
+    protected def getterMethod(GeneratedProperty field) '''
+        public «field.returnType.importedName» «field.getterMethodName»() {
+            «val fieldName = field.fieldName»
+            «IF field.returnType.name.endsWith("[]")»
+            return «fieldName» == null ? null : «fieldName».clone();
+            «ELSE»
+            return «fieldName»;
+            «ENDIF»
+        }
+    '''
 
     final protected def getterMethodName(GeneratedProperty field) {
         val prefix = if(field.returnType.equals(Types.BOOLEAN)) "is" else "get"

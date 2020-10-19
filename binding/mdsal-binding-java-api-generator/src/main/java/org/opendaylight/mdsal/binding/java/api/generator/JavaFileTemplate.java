@@ -242,6 +242,16 @@ class JavaFileTemplate {
     }
 
     /**
+     * Generate a call to {@link Object#clone()} if target field represents an array. Returns an empty string otherwise.
+     *
+     * @param property Generated property
+     * @return The string used to clone the property, or an empty string
+     */
+    static final String cloneCall(final GeneratedProperty property) {
+        return property.getReturnType().getName().endsWith("[]") ? ".clone()" : "";
+    }
+
+    /**
      * Returns set of method signature instances which contains all the methods of the <code>genType</code>
      * and all the methods of the implemented interfaces.
      *

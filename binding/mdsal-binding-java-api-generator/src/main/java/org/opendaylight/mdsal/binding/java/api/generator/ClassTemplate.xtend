@@ -214,7 +214,7 @@ class ClassTemplate extends BaseTemplate {
     def private scalarTypeObjectValue(GeneratedProperty field) '''
         @«OVERRIDE.importedName»
         public «field.returnType.importedName» «BindingMapping.SCALAR_TYPE_OBJECT_GET_VALUE_NAME»() {
-            return «field.fieldName»«IF field.returnType.name.endsWith("[]")».clone()«ENDIF»;
+            return «field.fieldName»«field.cloneCall»;
         }
     '''
 
@@ -306,11 +306,7 @@ class ClassTemplate extends BaseTemplate {
 
         «FOR p : properties»
             «val fieldName = p.fieldName»
-            «IF p.returnType.name.endsWith("[]")»
-                this.«fieldName» = «fieldName».clone();
-            «ELSE»
-                this.«fieldName» = «fieldName»;
-            «ENDIF»
+            this.«fieldName» = «fieldName»«p.cloneCall»;
         «ENDFOR»
     }
     '''

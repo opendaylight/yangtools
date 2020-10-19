@@ -13,8 +13,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 /**
  * Template for generating JAVA class.
  */
-class ListKeyTemplate extends ClassTemplate {
-
+final class ListKeyTemplate extends ClassTemplate {
     /**
      * Creates instance of this class with concrete <code>genType</code>.
      *
@@ -24,37 +23,21 @@ class ListKeyTemplate extends ClassTemplate {
         super(genType)
     }
 
-
-    override final allValuesConstructor() '''
+    override allValuesConstructor() '''
         public «type.name»(«allProperties.asNonNullArgumentsDeclaration») {
             «FOR p : allProperties»
-                «CODEHELPERS.importedName».requireValue(«p.fieldName»);
+                «val fieldName = p.fieldName»
+                this.«fieldName» = «CODEHELPERS.importedName».requireKeyProp(«fieldName», "«p.name»")«p.cloneCall»;
             «ENDFOR»
             «FOR p : properties»
                 «generateRestrictions(type, p.fieldName, p.returnType)»
             «ENDFOR»
-
-            «FOR p : allProperties»
-                «val fieldName = p.fieldName»
-                «IF p.returnType.name.endsWith("[]")»
-                    this.«fieldName» = «fieldName».clone();
-                «ELSE»
-                    this.«fieldName» = «fieldName»;
-                «ENDIF»
-            «ENDFOR»
         }
     '''
 
-    override final getterMethod(GeneratedProperty field) {
-        '''
-            public «field.returnType.importedNonNull» «field.getterMethodName»() {
-                «val fieldName = field.fieldName»
-                «IF field.returnType.name.endsWith("[]")»
-                return «fieldName».clone();
-                «ELSE»
-                return «fieldName»;
-                «ENDIF»
-            }
-        '''
-    }
+    override getterMethod(GeneratedProperty field) '''
+        public «field.returnType.importedNonNull» «field.getterMethodName»() {
+            return «field.fieldName»«field.cloneCall»;
+        }
+    '''
 }

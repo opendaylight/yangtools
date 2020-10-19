@@ -54,12 +54,27 @@ public final class CodeHelpers {
     }
 
     /**
+     * A shortcut for {@code Preconditions.checkNotNull(value, "Key component \"%s\" must not be null", name)}.
+     *
+     * @param value Value itself
+     * @param name Name of the value
+     * @return Non-null value
+     * @throws NullPointerException if value is null
+     */
+    public static <T> @NonNull T requireKeyProp(final @Nullable T value, final @NonNull String name) {
+        if (value == null) {
+            throw new NullPointerException("Key component \"" + name + "\" may not be null");
+        }
+        return value;
+    }
+
+    /**
      * A shortcut for {@code Objects.requireNonNull(value, "Supplied value may not be null")}.
      *
      * @param value Value itself
      * @throws NullPointerException if value is null
      */
-    public static void requireValue(@Nullable final Object value) {
+    public static void requireValue(final @Nullable Object value) {
         requireNonNull(value, "Supplied value may not be null");
     }
 
