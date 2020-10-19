@@ -11,27 +11,18 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
@@ -39,39 +30,17 @@ import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.opendaylight.yangtools.yang2sources.spi.ModuleResourceResolver;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class GenerateSourcesTest {
-
-    private String yang;
+public class GenerateSourcesTest extends AbstractCodeGeneratorTest {
     private YangToSourcesMojo mojo;
     private File outDir;
 
-    @Mock
-    private MavenProject project;
-
-    @Mock
-    private Build build;
-
-    @Mock
-    private Plugin plugin;
-
     @Before
     public void setUp() throws Exception {
-        yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
         outDir = new File("/outputDir");
-        final YangProvider mock = mock(YangProvider.class);
-        doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(Collection.class));
-
-        final YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(this.yang), ImmutableList.of(),
-                ImmutableList.of(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), this.project, false,
-                mock);
-        this.mojo = new YangToSourcesMojo(processor);
-        doReturn(new File("")).when(this.project).getBasedir();
-        doReturn("target/").when(this.build).getDirectory();
-        doReturn(this.build).when(this.project).getBuild();
-        doReturn(Collections.emptyList()).when(this.plugin).getDependencies();
-        doReturn(this.plugin).when(this.project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
-        this.mojo.setProject(this.project);
+        this.mojo = setupMojo(new YangToSourcesProcessor(
+            new File(Resources.getResource(GenerateSourcesTest.class, "/yang").toURI()), List.of(),
+            List.of(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), this.project, false,
+            yangProvider));
     }
 
     @Test

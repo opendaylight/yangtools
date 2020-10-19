@@ -1,0 +1,22 @@
+submodule bytedance-dns-rpc {
+	belongs-to "bytedance-dns" {
+		prefix "dns";
+	}
+
+	revision "2020-10-12" {
+	}
+	
+	rpc opt_dns{
+		input {
+			leaf foo {
+				type string;
+			}
+		}
+		output {
+			leaf bar {
+				type string;
+			}
+		}
+		
+	}
+}

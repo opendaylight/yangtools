@@ -1,0 +1,10 @@
+module bytedance-dns {
+        yang-version 1;
+        namespace "bytedance:dns";
+        prefix "dns";
+
+        include bytedance-dns-rpc;
+
+        revision "2020-10-13" {
+        }
+}
