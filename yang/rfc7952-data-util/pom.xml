@@ -47,19 +47,4 @@
             <artifactId>rfc7952-model-api</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.rfc7952.data.util</Automatic-Module-Name>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
