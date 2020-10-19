@@ -1,0 +1,7 @@
+submodule foo-submodule {
+	belongs-to foo { prefix dns; }
+
+	revision "2020-10-12";
+
+	rpc some-rpc;
+}

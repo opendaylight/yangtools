@@ -1,0 +1,8 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  include foo-submodule;
+
+  revision "2020-10-13";
+}
