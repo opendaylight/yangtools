@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -44,7 +44,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * @author Robert Varga
  */
 @NonNullByDefault
-final class FileGeneratorTask extends AbstractGeneratorTask {
+final class FileGeneratorTask extends GeneratorTask {
     private static final Logger LOG = LoggerFactory.getLogger(FileGeneratorTask.class);
     private static final CharMatcher SEP_MATCHER = CharMatcher.is(GeneratedFilePath.SEPARATOR);
     private static final Map<GeneratedFileType, String> TYPE_PATHS = ImmutableMap.of(

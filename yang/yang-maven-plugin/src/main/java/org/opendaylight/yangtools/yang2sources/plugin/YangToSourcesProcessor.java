@@ -136,9 +136,9 @@ class YangToSourcesProcessor {
         }
 
         // We need to instantiate all code generators to determine required import resolution mode
-        final List<AbstractGeneratorTask> codeGenerators = instantiateGenerators();
+        final List<GeneratorTask> codeGenerators = instantiateGenerators();
         final Set<StatementParserMode> parserModes = codeGenerators.stream()
-            .map(AbstractGeneratorTask::parserMode)
+            .map(GeneratorTask::parserMode)
             .collect(Collectors.toUnmodifiableSet());
 
         for (StatementParserMode parserMode : parserModes) {
@@ -182,8 +182,8 @@ class YangToSourcesProcessor {
             META_INF_YANG_SERVICES_STRING_JAR);
     }
 
-    private List<AbstractGeneratorTask> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
-        final List<AbstractGeneratorTask> generators = new ArrayList<>(codeGeneratorArgs.size());
+    private List<GeneratorTask> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
+        final List<GeneratorTask> generators = new ArrayList<>(codeGeneratorArgs.size());
         for (CodeGeneratorArg arg : codeGeneratorArgs) {
             generators.add(CodeGeneratorTask.create(arg));
             LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, arg.getCodeGeneratorClass());
@@ -324,7 +324,7 @@ class YangToSourcesProcessor {
     /**
      * Call generate on every generator from plugin configuration.
      */
-    private Set<File> generateSources(final ContextHolder context, final Collection<AbstractGeneratorTask> generators)
+    private Set<File> generateSources(final ContextHolder context, final Collection<GeneratorTask> generators)
             throws MojoFailureException {
         if (generators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
@@ -332,7 +332,7 @@ class YangToSourcesProcessor {
         }
 
         Builder<File> allFiles = ImmutableSet.builder();
-        for (AbstractGeneratorTask task : generators) {
+        for (GeneratorTask task : generators) {
             final Stopwatch watch = Stopwatch.createStarted();
             task.initialize(project, context);
             LOG.debug("{} Task {} initialized in {}", watch);
