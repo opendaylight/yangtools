@@ -24,6 +24,7 @@
 
     <modules>
         <module>plugin-generator-api</module>
+        <module>plugin-parent</module>
         <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-spi</module>
         <module>yang-maven-plugin-it</module>

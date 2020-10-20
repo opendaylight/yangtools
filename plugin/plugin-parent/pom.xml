@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>bundle-parent</artifactId>
+        <version>6.0.1-SNAPSHOT</version>
+        <relativePath>../../bundle-parent</relativePath>
+    </parent>
+
+    <artifactId>plugin-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
+    <description>Parent pom.xml for artifacts interested in running yang-maven-plugin</description>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.opendaylight.yangtools</groupId>
+                    <artifactId>yang-maven-plugin</artifactId>
+                    <!-- Explicit version, as we get inherited -->
+                    <version>6.0.1-SNAPSHOT</version>
+
+    <!--
+        The main entrypoint into configuration. Users of this pom are expected to
+        extend their pluginManagement section with any specific configration they
+        want to include for their plugins.
+
+        Individual generators are located through ServiceLoader mechanism, and each
+        will receive configuration corresponding to its name.
+
+        // FIXME: add an example
+        -->
+                    <configuration>
+                        <inspectDependencies>true</inspectDependencies>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>yang-gen</id>
+            <activation>
+                <file>
+                    <!-- Activate the plugin only if src/main/yang is present -->
+                    <exists>src/main/yang</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.opendaylight.yangtools</groupId>
+                        <artifactId>yang-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
