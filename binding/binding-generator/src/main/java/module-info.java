@@ -12,6 +12,9 @@ import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeGenerator;
 
 module org.opendaylight.yangtools.binding.generator {
     exports org.opendaylight.yangtools.binding.generator;
+    exports org.opendaylight.yangtools.binding.generator.dagger;
+
+    // FIXME: remove this package
     exports org.opendaylight.yangtools.binding.generator.impl.di;
 
     provides BindingGenerator with DefaultBindingGenerator;
@@ -33,7 +36,11 @@ module org.opendaylight.yangtools.binding.generator {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static transitive javax.inject;
+    // FIXME: figure these out
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
+    requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
