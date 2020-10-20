@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.rfc6241.parser.impl.Rfc6241ParserExtension;
 @Singleton
 @NonNullByDefault
 @SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc6241ParserExtension extends Rfc6241ParserExtension {
     /**
      * Default constructor.
