@@ -31,6 +31,8 @@ module org.opendaylight.yangtools.rfc6241.parser.support {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static dagger;
+    requires static java.compiler;
     requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
