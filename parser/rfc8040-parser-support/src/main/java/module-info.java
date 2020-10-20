@@ -29,8 +29,11 @@ module org.opendaylight.yangtools.rfc8040.parser.support {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive dagger;
+    requires static transitive jakarta.inject;
+    requires static transitive java.compiler;
+    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
-    requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;

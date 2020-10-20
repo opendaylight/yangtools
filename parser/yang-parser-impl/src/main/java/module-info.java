@@ -36,12 +36,16 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.yang.xpath.impl;
     requires org.slf4j;
 
     // Annotations
+    requires static transitive dagger;
+    requires static transitive jakarta.inject;
+    requires static transitive java.compiler;
+    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
-    requires static javax.inject;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
     requires static org.kohsuke.metainf_services;
