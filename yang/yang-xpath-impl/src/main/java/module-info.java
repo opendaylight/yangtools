@@ -18,6 +18,7 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     requires org.slf4j;
 
     // Annotations
+    requires static dagger;
     requires static javax.inject;
     requires static org.osgi.service.component.annotations;
 }
