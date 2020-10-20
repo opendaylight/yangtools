@@ -1,1 +1,1 @@
-Import-Package: !javax.inject, *
+Import-Package: !jakarta.inject, !javax.inject, *
