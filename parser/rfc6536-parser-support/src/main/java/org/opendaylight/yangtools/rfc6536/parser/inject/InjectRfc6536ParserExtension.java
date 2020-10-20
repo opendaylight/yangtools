@@ -16,10 +16,11 @@ import org.opendaylight.yangtools.rfc6536.parser.impl.Rfc6536ParserExtension;
  * Parser support for {@code ietf-netconf-acm.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc6536Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc6536ParserExtension extends Rfc6536ParserExtension {
     /**
      * Default constructor.

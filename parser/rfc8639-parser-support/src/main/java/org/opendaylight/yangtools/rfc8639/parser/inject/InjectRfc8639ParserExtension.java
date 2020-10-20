@@ -16,10 +16,11 @@ import org.opendaylight.yangtools.rfc8639.parser.impl.Rfc8639ParserExtension;
  * Parser support for {@code ietf-subscribed-notifications.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc8639Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc8639ParserExtension extends Rfc8639ParserExtension {
     /**
      * Default constructor.
