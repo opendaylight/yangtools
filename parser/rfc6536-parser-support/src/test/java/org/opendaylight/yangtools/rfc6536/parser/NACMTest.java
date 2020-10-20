@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMConstants;
-import org.opendaylight.yangtools.rfc6536.parser.inject.InjectRfc6536ParserExtension;
+import org.opendaylight.yangtools.rfc6536.parser.dagger.Rfc6536Module;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -27,7 +27,7 @@ class NACMTest {
     void testResolution() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                new InjectRfc6536ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
+                Rfc6536Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
         final var context = reactor.newBuild()
