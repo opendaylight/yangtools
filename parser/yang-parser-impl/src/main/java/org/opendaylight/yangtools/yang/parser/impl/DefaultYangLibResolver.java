@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibModuleSet;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.parser.inject.InjectYangLibResolver;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
@@ -32,7 +31,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component
 @MetaInfServices
-public sealed class DefaultYangLibResolver implements YangLibResolver permits InjectYangLibResolver {
+public final class DefaultYangLibResolver implements YangLibResolver {
     private final CrossSourceStatementReactor reactor;
 
     public DefaultYangLibResolver() {
