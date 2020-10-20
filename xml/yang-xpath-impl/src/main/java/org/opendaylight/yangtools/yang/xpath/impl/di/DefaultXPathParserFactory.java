@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
  * frameworks.
  */
 @Singleton
+@Deprecated(forRemoval = true, since = "14.0.21")
 public final class DefaultXPathParserFactory implements YangXPathParserFactory {
     private final AntlrXPathParserFactory delegate = new AntlrXPathParserFactory();
 
