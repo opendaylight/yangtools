@@ -114,6 +114,9 @@
                     <supportedProjectTypes>
                         <supportedProjectType>maven-plugin</supportedProjectType>
                     </supportedProjectTypes>
+                    <manifestEntries>
+                        <Automatic-Module-Name>org.opendaylight.yangtools.plugin.maven</Automatic-Module-Name>
+                    </manifestEntries>
                 </configuration>
             </plugin>
             <plugin>
