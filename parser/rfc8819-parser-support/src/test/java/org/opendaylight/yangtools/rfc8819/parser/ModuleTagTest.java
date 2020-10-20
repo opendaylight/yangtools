@@ -20,7 +20,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.rfc8819.model.api.ModuleTagEffectiveStatement;
 import org.opendaylight.yangtools.rfc8819.model.api.Tag;
-import org.opendaylight.yangtools.rfc8819.parser.inject.InjectRfc8819ParserExtension;
+import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.yang.model.spi.source.URLYangTextSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -38,7 +38,7 @@ class ModuleTagTest {
     static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                new InjectRfc8819ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
+                Rfc8819Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
     }
 

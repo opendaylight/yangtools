@@ -9,12 +9,18 @@ package org.opendaylight.yangtools.yang.data.tree.impl.di;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.tree.impl.ReferenceDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.ri.dagger.ReferenceDataTreeFactoryModule;
 
 /**
  * A factory for creating in-memory data trees.
+ *
+ * @deprecated Use {@link ReferenceDataTreeFactoryModule#provideDataTreeFactory()} instead.
  */
 @Singleton
+@NonNullByDefault
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InMemoryDataTreeFactory extends ReferenceDataTreeFactory {
     @Inject
     public InMemoryDataTreeFactory() {
