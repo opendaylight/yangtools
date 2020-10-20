@@ -39,11 +39,6 @@
         <module>yang-model-util</module>
         <module>yang-model-util-ut</module>
 
-        <!-- Code Generation and build plugins -->
-        <module>yang-maven-plugin</module>
-        <module>yang-maven-plugin-spi</module>
-        <module>yang-maven-plugin-it</module>
-
         <!-- YANG XPath API and implementation -->
         <module>yang-xpath-api</module>
         <module>yang-xpath-antlr</module>

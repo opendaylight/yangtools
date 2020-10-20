@@ -24,12 +24,9 @@
 
     <modules>
         <module>plugin-generator-api</module>
-
-        <!-- FIXME:
         <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-spi</module>
         <module>yang-maven-plugin-it</module>
-         !-->
     </modules>
 
     <properties>
