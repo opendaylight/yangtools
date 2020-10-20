@@ -16,10 +16,11 @@ import org.opendaylight.yangtools.odlext.parser.impl.YangExtParserExtension;
  * Our extension exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link YangExtModule#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectYangExtParserExtension extends YangExtParserExtension {
     /**
      * Default constructor.

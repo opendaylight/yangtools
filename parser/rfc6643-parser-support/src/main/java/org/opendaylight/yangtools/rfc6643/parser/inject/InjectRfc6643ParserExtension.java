@@ -16,10 +16,11 @@ import org.opendaylight.yangtools.rfc6643.parser.impl.Rfc6643ParserExtension;
  * Parser support for {@code ietf-yang-smiv2.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc6643Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc6643ParserExtension extends Rfc6643ParserExtension {
     /**
      * Default constructor.
