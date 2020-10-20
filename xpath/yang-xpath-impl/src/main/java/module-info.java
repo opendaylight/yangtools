@@ -25,6 +25,7 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     // Annotations
     requires static transitive javax.inject;
     requires static com.github.spotbugs.annotations;
+    requires static dagger;
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.service.component.annotations;
