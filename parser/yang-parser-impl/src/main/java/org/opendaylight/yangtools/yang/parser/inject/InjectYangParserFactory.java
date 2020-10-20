@@ -17,13 +17,18 @@ import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
+import org.opendaylight.yangtools.yang.parser.ri.dagger.YangParserFactoryModule;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
  * The {@link YangParserFactory} implementation.
+ *
+ * @since 14.0.20
+ * @deprecated Use {@link YangParserFactoryModule#provideParserFactory(YangXPathParserFactory, java.util.Set)} instead.
  */
 @Singleton
 @SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectYangParserFactory implements YangParserFactory {
     private final @NonNull DefaultYangParserFactory delegate;
 
