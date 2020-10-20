@@ -11,11 +11,21 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
+/**
+ * Reference implementation of YANG parser.
+ *
+ * @provides SchemaRepository
+ * @provides YangLibResolver
+ * @provides YangParserFactory
+ */
 module org.opendaylight.yangtools.yang.parser.impl {
-    // FIXME: do not export this package
-    exports org.opendaylight.yangtools.yang.parser.impl;
-    exports org.opendaylight.yangtools.yang.parser.inject;
     exports org.opendaylight.yangtools.yang.parser.repo;
+    exports org.opendaylight.yangtools.yang.parser.ri.dagger;
+
+    // FIXME: do not export this package and rename it to 'ri' instead of 'impl'
+    exports org.opendaylight.yangtools.yang.parser.impl;
+    // FIXME: remove this package
+    exports org.opendaylight.yangtools.yang.parser.inject;
 
     uses ParserExtension;
     uses YangXPathParserFactory;
@@ -41,11 +51,16 @@ module org.opendaylight.yangtools.yang.parser.impl {
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.yang.xpath.impl;
     requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
+    // FIXME: figure these out
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
     requires static javax.inject;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
