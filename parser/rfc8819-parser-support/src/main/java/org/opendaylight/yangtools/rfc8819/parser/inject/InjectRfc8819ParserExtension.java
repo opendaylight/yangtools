@@ -10,16 +10,18 @@ package org.opendaylight.yangtools.rfc8819.parser.inject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.rfc8819.parser.dagger.Rfc8819Module;
 import org.opendaylight.yangtools.rfc8819.parser.impl.Rfc8819ParserExtension;
 
 /**
  * Parser support for {@code ietf-module-tags.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc8819Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc8819ParserExtension extends Rfc8819ParserExtension {
     /**
      * Default constructor.

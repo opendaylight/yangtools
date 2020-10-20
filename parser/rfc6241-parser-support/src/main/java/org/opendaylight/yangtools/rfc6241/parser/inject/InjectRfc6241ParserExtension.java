@@ -10,16 +10,18 @@ package org.opendaylight.yangtools.rfc6241.parser.inject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.rfc6241.parser.dagger.Rfc6241Module;
 import org.opendaylight.yangtools.rfc6241.parser.impl.Rfc6241ParserExtension;
 
 /**
  * Parser support for {@code ietf-netconf.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc6241Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc6241ParserExtension extends Rfc6241ParserExtension {
     /**
      * Default constructor.
