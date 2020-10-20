@@ -44,9 +44,6 @@
         <module>yang-xpath-antlr</module>
         <module>yang-xpath-impl</module>
 
-        <!-- End-user utility for validating YANG models -->
-        <module>yang-model-validator</module>
-
         <!-- YANG parser end-user API -->
         <module>yang-parser-api</module>
         <module>yang-test-util</module>

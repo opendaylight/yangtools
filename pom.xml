@@ -42,9 +42,9 @@
         <module>docs</module>
         <module>features</module>
         <module>plugin</module>
+        <module>tools</module>
 
         <module>yang</module>
-        <module>yang-validation-tool</module>
     </modules>
 
     <properties>
