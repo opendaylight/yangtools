@@ -26,11 +26,11 @@ import org.osgi.service.component.annotations.Component;
 @NonNullByDefault
 @MetaInfServices(ParserExtension.class)
 @Component(service = ParserExtension.class)
-public sealed class Rfc6241ParserExtension extends AbstractParserExtension permits InjectRfc6241ParserExtension {
+public sealed class Rfc7952ParserExtension extends AbstractParserExtension permits InjectRfc6241ParserExtension {
     /**
      * Default constructor.
      */
-    public Rfc6241ParserExtension() {
+    public Rfc7952ParserExtension() {
         super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES);
     }
 

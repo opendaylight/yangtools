@@ -16,10 +16,11 @@ import org.opendaylight.yangtools.rfc8040.parser.impl.Rfc8040ParserExtension;
  * Parser support for {@code ietf-restconf.yang} exposed into the {@code javax.inject} world.
  *
  * @since 14.0.20
+ * @deprecated Use {@link Rfc8040Module#provideParserExtension()} instead.
  */
 @Singleton
 @NonNullByDefault
-@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class InjectRfc8040ParserExtension extends Rfc8040ParserExtension {
     /**
      * Default constructor.
