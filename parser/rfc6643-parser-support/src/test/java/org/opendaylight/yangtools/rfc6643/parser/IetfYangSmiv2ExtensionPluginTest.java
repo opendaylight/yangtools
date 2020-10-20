@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdSchemaNode;
-import org.opendaylight.yangtools.rfc6643.parser.inject.InjectRfc6643ParserExtension;
+import org.opendaylight.yangtools.rfc6643.parser.dagger.Rfc6643Module;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -39,7 +39,7 @@ class IetfYangSmiv2ExtensionPluginTest {
     void testExtensions() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
-                new InjectRfc6643ParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
+                Rfc6643Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var schema = reactor.newBuild()
             .addSources(
