@@ -49,7 +49,10 @@ module org.opendaylight.yangtools.binding.data.codec.dynamic {
 
     // Annotations
     requires static com.github.spotbugs.annotations;
-    requires static transitive javax.inject;
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
+    requires static javax.inject;
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;

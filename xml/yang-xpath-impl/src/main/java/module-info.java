@@ -10,8 +10,13 @@ import org.opendaylight.yangtools.yang.xpath.impl.AntlrXPathParserFactory;
 
 /**
  * Reference implementation of YANG XPath parser.
+ *
+ * @provides YangXPathParserFactory
  */
 module org.opendaylight.yangtools.yang.xpath.impl {
+    exports org.opendaylight.yangtools.yang.xpath.ri.dagger;
+
+    // FIXME: remove this package
     exports org.opendaylight.yangtools.yang.xpath.impl.di;
 
     provides YangXPathParserFactory with AntlrXPathParserFactory;
@@ -24,6 +29,12 @@ module org.opendaylight.yangtools.yang.xpath.impl {
 
     // Annotations
     requires static transitive javax.inject;
+
+    // FIXME: these should be transitive once we do not expose impl.di
+    requires static dagger;
+    requires static jakarta.inject;
+    requires static java.compiler;
+
     requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
