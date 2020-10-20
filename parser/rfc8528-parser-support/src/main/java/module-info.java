@@ -13,8 +13,11 @@ import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
  * @provides ParserExtension
  */
 module org.opendaylight.yangtools.rfc8528.parser.support {
+    exports org.opendaylight.yangtools.rfc8528.parser.dagger;
+
     // FIXME: do not export this package
     exports org.opendaylight.yangtools.rfc8528.parser;
+    // FIXME: remove this package
     exports org.opendaylight.yangtools.rfc8528.parser.inject;
 
     provides ParserExtension with org.opendaylight.yangtools.rfc8528.parser.impl.Rfc8528ParserExtension;
@@ -25,12 +28,14 @@ module org.opendaylight.yangtools.rfc8528.parser.support {
     requires transitive org.opendaylight.yangtools.rfc8528.model.api;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.model.spi;
     requires org.slf4j;
 
     // Annotations
+    requires static transitive dagger;
+    requires static transitive jakarta.inject;
+    requires static transitive java.compiler;
+    requires static transitive javax.inject;
     requires static transitive org.eclipse.jdt.annotation;
-    requires static javax.inject;
     requires static org.kohsuke.metainf_services;
     requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
