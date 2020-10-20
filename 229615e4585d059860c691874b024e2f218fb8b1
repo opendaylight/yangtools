@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4f536ba_426a0fb9",
+        "filename": "plugin/plugin-generator-api/src/main/java/org/opendaylight/yangtools/plugin/generator/api/FileGenerator.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2020-10-20T08:17:02Z",
+      "side": 1,
+      "message": "\"directly\" still used one too many times.",
+      "range": {
+        "startLine": 41,
+        "startChar": 59,
+        "endLine": 41,
+        "endChar": 99
+      },
+      "revId": "229615e4585d059860c691874b024e2f218fb8b1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
