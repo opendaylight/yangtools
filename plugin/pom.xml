@@ -24,6 +24,7 @@
 
     <modules>
         <module>plugin-generator-api</module>
+        <module>plugin-parent</module>
 
         <!-- FIXME: 
         <module>yang-maven-plugin</module>
