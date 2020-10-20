@@ -23,7 +23,10 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive dagger;
+    requires static transitive java.compiler;
     requires static transitive javax.inject;
+    requires static transitive jakarta.inject;
     requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
     requires static org.kohsuke.metainf_services;
