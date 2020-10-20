@@ -17,15 +17,20 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingDataCodec;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.dynamic.DynamicBindingDataCodec;
+import org.opendaylight.yangtools.binding.data.codec.dynamic.dagger.BindingDataCodecFactoryModule;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingCodecContext;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 
 /**
  * Default implementation of {@link DynamicBindingDataCodec}.
+ *
+ * @deprecated Use {@link BindingDataCodecFactoryModule#provideBindingDataCodecFactory()} instead.
  */
 @Beta
 @Singleton
 @NonNullByDefault
+@SuppressWarnings("exports")
+@Deprecated(since = "14.0.21", forRemoval = true)
 public final class DefaultDynamicBindingDataCodec extends ForwardingObject implements DynamicBindingDataCodec {
     private final DynamicBindingDataCodec delegate;
 
