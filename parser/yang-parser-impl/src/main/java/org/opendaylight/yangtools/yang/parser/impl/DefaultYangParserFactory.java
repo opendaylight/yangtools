@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.parser.inject.InjectYangParserFactory;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.service.component.annotations.Activate;
@@ -30,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
 @Beta
 @Component
 @MetaInfServices
-public sealed class DefaultYangParserFactory implements YangParserFactory permits InjectYangParserFactory {
+public final class DefaultYangParserFactory implements YangParserFactory {
     private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(ImportResolutionMode.DEFAULT);
 
     private final ConcurrentHashMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =

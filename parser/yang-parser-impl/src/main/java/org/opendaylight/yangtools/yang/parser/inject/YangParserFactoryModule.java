@@ -7,22 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.inject;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import dagger.Module;
+import dagger.Provides;
+import jakarta.inject.Singleton;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
+import org.opendaylight.yangtools.yang.parser.spi.ParserExtension;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
- * The {@link YangParserFactory} implementation.
+ * A Dagger module providing {@link YangParserFactory}.
  */
-@Singleton
-@NonNullByDefault
-@SuppressWarnings("exports")
-public final class InjectYangParserFactory extends DefaultYangParserFactory {
-    @Inject
-    public InjectYangParserFactory(final YangXPathParserFactory xpathFactory) {
-        super(xpathFactory);
+@Module
+public interface YangParserFactoryModule {
+    @Provides
+    @Singleton
+    static YangParserFactory provideParserFactory(final YangXPathParserFactory xpathFactory,
+            final Set<ParserExtension> extensions) {
+        return new DefaultYangParserFactory(xpathFactory);
     }
 }

@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.inject;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import dagger.Module;
+import dagger.Provides;
+import jakarta.inject.Singleton;
 import org.opendaylight.yangtools.yang.parser.api.YangLibResolver;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultYangLibResolver;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 /**
- * Reference {@link YangLibResolver} implementation.
+ * A Dagger module providing {@link YangLibResolver}.
  */
-@Singleton
-@NonNullByDefault
-@SuppressWarnings("exports")
-public final class InjectYangLibResolver extends DefaultYangLibResolver {
-    @Inject
-    public InjectYangLibResolver(final YangXPathParserFactory xpathFactory) {
-        super(xpathFactory);
+@Module
+public interface YangLibResolverModule {
+    @Provides
+    @Singleton
+    static YangLibResolver provideYangLibResolver(final YangXPathParserFactory xpathFactory) {
+        return new DefaultYangLibResolver(xpathFactory);
     }
 }
