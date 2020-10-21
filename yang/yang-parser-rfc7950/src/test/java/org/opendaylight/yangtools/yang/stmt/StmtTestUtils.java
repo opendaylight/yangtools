@@ -236,6 +236,11 @@ public final class StmtTestUtils {
         return reactor.buildEffective();
     }
 
+    public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
+            throws URISyntaxException, SAXException, IOException, ReactorException {
+        return parseYinSources(yinSourcesDirectoryPath, StatementParserMode.DEFAULT_MODE);
+    }
+
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final StatementParserMode statementParserMode) throws URISyntaxException, SAXException, IOException,
             ReactorException {
