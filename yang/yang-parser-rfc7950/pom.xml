@@ -78,15 +78,15 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.parser.rfc7950</Automatic-Module-Name>
-                    </instructions>
+                    <argLine>@{argLine}
+                        --add-opens org.opendaylight.yangtools.yang.parser.rfc7950/org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
+                <!-- FIXME: why is this needed? -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
