@@ -13,29 +13,21 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class ElementCountConstraintsTest {
-
     @Test
-    public void testElementCountConstraints() throws ParseException, ReactorException, URISyntaxException, IOException,
-            YangSyntaxErrorException {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(YangStatementStreamSource.create(
-                    YangTextSchemaSource.forResource("/constraint-definitions-test/foo.yang")))
-                .buildEffective();
+    public void testElementCountConstraints()
+            throws YangSyntaxErrorException, ReactorException, URISyntaxException, IOException {
+        final var schemaContext = StmtTestUtils.parseYangSource("/constraint-definitions-test/foo.yang");
         assertNotNull(schemaContext);
 
         final Module testModule = schemaContext.findModule("foo", Revision.of("2016-09-20")).get();
