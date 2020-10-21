@@ -14,16 +14,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class YangModelDependencyInfoTest {
+    // Utility
+    private static YangModelDependencyInfo forResource(final String resourceName) {
+        final YangStatementStreamSource source = StmtTestUtils.sourceForResource(resourceName);
+        return YangModelDependencyInfo.forIR(source.rootStatement(), source.getIdentifier());
+    }
 
     @Test
-    public void testModuleWithNoImports() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
-            "/ietf/ietf-inet-types@2010-09-24.yang");
+    public void testModuleWithNoImports() {
+        YangModelDependencyInfo info = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         assertNotNull(info);
         assertEquals("ietf-inet-types", info.getName());
         assertEquals("2010-09-24", info.getFormattedRevision());
@@ -33,9 +36,8 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testModuleWithImports() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
-                "/parse-methods/dependencies/m2@2013-09-30.yang");
+    public void testModuleWithImports() {
+        YangModelDependencyInfo info = forResource("/parse-methods/dependencies/m2@2013-09-30.yang");
         assertNotNull(info);
         assertEquals("m2", info.getName());
         assertEquals("2013-09-30", info.getFormattedRevision());
@@ -44,20 +46,17 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testModuleWithoutRevision() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
-                "/no-revision/module-without-revision.yang");
+    public void testModuleWithoutRevision() {
+        YangModelDependencyInfo info = forResource("/no-revision/module-without-revision.yang");
         assertNotNull(info);
         assertEquals("module-without-revision", info.getName());
         assertNull(info.getFormattedRevision());
     }
 
     @Test
-    public void testEquals() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo info1 = YangModelDependencyInfo.forResource(getClass(),
-            "/ietf/ietf-inet-types@2010-09-24.yang");
-        YangModelDependencyInfo info2 = YangModelDependencyInfo.forResource(getClass(),
-            "/no-revision/module-without-revision.yang");
+    public void testEquals() {
+        YangModelDependencyInfo info1 = forResource("/ietf/ietf-inet-types@2010-09-24.yang");
+        YangModelDependencyInfo info2 = forResource("/no-revision/module-without-revision.yang");
 
         assertTrue(info1.equals(info1));
         assertFalse(info1.equals(null));
@@ -65,37 +64,35 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testYangtools827() throws IOException, YangSyntaxErrorException {
+    public void testYangtools827() {
         // Latest revision needs to be picked up irrespective of ordering
-        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
-            "/bugs/YT827/foo.yang");
+        YangModelDependencyInfo info = forResource("/bugs/YT827/foo.yang");
         assertEquals("2014-12-24", info.getFormattedRevision());
     }
 
     @Test
-    public void testHashcode() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
-                "/no-revision/module-without-revision.yang");
+    public void testHashcode() {
+        YangModelDependencyInfo info = forResource("/no-revision/module-without-revision.yang");
         assertNotEquals("hashcode", 31, info.hashCode());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMalformedImport() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-import.yang");
+    public void testMalformedImport() {
+        forResource("/depinfo-malformed/malformed-import.yang");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMalformedImportRev() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-import-rev.yang");
+    public void testMalformedImportRev() {
+        forResource("/depinfo-malformed/malformed-import-rev.yang");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMalformedModule() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-module.yang");
+    public void testMalformedModule() {
+        forResource("/depinfo-malformed/malformed-module.yang");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMalformedRev() throws IOException, YangSyntaxErrorException {
-        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-rev.yang");
+    public void testMalformedRev() {
+        forResource("/depinfo-malformed/malformed-rev.yang");
     }
 }

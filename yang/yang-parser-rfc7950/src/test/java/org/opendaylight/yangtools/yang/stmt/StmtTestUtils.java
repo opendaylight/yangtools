@@ -77,7 +77,7 @@ public final class StmtTestUtils {
         return result;
     }
 
-    public static StatementStreamSource sourceForResource(final String resourceName) {
+    public static YangStatementStreamSource sourceForResource(final String resourceName) {
         try {
             return YangStatementStreamSource.create(YangTextSchemaSource.forFile(new File(
                 StmtTestUtils.class.getResource(resourceName).toURI())));
