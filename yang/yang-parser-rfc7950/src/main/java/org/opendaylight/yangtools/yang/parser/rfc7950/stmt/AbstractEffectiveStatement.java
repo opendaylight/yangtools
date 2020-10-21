@@ -91,7 +91,7 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
             final StatementSourceReference ref, final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
         substatements.stream().filter(SchemaTreeEffectiveStatement.class::isInstance)
-            .forEach(child -> putChild(schemaChildren, (SchemaTreeEffectiveStatement) child, ref, "schema"));
+            .forEach(child -> putChild(schemaChildren, (SchemaTreeEffectiveStatement<?>) child, ref, "schema"));
         return schemaChildren;
     }
 
