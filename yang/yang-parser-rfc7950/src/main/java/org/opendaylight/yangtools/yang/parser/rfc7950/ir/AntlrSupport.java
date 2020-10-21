@@ -62,7 +62,7 @@ public final class AntlrSupport {
      * @return A new IRStatement
      * @throws NullPointerException if {@code file} is null or it does not contain a root statement
      */
-    public static @NonNull IRStatement createStatement(final FileContext file) {
+    public static @NonNull IRStatement createStatement(@SuppressWarnings("exports") final FileContext file) {
         return createStatement(file.statement());
     }
 
@@ -73,7 +73,7 @@ public final class AntlrSupport {
      * @return A new IRStatement
      * @throws NullPointerException if {@code stmt} is null
      */
-    public static @NonNull IRStatement createStatement(final StatementContext stmt) {
+    public static @NonNull IRStatement createStatement(@SuppressWarnings("exports") final StatementContext stmt) {
         return new AntlrSupport().statementOf(stmt);
     }
 
