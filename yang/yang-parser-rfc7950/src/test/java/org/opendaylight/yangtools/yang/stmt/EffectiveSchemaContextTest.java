@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -33,26 +32,20 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
 
 public class EffectiveSchemaContextTest {
-
     @Test
     public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
             YangSyntaxErrorException {
         final EffectiveSchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                        "/effective-schema-context-test/foo.yang")))
-                .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                        "/effective-schema-context-test/bar.yang")))
-                .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                        "/effective-schema-context-test/baz.yang")))
-                .buildEffective();
+            .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/foo.yang"))
+            .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/bar.yang"))
+            .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/baz.yang"))
+            .buildEffective();
         assertNotNull(schemaContext);
 
         final Collection<? extends DataSchemaNode> dataDefinitions = schemaContext.getDataDefinitions();
