@@ -60,7 +60,7 @@
             </activation>
 
             <modules>
-                <module>distribution-karaf</module>
+                <module>karaf</module>
             </modules>
         </profile>
         <profile>
