@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -18,22 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class ChoiceStmtTest {
-
-    private static final StatementStreamSource CHOICE_MODULE = sourceForResource("/model/foo.yang");
-    private static final StatementStreamSource IMPORTED_MODULE1 = sourceForResource("/model/bar.yang");
-    private static final StatementStreamSource IMPORTED_MODULE2 = sourceForResource("/model/baz.yang");
-    private static final StatementStreamSource INCLUDED_MODULE = sourceForResource("/model/subfoo.yang");
-
     @Test
-    public void choiceAndCaseTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(CHOICE_MODULE, IMPORTED_MODULE1, IMPORTED_MODULE2, INCLUDED_MODULE)
-                .buildEffective();
+    public void choiceAndCaseTest() throws ReactorException, YangSyntaxErrorException, URISyntaxException, IOException {
+        final SchemaContext result = StmtTestUtils.parseYangSources("/model");
         assertNotNull(result);
 
         final Module testModule = result.findModules("foo").iterator().next();
