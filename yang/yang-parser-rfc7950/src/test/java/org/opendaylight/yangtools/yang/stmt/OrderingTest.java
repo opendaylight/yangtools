@@ -119,8 +119,7 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes3() throws Exception {
-        final Module justFoo = TestUtils.loadModuleResources(getClass(), "/ordering/foo.yang")
-                .getModules().iterator().next();
+        final Module justFoo = StmtTestUtils.parseYangSource("/ordering/foo.yang").getModules().iterator().next();
         final ContainerSchemaNode x = (ContainerSchemaNode) justFoo
                 .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
         final Collection<? extends DataSchemaNode> childNodes = x.getChildNodes();

@@ -10,22 +10,19 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.io.IOException;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class YangParserIdentityTest {
 
     // base identity name equals identity name
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void testParsingIdentityTestModule() throws IOException, ReactorException, YangSyntaxErrorException {
+    public void testParsingIdentityTestModule() throws Exception {
         try {
-            TestUtils.loadModuleResources(getClass(), "/identity/identitytest.yang");
+            StmtTestUtils.parseYangSource("/identity/identitytest.yang");
         } catch (SomeModifiersUnresolvedException e) {
             StmtTestUtils.log(e, "      ");
             throw e;
@@ -34,9 +31,9 @@ public class YangParserIdentityTest {
 
     // same module prefixed base identity name equals identity name
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void testParsingPrefixIdentityTestModule() throws IOException, ReactorException, YangSyntaxErrorException  {
+    public void testParsingPrefixIdentityTestModule() throws Exception {
         try {
-            TestUtils.loadModuleResources(getClass(), "/identity/prefixidentitytest.yang");
+            StmtTestUtils.parseYangSource("/identity/prefixidentitytest.yang");
         } catch (SomeModifiersUnresolvedException e) {
             StmtTestUtils.log(e, "      ");
             throw e;
@@ -47,7 +44,7 @@ public class YangParserIdentityTest {
     // prefix differs
     @Test
     public void testParsingImportPrefixIdentityTestModule() throws Exception {
-        Module module = TestUtils.findModule(TestUtils.loadModules(getClass().getResource("/identity/import").toURI()),
+        Module module = TestUtils.findModule(StmtTestUtils.parseYangSources("/identity/import"),
             "prefiximportidentitytest").get();
         Collection<? extends ModuleImport> imports = module.getImports();
         assertEquals(imports.size(), 1);
