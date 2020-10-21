@@ -79,9 +79,9 @@ public final class StmtTestUtils {
 
     public static StatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forResource(
-                StmtTestUtils.class, resourceName));
-        } catch (IOException | YangSyntaxErrorException e) {
+            return YangStatementStreamSource.create(YangTextSchemaSource.forFile(new File(
+                StmtTestUtils.class.getResource(resourceName).toURI())));
+        } catch (IOException | YangSyntaxErrorException | URISyntaxException e) {
             throw new IllegalArgumentException("Failed to create source", e);
         }
     }
