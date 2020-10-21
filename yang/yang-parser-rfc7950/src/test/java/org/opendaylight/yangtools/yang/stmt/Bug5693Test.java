@@ -5,17 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.xml.sax.SAXException;
 
@@ -27,8 +26,8 @@ public class Bug5693Test {
      * Use input stream to load Yin module.
      */
     @Before
-    public void initTest() throws ReactorException, SAXException, IOException {
-        foo = TestUtils.loadYinModule(YinTextSchemaSource.forResource(getClass(), "/bugs/bug5693/foo.yin"));
+    public void initTest() throws ReactorException, SAXException, IOException, URISyntaxException {
+        foo = StmtTestUtils.parseYinSources("/bugs/bug5693").getModules().iterator().next();
     }
 
     /**
