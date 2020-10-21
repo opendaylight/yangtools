@@ -188,6 +188,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
+    @Deprecated
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D>
             requiresDeclared(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, D, ?>> rawContext = requiresCtxImpl(context, namespace, key,
@@ -196,6 +197,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
+    @Deprecated
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
             AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final K key) {
@@ -203,12 +205,14 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
+    @Deprecated
     public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(
             final StmtContext<?, ?, ? extends E> stmt) {
         return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContext::buildEffective);
     }
 
     @Override
+    @Deprecated
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E>
             requiresEffective(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, ?, E>> rawContext = requiresCtxImpl(context, namespace, key,
@@ -217,6 +221,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
+    @Deprecated
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>>
             AbstractPrerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final K key) {
@@ -224,6 +229,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
+    @Deprecated
     public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(
             final Mutable<?, ?, ?> context, final Class<N> namespace) {
         return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
