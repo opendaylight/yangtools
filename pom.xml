@@ -36,11 +36,13 @@
 
     <modules>
         <module>artifacts</module>
+        <module>docs</module>
+        <module>features</module>
+
+        <module>attic</module>
         <module>benchmarks</module>
         <module>bundle-parent</module>
         <module>common</module>
-        <module>docs</module>
-        <module>features</module>
         <module>plugin</module>
         <module>tools</module>
 
