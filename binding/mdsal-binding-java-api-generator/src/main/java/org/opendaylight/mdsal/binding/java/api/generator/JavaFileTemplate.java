@@ -67,9 +67,13 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
     /**
-     * {@code java.lang.SuppressWarnings} as a JavaTypeName.
+     * {@code java.lang.void} as a JavaTypeName.
      */
     static final @NonNull JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
+    /**
+     * {@code java.lang.SuppressWarnings} as a JavaTypeName.
+     */
+    static final @NonNull JavaTypeName VOID = JavaTypeName.create(void.class);
 
     /**
      * {@code java.util.Arrays} as a JavaTypeName.

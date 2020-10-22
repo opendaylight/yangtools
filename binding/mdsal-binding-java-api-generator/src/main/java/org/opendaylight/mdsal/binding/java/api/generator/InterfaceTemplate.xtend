@@ -31,7 +31,6 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
-import org.opendaylight.mdsal.binding.model.api.TypeMember
 
 /**
  * Template for generating JAVA interfaces.
@@ -190,6 +189,10 @@ class InterfaceTemplate extends BaseTemplate {
         } else {
             switch method.name {
                 case DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME : generateDefaultImplementedInterface
+                default :
+                    if (VOID == method.returnType.identifier) {
+                        generateNoopVoidInterfaceMethod(method)
+                    }
             }
         }
     }
@@ -206,6 +209,14 @@ class InterfaceTemplate extends BaseTemplate {
         «method.comment.asJavadoc»
         «method.annotations.generateAnnotations»
         «method.returnType.importedName» «method.name»(«method.parameters.generateParameters»);
+    '''
+
+    def private generateNoopVoidInterfaceMethod(MethodSignature method) '''
+        «method.comment.asJavadoc»
+        «method.annotations.generateAnnotations»
+        default «VOID.importedName» «method.name»(«method.parameters.generateParameters») {
+            // No-op
+        }
     '''
 
     def private static accessorJavadoc(MethodSignature method, String orString) {

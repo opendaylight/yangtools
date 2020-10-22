@@ -32,7 +32,6 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.TypeMemberComment
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
