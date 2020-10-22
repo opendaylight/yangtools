@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 @RunWith(MockitoJUnitRunner.class)
 public class BitsTypeTest {
     @Mock
-    private BitsTypeDefinition.Bit bit;
+    public BitsTypeDefinition.Bit bit;
 
     @Test
     public void canCreateBitsType() {

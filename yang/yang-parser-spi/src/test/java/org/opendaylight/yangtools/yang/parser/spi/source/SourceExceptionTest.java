@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SourceExceptionTest {
     @Mock
-    private StatementSourceReference mock;
+    public StatementSourceReference mock;
 
     @Before
     public void before() {

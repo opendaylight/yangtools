@@ -39,24 +39,4 @@
             <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>@{argLine}
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.api=ALL-UNNAMED
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.api.meta=ALL-UNNAMED
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.api.stmt=ALL-UNNAMED
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.api.stmt.compat=ALL-UNNAMED
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.api.type=ALL-UNNAMED
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.repo.api=ALL-UNNAMED
-                        --add-opens org.opendaylight.yangtools.yang.model.api/org.opendaylight.yangtools.yang.model.repo.spi=ALL-UNNAMED
-                    </argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>

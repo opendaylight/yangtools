@@ -25,13 +25,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class EffectiveStatementTest {
     @Mock
-    private EffectiveStatement1 stmt;
+    public EffectiveStatement1 stmt;
     @Mock
-    private EffectiveStatement1 stmt1;
+    public EffectiveStatement1 stmt1;
     @Mock
-    private Effectivestatement2 stmt2;
+    public Effectivestatement2 stmt2;
     @Mock
-    private Map<?, ?> mockNamespace;
+    public Map<?, ?> mockNamespace;
 
     @Before
     public void before() {

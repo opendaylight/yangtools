@@ -50,12 +50,12 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class FilesystemSchemaSourceCacheTest {
+    @Mock
+    public SchemaSourceRegistry registry;
+    @Mock
+    public SchemaSourceRegistration<?> registration;
 
-    @Mock
-    private SchemaSourceRegistry registry;
-    @Mock
-    private SchemaSourceRegistration<?> registration;
-    private File storageDir;
+    public File storageDir;
 
     @Before
     public void setUp() throws Exception {

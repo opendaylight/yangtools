@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement1;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class ActionStatementAwareDeclaredStatementTest {
     @Mock
-    ActionStatementAwareDeclaredStatement<?> stmt;
+    public ActionStatementAwareDeclaredStatement<?> stmt;
     @Mock
-    private DeclaredStatement1 stmt1;
+    public DeclaredStatement1 stmt1;
     @Mock
-    private ActionStatement stmt2;
+    public ActionStatement stmt2;
 
     @Before
     public void before() {
