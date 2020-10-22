@@ -28,9 +28,9 @@ public class PotentialSchemaSourceTest {
     }
 
     @Mock
-    private SourceIdentifier sourceIdentifier;
-    private PotentialSchemaSource<TestSchemaSourceRepresentation> source;
-    private PotentialSchemaSource<TestSchemaSourceRepresentation> same;
+    public SourceIdentifier sourceIdentifier;
+    public PotentialSchemaSource<TestSchemaSourceRepresentation> source;
+    public PotentialSchemaSource<TestSchemaSourceRepresentation> same;
 
     @Before
     public void before() {

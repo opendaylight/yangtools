@@ -23,11 +23,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class DeclaredStatementTest {
     @Mock
-    private DeclaredStatement1 stmt;
+    public DeclaredStatement1 stmt;
     @Mock
-    private DeclaredStatement1 stmt1;
+    public DeclaredStatement1 stmt1;
     @Mock
-    private DeclaredStatement2 stmt2;
+    public DeclaredStatement2 stmt2;
 
     @Before
     public void before() {

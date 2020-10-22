@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaNodeUtilsTest {
     @Mock
-    private DerivableSchemaNode derivableNode;
+    public DerivableSchemaNode derivableNode;
 
     @Test
     public void testHandleNullGetOriginalIfPossible() {

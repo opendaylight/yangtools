@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 @RunWith(MockitoJUnitRunner.class)
 public class RefcountedRegistrationTest {
     @Mock
-    private SchemaSourceRegistration<?> reg;
+    public SchemaSourceRegistration<?> reg;
 
     @Before
     public void before() {

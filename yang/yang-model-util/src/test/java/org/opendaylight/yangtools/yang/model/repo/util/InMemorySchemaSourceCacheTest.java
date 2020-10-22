@@ -40,15 +40,14 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class InMemorySchemaSourceCacheTest {
-
-    private static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
-    private static final long LIFETIME = 1000L;
-    private static final TimeUnit UNITS = TimeUnit.MILLISECONDS;
+    public static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
+    public static final long LIFETIME = 1000L;
+    public static final TimeUnit UNITS = TimeUnit.MILLISECONDS;
 
     @Mock
-    private SchemaSourceRegistry registry;
+    public SchemaSourceRegistry registry;
     @Mock
-    private SchemaSourceRegistration<?> registration;
+    public SchemaSourceRegistration<?> registration;
 
     @Before
     public void setUp() throws Exception {

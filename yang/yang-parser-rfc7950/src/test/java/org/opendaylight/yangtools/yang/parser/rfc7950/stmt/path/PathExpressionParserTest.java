@@ -44,10 +44,11 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class PathExpressionParserTest {
     @Mock
-    private StmtContext<?, ?, ?> ctx;
+    public StmtContext<?, ?, ?> ctx;
     @Mock
-    private StatementSourceReference ref;
-    private final PathExpressionParser parser = new PathExpressionParser();
+    public StatementSourceReference ref;
+
+    public final PathExpressionParser parser = new PathExpressionParser();
 
     @Before
     public void before() {

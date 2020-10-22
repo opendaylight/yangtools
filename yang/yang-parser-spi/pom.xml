@@ -40,16 +40,4 @@
             <artifactId>mockito-configuration</artifactId>
         </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>@{argLine}
-                        --add-opens org.opendaylight.yangtools.yang.parser.spi/org.opendaylight.yangtools.yang.parser.spi.source=ALL-UNNAMED
-                    </argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

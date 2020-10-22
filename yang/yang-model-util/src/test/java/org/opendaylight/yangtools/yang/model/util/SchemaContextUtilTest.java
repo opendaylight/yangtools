@@ -38,15 +38,15 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaContextUtilTest {
-    private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
-    private static final URI NAMESPACE = URI.create("abc");
+    public static final Splitter SPACE_SPLITTER = Splitter.on(' ');
+    public static final URI NAMESPACE = URI.create("abc");
 
     @Mock
-    private SchemaContext mockSchemaContext;
+    public SchemaContext mockSchemaContext;
     @Mock
-    private Module mockModule;
+    public Module mockModule;
     @Mock
-    private SchemaNode schemaNode;
+    public SchemaNode schemaNode;
 
     @Before
     public void before() {

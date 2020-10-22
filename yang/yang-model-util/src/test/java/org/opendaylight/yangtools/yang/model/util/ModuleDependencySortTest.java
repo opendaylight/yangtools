@@ -28,20 +28,20 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleDependencySortTest {
-    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"));
-    private static final QNameModule BAR_MODULE = QNameModule.create(URI.create("bar"));
+    public static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"));
+    public static final QNameModule BAR_MODULE = QNameModule.create(URI.create("bar"));
 
     @Mock
-    private Module fooNoRev;
+    public Module fooNoRev;
 
     @Mock
-    private ModuleImport fooNoRevImport;
+    public ModuleImport fooNoRevImport;
 
     @Mock
-    private Module bar;
+    public Module bar;
 
     @Mock
-    private Submodule barSubmodule;
+    public Submodule barSubmodule;
 
     @Before
     public void before() {

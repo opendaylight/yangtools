@@ -36,19 +36,19 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SchemaSourceTransformerTest {
-
-    private SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource> schema;
-    private static final Class<YangSchemaSourceRepresentation> SRC_CLASS = YangSchemaSourceRepresentation.class;
-    private static final Class<YinXmlSchemaSource> DST_CLASS = YinXmlSchemaSource.class;
+    public static final Class<YangSchemaSourceRepresentation> SRC_CLASS = YangSchemaSourceRepresentation.class;
+    public static final Class<YinXmlSchemaSource> DST_CLASS = YinXmlSchemaSource.class;
 
     @Mock
-    private SchemaRepository provider;
+    public SchemaRepository provider;
 
     @Mock
-    private SchemaSourceRegistry consumer;
+    public SchemaSourceRegistry consumer;
 
     @Mock
-    private AsyncFunction<YangSchemaSourceRepresentation, YinXmlSchemaSource> function;
+    public AsyncFunction<YangSchemaSourceRepresentation, YinXmlSchemaSource> function;
+
+    public SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource> schema;
 
     @Test
     public void schemaSourceTransformerTest() {
