@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -67,8 +68,18 @@ public final class NormalizedNodes {
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent,
+            final PathArgument pathArg) {
+        return parent.flatMap(node -> getDirectChild(node, pathArg));
+    }
+
+    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent,
             final PathArgument... relativePath) {
         return findNode(parent, Arrays.asList(relativePath));
+    }
+
+    public static Optional<NormalizedNode<?, ?>> findNode(final @Nullable NormalizedNode<?, ?> parent,
+            final PathArgument pathArg) {
+        return parent == null ? Optional.empty() : getDirectChild(parent, pathArg);
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
