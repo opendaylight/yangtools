@@ -108,15 +108,14 @@ public final class NormalizedNodes {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Optional<NormalizedNode<?, ?>> getDirectChild(final NormalizedNode<?, ?> node,
             final PathArgument pathArg) {
-        if (node instanceof ValueNode) {
-            return Optional.empty();
-        } else if (node instanceof DataContainerNode) {
+        if (node instanceof DataContainerNode) {
             return (Optional) ((DataContainerNode<?>) node).getChild(pathArg);
         } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
             return (Optional) ((MapNode) node).getChild((NodeIdentifierWithPredicates) pathArg);
         } else if (node instanceof LeafSetNode && pathArg instanceof NodeWithValue) {
             return (Optional) ((LeafSetNode<?>) node).getChild((NodeWithValue) pathArg);
         }
+        // Anything else, including ValueNode
         return Optional.empty();
     }
 
