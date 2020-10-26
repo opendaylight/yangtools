@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Utility methods for lazily instantiated collections. These are useful for situations when we start off with an empty
@@ -40,6 +42,32 @@ public final class LazyCollections {
                 break;
             default:
                 ret = list;
+        }
+
+        ret.add(obj);
+        return ret;
+    }
+
+    /**
+     * Add an element to a set, potentially transforming the set.
+     *
+     * @param <E> the type of elements in the set
+     * @param set Current set
+     * @param obj Object that needs to be added
+     * @return new set
+     */
+    public static <E> Set<E> lazyAdd(final Set<E> set, final E obj) {
+        final Set<E> ret;
+
+        switch (set.size()) {
+            case 0:
+                return Collections.singleton(obj);
+            case 1:
+                ret = new HashSet<>(2);
+                ret.addAll(set);
+                break;
+            default:
+                ret = set;
         }
 
         ret.add(obj);
