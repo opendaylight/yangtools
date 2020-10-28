@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -28,9 +29,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 @Beta
 public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-    extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodeNamespace<D, E>>
-    implements StatementNamespace<QName, D, E> {
-
+        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodeNamespace<D, E>>
+        implements StatementNamespace<QName, D, E> {
     public ChildSchemaNodeNamespace() {
         super((Class) ChildSchemaNodeNamespace.class);
     }
@@ -43,7 +43,19 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
 
     @Override
     public StmtContext<?, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
-        return globalOrStatementSpecific(storage).getFromLocalStorage(getIdentifier(), key);
+        // Get the backing storage node for the requested storage
+        final NamespaceStorageNode storageNode = globalOrStatementSpecific(storage);
+        // Check try to look up existing node
+        final StmtContext<?, D, E> existing = storageNode.getFromLocalStorage(getIdentifier(), key);
+
+        // An existing node takes precedence, if it does not exist try to request it
+        return existing != null ? existing : requestFrom(storageNode, key);
+    }
+
+    private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+            StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
+        return storageNode instanceof OnDemandSchemaTreeStorageNode
+            ? ((OnDemandSchemaTreeStorageNode) storageNode).requestSchemaTreeChild(key) : null;
     }
 
     @Override
