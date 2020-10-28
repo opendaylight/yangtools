@@ -12,10 +12,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -27,9 +29,34 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Statement local namespace, which holds direct schema node descendants.
  */
 @Beta
-public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-    extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodeNamespace<D, E>>
-    implements StatementNamespace<QName, D, E> {
+public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>,
+            E extends SchemaTreeEffectiveStatement<D>>
+        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodeNamespace<D, E>>
+        implements StatementNamespace<QName, D, E> {
+
+    /**
+     * Interface implemented by {@link NamespaceStorageNode}s which support dynamic addition of child elements as they
+     * are requested. This means that any node in {@link ChildSchemaNodeNamespace} can, defer creation of child
+     * namespace storage nodes, in effect lazily expanding this namespace on an if-needed basis.
+     */
+    @Beta
+    public interface OnDemandStorageNode extends NamespaceStorageNode {
+        /**
+         * Request that a new member of this node's schema tree statement be added. Implementations are required to
+         * perform lookup in their internal structure and create a child if tracktable. Resulting node is expected to
+         * have been registered with local storage, so that it is accessible through
+         * {@link #getFromLocalStorage(Class, Object)}.
+         *
+         * <p>
+         * This method must not change its mind about a child's presence -- once it returns non-present, it has to be
+         * always returning non-present.
+         *
+         * @param qname node identifier of the child being requested
+         * @return Requested child, if it is present.
+         */
+        <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
+            @Nullable StmtContext<?, D, E> requestSchemaTreeChild(QName qname);
+    }
 
     public ChildSchemaNodeNamespace() {
         super((Class) ChildSchemaNodeNamespace.class);
@@ -43,7 +70,19 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
 
     @Override
     public StmtContext<?, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
-        return globalOrStatementSpecific(storage).getFromLocalStorage(getIdentifier(), key);
+        // Get the backing storage node for the requested storage
+        final NamespaceStorageNode storageNode = globalOrStatementSpecific(storage);
+        // Check try to look up existing node
+        final StmtContext<?, D, E> existing = storageNode.getFromLocalStorage(getIdentifier(), key);
+
+        // An existing node takes precedence, if it does not exist try to request it
+        return existing != null ? existing : requestFrom(storageNode, key);
+    }
+
+    private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
+            StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
+        return storageNode instanceof OnDemandStorageNode
+            ? ((OnDemandStorageNode) storageNode).requestSchemaTreeChild(key) : null;
     }
 
     @Override
