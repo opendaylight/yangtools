@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -70,7 +71,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
+final class BuildGlobalContext extends NamespaceStorageSupport implements GlobalNamespaceStorageNode, Registry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
@@ -176,6 +177,11 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     @Override
     public NamespaceStorageNode getParentNamespaceStorage() {
         return null;
+    }
+
+    @Override
+    public BuildGlobalContext getGlobalNamespaceStorage() {
+        return this;
     }
 
     @Override
