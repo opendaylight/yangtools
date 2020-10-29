@@ -15,9 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
  * A massively-misnamed superclass for statements which are both schema tree participants and can be created as implicit
@@ -28,14 +26,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 @Beta
 public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<QName>,
-        E extends EffectiveStatement<QName, D>> extends BaseQNameStatementSupport<D, E> {
+        E extends EffectiveStatement<QName, D>> extends BaseSchemaTreeStatementSupport<D, E> {
     protected BaseImplicitStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition);
-    }
-
-    @Override
-    public final void onStatementAdded(final Mutable<QName, D, E> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override
