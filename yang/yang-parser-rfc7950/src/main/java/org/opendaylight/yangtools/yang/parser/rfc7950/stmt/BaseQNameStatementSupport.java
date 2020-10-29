@@ -34,6 +34,10 @@ public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QNam
         super(publicDefinition);
     }
 
+    protected BaseQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        super(publicDefinition, copyPolicy);
+    }
+
     @Override
     public final D createDeclared(final StmtContext<QName, D, ?> ctx) {
         final ImmutableList<? extends DeclaredStatement<?>> substatements = ctx.declaredSubstatements().stream()

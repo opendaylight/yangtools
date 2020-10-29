@@ -18,10 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Class providing necessary support for processing a YANG statements which has a {@link QName} argument. In addition
  * to functions of {@link AbstractStatementSupport}, it takes care of adapting QNames across modules.
  *
- * @param <D>
- *            Declared Statement representation
- * @param <E>
- *            Effective Statement representation
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
  */
 @Beta
 public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
@@ -29,6 +27,10 @@ public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<
 
     protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition);
+    }
+
+    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        super(publicDefinition, copyPolicy);
     }
 
     @Override

@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -28,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-abstract class AbstractRpcStatementSupport extends BaseQNameStatementSupport<RpcStatement, RpcEffectiveStatement> {
+abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.RPC)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -48,11 +47,6 @@ abstract class AbstractRpcStatementSupport extends BaseQNameStatementSupport<Rpc
     @Override
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
-    }
-
-    @Override
-    public final void onStatementAdded(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override
