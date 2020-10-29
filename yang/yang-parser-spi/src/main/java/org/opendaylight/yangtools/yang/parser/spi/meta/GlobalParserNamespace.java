@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.parser.spi.meta;
+
+/**
+ * Marker for {@link ParserNamespace}s which use {@link NamespaceBehaviour#global(Class)}.
+ *
+ * @param <K> Identifier type
+ * @param <V> Value type
+ */
+public interface GlobalParserNamespace<K, V> extends ParserNamespace<K, V> {
+
+}
