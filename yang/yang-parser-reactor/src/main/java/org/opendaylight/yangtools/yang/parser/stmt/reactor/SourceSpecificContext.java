@@ -261,6 +261,11 @@ final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
         return globalContext;
     }
 
+    @Override
+    public BuildGlobalContext getGlobalNamespaceStorage() {
+        return globalContext;
+    }
+
     PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) {
         final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
