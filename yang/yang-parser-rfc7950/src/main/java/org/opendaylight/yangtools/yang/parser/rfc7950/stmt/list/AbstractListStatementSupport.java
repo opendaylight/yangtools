@@ -33,8 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -44,7 +43,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<ListStatement, ListEffectiveStatement> {
+abstract class AbstractListStatementSupport extends
+        BaseSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractListStatementSupport.class);
     private static final ImmutableSet<YangStmtMapping> UNINSTANTIATED_DATATREE_STATEMENTS = ImmutableSet.of(
         YangStmtMapping.GROUPING, YangStmtMapping.NOTIFICATION, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT);
@@ -56,11 +57,6 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
     @Override
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
-    }
-
-    @Override
-    public final void onStatementAdded(final Mutable<QName, ListStatement, ListEffectiveStatement> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override

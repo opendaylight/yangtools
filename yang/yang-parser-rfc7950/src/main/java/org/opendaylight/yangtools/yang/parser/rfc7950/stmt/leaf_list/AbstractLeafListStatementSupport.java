@@ -25,24 +25,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractLeafListStatementSupport
-        extends BaseQNameStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
+        extends BaseSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     AbstractLeafListStatementSupport() {
         super(YangStmtMapping.LEAF_LIST);
-    }
-
-    @Override
-    public final void onStatementAdded(final Mutable<QName, LeafListStatement, LeafListEffectiveStatement> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override
