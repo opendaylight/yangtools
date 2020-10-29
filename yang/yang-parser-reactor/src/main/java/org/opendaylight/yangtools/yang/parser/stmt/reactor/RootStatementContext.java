@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -42,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * of this class, hence recursive lookups from them cross this class.
  */
 public final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends AbstractResumedStatement<A, D, E> {
+        extends AbstractResumedStatement<A, D, E> implements RootStmtContext.Mutable<A, D, E> {
 
     public static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
 
