@@ -14,14 +14,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 
 /**
- * Namespace class for storing Maps of all modules with the same name. This namespace is
- * used only in case the semantic versioning is enabled, otherwise it is empty.
+ * Namespace class for storing Maps of all modules with the same name. This namespace is used only in case the semantic
+ * versioning is enabled, otherwise it is empty. Since we can only one semantic version participating for each module
+ * and each module's revision has to be unique, as well as its namespace, this namespace is globally unique.
  */
 @Beta
 public interface SemanticVersionModuleNamespace
-    extends StatementNamespace<SemVerSourceIdentifier, ModuleStatement, ModuleEffectiveStatement> {
+    extends GlobalStatementNamespace<SemVerSourceIdentifier, ModuleStatement, ModuleEffectiveStatement> {
     NamespaceBehaviour<SemVerSourceIdentifier, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
             @NonNull SemanticVersionModuleNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SemanticVersionModuleNamespace.class);
+            NamespaceBehaviour.globalOf(SemanticVersionModuleNamespace.class);
 
 }
