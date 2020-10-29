@@ -7,15 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
  * Specialization of {@link BaseQNameStatementSupport} for {@code input} and {@code output} statements.
@@ -26,8 +31,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 public abstract class BaseOperationContainerStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends BaseImplicitStatementSupport<D, E> {
-    protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition) {
+    private final Function<QNameModule, QName> createArgument;
+
+    protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition,
+            final Function<QNameModule, QName> createArgument) {
         super(publicDefinition);
+        this.createArgument = requireNonNull(createArgument);
+    }
+
+    @Override
+    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return createArgument.apply(StmtContextUtils.getRootModuleQName(ctx));
     }
 
     @Override

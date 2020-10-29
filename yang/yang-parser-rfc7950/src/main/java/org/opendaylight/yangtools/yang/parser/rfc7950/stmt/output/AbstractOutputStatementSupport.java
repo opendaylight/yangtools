@@ -18,17 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractOutputStatementSupport
         extends BaseOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
     AbstractOutputStatementSupport() {
-        super(YangStmtMapping.OUTPUT);
-    }
-
-    @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return YangConstants.operationOutputQName(StmtContextUtils.getRootModuleQName(ctx));
+        super(YangStmtMapping.OUTPUT, YangConstants::operationOutputQName);
     }
 
     @Override
