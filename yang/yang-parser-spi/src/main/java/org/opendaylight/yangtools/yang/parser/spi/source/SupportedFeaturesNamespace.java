@@ -5,19 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalIdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 public interface SupportedFeaturesNamespace
-        extends IdentifierNamespace<SupportedFeaturesNamespace.SupportedFeatures, Set<QName>> {
+        extends GlobalIdentifierNamespace<SupportedFeaturesNamespace.SupportedFeatures, Set<QName>> {
     NamespaceBehaviour<SupportedFeatures, Set<QName>, @NonNull SupportedFeaturesNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SupportedFeaturesNamespace.class);
+            NamespaceBehaviour.globalOf(SupportedFeaturesNamespace.class);
 
     enum SupportedFeatures {
         SUPPORTED_FEATURES
