@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatem
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractChoiceStatementSupport
@@ -38,11 +37,6 @@ abstract class AbstractChoiceStatementSupport
         implements ImplicitParentAwareStatementSupport {
     AbstractChoiceStatementSupport() {
         super(YangStmtMapping.CHOICE);
-    }
-
-    @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override

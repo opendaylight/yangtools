@@ -45,11 +45,6 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
     }
 
     @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
-    }
-
-    @Override
     public final void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 

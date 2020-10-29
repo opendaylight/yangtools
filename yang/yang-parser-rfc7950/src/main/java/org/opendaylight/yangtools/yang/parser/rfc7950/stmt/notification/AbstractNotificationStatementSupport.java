@@ -16,17 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractNotificationStatementSupport
         extends BaseSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport() {
         super(YangStmtMapping.NOTIFICATION);
-    }
-
-    @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override

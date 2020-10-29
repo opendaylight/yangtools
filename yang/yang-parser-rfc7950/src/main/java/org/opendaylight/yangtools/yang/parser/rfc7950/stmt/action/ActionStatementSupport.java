@@ -57,11 +57,6 @@ public final class ActionStatementSupport extends
     }
 
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
-    }
-
-    @Override
     public void onFullDefinitionDeclared(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 

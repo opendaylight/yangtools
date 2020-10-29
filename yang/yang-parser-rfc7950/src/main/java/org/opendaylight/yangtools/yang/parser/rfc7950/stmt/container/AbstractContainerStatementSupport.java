@@ -22,17 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractContainerStatementSupport
         extends BaseSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
     AbstractContainerStatementSupport() {
         super(YangStmtMapping.CONTAINER);
-    }
-
-    @Override
-    public final QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
