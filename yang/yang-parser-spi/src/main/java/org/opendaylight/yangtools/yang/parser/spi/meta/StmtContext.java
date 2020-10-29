@@ -151,7 +151,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
-    @NonNull StmtContext<?, ?, ?> getRoot();
+    @NonNull RootStmtContext<?, ?, ?> getRoot();
 
     /**
      * Return declared substatements. These are the statements which are explicitly written in the source model.
@@ -271,7 +271,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
                 T key, U value);
 
         @Override
-        Mutable<?, ?, ?> getRoot();
+        RootStmtContext.Mutable<?, ?, ?> getRoot();
 
         /**
          * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
