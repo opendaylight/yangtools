@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextDefaults;
@@ -267,6 +268,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     public StatementContextBase<?, ?, ?> getParentNamespaceStorage() {
         return parent;
+    }
+
+    @Override
+    public GlobalNamespaceStorageNode getGlobalNamespaceStorage() {
+        return parent.getGlobalNamespaceStorage();
     }
 
     @Override
