@@ -5,15 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.SetMultimap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Namespace used for storing information about modules that support deviation resolution.
@@ -21,7 +20,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  */
 @Beta
 public interface ModulesDeviatedByModules
-        extends ParserNamespace<ModulesDeviatedByModules.SupportedModules, SetMultimap<QNameModule, QNameModule>> {
+        extends GlobalParserNamespace<ModulesDeviatedByModules.SupportedModules,
+                    SetMultimap<QNameModule, QNameModule>> {
     NamespaceBehaviour<SupportedModules, SetMultimap<QNameModule, QNameModule>, @NonNull ModulesDeviatedByModules>
         BEHAVIOUR = NamespaceBehaviour.global(ModulesDeviatedByModules.class);
 

@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
@@ -165,13 +166,13 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
      * Creates a global namespace behaviour for supplied namespace type. Global behaviour stores and loads all values
      * from root {@link NamespaceStorageNode} with type of {@link StorageNodeType#GLOBAL}.
      *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> {@link IdentifierNamespace} type
      * @param identifier Namespace identifier.
-     * @param <K> type parameter
-     * @param <V> type parameter
-     * @param <N> type parameter
      * @return global namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> global(
+    public static <K, V, N extends GlobalParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> global(
             final Class<N> identifier) {
         return new Global<>(identifier);
     }
@@ -181,10 +182,10 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
      * and loads all values from closest {@link NamespaceStorageNode} ancestor with type
      * of {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
      *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> {@link IdentifierNamespace} type
      * @param identifier Namespace identifier.
-     * @param <K> type parameter
-     * @param <V> type parameter
-     * @param <N> type parameter
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> sourceLocal(
@@ -326,7 +327,7 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
         abstract NamespaceStorageNode findStorageNode(NamespaceStorageNode storage);
     }
 
-    static final class Global<K, V, N extends ParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
+    static final class Global<K, V, N extends GlobalParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
         Global(final Class<N> identifier) {
             super(identifier);
         }
