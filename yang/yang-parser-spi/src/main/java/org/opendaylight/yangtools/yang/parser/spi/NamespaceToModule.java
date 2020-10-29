@@ -11,14 +11,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalStatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
+ * A derived namespace allowing lookup of modules based on their {@link QNameModule}. Namespace and revisions have to be
+ * globally unique, otherwise we have two copies of something and we should have rejected that.
  */
-public interface NamespaceToModule extends StatementNamespace<QNameModule, ModuleStatement, ModuleEffectiveStatement> {
+public interface NamespaceToModule
+        extends GlobalStatementNamespace<QNameModule, ModuleStatement, ModuleEffectiveStatement> {
     NamespaceBehaviour<QNameModule, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
-            @NonNull NamespaceToModule> BEHAVIOUR = NamespaceBehaviour.global(NamespaceToModule.class);
+            @NonNull NamespaceToModule> BEHAVIOUR = NamespaceBehaviour.globalOf(NamespaceToModule.class);
 }

@@ -12,15 +12,16 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 @Beta
-public interface YangNamespaceContextNamespace extends ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
+public interface YangNamespaceContextNamespace
+        extends GlobalParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
     NamespaceBehaviour<StmtContext<?, ?, ?>, YangNamespaceContext, @NonNull YangNamespaceContextNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(YangNamespaceContextNamespace.class);
+            NamespaceBehaviour.globalOf(YangNamespaceContextNamespace.class);
 
     static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
         final StmtContext<?, ?, ?> root = ctx.getRoot();
