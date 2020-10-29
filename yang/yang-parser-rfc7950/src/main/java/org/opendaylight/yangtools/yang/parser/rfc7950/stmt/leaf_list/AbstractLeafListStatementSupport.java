@@ -29,18 +29,12 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractLeafListStatementSupport
         extends BaseSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     AbstractLeafListStatementSupport() {
         super(YangStmtMapping.LEAF_LIST);
-    }
-
-    @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override

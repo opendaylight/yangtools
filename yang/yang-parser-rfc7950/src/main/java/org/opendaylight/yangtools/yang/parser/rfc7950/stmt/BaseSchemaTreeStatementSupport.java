@@ -12,7 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
  * Specialization of {@link BaseQNameStatementSupport} for stating the onStatementAdded method.
@@ -35,4 +37,9 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
+    // Non-final because {@code input} and {@code output} are doing their own thing.
+    @Override
+    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return StmtContextUtils.parseIdentifier(ctx, value);
+    }
 }

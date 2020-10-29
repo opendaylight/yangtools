@@ -56,11 +56,6 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
     }
 
     @Override
-    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx,value);
-    }
-
-    @Override
     public void onFullDefinitionDeclared(final Mutable<QName, LeafStatement, LeafEffectiveStatement> ctx) {
         super.onFullDefinitionDeclared(ctx);
         StmtContextUtils.validateIfFeatureAndWhenOnListKeys(ctx);
