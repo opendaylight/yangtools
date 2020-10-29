@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Map;
@@ -18,9 +17,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
@@ -109,30 +105,6 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
          */
         <K, V, N extends IdentifierNamespace<K, V>> @Nullable V putToLocalStorageIfAbsent(Class<N> type, K key,
                 V value);
-    }
-
-    /**
-     * Interface implemented by {@link NamespaceStorageNode}s which support dynamic addition of child elements as they
-     * are requested. This means that such a node can, defer creation of child namespace storage nodes, in effect lazily
-     * expanding this namespace on an if-needed basis.
-     */
-    @Beta
-    public interface OnDemandSchemaTreeStorageNode extends NamespaceStorageNode {
-        /**
-         * Request that a new member of this node's schema tree statement be added. Implementations are required to
-         * perform lookup in their internal structure and create a child if tracktable. Resulting node is expected to
-         * have been registered with local storage, so that it is accessible through
-         * {@link #getFromLocalStorage(Class, Object)}.
-         *
-         * <p>
-         * This method must not change its mind about a child's presence -- once it returns non-present, it has to be
-         * always returning non-present.
-         *
-         * @param qname node identifier of the child being requested
-         * @return Requested child, if it is present.
-         */
-        <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-            @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 
     protected NamespaceBehaviour(final Class<N> identifier) {
