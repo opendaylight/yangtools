@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Global mapping of modules to QNameModules.
  */
-public interface ModuleCtxToModuleQName extends ParserNamespace<StmtContext<?,?,?>, QNameModule> {
+public interface ModuleCtxToModuleQName extends GlobalParserNamespace<StmtContext<?,?,?>, QNameModule> {
     NamespaceBehaviour<StmtContext<?, ?, ?>, QNameModule, @NonNull ModuleCtxToModuleQName> BEHAVIOUR =
             NamespaceBehaviour.global(ModuleCtxToModuleQName.class);
 
