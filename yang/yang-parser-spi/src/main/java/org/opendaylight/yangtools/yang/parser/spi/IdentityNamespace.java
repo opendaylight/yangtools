@@ -11,17 +11,22 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalIdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalStatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
  * namespace.
+ *
+ * <p>
+ * Since we required unique QName to be assigned to each module, their identity names are globally unique, hence this
+ * is a {@link GlobalIdentifierNamespace}.
  */
-public interface IdentityNamespace extends
-        StatementNamespace<QName, IdentityStatement, IdentityEffectiveStatement> {
+public interface IdentityNamespace
+        extends GlobalStatementNamespace<QName, IdentityStatement, IdentityEffectiveStatement> {
     NamespaceBehaviour<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>,
-            @NonNull IdentityNamespace> BEHAVIOUR = NamespaceBehaviour.global(IdentityNamespace.class);
+            @NonNull IdentityNamespace> BEHAVIOUR = NamespaceBehaviour.globalOf(IdentityNamespace.class);
 
 }

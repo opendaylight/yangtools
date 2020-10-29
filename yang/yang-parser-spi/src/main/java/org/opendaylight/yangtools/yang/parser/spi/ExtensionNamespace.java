@@ -11,16 +11,22 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalIdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalStatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Extension namespace. All extension names defined in a module and its submodules share the same
- * extension identifier namespace, where each extension is identified by a QName formed from the
- * defining module's QNameModule and the identifier specified in extension statement's argument.
+ * Extension namespace. All extension names defined in a module and its submodules share the same extension identifier
+ * namespace, where each extension is identified by a QName formed from the defining module's QNameModule and the
+ * identifier specified in extension statement's argument.
+ *
+ * <p>
+ * Since we required unique QName to be assigned to each module, their extension names are globally unique, hence this
+ * is a {@link GlobalIdentifierNamespace}.
  */
-public interface ExtensionNamespace extends StatementNamespace<QName, ExtensionStatement, ExtensionEffectiveStatement> {
+public interface ExtensionNamespace
+        extends GlobalStatementNamespace<QName, ExtensionStatement, ExtensionEffectiveStatement> {
     NamespaceBehaviour<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>,
             @NonNull ExtensionNamespace> BEHAVIOUR = NamespaceBehaviour.global(ExtensionNamespace.class);
 
