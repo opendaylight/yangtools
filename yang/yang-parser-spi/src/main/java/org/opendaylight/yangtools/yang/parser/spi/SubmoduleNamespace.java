@@ -11,17 +11,17 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalStatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Submodule equivalent of ModuleNamespace.
+ * Submodule equivalent of {@link ModuleNamespace}. Submodule names actually live in the same namespace names, so the
+ * same guarantees apply.
  */
 // FIXME: describe scoping of this namespace
 public interface SubmoduleNamespace
-    extends StatementNamespace<SourceIdentifier, SubmoduleStatement, SubmoduleEffectiveStatement> {
+    extends GlobalStatementNamespace<SourceIdentifier, SubmoduleStatement, SubmoduleEffectiveStatement> {
     NamespaceBehaviour<SourceIdentifier, StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>,
-            @NonNull SubmoduleNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SubmoduleNamespace.class);
+            @NonNull SubmoduleNamespace> BEHAVIOUR = NamespaceBehaviour.globalOf(SubmoduleNamespace.class);
 }

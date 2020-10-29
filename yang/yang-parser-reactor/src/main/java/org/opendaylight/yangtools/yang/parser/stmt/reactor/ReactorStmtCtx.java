@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -277,6 +278,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // NamespaceStorageSupport/Mutable integration methods. Keep these together.
     //
     //
+
+    @Override
+    public final GlobalNamespaceStorageNode getGlobalNamespaceStorage() {
+        return BuildGlobalContext.current();
+    }
 
     @Override
     public final <K, V, T extends K, N extends ParserNamespace<K, V>> V namespaceItem(final Class<@NonNull N> type,

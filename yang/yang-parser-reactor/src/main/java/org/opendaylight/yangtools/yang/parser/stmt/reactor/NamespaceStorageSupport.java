@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
@@ -42,6 +43,17 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      */
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * This method override provides bimorphic invocation on this method invocation between
+     * {@link SourceSpecificContext} and the more general {@link NamespaceStorageSupport}. We typically do not expect
+     * the two accesses to overlap.
+     */
+    @Override
+    public abstract GlobalNamespaceStorageNode getGlobalNamespaceStorage();
 
     /**
      * Return the registry of a source context.
