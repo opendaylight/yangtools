@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
@@ -83,6 +85,14 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         @Nullable NamespaceStorageNode getParentNamespaceStorage();
 
+        /**
+         * The global parent namespace storage. This is the storage node which has no parents and is a singleton in
+         * a particular {@link NamespaceStorageNode} hierarchy.
+         *
+         * @return The global namespace storage node.
+         */
+        @NonNull GlobalNamespaceStorageNode getGlobalNamespaceStorage();
+
         <K, V, N extends IdentifierNamespace<K, V>> @Nullable V getFromLocalStorage(Class<N> type, K key);
 
         <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(Class<N> type);
@@ -112,6 +122,14 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     /**
+     * Tagging interface for the singleton {@link GlobalNamespaceStorageNode} which exists in the reactor, as implied
+     * by {@link StorageNodeType#GLOBAL}.
+     */
+    public interface GlobalNamespaceStorageNode extends NamespaceStorageNode {
+
+    }
+
+    /**
      * Interface implemented by {@link NamespaceStorageNode}s which support dynamic addition of child elements as they
      * are requested. This means that such a node can, defer creation of child namespace storage nodes, in effect lazily
      * expanding this namespace on an if-needed basis.
@@ -135,6 +153,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(NamespaceBehaviour.class);
+
     protected NamespaceBehaviour(final Class<N> identifier) {
         super(identifier);
     }
@@ -143,14 +163,30 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * Creates a global namespace behaviour for supplied namespace type. Global behaviour stores and loads all values
      * from root {@link NamespaceStorageNode} with type of {@link StorageNodeType#GLOBAL}.
      *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> {@link IdentifierNamespace} type
      * @param identifier Namespace identifier.
-     * @param <K> type parameter
-     * @param <V> type parameter
-     * @param <N> type parameter
      * @return global namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> global(
             final Class<N> identifier) {
+        LOG.debug("{} is not using globalOf(). Audit it for conversion, please.");
+        return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
+    }
+
+    /**
+     * Creates a global namespace behaviour for supplied namespace type. Global behaviour stores and loads all values
+     * from root {@link NamespaceStorageNode} with type of {@link StorageNodeType#GLOBAL}. Namespace
+     *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> {@link GlobalIdentifierNamespace} type
+     * @param identifier Namespace identifier.
+     * @return global namespace behaviour for supplied namespace type.
+     */
+    public static <K, V, N extends GlobalIdentifierNamespace<K, V>>
+            @NonNull NamespaceBehaviour<K, V, N> globalOf(final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
     }
 
@@ -159,10 +195,10 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * and loads all values from closest {@link NamespaceStorageNode} ancestor with type
      * of {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
      *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> {@link IdentifierNamespace} type
      * @param identifier Namespace identifier.
-     * @param <K> type parameter
-     * @param <V> type parameter
-     * @param <N> type parameter
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> sourceLocal(

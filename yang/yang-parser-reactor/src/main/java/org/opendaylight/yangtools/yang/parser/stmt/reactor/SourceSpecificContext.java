@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
@@ -275,6 +276,11 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     @Override
     public NamespaceStorageNode getParentNamespaceStorage() {
+        return globalContext;
+    }
+
+    @Override
+    public GlobalNamespaceStorageNode getGlobalNamespaceStorage() {
         return globalContext;
     }
 
