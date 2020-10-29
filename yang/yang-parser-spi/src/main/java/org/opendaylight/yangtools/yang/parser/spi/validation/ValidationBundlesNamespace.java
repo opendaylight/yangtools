@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.validation;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalIdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
@@ -18,9 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
  * significant properties.
  */
 public interface ValidationBundlesNamespace extends
-        IdentifierNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
+        GlobalIdentifierNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
     NamespaceBehaviour<ValidationBundleType, Collection<?>, @NonNull ValidationBundlesNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(ValidationBundlesNamespace.class);
+            NamespaceBehaviour.globalOf(ValidationBundlesNamespace.class);
 
     enum ValidationBundleType {
         /**

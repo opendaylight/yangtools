@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalIdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Global mapping of modules to source identifier.
  */
-public interface ModuleCtxToSourceIdentifier extends IdentifierNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
+public interface ModuleCtxToSourceIdentifier extends GlobalIdentifierNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
     NamespaceBehaviour<StmtContext<?, ?, ?>, SourceIdentifier, @NonNull ModuleCtxToSourceIdentifier> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleCtxToSourceIdentifier.class);
+            NamespaceBehaviour.globalOf(ModuleCtxToSourceIdentifier.class);
 }

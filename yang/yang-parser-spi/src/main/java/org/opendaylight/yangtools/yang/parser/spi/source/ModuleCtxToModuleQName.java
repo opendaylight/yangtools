@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.GlobalIdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Global mapping of modules to QNameModules.
  */
-public interface ModuleCtxToModuleQName extends IdentifierNamespace<StmtContext<?,?,?>, QNameModule> {
+public interface ModuleCtxToModuleQName extends GlobalIdentifierNamespace<StmtContext<?,?,?>, QNameModule> {
     NamespaceBehaviour<StmtContext<?, ?, ?>, QNameModule, @NonNull ModuleCtxToModuleQName> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleCtxToModuleQName.class);
+            NamespaceBehaviour.globalOf(ModuleCtxToModuleQName.class);
 
 }
