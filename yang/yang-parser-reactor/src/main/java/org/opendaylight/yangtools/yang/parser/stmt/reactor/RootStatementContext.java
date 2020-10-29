@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -84,6 +85,11 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     public NamespaceStorageNode getParentNamespaceStorage() {
         // namespace storage of source context
         return sourceContext;
+    }
+
+    @Override
+    public GlobalNamespaceStorageNode getGlobalNamespaceStorage() {
+        return sourceContext.getGlobalNamespaceStorage();
     }
 
     @Override
