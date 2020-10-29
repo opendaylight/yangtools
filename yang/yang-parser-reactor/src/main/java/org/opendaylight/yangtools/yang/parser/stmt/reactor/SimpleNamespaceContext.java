@@ -47,7 +47,7 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
 
         if (listeners != null) {
             notifyListeners(storage, listeners.iterator(), value);
-            if (listeners.isEmpty()) {
+            if (listeners != null && listeners.isEmpty()) {
                 listeners = null;
             }
         }
@@ -59,7 +59,7 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
                     it.remove();
                 }
             }
-            if (predicateListeners.isEmpty()) {
+            if (predicateListeners != null && predicateListeners.isEmpty()) {
                 predicateListeners = null;
             }
         }
