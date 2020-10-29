@@ -12,4 +12,5 @@ module org.opendaylight.yangtools.yang.parser.spi {
     exports org.opendaylight.yangtools.yang.parser.spi.validation;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires org.slf4j;
 }
