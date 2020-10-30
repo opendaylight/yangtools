@@ -45,9 +45,8 @@ public final class MandatoryStatementSupport extends
     }
 
     @Override
-    protected MandatoryEffectiveStatement createEffective(
-            final StmtContext<Boolean, MandatoryStatement, MandatoryEffectiveStatement> ctx,
-            final MandatoryStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected MandatoryEffectiveStatement createEffective(final MandatoryStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularMandatoryEffectiveStatement(declared, substatements);
     }
 

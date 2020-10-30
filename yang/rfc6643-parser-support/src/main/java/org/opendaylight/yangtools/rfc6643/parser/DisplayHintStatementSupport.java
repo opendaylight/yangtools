@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -50,17 +51,8 @@ public final class DisplayHintStatementSupport
     }
 
     @Override
-    protected DisplayHintEffectiveStatement createEffective(
-            final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx,
-            final DisplayHintStatement declared,
+    protected DisplayHintEffectiveStatement createEffective(final Current<String, DisplayHintStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DisplayHintEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected DisplayHintEffectiveStatement createEmptyEffective(
-            final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx,
-            final DisplayHintStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new DisplayHintEffectiveStatementImpl(stmt, substatements);
     }
 }

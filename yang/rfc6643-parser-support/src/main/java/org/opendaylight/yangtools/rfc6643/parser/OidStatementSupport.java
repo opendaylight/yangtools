@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6643.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidEffectiveStatement;
@@ -16,6 +17,8 @@ import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -61,15 +64,9 @@ public final class OidStatementSupport
     }
 
     @Override
-    protected OidEffectiveStatement createEffective(
-            final StmtContext<ObjectIdentifier, OidStatement, OidEffectiveStatement> ctx,
-            final OidStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OidEffectiveStatementImpl(declared, substatements, ctx);
+    protected OidEffectiveStatement createEffective(final Current<ObjectIdentifier, OidStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new OidEffectiveStatementImpl(stmt, substatements);
     }
 
-    @Override
-    protected OidEffectiveStatement createEmptyEffective(
-            final StmtContext<ObjectIdentifier, OidStatement, OidEffectiveStatement> ctx, final OidStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
-    }
 }

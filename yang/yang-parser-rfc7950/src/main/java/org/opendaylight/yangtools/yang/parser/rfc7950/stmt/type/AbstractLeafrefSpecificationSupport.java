@@ -17,8 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpeci
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractLeafrefSpecificationSupport
         extends BaseStatementSupport<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> {
@@ -39,41 +41,37 @@ abstract class AbstractLeafrefSpecificationSupport
 
     @Override
     protected final LeafrefSpecification createEmptyDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx) {
-        throw noPath(ctx);
+        throw noPath(ctx.getStatementSourceReference());
     }
 
     @Override
-    protected final EffectiveStatement<String, LeafrefSpecification> createEffective(
-            final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx,
-            final LeafrefSpecification declared,
+    protected EffectiveStatement<String, LeafrefSpecification> createEffective(
+            final Current<String, LeafrefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(ctx.getSchemaPath().get());
+        if (substatements.isEmpty()) {
+            throw noPath(stmt.sourceReference());
+        }
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof PathEffectiveStatement) {
-                builder.setPathStatement(((PathEffectiveStatement) stmt).argument());
-            } else if (stmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+        final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(stmt.getSchemaPath());
+
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof PathEffectiveStatement) {
+                builder.setPathStatement(((PathEffectiveStatement) subStmt).argument());
+            } else if (subStmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement)subStmt).argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    @Override
-    protected final EffectiveStatement<String, LeafrefSpecification> createEmptyEffective(
-            final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx,
-            final LeafrefSpecification declared) {
-        throw noPath(ctx);
-    }
-
-    private static SourceException noPath(final StmtContext<?, ?, ?> ctx) {
+    private static SourceException noPath(final StatementSourceReference ref) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.12
          *
          *     When the type is "union", the "type" statement (Section 7.4) MUST be
          *     present.
          */
-        return new SourceException("A path statement has to be present", ctx.getStatementSourceReference());
+        return new SourceException("A path statement has to be present", ref);
     }
 }

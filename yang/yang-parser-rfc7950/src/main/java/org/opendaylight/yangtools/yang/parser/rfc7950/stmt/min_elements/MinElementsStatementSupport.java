@@ -59,9 +59,7 @@ public final class MinElementsStatementSupport
     }
 
     @Override
-    protected MinElementsEffectiveStatement createEffective(
-            final StmtContext<Integer, MinElementsStatement, MinElementsEffectiveStatement> ctx,
-            final MinElementsStatement declared,
+    protected MinElementsEffectiveStatement createEffective(final MinElementsStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularMinElementsEffectiveStatement(declared, substatements);
     }

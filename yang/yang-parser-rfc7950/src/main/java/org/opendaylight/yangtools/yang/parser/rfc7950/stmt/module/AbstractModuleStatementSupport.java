@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
@@ -37,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -53,6 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelon
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractModuleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
@@ -137,11 +140,11 @@ abstract class AbstractModuleStatementSupport
 
     @Override
     protected final ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
+            final Current<UnqualifiedQName, ModuleStatement> stmt,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> local =
-                super.buildEffectiveSubstatements(ctx, substatements);
-        final Collection<StmtContext<?, ?, ?>> submodules = submoduleContexts(ctx);
+                super.buildEffectiveSubstatements(stmt, substatements);
+        final Collection<StmtContext<?, ?, ?>> submodules = submoduleContexts(stmt);
         if (submodules.isEmpty()) {
             return local;
         }
@@ -170,38 +173,34 @@ abstract class AbstractModuleStatementSupport
 
     @Override
     protected final ModuleStatement createEmptyDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx) {
-        throw noNamespace(ctx);
+        throw noNamespace(ctx.getStatementSourceReference());
     }
 
     @Override
-    protected final ModuleEffectiveStatement createEffective(
-            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected final ModuleEffectiveStatement createEffective(final Current<UnqualifiedQName, ModuleStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noNamespace(stmt.sourceReference());
+        }
+
         final List<Submodule> submodules = new ArrayList<>();
-        for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(ctx)) {
+        for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(stmt)) {
             final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
             verify(submodule instanceof Submodule, "Submodule statement %s is not a Submodule", submodule);
             submodules.add((Submodule) submodule);
         }
 
-        return new ModuleEffectiveStatementImpl(ctx, declared, substatements, submodules);
+        return new ModuleEffectiveStatementImpl(stmt, substatements, submodules);
     }
 
-    @Override
-    protected final ModuleEffectiveStatement createEmptyEffective(
-            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared) {
-        throw noNamespace(ctx);
-    }
-
-    private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final StmtContext<?, ?, ?> ctx) {
-        final Map<String, StmtContext<?, ?, ?>> submodules = ctx.getAllFromCurrentStmtCtxNamespace(
+    private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
+        final Map<String, StmtContext<?, ?, ?>> submodules = stmt.getAllFromCurrentStmtCtxNamespace(
             IncludedSubmoduleNameToModuleCtx.class);
         return submodules == null ? List.of() : submodules.values();
     }
 
-    private static SourceException noNamespace(final StmtContext<?, ?, ?> ctx) {
-        return new SourceException("No namespace declared in module", ctx.getStatementSourceReference());
+    private static SourceException noNamespace(final @NonNull StatementSourceReference ref) {
+        return new SourceException("No namespace declared in module", ref);
     }
 
     private static void addToSemVerModuleNamespace(
