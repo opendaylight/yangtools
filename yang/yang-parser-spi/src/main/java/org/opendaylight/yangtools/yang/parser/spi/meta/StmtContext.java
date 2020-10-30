@@ -390,4 +390,38 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
     }
+
+    /**
+     * Search of any child statement context of specified type and return its argument. If such a statement exists, it
+     * is assumed to have the right argument. Users should be careful to use this method for statements which have
+     * cardinality {@code 0..1}, otherwise this method can return any one of the statement's argument.
+     *
+     * <p>
+     * The default implementation defers to
+     * {@link StmtContextDefaults#findSubstatementArgument(StmtContext, Class)}, subclasses are expected to provide
+     * optimized implementation if possible.
+     *
+     * @param <X> Substatement argument type
+     * @param <Z> Substatement effective statement representation
+     * @param type Effective statement representation being look up
+     * @return {@link Optional#empty()} if no statement exists, otherwise the argument value
+     */
+    default <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+            final @NonNull Class<Z> type) {
+        return StmtContextDefaults.findSubstatementArgument(this, type);
+    }
+
+    /**
+     * Check if there is any child statement context of specified type.
+     *
+     * <p>
+     * The default implementation defers to {@link StmtContextDefaults#hasSubstatement(StmtContext, Class)},
+     * subclasses are expected to provide optimized implementation if possible.
+     *
+     * @param type Effective statement representation being look up
+     * @return True if such a child statement exists, false otherwise
+     */
+    default boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return StmtContextDefaults.hasSubstatement(this, type);
+    }
 }
