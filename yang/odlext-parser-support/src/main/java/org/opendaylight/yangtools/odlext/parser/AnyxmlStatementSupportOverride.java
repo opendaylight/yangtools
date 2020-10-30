@@ -49,11 +49,25 @@ public final class AnyxmlStatementSupportOverride
     }
 
     @Override
+    public AnyxmlEffectiveStatement createEffective(final StmtContext<QName, AnyxmlStatement,
+            AnyxmlEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, AnyxmlStatement> stmt) {
+        final AnyxmlEffectiveStatement delegateStatement = super.createEffective(ctx, parent, stmt);
+        return createAnyXmlEffectiveStatement(ctx, delegateStatement);
+    }
+
+    @Override
     public AnyxmlEffectiveStatement createEffective(
             final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
         final AnyxmlEffectiveStatement delegateStatement = delegate().createEffective(ctx);
+        return createAnyXmlEffectiveStatement(ctx, delegateStatement);
+    }
+
+    private static AnyxmlEffectiveStatement createAnyXmlEffectiveStatement(
+            final StmtContext<QName, AnyxmlStatement,  AnyxmlEffectiveStatement> ctx,
+            final AnyxmlEffectiveStatement delegateStatement) {
         final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            AnyxmlSchemaLocationEffectiveStatement>> schemaLocations =
+                AnyxmlSchemaLocationEffectiveStatement>> schemaLocations =
                 ctx.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
         if (schemaLocations != null && !schemaLocations.isEmpty()) {
             final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
@@ -74,4 +88,5 @@ public final class AnyxmlStatementSupportOverride
                 .map(StmtContext::buildEffective)
                 .filter(ContainerSchemaNode.class::isInstance).map(ContainerSchemaNode.class::cast);
     }
+
 }
