@@ -50,14 +50,15 @@ public final class ContactStatementSupport
     @Override
     protected ContactEffectiveStatement createEffective(
             final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
-            final ContactStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularContactEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ContactStatement> stmt) {
+        return new RegularContactEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected ContactEffectiveStatement createEmptyEffective(
             final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
-            final ContactStatement declared) {
-        return new EmptyContactEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ContactStatement> stmt) {
+        return new EmptyContactEffectiveStatement(stmt.declared());
     }
 }

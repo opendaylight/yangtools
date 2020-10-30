@@ -50,14 +50,15 @@ public final class DefaultStatementSupport
     @Override
     protected DefaultEffectiveStatement createEffective(
             final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
-            final DefaultStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularDefaultEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, DefaultStatement> stmt) {
+        return new RegularDefaultEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected DefaultEffectiveStatement createEmptyEffective(
             final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
-            final DefaultStatement declared) {
-        return new EmptyDefaultEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, DefaultStatement> stmt) {
+        return new EmptyDefaultEffectiveStatement(stmt.declared());
     }
 }

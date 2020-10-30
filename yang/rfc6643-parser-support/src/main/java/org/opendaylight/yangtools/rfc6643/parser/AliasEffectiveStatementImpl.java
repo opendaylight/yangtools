@@ -16,17 +16,20 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, AliasStatement>
         implements AliasEffectiveStatement, AliasSchemaNode {
     private final SchemaPath path;
 
-    AliasEffectiveStatementImpl(final AliasStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<String, AliasStatement, ?> ctx) {
-        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    AliasEffectiveStatementImpl(final EffectiveStatementState<String, AliasStatement> stmt,
+                                final EffectiveParentState parent,
+                                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                                final StmtContext<String, AliasStatement, ?> ctx) {
+        super(ctx.coerceStatementArgument(), stmt, substatements, ctx);
+        path = parent.schemaPath().get().createChild(getNodeType());
     }
 
     @Override

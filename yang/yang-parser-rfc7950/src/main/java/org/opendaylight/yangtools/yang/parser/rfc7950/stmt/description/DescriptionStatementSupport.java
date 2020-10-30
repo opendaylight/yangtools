@@ -50,15 +50,15 @@ public final class DescriptionStatementSupport
     @Override
     protected DescriptionEffectiveStatement createEffective(
             final StmtContext<String, DescriptionStatement, DescriptionEffectiveStatement> ctx,
-            final DescriptionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularDescriptionEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, DescriptionStatement> stmt) {
+        return new RegularDescriptionEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected DescriptionEffectiveStatement createEmptyEffective(
             final StmtContext<String, DescriptionStatement, DescriptionEffectiveStatement> ctx,
-            final DescriptionStatement declared) {
-        return new EmptyDescriptionEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, DescriptionStatement> stmt) {
+        return new EmptyDescriptionEffectiveStatement(stmt.declared());
     }
 }

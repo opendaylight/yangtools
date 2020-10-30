@@ -58,12 +58,13 @@ final class BitsSpecificationSupport
     @Override
     protected EffectiveStatement<String, BitsSpecification> createEffective(
             final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx,
-            final BitsSpecification declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, BitsSpecification> stmt) {
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
         Uint32 highestPosition = null;
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BitEffectiveStatement) {
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof BitEffectiveStatement) {
+                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) subStmt;
 
                 final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
                 final Uint32 effectivePos;
@@ -88,13 +89,13 @@ final class BitsSpecificationSupport
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected EffectiveStatement<String, BitsSpecification> createEmptyEffective(
             final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx,
-            final BitsSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, BitsSpecification> stmt) {
         throw noBits(ctx);
     }
 

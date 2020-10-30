@@ -55,7 +55,9 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
     }
 
     @Override
-    protected final E createEmptyEffective(final StmtContext<Boolean, D, E> ctx, final D declared) {
+    protected final E createEmptyEffective(final StmtContext<Boolean, D, E> ctx, final EffectiveParentState parent,
+                                           final EffectiveStatementState<Boolean, D> stmt) {
+        final D declared = stmt.declared();
         if (emptyDeclaredTrue.equals(declared)) {
             return emptyEffectiveTrue;
         } else if (emptyDeclaredFalse.equals(declared)) {

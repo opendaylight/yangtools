@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -66,26 +67,26 @@ public final class AnydataStatementSupport
     @Override
     protected AnydataEffectiveStatement createEffective(
             final StmtContext<QName, AnydataStatement, AnydataEffectiveStatement> ctx,
-            final AnydataStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularAnydataEffectiveStatement(declared, ctx.getSchemaPath().get(),
-            computeFlags(ctx, substatements), findOriginal(ctx), substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, AnydataStatement> stmt) {
+        return new RegularAnydataEffectiveStatement(stmt.declared(), ctx.getSchemaPath().get(),
+                computeFlags(stmt.history(), ctx.isConfiguration(), substatements), findOriginal(ctx), substatements);
     }
 
     @Override
     protected AnydataEffectiveStatement createEmptyEffective(
             final StmtContext<QName, AnydataStatement, AnydataEffectiveStatement> ctx,
-            final AnydataStatement declared) {
-        return new EmptyAnydataEffectiveStatement(declared, ctx.getSchemaPath().get(),
-            computeFlags(ctx, ImmutableList.of()), findOriginal(ctx));
+            final EffectiveParentState parent, final EffectiveStatementState<QName, AnydataStatement> stmt) {
+        return new EmptyAnydataEffectiveStatement(stmt.declared(), ctx.getSchemaPath().get(),
+            computeFlags(stmt.history(), ctx.isConfiguration(), ImmutableList.of()), findOriginal(ctx));
     }
 
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    private static int computeFlags(final CopyHistory history, final boolean isConfig,
+                                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(history)
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration())
+                .setConfiguration(isConfig)
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
     }

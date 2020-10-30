@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractNotificationStatementSupport
         extends BaseSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
@@ -35,22 +36,23 @@ abstract class AbstractNotificationStatementSupport
     }
 
     @Override
-    protected final NotificationEffectiveStatement createEffective(
+    protected NotificationEffectiveStatement createEffective(
             final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final NotificationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        checkEffective(ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, NotificationStatement> stmt) {
+        checkEffective(ctx, stmt.sourceReference());
 
-        return new NotificationEffectiveStatementImpl(declared, historyAndStatusFlags(ctx, substatements), ctx,
-            substatements);
+        return new NotificationEffectiveStatementImpl(stmt, ctx,
+                historyAndStatusFlags(stmt.history(), substatements), substatements);
     }
 
     @Override
     protected final NotificationEffectiveStatement createEmptyEffective(
             final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final NotificationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, NotificationStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 
-    abstract void checkEffective(StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx);
+    abstract void checkEffective(StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
+                                 StatementSourceReference ref);
 }

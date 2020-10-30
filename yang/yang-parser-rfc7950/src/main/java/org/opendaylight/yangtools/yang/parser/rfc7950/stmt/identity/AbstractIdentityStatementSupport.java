@@ -67,16 +67,16 @@ abstract class AbstractIdentityStatementSupport
     }
 
     @Override
-    protected final IdentityEffectiveStatement createEffective(
+    protected IdentityEffectiveStatement createEffective(
             final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
-            final IdentityStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, IdentityStatement> stmt) {
         final List<IdentitySchemaNode> identities = new ArrayList<>();
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BaseEffectiveStatement) {
-                final QName qname = ((BaseEffectiveStatement) stmt).argument();
+        for (EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof BaseEffectiveStatement) {
+                final QName qname = ((BaseEffectiveStatement) subStmt).argument();
                 final IdentityEffectiveStatement identity =
-                        verifyNotNull(ctx.getFromNamespace(IdentityNamespace.class, qname),
+                        verifyNotNull(stmt.getFromNamespace(IdentityNamespace.class, qname),
                             "Failed to find identity %s", qname)
                         .buildEffective();
                 verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);
@@ -84,7 +84,7 @@ abstract class AbstractIdentityStatementSupport
             }
         }
 
-        return new RegularIdentityEffectiveStatement(declared, ctx, new FlagsBuilder()
+        return new RegularIdentityEffectiveStatement(stmt.declared(), ctx, new FlagsBuilder()
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .toFlags(), substatements, ImmutableSet.copyOf(identities));
     }
@@ -92,7 +92,7 @@ abstract class AbstractIdentityStatementSupport
     @Override
     protected final IdentityEffectiveStatement createEmptyEffective(
             final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
-            final IdentityStatement declared) {
-        return new EmptyIdentityEffectiveStatement(declared, ctx);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, IdentityStatement> stmt) {
+        return new EmptyIdentityEffectiveStatement(stmt.declared(), ctx);
     }
 }

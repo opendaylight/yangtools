@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -30,10 +32,11 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     private final QName maybeQNameArgument;
     private final @NonNull SchemaPath path;
 
-    UnrecognizedEffectiveStatementImpl(final @NonNull UnrecognizedStatement declared,
+    UnrecognizedEffectiveStatementImpl(final EffectiveStatementState<String, UnrecognizedStatement> stmt,
+            final EffectiveParentState parent,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final StmtContext<String, UnrecognizedStatement, ?> ctx) {
-        super(ctx.getStatementArgument(), declared, substatements, ctx);
+        super(ctx.getStatementArgument(), stmt, substatements, ctx);
 
         // FIXME: Remove following section after fixing 4380
         final UnknownSchemaNode original = (UnknownSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
@@ -53,7 +56,7 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
 
         SchemaPath maybePath;
         try {
-            maybePath = ctx.coerceParentContext().getSchemaPath()
+            maybePath = parent.schemaPath()
                     .map(parentPath -> parentPath.createChild(maybeQNameArgument)).orElse(null);
         } catch (IllegalArgumentException | SourceException e) {
             LOG.debug("Cannot construct path for {}, attempting to recover", ctx, e);
