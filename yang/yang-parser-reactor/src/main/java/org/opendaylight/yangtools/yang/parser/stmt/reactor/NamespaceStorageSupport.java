@@ -26,6 +26,13 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     private Map<Class<?>, Map<?,?>> namespaces = ImmutableMap.of();
 
+    /**
+     * {@inheritDoc}
+     *
+     * This method override provides bimorphic invocation on this method invocation between
+     * {@link SourceSpecificContext} and the more general {@link NamespaceStorageSupport}. We typically do not expect
+     * the two accesses to overlap.
+     */
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
 
