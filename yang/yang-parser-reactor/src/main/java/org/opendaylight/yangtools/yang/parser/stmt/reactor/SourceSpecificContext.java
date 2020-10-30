@@ -277,7 +277,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public NamespaceStorageNode getParentNamespaceStorage() {
+    public BuildGlobalContext getParentNamespaceStorage() {
         return currentContext;
     }
 
