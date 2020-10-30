@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Uint32, SubIdStatement>
@@ -24,11 +26,12 @@ final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Ui
 
     private final SchemaPath path;
 
-    SubIdEffectiveStatementImpl(final SubIdStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<Uint32, SubIdStatement, ?> ctx) {
-        super(declared.argument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    SubIdEffectiveStatementImpl(final EffectiveStatementState<Uint32, SubIdStatement> stmt,
+                                final EffectiveParentState parent,
+                                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                                final StmtContext<Uint32, SubIdStatement, ?> ctx) {
+        super(stmt.declared().argument(), stmt, substatements, ctx);
+        path = parent.schemaPath().get().createChild(getNodeType());
     }
 
     @Override

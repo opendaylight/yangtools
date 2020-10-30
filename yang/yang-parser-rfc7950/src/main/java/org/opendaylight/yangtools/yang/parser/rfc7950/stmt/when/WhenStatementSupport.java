@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
@@ -63,16 +64,9 @@ public final class WhenStatementSupport
     }
 
     @Override
-    protected WhenEffectiveStatement createEffective(
-            final StmtContext<QualifiedBound, WhenStatement, WhenEffectiveStatement> ctx,
-            final WhenStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularWhenEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected WhenEffectiveStatement createEmptyEffective(
-            final StmtContext<QualifiedBound, WhenStatement, WhenEffectiveStatement> ctx,
-            final WhenStatement declared) {
-        return new EmptyWhenEffectiveStatement(declared);
+    protected WhenEffectiveStatement createEffective(final Current<QualifiedBound, WhenStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyWhenEffectiveStatement(stmt.declared())
+            : new RegularWhenEffectiveStatement(stmt.declared(), substatements);
     }
 }

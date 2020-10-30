@@ -16,17 +16,20 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class DefValEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, DefValStatement>
         implements DefValEffectiveStatement, DefValSchemaNode {
     private final SchemaPath path;
 
-    DefValEffectiveStatementImpl(final DefValStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<String, DefValStatement, ?> ctx) {
-        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    DefValEffectiveStatementImpl(final EffectiveStatementState<String, DefValStatement> stmt,
+                                 final StatementFactory.EffectiveParentState parent,
+                                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                                 final StmtContext<String, DefValStatement, ?> ctx) {
+        super(ctx.coerceStatementArgument(), stmt, substatements, ctx);
+        path = parent.schemaPath().get().createChild(getNodeType());
     }
 
     @Override

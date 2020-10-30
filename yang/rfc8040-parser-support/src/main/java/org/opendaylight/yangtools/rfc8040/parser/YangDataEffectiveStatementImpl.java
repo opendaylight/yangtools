@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
@@ -32,10 +34,10 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     private final @NonNull QName maybeQNameArgument;
     private final @NonNull ContainerEffectiveStatement container;
 
-    YangDataEffectiveStatementImpl(final YangDataStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    YangDataEffectiveStatementImpl(final EffectiveStatementState<String, YangDataStatement> stmt,
+            final EffectiveParentState parent, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final StmtContext<String, YangDataStatement, ?> ctx) {
-        super(ctx.getStatementArgument(), declared, substatements, ctx);
+        super(ctx.getStatementArgument(), stmt, substatements, ctx);
 
         QName maybeQNameArgumentInit;
         try {
@@ -45,7 +47,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         }
         this.maybeQNameArgument = maybeQNameArgumentInit;
 
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
+        path = parent.schemaPath().get().createChild(maybeQNameArgument);
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,17 +49,9 @@ public final class PresenceStatementSupport
     }
 
     @Override
-    protected PresenceEffectiveStatement createEffective(
-            final StmtContext<String, PresenceStatement, PresenceEffectiveStatement> ctx,
-            final PresenceStatement declared,
+    protected PresenceEffectiveStatement createEffective(final Current<String, PresenceStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPresenceEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected PresenceEffectiveStatement createEmptyEffective(
-            final StmtContext<String, PresenceStatement, PresenceEffectiveStatement> ctx,
-            final PresenceStatement declared) {
-        return new EmptyPresenceEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyPresenceEffectiveStatement(stmt.declared())
+            : new RegularPresenceEffectiveStatement(stmt.declared(), substatements);
     }
 }

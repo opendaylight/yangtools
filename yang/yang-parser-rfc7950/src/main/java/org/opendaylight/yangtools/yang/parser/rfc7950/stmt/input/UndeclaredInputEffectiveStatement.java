@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -19,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class UndeclaredInputEffectiveStatement
         extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
@@ -28,11 +30,11 @@ final class UndeclaredInputEffectiveStatement
     private final int flags;
 
     UndeclaredInputEffectiveStatement(final int flags,
-            final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final StatementSourceReference ref, final SchemaPath path) {
+        super(substatements, ref);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = ctx.getSchemaPath().get();
     }
 
     @Override

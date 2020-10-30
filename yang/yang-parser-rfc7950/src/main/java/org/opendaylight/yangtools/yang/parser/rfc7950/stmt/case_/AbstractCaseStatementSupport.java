@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseImplicitStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractCaseStatementSupport
@@ -57,32 +58,30 @@ abstract class AbstractCaseStatementSupport
     }
 
     @Override
-    protected final CaseEffectiveStatement createDeclaredEffective(
-            final StmtContext<QName, CaseStatement, CaseEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final CaseStatement declared) {
-        return new DeclaredCaseEffectiveStatement(declared, ctx, substatements, computeFlags(ctx, substatements),
-            findOriginal(ctx));
+    protected final CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, stmt.sourceReference(),
+            computeFlags(stmt, substatements), stmt.getSchemaPath(), findOriginal(stmt));
     }
 
     @Override
-    protected final CaseEffectiveStatement createUndeclaredEffective(
-            final StmtContext<QName, CaseStatement, CaseEffectiveStatement> ctx,
+    protected final CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredCaseEffectiveStatement(ctx, substatements, computeFlags(ctx, substatements),
-            findOriginal(ctx));
+        return new UndeclaredCaseEffectiveStatement(substatements, stmt.sourceReference(),
+            computeFlags(stmt, substatements), stmt.getSchemaPath(), findOriginal(stmt));
     }
 
-    private static @Nullable CaseSchemaNode findOriginal(final StmtContext<?, ?, ?> ctx) {
-        return (CaseSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+    private static @Nullable CaseSchemaNode findOriginal(final Current<?, ?> stmt) {
+        return (CaseSchemaNode) stmt.original();
     }
 
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
+    private static int computeFlags(final Current<?, ?> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration()
-                    && ctx.allSubstatementsStream().anyMatch(StmtContext::isConfiguration))
+                .setConfiguration(stmt.effectiveConfig()
+                    && stmt.caerbannog().allSubstatementsStream().anyMatch(StmtContext::isConfiguration))
                 .toFlags();
     }
 }

@@ -90,18 +90,19 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataEffectiveStatement createEffective(
             final StmtContext<String, YangDataStatement, YangDataEffectiveStatement> ctx,
-            final YangDataStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, YangDataStatement> stmt) {
         // in case of yang-data node we need to perform substatement validation at the point when we have
         // effective substatement contexts already available - if the node has only a uses statement declared in it,
         // one top-level container node may very well be added to the yang-data as an effective statement
         validator.validate(ctx);
-        return new YangDataEffectiveStatementImpl(declared, substatements, ctx);
+        return new YangDataEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected YangDataEffectiveStatement createEmptyEffective(
             final StmtContext<String, YangDataStatement, YangDataEffectiveStatement> ctx,
-            final YangDataStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, YangDataStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

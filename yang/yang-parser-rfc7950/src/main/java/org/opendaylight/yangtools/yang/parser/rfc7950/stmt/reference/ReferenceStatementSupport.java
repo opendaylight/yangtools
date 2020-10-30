@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -49,17 +50,9 @@ public final class ReferenceStatementSupport
     }
 
     @Override
-    protected ReferenceEffectiveStatement createEffective(
-            final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
-            final ReferenceStatement declared,
+    protected ReferenceEffectiveStatement createEffective(final Current<String, ReferenceStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularReferenceEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected ReferenceEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
-            final ReferenceStatement declared) {
-        return new EmptyReferenceEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyReferenceEffectiveStatement(stmt.declared())
+            : new RegularReferenceEffectiveStatement(stmt.declared(), substatements);
     }
 }

@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -82,17 +83,13 @@ public final class YangVersionStatementSupport
     }
 
     @Override
-    protected YangVersionEffectiveStatement createEffective(
-            final StmtContext<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> ctx,
-            final YangVersionStatement declared,
+    protected YangVersionEffectiveStatement createEffective(final Current<YangVersion, YangVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularYangVersionEffectiveStatement(declared, substatements);
+        return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
+            : new RegularYangVersionEffectiveStatement(stmt.declared(), substatements);
     }
 
-    @Override
-    protected YangVersionEffectiveStatement createEmptyEffective(
-            final StmtContext<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> ctx,
-            final YangVersionStatement declared) {
+    private static @NonNull YangVersionEffectiveStatement createEmptyEffective(final YangVersionStatement declared) {
         if (EMPTY_VER1_DECL.equals(declared)) {
             return EMPTY_VER1_EFF;
         } else if (EMPTY_VER1_1_DECL.equals(declared)) {
