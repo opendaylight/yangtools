@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -968,11 +968,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return true;
         }
 
-        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-            ConfigStatement.class);
         final boolean isConfig;
-        if (configStatement != null) {
-            isConfig = configStatement.coerceStatementArgument();
+        final Optional<Boolean> optConfig = findSubstatementArgument(ConfigEffectiveStatement.class);
+        if (optConfig.isPresent()) {
+            isConfig = optConfig.orElseThrow();
             if (isConfig) {
                 // Validity check: if parent is config=false this cannot be a config=true
                 InferenceException.throwIf(!parent.isConfiguration(), getStatementSourceReference(),
