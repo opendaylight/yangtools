@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
@@ -112,9 +111,9 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
                 E extends SchemaTreeAwareEffectiveStatement<A, D>> extends DefaultWithSchemaTree<A, D, E> {
             private final @NonNull Object substatements;
 
-            protected WithSubstatements(final StmtContext<?, ?, ?> ctx,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(ctx, substatements);
+            protected WithSubstatements(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                    final StatementSourceReference ref) {
+                super(substatements, ref);
                 this.substatements = maskList(substatements);
             }
 
@@ -126,10 +125,9 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
 
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
 
-        protected DefaultWithSchemaTree(final StmtContext<?, ?, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(
-                ctx.getStatementSourceReference(), substatements));
+        protected DefaultWithSchemaTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StatementSourceReference ref) {
+            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(ref, substatements));
         }
 
         @Override
@@ -152,9 +150,9 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
                 E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
             private final @NonNull Object substatements;
 
-            protected WithSubstatements(final StmtContext<?, ?, ?> ctx,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(ctx, substatements);
+            protected WithSubstatements(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                    final StatementSourceReference ref) {
+                super(substatements, ref);
                 this.substatements = maskList(substatements);
             }
 
@@ -167,9 +165,8 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
 
-        protected DefaultWithDataTree(final StmtContext<?, ?, ?> ctx,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            final StatementSourceReference ref = ctx.getStatementSourceReference();
+        protected DefaultWithDataTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final StatementSourceReference ref) {
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(ref, substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
             this.dataTree = createDataTreeNamespace(ref, schema.values(), schemaTree);

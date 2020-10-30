@@ -45,9 +45,8 @@ public final class YinElementStatementSupport
     }
 
     @Override
-    protected YinElementEffectiveStatement createEffective(
-            final StmtContext<Boolean, YinElementStatement, YinElementEffectiveStatement> ctx,
-            final YinElementStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected YinElementEffectiveStatement createEffective(final YinElementStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularYinElementEffectiveStatement(declared, substatements);
     }
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ForwardingStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -49,16 +51,19 @@ public final class AnyxmlStatementSupportOverride
     }
 
     @Override
-    public AnyxmlEffectiveStatement createEffective(
-            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
-        final AnyxmlEffectiveStatement delegateStatement = delegate().createEffective(ctx);
+    public AnyxmlEffectiveStatement createEffective(final Current<QName, AnyxmlStatement> stmt,
+            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
+                final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        final AnyxmlEffectiveStatement delegateStatement = super.createEffective(stmt, declaredSubstatements,
+            effectiveSubstatements);
+
         final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            AnyxmlSchemaLocationEffectiveStatement>> schemaLocations =
-                ctx.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
+                AnyxmlSchemaLocationEffectiveStatement>> schemaLocations =
+                stmt.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
         if (schemaLocations != null && !schemaLocations.isEmpty()) {
             final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
                     .getStatementArgument();
-            final Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(ctx, anyXmlSchemaNodeIdentifier);
+            final Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(stmt, anyXmlSchemaNodeIdentifier);
             if (anyXmlSchema.isPresent()) {
                 return new YangModeledAnyxmlEffectiveStatementImpl(delegateStatement, anyXmlSchema.get());
             }
@@ -67,10 +72,9 @@ public final class AnyxmlStatementSupportOverride
         return delegateStatement;
     }
 
-    private static Optional<ContainerSchemaNode> getAnyXmlSchema(
-            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx,
+    private static Optional<ContainerSchemaNode> getAnyXmlSchema(final Current<QName, AnyxmlStatement> stmt,
             final SchemaNodeIdentifier contentSchemaPath) {
-        return SchemaTreeNamespace.findNode(ctx.getRoot(), contentSchemaPath)
+        return SchemaTreeNamespace.findNode(stmt.caerbannog().getRoot(), contentSchemaPath)
                 .map(StmtContext::buildEffective)
                 .filter(ContainerSchemaNode.class::isInstance).map(ContainerSchemaNode.class::cast);
     }

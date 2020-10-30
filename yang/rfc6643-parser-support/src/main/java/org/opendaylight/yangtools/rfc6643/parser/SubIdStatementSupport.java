@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -56,15 +57,8 @@ public final class SubIdStatementSupport
     }
 
     @Override
-    protected SubIdEffectiveStatement createEffective(
-            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx,
-            final SubIdStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new SubIdEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected SubIdEffectiveStatement createEmptyEffective(
-            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx, final SubIdStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected SubIdEffectiveStatement createEffective(final Current<Uint32, SubIdStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new SubIdEffectiveStatementImpl(stmt, substatements);
     }
 }

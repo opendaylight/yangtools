@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -91,15 +92,9 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
     }
 
     @Override
-    protected BaseEffectiveStatement createEffective(
-            final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx, final BaseStatement declared,
+    protected BaseEffectiveStatement createEffective(final Current<QName, BaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularBaseEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected BaseEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx, final BaseStatement declared) {
-        return new EmptyBaseEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyBaseEffectiveStatement(stmt.declared())
+            : new RegularBaseEffectiveStatement(stmt.declared(), substatements);
     }
 }

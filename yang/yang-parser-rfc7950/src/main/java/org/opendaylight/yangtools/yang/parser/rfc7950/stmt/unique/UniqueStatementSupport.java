@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -78,17 +79,11 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    protected UniqueEffectiveStatement createEffective(
-            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
-            final UniqueStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularUniqueEffectiveStatement(declared, substatements);
-    }
+    protected UniqueEffectiveStatement createEffective(final Current<Set<Descendant>, UniqueStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyUniqueEffectiveStatement(stmt.declared())
+            : new RegularUniqueEffectiveStatement(stmt.declared(), substatements);
 
-    @Override
-    protected UniqueEffectiveStatement createEmptyEffective(
-            final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
-            final UniqueStatement declared) {
-        return new EmptyUniqueEffectiveStatement(declared);
     }
 
     private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,

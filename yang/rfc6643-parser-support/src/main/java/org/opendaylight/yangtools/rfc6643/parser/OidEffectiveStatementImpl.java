@@ -17,18 +17,17 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class OidEffectiveStatementImpl extends UnknownEffectiveStatementBase<ObjectIdentifier, OidStatement>
         implements OidEffectiveStatement, OidSchemaNode {
 
     private final SchemaPath path;
 
-    OidEffectiveStatementImpl(final OidStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<ObjectIdentifier, OidStatement, ?> ctx) {
-        super(declared.argument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    OidEffectiveStatementImpl(final Current<ObjectIdentifier, OidStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, substatements);
+        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override
