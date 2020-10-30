@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -286,7 +287,8 @@ public final class StmtContextUtils {
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
+        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
+        // return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
     }
 
     /**

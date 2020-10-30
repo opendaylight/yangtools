@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -391,4 +392,18 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
     }
+
+    default <V, T extends EffectiveStatement<V, ?>> Optional<V> findFirstSubstatementArgument(final @NonNull Class<T> type) {
+        return allSubstatementsStream()
+                .filter(o -> ((StmtContext) o).producesEffective(type))
+                .findFirst()
+                .map(StmtContext::coerceParentContext)
+                .map(type::cast)
+                .map(EffectiveStatement::argument);
+    }
+
+    default boolean hasSubstatement(Class<? extends EffectiveStatement> c) {
+        return allSubstatementsStream().anyMatch(c::isInstance);
+    }
+
 }
