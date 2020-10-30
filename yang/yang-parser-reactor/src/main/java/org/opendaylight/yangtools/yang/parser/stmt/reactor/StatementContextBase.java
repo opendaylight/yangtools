@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -52,6 +53,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -69,6 +71,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -111,6 +114,76 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     interface ContextMutation {
 
         boolean isFinished();
+    }
+
+    private final class BaseStatementState implements EffectiveStmtCtx.Current<A, D> {
+        @Override
+        public StatementSource source() {
+            return getStatementSource();
+        }
+
+        @Override
+        public StatementSourceReference sourceReference() {
+            return getStatementSourceReference();
+        }
+
+        @Override
+        public CopyHistory history() {
+            return getCopyHistory();
+        }
+
+        @Override
+        public D declared() {
+            return buildDeclared();
+        }
+
+        @Override
+        public <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
+                final Class<@NonNull N> type, final T key) {
+            return StatementContextBase.this.getFromNamespace(type, key);
+        }
+
+        @Override
+        public boolean effectiveConfig() {
+            return isConfiguration();
+        }
+
+        @Override
+        public Optional<SchemaPath> schemaPath() {
+            return StatementContextBase.this.getSchemaPath();
+        }
+
+        @Override
+        public @NonNull StatementDefinition publicDefinition() {
+            return getPublicDefinition();
+        }
+
+        @Override
+        public @Nullable Parent parent() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V>
+                getAllFromCurrentStmtCtxNamespace(final Class<N> type) {
+            return StatementContextBase.this.getAllFromCurrentStmtCtxNamespace(type);
+        }
+
+        @Override
+        public A argument() {
+            return getStatementArgument();
+        }
+
+        @Override
+        public String rawArgument() {
+            return rawStatementArgument();
+        }
+
+        @Override
+        public EffectiveStatement<?, ?> original() {
+            return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
@@ -561,8 +634,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(this);
+        return effectiveInstance = definition.getFactory().createEffective(new BaseStatementState(), streamDeclared(),
+            streamEffective());
     }
+
+    abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
+
+    abstract Stream<? extends StmtContext<?, ?, ?>> streamEffective();
 
     /**
      * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,

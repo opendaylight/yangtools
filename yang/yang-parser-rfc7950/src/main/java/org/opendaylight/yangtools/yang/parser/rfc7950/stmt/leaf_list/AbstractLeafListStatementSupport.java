@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -49,24 +50,21 @@ abstract class AbstractLeafListStatementSupport
     }
 
     @Override
-    protected final LeafListEffectiveStatement createEffective(
-            final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
-            final LeafListStatement declared,
+    protected LeafListEffectiveStatement createEffective(final Current<QName, LeafListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-            findFirstStatement(substatements, TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                findFirstStatement(substatements, TypeEffectiveStatement.class), stmt.sourceReference(),
                 "Leaf-list is missing a 'type' statement");
 
-        final SchemaPath path = ctx.getSchemaPath().get();
-        final LeafListSchemaNode original = (LeafListSchemaNode) ctx.getOriginalCtx()
-                .map(StmtContext::buildEffective).orElse(null);
+        final SchemaPath path = stmt.getSchemaPath();
+        final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
 
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration())
+                .setConfiguration(stmt.effectiveConfig())
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
-                    .equals(Ordering.USER))
+                        .equals(Ordering.USER))
                 .toFlags();
         final ImmutableSet<String> defaultValues = substatements.stream()
                 .filter(DefaultEffectiveStatement.class::isInstance)
@@ -76,31 +74,25 @@ abstract class AbstractLeafListStatementSupport
 
         // FIXME: We need to interpret the default value in terms of supplied element type
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
-            ctx.getStatementSourceReference(),
-            "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
-            ctx.getStatementArgument(), defaultValues);
+                EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
+                stmt.sourceReference(),
+                "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+                stmt.argument(), defaultValues);
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
 
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
 
+        final LeafListStatement declared = stmt.declared();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
                     ? new EmptyLeafListEffectiveStatement(declared, path, flags, substatements)
-                            : new SlimLeafListEffectiveStatement(declared, path, flags, substatements, original,
-                                elementCountConstraint.orElse(null));
+                    : new SlimLeafListEffectiveStatement(declared, path, flags, substatements, original,
+                    elementCountConstraint.orElse(null));
         }
 
         return new RegularLeafListEffectiveStatement(declared, path, flags, substatements, original, defaultValues,
-            elementCountConstraint.orElse(null));
-    }
-
-    @Override
-    protected final LeafListEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
-            final LeafListStatement declared) {
-        throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
+                elementCountConstraint.orElse(null));
     }
 }

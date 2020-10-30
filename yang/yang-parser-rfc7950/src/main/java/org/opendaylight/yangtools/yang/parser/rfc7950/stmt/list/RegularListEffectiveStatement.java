@@ -15,17 +15,19 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularListEffectiveStatement extends AbstractListEffectiveStatement {
     private final ElementCountConstraint elementCountConstraint;
     private final ListSchemaNode original;
 
-    RegularListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
-            final StmtContext<?, ?, ?> ctx, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    RegularListEffectiveStatement(final Current<QName, ListStatement> stmt, final SchemaPath path,
+            final int flags, final StmtContext<?, ?, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition, final ElementCountConstraint elementCountConstraint,
             final ListSchemaNode original) {
-        super(declared, path, flags, ctx, substatements, keyDefinition);
+        super(stmt, path, flags, ctx, substatements, keyDefinition);
         this.elementCountConstraint = elementCountConstraint;
         this.original = original;
     }

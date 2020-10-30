@@ -43,11 +43,11 @@ public final class MountPointStatementSupport
 
         private final @NonNull SchemaPath path;
 
-        Effective(final MountPointStatement declared,
+        Effective(final EffectiveStatementState<QName, MountPointStatement> stmt, final EffectiveParentState parent,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
                 final StmtContext<QName, MountPointStatement, ?> ctx) {
-            super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
+            super(ctx.coerceStatementArgument(), stmt, substatements, ctx);
+            path = parent.schemaPath().get().createChild(argument());
         }
 
         @Override
@@ -123,14 +123,15 @@ public final class MountPointStatementSupport
     @Override
     protected MountPointEffectiveStatement createEffective(
             final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
-            final MountPointStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, MountPointStatement> stmt) {
+        return new Effective(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected MountPointEffectiveStatement createEmptyEffective(
             final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
-            final MountPointStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, MountPointStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -57,16 +58,9 @@ public final class ArgumentStatementSupport
     }
 
     @Override
-    protected ArgumentEffectiveStatement createEffective(
-            final StmtContext<QName, ArgumentStatement, ArgumentEffectiveStatement> ctx,
-            final ArgumentStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularArgumentEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected ArgumentEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ArgumentStatement, ArgumentEffectiveStatement> ctx,
-            final ArgumentStatement declared) {
-        return new EmptyArgumentEffectiveStatement(declared);
+    protected ArgumentEffectiveStatement createEffective(final Current<QName, ArgumentStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyArgumentEffectiveStatement(stmt.declared())
+            : new RegularArgumentEffectiveStatement(stmt.declared(), substatements);
     }
 }

@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -21,6 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -64,31 +67,27 @@ public final class AnyxmlStatementSupport
     }
 
     @Override
-    protected AnyxmlEffectiveStatement createEffective(
-            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx,
-            final AnyxmlStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularAnyxmlEffectiveStatement(declared, ctx.getSchemaPath().get(),
-            computeFlags(ctx, substatements), findOriginal(ctx),substatements);
-    }
-
-    @Override
-    protected AnyxmlEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx, final AnyxmlStatement declared) {
-        return new EmptyAnyxmlEffectiveStatement(declared, ctx.getSchemaPath().get(),
-            computeFlags(ctx, ImmutableList.of()), findOriginal(ctx));
-    }
-
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
+    protected AnyxmlEffectiveStatement createEffective(final Current<QName, AnyxmlStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final int flags = computeFlags(stmt.history(), stmt.effectiveConfig(), substatements);
+        final SchemaPath path = stmt.getSchemaPath();
+
+        return substatements.isEmpty()
+            ? new EmptyAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))
+                : new RegularAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt),substatements);
+    }
+
+    private static int computeFlags(final CopyHistory history, final boolean isConfig,
+                                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(history)
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration())
+                .setConfiguration(isConfig)
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
     }
 
-    private static @Nullable AnyxmlSchemaNode findOriginal(final StmtContext<?, ?, ?> ctx) {
-        return (AnyxmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+    private static @Nullable AnyxmlSchemaNode findOriginal(final Current<?, ?> stmt) {
+        return (AnyxmlSchemaNode) stmt.original();
     }
 }
