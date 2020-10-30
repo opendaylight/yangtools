@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
@@ -30,20 +30,18 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     private final QName maybeQNameArgument;
     private final @NonNull SchemaPath path;
 
-    UnrecognizedEffectiveStatementImpl(final @NonNull UnrecognizedStatement declared,
-            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<String, UnrecognizedStatement, ?> ctx) {
-        super(ctx.getStatementArgument(), declared, substatements, ctx);
+    UnrecognizedEffectiveStatementImpl(final Current<String, UnrecognizedStatement> stmt,
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt.argument(), stmt, substatements);
 
         // FIXME: Remove following section after fixing 4380
-        final UnknownSchemaNode original = (UnknownSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
-                .orElse(null);
+        final UnknownSchemaNode original = (UnknownSchemaNode) stmt.original();
         if (original != null) {
             this.maybeQNameArgument = original.getQName();
         } else {
             QName maybeQNameArgumentInit = null;
             try {
-                maybeQNameArgumentInit = StmtContextUtils.qnameFromArgument(ctx, argument());
+                maybeQNameArgumentInit = StmtContextUtils.qnameFromArgument(stmt.caerbannog(), argument());
             } catch (SourceException e) {
                 LOG.debug("Not constructing QName from {}", argument(), e);
                 maybeQNameArgumentInit = getNodeType();
@@ -53,10 +51,10 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
 
         SchemaPath maybePath;
         try {
-            maybePath = ctx.coerceParentContext().getSchemaPath()
+            maybePath = stmt.getParent().schemaPath()
                     .map(parentPath -> parentPath.createChild(maybeQNameArgument)).orElse(null);
         } catch (IllegalArgumentException | SourceException e) {
-            LOG.debug("Cannot construct path for {}, attempting to recover", ctx, e);
+            LOG.debug("Cannot construct path for {}, attempting to recover", stmt, e);
             maybePath = null;
         }
         path = maybePath;

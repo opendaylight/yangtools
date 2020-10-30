@@ -60,14 +60,13 @@ public final class PositionStatementSupport
     }
 
     @Override
-    protected PositionEffectiveStatement createEmptyEffective(final PositionStatement declared) {
-        return new EmptyPositionEffectiveStatement(declared);
+    protected PositionEffectiveStatement createEffective(final PositionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularPositionEffectiveStatement(declared, substatements);
     }
 
     @Override
-    protected PositionEffectiveStatement createEffective(
-            final StmtContext<Uint32, PositionStatement, PositionEffectiveStatement> ctx,
-            final PositionStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPositionEffectiveStatement(declared, substatements);
+    protected PositionEffectiveStatement createEmptyEffective(final PositionStatement declared) {
+        return new EmptyPositionEffectiveStatement(declared);
     }
 }

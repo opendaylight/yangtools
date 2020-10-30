@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -73,18 +74,12 @@ public final class FeatureStatementSupport
     }
 
     @Override
-    protected FeatureEffectiveStatement createEffective(
-            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx, final FeatureStatement declared,
+    protected FeatureEffectiveStatement createEffective(final Current<QName, FeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularFeatureEffectiveStatement(declared, ctx.getSchemaPath().get(), computeFlags(substatements),
-            substatements);
-    }
-
-    @Override
-    protected FeatureEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx,
-            final FeatureStatement declared) {
-        return new EmptyFeatureEffectiveStatement(declared, ctx.getSchemaPath().get(), EMPTY_EFFECTIVE_FLAGS);
+        return substatements.isEmpty()
+            ? new EmptyFeatureEffectiveStatement(stmt.declared(), stmt.getSchemaPath(), EMPTY_EFFECTIVE_FLAGS)
+                : new RegularFeatureEffectiveStatement(stmt.declared(), stmt.getSchemaPath(),
+                    computeFlags(substatements), substatements);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

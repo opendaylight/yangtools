@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -100,16 +101,9 @@ abstract class AbstractIncludeStatementSupport
     }
 
     @Override
-    protected final IncludeEffectiveStatement createEffective(
-            final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
-            final IncludeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularIncludeEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected final IncludeEffectiveStatement createEmptyEffective(
-            final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
-            final IncludeStatement declared) {
-        return new EmptyIncludeEffectiveStatement(declared);
+    protected final IncludeEffectiveStatement createEffective(final Current<String, IncludeStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(stmt.declared())
+            : new RegularIncludeEffectiveStatement(stmt.declared(), substatements);
     }
 }

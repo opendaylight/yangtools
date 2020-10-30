@@ -17,9 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Spe
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class Decimal64SpecificationSupport extends BaseStatementSupport<String, Decimal64Specification,
         EffectiveStatement<String, Decimal64Specification>> {
@@ -51,43 +53,38 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
 
     @Override
     protected Decimal64Specification createEmptyDeclared(final StmtContext<String, Decimal64Specification, ?> ctx) {
-        throw noFracDigits(ctx);
+        throw noFracDigits(ctx.getStatementSourceReference());
     }
 
     @Override
     protected EffectiveStatement<String, Decimal64Specification> createEffective(
-            final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx,
-            final Decimal64Specification declared,
+            final Current<String, Decimal64Specification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(ctx.getSchemaPath().get());
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof FractionDigitsEffectiveStatement) {
-                builder.setFractionDigits(((FractionDigitsEffectiveStatement) stmt).argument());
+        if (substatements.isEmpty()) {
+            throw noFracDigits(stmt.sourceReference());
+        }
+
+        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.getSchemaPath());
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof FractionDigitsEffectiveStatement) {
+                builder.setFractionDigits(((FractionDigitsEffectiveStatement) subStmt).argument());
             }
-            if (stmt instanceof RangeEffectiveStatement) {
-                final RangeEffectiveStatement range = (RangeEffectiveStatement) stmt;
+            if (subStmt instanceof RangeEffectiveStatement) {
+                final RangeEffectiveStatement range = (RangeEffectiveStatement) subStmt;
                 builder.setRangeConstraint(range, range.argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    @Override
-    protected EffectiveStatement<String, Decimal64Specification> createEmptyEffective(
-            final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx,
-            final Decimal64Specification declared) {
-        throw noFracDigits(ctx);
-    }
-
-    private static SourceException noFracDigits(final StmtContext<?, ?, ?> ctx) {
+    private static SourceException noFracDigits(final StatementSourceReference ref) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.3.4
          *
          *     The "fraction-digits" statement, which is a substatement to the
          *     "type" statement, MUST be present if the type is "decimal64".
          */
-        return new SourceException("At least one fraction-digits statement has to be present",
-            ctx.getStatementSourceReference());
+        return new SourceException("At least one fraction-digits statement has to be present", ref);
     }
 }

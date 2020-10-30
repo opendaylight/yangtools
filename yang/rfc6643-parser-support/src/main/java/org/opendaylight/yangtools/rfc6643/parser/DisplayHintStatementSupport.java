@@ -52,15 +52,15 @@ public final class DisplayHintStatementSupport
     @Override
     protected DisplayHintEffectiveStatement createEffective(
             final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx,
-            final DisplayHintStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DisplayHintEffectiveStatementImpl(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, DisplayHintStatement> stmt) {
+        return new DisplayHintEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected DisplayHintEffectiveStatement createEmptyEffective(
             final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx,
-            final DisplayHintStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, DisplayHintStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

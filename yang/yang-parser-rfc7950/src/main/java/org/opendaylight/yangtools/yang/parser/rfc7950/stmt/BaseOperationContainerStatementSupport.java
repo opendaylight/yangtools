@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
@@ -45,20 +46,20 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     }
 
     @Override
-    protected final @NonNull E createDeclaredEffective(final StmtContext<QName, D, E> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final D declared) {
-        return createDeclaredEffective(historyAndStatusFlags(ctx, substatements), ctx, substatements, declared);
+    protected final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return createDeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
     }
 
-    protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
-            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements, @NonNull D declared);
+    protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
+            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     @Override
-    protected final E createUndeclaredEffective(final StmtContext<QName, D, E> ctx,
+    protected final E createUndeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createUndeclaredEffective(historyAndStatusFlags(ctx, substatements), ctx, substatements);
+        return createUndeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
     }
 
-    protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
+    protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 }
