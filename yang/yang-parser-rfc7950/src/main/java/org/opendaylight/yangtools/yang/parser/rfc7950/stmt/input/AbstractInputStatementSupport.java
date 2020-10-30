@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractInputStatementSupport
@@ -54,16 +55,17 @@ abstract class AbstractInputStatementSupport
 
     @Override
     protected final InputEffectiveStatement createDeclaredEffective(final int flags,
-            final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final InputStatement declared) {
-        return new DeclaredInputEffectiveStatement(declared, flags, ctx, substatements);
+            final Current<QName, InputStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeclaredInputEffectiveStatement(flags, stmt.declared(), substatements, stmt.sourceReference(),
+            stmt.getSchemaPath());
     }
 
     @Override
     protected final InputEffectiveStatement createUndeclaredEffective(final int flags,
-            final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
+            final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredInputEffectiveStatement(flags, ctx, substatements);
+        return new UndeclaredInputEffectiveStatement(flags, substatements, stmt.sourceReference(),
+            stmt.getSchemaPath());
     }
 }

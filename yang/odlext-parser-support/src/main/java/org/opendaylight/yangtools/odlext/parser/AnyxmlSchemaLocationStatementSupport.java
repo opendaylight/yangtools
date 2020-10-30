@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -72,16 +73,8 @@ public final class AnyxmlSchemaLocationStatementSupport
 
     @Override
     protected AnyxmlSchemaLocationEffectiveStatement createEffective(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared,
+            final Current<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AnyxmlSchemaLocationEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected AnyxmlSchemaLocationEffectiveStatement createEmptyEffective(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new AnyxmlSchemaLocationEffectiveStatementImpl(stmt, substatements);
     }
 }

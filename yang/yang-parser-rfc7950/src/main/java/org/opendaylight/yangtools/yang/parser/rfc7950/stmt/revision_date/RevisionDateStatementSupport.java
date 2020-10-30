@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -61,17 +62,9 @@ public final class RevisionDateStatementSupport
     }
 
     @Override
-    protected RevisionDateEffectiveStatement createEffective(
-            final StmtContext<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> ctx,
-            final RevisionDateStatement declared,
+    protected RevisionDateEffectiveStatement createEffective(final Current<Revision, RevisionDateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularRevisionDateEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected RevisionDateEffectiveStatement createEmptyEffective(
-            final StmtContext<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> ctx,
-            final RevisionDateStatement declared) {
-        return new EmptyRevisionDateEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyRevisionDateEffectiveStatement(stmt.declared())
+            : new RegularRevisionDateEffectiveStatement(stmt.declared(), substatements);
     }
 }

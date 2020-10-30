@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,16 +49,9 @@ public final class DefaultStatementSupport
     }
 
     @Override
-    protected DefaultEffectiveStatement createEffective(
-            final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
-            final DefaultStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularDefaultEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected DefaultEffectiveStatement createEmptyEffective(
-            final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
-            final DefaultStatement declared) {
-        return new EmptyDefaultEffectiveStatement(declared);
+    protected DefaultEffectiveStatement createEffective(final Current<String, DefaultStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyDefaultEffectiveStatement(stmt.declared())
+            : new RegularDefaultEffectiveStatement(stmt.declared(), substatements);
     }
 }
