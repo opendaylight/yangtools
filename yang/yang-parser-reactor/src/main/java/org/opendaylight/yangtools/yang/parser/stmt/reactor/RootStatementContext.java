@@ -41,8 +41,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance
  * of this class, hence recursive lookups from them cross this class.
  */
-public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
-        AbstractResumedStatement<A, D, E> {
+public final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends AbstractResumedStatement<A, D, E> {
 
     public static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
 
