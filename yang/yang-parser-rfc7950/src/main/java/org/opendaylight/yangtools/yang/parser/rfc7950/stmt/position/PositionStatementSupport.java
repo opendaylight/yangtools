@@ -67,7 +67,8 @@ public final class PositionStatementSupport
     @Override
     protected PositionEffectiveStatement createEffective(
             final StmtContext<Uint32, PositionStatement, PositionEffectiveStatement> ctx,
-            final PositionStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPositionEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Uint32, PositionStatement> stmt) {
+        return new RegularPositionEffectiveStatement(stmt.declared(), substatements);
     }
 }

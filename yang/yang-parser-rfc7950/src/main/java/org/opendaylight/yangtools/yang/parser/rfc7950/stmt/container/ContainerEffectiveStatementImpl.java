@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.PresenceMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ContainerEffectiveStatementImpl
@@ -49,14 +50,14 @@ final class ContainerEffectiveStatementImpl
     private final @NonNull SchemaPath path;
     private final @Nullable ContainerSchemaNode original;
 
-    ContainerEffectiveStatementImpl(final ContainerStatement declared, final SchemaPath path, final int flags,
-                final StmtContext<?, ?, ?> ctx, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final ContainerSchemaNode original) {
-        super(declared, ctx, substatements);
+    ContainerEffectiveStatementImpl(final  EffectiveStatementState<QName, ContainerStatement> stmt,
+        final SchemaPath path, final int flags, final StmtContext<?, ?, ?> ctx,
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final ContainerSchemaNode original) {
+        super(stmt, substatements);
 
-        EffectiveStmtUtils.checkUniqueGroupings(ctx, substatements);
-        EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements);
-        EffectiveStmtUtils.checkUniqueUses(ctx, substatements);
+        EffectiveStmtUtils.checkUniqueGroupings(ctx, substatements, stmt.sourceReference());
+        EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements, stmt.sourceReference());
+        EffectiveStmtUtils.checkUniqueUses(ctx, substatements, stmt.sourceReference());
 
         this.path = requireNonNull(path);
         this.original = original;

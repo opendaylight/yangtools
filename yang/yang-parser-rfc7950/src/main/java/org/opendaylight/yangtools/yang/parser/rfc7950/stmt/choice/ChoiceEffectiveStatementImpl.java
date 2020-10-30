@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffec
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
@@ -38,11 +39,11 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     private final @NonNull SchemaPath path;
     private final int flags;
 
-    ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
+    ChoiceEffectiveStatementImpl(final EffectiveStatementState<QName, ChoiceStatement> stmt,
             final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
             final @Nullable CaseSchemaNode defaultCase, final @Nullable ChoiceSchemaNode original) {
-        super(declared, ctx, substatements);
+        super(stmt, substatements);
         this.flags = flags;
         this.path = ctx.getSchemaPath().get();
         this.defaultCase = defaultCase;

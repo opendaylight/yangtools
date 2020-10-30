@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractUndeclaredEffectiveStatement.DefaultWithSchemaTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement>
@@ -28,9 +29,10 @@ final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, Ca
     private final int flags;
 
     UndeclaredCaseEffectiveStatement(final StmtContext<QName, CaseStatement, CaseEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final @Nullable CaseSchemaNode original) {
-        super(ctx, substatements);
+            final EffectiveStatementState<QName, CaseStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final int flags, final @Nullable CaseSchemaNode original) {
+        super(stmt, substatements);
         this.flags = flags;
         this.path = ctx.getSchemaPath().get();
         this.original = original;

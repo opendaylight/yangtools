@@ -61,9 +61,9 @@ public final class MinElementsStatementSupport
     @Override
     protected MinElementsEffectiveStatement createEffective(
             final StmtContext<Integer, MinElementsStatement, MinElementsEffectiveStatement> ctx,
-            final MinElementsStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularMinElementsEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Integer, MinElementsStatement> stmt) {
+        return new RegularMinElementsEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
