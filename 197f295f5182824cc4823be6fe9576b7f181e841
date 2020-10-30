@@ -22,6 +22,30 @@
       "revId": "197f295f5182824cc4823be6fe9576b7f181e841",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddc82f86_ba0d1099",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 973,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-10-30T16:26:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89836a2c_4bf441d6",
+      "range": {
+        "startLine": 971,
+        "startChar": 8,
+        "endLine": 973,
+        "endChar": 42
+      },
+      "revId": "197f295f5182824cc4823be6fe9576b7f181e841",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }

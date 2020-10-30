@@ -22,6 +22,30 @@
       "revId": "3f3df266fb8ba0b06ffb6492766e8f49b167b05d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0790bb6f_23cec461",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-10-30T16:26:13Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "2a82a2b5_b897fea7",
+      "range": {
+        "startLine": 140,
+        "startChar": 1,
+        "endLine": 157,
+        "endChar": 5
+      },
+      "revId": "3f3df266fb8ba0b06ffb6492766e8f49b167b05d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
