@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b6e905d_bc2ac305",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-10-30T08:42:14Z",
+      "side": 1,
+      "message": "wouldn t it be cleaner if we just call overridden mutableEffectiveSubstatements() method from this class in here? and get rid of 172? it does the same thing and we basically just duplicated that part of the code here",
+      "range": {
+        "startLine": 176,
+        "startChar": 41,
+        "endLine": 176,
+        "endChar": 78
+      },
+      "revId": "74d17f6288c8a8add46b7aeb779753b158648767",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
