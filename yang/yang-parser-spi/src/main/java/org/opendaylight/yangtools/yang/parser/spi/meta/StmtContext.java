@@ -425,4 +425,5 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     default boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
         return StmtContextDefaults.hasSubstatement(this, type);
     }
+
 }
