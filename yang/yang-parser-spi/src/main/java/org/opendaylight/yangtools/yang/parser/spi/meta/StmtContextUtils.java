@@ -10,18 +10,21 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -29,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -135,25 +138,6 @@ public final class StmtContextUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Searches for the first substatement of the specified type in the specified statement context.
-     * First, it tries to find the substatement in the effective substatements of the statement context.
-     * If it was not found, then it proceeds to search in the declared substatements. If it still was not found,
-     * the method returns null.
-     *
-     * @param stmtContext statement context to search in
-     * @param declaredType substatement type to search for
-     * @param <A> statement argument type
-     * @param <D> declared statement type
-     * @return statement context that was searched for or null if was not found
-     */
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        final StmtContext<A, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
-        return effectiveSubstatement != null ? effectiveSubstatement : findFirstDeclaredSubstatement(stmtContext,
-                declaredType);
     }
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
@@ -286,7 +270,7 @@ public final class StmtContextUtils {
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
+        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
     }
 
     /**
@@ -376,12 +360,9 @@ public final class StmtContextUtils {
         StmtContext<?, ?, ?> current = ctx.coerceParentContext();
         StmtContext<?, ?, ?> parent = current.getParentContext();
         while (parent != null) {
-            if (ancestorType.equals(current.getPublicDefinition())) {
-                @SuppressWarnings("unchecked")
-                final Class<D> ancestorChildTypeClass = (Class<D>) ancestorChildType.getDeclaredRepresentationClass();
-                if (findFirstSubstatement(current, ancestorChildTypeClass) == null) {
-                    return false;
-                }
+            if (ancestorType.equals(current.getPublicDefinition())
+                    && !current.hasSubstatement(ancestorChildType.getEffectiveRepresentationClass())) {
+                return false;
             }
 
             current = parent;
@@ -625,5 +606,23 @@ public final class StmtContextUtils {
             }
         }
         return Optional.ofNullable(revision);
+    }
+
+    @Beta
+    public static <A, E extends EffectiveStatement<A, ?>> @NonNull Optional<A> defaultFindSubstatementArgument(
+            final StmtContext<?, ?, ?> stmt, final @NonNull Class<E> type) {
+        return stmt.allSubstatementsStream()
+                .filter(ctx -> ((StmtContext) ctx).producesEffective(type))
+                .findAny()
+                .map(ctx -> (A) ctx.coerceStatementArgument());
+    }
+
+    @Beta
+    public static boolean defaultHasSubstatement(final StmtContext<?, ?, ?> stmt,
+            final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return stmt.allSubstatementsStream()
+            .filter(ctx -> ((StmtContext<?, ?, ?>) ctx).producesEffective(type))
+            .findAny()
+            .isPresent();
     }
 }
