@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -19,19 +21,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
         implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
     private final @NonNull SchemaPath path;
     private final int flags;
 
-    DeclaredOutputEffectiveStatement(final OutputStatement declared, final int flags,
-            final StmtContext<QName, OutputStatement, OutputEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, ctx, substatements);
+    DeclaredOutputEffectiveStatement(final int flags, final OutputStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
+            final SchemaPath path) {
+        super(declared, substatements, ref);
         this.flags = flags;
-        this.path = ctx.getSchemaPath().get();
+        this.path = requireNonNull(path);
     }
 
     @Override
