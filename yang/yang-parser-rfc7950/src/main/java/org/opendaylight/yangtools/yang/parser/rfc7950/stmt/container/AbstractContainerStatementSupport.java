@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractContainerStatementSupport
@@ -41,26 +43,24 @@ abstract class AbstractContainerStatementSupport
     }
 
     @Override
-    protected final ContainerEffectiveStatement createEffective(
-            final StmtContext<QName, ContainerStatement, ContainerEffectiveStatement> ctx,
-            final ContainerStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-
-        final SchemaPath path = ctx.getSchemaPath().get();
-        final ContainerSchemaNode original = (ContainerSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
-                .orElse(null);
+    protected ContainerEffectiveStatement createEffective(final Current<QName, ContainerStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final SchemaPath path = stmt.getSchemaPath();
+        final ContainerSchemaNode original = (ContainerSchemaNode) stmt.original();
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration())
+                .setConfiguration(stmt.effectiveConfig())
                 .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
                 .toFlags();
-        return new ContainerEffectiveStatementImpl(declared, path, flags, ctx, substatements, original);
-    }
 
-    @Override
-    protected final ContainerEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ContainerStatement, ContainerEffectiveStatement> ctx,
-            final ContainerStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        final var ref = stmt.sourceReference();
+        final var rabbit = stmt.caerbannog();
+        EffectiveStmtUtils.checkUniqueGroupings(rabbit, substatements, ref);
+        EffectiveStmtUtils.checkUniqueTypedefs(rabbit, substatements, ref);
+        EffectiveStmtUtils.checkUniqueUses(rabbit, substatements, ref);
+
+        return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(), flags, path,
+            original);
     }
 }

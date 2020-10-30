@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -37,9 +39,10 @@ final class ModelDefinedStatementSupport
     }
 
     @Override
-    public UnrecognizedEffectiveStatement createEffective(
-            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx) {
-        return definition.createEffective(ctx);
+    public UnrecognizedEffectiveStatement createEffective(final Current<String, UnrecognizedStatement> stmt,
+            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
+            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        return definition.createEffective(stmt, declaredSubstatements, effectiveSubstatements);
     }
 
     @Override

@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
 public final class EffectiveStmtUtils {
@@ -43,8 +44,8 @@ public final class EffectiveStmtUtils {
     }
 
     public static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
-            final EffectiveStatement<?, ?> effectiveStatement) {
-        return new SourceException(ctx.getStatementSourceReference(),
+            final StatementSourceReference sourceReference, final EffectiveStatement<?, ?> effectiveStatement) {
+        return new SourceException(sourceReference,
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
             ctx.getRoot().rawStatementArgument(), effectiveStatement.argument(), effectiveStatement.argument());
     }
@@ -167,32 +168,36 @@ public final class EffectiveStmtUtils {
     }
 
     public static void checkUniqueGroupings(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements) {
-        checkUniqueNodes(ctx, statements, GroupingDefinition.class);
+            final Collection<? extends EffectiveStatement<?, ?>> statements,
+            final StatementSourceReference sourceReference) {
+        checkUniqueNodes(ctx, statements, GroupingDefinition.class, sourceReference);
     }
 
     public static void checkUniqueTypedefs(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements) {
+            final Collection<? extends EffectiveStatement<?, ?>> statements,
+            final StatementSourceReference sourceReference) {
         final Set<Object> typedefs = new HashSet<>();
         for (EffectiveStatement<?, ?> stmt : statements) {
             if (stmt instanceof TypedefEffectiveStatement
                     && !typedefs.add(((TypedefEffectiveStatement) stmt).getTypeDefinition())) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, sourceReference, stmt);
             }
         }
     }
 
     public static void checkUniqueUses(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements) {
-        checkUniqueNodes(ctx, statements, UsesNode.class);
+            final Collection<? extends EffectiveStatement<?, ?>> statements,
+            final StatementSourceReference sourceReference) {
+        checkUniqueNodes(ctx, statements, UsesNode.class, sourceReference);
     }
 
     private static void checkUniqueNodes(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<?> type) {
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<?> type,
+            final StatementSourceReference sourceReference) {
         final Set<Object> nodes = new HashSet<>();
         for (EffectiveStatement<?, ?> stmt : statements) {
             if (type.isInstance(stmt) && !nodes.add(stmt)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, sourceReference, stmt);
             }
         }
     }

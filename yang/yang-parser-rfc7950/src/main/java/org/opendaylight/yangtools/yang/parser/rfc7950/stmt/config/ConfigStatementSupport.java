@@ -44,9 +44,8 @@ public final class ConfigStatementSupport
     }
 
     @Override
-    protected ConfigEffectiveStatement createEffective(
-            final StmtContext<Boolean, ConfigStatement, ConfigEffectiveStatement> ctx,
-            final ConfigStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected ConfigEffectiveStatement createEffective(final ConfigStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularConfigEffectiveStatement(declared, substatements);
     }
 

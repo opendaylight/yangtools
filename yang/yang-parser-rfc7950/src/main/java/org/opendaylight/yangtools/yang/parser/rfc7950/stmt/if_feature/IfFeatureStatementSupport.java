@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -112,16 +113,9 @@ public final class IfFeatureStatementSupport
     }
 
     @Override
-    protected IfFeatureEffectiveStatement createEffective(
-            final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx,
-            final IfFeatureStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularIfFeatureEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected IfFeatureEffectiveStatement createEmptyEffective(
-            final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx,
-            final IfFeatureStatement declared) {
-        return new EmptyIfFeatureEffectiveStatement(declared);
+    protected IfFeatureEffectiveStatement createEffective(final Current<IfFeatureExpr, IfFeatureStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyIfFeatureEffectiveStatement(stmt.declared())
+            : new RegularIfFeatureEffectiveStatement(stmt.declared(), substatements);
     }
 }

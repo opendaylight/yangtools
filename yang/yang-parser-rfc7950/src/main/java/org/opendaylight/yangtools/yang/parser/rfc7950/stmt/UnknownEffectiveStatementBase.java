@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatement<A>>
@@ -32,18 +33,16 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     private final QName nodeType;
     private final String nodeParameter;
 
-    protected UnknownEffectiveStatementBase(final A argument, final @NonNull D declared,
-            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            // FIXME: 7.0.0: we should not be needing this
-            final StmtContext<A, D, ?> ctx) {
-        super(argument, declared, substatements);
+    protected UnknownEffectiveStatementBase(final Current<A, D> stmt,
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt.argument(), stmt.declared(), substatements);
 
         final StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement> extensionInit =
-                ctx.getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
+                stmt.getFromNamespace(ExtensionNamespace.class, stmt.publicDefinition().getStatementName());
 
         if (extensionInit == null) {
             extension = null;
-            nodeType = ctx.getPublicDefinition().getStatementName();
+            nodeType = stmt.publicDefinition().getStatementName();
         } else {
             final EffectiveStatement<QName, ExtensionStatement> effective = extensionInit.buildEffective();
             Preconditions.checkState(effective instanceof ExtensionDefinition,
@@ -53,7 +52,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         }
 
         // initCopyType
-        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
+        final CopyHistory copyTypesFromOriginal = stmt.history();
         if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
             this.augmenting = true;
             this.addedByUses = true;
@@ -62,7 +61,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
         }
 
-        nodeParameter = ctx.rawStatementArgument() == null ? "" : ctx.rawStatementArgument();
+        nodeParameter = stmt.rawArgument() == null ? "" : stmt.rawArgument();
     }
 
     @Deprecated

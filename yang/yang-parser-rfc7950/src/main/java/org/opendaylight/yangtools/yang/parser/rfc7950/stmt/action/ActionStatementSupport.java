@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -87,29 +90,23 @@ public final class ActionStatementSupport extends
     }
 
     @Override
-    protected ActionEffectiveStatement createEffective(
-            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared,
+    protected ActionEffectiveStatement createEffective(final Current<QName, ActionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final QName argument = ctx.coerceStatementArgument();
-        final StatementSourceReference ref = ctx.getStatementSourceReference();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ref,
+        final StatementSourceReference ref = stmt.sourceReference();
+        checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
+        final QName argument = stmt.coerceArgument();
+        final var rabbit = stmt.caerbannog();
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(rabbit, ILLEGAL_PARENTS), ref,
             "Action %s is defined within a notification, rpc or another action", argument);
         SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(rabbit, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
             "Action %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(rabbit, YangStmtMapping.CASE), ref,
             "Action %s is defined within a case statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.MODULE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(rabbit, YangStmtMapping.MODULE), ref,
             "Action %s is defined at the top level of a module", argument);
 
-        return new ActionEffectiveStatementImpl(declared, ctx.getSchemaPath().get(),
-            historyAndStatusFlags(ctx, substatements), ctx, substatements);
-    }
-
-    @Override
-    protected ActionEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared) {
-        throw new IllegalStateException("Missing implicit input/output statements at "
-            + ctx.getStatementSourceReference());
+        return new ActionEffectiveStatementImpl(stmt.declared(), stmt.getSchemaPath(),
+            historyAndStatusFlags(stmt.history(), substatements), substatements, stmt.sourceReference());
     }
 }

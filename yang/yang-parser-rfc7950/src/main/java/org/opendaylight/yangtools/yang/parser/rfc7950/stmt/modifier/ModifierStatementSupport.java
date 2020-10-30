@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -62,16 +63,9 @@ public final class ModifierStatementSupport
     }
 
     @Override
-    protected ModifierEffectiveStatement createEffective(
-            final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
-            final ModifierStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularModifierEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected ModifierEffectiveStatement createEmptyEffective(
-            final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
-            final ModifierStatement declared) {
-        return new EmptyModifierEffectiveStatement(declared);
+    protected ModifierEffectiveStatement createEffective(final Current<ModifierKind, ModifierStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyModifierEffectiveStatement(stmt.declared())
+            : new RegularModifierEffectiveStatement(stmt.declared(), substatements);
     }
 }

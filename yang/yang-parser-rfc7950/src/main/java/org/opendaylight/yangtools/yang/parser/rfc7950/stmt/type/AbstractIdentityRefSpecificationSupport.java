@@ -23,11 +23,13 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractIdentityRefSpecificationSupport
         extends BaseStatementSupport<String, IdentityRefSpecification,
@@ -66,37 +68,31 @@ abstract class AbstractIdentityRefSpecificationSupport
     @Override
     protected final IdentityRefSpecification createEmptyDeclared(
             final StmtContext<String, IdentityRefSpecification, ?> ctx) {
-        throw noBase(ctx);
+        throw noBase(ctx.getStatementSourceReference());
     }
 
     @Override
     protected final EffectiveStatement<String, IdentityRefSpecification> createEffective(
-            final StmtContext<String, IdentityRefSpecification,
-                EffectiveStatement<String, IdentityRefSpecification>> ctx,
-            final IdentityRefSpecification declared,
+            final Current<String, IdentityRefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(ctx.getSchemaPath().get());
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BaseEffectiveStatement) {
-                final QName identityQName = ((BaseEffectiveStatement) stmt).argument();
+        if (substatements.isEmpty()) {
+            throw noBase(stmt.sourceReference());
+        }
+
+        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(stmt.getSchemaPath());
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof BaseEffectiveStatement) {
+                final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
                 final StmtContext<?, IdentityStatement, IdentityEffectiveStatement> identityCtx =
-                        ctx.getFromNamespace(IdentityNamespace.class, identityQName);
+                        stmt.getFromNamespace(IdentityNamespace.class, identityQName);
                 builder.addIdentity((IdentitySchemaNode) identityCtx.buildEffective());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    @Override
-    protected final EffectiveStatement<String, IdentityRefSpecification> createEmptyEffective(
-            final StmtContext<String, IdentityRefSpecification,
-                EffectiveStatement<String, IdentityRefSpecification>> ctx,
-            final IdentityRefSpecification declared) {
-        throw noBase(ctx);
-    }
-
-    private static SourceException noBase(final StmtContext<?, ?, ?> ctx) {
+    private static SourceException noBase(final StatementSourceReference ref) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.10.2
          *
@@ -104,7 +100,6 @@ abstract class AbstractIdentityRefSpecificationSupport
          *     statement, MUST be present at least once if the type is
          *     "identityref".
          */
-        return new SourceException("At least one base statement has to be present",
-            ctx.getStatementSourceReference());
+        return new SourceException("At least one base statement has to be present", ref);
     }
 }
