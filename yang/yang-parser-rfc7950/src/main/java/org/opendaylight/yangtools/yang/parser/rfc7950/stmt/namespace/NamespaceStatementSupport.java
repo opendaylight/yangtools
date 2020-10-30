@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -62,16 +63,9 @@ public final class NamespaceStatementSupport
     }
 
     @Override
-    protected NamespaceEffectiveStatement createEffective(
-            final StmtContext<URI, NamespaceStatement, NamespaceEffectiveStatement> ctx,
-            final NamespaceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularNamespaceEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected NamespaceEffectiveStatement createEmptyEffective(
-            final StmtContext<URI, NamespaceStatement, NamespaceEffectiveStatement> ctx,
-            final NamespaceStatement declared) {
-        return new EmptyNamespaceEffectiveStatement(declared);
+    protected NamespaceEffectiveStatement createEffective(final Current<URI, NamespaceStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyNamespaceEffectiveStatement(stmt.declared())
+            : new RegularNamespaceEffectiveStatement(stmt.declared(), substatements);
     }
 }

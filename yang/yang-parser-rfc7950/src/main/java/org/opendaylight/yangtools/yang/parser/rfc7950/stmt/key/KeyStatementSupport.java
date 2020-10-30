@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -97,20 +98,17 @@ public final class KeyStatementSupport
     }
 
     @Override
-    protected KeyEffectiveStatement createEffective(
-            final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx, final KeyStatement declared,
+    protected KeyEffectiveStatement createEffective(final Current<Set<QName>, KeyStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final Set<QName> arg = ctx.coerceStatementArgument();
+        final Set<QName> arg = stmt.coerceArgument();
+        final KeyStatement declared = stmt.declared();
+        if (substatements.isEmpty()) {
+            return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
+                : new EmptyForeignKeyEffectiveStatement(declared, arg);
+        }
+
         return arg.equals(declared.argument()) ? new RegularLocalKeyEffectiveStatement(declared, substatements)
                 : new RegularForeignKeyEffectiveStatement(declared, arg, substatements);
-    }
-
-    @Override
-    protected KeyEffectiveStatement createEmptyEffective(
-            final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx, final KeyStatement declared) {
-        final Set<QName> arg = ctx.coerceStatementArgument();
-        return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
-                : new EmptyForeignKeyEffectiveStatement(declared, arg);
     }
 
     static @NonNull Object maskSet(final @NonNull Set<QName> set) {

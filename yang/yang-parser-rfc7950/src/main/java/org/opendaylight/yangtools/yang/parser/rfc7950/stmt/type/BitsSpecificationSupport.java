@@ -19,9 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class BitsSpecificationSupport
         extends BaseStatementSupport<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> {
@@ -52,25 +54,29 @@ final class BitsSpecificationSupport
 
     @Override
     protected BitsSpecification createEmptyDeclared(final StmtContext<String, BitsSpecification, ?> ctx) {
-        throw noBits(ctx);
+        throw noBits(ctx.getStatementSourceReference());
     }
 
     @Override
     protected EffectiveStatement<String, BitsSpecification> createEffective(
-            final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx,
-            final BitsSpecification declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
+            final Current<String, BitsSpecification> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noBits(stmt.sourceReference());
+        }
+
+        final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(stmt.getSchemaPath());
         Uint32 highestPosition = null;
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BitEffectiveStatement) {
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof BitEffectiveStatement) {
+                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) subStmt;
 
                 final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
                 final Uint32 effectivePos;
                 if (declaredPosition.isEmpty()) {
                     if (highestPosition != null) {
-                        SourceException.throwIf(Uint32.MAX_VALUE.equals(highestPosition),
-                            ctx.getStatementSourceReference(), "Bit %s must have a position statement", bitSubStmt);
+                        SourceException.throwIf(Uint32.MAX_VALUE.equals(highestPosition), stmt.sourceReference(),
+                            "Bit %s must have a position statement", bitSubStmt);
                         effectivePos = Uint32.fromIntBits(highestPosition.intValue() + 1);
                     } else {
                         effectivePos = Uint32.ZERO;
@@ -88,23 +94,16 @@ final class BitsSpecificationSupport
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    @Override
-    protected EffectiveStatement<String, BitsSpecification> createEmptyEffective(
-            final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx,
-            final BitsSpecification declared) {
-        throw noBits(ctx);
-    }
-
-    private static SourceException noBits(final StmtContext<?, ?, ?> ctx) {
+    private static SourceException noBits(final StatementSourceReference ref) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.7.4:
          *
          *     The "bit" statement, which is a substatement to the "type" statement,
          *     MUST be present if the type is "bits".
          */
-        return new SourceException("At least one bit statement has to be present", ctx.getStatementSourceReference());
+        return new SourceException("At least one bit statement has to be present", ref);
     }
 }

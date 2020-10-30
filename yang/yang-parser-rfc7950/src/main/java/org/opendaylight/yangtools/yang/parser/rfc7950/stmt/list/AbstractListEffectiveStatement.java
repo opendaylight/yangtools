@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.UserOrderedMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.WhenConditionMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractListEffectiveStatement
@@ -51,14 +52,15 @@ abstract class AbstractListEffectiveStatement
     private final @NonNull SchemaPath path;
     private final @NonNull Object keyDefinition;
 
-    AbstractListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
-            final StmtContext<?, ?, ?> ctx, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    AbstractListEffectiveStatement(final Current<QName, ListStatement> stmt, final SchemaPath path,
+            final int flags, final StmtContext<?, ?, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
-        super(declared, ctx, substatements);
+        super(stmt.declared(), substatements, stmt.sourceReference());
 
-        EffectiveStmtUtils.checkUniqueGroupings(ctx, substatements);
-        EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements);
-        EffectiveStmtUtils.checkUniqueUses(ctx, substatements);
+        EffectiveStmtUtils.checkUniqueGroupings(ctx, substatements, stmt.sourceReference());
+        EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements, stmt.sourceReference());
+        EffectiveStmtUtils.checkUniqueUses(ctx, substatements, stmt.sourceReference());
 
         this.substatements = maskList(substatements);
         this.path = requireNonNull(path);
