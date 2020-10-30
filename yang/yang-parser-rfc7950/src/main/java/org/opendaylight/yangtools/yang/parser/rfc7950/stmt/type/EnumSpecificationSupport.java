@@ -19,9 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class EnumSpecificationSupport
         extends BaseStatementSupport<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> {
@@ -50,25 +52,29 @@ final class EnumSpecificationSupport
 
     @Override
     protected EnumSpecification createEmptyDeclared(final StmtContext<String, EnumSpecification, ?> ctx) {
-        throw noEnum(ctx);
+        throw noEnum(ctx.getStatementSourceReference());
     }
 
     @Override
     protected EffectiveStatement<String, EnumSpecification> createEffective(
-            final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx,
-            final EnumSpecification declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(ctx.getSchemaPath().get());
+            final Current<String, EnumSpecification> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noEnum(stmt.sourceReference());
+        }
+
+        final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.getSchemaPath());
         Integer highestValue = null;
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof EnumEffectiveStatement) {
-                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) stmt;
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof EnumEffectiveStatement) {
+                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) subStmt;
 
                 final Optional<Integer> declaredValue =
                         enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
                 final int effectiveValue;
                 if (declaredValue.isEmpty()) {
                     if (highestValue != null) {
-                        SourceException.throwIf(highestValue == 2147483647, ctx.getStatementSourceReference(),
+                        SourceException.throwIf(highestValue == 2147483647, stmt.sourceReference(),
                                 "Enum '%s' must have a value statement", enumSubStmt);
                         effectiveValue = highestValue + 1;
                     } else {
@@ -87,24 +93,17 @@ final class EnumSpecificationSupport
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    @Override
-    protected EffectiveStatement<String, EnumSpecification> createEmptyEffective(
-            final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx,
-            final EnumSpecification declared) {
-        throw noEnum(ctx);
-    }
-
-    private static SourceException noEnum(final StmtContext<?, ?, ?> ctx) {
+    private static SourceException noEnum(final StatementSourceReference ref) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.6.4
          *
          *     The "enum" statement, which is a substatement to the "type"
          *     statement, MUST be present if the type is "enumeration".
          */
-        return new SourceException("At least one enum statement has to be present", ctx.getStatementSourceReference());
+        return new SourceException("At least one enum statement has to be present", ref);
     }
 
 }

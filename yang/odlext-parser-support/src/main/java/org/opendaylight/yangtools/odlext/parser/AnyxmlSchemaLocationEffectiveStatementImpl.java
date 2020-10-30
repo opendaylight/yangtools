@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 @VisibleForTesting
 public final class AnyxmlSchemaLocationEffectiveStatementImpl
@@ -25,11 +25,11 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
         implements AnyxmlSchemaLocationEffectiveStatement {
     private final @NonNull SchemaPath path;
 
-    AnyxmlSchemaLocationEffectiveStatementImpl(final AnyxmlSchemaLocationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
-        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    AnyxmlSchemaLocationEffectiveStatementImpl(
+            final Current<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, substatements);
+        path = stmt.getSchemaPath();
     }
 
     @Override

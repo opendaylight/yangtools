@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -107,15 +108,13 @@ public final class StatusStatementSupport
     }
 
     @Override
-    protected StatusEffectiveStatement createEffective(
-            final StmtContext<Status, StatusStatement, StatusEffectiveStatement> ctx, final StatusStatement declared,
+    protected StatusEffectiveStatement createEffective(final Current<Status, StatusStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularStatusEffectiveStatement(declared, substatements);
+        return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
+            : new RegularStatusEffectiveStatement(stmt.declared(), substatements);
     }
 
-    @Override
-    protected StatusEffectiveStatement createEmptyEffective(
-            final StmtContext<Status, StatusStatement, StatusEffectiveStatement> ctx, final StatusStatement declared) {
+    private static @NonNull StatusEffectiveStatement createEmptyEffective(final StatusStatement declared) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.
         if (EMPTY_DEPRECATED_DECL.equals(declared)) {

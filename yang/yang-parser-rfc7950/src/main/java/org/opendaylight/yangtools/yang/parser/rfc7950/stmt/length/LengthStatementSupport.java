@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -95,17 +96,10 @@ public final class LengthStatementSupport
     }
 
     @Override
-    protected LengthEffectiveStatement createEffective(
-            final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
-            final LengthStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularLengthEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected LengthEffectiveStatement createEmptyEffective(
-            final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
-            final LengthStatement declared) {
-        return new EmptyLengthEffectiveStatement(declared);
+    protected LengthEffectiveStatement createEffective(final Current<List<ValueRange>, LengthStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyLengthEffectiveStatement(stmt.declared())
+            : new RegularLengthEffectiveStatement(stmt.declared(), substatements);
     }
 
     private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {

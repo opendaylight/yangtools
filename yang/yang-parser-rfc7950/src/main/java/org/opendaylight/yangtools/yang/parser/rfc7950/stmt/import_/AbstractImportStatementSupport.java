@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveState
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -106,34 +108,30 @@ abstract class AbstractImportStatementSupport
     }
 
     @Override
-    protected final ImportEffectiveStatement createEffective(
-            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final ImportStatement declared,
+    protected final ImportEffectiveStatement createEffective(final Current<String, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        checkState(!substatements.isEmpty(), "Unexpected empty effective import statement");
 
+        final ImportStatement declared = stmt.declared();
         final String prefix = declared.getPrefix().getValue();
         final SemVer semVer;
         final Revision revision;
-        if (!ctx.isEnabledSemanticVersioning()) {
+        final var rabbit = stmt.caerbannog();
+        if (!rabbit.isEnabledSemanticVersioning()) {
             final Optional<Revision> optRev = substatements.stream()
                     .filter(RevisionDateEffectiveStatement.class::isInstance)
                     .findFirst()
-                    .map(stmt -> ((RevisionDateEffectiveStatement) stmt).argument());
-            revision = optRev.isPresent() ? optRev.get() : getImportedRevision(ctx, declared.getModule(), prefix);
+                    .map(subStmt -> ((RevisionDateEffectiveStatement) subStmt).argument());
+            revision = optRev.isPresent() ? optRev.get() : getImportedRevision(rabbit, declared.getModule(), prefix);
             semVer = null;
         } else {
-            final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
-                ImportPrefixToSemVerSourceIdentifier.class, prefix);
+            final SemVerSourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
+                    ImportPrefixToSemVerSourceIdentifier.class, prefix);
             revision = importedModuleIdentifier.getRevision().orElse(null);
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
         return new ImportEffectiveStatementImpl(declared, substatements, revision, semVer);
-    }
-
-    @Override
-    protected final ImportEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final ImportStatement declared) {
-        throw new IllegalStateException("Unexpected empty effective import statement");
     }
 
     private static Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx,
