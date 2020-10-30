@@ -281,7 +281,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     static final class StorageSpecific<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
-        StorageNodeType storageType;
+        private final StorageNodeType storageType;
 
         StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
             super(identifier);
