@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -968,22 +968,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return true;
         }
 
-        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-            ConfigStatement.class);
-        final boolean isConfig;
-        if (configStatement != null) {
-            isConfig = configStatement.coerceStatementArgument();
-            if (isConfig) {
+        Optional<Boolean> optConfig = findSubstatementArgument(ConfigEffectiveStatement.class);
+        if (optConfig.isPresent()) {
+            if (optConfig.orElseThrow()) {
                 // Validity check: if parent is config=false this cannot be a config=true
                 InferenceException.throwIf(!parent.isConfiguration(), getStatementSourceReference(),
                         "Parent node has config=false, this node must not be specifed as config=true");
             }
         } else {
             // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parent.isConfiguration();
+            optConfig = Optional.of(parent.isConfiguration());
         }
 
         // Resolved, make sure we cache this return
+        final boolean isConfig = optConfig.get();
         flags |= isConfig ? SET_CONFIGURATION : HAVE_CONFIGURATION;
         return isConfig;
     }
