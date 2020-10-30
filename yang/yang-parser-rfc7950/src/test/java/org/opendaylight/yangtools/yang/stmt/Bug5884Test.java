@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertNotNull;
 
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -47,9 +49,9 @@ public class Bug5884Test {
 
     private static void testIterator(final Iterator<? extends AugmentationSchemaNode> iterator) {
         while (iterator.hasNext()) {
-            AugmentationSchemaNode allAugments = iterator.next();
-            final DataSchemaNode currentChoice = allAugments.getChildNodes().iterator().next();
-            assertThat(currentChoice, isA(CaseSchemaNode.class));
+            final AugmentationSchemaNode augmentation = iterator.next();
+            final DataSchemaNode currentChoice = augmentation.getChildNodes().iterator().next();
+            assertThat(currentChoice, anyOf(isA(LeafSchemaNode.class), isA(CaseSchemaNode.class)));
         }
     }
 }

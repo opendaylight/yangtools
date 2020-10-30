@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractRefineStatementSupport
@@ -44,18 +45,10 @@ abstract class AbstractRefineStatementSupport
     }
 
     @Override
-    protected final RefineEffectiveStatement createEffective(
-            final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx,
-            final RefineStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RefineEffectiveStatementImpl(declared, substatements, ctx.getSchemaPath().get(),
-            (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective());
-    }
-
-    @Override
-    protected final RefineEffectiveStatement createEmptyEffective(
-            final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx,
-            final RefineStatement declared) {
+    protected final RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.getSchemaPath(),
+                (SchemaNode) stmt.caerbannog().getEffectOfStatement().iterator().next().buildEffective());
     }
 }

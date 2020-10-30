@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiv
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -140,12 +141,19 @@ public final class UsesStatementSupport
     }
 
     @Override
-    protected UsesEffectiveStatement createEffective(
-            final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx, final UsesStatement declared,
+    protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final GroupingDefinition sourceGrouping = getSourceGrouping(ctx);
-        final int flags = historyAndStatusFlags(ctx, substatements);
-        final QName argument = ctx.coerceStatementArgument();
+        final GroupingDefinition sourceGrouping = getSourceGrouping(stmt);
+        final int flags = historyAndStatusFlags(stmt.history(), substatements);
+        final QName argument = stmt.coerceArgument();
+        final UsesStatement declared = stmt.declared();
+
+        if (substatements.isEmpty()) {
+            return argument.equals(declared.argument())
+                ? new EmptyLocalUsesEffectiveStatement(declared, sourceGrouping, flags)
+                        : new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags);
+        }
+
         if (declared.argument().equals(argument)) {
             return new RegularLocalUsesEffectiveStatement(declared, sourceGrouping, flags, substatements);
         }
@@ -153,17 +161,6 @@ public final class UsesStatementSupport
             return new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags, substatements);
         }
         return new FullCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags, substatements);
-    }
-
-    @Override
-    protected UsesEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx, final UsesStatement declared) {
-        final GroupingDefinition sourceGrouping = getSourceGrouping(ctx);
-        final int flags = historyAndStatusFlags(ctx, ImmutableList.of());
-        final QName argument = ctx.coerceStatementArgument();
-        return argument.equals(declared.argument())
-                ? new EmptyLocalUsesEffectiveStatement(declared, sourceGrouping, flags)
-                        : new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags);
     }
 
     static @NonNull ImmutableMap<Descendant, SchemaNode> indexRefines(
@@ -180,8 +177,8 @@ public final class UsesStatementSupport
         return ImmutableMap.copyOf(refines);
     }
 
-    private static GroupingDefinition getSourceGrouping(final StmtContext<QName, ?, ?> ctx) {
-        return (GroupingDefinition) ctx.getFromNamespace(GroupingNamespace.class, ctx.coerceStatementArgument())
+    private static GroupingDefinition getSourceGrouping(final Current<QName, ?> stmt) {
+        return (GroupingDefinition) stmt.getFromNamespace(GroupingNamespace.class, stmt.coerceArgument())
                 .buildEffective();
     }
 

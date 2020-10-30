@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModu
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -57,18 +58,19 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final @NonNull QNameModule qnameModule;
     private final ImmutableList<Submodule> submodules;
 
-    ModuleEffectiveStatementImpl(final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    ModuleEffectiveStatementImpl(final Current<UnqualifiedQName, ModuleStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules) {
-        super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.coerceRawStatementArgument()));
+        super(stmt, substatements, findPrefix(stmt.caerbannog(), "module",
+            stmt.caerbannog().coerceRawStatementArgument()));
 
-        qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
+        qnameModule = verifyNotNull(stmt.getFromNamespace(ModuleCtxToModuleQName.class, stmt.caerbannog()));
         this.submodules = ImmutableList.copyOf(submodules);
 
         final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
         prefixToModuleBuilder.put(localPrefix, this);
-        appendPrefixes(ctx, prefixToModuleBuilder);
+        appendPrefixes(stmt, prefixToModuleBuilder);
         prefixToModule = prefixToModuleBuilder.build();
 
         final Map<QNameModule, String> tmp = Maps.newLinkedHashMapWithExpectedSize(prefixToModule.size() + 1);
@@ -79,21 +81,21 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
         final Map<String, StmtContext<?, ?, ?>> includedSubmodules =
-                ctx.getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
+                stmt.getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
         final Map<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>> extensions =
-                ctx.getAllFromCurrentStmtCtxNamespace(ExtensionNamespace.class);
+                stmt.getAllFromCurrentStmtCtxNamespace(ExtensionNamespace.class);
         qnameToExtension = extensions == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(extensions, StmtContext::buildEffective));
         final Map<QName, StmtContext<?, FeatureStatement, FeatureEffectiveStatement>> features =
-                ctx.getAllFromCurrentStmtCtxNamespace(FeatureNamespace.class);
+                stmt.getAllFromCurrentStmtCtxNamespace(FeatureNamespace.class);
         qnameToFeature = features == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(features, StmtContext::buildEffective));
         final Map<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> identities =
-                ctx.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
+                stmt.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
         qnameToIdentity = identities == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
     }

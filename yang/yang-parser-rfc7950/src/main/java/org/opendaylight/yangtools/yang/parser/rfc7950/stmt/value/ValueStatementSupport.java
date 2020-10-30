@@ -60,14 +60,13 @@ public final class ValueStatementSupport
     }
 
     @Override
-    protected ValueEffectiveStatement createEmptyEffective(@NonNull final ValueStatement declared) {
-        return new EmptyValueEffectiveStatement(declared);
+    protected ValueEffectiveStatement createEffective(final ValueStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularValueEffectiveStatement(declared, substatements);
     }
 
     @Override
-    protected ValueEffectiveStatement createEffective(
-            final StmtContext<Integer, ValueStatement, ValueEffectiveStatement> ctx, final ValueStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularValueEffectiveStatement(declared, substatements);
+    protected ValueEffectiveStatement createEmptyEffective(@NonNull final ValueStatement declared) {
+        return new EmptyValueEffectiveStatement(declared);
     }
 }

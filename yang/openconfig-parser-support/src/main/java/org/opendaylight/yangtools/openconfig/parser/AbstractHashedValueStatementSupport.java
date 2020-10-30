@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,13 +49,11 @@ abstract class AbstractHashedValueStatementSupport
         private final @NonNull StatementDefinition definition;
         private final SchemaPath path;
 
-        Effective(final OpenConfigHashedValueStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
-            super(declared.argument(), declared, substatements, ctx);
-            definition = ctx.getPublicDefinition();
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                ctx.getPublicDefinition().getStatementName());
+        Effective(final Current<Void, OpenConfigHashedValueStatement> stmt,
+                  final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(stmt, substatements);
+            definition = stmt.publicDefinition();
+            path = stmt.getSchemaPath();
         }
 
         @Override
@@ -100,17 +99,10 @@ abstract class AbstractHashedValueStatementSupport
     }
 
     @Override
-    protected final OpenConfigHashedValueEffectiveStatement createEffective(
-            final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
-            final OpenConfigHashedValueStatement declared,
+    protected OpenConfigHashedValueEffectiveStatement createEffective(
+            final Current<Void, OpenConfigHashedValueStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+        return new Effective(stmt, substatements);
     }
 
-    @Override
-    protected final OpenConfigHashedValueEffectiveStatement createEmptyEffective(
-            final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
-            final OpenConfigHashedValueStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
-    }
 }
