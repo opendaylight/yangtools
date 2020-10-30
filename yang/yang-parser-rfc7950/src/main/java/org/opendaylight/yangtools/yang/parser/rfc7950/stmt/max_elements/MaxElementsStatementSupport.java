@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -55,17 +56,9 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
-    protected MaxElementsEffectiveStatement createEffective(
-            final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx,
-            final MaxElementsStatement declared,
+    protected MaxElementsEffectiveStatement createEffective(final Current<String, MaxElementsStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularMaxElementsEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected MaxElementsEffectiveStatement createEmptyEffective(
-            final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx,
-            final MaxElementsStatement declared) {
-        return new EmptyMaxElementsEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyMaxElementsEffectiveStatement(stmt.declared())
+            : new RegularMaxElementsEffectiveStatement(stmt.declared(), substatements);
     }
 }

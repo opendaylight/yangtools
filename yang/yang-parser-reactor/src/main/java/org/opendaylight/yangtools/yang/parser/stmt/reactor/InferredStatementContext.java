@@ -269,6 +269,17 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
     }
 
+    @Override
+    Stream<? extends StmtContext<?, ?, ?>> streamDeclared() {
+        return Stream.empty();
+    }
+
+    @Override
+    Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
+        // FIXME: YANGTOOLS-1184: do not force initialization
+        return ensureEffectiveSubstatements().stream();
+    }
+
     private List<StatementContextBase<?, ?, ?>> initializeSubstatements(
             final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
