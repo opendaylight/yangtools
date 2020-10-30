@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -56,15 +57,8 @@ public final class AliasStatementSupport
     }
 
     @Override
-    protected AliasEffectiveStatement createEffective(
-            final StmtContext<String, AliasStatement, AliasEffectiveStatement> ctx, final AliasStatement declared,
+    protected AliasEffectiveStatement createEffective(final Current<String, AliasStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AliasEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected AliasEffectiveStatement createEmptyEffective(
-            final StmtContext<String, AliasStatement, AliasEffectiveStatement> ctx, final AliasStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new AliasEffectiveStatementImpl(stmt, substatements);
     }
 }

@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -67,16 +68,8 @@ public final class MaxAccessStatementSupport
     }
 
     @Override
-    protected MaxAccessEffectiveStatement createEffective(
-            final StmtContext<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> ctx,
-            final MaxAccessStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MaxAccessEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected MaxAccessEffectiveStatement createEmptyEffective(
-            final StmtContext<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> ctx,
-            final MaxAccessStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected MaxAccessEffectiveStatement createEffective(final Current<MaxAccess, MaxAccessStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new MaxAccessEffectiveStatementImpl(stmt, substatements);
     }
 }

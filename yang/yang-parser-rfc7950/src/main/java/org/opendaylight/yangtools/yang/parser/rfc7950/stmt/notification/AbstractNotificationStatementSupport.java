@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractNotificationStatementSupport
@@ -35,22 +36,13 @@ abstract class AbstractNotificationStatementSupport
     }
 
     @Override
-    protected final NotificationEffectiveStatement createEffective(
-            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final NotificationStatement declared,
+    protected final NotificationEffectiveStatement createEffective(final Current<QName, NotificationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        checkEffective(ctx);
+        checkEffective(stmt);
 
-        return new NotificationEffectiveStatementImpl(declared, historyAndStatusFlags(ctx, substatements), ctx,
-            substatements);
+        return new NotificationEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(),
+                historyAndStatusFlags(stmt.history(), substatements), stmt.getSchemaPath());
     }
 
-    @Override
-    protected final NotificationEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final NotificationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
-    }
-
-    abstract void checkEffective(StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx);
+    abstract void checkEffective(Current<QName, NotificationStatement> stmt);
 }

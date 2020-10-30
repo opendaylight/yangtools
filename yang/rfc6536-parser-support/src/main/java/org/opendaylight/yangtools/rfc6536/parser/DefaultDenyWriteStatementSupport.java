@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -38,12 +39,10 @@ public final class DefaultDenyWriteStatementSupport
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final DefaultDenyWriteStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
-            super(declared.argument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                ctx.getPublicDefinition().getStatementName());
+        Effective(final Current<Void, DefaultDenyWriteStatement> stmt,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(stmt, substatements);
+            path = stmt.getSchemaPath();
         }
 
         @Override
@@ -94,17 +93,8 @@ public final class DefaultDenyWriteStatementSupport
     }
 
     @Override
-    protected DefaultDenyWriteEffectiveStatement createEffective(
-            final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
-            final DefaultDenyWriteStatement declared,
+    protected DefaultDenyWriteEffectiveStatement createEffective(final Current<Void, DefaultDenyWriteStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
-    }
-
-    @Override
-    protected DefaultDenyWriteEffectiveStatement createEmptyEffective(
-            final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
-            final DefaultDenyWriteStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new Effective(stmt, substatements);
     }
 }

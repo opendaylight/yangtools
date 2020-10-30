@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -561,8 +562,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(this);
+        return effectiveInstance = definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this),
+            streamDeclared(), streamEffective());
     }
+
+    abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
+
+    abstract Stream<? extends StmtContext<?, ?, ?>> streamEffective();
 
     /**
      * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
