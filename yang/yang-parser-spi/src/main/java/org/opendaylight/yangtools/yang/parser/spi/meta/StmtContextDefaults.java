@@ -26,7 +26,7 @@ public final class StmtContextDefaults {
      * @param <A> Substatement argument type
      * @param <E> Substatement effective statement representation
      * @param stmt Statement context to search
-     * @param type Effective statement representation being look up
+     * @param type Effective statement representation being looked up
      * @return Effective statement argument, if found
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -39,10 +39,30 @@ public final class StmtContextDefaults {
     }
 
     /**
+     * Default implementation of {@link StmtContext#findSubstatementArgument(Class)}. See that method for API contract.
+     *
+     * @param <A> Substatement argument type
+     * @param <E> Substatement effective statement representation
+     * @param stmt Statement context to search
+     * @param type Effective statement representation being looked up
+     * @param argument Effective statement argument being looked up
+     * @return Effective statement argument, if found
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static <A, E extends EffectiveStatement<A, ?>>
+            @NonNull Optional<? extends StmtContext<?, ?, ?>> findSubstatementWithArgument(
+                final @NonNull StmtContext<?, ?, ?> stmt, final @NonNull Class<E> type, final @NonNull A argument) {
+        return stmt.allSubstatementsStream()
+                .filter(ctx -> ctx.isSupportedToBuildEffective() && ((StmtContext) ctx).producesEffective(type)
+                    && argument.equals(ctx.getStatementArgument()))
+                .findAny();
+    }
+
+    /**
      * Default implementation of {@link StmtContext#hasSubstatement(Class)}. See that method for API contract.
      *
      * @param stmt Statement context to search
-     * @param type Effective statement representation being look up
+     * @param type Effective statement representation being looked up
      * @return True if a match is found, false otherwise
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })

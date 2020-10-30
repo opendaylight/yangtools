@@ -404,12 +404,32 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @param <X> Substatement argument type
      * @param <Z> Substatement effective statement representation
-     * @param type Effective statement representation being look up
+     * @param type Effective statement representation being looked up
      * @return {@link Optional#empty()} if no statement exists, otherwise the argument value
      */
     default <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
         return StmtContextDefaults.findSubstatementArgument(this, type);
+    }
+
+    /**
+     * Find the (only) {@link StmtContext} which produces specified {@link EffectiveStatement} with specified argument.
+     *
+     * <p>
+     * The default implementation defers to
+     * {@link StmtContextDefaults#findSubstatementArgument(StmtContext, Class)}, subclasses are expected to provide
+     * optimized implementation if possible.
+     *
+     * @param <X> Substatement argument type
+     * @param <Z> Substatement effective statement representation
+     * @param type Effective statement representation being looked up
+     * @param argument Effective statement argument being looked up
+     * @return Optional containing the target substatement, or empty if no such statement exists.
+     */
+    default <X, Z extends EffectiveStatement<X, ?>>
+            @NonNull Optional<? extends StmtContext<?, ?, ?>> findSubstatementWithArgument(
+                final @NonNull Class<Z> type, final @NonNull X argument) {
+        return StmtContextDefaults.findSubstatementWithArgument(this, type, argument);
     }
 
     /**
@@ -419,7 +439,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * The default implementation defers to {@link StmtContextDefaults#hasSubstatement(StmtContext, Class)},
      * subclasses are expected to provide optimized implementation if possible.
      *
-     * @param type Effective statement representation being look up
+     * @param type Effective statement representation being looked up
      * @return True if such a child statement exists, false otherwise
      */
     default boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
