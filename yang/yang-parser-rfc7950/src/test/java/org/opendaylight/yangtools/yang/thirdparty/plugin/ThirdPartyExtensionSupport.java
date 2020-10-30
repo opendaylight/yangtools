@@ -56,15 +56,16 @@ public final class ThirdPartyExtensionSupport
     @Override
     protected ThirdPartyExtensionEffectiveStatement createEffective(
             final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
-            final ThirdPartyExtensionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ThirdPartyExtensionEffectiveStatementImpl(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ThirdPartyExtensionStatement> stmt) {
+        return new ThirdPartyExtensionEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected ThirdPartyExtensionEffectiveStatement createEmptyEffective(
             final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
-            final ThirdPartyExtensionStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent,
+            final EffectiveStatementState<String, ThirdPartyExtensionStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

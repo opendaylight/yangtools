@@ -65,14 +65,15 @@ public final class WhenStatementSupport
     @Override
     protected WhenEffectiveStatement createEffective(
             final StmtContext<QualifiedBound, WhenStatement, WhenEffectiveStatement> ctx,
-            final WhenStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularWhenEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QualifiedBound, WhenStatement> stmt) {
+        return new RegularWhenEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected WhenEffectiveStatement createEmptyEffective(
             final StmtContext<QualifiedBound, WhenStatement, WhenEffectiveStatement> ctx,
-            final WhenStatement declared) {
-        return new EmptyWhenEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QualifiedBound, WhenStatement> stmt) {
+        return new EmptyWhenEffectiveStatement(stmt.declared());
     }
 }

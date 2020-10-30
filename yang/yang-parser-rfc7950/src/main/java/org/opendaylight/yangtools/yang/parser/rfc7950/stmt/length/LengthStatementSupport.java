@@ -96,15 +96,16 @@ public final class LengthStatementSupport
     @Override
     protected LengthEffectiveStatement createEffective(
             final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
-            final LengthStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularLengthEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<List<ValueRange>, LengthStatement> stmt) {
+        return new RegularLengthEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected LengthEffectiveStatement createEmptyEffective(
             final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
-            final LengthStatement declared) {
-        return new EmptyLengthEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<List<ValueRange>, LengthStatement> stmt) {
+        return new EmptyLengthEffectiveStatement(stmt.declared());
     }
 
     private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {

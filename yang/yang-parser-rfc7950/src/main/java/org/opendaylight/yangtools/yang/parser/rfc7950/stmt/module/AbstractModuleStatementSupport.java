@@ -174,9 +174,10 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    protected final ModuleEffectiveStatement createEffective(
+    protected ModuleEffectiveStatement createEffective(
             final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<UnqualifiedQName, ModuleStatement> stmt) {
         final List<Submodule> submodules = new ArrayList<>();
         for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(ctx)) {
             final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
@@ -184,13 +185,13 @@ abstract class AbstractModuleStatementSupport
             submodules.add((Submodule) submodule);
         }
 
-        return new ModuleEffectiveStatementImpl(ctx, declared, substatements, submodules);
+        return new ModuleEffectiveStatementImpl(ctx, stmt, substatements, submodules);
     }
 
     @Override
     protected final ModuleEffectiveStatement createEmptyEffective(
             final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<UnqualifiedQName, ModuleStatement> stmt) {
         throw noNamespace(ctx);
     }
 

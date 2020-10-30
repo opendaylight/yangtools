@@ -44,18 +44,19 @@ abstract class AbstractRefineStatementSupport
     }
 
     @Override
-    protected final RefineEffectiveStatement createEffective(
+    protected RefineEffectiveStatement createEffective(
             final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx,
-            final RefineStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RefineEffectiveStatementImpl(declared, substatements, ctx.getSchemaPath().get(),
-            (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective());
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Descendant, RefineStatement> stmt) {
+        return new RefineEffectiveStatementImpl(stmt.declared(), substatements, ctx.getSchemaPath().get(),
+                (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective());
     }
 
     @Override
     protected final RefineEffectiveStatement createEmptyEffective(
             final StmtContext<Descendant, RefineStatement, RefineEffectiveStatement> ctx,
-            final RefineStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<Descendant, RefineStatement> stmt) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return createEffective(ctx, declared, ImmutableList.of());
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

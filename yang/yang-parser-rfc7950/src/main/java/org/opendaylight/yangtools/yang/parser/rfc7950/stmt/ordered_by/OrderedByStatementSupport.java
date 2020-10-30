@@ -94,17 +94,18 @@ public final class OrderedByStatementSupport
     @Override
     protected OrderedByEffectiveStatement createEffective(
             final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
-            final OrderedByStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularOrderedByEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Ordering, OrderedByStatement> stmt) {
+        return new RegularOrderedByEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected OrderedByEffectiveStatement createEmptyEffective(
             final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
-            final OrderedByStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<Ordering, OrderedByStatement> stmt) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.
+        final OrderedByStatement declared = stmt.declared();
         if (EMPTY_USER_DECL.equals(declared)) {
             // Most likely to be seen (as system is the default)
             return EMPTY_USER_EFF;

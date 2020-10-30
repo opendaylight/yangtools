@@ -106,10 +106,11 @@ abstract class AbstractImportStatementSupport
     }
 
     @Override
-    protected final ImportEffectiveStatement createEffective(
-            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final ImportStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-
+    protected ImportEffectiveStatement createEffective(
+            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ImportStatement> stmt) {
+        final ImportStatement declared = stmt.declared();
         final String prefix = declared.getPrefix().getValue();
         final SemVer semVer;
         final Revision revision;
@@ -117,12 +118,12 @@ abstract class AbstractImportStatementSupport
             final Optional<Revision> optRev = substatements.stream()
                     .filter(RevisionDateEffectiveStatement.class::isInstance)
                     .findFirst()
-                    .map(stmt -> ((RevisionDateEffectiveStatement) stmt).argument());
+                    .map(subStmt -> ((RevisionDateEffectiveStatement) subStmt).argument());
             revision = optRev.isPresent() ? optRev.get() : getImportedRevision(ctx, declared.getModule(), prefix);
             semVer = null;
         } else {
-            final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
-                ImportPrefixToSemVerSourceIdentifier.class, prefix);
+            final SemVerSourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
+                    ImportPrefixToSemVerSourceIdentifier.class, prefix);
             revision = importedModuleIdentifier.getRevision().orElse(null);
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
@@ -132,7 +133,8 @@ abstract class AbstractImportStatementSupport
 
     @Override
     protected final ImportEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final ImportStatement declared) {
+            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ImportStatement> stmt) {
         throw new IllegalStateException("Unexpected empty effective import statement");
     }
 

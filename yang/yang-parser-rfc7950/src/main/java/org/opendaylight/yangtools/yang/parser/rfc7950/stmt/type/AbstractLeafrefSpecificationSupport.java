@@ -43,27 +43,27 @@ abstract class AbstractLeafrefSpecificationSupport
     }
 
     @Override
-    protected final EffectiveStatement<String, LeafrefSpecification> createEffective(
+    protected EffectiveStatement<String, LeafrefSpecification> createEffective(
             final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx,
-            final LeafrefSpecification declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, LeafrefSpecification> stmt) {
         final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(ctx.getSchemaPath().get());
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof PathEffectiveStatement) {
-                builder.setPathStatement(((PathEffectiveStatement) stmt).argument());
-            } else if (stmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof PathEffectiveStatement) {
+                builder.setPathStatement(((PathEffectiveStatement) subStmt).argument());
+            } else if (subStmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement)subStmt).argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected final EffectiveStatement<String, LeafrefSpecification> createEmptyEffective(
             final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx,
-            final LeafrefSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, LeafrefSpecification> stmt) {
         throw noPath(ctx);
     }
 

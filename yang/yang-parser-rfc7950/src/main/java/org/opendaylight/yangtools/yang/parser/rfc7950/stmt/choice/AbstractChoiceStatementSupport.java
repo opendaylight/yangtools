@@ -57,9 +57,10 @@ abstract class AbstractChoiceStatementSupport
     }
 
     @Override
-    protected final ChoiceEffectiveStatement createEffective(
+    protected ChoiceEffectiveStatement createEffective(
             final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
-            final ChoiceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ChoiceStatement> stmt) {
         final String defaultArg = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         final CaseSchemaNode defaultCase;
         if (defaultArg != null) {
@@ -67,32 +68,33 @@ abstract class AbstractChoiceStatementSupport
             try {
                 qname = QName.create(ctx.coerceStatementArgument(), defaultArg);
             } catch (IllegalArgumentException e) {
-                throw new SourceException(ctx.getStatementSourceReference(), "Default statement has invalid name '%s'",
-                    defaultArg, e);
+                throw new SourceException(stmt.sourceReference(), "Default statement has invalid name '%s'",
+                        defaultArg, e);
             }
 
             // FIXME: this does not work with submodules, as they are
             defaultCase = InferenceException.throwIfNull(findCase(qname, substatements),
-                ctx.getStatementSourceReference(), "Default statement refers to missing case %s", qname);
+                    stmt.sourceReference(), "Default statement refers to missing case %s", qname);
         } else {
             defaultCase = null;
         }
 
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(ctx.isConfiguration())
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
 
-        return new ChoiceEffectiveStatementImpl(declared, ctx, substatements, flags, defaultCase,
-            (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
+        return new ChoiceEffectiveStatementImpl(stmt, ctx, substatements, flags, defaultCase,
+                (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
     }
 
     @Override
     protected final ChoiceEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx, final ChoiceStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ChoiceStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 
     abstract StatementSupport<?, ?, ?> implictCase();

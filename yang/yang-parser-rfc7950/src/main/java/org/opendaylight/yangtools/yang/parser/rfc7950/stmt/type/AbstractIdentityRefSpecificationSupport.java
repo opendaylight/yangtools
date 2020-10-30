@@ -70,29 +70,30 @@ abstract class AbstractIdentityRefSpecificationSupport
     }
 
     @Override
-    protected final EffectiveStatement<String, IdentityRefSpecification> createEffective(
+    protected EffectiveStatement<String, IdentityRefSpecification> createEffective(
             final StmtContext<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> ctx,
-            final IdentityRefSpecification declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, IdentityRefSpecification> stmt) {
+
         final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(ctx.getSchemaPath().get());
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BaseEffectiveStatement) {
-                final QName identityQName = ((BaseEffectiveStatement) stmt).argument();
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof BaseEffectiveStatement) {
+                final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
                 final StmtContext<?, IdentityStatement, IdentityEffectiveStatement> identityCtx =
-                        ctx.getFromNamespace(IdentityNamespace.class, identityQName);
+                        stmt.getFromNamespace(IdentityNamespace.class, identityQName);
                 builder.addIdentity((IdentitySchemaNode) identityCtx.buildEffective());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected final EffectiveStatement<String, IdentityRefSpecification> createEmptyEffective(
             final StmtContext<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> ctx,
-            final IdentityRefSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, IdentityRefSpecification> stmt) {
         throw noBase(ctx);
     }
 

@@ -57,26 +57,26 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
     @Override
     protected EffectiveStatement<String, Decimal64Specification> createEffective(
             final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx,
-            final Decimal64Specification declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, Decimal64Specification> stmt) {
         final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(ctx.getSchemaPath().get());
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof FractionDigitsEffectiveStatement) {
-                builder.setFractionDigits(((FractionDigitsEffectiveStatement) stmt).argument());
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof FractionDigitsEffectiveStatement) {
+                builder.setFractionDigits(((FractionDigitsEffectiveStatement) subStmt).argument());
             }
-            if (stmt instanceof RangeEffectiveStatement) {
-                final RangeEffectiveStatement range = (RangeEffectiveStatement) stmt;
+            if (subStmt instanceof RangeEffectiveStatement) {
+                final RangeEffectiveStatement range = (RangeEffectiveStatement) subStmt;
                 builder.setRangeConstraint(range, range.argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected EffectiveStatement<String, Decimal64Specification> createEmptyEffective(
             final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx,
-            final Decimal64Specification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, Decimal64Specification> stmt) {
         throw noFracDigits(ctx);
     }
 

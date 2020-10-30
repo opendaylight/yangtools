@@ -57,27 +57,27 @@ final class InstanceIdentifierSpecificationSupport extends BaseStatementSupport<
     @Override
     protected EffectiveStatement<String, InstanceIdentifierSpecification> createEffective(
             final StmtContext<String, InstanceIdentifierSpecification,
-                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx,
-            final InstanceIdentifierSpecification declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                    EffectiveStatement<String, InstanceIdentifierSpecification>> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, InstanceIdentifierSpecification> stmt) {
         final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(
-            BaseTypes.instanceIdentifierType(), ctx.getSchemaPath().get());
+                BaseTypes.instanceIdentifierType(), ctx.getSchemaPath().get());
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+        for (EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement)subStmt).argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected EffectiveStatement<String, InstanceIdentifierSpecification> createEmptyEffective(
             final StmtContext<String, InstanceIdentifierSpecification,
-                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx,
-            final InstanceIdentifierSpecification declared) {
+                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, InstanceIdentifierSpecification> stmt) {
         // TODO: we could do better here, but its really splitting hairs
-        return createEffective(ctx, declared, ImmutableList.of());
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

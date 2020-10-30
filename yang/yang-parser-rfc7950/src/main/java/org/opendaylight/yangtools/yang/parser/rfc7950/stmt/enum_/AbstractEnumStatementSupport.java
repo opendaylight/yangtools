@@ -40,15 +40,17 @@ abstract class AbstractEnumStatementSupport
     }
 
     @Override
-    protected final EnumEffectiveStatement createEffective(
-            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EnumStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularEnumEffectiveStatement(declared, substatements);
+    protected EnumEffectiveStatement createEffective(
+            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, EnumStatement> stmt) {
+        return new RegularEnumEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected final EnumEffectiveStatement createEmptyEffective(
-            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EnumStatement declared) {
-        return new EmptyEnumEffectiveStatement(declared);
+            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, EnumStatement> stmt) {
+        return new EmptyEnumEffectiveStatement(stmt.declared());
     }
 }

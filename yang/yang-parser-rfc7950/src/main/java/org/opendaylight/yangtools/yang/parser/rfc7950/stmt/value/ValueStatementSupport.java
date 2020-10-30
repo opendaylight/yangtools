@@ -66,8 +66,9 @@ public final class ValueStatementSupport
 
     @Override
     protected ValueEffectiveStatement createEffective(
-            final StmtContext<Integer, ValueStatement, ValueEffectiveStatement> ctx, final ValueStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularValueEffectiveStatement(declared, substatements);
+            final StmtContext<Integer, ValueStatement, ValueEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Integer, ValueStatement> stmt) {
+        return new RegularValueEffectiveStatement(stmt.declared(), substatements);
     }
 }

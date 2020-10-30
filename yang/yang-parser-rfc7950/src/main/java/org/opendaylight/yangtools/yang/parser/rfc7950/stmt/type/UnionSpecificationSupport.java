@@ -55,22 +55,23 @@ final class UnionSpecificationSupport
     @Override
     protected EffectiveStatement<String, UnionSpecification> createEffective(
             final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx,
-            final UnionSpecification declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, UnionSpecification> stmt) {
         final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(ctx.getSchemaPath().get());
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof TypeEffectiveStatement) {
-                builder.addType(((TypeEffectiveStatement<?>)stmt).getTypeDefinition());
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof TypeEffectiveStatement) {
+                builder.addType(((TypeEffectiveStatement<?>)subStmt).getTypeDefinition());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected EffectiveStatement<String, UnionSpecification> createEmptyEffective(
             final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx,
-            final UnionSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, UnionSpecification> stmt) {
         throw noType(ctx);
     }
 

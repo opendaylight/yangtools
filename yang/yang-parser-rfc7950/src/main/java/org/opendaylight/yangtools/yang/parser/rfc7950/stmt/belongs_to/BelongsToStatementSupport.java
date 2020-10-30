@@ -93,18 +93,20 @@ public final class BelongsToStatementSupport
         return new EmptyBelongsToStatement(ctx.coerceRawStatementArgument());
     }
 
+
     @Override
     protected BelongsToEffectiveStatement createEffective(
             final StmtContext<String, BelongsToStatement, BelongsToEffectiveStatement> ctx,
-            final BelongsToStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularBelongsToEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, BelongsToStatement> stmt) {
+        return new RegularBelongsToEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected BelongsToEffectiveStatement createEmptyEffective(
             final StmtContext<String, BelongsToStatement, BelongsToEffectiveStatement> ctx,
-            final BelongsToStatement declared) {
-        return new EmptyBelongsToEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, BelongsToStatement> stmt) {
+        return new EmptyBelongsToEffectiveStatement(stmt.declared());
     }
 
     private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,

@@ -65,15 +65,15 @@ public final class OpenConfigVersionSupport
     @Override
     protected OpenConfigVersionEffectiveStatement createEffective(
             final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
-            final OpenConfigVersionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OpenConfigVersionEffectiveStatementImpl(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<SemVer, OpenConfigVersionStatement> stmt) {
+        return new OpenConfigVersionEffectiveStatementImpl(stmt, substatements, ctx, parent);
     }
 
     @Override
     protected OpenConfigVersionEffectiveStatement createEmptyEffective(
             final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
-            final OpenConfigVersionStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<SemVer, OpenConfigVersionStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

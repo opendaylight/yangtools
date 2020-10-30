@@ -56,12 +56,13 @@ final class EnumSpecificationSupport
     @Override
     protected EffectiveStatement<String, EnumSpecification> createEffective(
             final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx,
-            final EnumSpecification declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, EnumSpecification> stmt) {
         final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(ctx.getSchemaPath().get());
         Integer highestValue = null;
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof EnumEffectiveStatement) {
-                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) stmt;
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof EnumEffectiveStatement) {
+                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) subStmt;
 
                 final Optional<Integer> declaredValue =
                         enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
@@ -87,13 +88,13 @@ final class EnumSpecificationSupport
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
     @Override
     protected EffectiveStatement<String, EnumSpecification> createEmptyEffective(
             final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx,
-            final EnumSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, EnumSpecification> stmt) {
         throw noEnum(ctx);
     }
 

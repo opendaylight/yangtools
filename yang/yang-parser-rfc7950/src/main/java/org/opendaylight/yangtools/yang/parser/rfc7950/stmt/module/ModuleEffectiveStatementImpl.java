@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModu
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -58,9 +59,10 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final ImmutableList<Submodule> submodules;
 
     ModuleEffectiveStatementImpl(final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveStatementState<UnqualifiedQName, ModuleStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules) {
-        super(declared, ctx, substatements, findPrefix(ctx, "module", ctx.coerceRawStatementArgument()));
+        super(stmt, ctx, substatements, findPrefix(ctx, "module", ctx.coerceRawStatementArgument()));
 
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
         this.submodules = ImmutableList.copyOf(submodules);

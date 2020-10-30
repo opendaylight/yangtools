@@ -63,15 +63,15 @@ public final class RevisionDateStatementSupport
     @Override
     protected RevisionDateEffectiveStatement createEffective(
             final StmtContext<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> ctx,
-            final RevisionDateStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularRevisionDateEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Revision, RevisionDateStatement> stmt) {
+        return new RegularRevisionDateEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected RevisionDateEffectiveStatement createEmptyEffective(
             final StmtContext<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> ctx,
-            final RevisionDateStatement declared) {
-        return new EmptyRevisionDateEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<Revision, RevisionDateStatement> stmt) {
+        return new EmptyRevisionDateEffectiveStatement(stmt.declared());
     }
 }

@@ -65,9 +65,10 @@ abstract class AbstractListStatementSupport extends
     }
 
     @Override
-    protected final ListEffectiveStatement createEffective(
+    protected ListEffectiveStatement createEffective(
             final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx,
-            final ListStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ListStatement> stmt) {
         final SchemaPath path = ctx.getSchemaPath().get();
         final ListSchemaNode original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
                 .orElse(null);
@@ -84,7 +85,7 @@ abstract class AbstractListStatementSupport extends
             }
             for (final QName keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(ctx.getStatementSourceReference(),
+                    throw new InferenceException(stmt.sourceReference(),
                         "Key '%s' misses node '%s' in list '%s'", keyStmt.getDeclared().rawArgument(),
                         keyQName.getLocalName(), ctx.getStatementArgument());
                 }
@@ -98,7 +99,7 @@ abstract class AbstractListStatementSupport extends
 
         final boolean configuration = ctx.isConfiguration();
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(configuration)
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
@@ -111,9 +112,9 @@ abstract class AbstractListStatementSupport extends
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
         return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition)
-                        : new RegularListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition,
-                            elementCountConstraint.orElse(null), original);
+                ? new EmptyListEffectiveStatement(stmt, path, flags, ctx, substatements, keyDefinition)
+                : new RegularListEffectiveStatement(stmt, path, flags, ctx, substatements, keyDefinition,
+                elementCountConstraint.orElse(null), original);
     }
 
     private static void warnConfigList(final @NonNull StmtContext<QName, ListStatement, ListEffectiveStatement> ctx) {
@@ -154,7 +155,8 @@ abstract class AbstractListStatementSupport extends
 
     @Override
     protected final ListEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx, final ListStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ListStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

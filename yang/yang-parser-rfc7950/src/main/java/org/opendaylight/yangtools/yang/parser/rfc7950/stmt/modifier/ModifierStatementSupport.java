@@ -63,14 +63,15 @@ public final class ModifierStatementSupport
     @Override
     protected ModifierEffectiveStatement createEffective(
             final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
-            final ModifierStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularModifierEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<ModifierKind, ModifierStatement> stmt) {
+        return new RegularModifierEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected ModifierEffectiveStatement createEmptyEffective(
             final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
-            final ModifierStatement declared) {
-        return new EmptyModifierEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<ModifierKind, ModifierStatement> stmt) {
+        return new EmptyModifierEffectiveStatement(stmt.declared());
     }
 }

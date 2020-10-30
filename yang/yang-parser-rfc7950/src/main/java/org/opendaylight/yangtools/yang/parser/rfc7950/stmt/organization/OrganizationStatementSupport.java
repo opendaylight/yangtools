@@ -51,15 +51,15 @@ public final class OrganizationStatementSupport
     @Override
     protected OrganizationEffectiveStatement createEffective(
             final StmtContext<String, OrganizationStatement, OrganizationEffectiveStatement> ctx,
-            final OrganizationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularOrganizationEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveParentState parent, final EffectiveStatementState<String, OrganizationStatement> stmt) {
+        return new RegularOrganizationEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected OrganizationEffectiveStatement createEmptyEffective(
             final StmtContext<String, OrganizationStatement, OrganizationEffectiveStatement> ctx,
-            final OrganizationStatement declared) {
-        return new EmptyOrganizationEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, OrganizationStatement> stmt) {
+        return new EmptyOrganizationEffectiveStatement(stmt.declared());
     }
 }
