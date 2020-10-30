@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f899f3b_d78f35b1",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-10-30T11:45:57Z",
+      "side": 1,
+      "message": "A is what we use",
+      "range": {
+        "startLine": 396,
+        "startChar": 13,
+        "endLine": 396,
+        "endChar": 14
+      },
+      "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14fc6a26_7162cd53",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-10-30T11:45:57Z",
+      "side": 1,
+      "message": "ctx",
+      "range": {
+        "startLine": 398,
+        "startChar": 24,
+        "endLine": 398,
+        "endChar": 25
+      },
+      "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "962641d4_009433d4",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-10-30T11:45:57Z",
+      "side": 1,
+      "message": "map(ctx -\u003e (V) ctx.coerceStatementArgument())",
+      "range": {
+        "startLine": 400,
+        "startChar": 0,
+        "endLine": 402,
+        "endChar": 51
+      },
+      "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
