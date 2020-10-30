@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -148,7 +148,9 @@ public final class StmtContextUtils {
      * @param <A> statement argument type
      * @param <D> declared statement type
      * @return statement context that was searched for or null if was not found
+     * @deprecated Use {@link StmtContext#findSubstatementArgument(Class)} instead.
      */
+    @Deprecated(forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
         final StmtContext<A, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
@@ -286,7 +288,7 @@ public final class StmtContextUtils {
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
+        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
     }
 
     /**
@@ -376,12 +378,9 @@ public final class StmtContextUtils {
         StmtContext<?, ?, ?> current = ctx.coerceParentContext();
         StmtContext<?, ?, ?> parent = current.getParentContext();
         while (parent != null) {
-            if (ancestorType.equals(current.getPublicDefinition())) {
-                @SuppressWarnings("unchecked")
-                final Class<D> ancestorChildTypeClass = (Class<D>) ancestorChildType.getDeclaredRepresentationClass();
-                if (findFirstSubstatement(current, ancestorChildTypeClass) == null) {
-                    return false;
-                }
+            if (ancestorType.equals(current.getPublicDefinition())
+                    && !current.hasSubstatement(ancestorChildType.getEffectiveRepresentationClass())) {
+                return false;
             }
 
             current = parent;
