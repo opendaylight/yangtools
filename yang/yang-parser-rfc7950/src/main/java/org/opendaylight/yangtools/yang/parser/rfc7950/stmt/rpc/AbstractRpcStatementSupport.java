@@ -73,16 +73,18 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
     }
 
     @Override
-    protected final RpcEffectiveStatement createEffective(
-            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final RpcStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RpcEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), computeFlags(ctx, substatements), ctx,
-            substatements);
+    protected RpcEffectiveStatement createEffective(
+            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, RpcStatement> stmt) {
+        return new RpcEffectiveStatementImpl(stmt, ctx.getSchemaPath().get(), computeFlags(substatements),
+                substatements);
     }
 
     @Override
     protected final RpcEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final RpcStatement declared) {
+            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, RpcStatement> stmt) {
         throw new IllegalStateException("Missing implicit input/output statements at "
                 + ctx.getStatementSourceReference());
     }
@@ -91,8 +93,7 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
 
     abstract StatementSupport<?, ?, ?> implictOutput();
 
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();

@@ -49,12 +49,12 @@ abstract class AbstractLeafListStatementSupport
     }
 
     @Override
-    protected final LeafListEffectiveStatement createEffective(
+    protected LeafListEffectiveStatement createEffective(
             final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
-            final LeafListStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, LeafListStatement> stmt) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-            findFirstStatement(substatements, TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                findFirstStatement(substatements, TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
                 "Leaf-list is missing a 'type' statement");
 
         final SchemaPath path = ctx.getSchemaPath().get();
@@ -66,7 +66,7 @@ abstract class AbstractLeafListStatementSupport
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(ctx.isConfiguration())
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
-                    .equals(Ordering.USER))
+                        .equals(Ordering.USER))
                 .toFlags();
         final ImmutableSet<String> defaultValues = substatements.stream()
                 .filter(DefaultEffectiveStatement.class::isInstance)
@@ -76,31 +76,32 @@ abstract class AbstractLeafListStatementSupport
 
         // FIXME: We need to interpret the default value in terms of supplied element type
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
-            ctx.getStatementSourceReference(),
-            "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
-            ctx.getStatementArgument(), defaultValues);
+                EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
+                ctx.getStatementSourceReference(),
+                "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+                ctx.getStatementArgument(), defaultValues);
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
 
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
 
+        final LeafListStatement declared = stmt.declared();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
                     ? new EmptyLeafListEffectiveStatement(declared, path, flags, substatements)
-                            : new SlimLeafListEffectiveStatement(declared, path, flags, substatements, original,
-                                elementCountConstraint.orElse(null));
+                    : new SlimLeafListEffectiveStatement(declared, path, flags, substatements, original,
+                    elementCountConstraint.orElse(null));
         }
 
         return new RegularLeafListEffectiveStatement(declared, path, flags, substatements, original, defaultValues,
-            elementCountConstraint.orElse(null));
+                elementCountConstraint.orElse(null));
     }
 
     @Override
     protected final LeafListEffectiveStatement createEmptyEffective(
             final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
-            final LeafListStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<QName, LeafListStatement> stmt) {
         throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
     }
 }

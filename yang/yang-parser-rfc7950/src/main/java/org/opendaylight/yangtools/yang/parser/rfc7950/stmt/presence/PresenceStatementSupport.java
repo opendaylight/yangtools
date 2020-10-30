@@ -50,15 +50,15 @@ public final class PresenceStatementSupport
     @Override
     protected PresenceEffectiveStatement createEffective(
             final StmtContext<String, PresenceStatement, PresenceEffectiveStatement> ctx,
-            final PresenceStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPresenceEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final  EffectiveParentState parent,
+            final EffectiveStatementState<String, PresenceStatement> stmt) {
+        return new RegularPresenceEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected PresenceEffectiveStatement createEmptyEffective(
             final StmtContext<String, PresenceStatement, PresenceEffectiveStatement> ctx,
-            final PresenceStatement declared) {
-        return new EmptyPresenceEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, PresenceStatement> stmt) {
+        return new EmptyPresenceEffectiveStatement(stmt.declared());
     }
 }

@@ -91,15 +91,16 @@ public final class FractionDigitsStatementSupport
     @Override
     protected FractionDigitsEffectiveStatement createEffective(
             final StmtContext<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> ctx,
-            final FractionDigitsStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularFractionDigitsEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Integer, FractionDigitsStatement> stmt) {
+        return new RegularFractionDigitsEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected FractionDigitsEffectiveStatement createEmptyEffective(
             final StmtContext<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> ctx,
-            final FractionDigitsStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<Integer, FractionDigitsStatement> stmt) {
+        final FractionDigitsStatement declared = stmt.declared();
         final EmptyFractionDigitsEffectiveStatement shared = EMPTY_EFF.get(declared);
         return shared != null ? shared :  new EmptyFractionDigitsEffectiveStatement(declared);
     }

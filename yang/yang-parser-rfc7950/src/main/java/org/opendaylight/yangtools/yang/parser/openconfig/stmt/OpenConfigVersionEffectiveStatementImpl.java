@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class OpenConfigVersionEffectiveStatementImpl
@@ -24,11 +26,12 @@ final class OpenConfigVersionEffectiveStatementImpl
 
     private final @NonNull SchemaPath path;
 
-    OpenConfigVersionEffectiveStatementImpl(final OpenConfigVersionStatement declared,
+    OpenConfigVersionEffectiveStatementImpl(
+            final EffectiveStatementState<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
-        super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+            final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx, final EffectiveParentState parent) {
+        super(ctx.coerceStatementArgument(), stmt, substatements, ctx);
+        path = parent.schemaPath().get().createChild(getNodeType());
     }
 
     @Override

@@ -68,14 +68,15 @@ public final class PathStatementSupport
     @Override
     protected PathEffectiveStatement createEffective(
             final StmtContext<PathExpression, PathStatement, PathEffectiveStatement> ctx,
-            final PathStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPathEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<PathExpression, PathStatement> stmt) {
+        return new RegularPathEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected PathEffectiveStatement createEmptyEffective(
             final StmtContext<PathExpression, PathStatement, PathEffectiveStatement> ctx,
-            final PathStatement declared) {
-        return new EmptyPathEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<PathExpression, PathStatement> stmt) {
+        return new EmptyPathEffectiveStatement(stmt.declared());
     }
 }

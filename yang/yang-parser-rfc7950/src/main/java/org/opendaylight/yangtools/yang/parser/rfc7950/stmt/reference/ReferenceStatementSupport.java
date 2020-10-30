@@ -51,15 +51,15 @@ public final class ReferenceStatementSupport
     @Override
     protected ReferenceEffectiveStatement createEffective(
             final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
-            final ReferenceStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularReferenceEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ReferenceStatement> stmt) {
+        return new RegularReferenceEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected ReferenceEffectiveStatement createEmptyEffective(
             final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
-            final ReferenceStatement declared) {
-        return new EmptyReferenceEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ReferenceStatement> stmt) {
+        return new EmptyReferenceEffectiveStatement(stmt.declared());
     }
 }

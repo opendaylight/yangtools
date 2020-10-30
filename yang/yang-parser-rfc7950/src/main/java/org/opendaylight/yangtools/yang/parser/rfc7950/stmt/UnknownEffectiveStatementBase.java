@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatement<A>>
@@ -32,14 +33,14 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     private final QName nodeType;
     private final String nodeParameter;
 
-    protected UnknownEffectiveStatementBase(final A argument, final @NonNull D declared,
+    protected UnknownEffectiveStatementBase(final A argument, final EffectiveStatementState<A, D> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             // FIXME: 7.0.0: we should not be needing this
             final StmtContext<A, D, ?> ctx) {
-        super(argument, declared, substatements);
+        super(argument, stmt.declared(), substatements);
 
         final StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement> extensionInit =
-                ctx.getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
+                stmt.getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
 
         if (extensionInit == null) {
             extension = null;
@@ -53,7 +54,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         }
 
         // initCopyType
-        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
+        final CopyHistory copyTypesFromOriginal = stmt.history();
         if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
             this.augmenting = true;
             this.addedByUses = true;

@@ -52,14 +52,15 @@ public final class ImpliedStatementSupport
     @Override
     protected ImpliedEffectiveStatement createEffective(
             final StmtContext<String, ImpliedStatement, ImpliedEffectiveStatement> ctx,
-            final ImpliedStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ImpliedEffectiveStatementImpl(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ImpliedStatement> stmt) {
+        return new ImpliedEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected ImpliedEffectiveStatement createEmptyEffective(
             final StmtContext<String, ImpliedStatement, ImpliedEffectiveStatement> ctx,
-            final ImpliedStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, ImpliedStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

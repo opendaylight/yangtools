@@ -14,12 +14,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -29,6 +32,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
+// FIXME: YANGTOOLS-1161: move this into yang-parser-reactor, as the substatement handling has natural place there. Also
+//        we rely on  getEffectOfStatement() -- which is something reactor mechanics need to make work better.
 @Beta
 public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
@@ -54,28 +59,26 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     protected abstract @NonNull D createEmptyDeclared(@NonNull StmtContext<A, D, ?> ctx);
 
     @Override
-    public E createEffective(final StmtContext<A, D, E> ctx) {
-        final D declared = ctx.buildDeclared();
+    public E createEffective(final Current<A, D> stmt, final Stream<StmtContext<?, ?, ?>> declaredSubstatements,
+            final Stream<StmtContext<?, ?, ?>> effectiveSubstatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
-                buildEffectiveSubstatements(ctx, statementsToBuild(ctx, declaredSubstatements(ctx)));
-        return substatements.isEmpty() ? createEmptyEffective(ctx, declared)
-                : createEffective(ctx, declared, substatements);
+                buildEffectiveSubstatements(stmt, statementsToBuild(stmt,
+                    declaredSubstatements(declaredSubstatements, effectiveSubstatements)));
+        return createEffective(stmt, substatements);
     }
 
-    protected abstract @NonNull E createEffective(@NonNull StmtContext<A, D, E> ctx, @NonNull D declared,
+    protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
-
-    protected abstract @NonNull E createEmptyEffective(@NonNull StmtContext<A, D, E> ctx, @NonNull D declared);
 
     /**
      * Give statement support a hook to transform statement contexts before they are built. Default implementation
      * does nothing, but note {@code augment} statement performs a real transformation.
      *
-     * @param ctx Parent statement context
+     * @param ctx Effective capture of this statement's significant state
      * @param substatements Substatement contexts which have been determined to be built
      * @return Substatement context which are to be actually built
      */
-    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final StmtContext<A, D, E> ctx,
+    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final Current<A, D> ctx,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         return substatements;
     }
@@ -101,16 +104,16 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
      * Create a set of substatements. This method is split out so it can be overridden in subclasses adjust the
      * resulting statements.
      *
-     * @param ctx Parent statement context
+     * @param stmt Current statement context
      * @param substatements proposed substatements
      * @return Built effective substatements
      */
-    protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final StmtContext<A, D, E> ctx, final List<? extends StmtContext<?, ?, ?>> substatements) {
+    protected @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
+            final Current<A, D> stmt, final List<? extends StmtContext<?, ?, ?>> substatements) {
         return defaultBuildEffectiveSubstatements(substatements);
     }
 
-    private static ImmutableList<? extends EffectiveStatement<?, ?>> defaultBuildEffectiveSubstatements(
+    private static @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> defaultBuildEffectiveSubstatements(
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         return substatements.stream()
                 .filter(StmtContext::isSupportedToBuildEffective)
@@ -118,7 +121,9 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
                 .collect(ImmutableList.toImmutableList());
     }
 
-    private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(final StmtContext<?, ?, ?> ctx) {
+    private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(
+            final Stream<StmtContext<?, ?, ?>> declaredSubstatements,
+            final Stream<StmtContext<?, ?, ?>> effectiveSubstatements) {
         /*
          * This dance is required to ensure that effects of 'uses' nodes are applied in the same order as
          * the statements were defined -- i.e. if we have something like this:
@@ -146,33 +151,34 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
          * FIXME: 7.0.0: this really should be handled by UsesStatementSupport such that 'uses baz' would have a
          *               prerequisite of a resolved 'uses bar'.
          */
+        final List<StmtContext<?, ?, ?>> declaredInit = declaredSubstatements
+            .filter(StmtContext::isSupportedByFeatures)
+            .collect(Collectors.toList());
+
         final List<StmtContext<?, ?, ?>> substatementsInit = new ArrayList<>();
         Set<StmtContext<?, ?, ?>> filteredStatements = null;
-        for (final StmtContext<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
-            if (declaredSubstatement.isSupportedByFeatures()) {
-                substatementsInit.add(declaredSubstatement);
+        for (final StmtContext<?, ?, ?> declaredSubstatement : declaredInit) {
+            substatementsInit.add(declaredSubstatement);
 
-                final Collection<? extends StmtContext<?, ?, ?>> effect = declaredSubstatement.getEffectOfStatement();
-                if (!effect.isEmpty()) {
-                    if (filteredStatements == null) {
-                        filteredStatements = new HashSet<>();
-                    }
-                    filteredStatements.addAll(effect);
-                    substatementsInit.addAll(effect);
+            final Collection<? extends StmtContext<?, ?, ?>> effect = declaredSubstatement.getEffectOfStatement();
+            if (!effect.isEmpty()) {
+                if (filteredStatements == null) {
+                    filteredStatements = new HashSet<>();
                 }
+                filteredStatements.addAll(effect);
+                substatementsInit.addAll(effect);
             }
         }
 
+        final Stream<StmtContext<?, ?, ?>> effective;
         if (filteredStatements != null) {
-            for (StmtContext<?, ?, ?> stmt : ctx.effectiveSubstatements()) {
-                if (!filteredStatements.contains(stmt)) {
-                    substatementsInit.add(stmt);
-                }
-            }
+            final Set<StmtContext<?, ?, ?>> filtered = filteredStatements;
+            effective = effectiveSubstatements.filter(stmt -> !filtered.contains(stmt));
         } else {
-            substatementsInit.addAll(ctx.effectiveSubstatements());
+            effective = effectiveSubstatements;
         }
 
+        substatementsInit.addAll(effective.collect(Collectors.toList()));
         return substatementsInit;
     }
 }

@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 public final class NotificationStatementRFC6020Support extends AbstractNotificationStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
@@ -47,7 +48,8 @@ public final class NotificationStatementRFC6020Support extends AbstractNotificat
     }
 
     @Override
-    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
+    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
+                        final StatementSourceReference ref) {
         // No-op
     }
 }

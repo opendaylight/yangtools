@@ -100,16 +100,17 @@ abstract class AbstractIncludeStatementSupport
     }
 
     @Override
-    protected final IncludeEffectiveStatement createEffective(
+    protected IncludeEffectiveStatement createEffective(
             final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
-            final IncludeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularIncludeEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, IncludeStatement> stmt) {
+        return new RegularIncludeEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected final IncludeEffectiveStatement createEmptyEffective(
             final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
-            final IncludeStatement declared) {
-        return new EmptyIncludeEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, IncludeStatement> stmt) {
+        return new EmptyIncludeEffectiveStatement(stmt.declared());
     }
 }

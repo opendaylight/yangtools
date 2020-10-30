@@ -79,34 +79,37 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
 
     @Override
     protected LeafEffectiveStatement createEffective(
-            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final LeafStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, LeafStatement> stmt) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-            findFirstStatement(substatements, TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+            findFirstStatement(substatements, TypeEffectiveStatement.class), stmt.sourceReference(),
                 "Leaf is missing a 'type' statement");
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
-            ctx.getStatementSourceReference(),
+            stmt.sourceReference(),
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(), dflt);
 
         final SchemaPath path = ctx.getSchemaPath().get();
         final LeafSchemaNode original = (LeafSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
                 .orElse(null);
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(ctx.isConfiguration())
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
 
+        final LeafStatement declared = stmt.declared();
         return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
                 : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
     }
 
     @Override
     protected LeafEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final LeafStatement declared) {
+            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, LeafStatement> stmt) {
         throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
     }
 }

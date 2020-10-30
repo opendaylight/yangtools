@@ -48,11 +48,11 @@ public final class AnnotationStatementSupport
         private final @NonNull TypeDefinition<?> type;
         private final @NonNull SchemaPath path;
 
-        Effective(final AnnotationStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<QName, AnnotationStatement, ?> ctx) {
-            super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
+        Effective(final EffectiveStatementState<QName, AnnotationStatement> stmt, final EffectiveParentState parent,
+                  final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                  final StmtContext<QName, AnnotationStatement, ?> ctx) {
+            super(ctx.coerceStatementArgument(), stmt, substatements, ctx);
+            path = parent.schemaPath().get().createChild(argument());
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
@@ -148,15 +148,15 @@ public final class AnnotationStatementSupport
     @Override
     protected AnnotationEffectiveStatement createEffective(
             final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
-            final AnnotationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, AnnotationStatement> stmt) {
+        return new Effective(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected AnnotationEffectiveStatement createEmptyEffective(
             final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
-            final AnnotationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, AnnotationStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }
