@@ -38,12 +38,12 @@ public final class DefaultDenyWriteStatementSupport
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final DefaultDenyWriteStatement declared,
+        Effective(final EffectiveStatementState<Void, DefaultDenyWriteStatement> stmt,
+                  final EffectiveParentState parent,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
                 final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
-            super(declared.argument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                ctx.getPublicDefinition().getStatementName());
+            super(stmt.declared().argument(), stmt, substatements, ctx);
+            path = parent.schemaPath().get().createChild(ctx.getPublicDefinition().getStatementName());
         }
 
         @Override
@@ -96,15 +96,15 @@ public final class DefaultDenyWriteStatementSupport
     @Override
     protected DefaultDenyWriteEffectiveStatement createEffective(
             final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
-            final DefaultDenyWriteStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Void, DefaultDenyWriteStatement> stmt) {
+        return new Effective(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected DefaultDenyWriteEffectiveStatement createEmptyEffective(
             final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
-            final DefaultDenyWriteStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<Void, DefaultDenyWriteStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

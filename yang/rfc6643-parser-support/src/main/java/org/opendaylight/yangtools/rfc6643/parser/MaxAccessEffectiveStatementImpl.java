@@ -17,17 +17,20 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBase<MaxAccess, MaxAccessStatement>
         implements MaxAccessEffectiveStatement, MaxAccessSchemaNode {
     private final SchemaPath path;
 
-    MaxAccessEffectiveStatementImpl(final MaxAccessStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx) {
-        super(declared.argument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    MaxAccessEffectiveStatementImpl(final EffectiveStatementState<MaxAccess, MaxAccessStatement> stmt,
+                                    final EffectiveParentState parent,
+                                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                                    final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx) {
+        super(stmt.declared().argument(), stmt, substatements, ctx);
+        path = parent.schemaPath().get().createChild(getNodeType());
     }
 
     @Override

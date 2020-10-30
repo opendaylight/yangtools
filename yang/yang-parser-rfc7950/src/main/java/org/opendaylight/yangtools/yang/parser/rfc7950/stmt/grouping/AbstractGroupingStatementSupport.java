@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -62,18 +63,10 @@ abstract class AbstractGroupingStatementSupport
     }
 
     @Override
-    protected final GroupingEffectiveStatement createEffective(
-            final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx,
-            final GroupingStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new GroupingEffectiveStatementImpl(declared, ctx, substatements,
-            historyAndStatusFlags(ctx, substatements));
-    }
-
-    @Override
-    protected GroupingEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx,
-            final GroupingStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected GroupingEffectiveStatement createEffective(final Current<QName, GroupingStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new GroupingEffectiveStatementImpl(stmt, ctx, substatements,
+            historyAndStatusFlags(stmt.history(), substatements));
     }
 
     private static void checkDeclaredConflict(final StmtContext<QName, ?, ?> ctx) {

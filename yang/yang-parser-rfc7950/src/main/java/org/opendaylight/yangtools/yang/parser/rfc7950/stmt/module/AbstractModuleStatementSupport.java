@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -137,11 +138,11 @@ abstract class AbstractModuleStatementSupport
 
     @Override
     protected final ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
+            final Current<UnqualifiedQName, ModuleStatement> stmt,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> local =
-                super.buildEffectiveSubstatements(ctx, substatements);
-        final Collection<StmtContext<?, ?, ?>> submodules = submoduleContexts(ctx);
+                super.buildEffectiveSubstatements(stmt, substatements);
+        final Collection<StmtContext<?, ?, ?>> submodules = submoduleContexts(stmt);
         if (submodules.isEmpty()) {
             return local;
         }
@@ -174,9 +175,10 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    protected final ModuleEffectiveStatement createEffective(
+    protected ModuleEffectiveStatement createEffective(
             final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<UnqualifiedQName, ModuleStatement> stmt) {
         final List<Submodule> submodules = new ArrayList<>();
         for (StmtContext<?, ?, ?> submoduleCtx : submoduleContexts(ctx)) {
             final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
@@ -184,17 +186,17 @@ abstract class AbstractModuleStatementSupport
             submodules.add((Submodule) submodule);
         }
 
-        return new ModuleEffectiveStatementImpl(ctx, declared, substatements, submodules);
+        return new ModuleEffectiveStatementImpl(ctx, stmt, substatements, submodules);
     }
 
     @Override
     protected final ModuleEffectiveStatement createEmptyEffective(
             final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<UnqualifiedQName, ModuleStatement> stmt) {
         throw noNamespace(ctx);
     }
 
-    private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final StmtContext<?, ?, ?> ctx) {
+    private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> ctx) {
         final Map<String, StmtContext<?, ?, ?>> submodules = ctx.getAllFromCurrentStmtCtxNamespace(
             IncludedSubmoduleNameToModuleCtx.class);
         return submodules == null ? List.of() : submodules.values();

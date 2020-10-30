@@ -63,13 +63,15 @@ public final class OidStatementSupport
     @Override
     protected OidEffectiveStatement createEffective(
             final StmtContext<ObjectIdentifier, OidStatement, OidEffectiveStatement> ctx,
-            final OidStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OidEffectiveStatementImpl(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<ObjectIdentifier, OidStatement> stmt) {
+        return new OidEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected OidEffectiveStatement createEmptyEffective(
-            final StmtContext<ObjectIdentifier, OidStatement, OidEffectiveStatement> ctx, final OidStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<ObjectIdentifier, OidStatement, OidEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<ObjectIdentifier, OidStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

@@ -33,29 +33,32 @@ public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<Q
     }
 
     @Override
-    protected final E createEffective(
-            final StmtContext<QName, D, E> ctx,
-            final D declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+    protected E createEffective(final StmtContext<QName, D, E> ctx,
+                                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                                final EffectiveParentState parent, final EffectiveStatementState<QName, D> stmt) {
+        final StatementSource source = stmt.source();
+        switch (source) {
             case CONTEXT:
-                return createUndeclaredEffective(ctx, substatements);
+                return createUndeclaredEffective(ctx, substatements, stmt, parent);
             case DECLARATION:
-                return createDeclaredEffective(ctx, substatements, declared);
+                return createDeclaredEffective(ctx, substatements, stmt, parent);
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }
     }
 
     @Override
-    protected final E createEmptyEffective(final StmtContext<QName, D, E> ctx, final D declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected final E createEmptyEffective(final StmtContext<QName, D, E> ctx, final EffectiveParentState parent,
+                                           final EffectiveStatementState<QName, D> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 
     protected abstract @NonNull E createDeclaredEffective(@NonNull StmtContext<QName, D, E> ctx,
-            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements, @NonNull D declared);
+            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            @NonNull EffectiveStatementState<QName, D> stmt, @NonNull EffectiveParentState parent);
 
     protected abstract @NonNull E createUndeclaredEffective(@NonNull StmtContext<QName, D, E> ctx,
-            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
+            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            @NonNull EffectiveStatementState<QName, D> stmt, @NonNull EffectiveParentState parent);
 
 }

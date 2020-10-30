@@ -74,17 +74,18 @@ public final class FeatureStatementSupport
 
     @Override
     protected FeatureEffectiveStatement createEffective(
-            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx, final FeatureStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularFeatureEffectiveStatement(declared, ctx.getSchemaPath().get(), computeFlags(substatements),
-            substatements);
+            final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveParentState parent, final EffectiveStatementState<QName, FeatureStatement> stmt) {
+        return new RegularFeatureEffectiveStatement(stmt.declared(), ctx.getSchemaPath().get(),
+                computeFlags(substatements), substatements);
     }
 
     @Override
     protected FeatureEffectiveStatement createEmptyEffective(
             final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx,
-            final FeatureStatement declared) {
-        return new EmptyFeatureEffectiveStatement(declared, ctx.getSchemaPath().get(), EMPTY_EFFECTIVE_FLAGS);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, FeatureStatement> stmt) {
+        return new EmptyFeatureEffectiveStatement(stmt.declared(), ctx.getSchemaPath().get(), EMPTY_EFFECTIVE_FLAGS);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

@@ -53,17 +53,18 @@ abstract class AbstractInputStatementSupport
     }
 
     @Override
-    protected final InputEffectiveStatement createDeclaredEffective(final int flags,
-            final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final InputStatement declared) {
-        return new DeclaredInputEffectiveStatement(declared, flags, ctx, substatements);
+    protected InputEffectiveStatement createDeclaredEffective(int flags,
+                final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
+                final EffectiveStatementState<QName, InputStatement> stmt,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeclaredInputEffectiveStatement(flags, ctx, stmt, substatements);
     }
 
     @Override
-    protected final InputEffectiveStatement createUndeclaredEffective(final int flags,
-            final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredInputEffectiveStatement(flags, ctx, substatements);
+    protected InputEffectiveStatement createUndeclaredEffective(int flags,
+                final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
+                final EffectiveStatementState<QName, InputStatement> stmt,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new UndeclaredInputEffectiveStatement(flags, ctx, stmt.sourceReference(), substatements);
     }
 }

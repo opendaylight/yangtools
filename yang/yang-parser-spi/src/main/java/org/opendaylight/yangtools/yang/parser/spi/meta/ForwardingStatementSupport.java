@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
@@ -38,8 +40,9 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public E createEffective(final StmtContext<A, D, E> ctx) {
-        return delegate().createEffective(ctx);
+    public E createEffective(final Current<A, D> stmt, final Stream<StmtContext<?, ?, ?>> declaredSubstatements,
+            final Stream<StmtContext<?, ?, ?>> effectiveSubstatements) {
+        return delegate().createEffective(stmt, declaredSubstatements, effectiveSubstatements);
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -66,18 +67,8 @@ final class UnrecognizedStatementSupport
     }
 
     @Override
-    protected UnrecognizedEffectiveStatement createEffective(
-            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
-            final UnrecognizedStatement declared,
+    protected UnrecognizedEffectiveStatement createEffective(final Current<String, UnrecognizedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UnrecognizedEffectiveStatementImpl(declared, substatements, ctx);
+        return new UnrecognizedEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
-
-    @Override
-    protected UnrecognizedEffectiveStatement createEmptyEffective(
-            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
-            final UnrecognizedStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
-    }
-
 }

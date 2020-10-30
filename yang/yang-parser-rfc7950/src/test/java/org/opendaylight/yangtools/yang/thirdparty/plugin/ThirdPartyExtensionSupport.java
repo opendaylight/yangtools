@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -55,16 +56,8 @@ public final class ThirdPartyExtensionSupport
 
     @Override
     protected ThirdPartyExtensionEffectiveStatement createEffective(
-            final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
-            final ThirdPartyExtensionStatement declared,
+            final Current<String, ThirdPartyExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ThirdPartyExtensionEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected ThirdPartyExtensionEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> ctx,
-            final ThirdPartyExtensionStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new ThirdPartyExtensionEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 }
