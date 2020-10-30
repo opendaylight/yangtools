@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -135,25 +136,6 @@ public final class StmtContextUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Searches for the first substatement of the specified type in the specified statement context.
-     * First, it tries to find the substatement in the effective substatements of the statement context.
-     * If it was not found, then it proceeds to search in the declared substatements. If it still was not found,
-     * the method returns null.
-     *
-     * @param stmtContext statement context to search in
-     * @param declaredType substatement type to search for
-     * @param <A> statement argument type
-     * @param <D> declared statement type
-     * @return statement context that was searched for or null if was not found
-     */
-    public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
-        final StmtContext<A, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
-        return effectiveSubstatement != null ? effectiveSubstatement : findFirstDeclaredSubstatement(stmtContext,
-                declaredType);
     }
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
@@ -286,7 +268,7 @@ public final class StmtContextUtils {
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
-        return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
+        return stmtCtx.hasSubstatement(PresenceEffectiveStatement.class);
     }
 
     /**
@@ -378,8 +360,9 @@ public final class StmtContextUtils {
         while (parent != null) {
             if (ancestorType.equals(current.getPublicDefinition())) {
                 @SuppressWarnings("unchecked")
-                final Class<D> ancestorChildTypeClass = (Class<D>) ancestorChildType.getDeclaredRepresentationClass();
-                if (findFirstSubstatement(current, ancestorChildTypeClass) == null) {
+                final Class<? extends EffectiveStatement> ancestorChildTypeClass = ancestorChildType
+                        .getEffectiveRepresentationClass();
+                if (!current.hasSubstatement(ancestorChildTypeClass)) {
                     return false;
                 }
             }
