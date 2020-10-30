@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -241,7 +242,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     private static boolean hasWhenSubstatement(final StmtContext<?, ?, ?> ctx) {
-        return StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
+        return ctx.hasSubstatement(WhenEffectiveStatement.class);
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
