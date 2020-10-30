@@ -64,14 +64,15 @@ public final class NamespaceStatementSupport
     @Override
     protected NamespaceEffectiveStatement createEffective(
             final StmtContext<URI, NamespaceStatement, NamespaceEffectiveStatement> ctx,
-            final NamespaceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularNamespaceEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<URI, NamespaceStatement> stmt) {
+        return new RegularNamespaceEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected NamespaceEffectiveStatement createEmptyEffective(
             final StmtContext<URI, NamespaceStatement, NamespaceEffectiveStatement> ctx,
-            final NamespaceStatement declared) {
-        return new EmptyNamespaceEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<URI, NamespaceStatement> stmt) {
+        return new EmptyNamespaceEffectiveStatement(stmt.declared());
     }
 }

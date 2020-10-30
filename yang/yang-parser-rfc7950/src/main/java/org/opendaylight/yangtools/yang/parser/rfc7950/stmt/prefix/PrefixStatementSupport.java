@@ -49,14 +49,16 @@ public final class PrefixStatementSupport
 
     @Override
     protected PrefixEffectiveStatement createEffective(
-            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final PrefixStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPrefixEffectiveStatement(declared, substatements);
+            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, PrefixStatement> stmt) {
+        return new RegularPrefixEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected PrefixEffectiveStatement createEmptyEffective(
-            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final PrefixStatement declared) {
-        return new EmptyPrefixEffectiveStatement(declared);
+            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, PrefixStatement> stmt) {
+        return new EmptyPrefixEffectiveStatement(stmt.declared());
     }
 }

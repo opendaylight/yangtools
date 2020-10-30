@@ -67,14 +67,15 @@ public final class MustStatementSupport
     @Override
     protected MustEffectiveStatement createEffective(
             final StmtContext<QualifiedBound, MustStatement, MustEffectiveStatement> ctx,
-            final MustStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularMustEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QualifiedBound, MustStatement> stmt) {
+        return new RegularMustEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected MustEffectiveStatement createEmptyEffective(
             final StmtContext<QualifiedBound, MustStatement, MustEffectiveStatement> ctx,
-            final MustStatement declared) {
-        return new EmptyMustEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QualifiedBound, MustStatement> stmt) {
+        return new EmptyMustEffectiveStatement(stmt.declared());
     }
 }

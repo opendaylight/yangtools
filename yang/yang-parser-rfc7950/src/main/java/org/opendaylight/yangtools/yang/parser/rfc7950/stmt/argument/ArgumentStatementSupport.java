@@ -59,14 +59,15 @@ public final class ArgumentStatementSupport
     @Override
     protected ArgumentEffectiveStatement createEffective(
             final StmtContext<QName, ArgumentStatement, ArgumentEffectiveStatement> ctx,
-            final ArgumentStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularArgumentEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ArgumentStatement> stmt) {
+        return new RegularArgumentEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected ArgumentEffectiveStatement createEmptyEffective(
             final StmtContext<QName, ArgumentStatement, ArgumentEffectiveStatement> ctx,
-            final ArgumentStatement declared) {
-        return new EmptyArgumentEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ArgumentStatement> stmt) {
+        return new EmptyArgumentEffectiveStatement(stmt.declared());
     }
 }

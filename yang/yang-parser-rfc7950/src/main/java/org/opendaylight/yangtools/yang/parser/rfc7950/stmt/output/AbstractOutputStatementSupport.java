@@ -55,14 +55,16 @@ abstract class AbstractOutputStatementSupport
     @Override
     protected final OutputEffectiveStatement createDeclaredEffective(final int flags,
             final StmtContext<QName, OutputStatement, OutputEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final OutputStatement declared) {
-        return new DeclaredOutputEffectiveStatement(declared, flags, ctx, substatements);
+            final EffectiveStatementState<QName, OutputStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeclaredOutputEffectiveStatement(stmt, flags, ctx, substatements);
     }
 
     @Override
     protected final OutputEffectiveStatement createUndeclaredEffective(final int flags,
             final StmtContext<QName, OutputStatement, OutputEffectiveStatement> ctx,
+            final EffectiveStatementState<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredOutputEffectiveStatement(flags, ctx, substatements);
+        return new UndeclaredOutputEffectiveStatement(flags, stmt.sourceReference(), ctx, substatements);
     }
 }

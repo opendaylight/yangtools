@@ -48,12 +48,13 @@ abstract class AbstractHashedValueStatementSupport
         private final @NonNull StatementDefinition definition;
         private final SchemaPath path;
 
-        Effective(final OpenConfigHashedValueStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
-            super(declared.argument(), declared, substatements, ctx);
+        Effective(final EffectiveStatementState<Void, OpenConfigHashedValueStatement> stmt,
+                  final EffectiveParentState parent,
+                  final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                  final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
+            super(stmt.declared().argument(), stmt, substatements, ctx);
             definition = ctx.getPublicDefinition();
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
+            path = parent.schemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
 
@@ -100,17 +101,18 @@ abstract class AbstractHashedValueStatementSupport
     }
 
     @Override
-    protected final OpenConfigHashedValueEffectiveStatement createEffective(
+    protected OpenConfigHashedValueEffectiveStatement createEffective(
             final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
-            final OpenConfigHashedValueStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Void, OpenConfigHashedValueStatement> stmt) {
+        return new Effective(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected final OpenConfigHashedValueEffectiveStatement createEmptyEffective(
             final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
-            final OpenConfigHashedValueStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent,
+            final EffectiveStatementState<Void, OpenConfigHashedValueStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

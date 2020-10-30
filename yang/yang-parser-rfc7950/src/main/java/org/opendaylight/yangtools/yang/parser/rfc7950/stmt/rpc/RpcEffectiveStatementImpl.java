@@ -19,17 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationDefinitionMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 
 final class RpcEffectiveStatementImpl extends WithSubstatements<QName, RpcStatement, RpcEffectiveStatement>
         implements RpcDefinition, RpcEffectiveStatement, OperationDefinitionMixin<RpcStatement> {
     private final @NonNull SchemaPath path;
     private final int flags;
 
-    RpcEffectiveStatementImpl(final RpcStatement declared, final SchemaPath path, final int flags,
-            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, ctx, substatements);
+    RpcEffectiveStatementImpl(final StatementFactory.EffectiveStatementState<QName, RpcStatement> stmt,
+                              final SchemaPath path, final int flags,
+                              final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
     }

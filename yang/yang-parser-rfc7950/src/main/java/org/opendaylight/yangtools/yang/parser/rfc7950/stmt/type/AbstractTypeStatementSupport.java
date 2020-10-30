@@ -233,13 +233,15 @@ abstract class AbstractTypeStatementSupport
     }
 
     @Override
-    protected final TypeEffectiveStatement<TypeStatement> createEffective(
+    protected EffectiveStatement<String, TypeStatement> createEffective(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, TypeStatement> stmt) {
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(ctx);
         // Now instantiate the proper effective statement for that type
         final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
+        final TypeStatement declared = stmt.declared();
         if (baseType instanceof BinaryTypeDefinition) {
             return createBinary(ctx, (BinaryTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof BitsTypeDefinition) {
@@ -258,7 +260,7 @@ abstract class AbstractTypeStatementSupport
             return createInstanceIdentifier(ctx, (InstanceIdentifierTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Int8TypeDefinition) {
             return createIntegral(ctx, declared, substatements,
-                RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
+                    RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int16TypeDefinition) {
             return createIntegral(ctx, declared, substatements,
                     RestrictedTypes.newInt16Builder((Int16TypeDefinition) baseType, typeEffectiveSchemaPath(ctx)));
@@ -294,7 +296,7 @@ abstract class AbstractTypeStatementSupport
     @Override
     protected final EffectiveStatement<String, TypeStatement> createEmptyEffective(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final TypeStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, TypeStatement> stmt) {
         return resolveType(ctx);
     }
 

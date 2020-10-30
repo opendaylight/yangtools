@@ -41,10 +41,10 @@ abstract class AbstractContainerStatementSupport
     }
 
     @Override
-    protected final ContainerEffectiveStatement createEffective(
+    protected ContainerEffectiveStatement createEffective(
             final StmtContext<QName, ContainerStatement, ContainerEffectiveStatement> ctx,
-            final ContainerStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ContainerStatement> stmt) {
         final SchemaPath path = ctx.getSchemaPath().get();
         final ContainerSchemaNode original = (ContainerSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
                 .orElse(null);
@@ -54,13 +54,13 @@ abstract class AbstractContainerStatementSupport
                 .setConfiguration(ctx.isConfiguration())
                 .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
                 .toFlags();
-        return new ContainerEffectiveStatementImpl(declared, path, flags, ctx, substatements, original);
+        return new ContainerEffectiveStatementImpl(stmt, path, flags, ctx, substatements, original);
     }
 
     @Override
     protected final ContainerEffectiveStatement createEmptyEffective(
             final StmtContext<QName, ContainerStatement, ContainerEffectiveStatement> ctx,
-            final ContainerStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ContainerStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }
