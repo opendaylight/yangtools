@@ -43,6 +43,13 @@ final class ModelDefinedStatementSupport
     }
 
     @Override
+    public UnrecognizedEffectiveStatement createEffective(
+            final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<String, UnrecognizedStatement> stmt) {
+        return definition.createEffective(ctx, parent, stmt);
+    }
+
+    @Override
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return definition.parseArgumentValue(ctx, value);
     }
