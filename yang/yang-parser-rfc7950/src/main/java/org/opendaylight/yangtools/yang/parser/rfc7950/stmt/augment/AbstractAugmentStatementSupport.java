@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -158,18 +154,6 @@ abstract class AbstractAugmentStatementSupport
     protected final AugmentStatement createEmptyDeclared(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
         return new EmptyAugmentStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
-    }
-
-    @Override
-    protected final List<? extends StmtContext<?, ?, ?>> statementsToBuild(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
-        final StatementContextBase<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
-            ctx);
-        return implicitDef == null ? substatements : Lists.transform(substatements, subCtx -> {
-            verify(subCtx instanceof StatementContextBase);
-            return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx);
-        });
     }
 
     @Override

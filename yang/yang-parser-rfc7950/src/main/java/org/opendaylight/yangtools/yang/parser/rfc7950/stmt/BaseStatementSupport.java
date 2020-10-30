@@ -54,12 +54,17 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     protected abstract @NonNull D createEmptyDeclared(@NonNull StmtContext<A, D, ?> ctx);
 
     @Override
-    public E createEffective(final StmtContext<A, D, E> ctx) {
-        final D declared = ctx.buildDeclared();
+    public E createEffective(final StmtContext<A, D, E> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<A, D> stmt) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
-                buildEffectiveSubstatements(ctx, statementsToBuild(ctx, declaredSubstatements(ctx)));
-        return substatements.isEmpty() ? createEmptyEffective(ctx, declared)
-                : createEffective(ctx, declared, substatements);
+                buildEffectiveSubstatements(ctx, statementsToBuild(stmt, declaredSubstatements(stmt)));
+        return substatements.isEmpty() ? createEmptyEffective(ctx, stmt.declared())
+                : createEffective(ctx, stmt.declared(), substatements);
+    }
+
+    @Override
+    public final E createEffective(final StmtContext<A, D, E> ctx) {
+        throw new UnsupportedOperationException();
     }
 
     protected abstract @NonNull E createEffective(@NonNull StmtContext<A, D, E> ctx, @NonNull D declared,
@@ -71,11 +76,11 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
      * Give statement support a hook to transform statement contexts before they are built. Default implementation
      * does nothing, but note {@code augment} statement performs a real transformation.
      *
-     * @param ctx Parent statement context
+     * @param ctx Effective capture of this statement's significant state
      * @param substatements Substatement contexts which have been determined to be built
      * @return Substatement context which are to be actually built
      */
-    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final StmtContext<A, D, E> ctx,
+    protected List<? extends StmtContext<?, ?, ?>> statementsToBuild(final EffectiveStatementState<A, D> ctx,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         return substatements;
     }
@@ -118,7 +123,8 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
                 .collect(ImmutableList.toImmutableList());
     }
 
-    private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(final StmtContext<?, ?, ?> ctx) {
+    private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(
+            final EffectiveStatementState<?, ?> ctx) {
         /*
          * This dance is required to ensure that effects of 'uses' nodes are applied in the same order as
          * the statements were defined -- i.e. if we have something like this:
