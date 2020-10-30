@@ -68,7 +68,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
+final class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final ModelProcessingPhase[] PHASE_EXECUTION_ORDER = {
