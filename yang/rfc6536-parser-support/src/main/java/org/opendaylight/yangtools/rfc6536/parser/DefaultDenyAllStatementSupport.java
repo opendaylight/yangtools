@@ -38,12 +38,12 @@ public final class DefaultDenyAllStatementSupport
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final DefaultDenyAllStatement declared,
+        Effective(final EffectiveStatementState<Void, DefaultDenyAllStatement> stmt,
+                  final EffectiveParentState parent,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
                 final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
-            super(declared.argument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                ctx.getPublicDefinition().getStatementName());
+            super(stmt.declared().argument(), stmt, substatements, ctx);
+            path = parent.schemaPath().get().createChild(ctx.getPublicDefinition().getStatementName());
         }
 
         @Override
@@ -96,15 +96,15 @@ public final class DefaultDenyAllStatementSupport
     @Override
     protected DefaultDenyAllEffectiveStatement createEffective(
             final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx,
-            final DefaultDenyAllStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Void, DefaultDenyAllStatement> stmt) {
+        return new Effective(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected DefaultDenyAllEffectiveStatement createEmptyEffective(
             final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx,
-            final DefaultDenyAllStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<Void, DefaultDenyAllStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

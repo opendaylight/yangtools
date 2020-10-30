@@ -46,12 +46,12 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
         private final @NonNull SchemaPath path;
 
-        Effective(final GetFilterElementAttributesStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
-            super(declared.argument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                ctx.getPublicDefinition().getStatementName());
+        Effective(final EffectiveStatementState<Void, GetFilterElementAttributesStatement> stmt,
+                  final EffectiveParentState parent,
+                  final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                  final StmtContext<Void, GetFilterElementAttributesStatement, ?> ctx) {
+            super(stmt.declared().argument(), stmt, substatements, ctx);
+            path = parent.schemaPath().get().createChild(ctx.getPublicDefinition().getStatementName());
         }
 
         @Override
@@ -114,18 +114,18 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
     @Override
     protected GetFilterElementAttributesEffectiveStatement createEffective(
             final StmtContext<Void, GetFilterElementAttributesStatement,
-                GetFilterElementAttributesEffectiveStatement> ctx,
-            final GetFilterElementAttributesStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
+                    GetFilterElementAttributesEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Void, GetFilterElementAttributesStatement> stmt) {
+        return new Effective(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected GetFilterElementAttributesEffectiveStatement createEmptyEffective(
             final StmtContext<Void, GetFilterElementAttributesStatement,
-                GetFilterElementAttributesEffectiveStatement> ctx,
-            final GetFilterElementAttributesStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+                GetFilterElementAttributesEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<Void, GetFilterElementAttributesStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {

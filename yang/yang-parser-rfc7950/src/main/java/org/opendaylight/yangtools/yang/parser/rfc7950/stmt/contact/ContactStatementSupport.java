@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,16 +49,9 @@ public final class ContactStatementSupport
     }
 
     @Override
-    protected ContactEffectiveStatement createEffective(
-            final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
-            final ContactStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularContactEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected ContactEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
-            final ContactStatement declared) {
-        return new EmptyContactEffectiveStatement(declared);
+    protected ContactEffectiveStatement createEffective(final Current<String, ContactStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyContactEffectiveStatement(stmt.declared())
+            : new RegularContactEffectiveStatement(stmt.declared(), substatements);
     }
 }

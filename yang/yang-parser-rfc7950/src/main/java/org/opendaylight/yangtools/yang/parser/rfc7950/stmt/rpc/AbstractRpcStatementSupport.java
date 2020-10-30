@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -20,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -73,26 +76,18 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
     }
 
     @Override
-    protected final RpcEffectiveStatement createEffective(
-            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final RpcStatement declared,
+    protected RpcEffectiveStatement createEffective(final Current<QName, RpcStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RpcEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), computeFlags(ctx, substatements), ctx,
-            substatements);
-    }
+        checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", stmt.sourceReference());
 
-    @Override
-    protected final RpcEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final RpcStatement declared) {
-        throw new IllegalStateException("Missing implicit input/output statements at "
-                + ctx.getStatementSourceReference());
+        return new RpcEffectiveStatementImpl(stmt, stmt.getSchemaPath(), computeFlags(substatements), substatements);
     }
 
     abstract StatementSupport<?, ?, ?> implictInput();
 
     abstract StatementSupport<?, ?, ?> implictOutput();
 
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();

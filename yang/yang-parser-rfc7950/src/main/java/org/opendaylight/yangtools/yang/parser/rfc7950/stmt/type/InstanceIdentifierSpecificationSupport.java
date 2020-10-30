@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -56,28 +57,18 @@ final class InstanceIdentifierSpecificationSupport extends BaseStatementSupport<
 
     @Override
     protected EffectiveStatement<String, InstanceIdentifierSpecification> createEffective(
-            final StmtContext<String, InstanceIdentifierSpecification,
-                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx,
-            final InstanceIdentifierSpecification declared,
+            final Current<String, InstanceIdentifierSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(
-            BaseTypes.instanceIdentifierType(), ctx.getSchemaPath().get());
+                BaseTypes.instanceIdentifierType(), stmt.getSchemaPath());
 
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof RequireInstanceEffectiveStatement) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
+        // TODO: we could do better here for empty substatements, but its really splitting hairs
+        for (EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement)subStmt).argument());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
-    }
-
-    @Override
-    protected EffectiveStatement<String, InstanceIdentifierSpecification> createEmptyEffective(
-            final StmtContext<String, InstanceIdentifierSpecification,
-                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx,
-            final InstanceIdentifierSpecification declared) {
-        // TODO: we could do better here, but its really splitting hairs
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 }

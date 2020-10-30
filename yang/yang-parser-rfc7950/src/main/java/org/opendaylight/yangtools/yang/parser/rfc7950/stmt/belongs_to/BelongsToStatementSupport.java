@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -94,17 +95,10 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    protected BelongsToEffectiveStatement createEffective(
-            final StmtContext<String, BelongsToStatement, BelongsToEffectiveStatement> ctx,
-            final BelongsToStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularBelongsToEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected BelongsToEffectiveStatement createEmptyEffective(
-            final StmtContext<String, BelongsToStatement, BelongsToEffectiveStatement> ctx,
-            final BelongsToStatement declared) {
-        return new EmptyBelongsToEffectiveStatement(declared);
+    protected BelongsToEffectiveStatement createEffective(final Current<String, BelongsToStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyBelongsToEffectiveStatement(stmt.declared())
+            : new RegularBelongsToEffectiveStatement(stmt.declared(), substatements);
     }
 
     private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,

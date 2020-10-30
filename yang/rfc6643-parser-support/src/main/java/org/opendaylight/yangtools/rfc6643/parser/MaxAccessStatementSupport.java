@@ -69,14 +69,16 @@ public final class MaxAccessStatementSupport
     @Override
     protected MaxAccessEffectiveStatement createEffective(
             final StmtContext<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> ctx,
-            final MaxAccessStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MaxAccessEffectiveStatementImpl(declared, substatements, ctx);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<MaxAccess, MaxAccessStatement> stmt) {
+        return new MaxAccessEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
+
 
     @Override
     protected MaxAccessEffectiveStatement createEmptyEffective(
             final StmtContext<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> ctx,
-            final MaxAccessStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<MaxAccess, MaxAccessStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

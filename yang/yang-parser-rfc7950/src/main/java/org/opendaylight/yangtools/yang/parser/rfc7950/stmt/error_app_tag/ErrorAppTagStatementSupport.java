@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,17 +49,9 @@ public final class ErrorAppTagStatementSupport
     }
 
     @Override
-    protected ErrorAppTagEffectiveStatement createEffective(
-            final StmtContext<String, ErrorAppTagStatement, ErrorAppTagEffectiveStatement> ctx,
-            final ErrorAppTagStatement declared,
+    protected ErrorAppTagEffectiveStatement createEffective(final Current<String, ErrorAppTagStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularErrorAppTagEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected ErrorAppTagEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ErrorAppTagStatement, ErrorAppTagEffectiveStatement> ctx,
-            final ErrorAppTagStatement declared) {
-        return new EmptyErrorAppTagEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyErrorAppTagEffectiveStatement(stmt.declared())
+            : new RegularErrorAppTagEffectiveStatement(stmt.declared(), substatements);
     }
 }

@@ -23,11 +23,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractSubmoduleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> {
@@ -86,24 +88,19 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     protected final SubmoduleStatement createEmptyDeclared(
             final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx) {
-        throw noBelongsTo(ctx);
+        throw noBelongsTo(ctx.getStatementSourceReference());
     }
 
     @Override
-    protected final SubmoduleEffectiveStatement createEffective(
-            final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new SubmoduleEffectiveStatementImpl(ctx, declared, substatements);
+    protected SubmoduleEffectiveStatement createEffective(final Current<UnqualifiedQName, SubmoduleStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noBelongsTo(stmt.sourceReference());
+        }
+        return new SubmoduleEffectiveStatementImpl(stmt, substatements);
     }
 
-    @Override
-    protected final SubmoduleEffectiveStatement createEmptyEffective(
-            final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared) {
-        throw noBelongsTo(ctx);
-    }
-
-    private static SourceException noBelongsTo(final StmtContext<?, ?, ?> ctx) {
-        return new SourceException("No belongs-to declared in submodule", ctx.getStatementSourceReference());
+    private static SourceException noBelongsTo(final StatementSourceReference ref) {
+        return new SourceException("No belongs-to declared in submodule", ref);
     }
 }
