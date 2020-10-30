@@ -15,13 +15,15 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
-    EmptyListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
-            final StmtContext<?, ?, ?> ctx, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    EmptyListEffectiveStatement(final EffectiveStatementState<QName, ListStatement> stmt, final SchemaPath path,
+            final int flags, final StmtContext<?, ?, ?> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
-        super(declared, path, flags, ctx, substatements, keyDefinition);
+        super(stmt, path, flags, ctx, substatements, keyDefinition);
     }
 
     @Override

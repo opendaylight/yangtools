@@ -114,14 +114,16 @@ public final class IfFeatureStatementSupport
     @Override
     protected IfFeatureEffectiveStatement createEffective(
             final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx,
-            final IfFeatureStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularIfFeatureEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveParentState parent,
+            final EffectiveStatementState<IfFeatureExpr, IfFeatureStatement> stmt) {
+        return new RegularIfFeatureEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected IfFeatureEffectiveStatement createEmptyEffective(
             final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx,
-            final IfFeatureStatement declared) {
-        return new EmptyIfFeatureEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<IfFeatureExpr, IfFeatureStatement> stmt) {
+        return new EmptyIfFeatureEffectiveStatement(stmt.declared());
     }
 }

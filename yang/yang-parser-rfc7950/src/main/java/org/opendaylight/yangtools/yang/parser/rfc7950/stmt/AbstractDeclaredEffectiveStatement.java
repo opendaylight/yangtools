@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -259,9 +259,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 E extends SchemaTreeAwareEffectiveStatement<A, D>> extends DefaultWithSchemaTree<A, D, E> {
             private final @NonNull Object substatements;
 
-            protected WithSubstatements(final D declared, final StmtContext<?, ?, ?> ctx,
+            protected WithSubstatements(final EffectiveStatementState<A, D> stmt,
                     final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(declared, ctx, substatements);
+                super(stmt, substatements);
                 this.substatements = maskList(substatements);
             }
 
@@ -274,11 +274,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull D declared;
 
-        protected DefaultWithSchemaTree(final D declared, final StmtContext<?, ?, ?> ctx,
+        protected DefaultWithSchemaTree(final EffectiveStatementState<A, D> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            this.declared = requireNonNull(declared);
+            this.declared = requireNonNull(stmt.declared());
             this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(
-                ctx.getStatementSourceReference(), substatements));
+                stmt.sourceReference(), substatements));
         }
 
         @Override
@@ -306,9 +306,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
             private final @NonNull Object substatements;
 
-            protected WithSubstatements(final D declared, final StmtContext<?, ?, ?> ctx,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(declared, ctx, substatements);
+            protected WithSubstatements(final EffectiveStatementState<A, D> stmt,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(stmt, substatements);
                 this.substatements = maskList(substatements);
             }
 
@@ -322,10 +322,10 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull D declared;
 
-        protected DefaultWithDataTree(final D declared, final StmtContext<?, ?, ?> ctx,
+        protected DefaultWithDataTree(final EffectiveStatementState<A, D> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            this.declared = requireNonNull(declared);
-            final StatementSourceReference ref = ctx.getStatementSourceReference();
+            this.declared = requireNonNull(stmt.declared());
+            final StatementSourceReference ref = stmt.sourceReference();
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(ref, substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
             this.dataTree = createDataTreeNamespace(ref, schema.values(), schemaTree);

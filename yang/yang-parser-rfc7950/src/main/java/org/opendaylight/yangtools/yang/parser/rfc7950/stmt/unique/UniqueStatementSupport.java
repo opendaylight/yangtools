@@ -80,16 +80,19 @@ public final class UniqueStatementSupport
     @Override
     protected UniqueEffectiveStatement createEffective(
             final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
-            final UniqueStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularUniqueEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Set<Descendant>, UniqueStatement> stmt) {
+        return new RegularUniqueEffectiveStatement(stmt.declared(), substatements);
+
     }
 
     @Override
     protected UniqueEffectiveStatement createEmptyEffective(
             final StmtContext<Set<Descendant>, UniqueStatement, UniqueEffectiveStatement> ctx,
-            final UniqueStatement declared) {
-        return new EmptyUniqueEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<Set<Descendant>, UniqueStatement> stmt) {
+        return new EmptyUniqueEffectiveStatement(stmt.declared());
     }
+
 
     private static ImmutableSet<Descendant> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {

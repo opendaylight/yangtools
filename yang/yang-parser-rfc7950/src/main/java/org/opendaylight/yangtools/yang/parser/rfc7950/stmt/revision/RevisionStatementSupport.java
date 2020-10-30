@@ -66,14 +66,15 @@ public final class RevisionStatementSupport
     @Override
     protected RevisionEffectiveStatement createEffective(
             final StmtContext<Revision, RevisionStatement, RevisionEffectiveStatement> ctx,
-            final RevisionStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularRevisionEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Revision, RevisionStatement> stmt) {
+        return new RegularRevisionEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected RevisionEffectiveStatement createEmptyEffective(
             final StmtContext<Revision, RevisionStatement, RevisionEffectiveStatement> ctx,
-            final RevisionStatement declared) {
-        return new EmptyRevisionEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<Revision, RevisionStatement> stmt) {
+        return new EmptyRevisionEffectiveStatement(stmt.declared());
     }
 }

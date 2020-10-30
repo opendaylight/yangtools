@@ -61,6 +61,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveParentState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -69,6 +71,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -111,6 +114,57 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     interface ContextMutation {
 
         boolean isFinished();
+    }
+
+    // FIXME: extend this as appropriate in InferredStatementContext
+    class BaseStatementState implements EffectiveStatementState<A, D> {
+        @Override
+        public StatementSource source() {
+            return getStatementSource();
+        }
+
+        @Override
+        public StatementSourceReference sourceReference() {
+            return getStatementSourceReference();
+        }
+
+        @Override
+        public CopyHistory history() {
+            return getCopyHistory();
+        }
+
+        @Override
+        public D declared() {
+            return buildDeclared();
+        }
+
+        @Override
+        public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
+            return StatementContextBase.this.declaredSubstatements();
+        }
+
+        @Override
+        public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
+            return StatementContextBase.this.effectiveSubstatements();
+        }
+
+        @Override
+        public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
+                final Class<@NonNull N> type, final T key) {
+            return StatementContextBase.this.getFromNamespace(type, key);
+        }
+    }
+
+    private final class BaseParentState implements EffectiveParentState {
+        @Override
+        public boolean effectiveConfig() {
+            return isConfiguration();
+        }
+
+        @Override
+        public @NonNull Optional<SchemaPath> schemaPath() {
+            return coerceParentContext().getSchemaPath();
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
@@ -561,7 +615,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(this);
+        return effectiveInstance = definition.getFactory().createEffective(this, new BaseParentState(), buildState());
+    }
+
+    // Extension point for InferredStatement
+    @NonNull EffectiveStatementState<A, D> buildState() {
+        return new BaseStatementState();
     }
 
     /**

@@ -90,16 +90,18 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     @Override
-    protected final SubmoduleEffectiveStatement createEffective(
+    protected SubmoduleEffectiveStatement createEffective(
             final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new SubmoduleEffectiveStatementImpl(ctx, declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<UnqualifiedQName, SubmoduleStatement> stmt) {
+        return new SubmoduleEffectiveStatementImpl(stmt, ctx, substatements);
     }
 
     @Override
     protected final SubmoduleEffectiveStatement createEmptyEffective(
             final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared) {
+            final EffectiveParentState parent,
+            final EffectiveStatementState<UnqualifiedQName, SubmoduleStatement> stmt) {
         throw noBelongsTo(ctx);
     }
 

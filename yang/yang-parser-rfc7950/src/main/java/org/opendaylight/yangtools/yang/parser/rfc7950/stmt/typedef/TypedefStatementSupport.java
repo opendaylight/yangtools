@@ -90,25 +90,26 @@ public final class TypedefStatementSupport extends
     @Override
     protected TypedefEffectiveStatement createEffective(
             final StmtContext<QName, TypedefStatement, TypedefEffectiveStatement> ctx,
-            final TypedefStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, TypedefStatement> stmt) {
         final TypeEffectiveStatement<?> typeEffectiveStmt = findFirstStatement(substatements,
-            TypeEffectiveStatement.class);
+                TypeEffectiveStatement.class);
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, dflt),
-            ctx.getStatementSourceReference(),
-            "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
-            dflt);
+                EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, dflt),
+                stmt.sourceReference(),
+                "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
+                dflt);
 
-        return new TypedefEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), computeFlags(substatements),
-            substatements);
+        return new TypedefEffectiveStatementImpl(stmt.declared(), ctx.getSchemaPath().get(),
+                computeFlags(substatements), substatements);
     }
 
     @Override
     protected TypedefEffectiveStatement createEmptyEffective(
             final StmtContext<QName, TypedefStatement, TypedefEffectiveStatement> ctx,
-            final TypedefStatement declared) {
-        throw new IllegalStateException("Refusing to create empty typedef for " + declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, TypedefStatement> stmt) {
+        throw new IllegalStateException("Refusing to create empty typedef for " + stmt.declared());
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
