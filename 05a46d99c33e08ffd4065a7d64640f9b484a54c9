@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "52cfd0d9_828685cd",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-10-30T12:02:18Z",
+      "side": 1,
+      "message": "Does it matter that we will be hiding type parameter A from this interface? \n\nDone",
+      "parentUuid": "1f899f3b_d78f35b1",
+      "range": {
+        "startLine": 396,
+        "startChar": 13,
+        "endLine": 396,
+        "endChar": 14
+      },
+      "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "14fc6a26_7162cd53",
         "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "176048a3_0713a0bc",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-10-30T12:02:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "14fc6a26_7162cd53",
+      "range": {
+        "startLine": 398,
+        "startChar": 24,
+        "endLine": 398,
+        "endChar": 25
+      },
+      "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     },
     {
       "key": {
@@ -92,6 +140,30 @@
       "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66ca3ea3_2f6effb1",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 402,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-10-30T12:02:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2d037d9_3adc8ec9",
+      "range": {
+        "startLine": 400,
+        "startChar": 0,
+        "endLine": 402,
+        "endChar": 51
+      },
+      "revId": "05a46d99c33e08ffd4065a7d64640f9b484a54c9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
