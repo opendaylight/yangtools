@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -55,7 +57,18 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
     }
 
     @Override
-    protected final E createEmptyEffective(final StmtContext<Boolean, D, E> ctx, final D declared) {
+    protected final E createEffective(final Current<Boolean, D> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? createEmptyEffective(stmt) : createEffective(stmt.declared(), substatements);
+    }
+
+    protected abstract @NonNull E createEffective(@NonNull D declared,
+        ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
+
+    protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
+
+    private @NonNull E createEmptyEffective(final Current<Boolean, D> stmt) {
+        final D declared = stmt.declared();
         if (emptyDeclaredTrue.equals(declared)) {
             return emptyEffectiveTrue;
         } else if (emptyDeclaredFalse.equals(declared)) {
@@ -64,6 +77,4 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
             return createEmptyEffective(declared);
         }
     }
-
-    protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
 }

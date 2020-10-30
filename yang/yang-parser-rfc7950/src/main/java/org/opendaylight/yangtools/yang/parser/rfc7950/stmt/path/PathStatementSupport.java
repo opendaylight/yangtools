@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -66,16 +67,9 @@ public final class PathStatementSupport
     }
 
     @Override
-    protected PathEffectiveStatement createEffective(
-            final StmtContext<PathExpression, PathStatement, PathEffectiveStatement> ctx,
-            final PathStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPathEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected PathEffectiveStatement createEmptyEffective(
-            final StmtContext<PathExpression, PathStatement, PathEffectiveStatement> ctx,
-            final PathStatement declared) {
-        return new EmptyPathEffectiveStatement(declared);
+    protected PathEffectiveStatement createEffective(final Current<PathExpression, PathStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyPathEffectiveStatement(stmt.declared())
+            : new RegularPathEffectiveStatement(stmt.declared(), substatements);
     }
 }

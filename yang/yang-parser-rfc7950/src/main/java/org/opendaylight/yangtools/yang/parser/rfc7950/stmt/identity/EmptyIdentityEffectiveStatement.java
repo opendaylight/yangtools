@@ -9,19 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyIdentityEffectiveStatement extends AbstractIdentityEffectiveStatement {
     private static final int CURRENT_FLAGS = new FlagsBuilder().setStatus(Status.CURRENT).toFlags();
 
-    EmptyIdentityEffectiveStatement(final IdentityStatement declared,
-            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx) {
-        super(declared, ctx);
+    EmptyIdentityEffectiveStatement(final IdentityStatement declared, final SchemaPath path) {
+        super(declared, path);
     }
 
     @Override

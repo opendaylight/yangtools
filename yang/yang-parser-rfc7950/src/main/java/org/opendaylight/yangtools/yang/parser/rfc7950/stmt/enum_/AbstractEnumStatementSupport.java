@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractEnumStatementSupport
@@ -40,15 +41,9 @@ abstract class AbstractEnumStatementSupport
     }
 
     @Override
-    protected final EnumEffectiveStatement createEffective(
-            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EnumStatement declared,
+    protected EnumEffectiveStatement createEffective(final Current<String, EnumStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularEnumEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected final EnumEffectiveStatement createEmptyEffective(
-            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EnumStatement declared) {
-        return new EmptyEnumEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyEnumEffectiveStatement(stmt.declared())
+            : new RegularEnumEffectiveStatement(stmt.declared(), substatements);
     }
 }

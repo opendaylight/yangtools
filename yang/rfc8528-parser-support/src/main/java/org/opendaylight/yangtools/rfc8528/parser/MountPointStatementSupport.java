@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -43,11 +44,10 @@ public final class MountPointStatementSupport
 
         private final @NonNull SchemaPath path;
 
-        Effective(final MountPointStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<QName, MountPointStatement, ?> ctx) {
-            super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
+        Effective(final Current<QName, MountPointStatement> stmt,
+                  final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(stmt, substatements);
+            path = stmt.getSchemaPath();
         }
 
         @Override
@@ -121,16 +121,8 @@ public final class MountPointStatementSupport
     }
 
     @Override
-    protected MountPointEffectiveStatement createEffective(
-            final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
-            final MountPointStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
-    }
-
-    @Override
-    protected MountPointEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
-            final MountPointStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected MountPointEffectiveStatement createEffective(final Current<QName, MountPointStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new Effective(stmt, substatements);
     }
 }

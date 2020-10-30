@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -48,20 +49,19 @@ public final class AnnotationStatementSupport
         private final @NonNull TypeDefinition<?> type;
         private final @NonNull SchemaPath path;
 
-        Effective(final AnnotationStatement declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StmtContext<QName, AnnotationStatement, ?> ctx) {
-            super(ctx.coerceStatementArgument(), declared, substatements, ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
+        Effective(final Current<QName, AnnotationStatement> stmt,
+                  final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            super(stmt, substatements);
+            path = stmt.getSchemaPath();
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-                firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                firstSubstatementOfType(TypeEffectiveStatement.class), stmt.sourceReference(),
                 "AnnotationStatementSupport %s is missing a 'type' statement", argument());
 
             final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
                 path);
-            final StmtContext<String, ?, ?> unitsStmt = StmtContextUtils.findFirstEffectiveSubstatement(ctx,
-                UnitsStatement.class);
+            final StmtContext<String, ?, ?> unitsStmt = StmtContextUtils.findFirstEffectiveSubstatement(
+                    stmt.caerbannog(), UnitsStatement.class);
             if (unitsStmt != null) {
                 builder.setUnits(unitsStmt.getStatementArgument());
             }
@@ -146,17 +146,8 @@ public final class AnnotationStatementSupport
     }
 
     @Override
-    protected AnnotationEffectiveStatement createEffective(
-            final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
-            final AnnotationStatement declared,
+    protected AnnotationEffectiveStatement createEffective(final Current<QName, AnnotationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(declared, substatements, ctx);
-    }
-
-    @Override
-    protected AnnotationEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
-            final AnnotationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new Effective(stmt, substatements);
     }
 }
