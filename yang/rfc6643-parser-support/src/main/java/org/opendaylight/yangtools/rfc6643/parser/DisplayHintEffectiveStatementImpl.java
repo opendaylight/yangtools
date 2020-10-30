@@ -16,17 +16,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class DisplayHintEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, DisplayHintStatement>
         implements DisplayHintEffectiveStatement, DisplayHintSchemaNode {
     private final SchemaPath path;
 
-    DisplayHintEffectiveStatementImpl(final DisplayHintStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StmtContext<String, DisplayHintStatement, ?> ctx) {
-        super(ctx.getStatementArgument(), declared, substatements, ctx);
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
+    DisplayHintEffectiveStatementImpl(final Current<String, DisplayHintStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, substatements);
+        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override

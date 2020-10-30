@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -92,17 +93,13 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    protected OrderedByEffectiveStatement createEffective(
-            final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
-            final OrderedByStatement declared,
+    protected OrderedByEffectiveStatement createEffective(final Current<Ordering, OrderedByStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularOrderedByEffectiveStatement(declared, substatements);
+        return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
+            : new RegularOrderedByEffectiveStatement(stmt.declared(), substatements);
     }
 
-    @Override
-    protected OrderedByEffectiveStatement createEmptyEffective(
-            final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
-            final OrderedByStatement declared) {
+    private static @NonNull OrderedByEffectiveStatement createEmptyEffective(final OrderedByStatement declared) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.
         if (EMPTY_USER_DECL.equals(declared)) {

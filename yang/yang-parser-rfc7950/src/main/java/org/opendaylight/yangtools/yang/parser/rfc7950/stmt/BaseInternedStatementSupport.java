@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -58,9 +59,14 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
     protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
 
     @Override
-    protected final E createEmptyEffective(final StmtContext<A, D, E> ctx, final D declared) {
-        return effectiveCache.getUnchecked(declared);
+    protected final E createEffective(final Current<A, D> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? effectiveCache.getUnchecked(stmt.declared())
+            : createEffective(stmt.declared(), substatements);
     }
+
+    protected abstract @NonNull E createEffective(@NonNull D declared,
+        @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
 

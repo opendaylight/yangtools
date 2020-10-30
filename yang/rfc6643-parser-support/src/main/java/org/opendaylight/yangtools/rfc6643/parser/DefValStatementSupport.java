@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -50,15 +51,8 @@ public final class DefValStatementSupport
     }
 
     @Override
-    protected DefValEffectiveStatement createEffective(
-            final StmtContext<String, DefValStatement, DefValEffectiveStatement> ctx, final DefValStatement declared,
+    protected DefValEffectiveStatement createEffective(final Current<String, DefValStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DefValEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected DefValEffectiveStatement createEmptyEffective(
-            final StmtContext<String, DefValStatement, DefValEffectiveStatement> ctx, final DefValStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new DefValEffectiveStatementImpl(stmt, substatements);
     }
 }

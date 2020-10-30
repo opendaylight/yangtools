@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -91,17 +92,10 @@ public final class RangeStatementSupport
     }
 
     @Override
-    protected RangeEffectiveStatement createEffective(
-            final StmtContext<List<ValueRange>, RangeStatement, RangeEffectiveStatement> ctx,
-            final RangeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularRangeEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected RangeEffectiveStatement createEmptyEffective(
-            final StmtContext<List<ValueRange>, RangeStatement, RangeEffectiveStatement> ctx,
-            final RangeStatement declared) {
-        return new EmptyRangeEffectiveStatement(declared);
+    protected RangeEffectiveStatement createEffective(final Current<List<ValueRange>, RangeStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyRangeEffectiveStatement(stmt.declared())
+            : new RegularRangeEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override

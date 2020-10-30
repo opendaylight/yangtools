@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -16,9 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecifi
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class UnionSpecificationSupport
         extends BaseStatementSupport<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> {
@@ -49,38 +52,35 @@ final class UnionSpecificationSupport
 
     @Override
     protected UnionSpecification createEmptyDeclared(final StmtContext<String, UnionSpecification, ?> ctx) {
-        throw noType(ctx);
+        throw noType(ctx.getStatementSourceReference());
     }
 
     @Override
     protected EffectiveStatement<String, UnionSpecification> createEffective(
-            final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx,
-            final UnionSpecification declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(ctx.getSchemaPath().get());
+            final Current<String, UnionSpecification> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noType(stmt.sourceReference());
+        }
 
-        for (final EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof TypeEffectiveStatement) {
-                builder.addType(((TypeEffectiveStatement<?>)stmt).getTypeDefinition());
+        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.getSchemaPath());
+
+        for (final EffectiveStatement<?, ?> subStmt : substatements) {
+            if (subStmt instanceof TypeEffectiveStatement) {
+                builder.addType(((TypeEffectiveStatement<?>)subStmt).getTypeDefinition());
             }
         }
 
-        return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
+        return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    @Override
-    protected EffectiveStatement<String, UnionSpecification> createEmptyEffective(
-            final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx,
-            final UnionSpecification declared) {
-        throw noType(ctx);
-    }
-
-    private static SourceException noType(final StmtContext<?, ?, ?> ctx) {
+    private static SourceException noType(final @NonNull StatementSourceReference ref) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.12
          *
          *     When the type is "union", the "type" statement (Section 7.4) MUST be
          *     present.
          */
-        return new SourceException("At least one type statement has to be present", ctx.getStatementSourceReference());
+        return new SourceException("At least one type statement has to be present", ref);
     }
 }
