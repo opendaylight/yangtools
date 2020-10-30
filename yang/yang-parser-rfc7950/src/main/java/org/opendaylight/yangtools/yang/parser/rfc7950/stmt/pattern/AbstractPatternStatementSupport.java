@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -52,16 +53,9 @@ abstract class AbstractPatternStatementSupport
     }
 
     @Override
-    protected final PatternEffectiveStatement createEffective(
-            final StmtContext<PatternExpression, PatternStatement, PatternEffectiveStatement> ctx,
-            final PatternStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPatternEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected final PatternEffectiveStatement createEmptyEffective(
-            final StmtContext<PatternExpression, PatternStatement, PatternEffectiveStatement> ctx,
-            final PatternStatement declared) {
-        return new EmptyPatternEffectiveStatement(declared);
+    protected final PatternEffectiveStatement createEffective(final Current<PatternExpression, PatternStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyPatternEffectiveStatement(stmt.declared())
+            : new RegularPatternEffectiveStatement(stmt.declared(), substatements);
     }
 }
