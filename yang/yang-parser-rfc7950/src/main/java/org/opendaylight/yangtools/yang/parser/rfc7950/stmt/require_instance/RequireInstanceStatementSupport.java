@@ -48,9 +48,9 @@ public final class RequireInstanceStatementSupport
     @Override
     protected RequireInstanceEffectiveStatement createEffective(
             final StmtContext<Boolean, RequireInstanceStatement, RequireInstanceEffectiveStatement> ctx,
-            final RequireInstanceStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularRequireInstanceEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<Boolean, RequireInstanceStatement> stmt) {
+        return new RegularRequireInstanceEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override

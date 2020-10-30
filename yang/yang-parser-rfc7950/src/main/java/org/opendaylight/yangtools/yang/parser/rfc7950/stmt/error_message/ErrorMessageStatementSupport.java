@@ -50,15 +50,16 @@ public final class ErrorMessageStatementSupport
     @Override
     protected ErrorMessageEffectiveStatement createEffective(
             final StmtContext<String, ErrorMessageStatement, ErrorMessageEffectiveStatement> ctx,
-            final ErrorMessageStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularErrorMessageEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveParentState parent,
+            final EffectiveStatementState<String, ErrorMessageStatement> stmt) {
+        return new RegularErrorMessageEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected ErrorMessageEffectiveStatement createEmptyEffective(
             final StmtContext<String, ErrorMessageStatement, ErrorMessageEffectiveStatement> ctx,
-            final ErrorMessageStatement declared) {
-        return new EmptyErrorMessageEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ErrorMessageStatement> stmt) {
+        return new EmptyErrorMessageEffectiveStatement(stmt.declared());
     }
 }

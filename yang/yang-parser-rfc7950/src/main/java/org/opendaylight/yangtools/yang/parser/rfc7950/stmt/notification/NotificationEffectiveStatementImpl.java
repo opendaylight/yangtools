@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class NotificationEffectiveStatementImpl
@@ -35,10 +36,11 @@ final class NotificationEffectiveStatementImpl
     private final @NonNull SchemaPath path;
     private final int flags;
 
-    NotificationEffectiveStatementImpl(final NotificationStatement declared, final int flags,
+    NotificationEffectiveStatementImpl(
+            final StatementFactory.EffectiveStatementState<QName, NotificationStatement> stmt,
             final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, ctx, substatements);
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, substatements);
         this.path = ctx.getSchemaPath().get();
         this.flags = flags;
     }

@@ -84,15 +84,16 @@ public final class YangVersionStatementSupport
     @Override
     protected YangVersionEffectiveStatement createEffective(
             final StmtContext<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> ctx,
-            final YangVersionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularYangVersionEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<YangVersion, YangVersionStatement> stmt) {
+        return new RegularYangVersionEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected YangVersionEffectiveStatement createEmptyEffective(
             final StmtContext<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> ctx,
-            final YangVersionStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<YangVersion, YangVersionStatement> stmt) {
+        final YangVersionStatement declared = stmt.declared();
         if (EMPTY_VER1_DECL.equals(declared)) {
             return EMPTY_VER1_EFF;
         } else if (EMPTY_VER1_1_DECL.equals(declared)) {

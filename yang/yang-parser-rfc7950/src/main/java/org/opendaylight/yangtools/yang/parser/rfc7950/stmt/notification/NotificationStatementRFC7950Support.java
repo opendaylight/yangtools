@@ -64,8 +64,8 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
 
 
     @Override
-    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
-        final StatementSourceReference ref = ctx.getStatementSourceReference();
+    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
+                        final StatementSourceReference ref) {
         final QName argument = ctx.getStatementArgument();
         SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ref,
             "Notification %s is defined within an rpc, action, or another notification", argument);

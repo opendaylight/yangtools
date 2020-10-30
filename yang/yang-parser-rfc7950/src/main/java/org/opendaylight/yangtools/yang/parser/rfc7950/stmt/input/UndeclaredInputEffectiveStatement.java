@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class UndeclaredInputEffectiveStatement
         extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
@@ -29,8 +30,9 @@ final class UndeclaredInputEffectiveStatement
 
     UndeclaredInputEffectiveStatement(final int flags,
             final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx,
+            final StatementSourceReference sourceReference,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(ctx, substatements);
+        super(sourceReference, substatements);
         this.flags = flags;
         this.path = ctx.getSchemaPath().get();
     }

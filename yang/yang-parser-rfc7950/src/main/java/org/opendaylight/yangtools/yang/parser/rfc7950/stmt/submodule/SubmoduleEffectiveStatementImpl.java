@@ -38,12 +38,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class SubmoduleEffectiveStatementImpl
         extends AbstractEffectiveModule<SubmoduleStatement, SubmoduleEffectiveStatement>
@@ -57,9 +59,10 @@ final class SubmoduleEffectiveStatementImpl
     private boolean sealed;
 
     SubmoduleEffectiveStatementImpl(
-        final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, ctx, substatements, findSubmodulePrefix(ctx));
+            final StatementFactory.EffectiveStatementState<UnqualifiedQName, SubmoduleStatement> stmt,
+            final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, ctx, substatements, findSubmodulePrefix(ctx, stmt.sourceReference()));
 
         final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
         final QNameModule belongsToModuleQName = ctx.getFromNamespace(ModuleNameToModuleQName.class,
@@ -147,11 +150,12 @@ final class SubmoduleEffectiveStatementImpl
         }
     }
 
-    private static @NonNull String findSubmodulePrefix(final StmtContext<UnqualifiedQName, ?, ?> ctx) {
+    private static @NonNull String findSubmodulePrefix(final StmtContext<UnqualifiedQName, ?, ?> ctx,
+                                                       final StatementSourceReference sourceReference) {
         final String name = ctx.coerceRawStatementArgument();
         final StmtContext<?, ?, ?> belongsTo = SourceException.throwIfNull(
                 StmtContextUtils.findFirstDeclaredSubstatement(ctx, BelongsToStatement.class),
-                ctx.getStatementSourceReference(), "Unable to find belongs-to statement in submodule %s.", name);
+                sourceReference, "Unable to find belongs-to statement in submodule %s.", name);
         return findPrefix(belongsTo, "submodule", name);
     }
 }

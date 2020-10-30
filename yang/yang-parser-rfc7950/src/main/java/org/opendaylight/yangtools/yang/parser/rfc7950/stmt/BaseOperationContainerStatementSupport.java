@@ -46,19 +46,24 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
 
     @Override
     protected final @NonNull E createDeclaredEffective(final StmtContext<QName, D, E> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final D declared) {
-        return createDeclaredEffective(historyAndStatusFlags(ctx, substatements), ctx, substatements, declared);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveStatementState<QName, D> stmt, final EffectiveParentState parent) {
+        return createDeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), ctx, stmt, substatements);
     }
 
     protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
-            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements, @NonNull D declared);
+            @NonNull EffectiveStatementState<QName, D> stmt,
+            @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     @Override
     protected final E createUndeclaredEffective(final StmtContext<QName, D, E> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createUndeclaredEffective(historyAndStatusFlags(ctx, substatements), ctx, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final EffectiveStatementState<QName, D> stmt, final EffectiveParentState parent) {
+        return createUndeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), ctx, stmt,
+                substatements);
     }
 
     protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull StmtContext<QName, D, E> ctx,
+            @NonNull EffectiveStatementState<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 }

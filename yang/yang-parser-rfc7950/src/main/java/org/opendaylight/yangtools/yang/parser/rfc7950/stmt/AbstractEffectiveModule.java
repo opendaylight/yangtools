@@ -58,6 +58,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
@@ -75,20 +76,20 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
     private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
-    protected AbstractEffectiveModule(final D declared,
+    protected AbstractEffectiveModule(final EffectiveStatementState<UnqualifiedQName, D> stmt,
             final StmtContext<UnqualifiedQName, D, ? extends EffectiveStatement<UnqualifiedQName, ?>> ctx,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
-        super(declared, ctx, substatements);
+        super(stmt, substatements);
 
         // This check is rather weird, but comes from our desire to lower memory footprint while providing both
         // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
         // concerned. This ensures that we have SchemaTree index available for use with child lookups.
         final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree =
-                createSchemaTreeNamespace(ctx.getStatementSourceReference(), effectiveSubstatements());
+                createSchemaTreeNamespace(stmt.sourceReference(), effectiveSubstatements());
         schemaTreeNamespace = ImmutableMap.copyOf(schemaTree);
 
         // Data tree check, not currently used
-        createDataTreeNamespace(ctx.getStatementSourceReference(), schemaTree.values(), schemaTreeNamespace);
+        createDataTreeNamespace(stmt.sourceReference(), schemaTree.values(), schemaTreeNamespace);
 
         this.prefix = requireNonNull(prefix);
 
@@ -98,17 +99,20 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UsesNode && !mutableUses.add((UsesNode) effectiveStatement)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt.sourceReference(),
+                        effectiveStatement);
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement) {
                 final TypeDefinition<?> type = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
                 if (!mutableTypeDefinitions.add(type)) {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt.sourceReference(),
+                            effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof GroupingDefinition
                     && !mutableGroupings.add((GroupingDefinition) effectiveStatement)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt.sourceReference(),
+                        effectiveStatement);
             }
         }
 

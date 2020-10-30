@@ -40,15 +40,17 @@ abstract class AbstractBitStatementSupport extends BaseStatementSupport<String, 
     }
 
     @Override
-    protected final BitEffectiveStatement createEffective(
-            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx, final BitStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularBitEffectiveStatement(declared, substatements);
+    protected BitEffectiveStatement createEffective(
+            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, BitStatement> stmt) {
+        return new RegularBitEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected final BitEffectiveStatement createEmptyEffective(
-            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx, final BitStatement declared) {
-        return new EmptyBitEffectiveStatement(declared);
+            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<String, BitStatement> stmt) {
+        return new EmptyBitEffectiveStatement(stmt.declared());
     }
 }

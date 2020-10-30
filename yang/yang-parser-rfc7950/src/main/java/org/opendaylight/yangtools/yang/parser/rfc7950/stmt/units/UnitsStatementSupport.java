@@ -51,14 +51,15 @@ public final class UnitsStatementSupport
     @Override
     protected UnitsEffectiveStatement createEffective(
             final StmtContext<String, UnitsStatement, UnitsEffectiveStatement> ctx,
-            final UnitsStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularUnitsEffectiveStatement(declared, substatements);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<String, UnitsStatement> stmt) {
+        return new RegularUnitsEffectiveStatement(stmt.declared(), substatements);
     }
 
     @Override
     protected UnitsEffectiveStatement createEmptyEffective(
             final StmtContext<String, UnitsStatement, UnitsEffectiveStatement> ctx,
-            final UnitsStatement declared) {
-        return new EmptyUnitsEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, UnitsStatement> stmt) {
+        return new EmptyUnitsEffectiveStatement(stmt.declared());
     }
 }

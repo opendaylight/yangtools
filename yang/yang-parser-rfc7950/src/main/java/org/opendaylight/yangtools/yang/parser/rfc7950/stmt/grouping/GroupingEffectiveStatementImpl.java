@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class GroupingEffectiveStatementImpl
@@ -35,9 +36,10 @@ final class GroupingEffectiveStatementImpl
     private final @NonNull SchemaPath path;
     private final int flags;
 
-    GroupingEffectiveStatementImpl(final GroupingStatement declared, final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags) {
-        super(declared, ctx, substatements);
+    GroupingEffectiveStatementImpl(final EffectiveStatementState<QName, GroupingStatement> stmt,
+            final StmtContext<?, ?, ?> ctx, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final int flags) {
+        super(stmt, substatements);
         this.path = ctx.getSchemaPath().get();
         this.flags = flags;
     }

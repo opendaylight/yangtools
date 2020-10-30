@@ -58,8 +58,9 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
     protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
 
     @Override
-    protected final E createEmptyEffective(final StmtContext<A, D, E> ctx, final D declared) {
-        return effectiveCache.getUnchecked(declared);
+    protected final E createEmptyEffective(final StmtContext<A, D, E> ctx, final EffectiveParentState parent,
+                                           final EffectiveStatementState<A, D> stmt) {
+        return effectiveCache.getUnchecked(stmt.declared());
     }
 
     protected abstract @NonNull E createEmptyEffective(@NonNull D declared);

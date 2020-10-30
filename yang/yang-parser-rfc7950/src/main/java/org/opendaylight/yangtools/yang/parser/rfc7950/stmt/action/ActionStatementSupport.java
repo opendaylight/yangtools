@@ -88,8 +88,9 @@ public final class ActionStatementSupport extends
 
     @Override
     protected ActionEffectiveStatement createEffective(
-            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ActionStatement> stmt) {
         final QName argument = ctx.coerceStatementArgument();
         final StatementSourceReference ref = ctx.getStatementSourceReference();
         SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ref,
@@ -102,13 +103,14 @@ public final class ActionStatementSupport extends
         SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.MODULE), ref,
             "Action %s is defined at the top level of a module", argument);
 
-        return new ActionEffectiveStatementImpl(declared, ctx.getSchemaPath().get(),
-            historyAndStatusFlags(ctx, substatements), ctx, substatements);
+        return new ActionEffectiveStatementImpl(stmt, ctx.getSchemaPath().get(),
+            historyAndStatusFlags(stmt.history(), substatements), substatements);
     }
 
     @Override
     protected ActionEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared) {
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ActionStatement> stmt) {
         throw new IllegalStateException("Missing implicit input/output statements at "
             + ctx.getStatementSourceReference());
     }
