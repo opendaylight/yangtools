@@ -13,4 +13,7 @@ module org.opendaylight.yangtools.yang.parser.spi {
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires org.slf4j;
+
+    // Annotations
+    requires static org.eclipse.jdt.annotation;
 }
