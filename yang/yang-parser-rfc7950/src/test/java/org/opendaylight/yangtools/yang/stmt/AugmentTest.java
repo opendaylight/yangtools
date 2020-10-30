@@ -131,7 +131,7 @@ public class AugmentTest {
         AugmentationSchemaNode augment2 = null;
         AugmentationSchemaNode augment3 = null;
         for (final AugmentationSchemaNode as : augmentations) {
-            if (!as.getWhenCondition().isPresent()) {
+            if (as.getWhenCondition().isEmpty()) {
                 augment3 = as;
             } else if ("br:ifType='ds0'".equals(as.getWhenCondition().orElseThrow().toString())) {
                 augment1 = as;
@@ -154,7 +154,7 @@ public class AugmentTest {
         assertNotNull(augmentHolder2);
 
         assertEquals(1, augment3.getChildNodes().size());
-        final CaseSchemaNode pause = (CaseSchemaNode) augment3.getDataChildByName(QName.create(
+        final LeafSchemaNode pause = (LeafSchemaNode) augment3.getDataChildByName(QName.create(
                 module3.getQNameModule(), "pause"));
         assertNotNull(pause);
     }
