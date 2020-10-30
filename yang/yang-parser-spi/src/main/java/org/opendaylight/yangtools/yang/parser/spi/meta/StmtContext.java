@@ -391,4 +391,17 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
     }
+
+    default <A, T extends EffectiveStatement<A, ?>> Optional<A> findFirstSubstatementArgument(
+            final @NonNull Class<T> type) {
+        return allSubstatementsStream()
+                .filter(ctx -> ((StmtContext) ctx).producesEffective(type))
+                .findFirst()
+                .map(ctx -> (A) ctx.coerceStatementArgument());
+    }
+
+    default boolean hasSubstatement(Class<? extends EffectiveStatement> type) {
+        return allSubstatementsStream().map(o -> ((StmtContext) o).buildEffective()).anyMatch(type::isInstance);
+    }
+
 }
