@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextDefaults;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,6 +163,30 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     boolean hasEmptySubstatements() {
         ensureSubstatements();
         return hasEmptyEffectiveSubstatements();
+    }
+
+    @Override
+    public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+            final @NonNull Class<Z> type) {
+        if (substatementsInitialized()) {
+            return StmtContextDefaults.findSubstatementArgument(this, type);
+        }
+
+        final Optional<X> templateArg = prototype.findSubstatementArgument(type);
+        if (templateArg.isEmpty()) {
+            return templateArg;
+        }
+        if (SchemaTreeEffectiveStatement.class.isAssignableFrom(type)) {
+            // X is known to be QName
+            return (Optional<X>) templateArg.map(template -> ((QName) template).bindTo(targetModule));
+        }
+        return templateArg;
+    }
+
+    @Override
+    public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return substatementsInitialized() ? StmtContextDefaults.hasSubstatement(prototype, type)
+            : prototype.hasSubstatement(type);
     }
 
     @Override
