@@ -77,7 +77,7 @@ public final class ExtensionStatementSupport
         stmt.addToNs(StatementDefinitionNamespace.class, stmt.getStatementArgument(),
             new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(stmt.getStatementArgument(),
                 argument != null ? argument.getStatementArgument() : null,
-                        yinElement != null && yinElement.getStatementArgument())));
+                        yinElement != null && yinElement.coerceStatementArgument())));
     }
 
     @Override
