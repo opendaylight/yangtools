@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -189,6 +190,16 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     final Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
         return effective;
+    }
+
+    @Override
+    final Stream<? extends StmtContext<?, ?, ?>> streamDeclared() {
+        return declaredSubstatements().stream();
+    }
+
+    @Override
+    final Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
+        return effective.stream();
     }
 
     /**

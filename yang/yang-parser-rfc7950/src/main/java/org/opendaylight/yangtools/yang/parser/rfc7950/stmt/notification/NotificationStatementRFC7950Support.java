@@ -12,9 +12,8 @@ import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -64,15 +63,16 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
 
 
     @Override
-    void checkEffective(final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
-        final StatementSourceReference ref = ctx.getStatementSourceReference();
-        final QName argument = ctx.getStatementArgument();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ref,
+    void checkEffective(final Current<QName, NotificationStatement> stmt) {
+        final QName argument = stmt.argument();
+        final StatementSourceReference ref = stmt.sourceReference();
+        final var rabbit = stmt.caerbannog();
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(rabbit, ILLEGAL_PARENTS), ref,
             "Notification %s is defined within an rpc, action, or another notification", argument);
         SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(rabbit, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
             "Notification %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(rabbit, YangStmtMapping.CASE), ref,
             "Notification %s is defined within a case statement", argument);
     }
 }

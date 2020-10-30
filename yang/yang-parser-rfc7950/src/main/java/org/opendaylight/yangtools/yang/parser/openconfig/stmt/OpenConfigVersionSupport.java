@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatemen
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -64,16 +65,8 @@ public final class OpenConfigVersionSupport
 
     @Override
     protected OpenConfigVersionEffectiveStatement createEffective(
-            final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
-            final OpenConfigVersionStatement declared,
+            final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new OpenConfigVersionEffectiveStatementImpl(declared, substatements, ctx);
-    }
-
-    @Override
-    protected OpenConfigVersionEffectiveStatement createEmptyEffective(
-            final StmtContext<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> ctx,
-            final OpenConfigVersionStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new OpenConfigVersionEffectiveStatementImpl(stmt, substatements);
     }
 }

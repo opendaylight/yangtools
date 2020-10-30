@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -23,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class NotificationEffectiveStatementImpl
         extends WithSubstatements<QName, NotificationStatement, NotificationEffectiveStatement>
@@ -35,11 +37,11 @@ final class NotificationEffectiveStatementImpl
     private final @NonNull SchemaPath path;
     private final int flags;
 
-    NotificationEffectiveStatementImpl(final NotificationStatement declared, final int flags,
-            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, ctx, substatements);
-        this.path = ctx.getSchemaPath().get();
+    NotificationEffectiveStatementImpl(final NotificationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
+            final int flags, final SchemaPath path) {
+        super(declared, substatements, ref);
+        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
