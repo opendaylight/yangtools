@@ -43,6 +43,12 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
+    public E createEffective(final StmtContext<A, D, E> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<A, D> stmt) {
+        return delegate().createEffective(ctx, parent, stmt);
+    }
+
+    @Override
     public StatementDefinition getPublicView() {
         return delegate().getPublicView();
     }
