@@ -73,15 +73,17 @@ public final class AnyxmlSchemaLocationStatementSupport
     @Override
     protected AnyxmlSchemaLocationEffectiveStatement createEffective(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new AnyxmlSchemaLocationEffectiveStatementImpl(declared, substatements, ctx);
+                    AnyxmlSchemaLocationEffectiveStatement> ctx,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final EffectiveParentState parent,
+            final EffectiveStatementState<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt) {
+        return new AnyxmlSchemaLocationEffectiveStatementImpl(stmt, parent, substatements, ctx);
     }
 
     @Override
     protected AnyxmlSchemaLocationEffectiveStatement createEmptyEffective(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+                AnyxmlSchemaLocationEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt) {
+        return createEffective(ctx, ImmutableList.of(), parent, stmt);
     }
 }

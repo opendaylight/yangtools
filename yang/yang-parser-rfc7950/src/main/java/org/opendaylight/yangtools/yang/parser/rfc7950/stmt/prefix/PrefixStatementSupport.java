@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,15 +49,9 @@ public final class PrefixStatementSupport
     }
 
     @Override
-    protected PrefixEffectiveStatement createEffective(
-            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final PrefixStatement declared,
+    protected PrefixEffectiveStatement createEffective(final Current<String, PrefixStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPrefixEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected PrefixEffectiveStatement createEmptyEffective(
-            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final PrefixStatement declared) {
-        return new EmptyPrefixEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyPrefixEffectiveStatement(stmt.declared())
+            : new RegularPrefixEffectiveStatement(stmt.declared(), substatements);
     }
 }

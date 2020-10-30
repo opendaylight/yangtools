@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBund
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -200,18 +201,9 @@ abstract class AbstractDeviateStatementSupport
     }
 
     @Override
-    protected final DeviateEffectiveStatement createEffective(
-            final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx,
-            final DeviateStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeviateEffectiveStatementImpl(declared, substatements);
-    }
-
-    @Override
-    protected final DeviateEffectiveStatement createEmptyEffective(
-            final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx,
-            final DeviateStatement declared) {
-        // This is exceedingly unlikely, just reuse the implementation
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeviateEffectiveStatementImpl(stmt.declared(), substatements);
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
