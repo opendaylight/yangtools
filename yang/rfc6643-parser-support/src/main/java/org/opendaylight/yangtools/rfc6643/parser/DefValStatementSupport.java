@@ -58,7 +58,8 @@ public final class DefValStatementSupport
 
     @Override
     protected DefValEffectiveStatement createEmptyEffective(
-            final StmtContext<String, DefValStatement, DefValEffectiveStatement> ctx, final DefValStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<String, DefValStatement, DefValEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<String, DefValStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

@@ -91,8 +91,9 @@ abstract class AbstractChoiceStatementSupport
 
     @Override
     protected final ChoiceEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx, final ChoiceStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ChoiceStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     abstract StatementSupport<?, ?, ?> implictCase();

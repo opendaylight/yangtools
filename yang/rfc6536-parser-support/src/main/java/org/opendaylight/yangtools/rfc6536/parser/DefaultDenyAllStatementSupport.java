@@ -104,7 +104,7 @@ public final class DefaultDenyAllStatementSupport
     @Override
     protected DefaultDenyAllEffectiveStatement createEmptyEffective(
             final StmtContext<Void, DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> ctx,
-            final DefaultDenyAllStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<Void, DefaultDenyAllStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

@@ -58,7 +58,7 @@ public final class UnitsStatementSupport
     @Override
     protected UnitsEffectiveStatement createEmptyEffective(
             final StmtContext<String, UnitsStatement, UnitsEffectiveStatement> ctx,
-            final UnitsStatement declared) {
-        return new EmptyUnitsEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, UnitsStatement> stmt) {
+        return new EmptyUnitsEffectiveStatement(stmt.declared());
     }
 }

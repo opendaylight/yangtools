@@ -71,7 +71,7 @@ public final class RevisionDateStatementSupport
     @Override
     protected RevisionDateEffectiveStatement createEmptyEffective(
             final StmtContext<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> ctx,
-            final RevisionDateStatement declared) {
-        return new EmptyRevisionDateEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<Revision, RevisionDateStatement> stmt) {
+        return new EmptyRevisionDateEffectiveStatement(stmt.declared());
     }
 }

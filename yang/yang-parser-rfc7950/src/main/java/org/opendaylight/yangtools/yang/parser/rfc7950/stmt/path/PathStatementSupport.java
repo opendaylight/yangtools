@@ -75,7 +75,7 @@ public final class PathStatementSupport
     @Override
     protected PathEffectiveStatement createEmptyEffective(
             final StmtContext<PathExpression, PathStatement, PathEffectiveStatement> ctx,
-            final PathStatement declared) {
-        return new EmptyPathEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<PathExpression, PathStatement> stmt) {
+        return new EmptyPathEffectiveStatement(stmt.declared());
     }
 }

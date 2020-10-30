@@ -48,7 +48,8 @@ abstract class AbstractEnumStatementSupport
 
     @Override
     protected final EnumEffectiveStatement createEmptyEffective(
-            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EnumStatement declared) {
-        return new EmptyEnumEffectiveStatement(declared);
+            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, EnumStatement> stmt) {
+        return new EmptyEnumEffectiveStatement(stmt.declared());
     }
 }

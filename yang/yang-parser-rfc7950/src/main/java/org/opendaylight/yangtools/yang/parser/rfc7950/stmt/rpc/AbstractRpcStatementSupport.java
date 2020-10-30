@@ -82,7 +82,8 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
 
     @Override
     protected final RpcEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final RpcStatement declared) {
+            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, RpcStatement> stmt) {
         throw new IllegalStateException("Missing implicit input/output statements at "
                 + ctx.getStatementSourceReference());
     }

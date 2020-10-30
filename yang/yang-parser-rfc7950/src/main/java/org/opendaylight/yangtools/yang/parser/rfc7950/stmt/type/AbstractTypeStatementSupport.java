@@ -293,7 +293,7 @@ abstract class AbstractTypeStatementSupport
     @Override
     protected final EffectiveStatement<String, TypeStatement> createEmptyEffective(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final TypeStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, TypeStatement> stmt) {
         return resolveType(ctx);
     }
 

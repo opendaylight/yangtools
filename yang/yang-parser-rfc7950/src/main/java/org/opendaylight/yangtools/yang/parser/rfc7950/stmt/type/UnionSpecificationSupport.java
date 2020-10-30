@@ -70,7 +70,7 @@ final class UnionSpecificationSupport
     @Override
     protected EffectiveStatement<String, UnionSpecification> createEmptyEffective(
             final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx,
-            final UnionSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, UnionSpecification> stmt) {
         throw noType(ctx);
     }
 

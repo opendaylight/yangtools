@@ -66,7 +66,7 @@ public final class ArgumentStatementSupport
     @Override
     protected ArgumentEffectiveStatement createEmptyEffective(
             final StmtContext<QName, ArgumentStatement, ArgumentEffectiveStatement> ctx,
-            final ArgumentStatement declared) {
-        return new EmptyArgumentEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ArgumentStatement> stmt) {
+        return new EmptyArgumentEffectiveStatement(stmt.declared());
     }
 }

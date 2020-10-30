@@ -80,7 +80,8 @@ public final class AnyxmlSchemaLocationStatementSupport
     @Override
     protected AnyxmlSchemaLocationEffectiveStatement createEmptyEffective(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-                AnyxmlSchemaLocationEffectiveStatement> ctx, final AnyxmlSchemaLocationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+                AnyxmlSchemaLocationEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

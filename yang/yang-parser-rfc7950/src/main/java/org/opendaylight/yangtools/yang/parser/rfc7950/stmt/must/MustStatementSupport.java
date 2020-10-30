@@ -74,7 +74,7 @@ public final class MustStatementSupport
     @Override
     protected MustEffectiveStatement createEmptyEffective(
             final StmtContext<QualifiedBound, MustStatement, MustEffectiveStatement> ctx,
-            final MustStatement declared) {
-        return new EmptyMustEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QualifiedBound, MustStatement> stmt) {
+        return new EmptyMustEffectiveStatement(stmt.declared());
     }
 }

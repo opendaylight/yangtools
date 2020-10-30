@@ -57,7 +57,7 @@ public final class ContactStatementSupport
     @Override
     protected ContactEffectiveStatement createEmptyEffective(
             final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
-            final ContactStatement declared) {
-        return new EmptyContactEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ContactStatement> stmt) {
+        return new EmptyContactEffectiveStatement(stmt.declared());
     }
 }

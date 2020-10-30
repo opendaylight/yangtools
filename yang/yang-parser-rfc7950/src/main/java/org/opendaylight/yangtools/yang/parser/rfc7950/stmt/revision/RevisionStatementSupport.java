@@ -73,7 +73,7 @@ public final class RevisionStatementSupport
     @Override
     protected RevisionEffectiveStatement createEmptyEffective(
             final StmtContext<Revision, RevisionStatement, RevisionEffectiveStatement> ctx,
-            final RevisionStatement declared) {
-        return new EmptyRevisionEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<Revision, RevisionStatement> stmt) {
+        return new EmptyRevisionEffectiveStatement(stmt.declared());
     }
 }

@@ -71,7 +71,7 @@ public final class NamespaceStatementSupport
     @Override
     protected NamespaceEffectiveStatement createEmptyEffective(
             final StmtContext<URI, NamespaceStatement, NamespaceEffectiveStatement> ctx,
-            final NamespaceStatement declared) {
-        return new EmptyNamespaceEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<URI, NamespaceStatement> stmt) {
+        return new EmptyNamespaceEffectiveStatement(stmt.declared());
     }
 }

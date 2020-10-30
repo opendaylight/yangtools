@@ -190,7 +190,7 @@ abstract class AbstractModuleStatementSupport
     @Override
     protected final ModuleEffectiveStatement createEmptyEffective(
             final StmtContext<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> ctx,
-            final ModuleStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<UnqualifiedQName, ModuleStatement> stmt) {
         throw noNamespace(ctx);
     }
 

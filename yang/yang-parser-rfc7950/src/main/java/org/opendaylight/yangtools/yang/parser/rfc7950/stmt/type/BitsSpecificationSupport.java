@@ -94,7 +94,7 @@ final class BitsSpecificationSupport
     @Override
     protected EffectiveStatement<String, BitsSpecification> createEmptyEffective(
             final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx,
-            final BitsSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, BitsSpecification> stmt) {
         throw noBits(ctx);
     }
 

@@ -60,7 +60,7 @@ public final class DisplayHintStatementSupport
     @Override
     protected DisplayHintEffectiveStatement createEmptyEffective(
             final StmtContext<String, DisplayHintStatement, DisplayHintEffectiveStatement> ctx,
-            final DisplayHintStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, DisplayHintStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

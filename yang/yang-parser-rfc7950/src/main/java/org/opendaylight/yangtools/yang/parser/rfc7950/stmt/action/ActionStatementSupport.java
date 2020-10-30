@@ -108,7 +108,8 @@ public final class ActionStatementSupport extends
 
     @Override
     protected ActionEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final ActionStatement declared) {
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ActionStatement> stmt) {
         throw new IllegalStateException("Missing implicit input/output statements at "
             + ctx.getStatementSourceReference());
     }

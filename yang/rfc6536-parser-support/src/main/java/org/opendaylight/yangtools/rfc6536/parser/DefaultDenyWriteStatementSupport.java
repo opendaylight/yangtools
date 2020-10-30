@@ -104,7 +104,7 @@ public final class DefaultDenyWriteStatementSupport
     @Override
     protected DefaultDenyWriteEffectiveStatement createEmptyEffective(
             final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx,
-            final DefaultDenyWriteStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<Void, DefaultDenyWriteStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

@@ -107,8 +107,10 @@ public final class KeyStatementSupport
 
     @Override
     protected KeyEffectiveStatement createEmptyEffective(
-            final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx, final KeyStatement declared) {
+            final StmtContext<Set<QName>, KeyStatement, KeyEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<Set<QName>, KeyStatement> stmt) {
         final Set<QName> arg = ctx.coerceStatementArgument();
+        final KeyStatement declared = stmt.declared();
         return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
                 : new EmptyForeignKeyEffectiveStatement(declared, arg);
     }

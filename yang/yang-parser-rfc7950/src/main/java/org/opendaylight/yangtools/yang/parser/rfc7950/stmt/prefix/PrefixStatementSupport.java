@@ -56,7 +56,8 @@ public final class PrefixStatementSupport
 
     @Override
     protected PrefixEffectiveStatement createEmptyEffective(
-            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final PrefixStatement declared) {
-        return new EmptyPrefixEffectiveStatement(declared);
+            final StmtContext<String, PrefixStatement, PrefixEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, PrefixStatement> stmt) {
+        return new EmptyPrefixEffectiveStatement(stmt.declared());
     }
 }

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -68,22 +69,23 @@ public final class AnyxmlStatementSupport
             final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx,
             final AnyxmlStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularAnyxmlEffectiveStatement(declared, ctx.getSchemaPath().get(),
-            computeFlags(ctx, substatements), findOriginal(ctx),substatements);
+            computeFlags(ctx.getCopyHistory(), ctx.isConfiguration(), substatements), findOriginal(ctx),substatements);
     }
 
     @Override
     protected AnyxmlEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx, final AnyxmlStatement declared) {
-        return new EmptyAnyxmlEffectiveStatement(declared, ctx.getSchemaPath().get(),
-            computeFlags(ctx, ImmutableList.of()), findOriginal(ctx));
+            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<QName, AnyxmlStatement> stmt) {
+        return new EmptyAnyxmlEffectiveStatement(stmt.declared(), ctx.getSchemaPath().get(),
+            computeFlags(stmt.history(), ctx.isConfiguration(), ImmutableList.of()), findOriginal(ctx));
     }
 
-    private static int computeFlags(final StmtContext<?, ?, ?> ctx,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    private static int computeFlags(final CopyHistory history, final boolean isConfig,
+                                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(history)
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration())
+                .setConfiguration(isConfig)
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
     }

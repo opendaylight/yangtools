@@ -88,7 +88,7 @@ public final class DeviationStatementSupport
     @Override
     protected DeviationEffectiveStatement createEmptyEffective(
             final StmtContext<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx,
-            final DeviationStatement declared) {
-        return new DeviationEffectiveStatementImpl(declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<Absolute, DeviationStatement> stmt) {
+        return new DeviationEffectiveStatementImpl(stmt.declared(), ImmutableList.of());
     }
 }

@@ -64,7 +64,8 @@ public final class AliasStatementSupport
 
     @Override
     protected AliasEffectiveStatement createEmptyEffective(
-            final StmtContext<String, AliasStatement, AliasEffectiveStatement> ctx, final AliasStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<String, AliasStatement, AliasEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, AliasStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

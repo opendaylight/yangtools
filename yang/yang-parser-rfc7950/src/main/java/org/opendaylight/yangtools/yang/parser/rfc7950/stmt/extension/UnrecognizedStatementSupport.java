@@ -76,8 +76,8 @@ final class UnrecognizedStatementSupport
     @Override
     protected UnrecognizedEffectiveStatement createEmptyEffective(
             final StmtContext<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> ctx,
-            final UnrecognizedStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, UnrecognizedStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
 }

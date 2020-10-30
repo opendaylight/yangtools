@@ -130,7 +130,7 @@ public final class MountPointStatementSupport
     @Override
     protected MountPointEffectiveStatement createEmptyEffective(
             final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
-            final MountPointStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, MountPointStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

@@ -132,7 +132,8 @@ abstract class AbstractImportStatementSupport
 
     @Override
     protected final ImportEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final ImportStatement declared) {
+            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, ImportStatement> stmt) {
         throw new IllegalStateException("Unexpected empty effective import statement");
     }
 

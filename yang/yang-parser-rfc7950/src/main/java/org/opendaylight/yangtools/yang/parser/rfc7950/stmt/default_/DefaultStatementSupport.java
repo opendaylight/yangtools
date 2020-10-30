@@ -57,7 +57,7 @@ public final class DefaultStatementSupport
     @Override
     protected DefaultEffectiveStatement createEmptyEffective(
             final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
-            final DefaultStatement declared) {
-        return new EmptyDefaultEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, DefaultStatement> stmt) {
+        return new EmptyDefaultEffectiveStatement(stmt.declared());
     }
 }

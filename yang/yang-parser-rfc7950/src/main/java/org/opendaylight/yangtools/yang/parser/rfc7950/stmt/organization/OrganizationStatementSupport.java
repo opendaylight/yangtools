@@ -59,7 +59,7 @@ public final class OrganizationStatementSupport
     @Override
     protected OrganizationEffectiveStatement createEmptyEffective(
             final StmtContext<String, OrganizationStatement, OrganizationEffectiveStatement> ctx,
-            final OrganizationStatement declared) {
-        return new EmptyOrganizationEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, OrganizationStatement> stmt) {
+        return new EmptyOrganizationEffectiveStatement(stmt.declared());
     }
 }

@@ -92,7 +92,7 @@ abstract class AbstractIdentityStatementSupport
     @Override
     protected final IdentityEffectiveStatement createEmptyEffective(
             final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
-            final IdentityStatement declared) {
-        return new EmptyIdentityEffectiveStatement(declared, ctx);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, IdentityStatement> stmt) {
+        return new EmptyIdentityEffectiveStatement(stmt.declared(), ctx);
     }
 }

@@ -58,7 +58,7 @@ public final class DescriptionStatementSupport
     @Override
     protected DescriptionEffectiveStatement createEmptyEffective(
             final StmtContext<String, DescriptionStatement, DescriptionEffectiveStatement> ctx,
-            final DescriptionStatement declared) {
-        return new EmptyDescriptionEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, DescriptionStatement> stmt) {
+        return new EmptyDescriptionEffectiveStatement(stmt.declared());
     }
 }

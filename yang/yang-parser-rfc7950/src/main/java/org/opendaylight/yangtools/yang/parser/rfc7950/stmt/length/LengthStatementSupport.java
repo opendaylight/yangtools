@@ -103,8 +103,8 @@ public final class LengthStatementSupport
     @Override
     protected LengthEffectiveStatement createEmptyEffective(
             final StmtContext<List<ValueRange>, LengthStatement, LengthEffectiveStatement> ctx,
-            final LengthStatement declared) {
-        return new EmptyLengthEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<List<ValueRange>, LengthStatement> stmt) {
+        return new EmptyLengthEffectiveStatement(stmt.declared());
     }
 
     private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {

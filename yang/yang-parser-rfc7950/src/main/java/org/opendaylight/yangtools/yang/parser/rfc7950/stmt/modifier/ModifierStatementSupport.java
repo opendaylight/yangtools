@@ -70,7 +70,7 @@ public final class ModifierStatementSupport
     @Override
     protected ModifierEffectiveStatement createEmptyEffective(
             final StmtContext<ModifierKind, ModifierStatement, ModifierEffectiveStatement> ctx,
-            final ModifierStatement declared) {
-        return new EmptyModifierEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<ModifierKind, ModifierStatement> stmt) {
+        return new EmptyModifierEffectiveStatement(stmt.declared());
     }
 }

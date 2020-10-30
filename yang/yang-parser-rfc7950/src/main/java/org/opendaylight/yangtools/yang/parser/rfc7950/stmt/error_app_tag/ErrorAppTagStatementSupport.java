@@ -58,7 +58,7 @@ public final class ErrorAppTagStatementSupport
     @Override
     protected ErrorAppTagEffectiveStatement createEmptyEffective(
             final StmtContext<String, ErrorAppTagStatement, ErrorAppTagEffectiveStatement> ctx,
-            final ErrorAppTagStatement declared) {
-        return new EmptyErrorAppTagEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ErrorAppTagStatement> stmt) {
+        return new EmptyErrorAppTagEffectiveStatement(stmt.declared());
     }
 }

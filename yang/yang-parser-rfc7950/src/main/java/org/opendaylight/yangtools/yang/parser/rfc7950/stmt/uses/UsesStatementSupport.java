@@ -157,10 +157,12 @@ public final class UsesStatementSupport
 
     @Override
     protected UsesEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx, final UsesStatement declared) {
+            final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, UsesStatement> stmt) {
         final GroupingDefinition sourceGrouping = getSourceGrouping(ctx);
         final int flags = historyAndStatusFlags(ctx, ImmutableList.of());
         final QName argument = ctx.coerceStatementArgument();
+        final UsesStatement declared = stmt.declared();
         return argument.equals(declared.argument())
                 ? new EmptyLocalUsesEffectiveStatement(declared, sourceGrouping, flags)
                         : new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags);

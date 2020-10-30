@@ -92,7 +92,7 @@ abstract class AbstractIdentityRefSpecificationSupport
     protected final EffectiveStatement<String, IdentityRefSpecification> createEmptyEffective(
             final StmtContext<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> ctx,
-            final IdentityRefSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, IdentityRefSpecification> stmt) {
         throw noBase(ctx);
     }
 

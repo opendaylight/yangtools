@@ -58,7 +58,7 @@ public final class PresenceStatementSupport
     @Override
     protected PresenceEffectiveStatement createEmptyEffective(
             final StmtContext<String, PresenceStatement, PresenceEffectiveStatement> ctx,
-            final PresenceStatement declared) {
-        return new EmptyPresenceEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, PresenceStatement> stmt) {
+        return new EmptyPresenceEffectiveStatement(stmt.declared());
     }
 }

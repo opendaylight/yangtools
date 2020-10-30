@@ -209,9 +209,9 @@ abstract class AbstractDeviateStatementSupport
     @Override
     protected final DeviateEffectiveStatement createEmptyEffective(
             final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx,
-            final DeviateStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<DeviateKind, DeviateStatement> stmt) {
         // This is exceedingly unlikely, just reuse the implementation
-        return createEffective(ctx, declared, ImmutableList.of());
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {

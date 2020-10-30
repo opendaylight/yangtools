@@ -115,9 +115,11 @@ public final class StatusStatementSupport
 
     @Override
     protected StatusEffectiveStatement createEmptyEffective(
-            final StmtContext<Status, StatusStatement, StatusEffectiveStatement> ctx, final StatusStatement declared) {
+            final StmtContext<Status, StatusStatement, StatusEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<Status, StatusStatement> stmt) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.
+        final StatusStatement declared = stmt.declared();
         if (EMPTY_DEPRECATED_DECL.equals(declared)) {
             // Most likely to be seen (as current is the default)
             return EMPTY_DEPRECATED_EFF;

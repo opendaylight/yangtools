@@ -99,8 +99,8 @@ public final class RangeStatementSupport
     @Override
     protected RangeEffectiveStatement createEmptyEffective(
             final StmtContext<List<ValueRange>, RangeStatement, RangeEffectiveStatement> ctx,
-            final RangeStatement declared) {
-        return new EmptyRangeEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<List<ValueRange>, RangeStatement> stmt) {
+        return new EmptyRangeEffectiveStatement(stmt.declared());
     }
 
     @Override

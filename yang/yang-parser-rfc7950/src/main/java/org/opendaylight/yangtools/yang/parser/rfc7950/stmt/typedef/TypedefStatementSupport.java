@@ -107,8 +107,8 @@ public final class TypedefStatementSupport extends
     @Override
     protected TypedefEffectiveStatement createEmptyEffective(
             final StmtContext<QName, TypedefStatement, TypedefEffectiveStatement> ctx,
-            final TypedefStatement declared) {
-        throw new IllegalStateException("Refusing to create empty typedef for " + declared);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, TypedefStatement> stmt) {
+        throw new IllegalStateException("Refusing to create empty typedef for " + stmt.declared());
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {

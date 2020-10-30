@@ -59,7 +59,7 @@ public final class ReferenceStatementSupport
     @Override
     protected ReferenceEffectiveStatement createEmptyEffective(
             final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
-            final ReferenceStatement declared) {
-        return new EmptyReferenceEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ReferenceStatement> stmt) {
+        return new EmptyReferenceEffectiveStatement(stmt.declared());
     }
 }

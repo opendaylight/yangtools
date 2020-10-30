@@ -101,7 +101,7 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataEffectiveStatement createEmptyEffective(
             final StmtContext<String, YangDataStatement, YangDataEffectiveStatement> ctx,
-            final YangDataStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, YangDataStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

@@ -64,7 +64,8 @@ public final class SubIdStatementSupport
 
     @Override
     protected SubIdEffectiveStatement createEmptyEffective(
-            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx, final SubIdStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<Uint32, SubIdStatement, SubIdEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<Uint32, SubIdStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

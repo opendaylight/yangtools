@@ -99,7 +99,8 @@ public final class FractionDigitsStatementSupport
     @Override
     protected FractionDigitsEffectiveStatement createEmptyEffective(
             final StmtContext<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> ctx,
-            final FractionDigitsStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<Integer, FractionDigitsStatement> stmt) {
+        final FractionDigitsStatement declared = stmt.declared();
         final EmptyFractionDigitsEffectiveStatement shared = EMPTY_EFF.get(declared);
         return shared != null ? shared :  new EmptyFractionDigitsEffectiveStatement(declared);
     }

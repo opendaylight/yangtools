@@ -59,7 +59,7 @@ public final class ImpliedStatementSupport
     @Override
     protected ImpliedEffectiveStatement createEmptyEffective(
             final StmtContext<String, ImpliedStatement, ImpliedEffectiveStatement> ctx,
-            final ImpliedStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<String, ImpliedStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

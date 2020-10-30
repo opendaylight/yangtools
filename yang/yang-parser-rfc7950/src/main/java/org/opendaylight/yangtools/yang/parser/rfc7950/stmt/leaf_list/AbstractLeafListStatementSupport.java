@@ -100,7 +100,7 @@ abstract class AbstractLeafListStatementSupport
     @Override
     protected final LeafListEffectiveStatement createEmptyEffective(
             final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
-            final LeafListStatement declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<QName, LeafListStatement> stmt) {
         throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
     }
 }

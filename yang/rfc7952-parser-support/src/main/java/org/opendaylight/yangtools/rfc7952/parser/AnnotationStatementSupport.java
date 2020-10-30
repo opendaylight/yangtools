@@ -156,7 +156,7 @@ public final class AnnotationStatementSupport
     @Override
     protected AnnotationEffectiveStatement createEmptyEffective(
             final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx,
-            final AnnotationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, AnnotationStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

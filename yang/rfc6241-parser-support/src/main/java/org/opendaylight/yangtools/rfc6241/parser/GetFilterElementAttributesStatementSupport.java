@@ -123,9 +123,9 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
     @Override
     protected GetFilterElementAttributesEffectiveStatement createEmptyEffective(
             final StmtContext<Void, GetFilterElementAttributesStatement,
-                GetFilterElementAttributesEffectiveStatement> ctx,
-            final GetFilterElementAttributesStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+                GetFilterElementAttributesEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<Void, GetFilterElementAttributesStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {

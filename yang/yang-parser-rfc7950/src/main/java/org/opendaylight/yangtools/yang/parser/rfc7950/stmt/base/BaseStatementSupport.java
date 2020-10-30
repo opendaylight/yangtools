@@ -100,7 +100,8 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
 
     @Override
     protected BaseEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx, final BaseStatement declared) {
-        return new EmptyBaseEffectiveStatement(declared);
+            final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<QName, BaseStatement> stmt) {
+        return new EmptyBaseEffectiveStatement(stmt.declared());
     }
 }

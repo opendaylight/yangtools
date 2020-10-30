@@ -83,8 +83,8 @@ public final class FeatureStatementSupport
     @Override
     protected FeatureEffectiveStatement createEmptyEffective(
             final StmtContext<QName, FeatureStatement, FeatureEffectiveStatement> ctx,
-            final FeatureStatement declared) {
-        return new EmptyFeatureEffectiveStatement(declared, ctx.getSchemaPath().get(), EMPTY_EFFECTIVE_FLAGS);
+            final EffectiveParentState parent, final EffectiveStatementState<QName, FeatureStatement> stmt) {
+        return new EmptyFeatureEffectiveStatement(stmt.declared(), parent.schemaPath().get(), EMPTY_EFFECTIVE_FLAGS);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

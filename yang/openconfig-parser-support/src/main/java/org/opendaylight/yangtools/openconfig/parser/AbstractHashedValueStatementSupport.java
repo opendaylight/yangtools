@@ -110,7 +110,8 @@ abstract class AbstractHashedValueStatementSupport
     @Override
     protected final OpenConfigHashedValueEffectiveStatement createEmptyEffective(
             final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx,
-            final OpenConfigHashedValueStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent,
+            final EffectiveStatementState<Void, OpenConfigHashedValueStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

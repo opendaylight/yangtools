@@ -60,7 +60,7 @@ abstract class AbstractContainerStatementSupport
     @Override
     protected final ContainerEffectiveStatement createEmptyEffective(
             final StmtContext<QName, ContainerStatement, ContainerEffectiveStatement> ctx,
-            final ContainerStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ContainerStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

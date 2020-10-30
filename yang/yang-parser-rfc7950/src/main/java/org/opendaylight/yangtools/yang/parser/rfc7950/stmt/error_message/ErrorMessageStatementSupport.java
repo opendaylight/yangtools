@@ -58,7 +58,7 @@ public final class ErrorMessageStatementSupport
     @Override
     protected ErrorMessageEffectiveStatement createEmptyEffective(
             final StmtContext<String, ErrorMessageStatement, ErrorMessageEffectiveStatement> ctx,
-            final ErrorMessageStatement declared) {
-        return new EmptyErrorMessageEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, ErrorMessageStatement> stmt) {
+        return new EmptyErrorMessageEffectiveStatement(stmt.declared());
     }
 }

@@ -108,7 +108,7 @@ abstract class AbstractIncludeStatementSupport
     @Override
     protected final IncludeEffectiveStatement createEmptyEffective(
             final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx,
-            final IncludeStatement declared) {
-        return new EmptyIncludeEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, IncludeStatement> stmt) {
+        return new EmptyIncludeEffectiveStatement(stmt.declared());
     }
 }

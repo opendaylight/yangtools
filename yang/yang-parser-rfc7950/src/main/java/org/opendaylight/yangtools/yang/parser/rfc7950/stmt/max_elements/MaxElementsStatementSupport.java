@@ -64,7 +64,7 @@ public final class MaxElementsStatementSupport
     @Override
     protected MaxElementsEffectiveStatement createEmptyEffective(
             final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx,
-            final MaxElementsStatement declared) {
-        return new EmptyMaxElementsEffectiveStatement(declared);
+            final EffectiveParentState parent, final EffectiveStatementState<String, MaxElementsStatement> stmt) {
+        return new EmptyMaxElementsEffectiveStatement(stmt.declared());
     }
 }

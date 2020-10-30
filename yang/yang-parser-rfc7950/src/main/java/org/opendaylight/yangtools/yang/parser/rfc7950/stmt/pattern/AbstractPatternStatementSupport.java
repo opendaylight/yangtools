@@ -61,7 +61,8 @@ abstract class AbstractPatternStatementSupport
     @Override
     protected final PatternEffectiveStatement createEmptyEffective(
             final StmtContext<PatternExpression, PatternStatement, PatternEffectiveStatement> ctx,
-            final PatternStatement declared) {
-        return new EmptyPatternEffectiveStatement(declared);
+            final EffectiveParentState parent,
+            final EffectiveStatementState<PatternExpression, PatternStatement> stmt) {
+        return new EmptyPatternEffectiveStatement(stmt.declared());
     }
 }

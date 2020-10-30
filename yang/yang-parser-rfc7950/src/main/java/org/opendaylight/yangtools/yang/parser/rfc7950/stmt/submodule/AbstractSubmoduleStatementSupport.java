@@ -98,7 +98,8 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     protected final SubmoduleEffectiveStatement createEmptyEffective(
             final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared) {
+            final EffectiveParentState parent,
+            final EffectiveStatementState<UnqualifiedQName, SubmoduleStatement> stmt) {
         throw noBelongsTo(ctx);
     }
 

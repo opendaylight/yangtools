@@ -72,8 +72,8 @@ abstract class AbstractGroupingStatementSupport
     @Override
     protected GroupingEffectiveStatement createEmptyEffective(
             final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx,
-            final GroupingStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, GroupingStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     private static void checkDeclaredConflict(final StmtContext<QName, ?, ?> ctx) {

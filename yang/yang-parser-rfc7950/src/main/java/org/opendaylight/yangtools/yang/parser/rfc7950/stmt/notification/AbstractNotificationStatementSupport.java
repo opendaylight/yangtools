@@ -48,8 +48,8 @@ abstract class AbstractNotificationStatementSupport
     @Override
     protected final NotificationEffectiveStatement createEmptyEffective(
             final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx,
-            final NotificationStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent, final EffectiveStatementState<QName, NotificationStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     abstract void checkEffective(StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx);

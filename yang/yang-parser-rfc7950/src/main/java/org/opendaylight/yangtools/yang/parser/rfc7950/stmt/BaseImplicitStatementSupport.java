@@ -48,8 +48,9 @@ public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<Q
     }
 
     @Override
-    protected final E createEmptyEffective(final StmtContext<QName, D, E> ctx, final D declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+    protected final E createEmptyEffective(final StmtContext<QName, D, E> ctx, final EffectiveParentState parent,
+                                           final EffectiveStatementState<QName, D> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     protected abstract @NonNull E createDeclaredEffective(@NonNull StmtContext<QName, D, E> ctx,

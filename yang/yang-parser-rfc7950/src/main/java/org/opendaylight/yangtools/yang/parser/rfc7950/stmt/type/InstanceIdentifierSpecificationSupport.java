@@ -75,9 +75,9 @@ final class InstanceIdentifierSpecificationSupport extends BaseStatementSupport<
     @Override
     protected EffectiveStatement<String, InstanceIdentifierSpecification> createEmptyEffective(
             final StmtContext<String, InstanceIdentifierSpecification,
-                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx,
-            final InstanceIdentifierSpecification declared) {
+                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<String, InstanceIdentifierSpecification> stmt) {
         // TODO: we could do better here, but its really splitting hairs
-        return createEffective(ctx, declared, ImmutableList.of());
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

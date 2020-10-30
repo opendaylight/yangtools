@@ -106,7 +106,8 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
 
     @Override
     protected LeafEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final LeafStatement declared) {
+            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, LeafStatement> stmt) {
         throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
     }
 }

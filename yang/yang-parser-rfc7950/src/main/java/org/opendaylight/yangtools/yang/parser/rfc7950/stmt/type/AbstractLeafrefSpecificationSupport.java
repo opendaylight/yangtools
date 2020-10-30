@@ -63,7 +63,7 @@ abstract class AbstractLeafrefSpecificationSupport
     @Override
     protected final EffectiveStatement<String, LeafrefSpecification> createEmptyEffective(
             final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx,
-            final LeafrefSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, LeafrefSpecification> stmt) {
         throw noPath(ctx);
     }
 

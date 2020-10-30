@@ -76,7 +76,7 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
     @Override
     protected EffectiveStatement<String, Decimal64Specification> createEmptyEffective(
             final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx,
-            final Decimal64Specification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, Decimal64Specification> stmt) {
         throw noFracDigits(ctx);
     }
 

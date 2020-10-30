@@ -93,7 +93,7 @@ final class EnumSpecificationSupport
     @Override
     protected EffectiveStatement<String, EnumSpecification> createEmptyEffective(
             final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx,
-            final EnumSpecification declared) {
+            final EffectiveParentState parent, final EffectiveStatementState<String, EnumSpecification> stmt) {
         throw noEnum(ctx);
     }
 

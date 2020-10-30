@@ -154,7 +154,8 @@ abstract class AbstractListStatementSupport extends
 
     @Override
     protected final ListEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx, final ListStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx, final EffectiveParentState parent,
+            final EffectiveStatementState<QName, ListStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 }

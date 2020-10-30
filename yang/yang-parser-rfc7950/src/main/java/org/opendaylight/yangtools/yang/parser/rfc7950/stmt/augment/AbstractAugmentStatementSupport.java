@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
-import static com.google.common.base.Verify.verify;
-
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -161,18 +157,6 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    protected final List<? extends StmtContext<?, ?, ?>> statementsToBuild(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
-        final StatementContextBase<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
-            ctx);
-        return implicitDef == null ? substatements : Lists.transform(substatements, subCtx -> {
-            verify(subCtx instanceof StatementContextBase);
-            return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx);
-        });
-    }
-
-    @Override
     protected final AugmentEffectiveStatement createEffective(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
             final AugmentStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -188,8 +172,9 @@ abstract class AbstractAugmentStatementSupport
     @Override
     protected final AugmentEffectiveStatement createEmptyEffective(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx,
-            final AugmentStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+            final EffectiveParentState parent,
+            final EffectiveStatementState<SchemaNodeIdentifier, AugmentStatement> stmt) {
+        return createEffective(ctx, stmt.declared(), ImmutableList.of());
     }
 
     private static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
