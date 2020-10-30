@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -39,6 +41,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private final @NonNull StatementSourceReference statementDeclSource;
     private final String rawArgument;
 
+    private List<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
     private @Nullable D declaredInstance;
 
@@ -88,6 +91,32 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
         return substatements;
+    }
+
+    @Override
+    public final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
+        return mutableEffectiveSubstatements(effective);
+    }
+
+    @Override
+    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+        effective = removeStatementFromEffectiveSubstatements(effective, statementDef);
+    }
+
+    @Override
+    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        effective = removeStatementFromEffectiveSubstatements(effective, statementDef, statementArg);
+    }
+
+    @Override
+    public final void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        effective = addEffectiveSubstatement(effective, substatement);
+    }
+
+    @Override
+    final void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        effective = addEffectiveSubstatementsImpl(effective, statements);
     }
 
     @Override
@@ -154,7 +183,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     final boolean hasEmptySubstatements() {
-        return substatements.size() == 0 && hasEmptyEffectiveSubstatements();
+        return substatements.size() == 0 && effective.isEmpty();
+    }
+
+    @Override
+    final Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
+        return effective;
     }
 
     /**
