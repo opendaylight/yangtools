@@ -7,16 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -25,12 +30,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextDefaults;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +59,16 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private final QNameModule targetModule;
     private final A argument;
 
+    /**
+     * Effective substatements, lazily materialized. This field can have three states:
+     * <ul>
+     *   <li>it can be {@code null}, in which case no materialization has taken place</li>
+     *   <li>it can be a {@link HashMap}, in which case partial materialization has taken place</li>
+     *   <li>it can be a {@link List}, in which case full materialization has taken place</li>
+     * </ul>
+     */
+    private Object substatements;
+
     private InferredStatementContext(final InferredStatementContext<A, D, E> original,
             final StatementContextBase<?, ?, ?> parent) {
         super(original);
@@ -60,7 +78,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.prototype = original.prototype;
         this.originalCtx = original.originalCtx;
         this.argument = original.argument;
-        setSubstatementsInitialized();
+        // Substatements are initialized here
+        this.substatements = ImmutableList.of();
     }
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
@@ -73,13 +92,16 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.childCopyType = requireNonNull(childCopyType);
         this.targetModule = targetModule;
         this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
-
-        // Note: substatements from prototype are initialized lazily through ensureSubstatements()
     }
 
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
         return ImmutableList.of();
+    }
+
+    @Override
+    public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
+        return mutableEffectiveSubstatements(ensureEffectiveSubstatements());
     }
 
     @Override
@@ -124,20 +146,45 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+        substatements = removeStatementFromEffectiveSubstatements(ensureEffectiveSubstatements(), statementDef);
+    }
+
+    @Override
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        substatements = removeStatementFromEffectiveSubstatements(ensureEffectiveSubstatements(), statementDef,
+            statementArg);
+    }
+
+    @Override
+    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        substatements = addEffectiveSubstatement(ensureEffectiveSubstatements(), substatement);
+    }
+
+    @Override
+    void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        substatements = addEffectiveSubstatementsImpl(ensureEffectiveSubstatements(), statements);
+    }
+
+    @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
     }
 
     @Override
     boolean hasEmptySubstatements() {
-        ensureEffectiveSubstatements();
-        return hasEmptyEffectiveSubstatements();
+        final Object local = substatements;
+        if (local == null) {
+            return prototype.hasEmptySubstatements();
+        }
+        return local instanceof HashMap ? false : ((List<?>) local).isEmpty();
     }
 
     @Override
     public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
-        if (substatementsInitialized()) {
+        if (substatements instanceof List) {
             return StmtContextDefaults.findSubstatementArgument(this, type);
         }
 
@@ -154,61 +201,96 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        return substatementsInitialized() ? StmtContextDefaults.hasSubstatement(prototype, type)
+        return substatements instanceof List ? StmtContextDefaults.hasSubstatement(prototype, type)
+            // We do not allow deletion of partially-materialized statements, hence this is accurate
             : prototype.hasSubstatement(type);
     }
 
     @Override
-    public <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-            StmtContext<QName, D, E> requestSchemaTreeChild(final QName qname) {
-        LOG.debug("Materializing on lookup of {}", qname);
-        // FIXME: YANGTOOLS-1160: we do not want to force full materialization here
-        ensureEffectiveSubstatements();
-
-        // Now we have to do a lookup as we do not have access to the namespace being populated (yet). Here we are
-        // bypassing additional checks and talk directly to superclass to get the statements.
-        for (StmtContext<?, ?, ?> stmt : super.mutableEffectiveSubstatements()) {
-            if (stmt.producesEffective(SchemaTreeEffectiveStatement.class)
-                && qname.equals(stmt.coerceStatementArgument())) {
-                return (StmtContext<QName, D, E>) stmt;
-            }
+    public <Y extends DeclaredStatement<QName>, Z extends EffectiveStatement<QName, Y>>
+            StmtContext<QName, Y, Z> requestSchemaTreeChild(final QName qname) {
+        if (substatements instanceof List) {
+            // We have performed materialization, hence we have triggered creation of all our schema tree child
+            // statements.
+            return null;
         }
-        return null;
+
+        final QName templateQName = qname.bindTo(StmtContextUtils.getRootModuleQName(prototype));
+        LOG.debug("Materializing child {} from {}", qname, templateQName);
+
+        final StmtContext<?, ?, ?> template;
+        if (prototype instanceof InferredStatementContext) {
+            // Note: we need to access namespace here, as the target statement may have already been populated, in which
+            //       case we want to obtain the statement in local namespace storage.
+            template = (StmtContext) ((InferredStatementContext<?, ?, ?>) prototype).getFromNamespace(
+                SchemaTreeNamespace.class, templateQName);
+        } else {
+            template = prototype.allSubstatementsStream()
+                .filter(stmt -> stmt.producesEffective(SchemaTreeEffectiveStatement.class)
+                    && templateQName.equals(stmt.getStatementArgument()))
+                .findAny()
+                .orElse(null);
+        }
+
+        if (template == null) {
+            // We do not have a template, this child does not exist. It may be added later, but that is someone else's
+            // responsibility.
+            LOG.debug("Child {} does not have a template", qname);
+            return null;
+        }
+
+        @SuppressWarnings("unchecked")
+        final Mutable<QName, Y, Z> ret = (Mutable<QName, Y, Z>) copySubstatement((Mutable<?, ?, ?>) template)
+            .orElseThrow(() -> new InferenceException(getStatementSourceReference(),
+                "Failed to materialize child %s template %s", qname, template));
+        ensureCompletedPhase(ret);
+        addMaterialized(template, ret);
+
+        LOG.debug("Child {} materialized", qname);
+        return ret;
     }
 
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
-    @Override
-    void ensureEffectiveSubstatements() {
-        if (!substatementsInitialized()) {
-            initializeSubstatements();
-        }
+    private List<StatementContextBase<?, ?, ?>> ensureEffectiveSubstatements() {
+        final Object local = substatements;
+        return local instanceof List ? (List<StatementContextBase<?, ?, ?>>) local
+            : initializeSubstatements((Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>>) local);
     }
 
     @Override
     Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
         // When we have not initialized, there are no statements to catch up: we will catch up when we are copying
-        // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL)
-        return substatementsInitialized() ? super.effectiveChildrenToComplete() : List.of();
+        // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL).
+        if (substatements == null) {
+            return ImmutableList.of();
+        } else if (substatements instanceof HashMap) {
+            return ((HashMap<?, StatementContextBase<?, ?, ?>>) substatements).values();
+        } else {
+            return (List<StatementContextBase<?, ?, ?>>) substatements;
+        }
     }
 
-    private void initializeSubstatements() {
+    private List<StatementContextBase<?, ?, ?>> initializeSubstatements(
+            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
         final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
-                copySubstatement(stmtContext, buffer);
+                copySubstatement(stmtContext, buffer, materializedSchemaTree);
             }
         }
         for (final Mutable<?, ?, ?> stmtContext : effective) {
-            copySubstatement(stmtContext, buffer);
+            copySubstatement(stmtContext, buffer, materializedSchemaTree);
         }
 
-        // We are bypassing usual safeties here, as this is not introducing new statements but rather just materializing
-        // them when the need has arised.
-        addInitialEffectiveSubstatements(buffer);
+        final List<StatementContextBase<?, ?, ?>> ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(),
+            buffer.size());
+        ret.addAll((Collection) buffer);
+        substatements = ret;
+        return ret;
     }
 
     // Statement copy mess starts here
@@ -222,7 +304,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
 
-    private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer) {
+    private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
+            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
         final StatementDefinition def = substatement.getPublicDefinition();
 
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
@@ -232,7 +315,52 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return;
         }
 
-        substatement.copyAsChildOf(this, childCopyType, targetModule).ifPresent(buffer::add);
+        // Consult materialized substatements. We are in a copy operation and will end up throwing materialized
+        // statements away -- hence we do not perform Map.remove() to save ourselves a mutation operation.
+        //
+        // We could also perform a Map.containsKey() and perform a bulk add, but that would mean the statement order
+        // against parent would change -- and we certainly do not want that to happen.
+        final StatementContextBase<?, ?, ?> materialized = findMaterialized(materializedSchemaTree, substatement);
+        if (materialized == null) {
+            copySubstatement(substatement).ifPresent(copy -> {
+                ensureCompletedPhase(copy);
+                buffer.add(copy);
+            });
+        } else {
+            buffer.add(materialized);
+        }
+    }
+
+    private Optional<? extends Mutable<?, ?, ?>> copySubstatement(final Mutable<?, ?, ?> substatement) {
+        return substatement.copyAsChildOf(this, childCopyType, targetModule);
+    }
+
+    private void addMaterialized(final StmtContext<?, ?, ?> template, final Mutable<?, ?, ?> copy) {
+        // Lazy initialization of backing map. We do not expect this to be used often or multiple times -- each hit here
+        // means an inference along schema tree, such as deviate/augment. HashMap requires power-of-two and defaults to
+        // 0.75 load factor -- we therefore size it to 4, i.e. next two inserts will not cause a resizing operation.
+
+        final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree;
+        if (substatements != null) {
+            verify(substatements instanceof HashMap, "Unexpected substatements %s", substatements);
+            materializedSchemaTree = (Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>>) substatements;
+        } else {
+            materializedSchemaTree = new HashMap<>(4);
+            substatements = materializedSchemaTree;
+        }
+
+        final StmtContext<?, ?, ?> existing = materializedSchemaTree.put(template,
+            (StatementContextBase<?, ?, ?>) copy);
+        if (existing != null) {
+            throw new VerifyException(
+                "Unexpected duplicate request for " + copy.getStatementArgument() + " previous result was " + existing);
+        }
+    }
+
+    private static @Nullable StatementContextBase<?, ?, ?> findMaterialized(
+            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree,
+            final StmtContext<?, ?, ?> template) {
+        return materializedSchemaTree == null ? null : materializedSchemaTree.get(template);
     }
 
     // Statement copy mess ends here
