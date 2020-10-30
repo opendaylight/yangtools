@@ -36,6 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -65,12 +68,10 @@ abstract class AbstractListStatementSupport extends
     }
 
     @Override
-    protected final ListEffectiveStatement createEffective(
-            final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx,
-            final ListStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final SchemaPath path = ctx.getSchemaPath().get();
-        final ListSchemaNode original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
-                .orElse(null);
+    protected ListEffectiveStatement createEffective(final Current<QName, ListStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final SchemaPath path = stmt.getSchemaPath();
+        final ListSchemaNode original = (ListSchemaNode) stmt.original();
 
         final ImmutableList<QName> keyDefinition;
         final KeyEffectiveStatement keyStmt = findFirstStatement(substatements, KeyEffectiveStatement.class);
@@ -84,9 +85,9 @@ abstract class AbstractListStatementSupport extends
             }
             for (final QName keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(ctx.getStatementSourceReference(),
+                    throw new InferenceException(stmt.sourceReference(),
                         "Key '%s' misses node '%s' in list '%s'", keyStmt.getDeclared().rawArgument(),
-                        keyQName.getLocalName(), ctx.getStatementArgument());
+                        keyQName.getLocalName(), stmt.argument());
                 }
                 keyDefinitionInit.add(keyQName);
             }
@@ -96,27 +97,28 @@ abstract class AbstractListStatementSupport extends
             keyDefinition = ImmutableList.of();
         }
 
-        final boolean configuration = ctx.isConfiguration();
+        final boolean configuration = stmt.effectiveConfig();
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(configuration)
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                     .equals(Ordering.USER))
                 .toFlags();
-        if (configuration && keyDefinition.isEmpty() && isInstantied(ctx)) {
-            warnConfigList(ctx);
+        if (configuration && keyDefinition.isEmpty() && isInstantied(stmt)) {
+            warnConfigList(stmt);
         }
 
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
         return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition)
-                        : new RegularListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition,
-                            elementCountConstraint.orElse(null), original);
+                ? new EmptyListEffectiveStatement(stmt, path, flags, substatements, keyDefinition)
+                : new RegularListEffectiveStatement(stmt, path, flags, substatements, keyDefinition,
+                    elementCountConstraint.orElse(null), original);
     }
 
-    private static void warnConfigList(final @NonNull StmtContext<QName, ListStatement, ListEffectiveStatement> ctx) {
+    private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {
+        final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx = stmt.caerbannog();
         final StmtContext<QName, ListStatement, ListEffectiveStatement> warnCtx = ctx.getOriginalCtx().orElse(ctx);
         final Boolean warned = warnCtx.getFromNamespace(ConfigListWarningNamespace.class, Boolean.TRUE);
         // Hacky check if we have issued a warning for the original statement
@@ -129,19 +131,19 @@ abstract class AbstractListStatementSupport extends
         }
     }
 
-    private static boolean isInstantied(final StmtContext<?, ?, ?> ctx) {
-        StmtContext<?, ?, ?> parent = ctx.getParentContext();
+    private static boolean isInstantied(final EffectiveStmtCtx ctx) {
+        Parent parent = ctx.parent();
         while (parent != null) {
-            final StatementDefinition parentDef = parent.getPublicDefinition();
+            final StatementDefinition parentDef = parent.publicDefinition();
             if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parentDef)) {
                 return false;
             }
 
-            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
+            final Parent grandParent = parent.parent();
             if (YangStmtMapping.AUGMENT == parentDef && grandParent != null) {
                 // If this is an augment statement and its parent is either a 'module' or 'submodule' statement, we are
                 // dealing with an uninstantiated context.
-                final StatementDefinition grandParentDef = grandParent.getPublicDefinition();
+                final StatementDefinition grandParentDef = grandParent.publicDefinition();
                 if (YangStmtMapping.MODULE == grandParentDef || YangStmtMapping.SUBMODULE == grandParentDef) {
                     return false;
                 }
@@ -150,11 +152,5 @@ abstract class AbstractListStatementSupport extends
             parent = grandParent;
         }
         return true;
-    }
-
-    @Override
-    protected final ListEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx, final ListStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
     }
 }

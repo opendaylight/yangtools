@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -57,42 +58,35 @@ abstract class AbstractChoiceStatementSupport
     }
 
     @Override
-    protected final ChoiceEffectiveStatement createEffective(
-            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx,
-            final ChoiceStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected ChoiceEffectiveStatement createEffective(final Current<QName, ChoiceStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final String defaultArg = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         final CaseSchemaNode defaultCase;
         if (defaultArg != null) {
             final QName qname;
             try {
-                qname = QName.create(ctx.coerceStatementArgument(), defaultArg);
+                qname = QName.create(stmt.coerceArgument(), defaultArg);
             } catch (IllegalArgumentException e) {
-                throw new SourceException(ctx.getStatementSourceReference(), "Default statement has invalid name '%s'",
-                    defaultArg, e);
+                throw new SourceException(stmt.sourceReference(), "Default statement has invalid name '%s'",
+                        defaultArg, e);
             }
 
             // FIXME: this does not work with submodules, as they are
             defaultCase = InferenceException.throwIfNull(findCase(qname, substatements),
-                ctx.getStatementSourceReference(), "Default statement refers to missing case %s", qname);
+                    stmt.sourceReference(), "Default statement refers to missing case %s", qname);
         } else {
             defaultCase = null;
         }
 
         final int flags = new FlagsBuilder()
-                .setHistory(ctx.getCopyHistory())
+                .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(ctx.isConfiguration())
+                .setConfiguration(stmt.effectiveConfig())
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
 
-        return new ChoiceEffectiveStatementImpl(declared, ctx, substatements, flags, defaultCase,
-            (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null));
-    }
-
-    @Override
-    protected final ChoiceEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx, final ChoiceStatement declared) {
-        return createEffective(ctx, declared, ImmutableList.of());
+        return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(), flags,
+            stmt.getSchemaPath(), defaultCase, (ChoiceSchemaNode) stmt.original());
     }
 
     abstract StatementSupport<?, ?, ?> implictCase();
