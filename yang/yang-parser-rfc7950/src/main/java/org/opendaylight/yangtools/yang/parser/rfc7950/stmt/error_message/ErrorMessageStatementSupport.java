@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -48,17 +49,9 @@ public final class ErrorMessageStatementSupport
     }
 
     @Override
-    protected ErrorMessageEffectiveStatement createEffective(
-            final StmtContext<String, ErrorMessageStatement, ErrorMessageEffectiveStatement> ctx,
-            final ErrorMessageStatement declared,
+    protected ErrorMessageEffectiveStatement createEffective(final Current<String, ErrorMessageStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularErrorMessageEffectiveStatement(declared, substatements);
-    }
-
-    @Override
-    protected ErrorMessageEffectiveStatement createEmptyEffective(
-            final StmtContext<String, ErrorMessageStatement, ErrorMessageEffectiveStatement> ctx,
-            final ErrorMessageStatement declared) {
-        return new EmptyErrorMessageEffectiveStatement(declared);
+        return substatements.isEmpty() ? new EmptyErrorMessageEffectiveStatement(stmt.declared())
+            : new RegularErrorMessageEffectiveStatement(stmt.declared(), substatements);
     }
 }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -88,27 +91,21 @@ public final class TypedefStatementSupport extends
     }
 
     @Override
-    protected TypedefEffectiveStatement createEffective(
-            final StmtContext<QName, TypedefStatement, TypedefEffectiveStatement> ctx,
-            final TypedefStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected TypedefEffectiveStatement createEffective(final Current<QName, TypedefStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final TypedefStatement declared = stmt.declared();
+        checkState(!substatements.isEmpty(), "Refusing to create empty typedef for %s", stmt.declared());
+
         final TypeEffectiveStatement<?> typeEffectiveStmt = findFirstStatement(substatements,
             TypeEffectiveStatement.class);
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, dflt),
-            ctx.getStatementSourceReference(),
-            "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
-            dflt);
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeEffectiveStmt, dflt),
+            stmt.sourceReference(),
+            "Typedef '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
-        return new TypedefEffectiveStatementImpl(declared, ctx.getSchemaPath().get(), computeFlags(substatements),
+        return new TypedefEffectiveStatementImpl(declared, stmt.getSchemaPath(), computeFlags(substatements),
             substatements);
-    }
-
-    @Override
-    protected TypedefEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, TypedefStatement, TypedefEffectiveStatement> ctx,
-            final TypedefStatement declared) {
-        throw new IllegalStateException("Refusing to create empty typedef for " + declared);
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {

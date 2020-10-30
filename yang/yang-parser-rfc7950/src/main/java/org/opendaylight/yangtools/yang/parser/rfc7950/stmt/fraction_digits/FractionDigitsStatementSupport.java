@@ -12,12 +12,14 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -89,16 +91,13 @@ public final class FractionDigitsStatementSupport
     }
 
     @Override
-    protected FractionDigitsEffectiveStatement createEffective(
-            final StmtContext<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> ctx,
-            final FractionDigitsStatement declared,
+    protected FractionDigitsEffectiveStatement createEffective(final Current<Integer, FractionDigitsStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularFractionDigitsEffectiveStatement(declared, substatements);
+        return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
+            : new RegularFractionDigitsEffectiveStatement(stmt.declared(), substatements);
     }
 
-    @Override
-    protected FractionDigitsEffectiveStatement createEmptyEffective(
-            final StmtContext<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> ctx,
+    private static @NonNull FractionDigitsEffectiveStatement createEmptyEffective(
             final FractionDigitsStatement declared) {
         final EmptyFractionDigitsEffectiveStatement shared = EMPTY_EFF.get(declared);
         return shared != null ? shared :  new EmptyFractionDigitsEffectiveStatement(declared);

@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -56,17 +57,15 @@ final class SubmoduleEffectiveStatementImpl
     private ImmutableSet<Submodule> submodules;
     private boolean sealed;
 
-    SubmoduleEffectiveStatementImpl(
-        final StmtContext<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> ctx,
-            final SubmoduleStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, ctx, substatements, findSubmodulePrefix(ctx));
+    SubmoduleEffectiveStatementImpl(final Current<UnqualifiedQName, SubmoduleStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(stmt, substatements, findSubmodulePrefix(stmt.caerbannog()));
 
-        final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
-        final QNameModule belongsToModuleQName = ctx.getFromNamespace(ModuleNameToModuleQName.class,
-                belongsToModuleName);
+        final QNameModule belongsToModuleQName = stmt.getFromNamespace(ModuleNameToModuleQName.class,
+            firstAttributeOf(stmt.caerbannog().declaredSubstatements(), BelongsToStatement.class));
 
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
-        appendPrefixes(ctx, prefixToModuleBuilder);
+        appendPrefixes(stmt, prefixToModuleBuilder);
         prefixToModule = prefixToModuleBuilder.build();
 
         final Map<QNameModule, String> tmp = Maps.newLinkedHashMapWithExpectedSize(prefixToModule.size());
@@ -84,7 +83,7 @@ final class SubmoduleEffectiveStatementImpl
          * collect only submodule contexts here and then build them during
          * sealing of this statement.
          */
-        final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = ctx.getAllFromCurrentStmtCtxNamespace(
+        final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = stmt.getAllFromCurrentStmtCtxNamespace(
             IncludedSubmoduleNameToModuleCtx.class);
         if (includedSubmodulesMap != null) {
             final Set<StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>> submoduleContextsInit =
@@ -99,7 +98,7 @@ final class SubmoduleEffectiveStatementImpl
         }
 
         if (!submoduleContexts.isEmpty()) {
-            ((Mutable<?, ?, ?>) ctx).addMutableStmtToSeal(this);
+            ((Mutable<?, ?, ?>) stmt.caerbannog()).addMutableStmtToSeal(this);
             sealed = false;
         } else {
             submodules = ImmutableSet.of();

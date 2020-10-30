@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -67,16 +68,18 @@ abstract class AbstractIdentityStatementSupport
     }
 
     @Override
-    protected final IdentityEffectiveStatement createEffective(
-            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
-            final IdentityStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    protected final IdentityEffectiveStatement createEffective(final Current<QName, IdentityStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            return new EmptyIdentityEffectiveStatement(stmt.declared(), stmt.getSchemaPath());
+        }
 
         final List<IdentitySchemaNode> identities = new ArrayList<>();
-        for (EffectiveStatement<?, ?> stmt : substatements) {
-            if (stmt instanceof BaseEffectiveStatement) {
-                final QName qname = ((BaseEffectiveStatement) stmt).argument();
+        for (EffectiveStatement<?, ?> substatement : substatements) {
+            if (substatement instanceof BaseEffectiveStatement) {
+                final QName qname = ((BaseEffectiveStatement) substatement).argument();
                 final IdentityEffectiveStatement identity =
-                        verifyNotNull(ctx.getFromNamespace(IdentityNamespace.class, qname),
+                        verifyNotNull(stmt.getFromNamespace(IdentityNamespace.class, qname),
                             "Failed to find identity %s", qname)
                         .buildEffective();
                 verify(identity instanceof IdentitySchemaNode, "%s is not a IdentitySchemaNode", identity);
@@ -84,15 +87,8 @@ abstract class AbstractIdentityStatementSupport
             }
         }
 
-        return new RegularIdentityEffectiveStatement(declared, ctx, new FlagsBuilder()
+        return new RegularIdentityEffectiveStatement(stmt.declared(), stmt.getSchemaPath(), new FlagsBuilder()
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .toFlags(), substatements, ImmutableSet.copyOf(identities));
-    }
-
-    @Override
-    protected final IdentityEffectiveStatement createEmptyEffective(
-            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx,
-            final IdentityStatement declared) {
-        return new EmptyIdentityEffectiveStatement(declared, ctx);
     }
 }
