@@ -481,7 +481,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (!statements.isEmpty()) {
             statements.forEach(StatementContextBase::verifyStatement);
             beforeAddEffectiveStatement(statements.size());
-            doAddEffectiveSubstatements(statements);
+
+            final Collection<? extends StatementContextBase<?, ?, ?>> casted =
+                (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
+            final ModelProcessingPhase phase = completedPhase;
+            if (phase != null) {
+                for (StatementContextBase<?, ?, ?> stmt : casted) {
+                    ensureCompletedPhase(stmt, phase);
+                }
+            }
+
+            effective.addAll(casted);
         }
     }
 
@@ -491,23 +501,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         substatementsInitialized = true;
 
         if (!statements.isEmpty()) {
-            statements.forEach(StatementContextBase::verifyStatement);
             beforeAddEffectiveStatementUnsafe(statements.size());
-            doAddEffectiveSubstatements(statements);
+            effective.addAll((Collection<? extends StatementContextBase<?, ?, ?>>) statements);
         }
     }
 
-    private void doAddEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        final Collection<? extends StatementContextBase<?, ?, ?>> casted =
-            (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
+    // exposed for InferredStatementContext only
+    final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
+        verifyStatement(stmt);
         final ModelProcessingPhase phase = completedPhase;
         if (phase != null) {
-            for (StatementContextBase<?, ?, ?> stmt : casted) {
-                ensureCompletedPhase(stmt, phase);
-            }
+            ensureCompletedPhase((StatementContextBase<?, ?, ?>) stmt, phase);
         }
-
-        effective.addAll(casted);
     }
 
     // Make sure target statement has transitioned at least to specified phase. This method is just before we take
