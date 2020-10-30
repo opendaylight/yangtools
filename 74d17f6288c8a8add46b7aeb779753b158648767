@@ -22,6 +22,30 @@
       "revId": "74d17f6288c8a8add46b7aeb779753b158648767",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2711f3e0_b33042c9",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-10-30T11:32:21Z",
+      "side": 1,
+      "message": "Yes we did and in current form it would. The keyword here is \u0027(yet)\u0027. We will get back to this part here: https://git.opendaylight.org/gerrit/c/yangtools/+/93478 -- we have other things to take of first, though 😊\nI\u0027ll add a FIXME.",
+      "parentUuid": "4b6e905d_bc2ac305",
+      "range": {
+        "startLine": 176,
+        "startChar": 41,
+        "endLine": 176,
+        "endChar": 78
+      },
+      "revId": "74d17f6288c8a8add46b7aeb779753b158648767",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
