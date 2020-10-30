@@ -98,7 +98,8 @@ public final class ExtensionStatementSupport
 
     @Override
     public ExtensionEffectiveStatement createEffective(
-            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
+            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx,
+            final EffectiveParentState parent, final EffectiveStatementState<QName, ExtensionStatement> stmt) {
         Map<StmtContext<?, ?, ?>, ExtensionEffectiveStatementImpl> tl = TL_BUILDERS.get();
         if (tl == null) {
             tl = new IdentityHashMap<>();
@@ -116,7 +117,7 @@ public final class ExtensionStatementSupport
                 ctx.getSchemaPath().get());
             verify(tl.put(ctx, created) == null);
             try {
-                return super.createEffective(ctx);
+                return super.createEffective(ctx, parent, stmt);
             } finally {
                 verify(tl.remove(ctx) == created);
 

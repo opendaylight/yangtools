@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextDefaults;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -42,6 +43,20 @@ import org.slf4j.LoggerFactory;
  */
 final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
+    private final class InferredStatementState extends BaseStatementState {
+        @Override
+        public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
+            // FIXME: compute these without storing them in parent
+            return super.declaredSubstatements();
+        }
+
+        @Override
+        public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
+            // FIXME: compute these without storing them in parent
+            return super.effectiveSubstatements();
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
@@ -205,6 +220,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             }
         }
         return null;
+    }
+
+    @Override
+    EffectiveStatementState<A, D> buildState() {
+        return new InferredStatementState();
     }
 
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
