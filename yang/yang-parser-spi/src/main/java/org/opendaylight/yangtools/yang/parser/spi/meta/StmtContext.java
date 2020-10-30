@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -425,4 +426,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     default boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
         return StmtContextDefaults.hasSubstatement(this, type);
     }
+
+    /**
+     * Search of any child statement context of {@link ConfigEffectiveStatement} type and return its argument.
+     *
+     * @return {@link Optional#empty()} if no statement exists, otherwise the argument value
+     */
+    @Beta
+    default Optional<Boolean> explicitConfig() {
+        return StmtContextDefaults.findSubstatementArgument(this, ConfigEffectiveStatement.class);
+    }
+
 }

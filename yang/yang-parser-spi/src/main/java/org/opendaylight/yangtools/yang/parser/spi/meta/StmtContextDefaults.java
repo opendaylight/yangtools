@@ -34,6 +34,7 @@ public final class StmtContextDefaults {
             final @NonNull StmtContext<?, ?, ?> stmt, final @NonNull Class<E> type) {
         return stmt.allSubstatementsStream()
                 .filter(ctx -> ((StmtContext) ctx).producesEffective(type))
+                .filter(ctx -> ((StmtContext) ctx).isSupportedToBuildEffective())
                 .findAny()
                 .map(ctx -> (A) ctx.coerceStatementArgument());
     }
