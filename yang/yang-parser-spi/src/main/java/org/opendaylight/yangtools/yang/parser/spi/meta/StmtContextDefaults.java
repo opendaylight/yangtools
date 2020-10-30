@@ -33,7 +33,8 @@ public final class StmtContextDefaults {
     public static <A, E extends EffectiveStatement<A, ?>> @NonNull Optional<A> findSubstatementArgument(
             final @NonNull StmtContext<?, ?, ?> stmt, final @NonNull Class<E> type) {
         return stmt.allSubstatementsStream()
-                .filter(ctx -> ((StmtContext) ctx).producesEffective(type))
+                .filter(ctx -> ((StmtContext) ctx).producesEffective(type) &&
+                        ((StmtContext) ctx).isSupportedToBuildEffective())
                 .findAny()
                 .map(ctx -> (A) ctx.coerceStatementArgument());
     }
