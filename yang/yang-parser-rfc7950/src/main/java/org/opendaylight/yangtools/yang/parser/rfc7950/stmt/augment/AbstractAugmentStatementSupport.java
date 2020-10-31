@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
@@ -260,11 +259,6 @@ abstract class AbstractAugmentStatementSupport
     private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
             final boolean skipCheckOfMandatoryNodes) {
-
-        if (sourceCtx.producesDeclared(WhenStatement.class)) {
-            return;
-        }
-
         if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
                 && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             checkForMandatoryNodes(sourceCtx);
