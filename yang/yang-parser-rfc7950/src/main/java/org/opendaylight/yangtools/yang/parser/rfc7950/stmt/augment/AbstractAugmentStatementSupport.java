@@ -262,11 +262,6 @@ abstract class AbstractAugmentStatementSupport
     private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
             final boolean skipCheckOfMandatoryNodes) {
-
-        if (sourceCtx.producesDeclared(WhenStatement.class)) {
-            return;
-        }
-
         if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
                 && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             checkForMandatoryNodes(sourceCtx);
