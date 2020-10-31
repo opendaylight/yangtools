@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -186,6 +188,10 @@ class YangToSourcesProcessor {
         YangProvider.setResource(generatedServicesDir, project);
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);
+
+        // FIXME: now record the state
+        final BuildInfo info = BuildInfo.of(yangFilesInProject, files.build());
+
     }
 
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
@@ -254,6 +260,12 @@ class YangToSourcesProcessor {
             return Optional.empty();
         }
 
+        final BuildInfo buildInfo = getBuildInfo();
+        if (buildInfo != null) {
+            // FIXME: do ... something :)
+
+        }
+
         try {
             final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
                     .map(file -> {
@@ -298,6 +310,16 @@ class YangToSourcesProcessor {
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
                 rootCause);
         }
+    }
+
+    private @Nullable BuildInfo getBuildInfo() {
+        final Object stored = buildContext.getValue(BuildInfo.class.getName());
+        if (stored == null) {
+            return null;
+        }
+
+        verify(stored instanceof BuildInfo, "Unexpected build info structure %s", stored);
+        return (BuildInfo) stored;
     }
 
     private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
