@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -120,6 +122,10 @@ class YangToSourcesProcessor {
          * files in current project and optionally any jars/files in the
          * dependencies.
          */
+        if (!yangFilesRootDir.isDirectory()) {
+            LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, yangFilesRootDir);
+            return;
+        }
         final List<File> yangFilesInProject;
         try {
             yangFilesInProject = listFiles(yangFilesRootDir, excludedFiles);
@@ -232,6 +238,10 @@ class YangToSourcesProcessor {
         YangProvider.setResource(generatedServicesDir, project);
         LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
             META_INF_YANG_SERVICES_STRING_JAR);
+
+        // FIXME: now record the state
+        final BuildInfo info = new ImmutableBuildInfo(yangFilesInProject, files.build());
+
     }
 
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
@@ -270,6 +280,12 @@ class YangToSourcesProcessor {
             final StatementParserMode parserMode, final Collection<ScannedDependency> dependencies,
             final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed) throws MojoExecutionException {
 
+        final BuildInfo buildInfo = getBuildInfo();
+        if (buildInfo != null) {
+            // FIXME: do ... something :)
+
+        }
+
         try {
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             final YangParser parser = parserFactory.createParser(parserMode);
@@ -299,13 +315,26 @@ class YangToSourcesProcessor {
         }
     }
 
-    private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
-            throws IOException {
-        if (!root.isDirectory()) {
-            LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
-            return ImmutableList.of();
+    private @Nullable BuildInfo getBuildInfo() {
+        final Object stored = buildContext.getValue(BuildInfo.class.getName());
+        if (stored != null) {
+            verify(stored instanceof BuildInfo, "Unexpected build info structure %s", stored);
+            return (BuildInfo) stored;
         }
 
+        final PersistentBuildInfo prev;
+        try {
+            prev = PersistentBuildInfo.from(project.getBuild().getDirectory());
+        } catch (IOException e) {
+            LOG.warn("Unable to access persistent build information", e);
+            return null;
+        }
+
+        return prev;
+    }
+
+    private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
+            throws IOException {
         return Files.walk(root.toPath()).map(Path::toFile).filter(File::isFile).filter(f -> {
             if (excludedFiles.contains(f)) {
                 LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
