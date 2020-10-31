@@ -15,6 +15,8 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hasher;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -187,12 +189,54 @@ final class FileGeneratorTask extends GeneratorTask<FileGeneratorTaskFactory> {
         }
 
         File generateFile() {
+            final HashCode hashCode;
             try (OutputStream stream = buildContext.newFileOutputStream(target)) {
-                file.writeBody(stream);
+                try (HashingOutputStream hashing = new HashingOutputStream(stream)) {
+                    file.writeBody(hashing);
+                    hashCode = hashing.hash();
+                }
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to generate file " + target, e);
             }
             return target;
+        }
+    }
+
+    private static final class HashingOutputStream extends OutputStream {
+        private final Hasher hasher = HashedFile.HASH_FUNCTION.newHasher();
+        private final OutputStream delegate;
+
+        HashingOutputStream(final OutputStream delegate) {
+            this.delegate = requireNonNull(delegate);
+        }
+
+        @Override
+        @SuppressWarnings("checkstyle:parameterName")
+        public void write(final int b) throws IOException {
+            delegate.write(b);
+            hasher.putByte((byte) b);
+        }
+
+        @Override
+        @SuppressWarnings("checkstyle:parameterName")
+        public void write(final byte[] b, final int off, final int len) throws IOException {
+            delegate.write(b, off, len);
+            hasher.putBytes(b, off, len);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            delegate.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            delegate.close();
+        }
+
+        HashCode hash() throws IOException {
+            delegate.flush();
+            return hasher.hash();
         }
     }
 }
