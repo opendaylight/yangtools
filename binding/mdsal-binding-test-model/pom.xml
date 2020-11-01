@@ -24,6 +24,12 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <properties>
+        <!-- generated code, let's not bother with these -->
+        <pmd.skip>true</pmd.skip>
+        <cpd.skip>true</cpd.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
