@@ -131,10 +131,6 @@
             <artifactId>yang-test-util</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-maven-plugin-spi</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -406,7 +402,7 @@
                         </group>
                         <group>
                             <title>yang-maven-plugin codegen interface</title>
-                            <packages>org.opendaylight.yangtools.plugin.generator.api*:org.opendaylight.yangtools.yang2sources.spi*</packages>
+                            <packages>org.opendaylight.yangtools.plugin.generator.api*</packages>
                         </group>
                         <group>
                             <title>Common YANG parser</title>

@@ -171,11 +171,6 @@
                 <artifactId>yang-maven-plugin</artifactId>
                 <version>10.0.0-SNAPSHOT</version>
             </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin-spi</artifactId>
-                <version>10.0.0-SNAPSHOT</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
