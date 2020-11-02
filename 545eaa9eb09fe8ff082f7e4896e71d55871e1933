@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e95fc521_969ae18b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-02T15:58:40Z",
+      "side": 1,
+      "message": "JIRA: YANGTOOLS-1162\n\nand should be just before Change-Id",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 16
+      },
+      "revId": "545eaa9eb09fe8ff082f7e4896e71d55871e1933",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fa8cd5f_182caede",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/AbstractDeclaredEffectiveRootStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-02T15:58:40Z",
+      "side": 1,
+      "message": "this should not be using StmtContext either -- add an alternative constructor and deprecate this one",
+      "range": {
+        "startLine": 25,
+        "startChar": 53,
+        "endLine": 25,
+        "endChar": 99
+      },
+      "revId": "545eaa9eb09fe8ff082f7e4896e71d55871e1933",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d9bc5df_003416ae",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/AbstractDeclaredEffectiveRootStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-02T15:58:40Z",
+      "side": 1,
+      "message": "end the end of the day these calls should be made inside *StatementSupport classes. Also note nullness annotations, for statements which have an argument (I think it\u0027s most of them), we want to use coerce(Raw)StatementArgument, which makes a non-null assertion.",
+      "range": {
+        "startLine": 27,
+        "startChar": 14,
+        "endLine": 27,
+        "endChar": 68
+      },
+      "revId": "545eaa9eb09fe8ff082f7e4896e71d55871e1933",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}

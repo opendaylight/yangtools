@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f0eb2aab_547c3835",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/AbstractDeclaredStatement.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-02T15:58:40Z",
+      "side": 0,
+      "message": "split this removal out: it is not API-compatible and hence will go in separately",
+      "revId": "d2ccea48b7261492fcc2e27c14dd16c69d9bb8ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
