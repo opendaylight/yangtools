@@ -13,6 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyIncludeStatement extends WithArgument<String> implements IncludeStatement {
     EmptyIncludeStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument());
     }
 }

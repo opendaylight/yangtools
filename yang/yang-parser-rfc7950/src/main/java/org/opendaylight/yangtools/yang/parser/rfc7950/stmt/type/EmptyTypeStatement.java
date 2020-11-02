@@ -13,6 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyTypeStatement extends WithRawStringArgument implements TypeStatement {
     EmptyTypeStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+        super(context.coerceRawStatementArgument());
     }
 }

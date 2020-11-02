@@ -26,7 +26,7 @@ final class SubmoduleStatementImpl extends AbstractDeclaredEffectiveRootStatemen
     @Deprecated(forRemoval = true)
     SubmoduleStatementImpl(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     SubmoduleStatementImpl(final String rawArgument, final UnqualifiedQName argument,
