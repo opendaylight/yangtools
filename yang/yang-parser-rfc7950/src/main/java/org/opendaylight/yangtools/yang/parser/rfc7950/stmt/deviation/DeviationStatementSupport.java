@@ -69,13 +69,15 @@ public final class DeviationStatementSupport
     @Override
     protected DeviationStatement createDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new DeviationStatementImpl(ctx, substatements);
+        return new DeviationStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                substatements);
     }
 
     @Override
     protected DeviationStatement createEmptyDeclared(
             final StmtContext<Absolute, DeviationStatement, ?> ctx) {
-        return new DeviationStatementImpl(ctx, ImmutableList.of());
+        return new DeviationStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                ImmutableList.of());
     }
 
     @Override

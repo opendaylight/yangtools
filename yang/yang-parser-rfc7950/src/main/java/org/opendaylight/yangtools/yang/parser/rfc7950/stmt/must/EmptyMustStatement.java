@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 
 final class EmptyMustStatement extends WithArgument<QualifiedBound> implements MustStatement {
     EmptyMustStatement(final StmtContext<QualifiedBound, ?, ?> context) {
-        super(context);
+        super(context.rawStatementArgument(), context.getStatementArgument());
     }
 }

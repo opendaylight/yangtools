@@ -14,8 +14,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularTypeStatement extends WithSubstatements implements TypeStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularTypeStatement#RegularTypeStatement(String, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularTypeStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), substatements);
+    }
+
+    RegularTypeStatement(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }

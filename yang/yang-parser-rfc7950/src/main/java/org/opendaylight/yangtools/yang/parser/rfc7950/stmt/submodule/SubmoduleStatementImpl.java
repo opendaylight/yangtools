@@ -16,8 +16,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class SubmoduleStatementImpl extends AbstractDeclaredEffectiveRootStatement<SubmoduleStatement>
         implements SubmoduleStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link SubmoduleStatementImpl#SubmoduleStatementImpl(String, UnqualifiedQName, ImmutableList)}
+     * instead
+     */
+    @Deprecated(forRemoval = true)
     SubmoduleStatementImpl(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
+    }
+
+    SubmoduleStatementImpl(final String rawArgument, final UnqualifiedQName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

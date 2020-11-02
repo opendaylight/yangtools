@@ -60,7 +60,8 @@ public final class AnyxmlSchemaLocationStatementSupport
     protected AnyxmlSchemaLocationStatement createDeclared(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new AnyxmlSchemaLocationStatementImpl(ctx, substatements);
+        return new AnyxmlSchemaLocationStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                substatements);
     }
 
     @Override

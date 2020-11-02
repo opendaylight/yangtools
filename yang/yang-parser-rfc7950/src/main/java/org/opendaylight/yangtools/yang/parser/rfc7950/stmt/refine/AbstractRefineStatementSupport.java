@@ -34,13 +34,14 @@ abstract class AbstractRefineStatementSupport
     @Override
     protected final RefineStatement createDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RefineStatementImpl(ctx, substatements);
+        return new RefineStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
     protected final RefineStatement createEmptyDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return new RefineStatementImpl(ctx, ImmutableList.of());
+        return new RefineStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                ImmutableList.of());
     }
 
     @Override
