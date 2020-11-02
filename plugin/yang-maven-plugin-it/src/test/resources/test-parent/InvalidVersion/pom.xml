@@ -42,25 +42,14 @@
                         <configuration>
                             <yangFilesRootDir>../files</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
-                            <codeGenerators>
-                            </codeGenerators>
-                            <resourceProviders>
-                                <provider>
-                                    <resourceProviderClass>
-                                        org.opendaylight.yangtools.yang2sources.spi.ResourceProviderTestImpl
-                                    </resourceProviderClass>
-                                    <outputBaseDir>
-                                        outDir/
-                                    </outputBaseDir>
-                                </provider>
-                            </resourceProviders>
+                            <fileGenerators/>
                         </configuration>
                     </execution>
                 </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
-                        <artifactId>yang-maven-plugin-spi</artifactId>
+                        <artifactId>plugin-generator-api</artifactId>
                         <version>${project.version}</version>
                         <type>test-jar</type>
                     </dependency>

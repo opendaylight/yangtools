@@ -29,16 +29,13 @@
                         <configuration>
                             <yangFilesRootDir>unknown</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
-                            <codeGenerators>
-                                <generator>
-                                    <codeGeneratorClass>
-                                        org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl
-                                    </codeGeneratorClass>
-                                    <outputBaseDir>
-                                        /outDir/
-                                    </outputBaseDir>
-                                </generator>
-                            </codeGenerators>
+                            <fileGenerators>
+                                <fileGenerator>
+                                    <identifier>
+                                        org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator
+                                    </identifier>
+                                </fileGenerator>
+                            </fileGenerators>
                         </configuration>
                     </execution>
                 </executions>

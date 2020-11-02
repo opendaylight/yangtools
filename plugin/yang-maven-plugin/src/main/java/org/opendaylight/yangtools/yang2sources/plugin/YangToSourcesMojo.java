@@ -28,23 +28,21 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
+import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
-import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Generate sources from yang files using user provided set of
- * {@link BasicCodeGenerator}s. Steps of this process:
+ * {@link FileGeneratorArg}s. Steps of this process:
  * <ol>
  *   <li>List yang files from {@link #yangFilesRootDir}</li>
  *   <li>Process yang files using Yang Parser</li>
- *   <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
+ *   <li>For each {@link FileGeneratorArg} from {@link #fileGenerators}:
  *     <ol>
  *       <li>Instantiate using default constructor</li>
- *       <li>Call {@link BasicCodeGenerator#generateSources(EffectiveModelContext, File, Set,
- *           org.opendaylight.yangtools.yang2sources.spi.ModuleResourceResolver)}</li>
+ *       <li>Call {@link FileGenerator#generateFiles(EffectiveModelContext, Set, ModuleResourceResolver)}</li>
  *     </ol>
  *   </li>
  * </ol>
@@ -53,14 +51,6 @@ import org.sonatype.plexus.build.incremental.BuildContext;
     requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true)
 public final class YangToSourcesMojo extends AbstractMojo {
     public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
-
-    /**
-     * Classes implementing {@link BasicCodeGenerator} interface. An instance will be
-     * created out of every class using default constructor. Method {@link
-     * BasicCodeGenerator#generateSources(EffectiveModelContext, File, Set)} will be called on every instance.
-     */
-    @Parameter(required = false)
-    private CodeGeneratorArg[] codeGenerators;
 
     /**
      * {@link FileGenerator} instances resolved via ServiceLoader can hold additional configuration, which details
@@ -115,7 +105,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     @VisibleForTesting
     YangToSourcesMojo(final YangToSourcesProcessor processor) {
-        this.yangToSourcesProcessor = processor;
+        yangToSourcesProcessor = processor;
     }
 
     public void setProject(final MavenProject project) {
@@ -133,8 +123,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
             yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
-                    excludedFiles, arrayToList(codeGenerators), arrayToList(fileGenerators), project,
-                    inspectDependencies);
+                    excludedFiles, arrayToList(fileGenerators), project, inspectDependencies);
         }
         yangToSourcesProcessor.conditionalExecute("true".equals(yangSkip));
     }

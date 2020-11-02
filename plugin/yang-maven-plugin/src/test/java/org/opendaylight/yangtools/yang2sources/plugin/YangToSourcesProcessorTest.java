@@ -7,64 +7,49 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.doReturn;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableTable;
 import java.io.File;
 import java.util.List;
-import org.apache.maven.model.Build;
-import org.apache.maven.project.MavenProject;
-import org.junit.Before;
+import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
-import org.opendaylight.yangtools.yang2sources.plugin.GenerateSourcesTest.GeneratorMock;
+import org.opendaylight.yangtools.yang.model.api.Module;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class YangToSourcesProcessorTest {
-    @Mock
-    public File buildContext;
-    @Mock
-    public MavenProject project;
-    @Mock
-    public YangProvider inspectDependencies;
+public class YangToSourcesProcessorTest extends AbstractCodeGeneratorTest {
+    private final File file = new File(getClass().getResource("/yang").getFile());
 
-    private final boolean dep = false;
-    private List<File> yangFilesRootDir;
-
-    @Before
-    public void before() {
-        yangFilesRootDir = ImmutableList.of(buildContext);
+    @Test
+    public void basicTest() {
+        assertMojoExecution(new YangToSourcesProcessor(file, List.of(),
+            List.of(new FileGeneratorArg("mockGenerator")), project, true,
+            YangProvider.getInstance()), mock -> {
+                doAnswer(invocation -> {
+                    final Set<Module> localModules = invocation.getArgument(1);
+                    assertEquals(2, localModules.size());
+                    return ImmutableTable.of();
+                }).when(mock).generateFiles(any(), any(), any());
+            }, mock -> { });
     }
 
     @Test
-    public void yangToSourcesProcessotTest() {
-        YangToSourcesProcessor processor = new YangToSourcesProcessor(buildContext, yangFilesRootDir,
-            ImmutableList.of(), project, dep, inspectDependencies);
-        assertNotNull(processor);
-
-        processor = new YangToSourcesProcessor(buildContext, yangFilesRootDir, ImmutableList.of(), project, dep,
-            inspectDependencies);
-        assertNotNull(processor);
-    }
-
-    @Test
-    public void test() throws Exception {
-        final File file = new File(getClass().getResource("/yang").getFile());
+    public void excludeFilesTest() throws Exception {
         final File excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
-        final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(),
-                "target/YangToSourcesProcessorTest-outputBaseDir");
-        final List<CodeGeneratorArg> codeGenerators = ImmutableList.of(codeGeneratorArg);
-        final Build build = new Build();
-        build.setDirectory("foo");
-        doReturn(build).when(project).getBuild();
-        final boolean dependencies = true;
-        final YangToSourcesProcessor proc = new YangToSourcesProcessor(file, ImmutableList.of(excludedYang),
-            codeGenerators, project, dependencies, YangProvider.getInstance());
-        assertNotNull(proc);
-        proc.execute();
+
+        assertMojoExecution(new YangToSourcesProcessor(file, List.of(excludedYang),
+            List.of(new FileGeneratorArg("mockGenerator")), project, true,
+            YangProvider.getInstance()), mock -> {
+                doAnswer(invocation -> {
+                    final Set<Module> localModules = invocation.getArgument(1);
+                    assertEquals(1, localModules.size());
+                    assertEquals("mock", localModules.iterator().next().getName());
+                    return ImmutableTable.of();
+                }).when(mock).generateFiles(any(), any(), any());
+            }, mock -> { });
     }
 }

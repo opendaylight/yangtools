@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-maven-plugin-spi</artifactId>
+            <artifactId>plugin-generator-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -37,16 +37,13 @@
                         <configuration>
                             <yangFilesRootDir>../files</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
-                            <codeGenerators>
+                            <fileGenerators>
                                 <generator>
-                                    <codeGeneratorClass>
-                                        org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl
-                                    </codeGeneratorClass>
-                                    <outputBaseDir>
-                                        target/correct
-                                    </outputBaseDir>
+                                    <identifier>
+                                        org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator
+                                    </identifier>
                                 </generator>
-                            </codeGenerators>
+                            </fileGenerators>
                         </configuration>
                     </execution>
                 </executions>
@@ -54,7 +51,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
-                        <artifactId>yang-maven-plugin-spi</artifactId>
+                        <artifactId>plugin-generator-api</artifactId>
                         <version>${project.version}</version>
                         <type>test-jar</type>
                     </dependency>

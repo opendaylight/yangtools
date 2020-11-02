@@ -29,18 +29,6 @@
                         <configuration combine.self="override">
                             <yangFilesRootDir>../files</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
-                            <codeGenerators>
-                            </codeGenerators>
-                            <resourceProviders>
-                                <provider>
-                                    <resourceProviderClass>
-                                        org.opendaylight.yangtools.yang2sources.spi.ResourceProviderTestImpl
-                                    </resourceProviderClass>
-                                    <outputBaseDir>
-                                        outDir/
-                                    </outputBaseDir>
-                                </provider>
-                            </resourceProviders>
                         </configuration>
                     </execution>
                 </executions>
