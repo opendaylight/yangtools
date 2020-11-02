@@ -70,6 +70,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>plugin-generator-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-impl</artifactId>
         </dependency>
         <dependency>
@@ -77,22 +81,14 @@
             <artifactId>yang-test-util</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-maven-plugin-spi</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.sonatype.plexus</groupId>
             <artifactId>plexus-build-api</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-maven-plugin-spi</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
         </dependency>
     </dependencies>
 

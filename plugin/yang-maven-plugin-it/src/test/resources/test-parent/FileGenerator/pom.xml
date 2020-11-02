@@ -38,7 +38,7 @@
                             <inspectDependencies>false</inspectDependencies>
                             <fileGenerators>
                                 <fileGenerator>
-                                    <identifier>org.opendaylight.yangtools.yang2sources.spi.TestFileGenerator</identifier>
+                                    <identifier>org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator</identifier>
                                     <configuration>
                                         <prefix>foo</prefix>
                                     </configuration>
@@ -51,7 +51,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
-                        <artifactId>yang-maven-plugin-spi</artifactId>
+                        <artifactId>plugin-generator-api</artifactId>
                         <version>${project.version}</version>
                         <type>test-jar</type>
                     </dependency>

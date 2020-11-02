@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang2sources.spi;
+package org.opendaylight.yangtools.plugin.generator.api;
 
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.plugin.generator.api.AbstractFileGeneratorFactory;
-import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
+import org.kohsuke.MetaInfServices;
 
+@MetaInfServices(value = FileGeneratorFactory.class)
 @NonNullByDefault
 public final class TestFileGeneratorFactory extends AbstractFileGeneratorFactory {
     public static final String PREFIX = "prefix";
