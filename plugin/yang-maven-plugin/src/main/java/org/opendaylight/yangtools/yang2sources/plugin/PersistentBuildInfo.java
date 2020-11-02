@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import java.io.DataInput;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -21,6 +22,7 @@ final class PersistentBuildInfo extends BuildInfo {
 
     private @Nullable BuildConfiguration config;
     private @Nullable ImmutableList<HashedFile> inputFiles;
+    private @Nullable ImmutableMultimap<String, HashedFile> outputFiles;
 
     PersistentBuildInfo(final DataInput input) {
         this.input = requireNonNull(input);
@@ -44,6 +46,15 @@ final class PersistentBuildInfo extends BuildInfo {
         return local;
     }
 
+    @Override
+    ImmutableMultimap<String, HashedFile> outputFiles() throws IOException {
+        ImmutableMultimap<String, HashedFile> local = outputFiles;
+        if (local == null) {
+            outputFiles = local = loadOutputFiles();
+        }
+        return local;
+    }
+
     private ImmutableList<HashedFile> loadInputFiles() throws IOException {
         final int inputSize = input.readInt();
         final ImmutableList.Builder<HashedFile> builder = ImmutableList.builderWithExpectedSize(inputSize);
@@ -54,8 +65,23 @@ final class PersistentBuildInfo extends BuildInfo {
         return builder.build();
     }
 
+    private ImmutableMultimap<String, HashedFile> loadOutputFiles() throws IOException {
+        final ImmutableMultimap.Builder<String, HashedFile> builder = ImmutableMultimap.builder();
+        final int generatorSize = input.readInt();
+        for (int i = 0; i < generatorSize; ++i) {
+            final String generatorName = input.readUTF();
+            final int fileSize = input.readInt();
+            for (int j = 0; j < fileSize; ++j) {
+                builder.put(generatorName, HashedFile.readFrom(input));
+            }
+        }
+
+        return builder.build();
+    }
+
     @Override
     ImmutableBuildInfo toImmutable() throws IOException {
-        return new ImmutableBuildInfo(buildConfiguration(), inputFiles());
+        return new ImmutableBuildInfo(buildConfiguration(), inputFiles(), outputFiles());
     }
+
 }
