@@ -44,7 +44,7 @@ final class UnionSpecificationSupport
     @Override
     protected UnionSpecification createDeclared(final StmtContext<String, UnionSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new UnionSpecificationImpl(ctx, substatements);
+        return new UnionSpecificationImpl(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

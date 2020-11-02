@@ -13,6 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyMaxElementsStatement extends WithArgument<String> implements MaxElementsStatement {
     EmptyMaxElementsStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument());
     }
 }
