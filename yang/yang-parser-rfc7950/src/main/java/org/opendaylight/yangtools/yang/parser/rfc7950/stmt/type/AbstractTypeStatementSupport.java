@@ -222,7 +222,7 @@ abstract class AbstractTypeStatementSupport
     @Override
     protected final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularTypeStatement(ctx, substatements);
+        return new RegularTypeStatement(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

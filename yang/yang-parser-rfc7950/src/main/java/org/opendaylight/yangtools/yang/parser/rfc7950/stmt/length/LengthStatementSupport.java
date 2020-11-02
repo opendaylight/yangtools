@@ -85,7 +85,8 @@ public final class LengthStatementSupport
     @Override
     protected LengthStatement createDeclared(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularLengthStatement(ctx, substatements);
+        return new RegularLengthStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                substatements);
     }
 
     @Override

@@ -60,7 +60,7 @@ abstract class AbstractIdentityRefSpecificationSupport
     @Override
     protected final IdentityRefSpecification createDeclared(final StmtContext<String, IdentityRefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new IdentityRefSpecificationImpl(ctx, substatements);
+        return new IdentityRefSpecificationImpl(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override
