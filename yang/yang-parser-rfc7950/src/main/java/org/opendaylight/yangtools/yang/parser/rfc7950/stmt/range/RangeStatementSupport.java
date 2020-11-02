@@ -81,7 +81,8 @@ public final class RangeStatementSupport
     @Override
     protected RangeStatement createDeclared(final StmtContext<List<ValueRange>, RangeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRangeStatement(ctx, substatements);
+        return new RegularRangeStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                substatements);
     }
 
     @Override
