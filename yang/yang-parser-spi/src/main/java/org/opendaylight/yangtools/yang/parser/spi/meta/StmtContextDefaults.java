@@ -33,7 +33,7 @@ public final class StmtContextDefaults {
     public static <A, E extends EffectiveStatement<A, ?>> @NonNull Optional<A> findSubstatementArgument(
             final @NonNull StmtContext<?, ?, ?> stmt, final @NonNull Class<E> type) {
         return stmt.allSubstatementsStream()
-                .filter(ctx -> ((StmtContext) ctx).producesEffective(type))
+                .filter(ctx -> ctx.isSupportedToBuildEffective() && ((StmtContext) ctx).producesEffective(type))
                 .findAny()
                 .map(ctx -> (A) ctx.coerceStatementArgument());
     }
@@ -47,7 +47,8 @@ public final class StmtContextDefaults {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean hasSubstatement(final @NonNull StmtContext<?, ?, ?> stmt,
-            @SuppressWarnings("rawtypes") final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        return stmt.allSubstatementsStream().anyMatch(ctx -> ((StmtContext) ctx).producesEffective(type));
+            final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return stmt.allSubstatementsStream()
+            .anyMatch(ctx -> ctx.isSupportedToBuildEffective() && ((StmtContext) ctx).producesEffective(type));
     }
 }
