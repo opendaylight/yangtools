@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
-import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -72,7 +71,6 @@ class YangToSourcesProcessor {
     private final YangParserFactory parserFactory;
     private final File yangFilesRootDir;
     private final Set<File> excludedFiles;
-    private final List<CodeGeneratorArg> codeGeneratorArgs;
     private final Map<String, FileGeneratorArg> fileGeneratorArgs;
     private final MavenProject project;
     private final boolean inspectDependencies;
@@ -80,14 +78,13 @@ class YangToSourcesProcessor {
     private final YangProvider yangProvider;
 
     private YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
-            final Collection<File> excludedFiles, final List<CodeGeneratorArg> codeGeneratorArgs,
-            final List<FileGeneratorArg> fileGeneratorsArgs,
+            final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGeneratorsArgs,
             final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
         this.buildContext = requireNonNull(buildContext, "buildContext");
         this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
-        this.codeGeneratorArgs = ImmutableList.copyOf(codeGeneratorArgs);
-        fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
+        //FIXME multiple FileGeneratorArg entries of same identifier became one here
+        this.fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
@@ -96,18 +93,17 @@ class YangToSourcesProcessor {
 
     @VisibleForTesting
     YangToSourcesProcessor(final File yangFilesRootDir, final Collection<File> excludedFiles,
-            final List<CodeGeneratorArg> codeGenerators, final MavenProject project, final boolean inspectDependencies,
+            final List<FileGeneratorArg> fileGenerators, final MavenProject project, final boolean inspectDependencies,
             final YangProvider yangProvider) {
-        this(new DefaultBuildContext(), yangFilesRootDir, excludedFiles, codeGenerators, ImmutableList.of(),
+        this(new DefaultBuildContext(), yangFilesRootDir, excludedFiles, ImmutableList.of(),
             project, inspectDependencies, yangProvider);
     }
 
     YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
-                final Collection<File> excludedFiles, final List<CodeGeneratorArg> codeGenerators,
-                final List<FileGeneratorArg> fileGenerators, final MavenProject project,
-                final boolean inspectDependencies) {
-        this(buildContext, yangFilesRootDir, excludedFiles, codeGenerators, fileGenerators, project,
-            inspectDependencies, YangProvider.getInstance());
+            final Collection<File> excludedFiles, final List<FileGeneratorArg> fileGenerators,
+            final MavenProject project, final boolean inspectDependencies) {
+        this(buildContext, yangFilesRootDir, excludedFiles, fileGenerators, project, inspectDependencies,
+            YangProvider.getInstance());
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -180,7 +176,7 @@ class YangToSourcesProcessor {
             .map(file -> {
                 final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
                 try {
-                    return Map.entry(textSource,TextToIRTransformer.transformText(textSource));
+                    return Map.entry(textSource, TextToIRTransformer.transformText(textSource));
                 } catch (YangSyntaxErrorException | IOException e) {
                     throw new IllegalArgumentException("Failed to parse " + file, e);
                 }
@@ -235,17 +231,13 @@ class YangToSourcesProcessor {
     }
 
     private List<GeneratorTaskFactory> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
-        final List<GeneratorTaskFactory> generators = new ArrayList<>(codeGeneratorArgs.size());
-        for (CodeGeneratorArg arg : codeGeneratorArgs) {
-            generators.add(CodeGeneratorTaskFactory.create(arg));
-            LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, arg.getCodeGeneratorClass());
-        }
-
         // Search for available FileGenerator implementations
         final Map<String, FileGeneratorFactory> factories = Maps.uniqueIndex(
             ServiceLoader.load(FileGeneratorFactory.class), FileGeneratorFactory::getIdentifier);
 
-        // Assign instantiate FileGenerators with appropriate configurate
+        // FIXME: iterate over fileGeneratorArg instances (configuration), not factories (environment)
+        // Assign instantiate FileGenerators with appropriate configuration
+        final List<GeneratorTaskFactory> generators = new ArrayList<>(factories.size());
         for (Entry<String, FileGeneratorFactory> entry : factories.entrySet()) {
             final String id = entry.getKey();
             FileGeneratorArg arg = fileGeneratorArgs.get(id);
@@ -261,6 +253,15 @@ class YangToSourcesProcessor {
             }
             LOG.info("{} Code generator {} instantiated", LOG_PREFIX, id);
         }
+
+        // Notify if no factory found for defined identifiers
+        fileGeneratorArgs.keySet().forEach(
+            fileGenIdentifier -> {
+                if (!factories.containsKey(fileGenIdentifier)) {
+                    LOG.warn("{} No generator found for identifier {}", LOG_PREFIX, fileGenIdentifier);
+                }
+            }
+        );
 
         return generators;
     }

@@ -29,24 +29,18 @@
                         <configuration>
                             <yangFilesRootDir>../files</yangFilesRootDir>
                             <inspectDependencies>false</inspectDependencies>
-                            <codeGenerators>
-                                <generator>
-                                    <codeGeneratorClass>
-                                        org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl
-                                    </codeGeneratorClass>
-                                    <outputBaseDir>
-                                        /outDir/
-                                    </outputBaseDir>
-                                </generator>
-                                <generator>
-                                    <codeGeneratorClass>
+                            <fileGenerators>
+                                <fileGenerator>
+                                    <identifier>
+                                        org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator
+                                    </identifier>
+                                </fileGenerator>
+                                <fileGenerator>
+                                    <identifier>
                                         unknown
-                                    </codeGeneratorClass>
-                                    <outputBaseDir>
-                                        /outDir/
-                                    </outputBaseDir>
-                                </generator>
-                            </codeGenerators>
+                                    </identifier>
+                                </fileGenerator>
+                            </fileGenerators>
                         </configuration>
                     </execution>
                 </executions>
@@ -54,7 +48,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
-                        <artifactId>yang-maven-plugin-spi</artifactId>
+                        <artifactId>plugin-generator-api</artifactId>
                         <version>${project.version}</version>
                         <type>test-jar</type>
                     </dependency>
