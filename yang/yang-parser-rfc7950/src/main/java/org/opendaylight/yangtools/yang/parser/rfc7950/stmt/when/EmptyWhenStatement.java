@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 
 final class EmptyWhenStatement extends WithArgument<QualifiedBound> implements WhenStatement {
     EmptyWhenStatement(final StmtContext<QualifiedBound, ?, ?> context) {
-        super(context);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument());
     }
 }
