@@ -17,17 +17,16 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.junit.Test;
+import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
+import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
-import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
-import org.opendaylight.yangtools.yang2sources.spi.ModuleResourceResolver;
 
 public class FilenameResolutionTest extends AbstractCodeGeneratorTest {
     @Test
@@ -38,7 +37,7 @@ public class FilenameResolutionTest extends AbstractCodeGeneratorTest {
             .execute();
     }
 
-    public static final class Generator implements BasicCodeGenerator {
+    public static final class Generator implements FileGenerator {
         @Override
         public Collection<File> generateSources(final EffectiveModelContext context, final File outputBaseDir,
                 final Set<Module> currentModules, final ModuleResourceResolver moduleResourcePathResolver)  {
@@ -50,16 +49,6 @@ public class FilenameResolutionTest extends AbstractCodeGeneratorTest {
             assertEquals(Optional.of("/META-INF/yang/foo-submodule@2020-10-12.yang"),
                 moduleResourcePathResolver.findModuleResourcePath(submodule, YangTextSchemaSource.class));
             return List.of();
-        }
-
-        @Override
-        public void setAdditionalConfig(final Map<String, String> additionalConfiguration) {
-            // Noop
-        }
-
-        @Override
-        public void setResourceBaseDir(final File resourceBaseDir) {
-            // Noop
         }
     }
 }
