@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyUsesStatement extends WithArgument<QName> implements UsesStatement {
     EmptyUsesStatement(final StmtContext<QName, ?, ?> context) {
-        super(context);
+        super(context.rawStatementArgument(), context.getStatementArgument());
     }
 }

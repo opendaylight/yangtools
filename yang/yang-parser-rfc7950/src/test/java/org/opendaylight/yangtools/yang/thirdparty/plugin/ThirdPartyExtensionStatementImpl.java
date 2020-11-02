@@ -19,6 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class ThirdPartyExtensionStatementImpl extends WithSubstatements implements ThirdPartyExtensionStatement {
     ThirdPartyExtensionStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), substatements);
     }
 }

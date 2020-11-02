@@ -24,6 +24,6 @@ public abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredS
                 MetaDeclaredStatement<UnqualifiedQName>, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
     protected AbstractDeclaredEffectiveRootStatement(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.rawStatementArgument(), ctx.getStatementArgument(), substatements);
     }
 }

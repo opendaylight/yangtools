@@ -17,6 +17,6 @@ final class RegularInstanceIdentifierSpecification extends WithSubstatements
         implements InstanceIdentifierSpecification {
     RegularInstanceIdentifierSpecification(final StmtContext<String, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.rawStatementArgument(), substatements);
     }
 }

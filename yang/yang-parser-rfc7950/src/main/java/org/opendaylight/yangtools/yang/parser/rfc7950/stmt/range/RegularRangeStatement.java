@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class RegularRangeStatement extends WithSubstatements<List<ValueRange>> implements RangeStatement {
     RegularRangeStatement(final StmtContext<List<ValueRange>, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

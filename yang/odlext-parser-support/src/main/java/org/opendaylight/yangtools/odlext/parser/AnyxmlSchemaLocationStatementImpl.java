@@ -19,6 +19,6 @@ final class AnyxmlSchemaLocationStatementImpl extends WithSubstatements<SchemaNo
     AnyxmlSchemaLocationStatementImpl(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

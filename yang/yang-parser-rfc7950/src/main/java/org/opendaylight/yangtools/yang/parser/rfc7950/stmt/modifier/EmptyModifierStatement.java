@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyModifierStatement extends WithArgument<ModifierKind> implements ModifierStatement {
     EmptyModifierStatement(final StmtContext<ModifierKind, ModifierStatement, ?> context) {
-        super(context);
+        super(context.rawStatementArgument(), context.getStatementArgument());
     }
 }
