@@ -22,8 +22,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement<UnqualifiedQName>>
         extends WithSubstatements<UnqualifiedQName> implements LinkageDeclaredStatement,
                 MetaDeclaredStatement<UnqualifiedQName>, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link AbstractDeclaredEffectiveRootStatement#AbstractDeclaredEffectiveRootStatement(
+     * String, UnqualifiedQName, ImmutableList)} instead
+     */
+    @Deprecated
     protected AbstractDeclaredEffectiveRootStatement(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
+    }
+
+    protected AbstractDeclaredEffectiveRootStatement(final String rawArgument, final UnqualifiedQName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

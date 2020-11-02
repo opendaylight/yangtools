@@ -17,8 +17,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * never be exposed to the world.
  */
 final class ThirdPartyExtensionStatementImpl extends WithSubstatements implements ThirdPartyExtensionStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link ThirdPartyExtensionStatementImpl#ThirdPartyExtensionStatementImpl(String,
+     * ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     ThirdPartyExtensionStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), substatements);
+    }
+
+    ThirdPartyExtensionStatementImpl(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }

@@ -15,8 +15,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularInstanceIdentifierSpecification extends WithSubstatements
         implements InstanceIdentifierSpecification {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularInstanceIdentifierSpecification#RegularInstanceIdentifierSpecification(
+     * String, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularInstanceIdentifierSpecification(final StmtContext<String, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.coerceRawStatementArgument(), substatements);
+    }
+
+    RegularInstanceIdentifierSpecification(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }

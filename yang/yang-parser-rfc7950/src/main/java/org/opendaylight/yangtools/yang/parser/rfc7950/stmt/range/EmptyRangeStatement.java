@@ -15,6 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyRangeStatement extends WithArgument<List<ValueRange>> implements RangeStatement {
     EmptyRangeStatement(final StmtContext<List<ValueRange>, ?, ?> context) {
-        super(context);
+        super(context.rawStatementArgument(), context.getStatementArgument());
     }
 }
