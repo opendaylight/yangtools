@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class AbstractCodeGeneratorTest {
     @Mock
     MavenProject project;
@@ -38,10 +38,10 @@ public abstract class AbstractCodeGeneratorTest {
         doReturn(new File("")).when(project).getBasedir();
         doReturn(build).when(project).getBuild();
 
-        doReturn(Collections.emptyList()).when(plugin).getDependencies();
+        doReturn(List.of()).when(plugin).getDependencies();
         doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
 
-        doNothing().when(yangProvider).addYangsToMetaInf(any(MavenProject.class), any(Collection.class));
+        doNothing().when(yangProvider).addYangsToMetaInf(any(MavenProject.class), anyCollection());
 
         final YangToSourcesMojo mojo = new YangToSourcesMojo(processor);
         mojo.setProject(project);

@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.GenerateSourcesTest.GeneratorMock;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
@@ -55,15 +54,13 @@ public class YangToSourcesProcessorTest {
     public void test() throws Exception {
         final File file = new File(getClass().getResource("/yang").getFile());
         final File excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
-        final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(),
-                "target/YangToSourcesProcessorTest-outputBaseDir");
-        final List<CodeGeneratorArg> codeGenerators = ImmutableList.of(codeGeneratorArg);
         final Build build = new Build();
         build.setDirectory("foo");
         doReturn(build).when(project).getBuild();
         final boolean dependencies = true;
-        final YangToSourcesProcessor proc = new YangToSourcesProcessor(file, ImmutableList.of(excludedYang),
-            codeGenerators, project, dependencies, YangProvider.getInstance());
+        final YangToSourcesProcessor proc = new YangToSourcesProcessor(file, List.of(excludedYang),
+            List.of(new FileGeneratorArg(GeneratorMock.class.getSimpleName())), project, dependencies,
+            YangProvider.getInstance());
         assertNotNull(proc);
         proc.execute();
     }
