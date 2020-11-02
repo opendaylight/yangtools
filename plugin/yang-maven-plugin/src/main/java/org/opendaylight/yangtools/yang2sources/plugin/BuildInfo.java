@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutput;
@@ -16,6 +18,8 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.StreamCorruptedException;
 import java.nio.file.Files;
+import java.util.Collection;
+import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -49,6 +53,8 @@ abstract class BuildInfo implements Immutable, WritableObject {
 
     abstract ImmutableList<HashedFile> inputFiles() throws IOException;
 
+    abstract ImmutableMultimap<String, HashedFile> outputFiles() throws IOException;
+
     abstract ImmutableBuildInfo toImmutable() throws IOException;
 
     @Override
@@ -61,6 +67,17 @@ abstract class BuildInfo implements Immutable, WritableObject {
         out.writeInt(inputFiles.size());
         for (HashedFile file : inputFiles) {
             file.writeTo(out);
+        }
+
+        final ImmutableMap<String, Collection<HashedFile>> outputFiles = outputFiles().asMap();
+        out.writeInt(outputFiles.size());
+        for (Entry<String, Collection<HashedFile>> entry : outputFiles.entrySet()) {
+            out.writeUTF(entry.getKey());
+            final Collection<HashedFile> files = entry.getValue();
+            out.writeInt(files.size());
+            for (HashedFile file : files) {
+                file.writeTo(out);
+            }
         }
     }
 }
