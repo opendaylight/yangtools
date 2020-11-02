@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc66e4e8_12fc43dc",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-02T13:36:02Z",
+      "side": 1,
+      "message": "so this has just one caller -- I do not think we should introduce it (since we have a more powerful tool)",
+      "revId": "8241a5c2b2ff420c78bd725eab34e64df2ee4798",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fa75c99_936449f5",
+        "filename": "yang/yang-parser-spi/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextDefaults.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-02T13:36:02Z",
+      "side": 1,
+      "message": "combine these into one predicate (save a cast plus a filter stage)",
+      "range": {
+        "startLine": 36,
+        "startChar": 17,
+        "endLine": 37,
+        "endChar": 81
+      },
+      "revId": "8241a5c2b2ff420c78bd725eab34e64df2ee4798",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
