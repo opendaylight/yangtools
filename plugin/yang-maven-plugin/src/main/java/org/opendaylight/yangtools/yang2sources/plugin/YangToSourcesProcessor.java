@@ -144,15 +144,61 @@ class YangToSourcesProcessor {
             .map(GeneratorTaskFactory::parserMode)
             .collect(Collectors.toUnmodifiableSet());
 
+        LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
+
+        final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
+        final Collection<ScannedDependency> dependencies;
+        if (inspectDependencies) {
+            dependencies = new ArrayList<>();
+            final Stopwatch watch = Stopwatch.createStarted();
+
+            try {
+                ScannedDependency.scanDependencies(project).forEach(dep -> {
+                    allFiles.add(dep.file());
+                    dependencies.add(dep);
+                });
+            } catch (IOException e) {
+                LOG.error("{} Failed to scan dependencies", LOG_PREFIX, e);
+                throw new MojoExecutionException(LOG_PREFIX + " Failed to scan dependencies ", e);
+            }
+            LOG.info("{} Found {} dependencies in {}", LOG_PREFIX, dependencies.size(), watch);
+        } else {
+            dependencies = ImmutableList.of();
+        }
+
+        /*
+         * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
+         * end of execution.
+         */
+        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
+            LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
+            return;
+        }
+
+        final Stopwatch watch = Stopwatch.createStarted();
+        final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
+            .map(file -> {
+                final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(file);
+                try {
+                    return Map.entry(textSource,TextToIRTransformer.transformText(textSource));
+                } catch (YangSyntaxErrorException | IOException e) {
+                    throw new IllegalArgumentException("Failed to parse " + file, e);
+                }
+            })
+            .collect(Collectors.toList());
+        LOG.debug("Found project files: {}", yangFilesInProject);
+        LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
+
         // FIXME: store these files into state, so that we can verify/clean up
         final Builder<File> files = ImmutableSet.builder();
         for (StatementParserMode parserMode : parserModes) {
-            final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject, parserMode);
+            final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject,
+                parserMode, dependencies, parsed);
             if (optReactor.isPresent()) {
                 final ProcessorModuleReactor reactor = optReactor.orElseThrow();
 
                 if (!skip) {
-                    final Stopwatch watch = Stopwatch.createStarted();
+                    final Stopwatch sw = Stopwatch.createStarted();
                     final ContextHolder holder;
 
                     try {
@@ -164,7 +210,7 @@ class YangToSourcesProcessor {
                     }
 
                     LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(),
-                        watch);
+                        sw);
                     files.addAll(generateSources(holder, codeGenerators, parserMode));
                 } else {
                     LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
@@ -221,54 +267,10 @@ class YangToSourcesProcessor {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<ProcessorModuleReactor> createReactor(final List<File> yangFilesInProject,
-            final StatementParserMode parserMode) throws MojoExecutionException {
-        LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
-
-        final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
-        final Collection<ScannedDependency> dependencies;
-        if (inspectDependencies) {
-            dependencies = new ArrayList<>();
-            final Stopwatch watch = Stopwatch.createStarted();
-
-            try {
-                ScannedDependency.scanDependencies(project).forEach(dep -> {
-                    allFiles.add(dep.file());
-                    dependencies.add(dep);
-                });
-            } catch (IOException e) {
-                LOG.error("{} Failed to scan dependencies", LOG_PREFIX, e);
-                throw new MojoExecutionException(LOG_PREFIX + " Failed to scan dependencies ", e);
-            }
-            LOG.info("{} Found {} dependencies in {}", LOG_PREFIX, dependencies.size(), watch);
-        } else {
-            dependencies = ImmutableList.of();
-        }
-
-        /*
-         * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
-         * end of execution.
-         */
-        final Stopwatch watch = Stopwatch.createStarted();
-        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
-            LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
-            return Optional.empty();
-        }
+            final StatementParserMode parserMode, final Collection<ScannedDependency> dependencies,
+            final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed) throws MojoExecutionException {
 
         try {
-            final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
-                    .map(file -> {
-                        final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(file);
-                        try {
-                            return Map.entry(textSource,TextToIRTransformer.transformText(textSource));
-                        } catch (YangSyntaxErrorException | IOException e) {
-                            throw new IllegalArgumentException("Failed to parse " + file, e);
-                        }
-                    })
-                    .collect(Collectors.toList());
-
-            // FIXME: all of the above checks need to be done just once
-
-
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             final YangParser parser = parserFactory.createParser(parserMode);
             for (final Entry<YangTextSchemaSource, IRSchemaSource> entry : parsed) {
@@ -284,9 +286,6 @@ class YangToSourcesProcessor {
                     sourcesInProject.add(textSource);
                 }
             }
-
-            LOG.debug("Found project files: {}", yangFilesInProject);
-            LOG.info("{} Project model files found: {} in {}", LOG_PREFIX, yangFilesInProject.size(), watch);
 
             final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
