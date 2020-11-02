@@ -45,7 +45,7 @@ final class EnumSpecificationSupport
     @Override
     protected EnumSpecification createDeclared(final StmtContext<String, EnumSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new EnumSpecificationImpl(ctx, substatements);
+        return new EnumSpecificationImpl(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

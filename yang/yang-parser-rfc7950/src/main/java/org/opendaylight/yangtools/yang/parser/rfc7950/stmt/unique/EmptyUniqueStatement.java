@@ -15,6 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyUniqueStatement extends WithArgument<Set<Descendant>> implements UniqueStatement {
     EmptyUniqueStatement(final StmtContext<Set<Descendant>, ?, ?> context) {
-        super(context);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument());
     }
 }
