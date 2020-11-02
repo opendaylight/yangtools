@@ -13,6 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyEnumStatement extends WithArgument<String> implements EnumStatement {
     EmptyEnumStatement(final StmtContext<String, ?, ?> context) {
-        super(context);
+        super(context.rawStatementArgument(), context.getStatementArgument());
     }
 }

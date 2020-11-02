@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 final class RegularMustStatement extends WithSubstatements<QualifiedBound> implements MustStatement {
     RegularMustStatement(final StmtContext<QualifiedBound, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

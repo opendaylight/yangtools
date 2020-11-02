@@ -20,7 +20,7 @@ final class UnrecognizedStatementImpl extends WithSubstatements implements Unrec
 
     UnrecognizedStatementImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), substatements);
         this.definition = context.getPublicDefinition();
     }
 

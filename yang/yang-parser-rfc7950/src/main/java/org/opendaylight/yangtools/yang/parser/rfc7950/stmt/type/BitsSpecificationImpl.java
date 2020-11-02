@@ -16,6 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class BitsSpecificationImpl extends WithSubstatements implements BitsSpecification {
     BitsSpecificationImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), substatements);
     }
 }

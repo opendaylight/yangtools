@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class RegularUsesStatement extends WithSubstatements<QName> implements UsesStatement {
     RegularUsesStatement(final StmtContext<QName, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

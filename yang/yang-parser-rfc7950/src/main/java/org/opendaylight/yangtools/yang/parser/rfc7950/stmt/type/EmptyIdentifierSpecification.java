@@ -13,6 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyIdentifierSpecification extends WithRawStringArgument implements InstanceIdentifierSpecification {
     EmptyIdentifierSpecification(final StmtContext<String, ?, ?> ctx) {
-        super(ctx);
+        super(ctx.rawStatementArgument());
     }
 }

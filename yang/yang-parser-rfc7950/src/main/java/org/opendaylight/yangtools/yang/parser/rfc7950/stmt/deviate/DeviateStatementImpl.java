@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class DeviateStatementImpl extends WithSubstatements<DeviateKind> implements DeviateStatement {
     DeviateStatementImpl(final StmtContext<DeviateKind, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

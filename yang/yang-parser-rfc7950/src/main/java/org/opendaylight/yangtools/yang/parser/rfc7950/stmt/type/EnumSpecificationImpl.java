@@ -16,6 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class EnumSpecificationImpl extends WithSubstatements implements EnumSpecification {
     EnumSpecificationImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), substatements);
     }
 }

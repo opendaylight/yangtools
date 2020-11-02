@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class RegularUniqueStatement extends WithSubstatements<Set<Descendant>> implements UniqueStatement {
     RegularUniqueStatement(final StmtContext<Set<Descendant>, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

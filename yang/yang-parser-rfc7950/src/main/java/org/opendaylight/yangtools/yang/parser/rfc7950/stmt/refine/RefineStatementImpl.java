@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class RefineStatementImpl extends WithSubstatements<Descendant> implements RefineStatement {
     RefineStatementImpl(final StmtContext<Descendant, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }

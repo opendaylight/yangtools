@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class RegularModifierStatement extends WithSubstatements<ModifierKind> implements ModifierStatement {
     RegularModifierStatement(final StmtContext<ModifierKind, ModifierStatement, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.rawStatementArgument(), context.getStatementArgument(), substatements);
     }
 }
