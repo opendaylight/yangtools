@@ -5,18 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang2sources.spi;
+package org.opendaylight.yangtools.plugin.generator.api;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
-import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
-import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
-import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
-import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileType;
-import org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
