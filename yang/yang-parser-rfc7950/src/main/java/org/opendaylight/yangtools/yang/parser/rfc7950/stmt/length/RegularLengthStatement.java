@@ -16,8 +16,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularLengthStatement extends WithSubstatements<List<ValueRange>> implements LengthStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularLengthStatement#RegularLengthStatement(String, List, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularLengthStatement(final StmtContext<List<ValueRange>, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularLengthStatement(final String rawArgument, final List<ValueRange> argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

@@ -15,8 +15,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RefineStatementImpl extends WithSubstatements<Descendant> implements RefineStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RefineStatementImpl#RefineStatementImpl(String, Descendant, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RefineStatementImpl(final StmtContext<Descendant, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RefineStatementImpl(final String rawArgument, final Descendant argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }
