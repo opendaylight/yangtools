@@ -15,8 +15,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 final class RegularMustStatement extends WithSubstatements<QualifiedBound> implements MustStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularMustStatement#RegularMustStatement(String, QualifiedBound, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularMustStatement(final StmtContext<QualifiedBound, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularMustStatement(final String rawArgument, final QualifiedBound argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

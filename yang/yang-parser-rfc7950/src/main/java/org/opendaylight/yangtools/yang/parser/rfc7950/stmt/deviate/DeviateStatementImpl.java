@@ -15,8 +15,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class DeviateStatementImpl extends WithSubstatements<DeviateKind> implements DeviateStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link DeviateStatementImpl#DeviateStatementImpl(String, DeviateKind, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     DeviateStatementImpl(final StmtContext<DeviateKind, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    DeviateStatementImpl(final String rawArgument, final DeviateKind argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }
