@@ -44,7 +44,7 @@ public final class ThirdPartyExtensionSupport
     protected ThirdPartyExtensionStatement createDeclared(
             final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ThirdPartyExtensionStatementImpl(ctx, substatements);
+        return new ThirdPartyExtensionStatementImpl(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

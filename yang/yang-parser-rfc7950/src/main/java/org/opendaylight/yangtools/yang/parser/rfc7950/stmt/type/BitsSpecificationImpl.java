@@ -11,11 +11,9 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class BitsSpecificationImpl extends WithSubstatements implements BitsSpecification {
-    BitsSpecificationImpl(final StmtContext<String, ?, ?> context,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+    BitsSpecificationImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }

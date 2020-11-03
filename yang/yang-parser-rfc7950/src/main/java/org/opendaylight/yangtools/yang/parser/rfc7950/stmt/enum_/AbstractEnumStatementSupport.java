@@ -31,12 +31,12 @@ abstract class AbstractEnumStatementSupport
     @Override
     protected final EnumStatement createDeclared(final StmtContext<String, EnumStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularEnumStatement(ctx, substatements);
+        return new RegularEnumStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
     protected final EnumStatement createEmptyDeclared(final StmtContext<String, EnumStatement, ?> ctx) {
-        return new EmptyEnumStatement(ctx);
+        return new EmptyEnumStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override

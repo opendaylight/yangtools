@@ -56,12 +56,12 @@ public final class MustStatementSupport
     @Override
     protected MustStatement createDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMustStatement(ctx, substatements);
+        return new RegularMustStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
     protected MustStatement createEmptyDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx) {
-        return new EmptyMustStatement(ctx);
+        return new EmptyMustStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override

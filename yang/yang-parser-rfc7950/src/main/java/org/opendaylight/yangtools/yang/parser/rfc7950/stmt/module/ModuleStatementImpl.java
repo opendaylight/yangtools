@@ -12,12 +12,11 @@ import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveRootStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ModuleStatementImpl extends AbstractDeclaredEffectiveRootStatement<ModuleStatement>
         implements ModuleStatement {
-    ModuleStatementImpl(final StmtContext<UnqualifiedQName, ?, ?> ctx,
+    ModuleStatementImpl(final String rawArgument, final UnqualifiedQName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

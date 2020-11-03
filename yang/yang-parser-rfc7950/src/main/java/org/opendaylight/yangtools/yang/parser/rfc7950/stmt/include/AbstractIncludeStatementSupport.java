@@ -90,12 +90,13 @@ abstract class AbstractIncludeStatementSupport
     @Override
     protected final IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularIncludeStatement(ctx, substatements);
+        return new RegularIncludeStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+            substatements);
     }
 
     @Override
     protected final IncludeStatement createEmptyDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
-        return new EmptyIncludeStatement(ctx);
+        return new EmptyIncludeStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override

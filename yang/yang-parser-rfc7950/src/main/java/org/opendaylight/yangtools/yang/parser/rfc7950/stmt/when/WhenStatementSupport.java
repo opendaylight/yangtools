@@ -54,12 +54,12 @@ public final class WhenStatementSupport
     @Override
     protected WhenStatement createDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularWhenStatement(ctx, substatements);
+        return new RegularWhenStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
     protected WhenStatement createEmptyDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx) {
-        return new EmptyWhenStatement(ctx);
+        return new EmptyWhenStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override

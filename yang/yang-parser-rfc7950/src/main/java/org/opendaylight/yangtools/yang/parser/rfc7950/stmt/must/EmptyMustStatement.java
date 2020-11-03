@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 final class EmptyMustStatement extends WithArgument<QualifiedBound> implements MustStatement {
-    EmptyMustStatement(final StmtContext<QualifiedBound, ?, ?> context) {
-        super(context);
+    EmptyMustStatement(final String rawArgument, final QualifiedBound argument) {
+        super(rawArgument, argument);
     }
 }
