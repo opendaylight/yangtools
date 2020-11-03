@@ -16,9 +16,22 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class AnyxmlSchemaLocationStatementImpl extends WithSubstatements<SchemaNodeIdentifier>
         implements AnyxmlSchemaLocationStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link AnyxmlSchemaLocationStatementImpl#AnyxmlSchemaLocationStatementImpl(String,
+     * SchemaNodeIdentifier, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     AnyxmlSchemaLocationStatementImpl(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    AnyxmlSchemaLocationStatementImpl(final String rawArgument, final SchemaNodeIdentifier argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

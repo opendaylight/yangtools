@@ -14,8 +14,21 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularMaxElementsStatement extends WithSubstatements<String> implements MaxElementsStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularMaxElementsStatement#RegularMaxElementsStatement(String, String,
+     * ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularMaxElementsStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularMaxElementsStatement(final String rawArgument, final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

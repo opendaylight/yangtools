@@ -14,8 +14,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class IdentityRefSpecificationImpl extends WithSubstatements implements IdentityRefSpecification {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link IdentityRefSpecificationImpl#IdentityRefSpecificationImpl(String, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     IdentityRefSpecificationImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), substatements);
+    }
+
+    IdentityRefSpecificationImpl(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }
