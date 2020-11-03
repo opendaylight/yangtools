@@ -14,8 +14,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class UnionSpecificationImpl extends WithSubstatements implements UnionSpecification {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link UnionSpecificationImpl#UnionSpecificationImpl(String, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     UnionSpecificationImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), substatements);
+    }
+
+    UnionSpecificationImpl(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }

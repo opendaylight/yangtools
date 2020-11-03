@@ -16,8 +16,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ModuleStatementImpl extends AbstractDeclaredEffectiveRootStatement<ModuleStatement>
         implements ModuleStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link ModuleStatementImpl#ModuleStatementImpl(String, UnqualifiedQName, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     ModuleStatementImpl(final StmtContext<UnqualifiedQName, ?, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
+    }
+
+    ModuleStatementImpl(final String rawArgument, final UnqualifiedQName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

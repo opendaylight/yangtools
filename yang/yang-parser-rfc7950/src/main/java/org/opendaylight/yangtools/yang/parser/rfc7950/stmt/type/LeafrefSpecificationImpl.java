@@ -14,8 +14,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class LeafrefSpecificationImpl extends WithSubstatements implements LeafrefSpecification {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link LeafrefSpecificationImpl#LeafrefSpecificationImpl(String, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     LeafrefSpecificationImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), substatements);
+    }
+
+    LeafrefSpecificationImpl(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, substatements);
     }
 }

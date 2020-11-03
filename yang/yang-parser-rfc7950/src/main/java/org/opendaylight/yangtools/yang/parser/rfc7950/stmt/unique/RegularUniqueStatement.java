@@ -16,8 +16,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularUniqueStatement extends WithSubstatements<Set<Descendant>> implements UniqueStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularUniqueStatement#RegularUniqueStatement(String, Set, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularUniqueStatement(final StmtContext<Set<Descendant>, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularUniqueStatement(final String rawArgument, final Set<Descendant> argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

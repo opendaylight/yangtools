@@ -15,8 +15,21 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularModifierStatement extends WithSubstatements<ModifierKind> implements ModifierStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularModifierStatement#RegularModifierStatement(String, ModifierKind,
+     * ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularModifierStatement(final StmtContext<ModifierKind, ModifierStatement, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularModifierStatement(final String rawArgument, final ModifierKind argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }
