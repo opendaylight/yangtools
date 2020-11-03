@@ -11,10 +11,9 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyUniqueStatement extends WithArgument<Set<Descendant>> implements UniqueStatement {
-    EmptyUniqueStatement(final StmtContext<Set<Descendant>, ?, ?> context) {
-        super(context);
+    EmptyUniqueStatement(final String rawArgument, final Set<Descendant> argument) {
+        super(rawArgument, argument);
     }
 }

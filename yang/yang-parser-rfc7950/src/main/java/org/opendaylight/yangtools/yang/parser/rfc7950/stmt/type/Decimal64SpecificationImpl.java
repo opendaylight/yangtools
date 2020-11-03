@@ -11,11 +11,10 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class Decimal64SpecificationImpl extends WithSubstatements implements Decimal64Specification {
-    Decimal64SpecificationImpl(final StmtContext<String, ?, ?> context,
+    Decimal64SpecificationImpl(final String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, substatements);
     }
 }

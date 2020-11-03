@@ -11,11 +11,10 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class IdentityRefSpecificationImpl extends WithSubstatements implements IdentityRefSpecification {
-    IdentityRefSpecificationImpl(final StmtContext<String, ?, ?> context,
+    IdentityRefSpecificationImpl(final String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, substatements);
     }
 }

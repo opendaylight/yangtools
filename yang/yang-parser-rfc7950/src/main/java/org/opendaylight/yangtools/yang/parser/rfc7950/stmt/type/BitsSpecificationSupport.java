@@ -47,7 +47,7 @@ final class BitsSpecificationSupport
     @Override
     protected BitsSpecification createDeclared(final StmtContext<String, BitsSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new BitsSpecificationImpl(ctx, substatements);
+        return new BitsSpecificationImpl(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

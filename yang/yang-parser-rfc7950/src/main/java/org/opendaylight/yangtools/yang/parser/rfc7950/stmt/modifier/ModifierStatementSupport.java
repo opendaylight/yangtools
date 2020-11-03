@@ -52,12 +52,13 @@ public final class ModifierStatementSupport
     @Override
     protected ModifierStatement createDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularModifierStatement(ctx, substatements);
+        return new RegularModifierStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+            substatements);
     }
 
     @Override
     protected ModifierStatement createEmptyDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx) {
-        return new EmptyModifierStatement(ctx);
+        return new EmptyModifierStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override

@@ -97,7 +97,7 @@ abstract class AbstractImportStatementSupport
     @Override
     protected final ImportStatement createDeclared(final StmtContext<String, ImportStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ImportStatementImpl(ctx, substatements);
+        return new ImportStatementImpl(ctx.coerceRawStatementArgument(), substatements);
     }
 
     @Override

@@ -7,21 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class UnrecognizedStatementImpl extends WithSubstatements implements UnrecognizedStatement {
     private final @NonNull StatementDefinition definition;
 
-    UnrecognizedStatementImpl(final StmtContext<String, ?, ?> context,
+    UnrecognizedStatementImpl(final String rawArgument, final @NonNull StatementDefinition statementDefinition,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
-        this.definition = context.getPublicDefinition();
+        super(rawArgument, substatements);
+        this.definition = requireNonNull(statementDefinition);
     }
 
     @Override

@@ -12,11 +12,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RefineStatementImpl extends WithSubstatements<Descendant> implements RefineStatement {
-    RefineStatementImpl(final StmtContext<Descendant, ?, ?> context,
+    RefineStatementImpl(final String rawArgument, final Descendant argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

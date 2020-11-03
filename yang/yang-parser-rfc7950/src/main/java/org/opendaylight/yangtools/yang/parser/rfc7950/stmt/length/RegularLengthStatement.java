@@ -13,11 +13,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularLengthStatement extends WithSubstatements<List<ValueRange>> implements LengthStatement {
-    RegularLengthStatement(final StmtContext<List<ValueRange>, ?, ?> context,
+    RegularLengthStatement(final String rawArgument, final List<ValueRange> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

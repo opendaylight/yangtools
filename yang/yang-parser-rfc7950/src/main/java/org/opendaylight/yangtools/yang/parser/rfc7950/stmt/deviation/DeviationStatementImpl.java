@@ -12,11 +12,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class DeviationStatementImpl extends WithSubstatements<Absolute> implements DeviationStatement {
-    DeviationStatementImpl(final StmtContext<Absolute, DeviationStatement, ?> context,
+    DeviationStatementImpl(final String rawArgument, final Absolute argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

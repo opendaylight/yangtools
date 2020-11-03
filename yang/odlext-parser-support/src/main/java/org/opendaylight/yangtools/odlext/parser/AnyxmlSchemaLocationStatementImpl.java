@@ -12,13 +12,11 @@ import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class AnyxmlSchemaLocationStatementImpl extends WithSubstatements<SchemaNodeIdentifier>
         implements AnyxmlSchemaLocationStatement {
-    AnyxmlSchemaLocationStatementImpl(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> context,
+    AnyxmlSchemaLocationStatementImpl(final String rawArgument, final SchemaNodeIdentifier argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

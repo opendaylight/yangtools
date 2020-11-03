@@ -11,12 +11,11 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularInstanceIdentifierSpecification extends WithSubstatements
         implements InstanceIdentifierSpecification {
-    RegularInstanceIdentifierSpecification(final StmtContext<String, ?, ?> ctx,
+    RegularInstanceIdentifierSpecification(final String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx, substatements);
+        super(rawArgument, substatements);
     }
 }

@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class EmptyModifierStatement extends WithArgument<ModifierKind> implements ModifierStatement {
-    EmptyModifierStatement(final StmtContext<ModifierKind, ModifierStatement, ?> context) {
-        super(context);
+    EmptyModifierStatement(final String rawArgument, final ModifierKind argument) {
+        super(rawArgument, argument);
     }
 }
