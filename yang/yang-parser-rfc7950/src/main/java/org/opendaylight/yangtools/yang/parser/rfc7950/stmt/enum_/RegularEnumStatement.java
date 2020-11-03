@@ -14,8 +14,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularEnumStatement extends WithSubstatements<String> implements EnumStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularEnumStatement#RegularEnumStatement(String, String, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularEnumStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularEnumStatement(final String rawArgument, final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }
