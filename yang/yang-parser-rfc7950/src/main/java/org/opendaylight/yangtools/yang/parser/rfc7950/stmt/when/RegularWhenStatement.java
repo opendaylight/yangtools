@@ -15,8 +15,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 final class RegularWhenStatement extends WithSubstatements<QualifiedBound> implements WhenStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularWhenStatement#RegularWhenStatement(String, QualifiedBound, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularWhenStatement(final StmtContext<QualifiedBound, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularWhenStatement(final String rawArgument, final QualifiedBound argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }

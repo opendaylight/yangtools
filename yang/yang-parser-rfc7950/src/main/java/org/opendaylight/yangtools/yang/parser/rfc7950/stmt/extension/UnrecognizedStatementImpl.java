@@ -18,10 +18,24 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class UnrecognizedStatementImpl extends WithSubstatements implements UnrecognizedStatement {
     private final @NonNull StatementDefinition definition;
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link UnrecognizedStatementImpl#UnrecognizedStatementImpl(String, ImmutableList,
+     * StatementDefinition)} instead
+     */
+    @Deprecated(forRemoval = true)
     UnrecognizedStatementImpl(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), substatements);
         this.definition = context.getPublicDefinition();
+    }
+
+    UnrecognizedStatementImpl(final String rawArgument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements,
+            StatementDefinition statementDefinition) {
+        super(rawArgument, substatements);
+        this.definition = statementDefinition;
     }
 
     @Override

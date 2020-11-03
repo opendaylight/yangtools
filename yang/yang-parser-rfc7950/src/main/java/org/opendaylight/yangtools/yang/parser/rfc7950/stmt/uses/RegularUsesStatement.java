@@ -15,8 +15,20 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RegularUsesStatement extends WithSubstatements<QName> implements UsesStatement {
+
+    /**
+     * Deprecated.
+     *
+     * @deprecated Use {@link RegularUsesStatement#RegularUsesStatement(String, QName, ImmutableList)} instead
+     */
+    @Deprecated(forRemoval = true)
     RegularUsesStatement(final StmtContext<QName, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(context, substatements);
+        super(context.coerceRawStatementArgument(), context.coerceStatementArgument(), substatements);
+    }
+
+    RegularUsesStatement(final String rawArgument, final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        super(rawArgument, argument, substatements);
     }
 }
