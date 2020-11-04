@@ -22,12 +22,12 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
 
     requires org.opendaylight.yangtools.openconfig.model.api;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.yang.parser.antlr;
     requires org.opendaylight.yangtools.yang.parser.reactor;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
-    requires org.opendaylight.yangtools.yang.model.api;
 
     // FIXME: hide these
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
