@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,10 +71,6 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest2.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
-
-    static {
-        BasicConfigurator.configure();
-    }
 
     @BeforeClass
     public static void init() throws DataValidationFailedException {

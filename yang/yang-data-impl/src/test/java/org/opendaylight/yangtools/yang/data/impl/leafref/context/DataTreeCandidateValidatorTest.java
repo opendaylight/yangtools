@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,10 +92,6 @@ public class DataTreeCandidateValidatorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
-
-    static {
-        BasicConfigurator.configure();
-    }
 
     @BeforeClass
     public static void init() throws DataValidationFailedException {
