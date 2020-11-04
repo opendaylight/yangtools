@@ -124,44 +124,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
-        ensureSubstatements();
-        return super.mutableEffectiveSubstatements();
-    }
-
-    @Override
-    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
-        ensureSubstatements();
-        super.addEffectiveSubstatement(substatement);
-    }
-
-    @Override
-    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        ensureSubstatements();
-        super.addEffectiveSubstatements(statements);
-    }
-
-    @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
-            final String statementArg) {
-        ensureSubstatements();
-        super.removeStatementFromEffectiveSubstatements(statementDef, statementArg);
-    }
-
-    @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
-        ensureSubstatements();
-        super.removeStatementFromEffectiveSubstatements(statementDef);
-    }
-
-    @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
     }
 
     @Override
     boolean hasEmptySubstatements() {
-        ensureSubstatements();
+        ensureEffectiveSubstatements();
         return hasEmptyEffectiveSubstatements();
     }
 
@@ -194,7 +163,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             StmtContext<QName, D, E> requestSchemaTreeChild(final QName qname) {
         LOG.debug("Materializing on lookup of {}", qname);
         // FIXME: YANGTOOLS-1160: we do not want to force full materialization here
-        ensureSubstatements();
+        ensureEffectiveSubstatements();
 
         // Now we have to do a lookup as we do not have access to the namespace being populated (yet). Here we are
         // bypassing additional checks and talk directly to superclass to get the statements.
@@ -209,10 +178,18 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
-    private void ensureSubstatements() {
+    @Override
+    void ensureEffectiveSubstatements() {
         if (!substatementsInitialized()) {
             initializeSubstatements();
         }
+    }
+
+    @Override
+    Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
+        // When we have not initialized, there are no statements to catch up: we will catch up when we are copying
+        // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL)
+        return substatementsInitialized() ? super.effectiveChildrenToComplete() : List.of();
     }
 
     private void initializeSubstatements() {

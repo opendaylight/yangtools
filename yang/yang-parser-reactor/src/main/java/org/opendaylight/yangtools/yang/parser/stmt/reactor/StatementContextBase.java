@@ -140,7 +140,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
+
+    // Note: this field is accessed either directly, or under substatementsInitialized == true
     private List<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
+
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
     private @Nullable ModelProcessingPhase completedPhase;
@@ -371,7 +374,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
+    public final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
+        ensureEffectiveSubstatements();
         if (effective instanceof ImmutableCollection) {
             return effective;
         }
@@ -380,12 +384,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private void shrinkEffective() {
+        // Initialization guarded by all callers
         if (effective.isEmpty()) {
             effective = ImmutableList.of();
         }
     }
 
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+    // Note: has side-effect of ensureEffectiveSubstatements()
+    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+        ensureEffectiveSubstatements();
         if (effective.isEmpty()) {
             return;
         }
@@ -413,10 +420,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param statementDef statement definition of the statement context to remove
      * @param statementArg statement argument of the statement context to remove
      */
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+    public final void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
             final String statementArg) {
         if (statementArg == null) {
+            // Note: has side-effect of ensureEffectiveSubstatements()
             removeStatementFromEffectiveSubstatements(statementDef);
+        } else {
+            ensureEffectiveSubstatements();
         }
 
         if (effective.isEmpty()) {
@@ -456,8 +466,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+    public final void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         verifyStatement(substatement);
+        ensureEffectiveSubstatements();
         beforeAddEffectiveStatement(1);
 
         final StatementContextBase<?, ?, ?> stmt = (StatementContextBase<?, ?, ?>) substatement;
@@ -477,12 +488,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+    public final void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
         if (!statements.isEmpty()) {
             statements.forEach(StatementContextBase::verifyStatement);
+            ensureEffectiveSubstatements();
             beforeAddEffectiveStatement(statements.size());
             doAddEffectiveSubstatements(statements);
         }
+    }
+
+    // exposed for InferredStatementContext, which we expect to initialize effective substatements
+    void ensureEffectiveSubstatements() {
+        // No-op for everything except InferredStatementContext
+    }
+
+    // Exposed for InferredStatementContextr only, others do not need initialization
+    Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
+        return effective;
     }
 
     // exposed for InferredStatementContext only
@@ -507,6 +529,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             }
         }
 
+        // Initialization guarded by all callers
         effective.addAll(casted);
     }
 
@@ -535,6 +558,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
 
+        // Initialization guarded by all callers
         if (effective.isEmpty()) {
             effective = new ArrayList<>(toAdd);
         }
@@ -594,7 +618,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
             finished &= child.tryToCompletePhase(phase);
         }
-        for (final StatementContextBase<?, ?, ?> child : effective) {
+        for (final StatementContextBase<?, ?, ?> child : effectiveChildrenToComplete()) {
             finished &= child.tryToCompletePhase(phase);
         }
         return finished;
@@ -941,6 +965,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     abstract boolean hasEmptySubstatements();
 
+    // Dual use method: AbstractResumedStatement does not use 'initialized' and InferredStatementContext ensures
+    //                  initialization.
+    // FIXME: 7.0.0: I think this warrants a separate subclasses, as InferredStatementContext wants to manage these
+    //               itself. Before we do that, though, we need to analyze size impacts
     final boolean hasEmptyEffectiveSubstatements() {
         return effective.isEmpty();
     }
