@@ -8,25 +8,36 @@
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 final class FileSearchUtil {
+    private static final String LS = System.lineSeparator();
+    static final String TAB = "    ";
+    static final String DOUBLE_TAB = TAB.repeat(2);
+    static final String TRIPLE_TAB = TAB.repeat(3);
+
     private FileSearchUtil() {
         // Hidden on purpose
     }
 
-    static void assertFileContains(final File file, final String searchText) throws FileNotFoundException {
-        try (Scanner scanner = new Scanner(file)) {
-            while (scanner.hasNextLine()) {
-                if (scanner.nextLine().contains(searchText)) {
-                    return;
-                }
-            }
+    static void assertFileContains(final File file, final String searchText) throws IOException {
+        assertFileContains(file, Files.readString(file.toPath()), searchText);
+    }
+
+    static void assertFileContains(final File file, final String fileContent, final String searchText) {
+        if (!fileContent.contains(searchText)) {
+            throw new AssertionError("File " + file + " does not contain '" + searchText + "'");
         }
-        throw new AssertionError("File " + file + " does not contain '" + searchText + "'");
+    }
+
+    static void assertFileContainsConsecutiveLines(final File file, final String fileContent, final String ... lines) {
+        for (final String line : lines) {
+            assertFileContains(file, fileContent, line);
+        }
+        assertFileContains(file, fileContent, String.join(LS, lines));
     }
 
     static Map<String, File> getFiles(final File path) {
@@ -44,5 +55,17 @@ final class FileSearchUtil {
 
             files.put(file.getName(), file);
         }
+    }
+
+    static String tab(final String line) {
+        return TAB + line;
+    }
+
+    static String doubleTab(final String line) {
+        return DOUBLE_TAB + line;
+    }
+
+    static String tripleTab(final String line) {
+        return TRIPLE_TAB + line;
     }
 }
