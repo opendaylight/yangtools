@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -120,6 +119,7 @@ import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -218,7 +218,7 @@ public final class RFC7950Reactors {
             .addSupport(YinElementStatementSupport.getInstance())
             .addSupport(ArgumentStatementSupport.getInstance())
             .addSupport(ExtensionStatementSupport.getInstance())
-            .addSupport(new ChildSchemaNodeNamespace<>())
+            .addSupport(SchemaTreeNamespace.getInstance())
             .addSupport(ExtensionNamespace.BEHAVIOUR)
             .addSupport(TypedefStatementSupport.getInstance())
             .addSupport(TypeNamespace.BEHAVIOUR)
