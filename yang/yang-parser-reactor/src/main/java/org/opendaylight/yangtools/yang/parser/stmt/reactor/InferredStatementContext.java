@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -179,8 +180,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         final StmtContext<?, ?, ?> template;
         if (prototype instanceof InferredStatementContext) {
-            // FIXME: this is not correct: we should be going through namespace access
-            template = ((InferredStatementContext<?, ?, ?>) prototype).requestSchemaTreeChild(templateQName);
+            template = (StmtContext<?, ?, ?>) prototype.getFromNamespace(ChildSchemaNodeNamespace.class, templateQName);
         } else {
             template = prototype.allSubstatementsStream()
                 .filter(stmt -> stmt.producesEffective(SchemaTreeEffectiveStatement.class)
