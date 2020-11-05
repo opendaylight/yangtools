@@ -22,6 +22,30 @@
       "revId": "a4032d142de34fb131eb10d4c5a480d0b6bc1db8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "041a3479_e836d708",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-05T13:18:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82fb2b48_525595ec",
+      "range": {
+        "startLine": 431,
+        "startChar": 51,
+        "endLine": 431,
+        "endChar": 53
+      },
+      "revId": "a4032d142de34fb131eb10d4c5a480d0b6bc1db8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
