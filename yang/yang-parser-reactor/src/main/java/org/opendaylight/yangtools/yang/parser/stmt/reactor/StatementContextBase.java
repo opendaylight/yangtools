@@ -826,10 +826,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * Adds a {@link ContextMutation} to a {@link ModelProcessingPhase}.
      *
-     * @throws IllegalStateException
-     *             when the mutation was registered after phase was completed
+     * @throws IllegalStateException when the mutation was registered after phase was completed
      */
-    void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
+    final void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
@@ -841,6 +840,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             phaseMutation = newMultimap();
         }
         phaseMutation.put(phase, mutation);
+    }
+
+    final void removeMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
+        if (!phaseMutation.isEmpty()) {
+            phaseMutation.remove(phase, mutation);
+        }
     }
 
     @Override
