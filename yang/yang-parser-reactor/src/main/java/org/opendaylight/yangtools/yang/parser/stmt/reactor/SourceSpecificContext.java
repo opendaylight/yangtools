@@ -28,8 +28,6 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -173,14 +171,6 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
      */
     YangVersion getRootVersion() {
         return root != null ? root.getRootVersion() : RootStatementContext.DEFAULT_VERSION;
-    }
-
-    DeclaredStatement<?> buildDeclared() {
-        return root.buildDeclared();
-    }
-
-    EffectiveStatement<?, ?> buildEffective() {
-        return root.buildEffective();
     }
 
     void startPhase(final ModelProcessingPhase phase) {
