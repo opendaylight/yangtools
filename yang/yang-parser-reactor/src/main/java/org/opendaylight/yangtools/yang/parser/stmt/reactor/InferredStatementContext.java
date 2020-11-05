@@ -206,7 +206,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public <Y extends DeclaredStatement<QName>, Z extends EffectiveStatement<QName, Y>>
+    public <Y extends DeclaredStatement<QName>, Z extends SchemaTreeEffectiveStatement<Y>>
             StmtContext<QName, Y, Z> requestSchemaTreeChild(final QName qname) {
         if (substatements instanceof List) {
             // We have performed materialization, hence we have triggered creation of all our schema tree child
