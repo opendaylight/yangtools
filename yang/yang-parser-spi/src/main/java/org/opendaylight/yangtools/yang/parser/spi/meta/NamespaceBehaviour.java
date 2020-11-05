@@ -20,9 +20,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 
 /**
@@ -139,7 +139,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
          * @return Requested child, if it is present.
          * @throws NullPointerException in {@code qname} is null
          */
-        <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
+        <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 
