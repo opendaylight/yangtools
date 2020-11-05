@@ -73,7 +73,7 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
         return existing != null ? existing : requestFrom(storageNode, key);
     }
 
-    private static <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
+    private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
             StmtContext<?, D, E> requestFrom(final NamespaceStorageNode storageNode, final QName key) {
         return storageNode instanceof OnDemandSchemaTreeStorageNode
             ? ((OnDemandSchemaTreeStorageNode) storageNode).requestSchemaTreeChild(key) : null;
