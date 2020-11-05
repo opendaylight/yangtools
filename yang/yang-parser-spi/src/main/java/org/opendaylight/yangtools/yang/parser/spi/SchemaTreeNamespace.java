@@ -5,17 +5,19 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
+package org.opendaylight.yangtools.yang.parser.spi;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -24,22 +26,40 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
- * Statement local namespace, which holds direct schema node descendants.
+ * Statement local namespace, which holds direct schema node descendants. This corresponds to the contents of the schema
+ * tree as exposed through {@link SchemaTreeAwareEffectiveStatement}.
  */
+// FIXME: 7.0.0: this contract seems to fall on the reactor side of things rather than parser-spi. Consider moving this
+//               into yang-(parser-)reactor-api.
 @Beta
-public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodeNamespace<D, E>>
+public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
+            E extends SchemaTreeAwareEffectiveStatement<QName, D>>
+        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>>
         implements StatementNamespace<QName, D, E> {
-    public ChildSchemaNodeNamespace() {
-        super((Class) ChildSchemaNodeNamespace.class);
+    private static final @NonNull SchemaTreeNamespace<?, ?> INSTANCE = new SchemaTreeNamespace<>();
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private SchemaTreeNamespace() {
+        super((Class) SchemaTreeNamespace.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <D extends DeclaredStatement<QName>, E extends SchemaTreeAwareEffectiveStatement<QName, D>>
+            @NonNull SchemaTreeNamespace<D, E> instance() {
+        return (SchemaTreeNamespace<D, E>) INSTANCE;
     }
 
     @Override
     public StmtContext<?, D, E> get(final QName key) {
-        // TODO Auto-generated method stub
+        // FIXME: 7.0.0: this method needs to be well-defined
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This method is analogous to {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)}.
+     */
     @Override
     public StmtContext<?, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
         // Get the backing storage node for the requested storage
@@ -59,7 +79,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
 
     @Override
     public Map<QName, StmtContext<?, D, E>> getAllFrom(final NamespaceStorageNode storage) {
-        // TODO Auto-generated method stub
+        // FIXME: 7.0.0: this method needs to be well-defined
         return null;
     }
 
@@ -67,7 +87,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
     @Override
     public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
         final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
-            ChildSchemaNodeNamespace.class, key, value);
+            SchemaTreeNamespace.class, key, value);
 
         if (prev != null) {
             throw new SourceException(value.getStatementSourceReference(),
@@ -95,7 +115,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
 
         QName nextPath = iterator.next();
         @SuppressWarnings("unchecked")
-        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(ChildSchemaNodeNamespace.class,
+        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(SchemaTreeNamespace.class,
             nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
@@ -104,7 +124,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
             nextPath = iterator.next();
             @SuppressWarnings("unchecked")
             final StmtContext<?, ?, ?> nextNodeCtx = (StmtContext<?, ?, ?>) current.getFromNamespace(
-                ChildSchemaNodeNamespace.class, nextPath);
+                SchemaTreeNamespace.class, nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }
