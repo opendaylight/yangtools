@@ -33,10 +33,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -91,7 +91,7 @@ abstract class AbstractAugmentStatementSupport
         final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
-            getSearchRoot(augmentNode), ChildSchemaNodeNamespace.class,
+            getSearchRoot(augmentNode), SchemaTreeNamespace.class,
             augmentNode.coerceStatementArgument().getNodeIdentifiers());
 
         augmentAction.apply(new InferenceAction() {
@@ -131,7 +131,7 @@ abstract class AbstractAugmentStatementSupport
                  */
                 if (YangStmtMapping.USES == augmentNode.coerceParentContext().getPublicDefinition()) {
                     final SchemaNodeIdentifier augmentArg = augmentNode.coerceStatementArgument();
-                    final Optional<StmtContext<?, ?, ?>> targetNode = ChildSchemaNodeNamespace.findNode(
+                    final Optional<StmtContext<?, ?, ?>> targetNode = SchemaTreeNamespace.findNode(
                         getSearchRoot(augmentNode), augmentArg);
                     if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
                         augmentNode.setIsSupportedToBuildEffective(false);

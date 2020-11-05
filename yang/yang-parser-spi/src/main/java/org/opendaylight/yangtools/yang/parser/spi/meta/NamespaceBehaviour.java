@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 
 /**
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
@@ -128,8 +130,14 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
          * This method must not change its mind about a child's presence -- once it returns non-present, it has to be
          * always returning non-present.
          *
+         * <p>
+         * The results produced by this method are expected to be consistent with
+         * {@link SchemaTreeAwareEffectiveStatement#findSchemaTreeNode(QName)} and
+         * {@link SchemaTreeNamespace#getFrom(NamespaceStorageNode, QName)}.
+         *
          * @param qname node identifier of the child being requested
          * @return Requested child, if it is present.
+         * @throws NullPointerException in {@code qname} is null
          */
         <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);

@@ -11,13 +11,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
- * Specialization of {@link BaseQNameStatementSupport} for stating the onStatementAdded method.
+ * Specialization of {@link BaseQNameStatementSupport} for {@link SchemaTreeEffectiveStatement} implementations. Every
+ * statement automatically participates in {@link SchemaTreeNamespace}.
  *
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
@@ -34,7 +35,7 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
 
     @Override
     public final void onStatementAdded(final Mutable<QName, D, E> stmt) {
-        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(SchemaTreeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     // Non-final because {@code input} and {@code output} are doing their own thing.
