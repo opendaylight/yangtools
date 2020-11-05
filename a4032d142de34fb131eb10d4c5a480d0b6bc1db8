@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82fb2b48_525595ec",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-11-05T12:49:21Z",
+      "side": 1,
+      "message": "us",
+      "range": {
+        "startLine": 431,
+        "startChar": 51,
+        "endLine": 431,
+        "endChar": 53
+      },
+      "revId": "a4032d142de34fb131eb10d4c5a480d0b6bc1db8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
