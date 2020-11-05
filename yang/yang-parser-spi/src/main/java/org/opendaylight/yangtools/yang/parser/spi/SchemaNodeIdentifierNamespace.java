@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeBa
  * <p>
  * This namespace is scoped to the parent node or module, unless the parent node is a case node. In that case,
  * the namespace is scoped to the closest ancestor node that is not a case or choice node.
+ *
+ * @deprecated This namespace was never implemented. Its purpose is generalized in {@link SchemaTreeNamespace}.
  */
+@Deprecated(forRemoval = true)
 public interface SchemaNodeIdentifierNamespace
     extends TreeBased<SchemaNodeIdentifier, DeclaredStatement<?>, EffectiveStatement<?, DeclaredStatement<?>>> {
 
