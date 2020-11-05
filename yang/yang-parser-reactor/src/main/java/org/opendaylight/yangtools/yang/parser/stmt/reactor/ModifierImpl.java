@@ -376,6 +376,11 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
+    /**
+     * This similar to {@link PhaseModificationInNamespace}, but allows recursive descent until it finds the real
+     * target. The mechanics is driven as a sequence of prerequisites along a path: first we hook onto namespace to
+     * give us the first step. When it does, we hook onto the first item to provide us the second step and so on.
+     */
     private final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K,
             N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, ContextMutation {
@@ -407,13 +412,25 @@ final class ModifierImpl implements ModelActionBuilder {
                 return;
             }
 
+            // Hook onto target: we either have a modification of the target itself or one of its children.
+            target.addMutation(modPhase, this);
+            // We have completed the context -> target step, hence we are no longer directly blocking context from
+            // making forward progress.
+            context.removeMutation(modPhase, this);
+
             if (!it.hasNext()) {
-                target.addMutation(modPhase, this);
+                // Last step: we are done
                 resolvePrereq((C) value);
                 return;
             }
 
+            // Make sure target's storage notifies us when the next step becomes available.
             hookOnto(target, namespace, it.next());
+        }
+
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+            return super.addToStringAttributes(toStringHelper).add("phase", modPhase).add("keys", keys);
         }
 
         void hookOnto(final StmtContext<?, ?, ?> context, final Class<?> namespace) {
