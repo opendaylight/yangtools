@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
+package org.opendaylight.yangtools.yang.parser.spi;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
@@ -27,11 +27,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Statement local namespace, which holds direct schema node descendants.
  */
 @Beta
-public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodeNamespace<D, E>>
+public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
+        extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>>
         implements StatementNamespace<QName, D, E> {
-    public ChildSchemaNodeNamespace() {
-        super((Class) ChildSchemaNodeNamespace.class);
+    public SchemaTreeNamespace() {
+        super((Class) SchemaTreeNamespace.class);
     }
 
     @Override
@@ -67,7 +67,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
     @Override
     public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
         final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
-            ChildSchemaNodeNamespace.class, key, value);
+            SchemaTreeNamespace.class, key, value);
 
         if (prev != null) {
             throw new SourceException(value.getStatementSourceReference(),
@@ -95,7 +95,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
 
         QName nextPath = iterator.next();
         @SuppressWarnings("unchecked")
-        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(ChildSchemaNodeNamespace.class,
+        StmtContext<?, ?, ?> current = (StmtContext<?, ?, ?>) root.getFromNamespace(SchemaTreeNamespace.class,
             nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), root));
@@ -104,7 +104,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
             nextPath = iterator.next();
             @SuppressWarnings("unchecked")
             final StmtContext<?, ?, ?> nextNodeCtx = (StmtContext<?, ?, ?>) current.getFromNamespace(
-                ChildSchemaNodeNamespace.class, nextPath);
+                SchemaTreeNamespace.class, nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }

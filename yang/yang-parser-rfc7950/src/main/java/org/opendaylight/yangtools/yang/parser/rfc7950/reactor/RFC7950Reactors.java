@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -113,6 +112,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value.ValueStatementS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when.WhenStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version.YangVersionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element.YinElementStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -218,7 +218,7 @@ public final class RFC7950Reactors {
             .addSupport(YinElementStatementSupport.getInstance())
             .addSupport(ArgumentStatementSupport.getInstance())
             .addSupport(ExtensionStatementSupport.getInstance())
-            .addSupport(new ChildSchemaNodeNamespace<>())
+            .addSupport(new SchemaTreeNamespace<>())
             .addSupport(ExtensionNamespace.BEHAVIOUR)
             .addSupport(TypedefStatementSupport.getInstance())
             .addSupport(TypeNamespace.BEHAVIOUR)
