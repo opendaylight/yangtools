@@ -17,7 +17,6 @@
     </parent>
 
     <artifactId>yang-binding</artifactId>
-    <version>7.0.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>Java binding for YANG</description>
@@ -49,12 +48,11 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.binding</Automatic-Module-Name>
-                    </instructions>
+                    <argLine>@{argLine}
+                        --add-opens org.opendaylight.yangtools.yang.binding/org.opendaylight.yangtools.yang.binding=ALL-UNNAMED
+                    </argLine>
                 </configuration>
             </plugin>
         </plugins>
