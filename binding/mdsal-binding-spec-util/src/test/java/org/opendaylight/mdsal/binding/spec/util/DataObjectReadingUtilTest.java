@@ -20,24 +20,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class DataObjectReadingUtilTest {
+    @Mock
+    public InstanceIdentifier<? extends DataObject> pathNull;
+    @Mock
+    public Map.Entry<InstanceIdentifier<? extends DataObject>, DataObject> entryNull;
+    @Mock
+    public DataObject mockedDataObject;
 
-    @Mock private InstanceIdentifier<? extends DataObject> pathNull;
-    @Mock private Map.Entry<InstanceIdentifier<? extends DataObject>, DataObject> entryNull;
-    @Mock private DataObject mockedDataObject;
-    private InstanceIdentifier<? extends DataObject> path;
-    private Map.Entry<InstanceIdentifier<? extends DataObject>, DataObject> entry;
+    public InstanceIdentifier<? extends DataObject> path;
+    public Map.Entry<InstanceIdentifier<? extends DataObject>, DataObject> entry;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-
         path = InstanceIdentifier.builder(Nodes.class).build();
         final ImmutableMap<InstanceIdentifier<? extends DataObject>, DataObject> map =
                 ImmutableMap.<InstanceIdentifier<? extends DataObject>, DataObject>builder()
