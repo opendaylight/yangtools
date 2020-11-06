@@ -36,6 +36,7 @@ import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
+import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -50,7 +51,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
-import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaSourceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,14 +62,13 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class ModuleInfoSnapshotResolver implements Mutable {
     private static final class RegisteredModuleInfo {
-        final YangTextSchemaSourceRegistration reg;
+        final Registration reg;
         final YangModuleInfo info;
         final ClassLoader loader;
 
         private int refcount = 1;
 
-        RegisteredModuleInfo(final YangModuleInfo info, final YangTextSchemaSourceRegistration reg,
-            final ClassLoader loader) {
+        RegisteredModuleInfo(final YangModuleInfo info, final Registration reg, final ClassLoader loader) {
             this.info = requireNonNull(info);
             this.reg = requireNonNull(reg);
             this.loader = requireNonNull(loader);
@@ -145,7 +144,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         }
 
         // Create an explicit registration
-        final YangTextSchemaSourceRegistration reg;
+        final Registration reg;
         try {
             reg = ctxResolver.registerSource(toYangTextSource(sourceId, info));
         } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
