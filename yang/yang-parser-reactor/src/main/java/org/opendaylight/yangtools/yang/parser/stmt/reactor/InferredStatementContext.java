@@ -159,8 +159,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
-            StmtContext<QName, D, E> requestSchemaTreeChild(final QName qname) {
+    public <X extends DeclaredStatement<QName>, Y extends SchemaTreeEffectiveStatement<X>>
+            StmtContext<QName, X, Y> requestSchemaTreeChild(final QName qname) {
         LOG.debug("Materializing on lookup of {}", qname);
         // FIXME: YANGTOOLS-1160: we do not want to force full materialization here
         ensureEffectiveSubstatements();
@@ -170,7 +170,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         for (StmtContext<?, ?, ?> stmt : super.mutableEffectiveSubstatements()) {
             if (stmt.producesEffective(SchemaTreeEffectiveStatement.class)
                 && qname.equals(stmt.coerceStatementArgument())) {
-                return (StmtContext<QName, D, E>) stmt;
+                return (StmtContext<QName, X, Y>) stmt;
             }
         }
         return null;

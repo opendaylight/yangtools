@@ -20,8 +20,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
@@ -131,7 +131,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
          * @param qname node identifier of the child being requested
          * @return Requested child, if it is present.
          */
-        <D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
+        <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
             @Nullable StmtContext<QName, D, E> requestSchemaTreeChild(QName qname);
     }
 
