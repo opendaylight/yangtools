@@ -54,7 +54,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
 final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D,SchemaContext> {
 
-    private final LoadingCache<Class<?>, DataContainerCodecContext<?,?>> childrenByClass = CacheBuilder.newBuilder()
+    private final LoadingCache<Class<?>, DataContainerCodecContext<?, ?>> childrenByClass =
+        CacheBuilder.newBuilder()
             .build(new CacheLoader<Class<?>, DataContainerCodecContext<?,?>>() {
                 @Override
                 public DataContainerCodecContext<?,?> load(final Class<?> key) {
@@ -62,13 +63,13 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 }
             });
 
-    private final LoadingCache<Class<? extends Action<?, ?, ?>>, ActionCodecContext> actionsByClass = CacheBuilder
-            .newBuilder().build(new CacheLoader<Class<? extends Action<?, ?, ?>>, ActionCodecContext>() {
-                @Override
-                public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> key) {
-                    return createActionContext(key);
-                }
-            });
+    private final LoadingCache<Class<? extends Action<?, ?, ?>>, ActionCodecContext> actionsByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> key) {
+                return createActionContext(key);
+            }
+        });
 
     private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder().build(
             new CacheLoader<Class<?>, ContainerNodeCodecContext<?>>() {
@@ -87,55 +88,55 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             });
 
     private final LoadingCache<Class<? extends DataObject>, ChoiceNodeCodecContext<?>> choicesByClass =
-            CacheBuilder.newBuilder().build(new CacheLoader<Class<? extends DataObject>, ChoiceNodeCodecContext<?>>() {
-                @Override
-                public ChoiceNodeCodecContext<?> load(final Class<? extends DataObject> key) {
-                    return createChoiceDataContext(key);
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public ChoiceNodeCodecContext<?> load(final Class<? extends DataObject> key) {
+                return createChoiceDataContext(key);
+            }
+        });
+
+    private final LoadingCache<QName, DataContainerCodecContext<?,?>> childrenByQName =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public DataContainerCodecContext<?, ?> load(final QName qname) {
+                final DataSchemaNode childSchema = getSchema().getDataChildByName(qname);
+                childNonNull(childSchema, qname, "Argument %s is not valid child of %s", qname, getSchema());
+                if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
+                    @SuppressWarnings("unchecked")
+                    final Class<? extends DataObject> childCls = (Class<? extends DataObject>)
+                        factory().getRuntimeContext().getClassForSchema(childSchema);
+                    return streamChild(childCls);
                 }
-            });
 
-    private final LoadingCache<QName, DataContainerCodecContext<?,?>> childrenByQName = CacheBuilder.newBuilder().build(
-            new CacheLoader<QName, DataContainerCodecContext<?,?>>() {
-                @Override
-                public DataContainerCodecContext<?,?> load(final QName qname) {
-                    final DataSchemaNode childSchema = getSchema().getDataChildByName(qname);
-                    childNonNull(childSchema, qname,"Argument %s is not valid child of %s", qname,getSchema());
-                    if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
-                        @SuppressWarnings("unchecked")
-                        final Class<? extends DataObject> childCls = (Class<? extends DataObject>)
-                                factory().getRuntimeContext().getClassForSchema(childSchema);
-                        return streamChild(childCls);
-                    }
+                throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
+            }
+        });
 
-                    throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
-                }
-            });
-
-    private final LoadingCache<Absolute, RpcInputCodec<?>> rpcDataByPath = CacheBuilder.newBuilder().build(
-        new CacheLoader<Absolute, RpcInputCodec<?>>() {
+    private final LoadingCache<Absolute, RpcInputCodec<?>> rpcDataByPath =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public RpcInputCodec<?> load(final Absolute key) {
                 final ContainerLike schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key.asSchemaPath());
                 @SuppressWarnings("unchecked")
                 final Class<? extends DataContainer> cls = (Class<? extends DataContainer>)
-                        factory().getRuntimeContext().getClassForSchema(schema);
+                    factory().getRuntimeContext().getClassForSchema(schema);
                 return getRpc(cls);
             }
         });
 
-    private final LoadingCache<Absolute, NotificationCodecContext<?>> notificationsByPath = CacheBuilder.newBuilder()
-            .build(new CacheLoader<Absolute, NotificationCodecContext<?>>() {
-                @Override
-                public NotificationCodecContext<?> load(final Absolute key) {
-                    final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(),
-                        // FIXME: do not convert here!
-                        key.asSchemaPath());
-                    @SuppressWarnings("unchecked")
-                    final Class<? extends Notification> clz = (Class<? extends Notification>)
-                            factory().getRuntimeContext().getClassForSchema(schema);
-                    return getNotification(clz);
-                }
-            });
+    private final LoadingCache<Absolute, NotificationCodecContext<?>> notificationsByPath =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
+            @Override
+            public NotificationCodecContext<?> load(final Absolute key) {
+                final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(),
+                    // FIXME: do not convert here!
+                    key.asSchemaPath());
+                @SuppressWarnings("unchecked")
+                final Class<? extends Notification> clz = (Class<? extends Notification>)
+                    factory().getRuntimeContext().getClassForSchema(schema);
+                return getNotification(clz);
+            }
+        });
 
     private SchemaRootCodecContext(final DataContainerCodecPrototype<SchemaContext> dataPrototype) {
         super(dataPrototype);
