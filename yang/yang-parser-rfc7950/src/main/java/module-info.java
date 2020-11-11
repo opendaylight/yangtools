@@ -29,6 +29,11 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
+    // Annotations
+    requires static com.github.spotbugs.annotations;
+    requires static org.checkerframework.checker.qual;
+    requires static org.eclipse.jdt.annotation;
+
     // FIXME: hide these
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
