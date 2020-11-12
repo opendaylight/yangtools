@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
@@ -22,21 +21,20 @@ public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends Immuta
         this.schema = requireNonNull(schema);
     }
 
-    public static <T> @NonNull NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(
+    public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(
             final LeafListSchemaNode schema) {
         return new ImmutableLeafSetEntryNodeSchemaAwareBuilder<>(schema);
     }
 
     @Override
-    public NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withValue(final T withValue) {
+    public ImmutableLeafSetEntryNodeBuilder<T> withValue(final T withValue) {
         super.withNodeIdentifier(new NodeWithValue<>(schema.getQName(), withValue));
         // TODO check value type using TypeProvider ?
         return super.withValue(withValue);
     }
 
     @Override
-    public NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(
-            final NodeWithValue withNodeIdentifier) {
+    public ImmutableLeafSetEntryNodeBuilder<T> withNodeIdentifier(final NodeWithValue withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

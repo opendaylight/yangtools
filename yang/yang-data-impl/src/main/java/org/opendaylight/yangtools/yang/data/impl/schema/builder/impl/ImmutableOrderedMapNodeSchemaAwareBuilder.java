@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
@@ -34,12 +32,12 @@ public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedM
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema) {
+    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema) {
         return new ImmutableOrderedMapNodeSchemaAwareBuilder(schema);
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema,
-        final MapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema,
+            final OrderedMapNode node) {
         if (!(node instanceof ImmutableOrderedMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

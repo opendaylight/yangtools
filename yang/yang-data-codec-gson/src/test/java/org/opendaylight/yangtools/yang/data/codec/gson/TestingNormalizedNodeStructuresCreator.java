@@ -40,8 +40,7 @@ public final class TestingNormalizedNodeStructuresCreator {
         throw new UnsupportedOperationException();
     }
 
-    @SafeVarargs
-    static ContainerNode cont1Node(final DataContainerChild<?, ?>... children) {
+    static ContainerNode cont1Node(final DataContainerChild... children) {
         return Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont1")))
                 .withValue(Arrays.asList(children))
@@ -107,8 +106,7 @@ public final class TestingNormalizedNodeStructuresCreator {
                 .build();
     }
 
-    @SafeVarargs
-    private static ChoiceNode choc11Node(final DataContainerChild<?, ?>... children) {
+    private static ChoiceNode choc11Node(final DataContainerChild... children) {
         return Builders.choiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc11")))
                 .withValue(Arrays.asList(children))

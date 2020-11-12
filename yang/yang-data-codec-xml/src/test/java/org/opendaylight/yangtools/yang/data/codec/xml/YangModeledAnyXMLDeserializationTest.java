@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -92,24 +91,23 @@ public class YangModeledAnyXMLDeserializationTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, yangModeledAnyXML);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> output = result.getResult();
+        final NormalizedNode output = result.getResult();
         assertTrue(output instanceof YangModeledAnyXmlNode);
         final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 
-        Collection<DataContainerChild<? extends PathArgument, ?>> value = yangModeledAnyXmlNode.getValue();
+        Collection<DataContainerChild> value = yangModeledAnyXmlNode.body();
         assertEquals(2, value.size());
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child = yangModeledAnyXmlNode
+        Optional<DataContainerChild> child = yangModeledAnyXmlNode
                 .getChild(new NodeIdentifier(myContainer1));
         assertTrue(child.orElse(null) instanceof ContainerNode);
         ContainerNode myContainerNode1 = (ContainerNode) child.get();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child2 = myContainerNode1.getChild(new NodeIdentifier(
-                myLeaf1));
+        Optional<DataContainerChild> child2 = myContainerNode1.getChild(new NodeIdentifier(myLeaf1));
         assertTrue(child2.orElse(null) instanceof LeafNode);
         LeafNode<?> leafNode1 = (LeafNode<?>) child2.get();
 
-        Object leafNode1Value = leafNode1.getValue();
+        Object leafNode1Value = leafNode1.body();
         assertEquals("value1", leafNode1Value);
     }
 
@@ -129,7 +127,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, myAnyXmlData);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> output = result.getResult();
+        final NormalizedNode output = result.getResult();
         assertTrue(output instanceof YangModeledAnyXmlNode);
         final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 
@@ -137,28 +135,26 @@ public class YangModeledAnyXMLDeserializationTest {
         DataSchemaNode expectedSchemaOfAnyXmlData = schemaContext.findDataChildByName(myContainer2).get();
         assertEquals(expectedSchemaOfAnyXmlData, schemaOfAnyXmlData);
 
-        Collection<DataContainerChild<? extends PathArgument, ?>> value = yangModeledAnyXmlNode.getValue();
+        Collection<DataContainerChild> value = yangModeledAnyXmlNode.body();
         assertEquals(2, value.size());
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child2 = yangModeledAnyXmlNode
+        Optional<DataContainerChild> child2 = yangModeledAnyXmlNode
                 .getChild(new NodeIdentifier(innerContainer));
         assertTrue(child2.orElse(null) instanceof ContainerNode);
         ContainerNode innerContainerNode = (ContainerNode) child2.get();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child3 = innerContainerNode
-                .getChild(new NodeIdentifier(myLeaf2));
+        Optional<DataContainerChild> child3 = innerContainerNode.getChild(new NodeIdentifier(myLeaf2));
         assertTrue(child3.orElse(null) instanceof LeafNode);
         LeafNode<?> leafNode2 = (LeafNode<?>) child3.get();
 
-        Object leafNode2Value = leafNode2.getValue();
+        Object leafNode2Value = leafNode2.body();
         assertEquals("any-xml-leaf-2-value", leafNode2Value);
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child4 = yangModeledAnyXmlNode
-                .getChild(new NodeIdentifier(myLeaf3));
+        Optional<DataContainerChild> child4 = yangModeledAnyXmlNode.getChild(new NodeIdentifier(myLeaf3));
         assertTrue(child4.orElse(null) instanceof LeafNode);
         LeafNode<?> leafNode3 = (LeafNode<?>) child4.get();
 
-        Object leafNode3Value = leafNode3.getValue();
+        Object leafNode3Value = leafNode3.body();
         assertEquals("any-xml-leaf-3-value", leafNode3Value);
     }
 

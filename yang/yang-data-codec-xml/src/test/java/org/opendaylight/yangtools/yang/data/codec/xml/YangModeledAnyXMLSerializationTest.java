@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -105,15 +104,14 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, bazCont);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode bazContainer = (ContainerNode) transformedInput;
         assertEquals(bazContainer.getNodeType(), bazQName);
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> bazContainerChild = bazContainer.getChild(
-                new NodeIdentifier(myAnyXMLDataBaz));
+        Optional<DataContainerChild> bazContainerChild = bazContainer.getChild(new NodeIdentifier(myAnyXMLDataBaz));
         assertTrue(bazContainerChild.orElse(null) instanceof YangModeledAnyXmlNode);
         YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) bazContainerChild.get();
 

@@ -44,12 +44,12 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
         }
 
         @Override
-        public Optional<NormalizedNode<?, ?>> getDataAfter() {
+        public Optional<NormalizedNode> getDataAfter() {
             return Optional.empty();
         }
 
         @Override
-        public Optional<NormalizedNode<?, ?>> getDataBefore() {
+        public Optional<NormalizedNode> getDataBefore() {
             return Optional.empty();
         }
 

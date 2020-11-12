@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
-
-    public static <T> @NonNull NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create() {
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create() {
         return new ImmutableLeafNodeBuilder<>();
     }
 

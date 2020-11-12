@@ -7,20 +7,35 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
+import com.google.common.annotations.Beta;
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.ItemOrder;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
 /**
- * Containment node, which contains {@link MapEntryNode} of the same type, which may
- * be quickly retrieved using key.
+ * Containment node, which contains {@link MapEntryNode} of the same type, which may be quickly retrieved using a key.
  *
  * <p>
  * This node maps to the list node in YANG schema, schema and semantics of this node,
  * its children and key construction is  defined by YANG <code>list</code>
- * statement and its <code>key</code> and <code>ordered-by</code> substatements.
+ * statement and its {@code key} and {@code ordered-by} substatements.
  */
-public interface MapNode extends MixinNode, DataContainerChild<NodeIdentifier, Collection<MapEntryNode>>,
-        NormalizedNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode> {
+public interface MapNode<@NonNull O extends ItemOrder<O>>
+        extends DistinctNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode>, ItemOrder<O>,
+                MixinNode, DataContainerChild {
+    @Beta
+    // FIXME: 7.0.0: document this method
+    @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
 
+    @Override
+    default int size() {
+        return asMap().size();
+    }
+
+    @Override
+    default boolean isEmpty() {
+        return asMap().isEmpty();
+    }
 }
