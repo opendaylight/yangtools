@@ -27,7 +27,7 @@ final class UnmodifiedRootDataTreeCandidateNode extends AbstractDataTreeCandidat
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         throw new UnsupportedOperationException("After-image not available after serialization");
     }
 
