@@ -271,7 +271,7 @@ public class NormalizedNodeXmlTranslationTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, containerNode);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> built = result.getResult();
+        final NormalizedNode built = result.getResult();
         assertNotNull(built);
 
         if (expectedNode != null) {

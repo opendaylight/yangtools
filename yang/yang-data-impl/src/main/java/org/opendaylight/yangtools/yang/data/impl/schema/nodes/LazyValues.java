@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 // NormalizedNode.getValue() does not compare as equal. When invoked twice and lazy leaves are in effect. Note that
 // Collection.equals() is undefined, but the expectation from users is that we will return the same view object, which
 // equals on identity.
-final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
+final class LazyValues extends AbstractCollection<DataContainerChild> {
     private final Map<PathArgument, Object> map;
 
     LazyValues(final Map<PathArgument, Object> map) {
@@ -39,7 +39,7 @@ final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
     }
 
     @Override
-    public Iterator<DataContainerChild<?, ?>> iterator() {
+    public Iterator<DataContainerChild> iterator() {
         return new Iter(map.entrySet().iterator());
     }
 
@@ -53,7 +53,7 @@ final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
         return this == obj || obj instanceof LazyValues && map.equals(((LazyValues)obj).map);
     }
 
-    private static final class Iter implements Iterator<DataContainerChild<?, ?>> {
+    private static final class Iter implements Iterator<DataContainerChild> {
         private final Iterator<Entry<PathArgument, Object>> iterator;
 
         Iter(final Iterator<Entry<PathArgument, Object>> iterator) {
@@ -66,10 +66,10 @@ final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
         }
 
         @Override
-        public DataContainerChild<?, ?> next() {
+        public DataContainerChild next() {
             final Entry<PathArgument, Object> entry = iterator.next();
             final Object value = entry.getValue();
-            return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value
+            return value instanceof DataContainerChild ? (DataContainerChild) value
                     : LazyLeafOperations.coerceLeaf(entry.getKey(), value);
         }
     }

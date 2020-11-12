@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
@@ -45,10 +46,9 @@ public final class DataTreeCandidateNodes {
      * @param node Unchanged normalized node
      * @return An empty DataTreeCandidateNode
      */
-    public static @NonNull DataTreeCandidateNode unmodified(final NormalizedNode<?, ?> node) {
-        if (node instanceof NormalizedNodeContainer) {
-            return new RecursiveUnmodifiedCandidateNode(
-                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) node);
+    public static @NonNull DataTreeCandidateNode unmodified(final NormalizedNode node) {
+        if (node instanceof DistinctNodeContainer) {
+            return new RecursiveUnmodifiedCandidateNode((DistinctNodeContainer<?, PathArgument, NormalizedNode>) node);
         }
         return new UnmodifiedLeafCandidateNode(node);
     }
@@ -60,7 +60,7 @@ public final class DataTreeCandidateNodes {
      * @return An empty DataTreeCandidateNode
      * @throws NullPointerException if {@code node} is null
      */
-    public static @NonNull DataTreeCandidateNode written(final NormalizedNode<?, ?> node) {
+    public static @NonNull DataTreeCandidateNode written(final NormalizedNode node) {
         return new NormalizedNodeDataTreeCandidateNode(node);
     }
 
@@ -73,14 +73,14 @@ public final class DataTreeCandidateNodes {
      * @return Collection of changes
      */
     public static @NonNull Collection<DataTreeCandidateNode> containerDelta(
-            final @Nullable NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
-            final @Nullable NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
+            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> oldData,
+            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> newData) {
         if (newData == null) {
             return oldData == null ? ImmutableList.of()
-                    : Collections2.transform(oldData.getValue(), DataTreeCandidateNodes::deleteNode);
+                    : Collections2.transform(oldData.body(), DataTreeCandidateNodes::deleteNode);
         }
         if (oldData == null) {
-            return Collections2.transform(newData.getValue(), DataTreeCandidateNodes::writeNode);
+            return Collections2.transform(newData.body(), DataTreeCandidateNodes::writeNode);
         }
 
         /*
@@ -92,14 +92,13 @@ public final class DataTreeCandidateNodes {
          * iterate over old data and looking up each child in new data.
          */
         final Collection<DataTreeCandidateNode> result = new ArrayList<>();
-        for (NormalizedNode<?, ?> child : newData.getValue()) {
+        for (NormalizedNode child : newData.body()) {
             final DataTreeCandidateNode node;
-            final Optional<NormalizedNode<?, ?>> maybeOldChild = oldData.getChild(child.getIdentifier());
-
-            if (maybeOldChild.isPresent()) {
+            final NormalizedNode oldChild = oldData.childByPath(child.getIdentifier());
+            if (oldChild != null) {
                 // This does not find children which have not in fact been modified, as doing that
                 // reliably would require us running a full equals() on the two nodes.
-                node = replaceNode(maybeOldChild.get(), child);
+                node = replaceNode(oldChild, child);
             } else {
                 node = writeNode(child);
             }
@@ -108,8 +107,8 @@ public final class DataTreeCandidateNodes {
         }
 
         // Process removals next, looking into new data to see if we processed it
-        for (NormalizedNode<?, ?> child : oldData.getValue()) {
-            if (newData.getChild(child.getIdentifier()).isEmpty()) {
+        for (NormalizedNode child : oldData.body()) {
+            if (newData.childByPath(child.getIdentifier()) == null) {
                 result.add(deleteNode(child));
             }
         }
@@ -126,18 +125,18 @@ public final class DataTreeCandidateNodes {
      * @return A {@link DataTreeCandidateNode} describing the change, or empty if the node is not present
      */
     public static @NonNull Optional<DataTreeCandidateNode> containerDelta(
-            final @Nullable NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
-            final @Nullable NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData,
+            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> oldData,
+            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> newData,
             final @NonNull PathArgument child) {
-        final Optional<NormalizedNode<?, ?>> maybeNewChild = getChild(newData, child);
-        final Optional<NormalizedNode<?, ?>> maybeOldChild = getChild(oldData, child);
-        if (maybeOldChild.isPresent()) {
-            final NormalizedNode<?, ?> oldChild = maybeOldChild.get();
-            return Optional.of(maybeNewChild.isPresent() ? replaceNode(oldChild, maybeNewChild.get())
-                    : deleteNode(oldChild));
+        final NormalizedNode newChild = getChild(newData, child);
+        final NormalizedNode oldChild = getChild(oldData, child);
+        if (oldChild != null) {
+            return Optional.of(newChild != null ? replaceNode(oldChild, newChild) : deleteNode(oldChild));
+        } else if (newChild != null) {
+            return Optional.of(DataTreeCandidateNodes.writeNode(newChild));
+        } else {
+            return Optional.empty();
         }
-
-        return maybeNewChild.map(DataTreeCandidateNodes::writeNode);
     }
 
     /**
@@ -222,38 +221,36 @@ public final class DataTreeCandidateNodes {
         }
     }
 
-    private static Optional<NormalizedNode<?, ?>> getChild(
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container,
-                    final PathArgument identifier) {
-        return container == null ? Optional.empty() : container.getChild(identifier);
+    private static @Nullable NormalizedNode getChild(
+            final DistinctNodeContainer<?, PathArgument, ?> container, final PathArgument identifier) {
+        return container == null ? null : container.childByPath(identifier);
     }
 
     @SuppressWarnings("unchecked")
-    private static @NonNull DataTreeCandidateNode deleteNode(final NormalizedNode<?, ?> data) {
+    private static @NonNull DataTreeCandidateNode deleteNode(final NormalizedNode data) {
         if (data instanceof NormalizedNodeContainer) {
             return new RecursiveDeleteCandidateNode(
-                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
+                (DistinctNodeContainer<?, PathArgument, NormalizedNode>) data);
         }
         return new DeleteLeafCandidateNode(data);
     }
 
 
     @SuppressWarnings("unchecked")
-    private static @NonNull DataTreeCandidateNode replaceNode(final NormalizedNode<?, ?> oldData,
-            final NormalizedNode<?, ?> newData) {
-        if (oldData instanceof NormalizedNodeContainer) {
+    private static @NonNull DataTreeCandidateNode replaceNode(final NormalizedNode oldData,
+            final NormalizedNode newData) {
+        if (oldData instanceof DistinctNodeContainer) {
             return new RecursiveReplaceCandidateNode(
-                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) oldData,
-                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) newData);
+                (DistinctNodeContainer<?, PathArgument, NormalizedNode>) oldData,
+                (DistinctNodeContainer<?, PathArgument, NormalizedNode>) newData);
         }
         return new ReplaceLeafCandidateNode(oldData, newData);
     }
 
     @SuppressWarnings("unchecked")
-    private static @NonNull DataTreeCandidateNode writeNode(final NormalizedNode<?, ?> data) {
-        if (data instanceof NormalizedNodeContainer) {
-            return new RecursiveWriteCandidateNode(
-                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
+    private static @NonNull DataTreeCandidateNode writeNode(final NormalizedNode data) {
+        if (data instanceof DistinctNodeContainer) {
+            return new RecursiveWriteCandidateNode((DistinctNodeContainer<?, PathArgument, NormalizedNode>) data);
         }
         return new WriteLeafCandidateNode(data);
     }

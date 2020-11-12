@@ -13,8 +13,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
  * Abstract base for container-based {@link MutableTreeNode}s. It tracks modified nodes in a map and deals with
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 abstract class AbstractMutableContainerNode implements MutableTreeNode {
     private final Version version;
     private Map<PathArgument, TreeNode> children;
-    private NormalizedNode<?, ?> data;
+    private NormalizedNode data;
     private Version subtreeVersion;
 
     protected AbstractMutableContainerNode(final AbstractContainerNode parent,
@@ -43,8 +43,8 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     }
 
     @SuppressWarnings("unchecked")
-    protected final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getData() {
-        return (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data;
+    protected final DistinctNodeContainer<?, PathArgument, NormalizedNode> getData() {
+        return (DistinctNodeContainer<?, PathArgument, NormalizedNode>) data;
     }
 
     @Override
@@ -63,7 +63,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     }
 
     @Override
-    public final void setData(final NormalizedNode<?, ?> data) {
+    public final void setData(final NormalizedNode data) {
         this.data = requireNonNull(data);
     }
 
@@ -81,7 +81,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
          */
         if (!version.equals(subtreeVersion)) {
             final Map<PathArgument, TreeNode> newChildren = MapAdaptor.getDefaultInstance().optimize(children);
-            final int dataSize = getData().size();
+            final int dataSize = getData().body().size();
             final int childrenSize = newChildren.size();
             if (dataSize != childrenSize) {
                 verify(dataSize > childrenSize, "Detected %s modified children, data has only %s",

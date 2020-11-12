@@ -39,7 +39,7 @@ class CaseEnforcer implements Immutable {
         }
 
         @Override
-        void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
+        void enforceOnTreeNode(final NormalizedNode normalizedNode) {
             enforcer.enforceOnData(normalizedNode);
         }
     }
@@ -101,7 +101,7 @@ class CaseEnforcer implements Immutable {
         return Sets.union(children.keySet(), augmentations.keySet());
     }
 
-    void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
+    void enforceOnTreeNode(final NormalizedNode normalizedNode) {
         // Default is no-op
     }
 }
