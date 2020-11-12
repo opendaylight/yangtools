@@ -64,7 +64,7 @@ public final class TestUtils {
         xmlParser.parse(reader);
     }
 
-    static String normalizedNodesToJsonString(final NormalizedNode<?, ?> data,
+    static String normalizedNodesToJsonString(final NormalizedNode data,
             final EffectiveModelContext schemaContext, final SchemaPath rootPath) throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(

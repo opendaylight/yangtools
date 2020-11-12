@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode {
-    RecursiveDeleteCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
+    RecursiveDeleteCandidateNode(final DistinctNodeContainer<?, PathArgument, NormalizedNode> data) {
         super(data);
     }
 
@@ -23,23 +23,22 @@ final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode 
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return Optional.empty();
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return dataOptional();
     }
 
     @Override
-    DataTreeCandidateNode createContainer(
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData) {
+    DataTreeCandidateNode createContainer(final DistinctNodeContainer<?, PathArgument, NormalizedNode> childData) {
         return new RecursiveDeleteCandidateNode(childData);
     }
 
     @Override
-    DataTreeCandidateNode createLeaf(final NormalizedNode<?, ?> childData) {
+    DataTreeCandidateNode createLeaf(final NormalizedNode childData) {
         return new DeleteLeafCandidateNode(childData);
     }
 }

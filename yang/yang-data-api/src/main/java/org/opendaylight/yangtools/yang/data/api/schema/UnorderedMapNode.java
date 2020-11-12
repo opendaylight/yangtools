@@ -7,22 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Map;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.ItemOrder.Ordered;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
 
 /**
  * {@link MapNode} which additionally preserves user-supplied ordering. This node represents a data instance of
  * a {@code list} with {@code ordered-by user;} substatement and a {@code key} definition.
  */
-public interface OrderedMapNode extends MapNode<@NonNull Ordered>, OrderedNodeContainer<MapEntryNode> {
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * The implementation is required to define a user-visible iteration order, which must match {@link #getChild(int)}.
-     */
+public interface UnorderedMapNode extends MapNode<@NonNull Unordered>, Unordered {
     @Override
-    Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
+    default Collection<MapEntryNode> body() {
+        return asMap().values();
+    }
 }

@@ -65,6 +65,7 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         }
 
         @Override
+        @Deprecated
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;
         }
