@@ -170,7 +170,7 @@ public class NormalizedNodesToXmlTest {
         new XMLTestCase() {}.assertXMLEqual(diff, true);
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    private NormalizedNode buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(

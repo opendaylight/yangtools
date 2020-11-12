@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -61,7 +62,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
         return childOperation != null ? appendChild(local, identifier, childOperation) : Optional.empty();
     }
 
-    private ModificationApplyOperation resolveChild(final PathArgument identifier) {
+    private @Nullable ModificationApplyOperation resolveChild(final PathArgument identifier) {
         final T schema = getSchema();
         if (identifier instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
             return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,

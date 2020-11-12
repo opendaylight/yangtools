@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnorderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -32,12 +31,12 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema) {
+    public static CollectionNodeBuilder<MapEntryNode, UnorderedMapNode> create(final ListSchemaNode schema) {
         return new ImmutableMapNodeSchemaAwareBuilder(schema);
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema,
-            final MapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, UnorderedMapNode> create(final ListSchemaNode schema,
+            final UnorderedMapNode node) {
         if (!(node instanceof ImmutableMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -46,14 +45,14 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
+    public ImmutableMapNodeBuilder withChild(final MapEntryNode child) {
         DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(),
             schema, Collections.singleton(schema.getQName()));
         return super.withChild(child);
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
+    public ImmutableMapNodeBuilder withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

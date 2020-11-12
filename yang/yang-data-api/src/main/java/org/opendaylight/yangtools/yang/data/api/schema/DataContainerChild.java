@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-
 /**
  * Marker interface for direct children of {@link DataContainerNode}.
  *
@@ -16,17 +14,16 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * This interface should not be implemented directly, but rather using one of its subinterfaces:
  *
  * <ul>
- *   <li>{@link LeafNode}
- *   <li>{@link ContainerNode}
- *   <li>{@link ChoiceNode}
- *   <li>{@link MapNode}
  *   <li>{@link AugmentationNode}
+ *   <li>{@link ChoiceNode}
+ *   <li>{@link ContainerNode}
+ *   <li>{@link ForeignDataNode}
+ *   <li>{@link LeafNode}
+ *   <li>{@link LeafSetNode}
+ *   <li>{@link MapNode}
+ *   <li>{@link UnkeyedListNode}
  * </ul>
- *
- * @param <K> Path Argument Type which is used to identify node
- * @param <V> Value type
  */
-public interface DataContainerChild<K extends PathArgument,V> extends NormalizedNode<K, V> {
-    @Override
-    K getIdentifier();
+public interface DataContainerChild extends NormalizedNode {
+
 }

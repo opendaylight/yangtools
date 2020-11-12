@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
@@ -25,8 +24,7 @@ public class ImmutableAnydataNodeBuilder<V>
         this.objectModel = requireNonNull(objectModel);
     }
 
-    public static <V> @NonNull NormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> create(
-            final Class<V> objectModel) {
+    public static <V> NormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> create(final Class<V> objectModel) {
         return new ImmutableAnydataNodeBuilder<>(objectModel);
     }
 
@@ -37,7 +35,7 @@ public class ImmutableAnydataNodeBuilder<V>
 
     private static final class ImmutableAnydataNode<V>
             extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, V> implements AnydataNode<V> {
-        private final @NonNull Class<V> objectModel;
+        private final Class<V> objectModel;
 
         protected ImmutableAnydataNode(final NodeIdentifier nodeIdentifier, final V value, final Class<V> objectModel) {
             super(nodeIdentifier, value);
@@ -45,7 +43,7 @@ public class ImmutableAnydataNodeBuilder<V>
         }
 
         @Override
-        public Class<V> getValueObjectModel() {
+        public Class<V> bodyObjectModel() {
             return objectModel;
         }
     }

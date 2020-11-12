@@ -15,22 +15,22 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
  * Utility implementation of {@link DataTreeCandidateNode} which acts as if
  * the {@link NormalizedNode} passed to it at creation time were freshly written.
  */
 final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final NormalizedNode<?, ?> data;
+    private final NormalizedNode data;
 
     /**
      * Create a new instance backed by supplied data.
      *
      * @param data Backing {@link NormalizedNode} data.
      */
-    NormalizedNodeDataTreeCandidateNode(final @NonNull NormalizedNode<?, ?> data) {
+    NormalizedNodeDataTreeCandidateNode(final @NonNull NormalizedNode data) {
         this.data = requireNonNull(data);
     }
 
@@ -41,8 +41,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
 
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
-        if (data instanceof NormalizedNodeContainer) {
-            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(),
+        if (data instanceof DistinctNodeContainer) {
+            return Collections2.transform(((DistinctNodeContainer<?, ?, ?>) data).body(),
                 input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
         }
         return ImmutableList.of();
@@ -50,10 +50,9 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
 
     @Override
     public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childIdentifier) {
-        if (data instanceof NormalizedNodeContainer) {
+        if (data instanceof DistinctNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final Optional<? extends NormalizedNode<?, ?>> child =
-                ((NormalizedNodeContainer)data).getChild(childIdentifier);
+            final Optional<? extends NormalizedNode> child = ((DistinctNodeContainer)data).getChild(childIdentifier);
             return child.map(NormalizedNodeDataTreeCandidateNode::new);
         }
         return Optional.empty();
@@ -65,12 +64,12 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return Optional.of(data);
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return Optional.empty();
     }
 }

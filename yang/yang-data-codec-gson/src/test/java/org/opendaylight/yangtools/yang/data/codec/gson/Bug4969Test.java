@@ -20,7 +20,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -48,17 +47,17 @@ public class Bug4969Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(context));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
 
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
-        final Optional<DataContainerChild<? extends PathArgument, ?>> ref1 = root.getChild(NodeIdentifier.create(
+        final Optional<DataContainerChild> ref1 = root.getChild(NodeIdentifier.create(
             QName.create("foo", "2016-01-22", "ref1")));
-        final Optional<DataContainerChild<? extends PathArgument, ?>> ref2 = root.getChild(NodeIdentifier.create(
+        final Optional<DataContainerChild> ref2 = root.getChild(NodeIdentifier.create(
             QName.create("foo", "2016-01-22", "ref2")));
-        final Optional<DataContainerChild<? extends PathArgument, ?>> ref3 = root.getChild(NodeIdentifier.create(
+        final Optional<DataContainerChild> ref3 = root.getChild(NodeIdentifier.create(
             QName.create("foo", "2016-01-22", "ref3")));
-        final Optional<DataContainerChild<? extends PathArgument, ?>> ref4 = root.getChild(NodeIdentifier.create(
+        final Optional<DataContainerChild> ref4 = root.getChild(NodeIdentifier.create(
             QName.create("foo", "2016-01-22", "ref4")));
 
         assertTrue(ref1.isPresent());
@@ -66,10 +65,10 @@ public class Bug4969Test {
         assertTrue(ref3.isPresent());
         assertTrue(ref4.isPresent());
 
-        final Object value1 = ref1.get().getValue();
-        final Object value2 = ref2.get().getValue();
-        final Object value3 = ref3.get().getValue();
-        final Object value4 = ref4.get().getValue();
+        final Object value1 = ref1.get().body();
+        final Object value2 = ref2.get().body();
+        final Object value3 = ref3.get().body();
+        final Object value4 = ref4.get().body();
 
         assertTrue(value1 instanceof Set);
         assertTrue(value2 instanceof Set);
@@ -108,7 +107,7 @@ public class Bug4969Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(context));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 }

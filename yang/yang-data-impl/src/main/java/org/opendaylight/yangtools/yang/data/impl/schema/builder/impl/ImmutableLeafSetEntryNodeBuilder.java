@@ -10,15 +10,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Objects;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public class ImmutableLeafSetEntryNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> {
-
-    public static <T> @NonNull ImmutableLeafSetEntryNodeBuilder<T> create() {
+    public static <T> ImmutableLeafSetEntryNodeBuilder<T> create() {
         return new ImmutableLeafSetEntryNodeBuilder<>();
     }
 

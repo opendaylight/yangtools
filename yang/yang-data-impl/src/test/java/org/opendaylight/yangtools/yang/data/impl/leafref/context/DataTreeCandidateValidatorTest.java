@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnorderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -398,7 +399,7 @@ public class DataTreeCandidateValidatorTest {
                 .node(con3);
         writeModification.write(con3Path, con3Node);
 
-        final LeafSetNode<?> leafListNode = createLeafRefLeafListNode();
+        final LeafSetNode<?, ?> leafListNode = createLeafRefLeafListNode();
         final YangInstanceIdentifier leafListPath = YangInstanceIdentifier.of(
                 odl).node(leafrefLeafList);
         writeModification.write(leafListPath, leafListNode);
@@ -433,10 +434,9 @@ public class DataTreeCandidateValidatorTest {
 
     }
 
-    private static LeafSetNode<?> createLeafRefLeafListNode() {
+    private static UnorderedLeafSetNode<?> createLeafRefLeafListNode() {
 
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders
-                .leafSetBuilder();
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders.leafSetBuilder();
         leafSetBuilder.withNodeIdentifier(new NodeIdentifier(leafrefLeafList));
 
         leafSetBuilder.addChild(createLeafSetEntry(leafrefLeafList, "k1"));

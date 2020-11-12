@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Iterator;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -21,10 +20,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnorderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -45,15 +44,15 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder() {
+    public static CollectionNodeBuilder<MapEntryNode, UnorderedMapNode> mapNodeBuilder() {
         return ImmutableMapNodeBuilder.create();
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
+    public static CollectionNodeBuilder<MapEntryNode, UnorderedMapNode> mapNodeBuilder(final QName name) {
         return mapNodeBuilder(NodeIdentifier.create(name));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final NodeIdentifier name) {
+    public static CollectionNodeBuilder<MapEntryNode, UnorderedMapNode> mapNodeBuilder(final NodeIdentifier name) {
         return ImmutableMapNodeBuilder.create().withNodeIdentifier(name);
     }
 
@@ -63,7 +62,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unordered Map node
      */
-    public static @NonNull MapNode mapNode(final QName name) {
+    public static UnorderedMapNode mapNode(final QName name) {
         return mapNode(NodeIdentifier.create(name));
     }
 
@@ -73,7 +72,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unordered Map node
      */
-    public static @NonNull MapNode mapNode(final NodeIdentifier name) {
+    public static UnorderedMapNode mapNode(final NodeIdentifier name) {
         return mapNodeBuilder(name).build();
     }
 
@@ -83,7 +82,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An ordered Map node
      */
-    public static @NonNull OrderedMapNode orderedMapNode(final QName name) {
+    public static OrderedMapNode orderedMapNode(final QName name) {
         return orderedMapNode(NodeIdentifier.create(name));
     }
 
@@ -93,7 +92,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return An ordered Map node
      */
-    public static @NonNull OrderedMapNode orderedMapNode(final NodeIdentifier name) {
+    public static OrderedMapNode orderedMapNode(final NodeIdentifier name) {
         return ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
@@ -105,7 +104,7 @@ public final class ImmutableNodes {
      * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
-    public static <T> @NonNull LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
+    public static <T> LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
         return ImmutableLeafNodeBuilder.createNode(name, value);
     }
 
@@ -117,22 +116,22 @@ public final class ImmutableNodes {
      * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
-    public static <T> @NonNull LeafNode<T> leafNode(final QName name, final T value) {
+    public static <T> LeafNode<T> leafNode(final QName name, final T value) {
         return leafNode(NodeIdentifier.create(name), value);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final QName nodeName, final QName keyName, final Object keyValue) {
         return ImmutableMapEntryNodeBuilder.create()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(nodeName, keyName, keyValue))
                 .withChild(leafNode(keyName, keyValue));
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
         return ImmutableMapEntryNodeBuilder.create();
     }
 
-    public static @NonNull MapEntryNode mapEntry(final QName nodeName, final QName keyName, final Object keyValue) {
+    public static MapEntryNode mapEntry(final QName nodeName, final QName keyName, final Object keyValue) {
         return mapEntryBuilder(nodeName, keyName, keyValue).build();
     }
 
@@ -142,7 +141,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return A container node
      */
-    public static @NonNull ContainerNode containerNode(final QName name) {
+    public static ContainerNode containerNode(final QName name) {
         return containerNode(NodeIdentifier.create(name));
     }
 
@@ -152,7 +151,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return A container node
      */
-    public static @NonNull ContainerNode containerNode(final NodeIdentifier name) {
+    public static ContainerNode containerNode(final NodeIdentifier name) {
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
@@ -162,7 +161,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return A choice node
      */
-    public static @NonNull ChoiceNode choiceNode(final QName name) {
+    public static ChoiceNode choiceNode(final QName name) {
         return choiceNode(NodeIdentifier.create(name));
     }
 
@@ -172,7 +171,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return A choice node
      */
-    public static @NonNull ChoiceNode choiceNode(final NodeIdentifier name) {
+    public static ChoiceNode choiceNode(final NodeIdentifier name) {
         return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
@@ -182,7 +181,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unkeyed list node
      */
-    public static @NonNull UnkeyedListNode listNode(final QName name) {
+    public static UnkeyedListNode listNode(final QName name) {
         return listNode(NodeIdentifier.create(name));
     }
 
@@ -192,7 +191,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return An unkeyed list node
      */
-    public static @NonNull UnkeyedListNode listNode(final NodeIdentifier name) {
+    public static UnkeyedListNode listNode(final NodeIdentifier name) {
         return ImmutableUnkeyedListNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
@@ -203,8 +202,7 @@ public final class ImmutableNodes {
      * @param id instance identifier to convert to node structure starting from root
      * @return serialized normalized node for provided instance Id
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx,
-            final YangInstanceIdentifier id) {
+    public static NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
         return fromInstanceId(ctx, id, Optional.empty());
     }
 
@@ -217,8 +215,8 @@ public final class ImmutableNodes {
      *                       instance identifier
      * @return serialized normalized node for provided instance Id with overridden last child.
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final NormalizedNode<?, ?> deepestElement) {
+    public static NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final NormalizedNode deepestElement) {
         return fromInstanceId(ctx, id, Optional.of(deepestElement));
     }
 
@@ -232,8 +230,8 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id with (optionally) overridden last child
      *         and (optionally) marked with specific operation attribute.
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final Optional<NormalizedNode<?, ?>> deepestElement) {
+    public static NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final Optional<NormalizedNode> deepestElement) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
         final Iterator<PathArgument> it = id.getPathArguments().iterator();

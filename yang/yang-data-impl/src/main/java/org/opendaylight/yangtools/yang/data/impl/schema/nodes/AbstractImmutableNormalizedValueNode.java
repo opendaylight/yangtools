@@ -14,8 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 
 public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgument, V> extends
         AbstractImmutableNormalizedNode<K, V> {
-
-    private final @NonNull V value;
+    private final V value;
 
     protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, final @NonNull V value) {
         super(nodeIdentifier);
@@ -23,11 +22,11 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
     }
 
     @Override
-    public final V getValue() {
+    public final V body() {
         return wrapValue(value);
     }
 
-    protected final @NonNull V value() {
+    protected final V value() {
         return value;
     }
 
