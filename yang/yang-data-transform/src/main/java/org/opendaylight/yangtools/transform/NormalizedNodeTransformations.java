@@ -26,7 +26,7 @@ public final class NormalizedNodeTransformations {
         // Hidden on purpose
     }
 
-    public static NormalizedNode<?, ?> transformQNames(final NormalizedNode<?, ?> original,
+    public static NormalizedNode transformQNames(final NormalizedNode original,
             final Function<QName, QName> mapping) {
         NormalizedNodeResult result = new NormalizedNodeResult();
         NormalizedNodeStreamWriter nodeWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -46,7 +46,7 @@ public final class NormalizedNodeTransformations {
      * @param mapping Map of QNames to transform. Not listed QNames are preserved.
      * @return Normalized Node with replaced QNames.
      */
-    public static NormalizedNode<?, ?> replaceQNames(final @NonNull NormalizedNode<?, ?> original,
+    public static NormalizedNode replaceQNames(final @NonNull NormalizedNode original,
             final @NonNull Map<QName, QName> mapping) {
         return transformQNames(original, new QNameReplacementFunction(mapping));
     }
@@ -58,7 +58,7 @@ public final class NormalizedNodeTransformations {
      * @param mapping Map of QNameModules to transform. Not listed QNameModules are preserved.
      * @return Normalized Node with replaced QNameModules.
      */
-    public static NormalizedNode<?, ?> replaceQNameModules(final @NonNull NormalizedNode<?, ?> original,
+    public static NormalizedNode replaceQNameModules(final @NonNull NormalizedNode original,
             final @NonNull Map<QNameModule, QNameModule> mapping) {
         return transformQNames(original, new QNameModuleReplacementFunction(mapping));
     }

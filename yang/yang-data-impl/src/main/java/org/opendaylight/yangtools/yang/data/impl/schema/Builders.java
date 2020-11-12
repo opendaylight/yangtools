@@ -20,17 +20,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.OrderedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.UnorderedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
@@ -50,12 +52,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -79,10 +81,12 @@ public final class Builders {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
     }
 
+    // FIXME: 7.0.0: add generic arguments
     public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
+    // FIXME: 7.0.0: add generic arguments
     public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
@@ -107,28 +111,36 @@ public final class Builders {
         return ImmutableAnydataNodeBuilder.create(objectModel);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder() {
-        return ImmutableOrderedLeafSetNodeBuilder.create();
+    public static <T> OrderedListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder() {
+        return ImmutableUserLeafSetNodeBuilder.create();
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder(final LeafListSchemaNode schema) {
-        return ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(schema);
+    public static <T> OrderedListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder(
+            final LeafListSchemaNode schema) {
+        return ImmutableUserLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder() {
+    public static <T> OrderedListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder(
+            final LeafListSchemaNode schema, final UserLeafSetNode<T> node) {
+        return ImmutableUserLeafSetNodeSchemaAwareBuilder.create(schema, node);
+    }
+
+    public static <T> UnorderedListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder() {
         return ImmutableLeafSetNodeBuilder.create();
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(final LeafSetNode<T> node) {
+    public static <T> UnorderedListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(
+            final SystemLeafSetNode<T> node) {
         return ImmutableLeafSetNodeBuilder.create(node);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema) {
+    public static <T> UnorderedListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(
+            final LeafListSchemaNode schema) {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema,
-            final LeafSetNode<T> node) {
+    public static <T> UnorderedListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema,
+        final SystemLeafSetNode<T> node) {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema, node);
     }
 
@@ -164,32 +176,32 @@ public final class Builders {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapBuilder() {
-        return ImmutableOrderedMapNodeBuilder.create();
+    public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder() {
+        return ImmutableUserMapNodeBuilder.create();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapBuilder(final ListSchemaNode schema) {
-        return ImmutableOrderedMapNodeSchemaAwareBuilder.create(schema);
+    public static CollectionNodeBuilder<MapEntryNode, UserMapNode> orderedMapBuilder(final ListSchemaNode schema) {
+        return ImmutableUserMapNodeSchemaAwareBuilder.create(schema);
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder() {
         return ImmutableUnkeyedListNodeBuilder.create();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder() {
+    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder() {
         return ImmutableMapNodeBuilder.create();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final MapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final SystemMapNode node) {
         return ImmutableMapNodeBuilder.create(node);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema) {
+    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final ListSchemaNode schema) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema,
-            final MapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder(final ListSchemaNode schema,
+            final SystemMapNode node) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema, node);
     }
 

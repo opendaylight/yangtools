@@ -145,7 +145,7 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
     }
 
     @Override
-    public final void writeNormalizedNode(final NormalizedNode<?, ?> node) throws IOException {
+    public final void writeNormalizedNode(final NormalizedNode node) throws IOException {
         ensureHeaderWritten();
         if (normalizedNodeWriter == null) {
             normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(this);

@@ -54,7 +54,7 @@ public interface TreeNode extends Identifiable<PathArgument>, StoreTreeNode<Tree
      *
      * @return Unmodifiable view of the underlying data.
      */
-    NormalizedNode<?, ?> getData();
+    NormalizedNode getData();
 
     /**
      * Get a mutable, isolated copy of the node.

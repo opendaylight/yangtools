@@ -53,12 +53,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -182,7 +183,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         XMLAssert.assertXMLEqual(diff, true);
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    private NormalizedNode buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
@@ -198,7 +199,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList2))
                                 .withValue("listleafvalue22").build()).build()).build();
 
-        OrderedMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(myOrderedList)).withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(myOrderedList, myKeyLeafInOrderedList, "olistkeyvalue1"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInOrderedList1))
@@ -226,13 +227,15 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         LeafNode<?> myLeaf1Node = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeaf1))
                 .withValue("value1").build();
 
-        LeafSetNode<?> myLeafListNode = Builders.leafSetBuilder().withNodeIdentifier(new NodeIdentifier(myLeafList))
+        SystemLeafSetNode<?> myLeafListNode = Builders.leafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myLeafList))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myLeafList, "lflvalue1")).withValue("lflvalue1").build())
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myLeafList, "lflvalue2")).withValue("lflvalue2").build()).build();
 
-        LeafSetNode<?> myOrderedLeafListNode = Builders.orderedLeafSetBuilder().withNodeIdentifier(
+        UserLeafSetNode<?> myOrderedLeafListNode = Builders.orderedLeafSetBuilder()
+                .withNodeIdentifier(
                 new NodeIdentifier(myOrderedLeafList))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myOrderedLeafList, "olflvalue1")).withValue("olflvalue1").build())

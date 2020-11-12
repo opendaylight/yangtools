@@ -8,26 +8,25 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.ItemOrder;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 
-public interface ListNodeBuilder<T, V>
-        extends CollectionNodeBuilder<LeafSetEntryNode<T>, LeafSetNode<T>> {
+public interface ListNodeBuilder<O extends ItemOrder<O>, T, V extends LeafSetNode<O, T>>
+        extends CollectionNodeBuilder<LeafSetEntryNode<T>, V> {
+    @Override
+    ListNodeBuilder<O, T, V> withNodeIdentifier(NodeIdentifier nodeIdentifier);
 
     @Override
-    ListNodeBuilder<T, V> withNodeIdentifier(NodeIdentifier nodeIdentifier);
+    ListNodeBuilder<O, T, V> withValue(Collection<LeafSetEntryNode<T>> value);
 
     @Override
-    ListNodeBuilder<T, V> withValue(Collection<LeafSetEntryNode<T>> value);
+    ListNodeBuilder<O, T, V> withChild(LeafSetEntryNode<T> child);
 
     @Override
-    ListNodeBuilder<T, V> withChild(LeafSetEntryNode<T> child);
+    ListNodeBuilder<O, T, V> withoutChild(PathArgument key);
 
-    @Override
-    ListNodeBuilder<T, V> withoutChild(PathArgument key);
-
-    @NonNull ListNodeBuilder<T, V> withChildValue(T child);
+    ListNodeBuilder<O, T, V> withChildValue(T child);
 }

@@ -77,7 +77,7 @@ public class Bug8803Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, topContSchema);
         xmlParser.parse(reader);
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         // serialization

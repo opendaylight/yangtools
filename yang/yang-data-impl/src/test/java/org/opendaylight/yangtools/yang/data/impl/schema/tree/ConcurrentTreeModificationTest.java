@@ -115,7 +115,7 @@ public class ConcurrentTreeModificationTest extends AbstractTestModelTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final Optional<NormalizedNode<?, ?>> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
+        final Optional<NormalizedNode> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
         assertPresentAndType(testNodeAfterCommits, ContainerNode.class);
     }
 
@@ -140,7 +140,7 @@ public class ConcurrentTreeModificationTest extends AbstractTestModelTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final Optional<NormalizedNode<?, ?>> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
+        final Optional<NormalizedNode> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
         assertPresentAndType(testNodeAfterCommits, ContainerNode.class);
     }
 

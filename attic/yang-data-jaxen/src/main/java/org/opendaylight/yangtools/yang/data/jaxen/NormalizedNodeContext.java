@@ -44,10 +44,10 @@ final class NormalizedNodeContext extends Context {
     private static final long serialVersionUID = 1L;
     private final @Nullable NormalizedNodeContext parent;
     private final DataSchemaContextNode<?> schema;
-    private final NormalizedNode<?, ?> node;
+    private final NormalizedNode node;
 
     private NormalizedNodeContext(final ContextSupport contextSupport, final DataSchemaContextNode<?> schema,
-        final NormalizedNode<?, ?> node, final @Nullable NormalizedNodeContext parent) {
+        final NormalizedNode node, final @Nullable NormalizedNodeContext parent) {
         super(contextSupport);
         this.schema = requireNonNull(schema);
         this.node = requireNonNull(node);
@@ -61,7 +61,7 @@ final class NormalizedNodeContext extends Context {
         return new NormalizedNodeContext(contextSupport, document.getSchema(), document.getRootNode(), null);
     }
 
-    NormalizedNode<?, ?> getNode() {
+    NormalizedNode getNode() {
         return node;
     }
 
@@ -77,7 +77,7 @@ final class NormalizedNodeContext extends Context {
         return schema;
     }
 
-    NormalizedNodeContext createChild(final NormalizedNode<?, ?> input) {
+    NormalizedNodeContext createChild(final NormalizedNode input) {
         DataSchemaContextNode<?> childSchema = schema.getChild(input.getIdentifier());
         if (childSchema == null) {
             /* This feels very much like a hack: but solves lookup of child nodes with predicates.
@@ -99,8 +99,8 @@ final class NormalizedNodeContext extends Context {
     }
 
     Optional<NormalizedNodeContext> findChild(final PathArgument arg) {
-        return node instanceof DataContainerNode ? ((DataContainerNode<?>)node).getChild(arg).map(this::createChild)
-                : Optional.empty();
+        return node instanceof DataContainerNode
+            ? ((DataContainerNode<?>)node).findChildByArg(arg).map(this::createChild) : Optional.empty();
     }
 
     Optional<NormalizedNodeContext> findDescendant(final YangInstanceIdentifier path) {
@@ -109,17 +109,15 @@ final class NormalizedNodeContext extends Context {
         }
 
         NormalizedNodeContext ctxWalk = this;
-        NormalizedNode<?, ?> dataWalk = node;
+        NormalizedNode dataWalk = node;
         for (PathArgument arg : path.getPathArguments()) {
             checkArgument(dataWalk instanceof DataContainerNode, "Path %s refers beyond node %s", path, dataWalk);
 
-            final Optional<DataContainerChild<? extends @Nullable PathArgument, ?>> optChild =
-                    ((DataContainerNode)dataWalk).getChild(arg);
-            if (!optChild.isPresent()) {
+            dataWalk = ((DataContainerNode<?>)dataWalk).childByArg(arg);
+            if (dataWalk == null) {
                 return Optional.empty();
             }
 
-            dataWalk = optChild.get();
             ctxWalk = createChild(dataWalk);
         }
 
@@ -127,24 +125,21 @@ final class NormalizedNodeContext extends Context {
     }
 
     Iterator<NormalizedNodeContext> iterateChildren(final DataContainerNode<?> data) {
-        return Iterators.transform(((DataContainerNode<?>) node).getValue().iterator(), this::createChild);
+        return Iterators.transform(((DataContainerNode<?>) node).body().iterator(), this::createChild);
     }
 
     @Nullable Iterator<NormalizedNodeContext> iterateChildrenNamed(final DataContainerNode<?> data, final QName qname) {
-        final NodeIdentifier arg = new NodeIdentifier(qname);
-        final Optional<DataContainerChild<? extends @Nullable PathArgument, ?>> maybeChild = data.getChild(arg);
-        if (!maybeChild.isPresent()) {
+        final DataContainerChild child = data.childByArg(new NodeIdentifier(qname));
+        if (child == null) {
             return null;
         }
 
-        final NormalizedNode<?, ?> child = maybeChild.get();
-        final Collection<? extends NormalizedNode<?, ?>> collection;
-
+        final Collection<? extends NormalizedNode> collection;
         // The child may be a structural node
         if (child instanceof MapNode) {
-            collection = ((MapNode)child).getValue();
+            collection = ((MapNode<?>)child).body();
         } else if (child instanceof LeafSetNode) {
-            collection = ((LeafSetNode<?>)child).getValue();
+            collection = ((LeafSetNode<?, ?>)child).body();
         } else {
             return Iterators.singletonIterator(createChild(child));
         }
