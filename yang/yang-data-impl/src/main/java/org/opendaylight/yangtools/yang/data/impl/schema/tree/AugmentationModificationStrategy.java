@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
+@NonNullByDefault
 final class AugmentationModificationStrategy
         extends DataNodeContainerModificationStrategy<AugmentationSchemaNode> {
     private static final NormalizedNodeContainerSupport<AugmentationIdentifier, AugmentationNode> SUPPORT =

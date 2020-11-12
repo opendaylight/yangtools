@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Node representing data instance of <code>choice</code>.
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * {@link org.opendaylight.yangtools.yang.model.api.CaseSchemaNode}, which are retrieved via
  * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode#getCases()}.
  */
-public interface ChoiceNode extends MixinNode, DataContainerNode<NodeIdentifier>,
-        DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
+@NonNullByDefault
+public interface ChoiceNode extends MixinNode, DataContainerNode<NodeIdentifier>, DataContainerChild {
 
 }

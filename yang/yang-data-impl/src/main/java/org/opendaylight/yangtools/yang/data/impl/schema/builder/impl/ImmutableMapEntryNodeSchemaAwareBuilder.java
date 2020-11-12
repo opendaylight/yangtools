@@ -13,7 +13,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataN
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException.IllegalListKeyException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+@NonNullByDefault
 public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapEntryNodeBuilder {
 
     private final ListSchemaNode schema;
@@ -42,7 +44,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
 
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }
@@ -53,7 +55,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         return super.build();
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final ListSchemaNode schema) {
         return new ImmutableMapEntryNodeSchemaAwareBuilder(schema);
     }
@@ -78,7 +80,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         final Object[] values = new Object[childrenQNamesToPaths.size()];
         int offset = 0;
         for (Entry<QName, PathArgument> entry : childrenQNamesToPaths.entrySet()) {
-            values[offset++] = nonnullKeyValue(entry.getKey(), getChild(entry.getValue())).getValue();
+            values[offset++] = nonnullKeyValue(entry.getKey(), getChild(entry.getValue())).body();
         }
         return ImmutableMapTemplate.ordered(childrenQNamesToPaths.keySet()).instantiateWithValues(values);
     }
@@ -87,12 +89,12 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         final Object[] values = new Object[keys.size()];
         int offset = 0;
         for (QName key : keys) {
-            values[offset++] = nonnullKeyValue(key, getChild(childrenQNamesToPaths.get(key))).getValue();
+            values[offset++] = nonnullKeyValue(key, getChild(childrenQNamesToPaths.get(key))).body();
         }
         return ImmutableMapTemplate.ordered(keys).instantiateWithValues(values);
     }
 
-    private DataContainerChild<?, ?> nonnullKeyValue(final QName key, final DataContainerChild<?, ?> value) {
+    private DataContainerChild nonnullKeyValue(final QName key, final @Nullable DataContainerChild value) {
         if (value != null) {
             return value;
         }

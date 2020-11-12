@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -17,6 +18,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * @param <V> Value type, uniquely identifying the object model used for values
  */
 @Beta
-public interface AnyxmlNode<V> extends ForeignDataNode<NodeIdentifier, V> {
-
+@NonNullByDefault
+public interface AnyxmlNode<V> extends ForeignDataNode<V> {
+    @Override
+    NodeIdentifier getIdentifier();
 }

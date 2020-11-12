@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+@NonNullByDefault
 final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
             new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
@@ -66,7 +68,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
         if (modification.getChildren().isEmpty()) {
@@ -133,12 +135,12 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
     }
 
     @Override
-    void verifyValue(final NormalizedNode<?, ?> value) {
+    void verifyValue(final NormalizedNode value) {
         // NOOP
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode value) {
         // NOOP
     }
 
@@ -149,7 +151,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
         // Unkeyed lists are always replaced
         node.write(value);
     }

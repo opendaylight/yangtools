@@ -24,6 +24,10 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.ItemOrder.Ordered;
+import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -59,6 +63,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Base strategy for converting an instance identifier into a normalized node structure for container-like types.
  */
+@NonNullByDefault
 abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends InstanceIdToNodes<T> {
     private static final Logger LOG = LoggerFactory.getLogger(InstanceIdToCompositeNodes.class);
 
@@ -68,8 +73,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     @Override
     @SuppressWarnings("unchecked")
-    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> lastChild) {
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+            final Optional<NormalizedNode> lastChild) {
         if (!isMixin()) {
             final QName type = getIdentifier().getNodeType();
             if (type != null) {
@@ -86,7 +91,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             final InstanceIdToNodes<?> childOp = getChildOperation(childPath);
             builder.addChild(childOp.create(childPath, others, lastChild));
         } else if (lastChild.isPresent()) {
-            builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().getValue()));
+            builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().body()));
         }
 
         return builder.build();
@@ -118,7 +123,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
 
         @Override
-        final InstanceIdToNodes<?> getChild(final PathArgument child) {
+        final @Nullable InstanceIdToNodes<?> getChild(final PathArgument child) {
             final InstanceIdToNodes<?> existing = byArg.get(child);
             if (existing != null) {
                 return existing;
@@ -242,28 +247,12 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
     }
 
-    static final class OrderedLeafListMixinNormalization extends UnorderedLeafListMixinNormalization {
-        OrderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
-            super(potential);
-        }
-
-        @Override
-        ListNodeBuilder<?, ?> createBuilder(final PathArgument compositeNode) {
-            return Builders.orderedLeafSetBuilder().withNodeIdentifier(getIdentifier());
-        }
-    }
-
-    static class UnorderedLeafListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
+    private abstract static class LeafListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
         private final InstanceIdToNodes<?> innerOp;
 
-        UnorderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
+        LeafListMixinNormalization(final LeafListSchemaNode potential) {
             super(NodeIdentifier.create(potential.getQName()));
             innerOp = new InstanceIdToSimpleNodes.LeafListEntryNormalization(potential);
-        }
-
-        @Override
-        ListNodeBuilder<?, ?> createBuilder(final PathArgument compositeNode) {
-            return Builders.leafSetBuilder().withNodeIdentifier(getIdentifier());
         }
 
         @Override
@@ -274,6 +263,29 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         @Override
         final boolean isMixin() {
             return true;
+        }
+    }
+
+    static final class OrderedLeafListMixinNormalization extends LeafListMixinNormalization {
+        OrderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
+            super(potential);
+        }
+
+        @Override
+        ListNodeBuilder<@NonNull Ordered, ?, ?> createBuilder(final PathArgument compositeNode) {
+            return Builders.orderedLeafSetBuilder().withNodeIdentifier(getIdentifier());
+        }
+    }
+
+    @NonNullByDefault
+    static class UnorderedLeafListMixinNormalization extends LeafListMixinNormalization {
+        UnorderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
+            super(potential);
+        }
+
+        @Override
+        ListNodeBuilder<Unordered, ?, ?> createBuilder(final PathArgument compositeNode) {
+            return Builders.leafSetBuilder().withNodeIdentifier(getIdentifier());
         }
     }
 

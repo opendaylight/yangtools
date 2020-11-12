@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -18,9 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *
  * <p>
  * See subinterfaces of this interface for concretization of node.
- *
- * @param <K> Local identifier of node
- * @param <V> Value of node
  */
 /*
  * FIXME: 7.0.0: NormalizedNode represents the perfectly-compliant view of the data, as evaluated by an implementation,
@@ -47,32 +44,32 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               do not agree on details. Furthermore things get way more complicated when we have a cross-schema
  *               boundary -- like RFC8528. Hence we cannot really have a reasonably-structured concept of unverified
  *               data. Nevertheless, this interface should be named 'NormalizedData'.
- *
- * FIXME: YANGTOOLS-1074: eliminate Identifiable<K> and K type argument
- * FIXME: YANGTOOLS-1074: eliminate V type argument
  */
-public interface NormalizedNode<K extends PathArgument, V> extends Identifiable<K> {
+@NonNullByDefault
+public interface NormalizedNode extends Identifiable<PathArgument> {
     /**
      * QName of the node as defined in YANG schema.
      *
      * @return QName of this node, non-null.
      */
-    // FIXME: YANGTOOLS-1074: eliminate this method
-    QName getNodeType();
+    // FIXME: YANGTOOLS-1074: eliminate this method: the problem is that it down not with with AugmentationIdentifier
+    //                        At least we need a 'QNameModule namespace()' method, as that is the common contract.
+    @Deprecated(forRemoval = true)
+    default QName getNodeType() {
+        return getIdentifier().getNodeType();
+    }
 
-    /**
-     * Locally unique identifier of the node.
-     *
-     * @return Node identifier, non-null.
-     */
     @Override
-    K getIdentifier();
+    // We override here, so that NormalizedNode.getIdentifier() has fewer implementations
+    PathArgument getIdentifier();
+
 
     /**
-     * Value of node.
+     * Returns the body of this node. While the return value specifies {@link Object}, this method's return value has
+     * further semantics. The returned object must be a well-published contract, such as {@code String},
+     * {@code Collection<NormalizedNode>} or {@code DOMSource}.
      *
-     * @return Value of the node, may be null.
+     * @return Returned value of this node.
      */
-    // FIXME: YANGTOOLS-1074: eliminate this method
-    @NonNull V getValue();
+    Object body();
 }

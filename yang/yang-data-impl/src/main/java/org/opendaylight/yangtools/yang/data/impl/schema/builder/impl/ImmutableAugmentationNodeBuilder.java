@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
+@NonNullByDefault
 public class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
 
@@ -31,16 +32,16 @@ public class ImmutableAugmentationNodeBuilder
         super(node);
     }
 
-    public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create() {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create() {
         return new ImmutableAugmentationNodeBuilder();
     }
 
-    public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
             final int sizeHint) {
         return new ImmutableAugmentationNodeBuilder(sizeHint);
     }
 
-    public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
             final AugmentationNode node) {
         if (!(node instanceof ImmutableAugmentationNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
@@ -51,7 +52,7 @@ public class ImmutableAugmentationNodeBuilder
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         // Check nested augments
         DataValidationException.checkLegalData(!(child instanceof AugmentationNode),
                 "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", child.getNodeType(),

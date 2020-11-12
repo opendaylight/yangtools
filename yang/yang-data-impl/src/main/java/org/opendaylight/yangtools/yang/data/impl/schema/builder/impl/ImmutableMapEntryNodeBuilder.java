@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NonNullByDefault
 public class ImmutableMapEntryNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
@@ -43,7 +45,7 @@ public class ImmutableMapEntryNodeBuilder
     protected ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
         super(node);
         this.childrenQNamesToPaths = new LinkedHashMap<>();
-        fillQnames(node.getValue(), childrenQNamesToPaths);
+        fillQnames(node.body(), childrenQNamesToPaths);
     }
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
@@ -64,9 +66,8 @@ public class ImmutableMapEntryNodeBuilder
         return new ImmutableMapEntryNodeBuilder((ImmutableMapEntryNode)node);
     }
 
-    private static void fillQnames(final Iterable<DataContainerChild<? extends PathArgument, ?>> iterable,
-            final Map<QName, PathArgument> out) {
-        for (final DataContainerChild<? extends PathArgument, ?> childId : iterable) {
+    private static void fillQnames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {
+        for (final DataContainerChild childId : iterable) {
             final PathArgument identifier = childId.getIdentifier();
 
             // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
@@ -80,7 +81,7 @@ public class ImmutableMapEntryNodeBuilder
 
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withValue(
-            final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
+            final Collection<DataContainerChild> withValue) {
         fillQnames(withValue, childrenQNamesToPaths);
         return super.withValue(withValue);
     }
@@ -91,7 +92,7 @@ public class ImmutableMapEntryNodeBuilder
 
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
         if (!isAugment(child.getIdentifier())) {
             childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
@@ -103,7 +104,7 @@ public class ImmutableMapEntryNodeBuilder
     @Override
     public MapEntryNode build() {
         for (final Entry<QName, Object> key : getNodeIdentifier().entrySet()) {
-            final DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(key.getKey()));
+            final DataContainerChild childNode = getChild(childrenQNamesToPaths.get(key.getKey()));
 
             // We have enough information to fill-in missing leaf nodes, so let's do that
             if (childNode == null) {
@@ -112,7 +113,7 @@ public class ImmutableMapEntryNodeBuilder
                 withChild(leaf);
             } else {
                 DataValidationException.checkListKey(getNodeIdentifier(), key.getKey(), key.getValue(),
-                    childNode.getValue());
+                    childNode.body());
             }
         }
 

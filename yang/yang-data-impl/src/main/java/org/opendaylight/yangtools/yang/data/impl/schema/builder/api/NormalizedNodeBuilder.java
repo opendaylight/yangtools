@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public interface NormalizedNodeBuilder<I extends PathArgument, V, R extends NormalizedNode<I, ?>> extends Builder<R> {
+@NonNullByDefault
+public interface NormalizedNodeBuilder<I extends PathArgument, V, R extends NormalizedNode> extends Builder<R> {
 
-    @NonNull NormalizedNodeBuilder<I, V, R> withValue(V value);
+    NormalizedNodeBuilder<I, V, R> withValue(V value);
 
-    @NonNull NormalizedNodeBuilder<I, V, R> withNodeIdentifier(I nodeIdentifier);
+    NormalizedNodeBuilder<I, V, R> withNodeIdentifier(I nodeIdentifier);
 
     @Override
     R build();

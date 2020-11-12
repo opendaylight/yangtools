@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
+@NonNullByDefault
 public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> {
 
@@ -65,6 +67,7 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         }
 
         @Override
+        @Deprecated
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;
         }

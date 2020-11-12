@@ -15,7 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * Base strategy for converting an instance identifier into a normalized node structure.
  * Use provided static methods for generic YangInstanceIdentifier -> NormalizedNode translation in ImmutableNodes.
  */
+@NonNullByDefault
 abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
     InstanceIdToNodes(final T identifier) {
         super(identifier);
@@ -55,7 +57,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
      * @param child child identifier
      * @return transformation strategy for a specific child
      */
-    abstract InstanceIdToNodes<?> getChild(PathArgument child);
+    abstract @Nullable InstanceIdToNodes<?> getChild(PathArgument child);
 
     /**
      * Convert instance identifier into a NormalizedNode structure.
@@ -65,8 +67,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
      * @param operation Optional modify operation to be set on the last child
      * @return NormalizedNode structure corresponding to submitted instance ID
      */
-    abstract @NonNull NormalizedNode<?, ?> create(PathArgument first, Iterator<PathArgument> others,
-            Optional<NormalizedNode<?, ?>> deepestChild);
+    abstract NormalizedNode create(PathArgument first, Iterator<PathArgument> others,
+            Optional<NormalizedNode> deepestChild);
 
     abstract boolean isMixin();
 
@@ -84,7 +86,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         }
 
         @Override
-        InstanceIdToNodes<?> getChild(final PathArgument child) {
+        @Nullable InstanceIdToNodes<?> getChild(final PathArgument child) {
             return child.getNodeType().equals(getIdentifier().getNodeType()) ? innerNode : null;
         }
 
@@ -100,7 +102,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         }
 
         @Override
-        final InstanceIdToNodes<?> getChild(final PathArgument child) {
+        final @Nullable InstanceIdToNodes<?> getChild(final PathArgument child) {
             return null;
         }
 
@@ -116,16 +118,16 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         }
 
         @Override
-        NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-                final Optional<NormalizedNode<?, ?>> deepestChild) {
+        NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+                final Optional<NormalizedNode> deepestChild) {
             checkState(deepestChild.isPresent(), "Cannot instantiate anydata node without a value");
-            final NormalizedNode<?, ?> child = deepestChild.get();
+            final NormalizedNode child = deepestChild.get();
             checkState(child instanceof AnydataNode, "Invalid child %s", child);
             return createAnydata((AnydataNode<?>) child);
         }
 
         private <T> AnydataNode<T> createAnydata(final AnydataNode<T> child) {
-            return Builders.anydataBuilder(child.getValueObjectModel()).withValue(child.getValue())
+            return Builders.anydataBuilder(child.bodyObjectModel()).withValue(child.body())
             .withNodeIdentifier(getIdentifier()).build();
         }
     }
@@ -136,15 +138,15 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         }
 
         @Override
-        NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-                final Optional<NormalizedNode<?, ?>> deepestChild) {
+        NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+                final Optional<NormalizedNode> deepestChild) {
             final NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> builder =
                     Builders.anyXmlBuilder()
                     .withNodeIdentifier(getIdentifier());
             if (deepestChild.isPresent()) {
-                final NormalizedNode<?, ?> child = deepestChild.get();
+                final NormalizedNode child = deepestChild.get();
                 checkState(child instanceof DOMSourceAnyxmlNode, "Invalid child %s", child);
-                builder.withValue(((DOMSourceAnyxmlNode) child).getValue());
+                builder.withValue(((DOMSourceAnyxmlNode) child).body());
             }
 
             return builder.build();
@@ -157,7 +159,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
             findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child));
     }
 
-    static InstanceIdToNodes<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
+    static @Nullable InstanceIdToNodes<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
         final Optional<DataSchemaNode> potential = findChildSchemaNode(schema, child);
         checkArgument(potential.isPresent(),
                 "Supplied QName %s is not valid according to schema %s, potential children nodes: %s", child, schema,
@@ -171,7 +173,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         return fromDataSchemaNode(result);
     }
 
-    private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
+    private static @Nullable ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
         for (final ChoiceSchemaNode choice : choices) {
             for (final CaseSchemaNode caze : choice.getCases()) {
                 if (findChildSchemaNode(caze, child).isPresent()) {
@@ -190,7 +192,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
      * otherwise returns a SchemaPathUtil for child as
      * call for {@link #fromDataSchemaNode(org.opendaylight.yangtools.yang.model.api.DataSchemaNode)}.
      */
-    private static InstanceIdToNodes<?> fromAugmentation(final DataNodeContainer parent,
+    private static @Nullable InstanceIdToNodes<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
         for (final AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
             final Optional<DataSchemaNode> potential = aug.findDataChildByName(child.getQName());
@@ -201,7 +203,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractSimpleI
         return fromDataSchemaNode(child);
     }
 
-    static InstanceIdToNodes<?> fromDataSchemaNode(final DataSchemaNode potential) {
+    static @Nullable InstanceIdToNodes<?> fromDataSchemaNode(final DataSchemaNode potential) {
         if (potential instanceof ContainerLike) {
             return new InstanceIdToCompositeNodes.ContainerTransformation((ContainerLike) potential);
         } else if (potential instanceof ListSchemaNode) {

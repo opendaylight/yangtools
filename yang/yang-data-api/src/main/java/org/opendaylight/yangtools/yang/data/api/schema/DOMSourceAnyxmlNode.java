@@ -8,22 +8,25 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * An AnyxmlNode with data in {@link DOMSource} format.
  */
+@NonNullByDefault
 public interface DOMSourceAnyxmlNode extends AnyxmlNode<DOMSource> {
     @Override
-    default Class<DOMSource> getValueObjectModel() {
+    default Class<DOMSource> bodyObjectModel() {
         return DOMSource.class;
     }
 
     /**
-     * Return value represented as a DOMSource. Returned source contains top level element
-     * that duplicates the anyxml node.
+     * {@inheritDoc}
      *
-     * @return anyxml node value represented as DOMSource.
+     * <p>
+     * Returned value is a DOMSource representation. Returned source contains top level element that duplicates the
+     * anyxml node.
      */
     @Override
-    DOMSource getValue();
+    DOMSource body();
 }

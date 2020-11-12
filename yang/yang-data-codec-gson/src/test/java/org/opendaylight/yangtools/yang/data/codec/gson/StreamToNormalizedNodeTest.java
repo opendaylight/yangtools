@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.LoggingNormalizedNodeStreamWriter;
@@ -84,15 +83,14 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         }
 
         // Finally build the node
-        final NormalizedNode<?, ?> parsedData = result.getResult();
+        final NormalizedNode parsedData = result.getResult();
         LOG.debug("Parsed NormalizedNodes: {}", parsedData);
 
         /*
          * This is the serialization part.
          */
         // We want to write the first child out
-        final DataContainerChild<? extends PathArgument, ?> firstChild =
-                (DataContainerChild<? extends PathArgument, ?>) parsedData;
+        final DataContainerChild firstChild = (DataContainerChild) parsedData;
         LOG.debug("Serializing first child: {}", firstChild);
 
         // String holder

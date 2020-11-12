@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -23,9 +25,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
+@NonNullByDefault
 public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
     private List<UnkeyedListEntryNode> value;
-    private NodeIdentifier nodeIdentifier;
+    @SuppressFBWarnings(value = "NP_STORE_INTO_NONNULL_FIELD", justification = "Non-grok of type annotations")
+    private @Nullable NodeIdentifier nodeIdentifier = null;
     private boolean dirty;
 
     protected ImmutableUnkeyedListNodeBuilder() {
@@ -37,19 +41,19 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         this.nodeIdentifier = node.getIdentifier();
         // FIXME: clean this up, notably reuse unmodified lists
         this.value = new LinkedList<>();
-        Iterables.addAll(value, node.getValue());
+        Iterables.addAll(value, node.body());
         this.dirty = true;
     }
 
-    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
             final UnkeyedListNode node) {
         if (!(node instanceof ImmutableUnkeyedListNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
@@ -125,7 +129,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public ImmutableList<UnkeyedListEntryNode> getValue() {
+        public ImmutableList<UnkeyedListEntryNode> body() {
             return ImmutableList.of();
         }
 
@@ -135,13 +139,13 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return 0;
         }
 
         @Override
         protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-            return Collections.emptyList().equals(other.getValue());
+            return Collections.emptyList().equals(other.body());
         }
 
         @Override
@@ -178,7 +182,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return children.size();
         }
     }

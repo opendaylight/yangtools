@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -21,10 +22,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataV
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
+@NonNullByDefault
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
-
     private final ChoiceSchemaNode schema;
-    private DataNodeContainerValidator validator;
+
+    private @Nullable DataNodeContainerValidator validator = null;
 
     protected ImmutableChoiceNodeSchemaAwareBuilder(final ChoiceSchemaNode schema) {
         this.schema = requireNonNull(schema, "Schema was null");
@@ -38,7 +40,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     }
 
     @Override
-    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withChild(final DataContainerChild child) {
         if (validator == null) {
             Optional<CaseSchemaNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
             DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);
@@ -54,7 +56,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
         return super.build();
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
         return new ImmutableChoiceNodeSchemaAwareBuilder(schema);
     }
 }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * with mandatory nodes, as it needs to tap into {@link SchemaAwareApplyOperation}'s operations, or subclassed
  * for the purposes of {@link StructuralContainerModificationStrategy}'s automatic lifecycle.
  */
+@NonNullByDefault
 class ContainerModificationStrategy extends DataNodeContainerModificationStrategy<ContainerLike> {
     private static final class EnforcingMandatory extends ContainerModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
@@ -36,7 +38,7 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
@@ -49,7 +51,7 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
                 final Optional<? extends TreeNode> currentMeta, final Version version) {
             final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataN
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
+@NonNullByDefault
 public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmentationNodeBuilder {
-
     private final DataNodeContainerValidator validator;
 
     protected ImmutableAugmentationNodeSchemaAwareBuilder(final AugmentationSchemaNode schema) {
@@ -33,11 +33,11 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         return super.withChild(validator.validateChild(child));
     }
 
-    public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
             final AugmentationSchemaNode schema) {
         return new ImmutableAugmentationNodeSchemaAwareBuilder(schema);
     }

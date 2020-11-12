@@ -8,19 +8,18 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
 
 /**
- * Leaf node with multiplicity 0..1.
+ * Node representing set of simple leaf nodes. Node containing instances of {@link LeafSetEntryNode}.
  *
  * <p>
- * Leaf node has a value, but no child nodes in the data tree, schema
- * for leaf node and its value is described by {@link org.opendaylight.yangtools.yang.model.api.LeafSchemaNode}.
+ * Schema and semantics of this node are described by instance of
+ * {@link org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode}.
  *
- * @param <T> Value type
+ * @param <T> Type of leaf node values.
  */
 @NonNullByDefault
-public interface LeafNode<T> extends ValueNode<T>, DataContainerChild {
-    @Override
-    NodeIdentifier getIdentifier();
+public interface UnorderedLeafSetNode<T> extends LeafSetNode<Unordered, T>, Unordered {
+
 }

@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Data subtree with cardinality 0..1 in the context of parent node.
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * Schema of this node is described by instance of
  * {@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}.
  */
-public interface ContainerNode extends DataContainerNode<NodeIdentifier>,
-        DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
+@NonNullByDefault
+public interface ContainerNode extends DataContainerNode<NodeIdentifier>, DataContainerChild {
 
 }

@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
@@ -16,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.util.LeafsetEntryInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
+@NonNullByDefault
 final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T> {
     private final LeafsetEntryInterner interner;
 
@@ -28,12 +33,13 @@ final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T
         this.interner = requireNonNull(interner);
     }
 
-    private static LeafsetEntryInterner getInterner(final DataSchemaNode schema) {
+    @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "Non-grok of type annotations")
+    private static @Nullable LeafsetEntryInterner getInterner(final @Nullable DataSchemaNode schema) {
         return schema instanceof LeafListSchemaNode ? LeafsetEntryInterner.forSchema((LeafListSchemaNode) schema)
                 : null;
     }
 
-    static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final DataSchemaNode schema) {
+    static <T> ListNodeBuilder<Unordered, T, LeafSetEntryNode<T>> create(final @Nullable DataSchemaNode schema) {
         final LeafsetEntryInterner interner = getInterner(schema);
         if (interner != null) {
             return new InterningLeafSetNodeBuilder<>(interner);
@@ -42,7 +48,8 @@ final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T
         return ImmutableLeafSetNodeBuilder.create();
     }
 
-    static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final DataSchemaNode schema, final int sizeHint) {
+    static <T> ListNodeBuilder<Unordered, T, LeafSetEntryNode<T>> create(final @Nullable DataSchemaNode schema,
+            final int sizeHint) {
         final LeafsetEntryInterner interner = getInterner(schema);
         if (interner != null) {
             return new InterningLeafSetNodeBuilder<>(interner, sizeHint);
@@ -52,7 +59,7 @@ final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(final LeafSetEntryNode<T> child) {
+    public ImmutableLeafSetNodeBuilder<T> withChild(final LeafSetEntryNode<T> child) {
         return super.withChild(interner.intern(child));
     }
 }

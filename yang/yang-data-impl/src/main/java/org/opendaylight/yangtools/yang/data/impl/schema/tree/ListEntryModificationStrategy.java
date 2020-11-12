@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+@NonNullByDefault
 class ListEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
     private static final class EnforcingMandatory extends ListEntryModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
@@ -31,7 +33,7 @@ class ListEntryModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
@@ -44,7 +46,7 @@ class ListEntryModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
                 final Optional<? extends TreeNode> currentMeta, final Version version) {
             final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);

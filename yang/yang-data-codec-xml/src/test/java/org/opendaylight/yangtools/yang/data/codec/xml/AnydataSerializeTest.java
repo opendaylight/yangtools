@@ -99,7 +99,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, anyDataSchemaNode);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertTrue(transformedInput instanceof AnydataNode);
         AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
@@ -115,7 +115,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
-        final String deserializeXml = getXmlFromDOMSource(((DOMSourceAnydata) anydataNode.getValue()).getSource());
+        final String deserializeXml = getXmlFromDOMSource(((DOMSourceAnydata) anydataNode.body()).getSource());
         assertFalse(serializedXml.isEmpty());
 
         // Check if is Serialize Node same as Deserialize Node
@@ -183,13 +183,13 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         xmlParser.flush();
 
         //Get Result
-        final NormalizedNode<?, ?> node = normalizedResult.getResult();
+        final NormalizedNode node = normalizedResult.getResult();
         assertTrue(node instanceof AnydataNode);
         final AnydataNode<?> anydataResult = (AnydataNode<?>) node;
 
         //Get Result in formatted String
-        assertTrue(anydataResult.getValue() instanceof DOMSourceAnydata);
-        final String serializedXml = getXmlFromDOMSource(((DOMSourceAnydata)anydataResult.getValue()).getSource());
+        assertTrue(anydataResult.body() instanceof DOMSourceAnydata);
+        final String serializedXml = getXmlFromDOMSource(((DOMSourceAnydata)anydataResult.body()).getSource());
         final String expectedXml = toString(doc.getDocumentElement());
 
         //Looking for difference in Serialized xml and in Loaded XML

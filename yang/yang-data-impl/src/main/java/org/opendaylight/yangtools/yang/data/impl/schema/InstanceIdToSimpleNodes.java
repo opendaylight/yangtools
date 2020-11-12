@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Iterator;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -24,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 /**
 * Base strategy for converting an instance identifier into a normalized node structure for leaf and leaf-list types.
 */
+@NonNullByDefault
 abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceIdToNodes<T> {
 
     InstanceIdToSimpleNodes(final T identifier) {
@@ -31,20 +34,20 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     }
 
     @Override
-    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> deepestChild) {
-        final NormalizedNodeBuilder<? extends PathArgument, Object,
-                ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(first);
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+            final Optional<NormalizedNode> deepestChild) {
+        final NormalizedNodeBuilder<? extends PathArgument, Object, ? extends NormalizedNode> builder =
+            getBuilder(first);
 
         if (deepestChild.isPresent()) {
-            builder.withValue(deepestChild.get().getValue());
+            builder.withValue(deepestChild.orElseThrow().body());
         }
 
         return builder.build();
     }
 
     @Override
-    final InstanceIdToNodes<?> getChild(final PathArgument child) {
+    final @Nullable InstanceIdToNodes<?> getChild(final PathArgument child) {
         return null;
     }
 
@@ -53,8 +56,8 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         return false;
     }
 
-    abstract NormalizedNodeBuilder<? extends PathArgument, Object,
-            ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
+    abstract NormalizedNodeBuilder<? extends PathArgument, Object, ? extends NormalizedNode> getBuilder(
+        PathArgument node);
 
     static final class LeafNormalization extends InstanceIdToSimpleNodes<NodeIdentifier> {
         LeafNormalization(final LeafSchemaNode potential) {

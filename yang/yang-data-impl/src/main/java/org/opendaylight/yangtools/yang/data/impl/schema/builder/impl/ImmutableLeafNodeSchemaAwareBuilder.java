@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
+@NonNullByDefault
 public final class ImmutableLeafNodeSchemaAwareBuilder<T> extends ImmutableLeafNodeBuilder<T> {
     private ImmutableLeafNodeSchemaAwareBuilder(final LeafSchemaNode schema) {
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static <T> @NonNull NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create(
-            final LeafSchemaNode schema) {
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create(final LeafSchemaNode schema) {
         return new ImmutableLeafNodeSchemaAwareBuilder<>(schema);
     }
 

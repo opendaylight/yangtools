@@ -93,7 +93,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(final PathArgument child) {
+    public Optional<NormalizedNode> readNode(final PathArgument child) {
         return stack.peek().read(child, getParent().getVersion());
     }
 
@@ -104,14 +104,14 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     }
 
     @Override
-    public void merge(final PathArgument child, final NormalizedNode<?, ?> data) {
+    public void merge(final PathArgument child, final NormalizedNode data) {
         ensureNotClosed();
         InMemoryDataTreeModification.checkIdentifierReferencesData(child, data);
         resolveChildModification(child).merge(data, getParent().getVersion());
     }
 
     @Override
-    public void write(final PathArgument child, final NormalizedNode<?, ?> data) {
+    public void write(final PathArgument child, final NormalizedNode data) {
         ensureNotClosed();
         InMemoryDataTreeModification.checkIdentifierReferencesData(child, data);
         resolveChildModification(child).write(data);
