@@ -31,7 +31,7 @@ public interface DataTreeModification extends DataTreeSnapshot {
      * @param path Node path
      * @param data Data to be merged
      */
-    void merge(YangInstanceIdentifier path, NormalizedNode<?, ?> data);
+    void merge(YangInstanceIdentifier path, NormalizedNode data);
 
     /**
      * Replace the data at specified path with supplied data.
@@ -39,7 +39,7 @@ public interface DataTreeModification extends DataTreeSnapshot {
      * @param path Node path
      * @param data New node data
      */
-    void write(YangInstanceIdentifier path, NormalizedNode<?, ?> data);
+    void write(YangInstanceIdentifier path, NormalizedNode data);
 
     /**
      * Finish creation of a modification, making it ready for application

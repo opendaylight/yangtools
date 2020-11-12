@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -45,15 +45,16 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder() {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder() {
         return ImmutableMapNodeBuilder.create();
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder(final QName name) {
         return mapNodeBuilder(NodeIdentifier.create(name));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final NodeIdentifier name) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapNodeBuilder(
+            final NodeIdentifier name) {
         return ImmutableMapNodeBuilder.create().withNodeIdentifier(name);
     }
 
@@ -63,7 +64,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unordered Map node
      */
-    public static @NonNull MapNode mapNode(final QName name) {
+    public static @NonNull SystemMapNode mapNode(final QName name) {
         return mapNode(NodeIdentifier.create(name));
     }
 
@@ -73,7 +74,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unordered Map node
      */
-    public static @NonNull MapNode mapNode(final NodeIdentifier name) {
+    public static @NonNull SystemMapNode mapNode(final NodeIdentifier name) {
         return mapNodeBuilder(name).build();
     }
 
@@ -83,7 +84,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An ordered Map node
      */
-    public static @NonNull OrderedMapNode orderedMapNode(final QName name) {
+    public static @NonNull UserMapNode orderedMapNode(final QName name) {
         return orderedMapNode(NodeIdentifier.create(name));
     }
 
@@ -93,8 +94,8 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return An ordered Map node
      */
-    public static @NonNull OrderedMapNode orderedMapNode(final NodeIdentifier name) {
-        return ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(name).build();
+    public static @NonNull UserMapNode orderedMapNode(final NodeIdentifier name) {
+        return ImmutableUserMapNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
     /**
@@ -203,8 +204,7 @@ public final class ImmutableNodes {
      * @param id instance identifier to convert to node structure starting from root
      * @return serialized normalized node for provided instance Id
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx,
-            final YangInstanceIdentifier id) {
+    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
         return fromInstanceId(ctx, id, Optional.empty());
     }
 
@@ -217,8 +217,8 @@ public final class ImmutableNodes {
      *                       instance identifier
      * @return serialized normalized node for provided instance Id with overridden last child.
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final NormalizedNode<?, ?> deepestElement) {
+    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final NormalizedNode deepestElement) {
         return fromInstanceId(ctx, id, Optional.of(deepestElement));
     }
 
@@ -232,8 +232,8 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id with (optionally) overridden last child
      *         and (optionally) marked with specific operation attribute.
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final Optional<NormalizedNode<?, ?>> deepestElement) {
+    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final Optional<NormalizedNode> deepestElement) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
         final Iterator<PathArgument> it = id.getPathArguments().iterator();

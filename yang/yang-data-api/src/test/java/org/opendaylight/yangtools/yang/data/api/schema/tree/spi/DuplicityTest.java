@@ -24,9 +24,9 @@ public class DuplicityTest {
     public void testDuplicate() {
         final LeafNode<?> leafNode = mock(LeafNode.class);
         final ContainerNode containerNode = mock(ContainerNode.class);
-        final Map<NormalizedNode<?, ?>, DuplicateEntry> normalizedNodeDuplicateEntryMapNode = NormalizedNodes
+        final Map<NormalizedNode, DuplicateEntry> normalizedNodeDuplicateEntryMapNode = NormalizedNodes
                 .findDuplicates(leafNode);
-        final Map<NormalizedNode<?, ?>, DuplicateEntry> normalizedNodeDuplicateEntryMapContainer = NormalizedNodes
+        final Map<NormalizedNode, DuplicateEntry> normalizedNodeDuplicateEntryMapContainer = NormalizedNodes
                 .findDuplicates(containerNode);
         assertEquals(0, normalizedNodeDuplicateEntryMapNode.size());
         assertEquals(0, normalizedNodeDuplicateEntryMapContainer.size());

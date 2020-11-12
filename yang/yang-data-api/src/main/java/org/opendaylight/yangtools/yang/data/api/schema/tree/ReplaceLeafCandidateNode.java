@@ -13,15 +13,15 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
-    private final NormalizedNode<?, ?> oldData;
+    private final NormalizedNode oldData;
 
-    ReplaceLeafCandidateNode(final NormalizedNode<?, ?> oldData, final NormalizedNode<?, ?> newData) {
+    ReplaceLeafCandidateNode(final NormalizedNode oldData, final NormalizedNode newData) {
         super(newData);
         this.oldData = requireNonNull(oldData);
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return Optional.of(oldData);
     }
 }
