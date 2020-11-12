@@ -43,7 +43,7 @@ final class JaxenSchemaContext implements XPathSchemaContext {
     }
 
     @Override
-    public XPathDocument createDocument(final NormalizedNode<?, ?> documentRoot) {
+    public XPathDocument createDocument(final NormalizedNode documentRoot) {
         return new JaxenDocument(context, tree, documentRoot);
     }
 }

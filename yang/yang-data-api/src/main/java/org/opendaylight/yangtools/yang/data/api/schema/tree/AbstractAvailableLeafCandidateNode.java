@@ -11,12 +11,12 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateNode {
-    AbstractAvailableLeafCandidateNode(final NormalizedNode<?, ?> dataAfter) {
+    AbstractAvailableLeafCandidateNode(final NormalizedNode dataAfter) {
         super(dataAfter);
     }
 
     @Override
-    public final Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public final Optional<NormalizedNode> getDataAfter() {
         return dataOptional();
     }
 }

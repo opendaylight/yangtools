@@ -53,10 +53,15 @@ public class ImmutableUnkeyedListEntryNodeBuilder
     }
 
     protected static final class ImmutableUnkeyedListEntryNode
-            extends AbstractImmutableDataContainerNode<NodeIdentifier> implements UnkeyedListEntryNode {
-
+            extends AbstractImmutableDataContainerNode<NodeIdentifier, UnkeyedListEntryNode>
+            implements UnkeyedListEntryNode {
         ImmutableUnkeyedListEntryNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> children) {
             super(children, nodeIdentifier);
+        }
+
+        @Override
+        protected Class<UnkeyedListEntryNode> implementedType() {
+            return UnkeyedListEntryNode.class;
         }
     }
 }

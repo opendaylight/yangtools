@@ -8,11 +8,14 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -20,20 +23,20 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -88,18 +91,18 @@ public class Bug4454Test {
             "bar");
     private final MapEntryNode bazEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
             "baz");
-    private final MapNode mapNodeBazFuzWithNodes = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeBazFuzWithNodes = ImmutableNodes.mapNodeBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).withChild(bazEntryNodeWithValue).withChild(fooEntryNode)
             .build();
-    private final MapNode mapNodeFooWithNodes = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeFooWithNodes = ImmutableNodes.mapNodeBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(fooEntryNode).withChild(fooEntryNodeWithValue).withChild(barEntryNode).withChild(bazEntryNode)
             .build();
-    private final MapNode mapNodeBar = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeBar = ImmutableNodes.mapNodeBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(barEntryNode).build();
-    private final MapNode mapNodeBaz = ImmutableNodes.mapNodeBuilder()
+    private final SystemMapNode mapNodeBaz = ImmutableNodes.mapNodeBuilder()
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).build();
 
@@ -182,7 +185,7 @@ public class Bug4454Test {
         assertFalse(inMemoryDataTree.toString().contains("list"));
 
         DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(!minMaxListRead.isPresent());
 
         modificationTree1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
@@ -230,7 +233,7 @@ public class Bug4454Test {
         DataTreeSnapshot test2 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test2.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(3, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
+        assertEquals(3, ((NormalizedNodeContainer<?, ?>) minMaxListRead.get()).size());
 
         DataTreeModification tempMod2 = test2.newModification();
         tempMod2.write(MIN_MAX_LIST_PATH, mapNodeBaz);
@@ -244,8 +247,8 @@ public class Bug4454Test {
         DataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(1, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
-        assertTrue(minMaxListRead.get().getValue().toString().contains("test2"));
+        assertEquals(1, ((NormalizedNodeContainer<?, ?>) minMaxListRead.get()).size());
+        assertThat(minMaxListRead.get().body().toString(), containsString("test2"));
 
         DataTreeModification tempMod3 = test3.newModification();
         tempMod3.merge(MIN_MAX_LIST_PATH, mapNodeBar);
@@ -276,7 +279,8 @@ public class Bug4454Test {
 
         final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
-                .withChildValue("foo").build();
+                .withChildValue("foo")
+                .build();
 
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
@@ -298,10 +302,10 @@ public class Bug4454Test {
         inMemoryDataTree.commit(prepare2);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+        final Optional<NormalizedNode> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
-        final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
-                .getChild(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
+        final Optional<NormalizedNodeContainer<?, ?>> leafList = ((DistinctNodeContainer) masterContainer.get())
+                .findChildByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
         assertEquals(3, leafList.get().size());
     }
@@ -343,7 +347,7 @@ public class Bug4454Test {
         inMemoryDataTree.commit(prepare);
 
         // Empty list should have disappeared, along with the container, as we are not enforcing root
-        final NormalizedNode<?, ?> data = inMemoryDataTree.takeSnapshot()
+        final NormalizedNode data = inMemoryDataTree.takeSnapshot()
                 .readNode(YangInstanceIdentifier.empty()).get();
         assertTrue(data instanceof ContainerNode);
         assertEquals(0, ((ContainerNode) data).size());
@@ -392,7 +396,7 @@ public class Bug4454Test {
     public void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
         final MapEntryNode fooEntryNoMinMaxNode =
                 ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo");
-        final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
+        final SystemMapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
                 .withChild(fooEntryNoMinMaxNode).build();
 
@@ -425,19 +429,18 @@ public class Bug4454Test {
         inMemoryDataTree.commit(prepare);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
+        final Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
 
         // Empty list should have disappeared
         assertFalse(minMaxListRead.isPresent());
     }
 
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
-        Optional<NormalizedNode<?, ?>> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
+        Optional<NormalizedNode> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
-        UnmodifiableCollection<?> collectionChildren = (UnmodifiableCollection<?>) minMaxListRead.get().getValue();
+        assertEquals(2, ((NormalizedNodeContainer<?, ?>) minMaxListRead.get()).size());
 
-        for (Object collectionChild : collectionChildren) {
+        for (Object collectionChild : (Collection<?>) minMaxListRead.get().body()) {
             if (collectionChild.toString().contains(first)) {
                 assertTrue(collectionChild.toString().contains(first));
             } else {

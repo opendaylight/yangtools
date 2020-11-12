@@ -60,7 +60,7 @@
  * node, which can occur only once per parent node; its leaves are MapEntryNode
  * nodes.
  * <ul>
- * <li> {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode} -
+ * <li> {@link org.opendaylight.yangtools.yang.data.api.schema.UserMapNode} -
  * Special node, which can occur only once per parent node; its leaves are
  * MapEntryNode nodes.</li>
  * </ul>
