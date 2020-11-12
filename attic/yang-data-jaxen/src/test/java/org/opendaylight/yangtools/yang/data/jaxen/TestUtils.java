@@ -14,7 +14,7 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 
@@ -60,7 +60,7 @@ final class TestUtils {
      *
      * @return A test document instance.
      */
-    public static NormalizedNode<?, ?> createNormalizedNodes() {
+    public static ContainerNode createNormalizedNodes() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(ROOT_QNAME))

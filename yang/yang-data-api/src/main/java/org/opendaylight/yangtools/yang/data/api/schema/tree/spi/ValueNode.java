@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 final class ValueNode extends AbstractTreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(ValueNode.class);
 
-    protected ValueNode(final NormalizedNode<?, ?> data, final Version version) {
+    protected ValueNode(final NormalizedNode data, final Version version) {
         super(data, version);
     }
 

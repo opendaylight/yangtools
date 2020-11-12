@@ -24,7 +24,7 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * @param data New data component, may not be null.
      * @throws NullPointerException if {@code data} is null
      */
-    void setData(NormalizedNode<?, ?> data);
+    void setData(NormalizedNode data);
 
     /**
      * Set the new subtree version. This is typically invoked when the user

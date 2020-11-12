@@ -36,7 +36,7 @@ public interface DataTreeModificationCursor extends DataTreeSnapshotCursor {
      * @throws BackendFailedException when implementation-specific errors occurs
      *                                while servicing the request.
      */
-    void merge(PathArgument child, NormalizedNode<?, ?> data);
+    void merge(PathArgument child, NormalizedNode data);
 
     /**
      * Replace the data at specified path with supplied data.
@@ -46,5 +46,5 @@ public interface DataTreeModificationCursor extends DataTreeSnapshotCursor {
      * @throws BackendFailedException when implementation-specific errors occurs
      *                                while servicing the request.
      */
-    void write(PathArgument child, NormalizedNode<?, ?> data);
+    void write(PathArgument child, NormalizedNode data);
 }

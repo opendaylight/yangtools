@@ -46,5 +46,5 @@ public interface XPathSchemaContext {
      * @return A new {@link XPathDocument} on which queries may be executed.
      * @throws IllegalArgumentException if the document root is not known to this schema context.
      */
-    @NonNull XPathDocument createDocument(@NonNull NormalizedNode<?, ?> documentRoot);
+    @NonNull XPathDocument createDocument(@NonNull NormalizedNode documentRoot);
 }

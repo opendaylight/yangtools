@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
@@ -69,20 +69,21 @@ public class Bug4295Test {
 
     private void firstModification() throws DataValidationFailedException {
         /*  MERGE */
-        MapNode outerListNode = ImmutableNodes.mapNodeBuilder().withNodeIdentifier(NodeIdentifier.create(outerList))
-                .withChild(createOuterListEntry("1", "o-1"))
-                .withChild(createOuterListEntry("2", "o-2"))
-                .withChild(createOuterListEntry("3", "o-3"))
-                .build();
+        SystemMapNode outerListNode = ImmutableNodes.mapNodeBuilder()
+            .withNodeIdentifier(NodeIdentifier.create(outerList))
+            .withChild(createOuterListEntry("1", "o-1"))
+            .withChild(createOuterListEntry("2", "o-2"))
+            .withChild(createOuterListEntry("3", "o-3"))
+            .build();
         ContainerNode rootContainerNode = createRootContainerBuilder()
-                .withChild(createSubRootContainerBuilder().withChild(outerListNode).build())
-                .build();
+            .withChild(createSubRootContainerBuilder().withChild(outerListNode).build())
+            .build();
         YangInstanceIdentifier path = YangInstanceIdentifier.of(root);
         DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
         modification.merge(path, rootContainerNode);
 
         /*  WRITE INNER LIST WITH ENTRIES*/
-        MapNode innerListNode = createInnerListBuilder()
+        SystemMapNode innerListNode = createInnerListBuilder()
             .withChild(createInnerListEntry("a", "i-a"))
             .withChild(createInnerListEntry("b", "i-b"))
             .build();
@@ -98,15 +99,16 @@ public class Bug4295Test {
 
     private void secondModification(final int testScenarioNumber) throws DataValidationFailedException {
         /*  MERGE */
-        MapNode outerListNode = ImmutableNodes.mapNodeBuilder().withNodeIdentifier(NodeIdentifier.create(outerList))
-                .withChild(createOuterListEntry("3", "o-3"))
-                .withChild(createOuterListEntry("4", "o-4"))
-                .withChild(createOuterListEntry("5", "o-5"))
-                .build();
+        SystemMapNode outerListNode = ImmutableNodes.mapNodeBuilder()
+            .withNodeIdentifier(NodeIdentifier.create(outerList))
+            .withChild(createOuterListEntry("3", "o-3"))
+            .withChild(createOuterListEntry("4", "o-4"))
+            .withChild(createOuterListEntry("5", "o-5"))
+            .build();
 
         ContainerNode rootContainerNode = createRootContainerBuilder()
-                .withChild(createSubRootContainerBuilder().withChild(outerListNode).build())
-                .build();
+            .withChild(createSubRootContainerBuilder().withChild(outerListNode).build())
+            .build();
 
         YangInstanceIdentifier path = YangInstanceIdentifier.of(root);
         DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
@@ -123,7 +125,7 @@ public class Bug4295Test {
             modification.write(path, innerListEntryA);
         } else if (testScenarioNumber == 3) {
             /* WRITE INNER LIST WITH ENTRIES */
-            MapNode innerListNode = createInnerListBuilder().withChild(createInnerListEntry("a", "i-a-3"))
+            SystemMapNode innerListNode = createInnerListBuilder().withChild(createInnerListEntry("a", "i-a-3"))
                     .withChild(createInnerListEntry("c", "i-c")).build();
             path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
                     .node(innerList);
@@ -150,7 +152,7 @@ public class Bug4295Test {
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(subRoot));
     }
 
-    private CollectionNodeBuilder<MapEntryNode, MapNode> createInnerListBuilder() {
+    private CollectionNodeBuilder<MapEntryNode, SystemMapNode> createInnerListBuilder() {
         return ImmutableNodes.mapNodeBuilder().withNodeIdentifier(NodeIdentifier.create(innerList));
     }
 

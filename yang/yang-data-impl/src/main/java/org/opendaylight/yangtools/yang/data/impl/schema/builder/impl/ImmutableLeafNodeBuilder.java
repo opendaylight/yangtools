@@ -35,15 +35,19 @@ public class ImmutableLeafNodeBuilder<T>
         return createNode(getNodeIdentifier(), getValue());
     }
 
-    private static final class ImmutableLeafNode<T>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, T> implements LeafNode<T> {
+    private static class ImmutableLeafNode<T>
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, LeafNode<?>, T> implements LeafNode<T> {
         ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value) {
             super(nodeIdentifier, value);
         }
+
+        @Override
+        protected final Class<LeafNode<?>> implementedType() {
+            return (Class) LeafNode.class;
+        }
     }
 
-    private static final class ImmutableBinaryLeafNode
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, byte[]> implements LeafNode<byte[]> {
+    private static final class ImmutableBinaryLeafNode extends ImmutableLeafNode<byte[]> {
         ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value) {
             super(nodeIdentifier, value);
         }

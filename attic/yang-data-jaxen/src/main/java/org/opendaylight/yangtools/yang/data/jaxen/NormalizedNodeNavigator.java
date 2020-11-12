@@ -53,11 +53,11 @@ final class NormalizedNodeNavigator extends DefaultNavigator
         return (NormalizedNodeContext) context;
     }
 
-    private static NormalizedNode<?, ?> contextNode(final Object context) {
+    private static NormalizedNode contextNode(final Object context) {
         return cast(context).getNode();
     }
 
-    private QName resolveQName(final NormalizedNode<?, ?> node, final String prefix, final String localName) {
+    private QName resolveQName(final NormalizedNode node, final String prefix, final String localName) {
         final QNameModule module;
         if (prefix.isEmpty()) {
             module = node.getNodeType().getModule();
@@ -156,9 +156,9 @@ final class NormalizedNodeNavigator extends DefaultNavigator
 
     @Override
     public String getElementStringValue(final Object element) {
-        final NormalizedNode<?, ?> node = contextNode(element);
+        final NormalizedNode node = contextNode(element);
         if (node instanceof LeafNode || node instanceof LeafSetEntryNode) {
-            final Object value = node.getValue();
+            final Object value = node.body();
 
             // TODO: This is a rather poor approximation of what the codec infrastructure, but it should be sufficient
             //       to work for now. Tracking SchemaPath will mean we will need to wrap each NormalizedNode with a
@@ -210,7 +210,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator
     @Override
     public Iterator<NormalizedNodeContext> getChildAxisIterator(final Object contextNode) {
         final NormalizedNodeContext ctx = cast(contextNode);
-        final NormalizedNode<?, ?> node = ctx.getNode();
+        final NormalizedNode node = ctx.getNode();
         return node instanceof DataContainerNode ? ctx.iterateChildren((DataContainerNode<?>) node) : null;
     }
 
@@ -218,7 +218,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator
     public Iterator<NormalizedNodeContext> getChildAxisIterator(final Object contextNode, final String localName,
             final String namespacePrefix, final String namespaceURI) {
         final NormalizedNodeContext ctx = cast(contextNode);
-        final NormalizedNode<?, ?> node = ctx.getNode();
+        final NormalizedNode node = ctx.getNode();
         return node instanceof DataContainerNode
                 ? ctx.iterateChildrenNamed((DataContainerNode<?>)node, resolveQName(node, namespacePrefix, localName))
                         : null;

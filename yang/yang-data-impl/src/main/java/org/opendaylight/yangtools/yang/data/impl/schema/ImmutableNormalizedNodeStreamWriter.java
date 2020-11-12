@@ -37,10 +37,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -152,7 +152,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startLeafSetEntryNode(final NodeWithValue<?> name) {
         final NormalizedNodeBuilder<?, ?, ?> current = current();
         checkArgument(current instanceof ImmutableLeafSetNodeBuilder
-            || current instanceof ImmutableOrderedLeafSetNodeBuilder || current instanceof NormalizedNodeResultBuilder,
+            || current instanceof ImmutableUserLeafSetNodeBuilder || current instanceof NormalizedNodeResultBuilder,
             "LeafSetEntryNode is not valid for parent %s", current);
         enter(name, leafsetEntryNodeBuilder());
         nextSchema = null;
@@ -219,7 +219,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
         final NormalizedNodeBuilder<?, ?, ?> current = current();
-        checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableOrderedMapNodeBuilder
+        checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableUserMapNodeBuilder
             || current instanceof NormalizedNodeResultBuilder);
 
         enter(identifier, UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
@@ -229,8 +229,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableOrderedMapNodeBuilder.create()
-                : ImmutableOrderedMapNodeBuilder.create(childSizeHint));
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUserMapNodeBuilder.create()
+                : ImmutableUserMapNodeBuilder.create(childSizeHint));
     }
 
     @Override
@@ -277,7 +277,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void endNode() {
         final NormalizedNodeBuilder finishedBuilder = builders.poll();
         checkState(finishedBuilder != null, "Node which should be closed does not exists.");
-        final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
+        final NormalizedNode product = finishedBuilder.build();
         nextSchema = null;
 
         writeChild(product);
@@ -299,7 +299,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * @throws IllegalStateException if there is no open builder
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected final void writeChild(final NormalizedNode<?, ?> child) {
+    protected final void writeChild(final NormalizedNode child) {
         final NormalizedNodeContainerBuilder current = currentContainer();
         checkState(current != null, "Reached top level node, which could not be closed in this writer.");
         current.addChild(requireNonNull(child));
