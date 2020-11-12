@@ -340,13 +340,11 @@ public final class SchemaUtils {
         return realChildNodes;
     }
 
-    public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema,
-            final DataContainerChild<?, ?> child) {
+    public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
         for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
             if (child instanceof AugmentationNode
-                    && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())) {
-                return Optional.of(choiceCaseNode);
-            } else if (choiceCaseNode.findDataChildByName(child.getNodeType()).isPresent()) {
+                    && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())
+                    || choiceCaseNode.findDataChildByName(child.getNodeType()).isPresent()) {
                 return Optional.of(choiceCaseNode);
             }
         }

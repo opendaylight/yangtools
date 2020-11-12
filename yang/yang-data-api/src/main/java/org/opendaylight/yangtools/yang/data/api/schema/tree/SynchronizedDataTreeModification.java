@@ -31,7 +31,7 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     }
 
     @Override
-    public synchronized Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
+    public synchronized Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
         return delegate.readNode(path);
     }
 
@@ -46,12 +46,12 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     }
 
     @Override
-    public synchronized void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    public synchronized void merge(final YangInstanceIdentifier path, final NormalizedNode data) {
         delegate.merge(path, data);
     }
 
     @Override
-    public synchronized void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    public synchronized void write(final YangInstanceIdentifier path, final NormalizedNode data) {
         delegate.write(path, data);
     }
 

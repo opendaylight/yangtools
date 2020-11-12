@@ -50,11 +50,15 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         return new ImmutableChoiceNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableChoiceNode extends AbstractImmutableDataContainerNode<NodeIdentifier>
-            implements ChoiceNode {
-
+    private static final class ImmutableChoiceNode
+            extends AbstractImmutableDataContainerNode<NodeIdentifier, ChoiceNode> implements ChoiceNode {
         ImmutableChoiceNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> children) {
             super(children, nodeIdentifier);
+        }
+
+        @Override
+        protected Class<ChoiceNode> implementedType() {
+            return ChoiceNode.class;
         }
     }
 }

@@ -24,7 +24,7 @@ final class OperationWithModification {
         this.modification = requireNonNull(mod);
     }
 
-    void write(final NormalizedNode<?, ?> value) {
+    void write(final NormalizedNode value) {
         modification.write(value);
         /**
          * Fast validation of structure, full validation on written data will be run during seal.
@@ -32,7 +32,7 @@ final class OperationWithModification {
         applyOperation.quickVerifyStructure(value);
     }
 
-    void merge(final NormalizedNode<?, ?> data, final Version version) {
+    void merge(final NormalizedNode data, final Version version) {
         /*
          * A merge operation will end up overwriting parts of the tree, retaining others. We want to
          * make sure we do not validate the complete resulting structure, but rather just what was
@@ -55,7 +55,7 @@ final class OperationWithModification {
      * Read a particular child. If the child has been modified and does not have a stable
      * view, one will we instantiated with specified version.
      */
-    Optional<NormalizedNode<?, ?>> read(final PathArgument child, final Version version) {
+    Optional<NormalizedNode> read(final PathArgument child, final Version version) {
         final Optional<ModifiedNode> maybeChild = modification.getChild(child);
         if (maybeChild.isPresent()) {
             final ModifiedNode childNode = maybeChild.get();
