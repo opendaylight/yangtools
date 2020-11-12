@@ -80,24 +80,23 @@ final class UniqueValidation extends AbstractValidation {
     }
 
     @Override
-    void enforceOnData(final NormalizedNode<?, ?> data) {
+    void enforceOnData(final NormalizedNode data) {
         enforceOnData(data, (message, values) -> new UniqueValidationFailedException(message));
     }
 
     @Override
-    void enforceOnData(final ModificationPath path, final NormalizedNode<?, ?> data)
-            throws UniqueConstraintException {
+    void enforceOnData(final ModificationPath path, final NormalizedNode data) throws UniqueConstraintException {
         enforceOnData(data, (message, values) -> new UniqueConstraintException(path.toInstanceIdentifier(), values,
             message));
     }
 
-    private <T extends @NonNull Exception> void enforceOnData(final NormalizedNode<?, ?> data,
+    private <T extends @NonNull Exception> void enforceOnData(final NormalizedNode data,
             final ExceptionSupplier<T> exceptionSupplier) throws T {
         final Stopwatch sw = Stopwatch.createStarted();
         verify(data instanceof NormalizedNodeContainer, "Unexpected data %s", data);
-        final var children = ((NormalizedNodeContainer<?, ?, ?>) data).getValue();
+        final var children = ((NormalizedNodeContainer<?, ?>) data).body();
         final var collected = HashMultimap.<UniqueValidator<?>, Object>create(validators.size(), children.size());
-        for (NormalizedNode<?, ?> child : children) {
+        for (NormalizedNode child : children) {
             verify(child instanceof DataContainerNode, "Unexpected child %s", child);
             final DataContainerNode<?> cont = (DataContainerNode<?>) child;
 

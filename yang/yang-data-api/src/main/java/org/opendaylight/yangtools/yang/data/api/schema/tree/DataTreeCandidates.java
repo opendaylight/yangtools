@@ -41,7 +41,7 @@ public final class DataTreeCandidates {
     }
 
     public static @NonNull DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath,
-                                                                final NormalizedNode<?, ?> node) {
+                                                                final NormalizedNode node) {
         return new DefaultDataTreeCandidate(rootPath, new NormalizedNodeDataTreeCandidateNode(node));
     }
 
@@ -115,8 +115,8 @@ public final class DataTreeCandidates {
                                                           final List<DataTreeCandidateNode> input) {
         final DataTreeCandidateNode last = input.get(input.size() - 1);
         ModificationType nodeModification = last.getModificationType();
-        Optional<NormalizedNode<?, ?>> dataBefore = first.getDataBefore();
-        Optional<NormalizedNode<?, ?>> dataAfter = last.getDataAfter();
+        Optional<NormalizedNode> dataBefore = first.getDataBefore();
+        Optional<NormalizedNode> dataAfter = last.getDataAfter();
         switch (nodeModification) {
             case DELETE:
                 ModificationType previous = first.getModificationType();
@@ -211,7 +211,7 @@ public final class DataTreeCandidates {
         for (Iterator<DataTreeCandidateNode> iterator = childNodes.iterator(); iterator.hasNext(); ) {
             cleanUpTree(finalNode, (TerminalDataTreeCandidateNode) iterator.next());
         }
-        Optional<NormalizedNode<?, ?>> dataBefore = finalNode.getDataBefore(identifier);
+        Optional<NormalizedNode> dataBefore = finalNode.getDataBefore(identifier);
 
         switch (nodeModification) {
             case UNMODIFIED:

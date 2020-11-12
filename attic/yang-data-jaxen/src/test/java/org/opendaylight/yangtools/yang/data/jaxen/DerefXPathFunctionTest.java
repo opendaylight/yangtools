@@ -32,9 +32,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
@@ -142,8 +142,8 @@ public class DerefXPathFunctionTest {
 
         final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
 
-        final LeafSetNode<?> referencedLeafListNode = Builders.leafSetBuilder().withNodeIdentifier(
-                new NodeIdentifier(REFERENCED_LEAFLIST))
+        final SystemLeafSetNode<?> referencedLeafListNode = Builders.leafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(REFERENCED_LEAFLIST))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(REFERENCED_LEAFLIST, "referenced-node-entry-value-a"))
                         .withValue("referenced-node-entry-value-a").build())
@@ -173,10 +173,10 @@ public class DerefXPathFunctionTest {
                 .getFunction(null, null, "deref");
         Object derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
-        assertTrue(derefResult instanceof NormalizedNode<?, ?>);
+        assertTrue(derefResult instanceof NormalizedNode);
 
-        final LeafSetEntryNode<?> referencedLeafListNodeEntry = referencedLeafListNode.getChild(
-                new NodeWithValue<>(REFERENCED_LEAFLIST, "referenced-node-entry-value-b")).get();
+        final LeafSetEntryNode<?> referencedLeafListNodeEntry = referencedLeafListNode.childByArg(
+                new NodeWithValue<>(REFERENCED_LEAFLIST, "referenced-node-entry-value-b"));
         assertSame(referencedLeafListNodeEntry, derefResult);
     }
 
@@ -188,7 +188,8 @@ public class DerefXPathFunctionTest {
         final LeafNode<?> iidLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(IID_LEAF))
                 .withValue(iidPath).build();
 
-        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
+        final SystemMapNode myListNode = Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(MY_LIST, keyValues))
                         .withChild(iidLeafNode)
@@ -222,7 +223,8 @@ public class DerefXPathFunctionTest {
         final LeafNode<?> ordinaryLeafBNode = Builders.leafBuilder().withNodeIdentifier(
                 new NodeIdentifier(ORDINARY_LEAF_B)).withValue("value-b").build();
 
-        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
+        final SystemMapNode myListNode = Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(MY_LIST, keyValues))
                         .withChild(referencedLeafNode).build())
@@ -243,7 +245,7 @@ public class DerefXPathFunctionTest {
     }
 
     // variant for a leafref that references a leaf-list
-    private static ContainerNode buildMyContainerNodeForLeafrefTest(final LeafSetNode<?> referencedLeafListNode) {
+    private static ContainerNode buildMyContainerNodeForLeafrefTest(final SystemLeafSetNode<?> referencedLeafListNode) {
         final LeafNode<?> leafListLeafrefNode = Builders.leafBuilder().withNodeIdentifier(
                 new NodeIdentifier(LEAFLIST_LEAFREF_LEAF)).withValue("referenced-node-entry-value-b").build();
 
@@ -259,15 +261,15 @@ public class DerefXPathFunctionTest {
                 .withChild(ordinaryLeafBNode).build();
 
         final Map<QName, Object> keyValues = ImmutableMap.of(KEY_LEAF_A, "value-a", KEY_LEAF_B, "value-b");
-
-        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
+        final SystemMapNode myListNode = Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(MY_LIST, keyValues))
                         .withChild(referencedLeafListNode).build())
                 .build();
 
-        final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
-                new NodeIdentifier(MY_CONTAINER))
+        final ContainerNode myContainerNode = Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_CONTAINER))
                 .withChild(myListNode)
                 .withChild(myInnerContainerNode).build();
         return myContainerNode;

@@ -16,9 +16,9 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -41,10 +41,10 @@ public class Bug2690Test extends AbstractTestModelTest {
     public void testWriteMerge1() throws DataValidationFailedException {
         final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
         final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 2);
-        final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
+        final SystemMapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
                 .withChild(fooEntryNode).build();
-        final MapNode mapNode2 = ImmutableNodes.mapNodeBuilder()
+        final SystemMapNode mapNode2 = ImmutableNodes.mapNodeBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
@@ -63,9 +63,9 @@ public class Bug2690Test extends AbstractTestModelTest {
 
         final DataTreeSnapshot snapshotAfterTx = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationAfterTx = snapshotAfterTx.newModification();
-        final Optional<NormalizedNode<?, ?>> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
+        final Optional<NormalizedNode> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?,?,?>)readNode.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?, ?>)readNode.get()).size());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class Bug2690Test extends AbstractTestModelTest {
     }
 
     private static void verifyTestDeleteStructuralAndWriteChild(final DataTreeSnapshot snapshot) {
-        final Optional<NormalizedNode<?, ?>> readNode = snapshot.readNode(TestModel.NAME_PATH);
+        final Optional<NormalizedNode> readNode = snapshot.readNode(TestModel.NAME_PATH);
         assertTrue(readNode.isPresent());
     }
 

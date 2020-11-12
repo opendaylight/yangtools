@@ -22,16 +22,27 @@ public class ImmutableAnyXmlNodeBuilder
     }
 
     @Override
+    public ImmutableAnyXmlNodeBuilder withValue(final DOMSource withValue) {
+        super.withValue(withValue);
+        return this;
+    }
+
+    @Override
     public DOMSourceAnyxmlNode build() {
         return new ImmutableXmlNode(getNodeIdentifier(), getValue());
     }
 
     private static final class ImmutableXmlNode
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSource>
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSourceAnyxmlNode, DOMSource>
             implements DOMSourceAnyxmlNode {
 
         ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value) {
             super(nodeIdentifier, value);
+        }
+
+        @Override
+        protected Class<DOMSourceAnyxmlNode> implementedType() {
+            return DOMSourceAnyxmlNode.class;
         }
     }
 }
