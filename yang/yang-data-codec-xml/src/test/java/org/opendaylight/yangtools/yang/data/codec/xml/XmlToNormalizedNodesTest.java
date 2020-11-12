@@ -116,10 +116,10 @@ public class XmlToNormalizedNodesTest {
         xmlParser.flush();
         xmlParser.close();
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
-        final NormalizedNode<?, ?> expectedNormalizedNode = buildOuterContainerNode();
+        final NormalizedNode expectedNormalizedNode = buildOuterContainerNode();
         assertNotNull(expectedNormalizedNode);
 
         assertEquals(expectedNormalizedNode, transformedInput);
@@ -138,7 +138,7 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -280,7 +280,7 @@ public class XmlToNormalizedNodesTest {
         }
     }
 
-    private static NormalizedNode<?, ?> buildOuterContainerNode() {
+    private static NormalizedNode buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_KEYED_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(

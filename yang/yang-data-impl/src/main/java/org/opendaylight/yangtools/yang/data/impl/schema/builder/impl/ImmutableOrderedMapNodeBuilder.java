@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -162,13 +165,15 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         }
 
         @Override
-        public int getSize() {
-            return children.size();
+        public Collection<MapEntryNode> body() {
+            return UnmodifiableCollection.create(children.values());
         }
 
         @Override
-        public Collection<MapEntryNode> getValue() {
-            return UnmodifiableCollection.create(children.values());
+        public Map<NodeIdentifierWithPredicates, MapEntryNode> asMap() {
+            // FIXME: we need unmasking here, i.e. UnmodifiableMap
+            return children instanceof ImmutableMap || children instanceof Immutable ? children
+                : Collections.unmodifiableMap(children);
         }
     }
 }
