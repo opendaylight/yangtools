@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -124,7 +124,7 @@ public final class TestModel {
         final LeafSetEntryNode<Object> puma = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
                 new NodeWithValue<>(SHOE_QNAME, "puma")).withValue("puma").build();
 
-        final LeafSetNode<Object> shoes = ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(
+        final SystemLeafSetNode<Object> shoes = ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(
                 new NodeIdentifier(SHOE_QNAME)).withChild(nike).withChild(puma).build();
 
         // Test a leaf-list where each entry contains an identity
@@ -136,7 +136,7 @@ public final class TestModel {
                                         TEST_QNAME, "capability"), DESC_QNAME))
                         .withValue(DESC_QNAME).build();
 
-        final LeafSetNode<Object> capabilities =
+        final SystemLeafSetNode<Object> capabilities =
                 ImmutableLeafSetNodeBuilder
                         .create()
                         .withNodeIdentifier(
@@ -163,7 +163,7 @@ public final class TestModel {
                         .withNodeIdentifier(
                                 new NodeWithValue<>(QName.create(
                                         TEST_QNAME, "number"), 15)).withValue(15).build();
-        final LeafSetNode<Object> numbers =
+        final SystemLeafSetNode<Object> numbers =
                 ImmutableLeafSetNodeBuilder
                         .create()
                         .withNodeIdentifier(

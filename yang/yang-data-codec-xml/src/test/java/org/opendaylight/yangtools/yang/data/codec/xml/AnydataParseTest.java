@@ -35,7 +35,7 @@ public class AnydataParseTest extends AbstractAnydataTest {
             SCHEMA_CONTEXT.findDataChildByName(FOO_QNAME).get(), true);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> parsed = result.getResult();
+        final NormalizedNode parsed = result.getResult();
         assertTrue(parsed instanceof AnydataNode);
     }
 }
