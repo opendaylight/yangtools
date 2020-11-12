@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -118,9 +120,9 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        final Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?, ?>) minMaxListRead.get()).size());
     }
 
     @Test(expected = DataValidationFailedException.class)
@@ -149,9 +151,9 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare1);
 
         DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?, ?>) minMaxListRead.get()).size());
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(gooPath, gooEntryNode);
@@ -164,7 +166,7 @@ public class ListConstraintsValidation {
         snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertEquals(3, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
+        assertEquals(3, ((NormalizedNodeContainer<?, ?>) minMaxListRead.get()).size());
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -204,12 +206,13 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare1);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+        final Optional<NormalizedNode> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
-        final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
-                .getChild(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
-        assertTrue(leafList.isPresent());
-        assertEquals(2, leafList.get().size());
+        final NormalizedNodeContainer<?, ?> leafList =
+            (NormalizedNodeContainer<?, ?>) ((DistinctNodeContainer) masterContainer.get())
+                .childByArg(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
+        assertNotNull(leafList);
+        assertEquals(2, leafList.size());
     }
 
     @Test
@@ -271,9 +274,9 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare1);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
+        final Optional<NormalizedNode> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
         assertTrue(unkeyedListRead.isPresent());
-        assertTrue(((UnkeyedListNode) unkeyedListRead.get()).getSize() == 1);
+        assertTrue(((UnkeyedListNode) unkeyedListRead.get()).size() == 1);
     }
 
     @Test

@@ -9,27 +9,23 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedSimpleValueNode<K extends PathArgument,V>
-        extends AbstractImmutableNormalizedValueNode<K, V> {
+public abstract class AbstractImmutableNormalizedSimpleValueNode<K extends PathArgument, N extends NormalizedNode, V>
+        extends AbstractImmutableNormalizedValueNode<K, N, V> {
     protected AbstractImmutableNormalizedSimpleValueNode(final K nodeIdentifier, final V value) {
         super(nodeIdentifier, value);
     }
 
     @Override
-    protected int valueHashCode() {
-        final V local = value();
-        final int result = local != null ? local.hashCode() : 1;
-        // FIXME: are attributes part of hashCode/equals?
-        return result;
+    protected final int valueHashCode() {
+        return value().hashCode();
     }
 
     @Override
-    protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-        // We can not call directly getValue.equals because of Empty Type
+    protected final boolean valueEquals(final N other) {
+        // We can not call directly body().equals because of Empty Type
         // RequireInstanceStatementSupport leaves which always have NULL value
-
-        // FIXME: are attributes part of hashCode/equals?
-        return Objects.deepEquals(value(), other.getValue());
+        return Objects.deepEquals(value(), other.body());
     }
 }

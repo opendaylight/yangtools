@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
@@ -61,14 +60,11 @@ public class AnyXmlWithParamsParsingTest {
 
         final XmlParserStream xmlParser = XmlParserStream.create(writer, SCHEMA, SCHEMA_NODE);
         xmlParser.traverse(new DOMSource(doc.getDocumentElement()));
-        final NormalizedNode<?, ?> parsed = resultHolder.getResult();
+        final NormalizedNode parsed = resultHolder.getResult();
 
-        final DataContainerChild<? extends PathArgument, ?> editCfg = ((ContainerNode) parsed)
-                .getChild(getNodeId(parsed, "edit-content")).get();
-
+        final DataContainerChild editCfg = ((ContainerNode) parsed).childByArg(getNodeId(parsed, "edit-content"));
         final DOMSource anyXmlParsedDom = ((DOMSourceAnyxmlNode) ((ChoiceNode) editCfg)
-                .getChild(getNodeId(parsed, "config")).get())
-                .getValue();
+                .childByArg(getNodeId(parsed, "config"))).body();
 
         assertNotNull(anyXmlParsedDom);
         final String anyXmlParsedDomString = toStringDom(anyXmlParsedDom);
@@ -83,7 +79,7 @@ public class AnyXmlWithParamsParsingTest {
                 "interface-configurations xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg\""));
     }
 
-    private static NodeIdentifier getNodeId(final NormalizedNode<?, ?> parsed, final String localName) {
+    private static NodeIdentifier getNodeId(final NormalizedNode parsed, final String localName) {
         return new NodeIdentifier(QName.create(parsed.getNodeType(), localName));
     }
 

@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
 public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmentationNodeBuilder {
-
     private final DataNodeContainerValidator validator;
 
     protected ImmutableAugmentationNodeSchemaAwareBuilder(final AugmentationSchemaNode schema) {
@@ -33,7 +32,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         return super.withChild(validator.validateChild(child));
     }
 

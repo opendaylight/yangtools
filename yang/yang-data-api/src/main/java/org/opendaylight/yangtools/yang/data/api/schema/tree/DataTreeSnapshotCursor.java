@@ -92,7 +92,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                servicing the request.
      * @throws IllegalArgumentException when specified path does not identify a valid child.
      */
-    Optional<NormalizedNode<?, ?>> readNode(@NonNull PathArgument child);
+    Optional<NormalizedNode> readNode(@NonNull PathArgument child);
 
     /**
      * Close this cursor. Attempting any further operations on the cursor will lead

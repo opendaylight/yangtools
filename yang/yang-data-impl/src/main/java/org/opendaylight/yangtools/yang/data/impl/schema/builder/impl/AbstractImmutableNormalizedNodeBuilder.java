@@ -10,14 +10,15 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 
-abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V, R extends NormalizedNode<I, ?>>
+abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V, R extends NormalizedNode>
         implements NormalizedNodeBuilder<I, V, R> {
-    private I nodeIdentifier;
-    private V value;
+    private @Nullable I nodeIdentifier = null;
+    private @Nullable V value = null;
 
     protected final I getNodeIdentifier() {
         checkState(nodeIdentifier != null, "Identifier has not been set");

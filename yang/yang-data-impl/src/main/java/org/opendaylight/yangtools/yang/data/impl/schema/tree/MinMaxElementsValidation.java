@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.RequiredElementCountException;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -43,13 +44,12 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     }
 
     @Override
-    void enforceOnData(final NormalizedNode<?, ?> data) {
+    void enforceOnData(final NormalizedNode data) {
         enforceOnData(data, (actual, message) -> new IllegalArgumentException(message));
     }
 
     @Override
-    void enforceOnData(final ModificationPath path, final NormalizedNode<?, ?> data)
-            throws RequiredElementCountException {
+    void enforceOnData(final ModificationPath path, final NormalizedNode data) throws RequiredElementCountException {
         enforceOnData(data, (actual, message) -> new RequiredElementCountException(path.toInstanceIdentifier(),
             minElements, maxElements, actual, message));
     }
@@ -60,9 +60,10 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
         T get(int actual, String message);
     }
 
-    private <X extends @NonNull Exception> void enforceOnData(final NormalizedNode<?, ?> value,
+    private <X extends @NonNull Exception> void enforceOnData(final NormalizedNode value,
             final ExceptionSupplier<X> exceptionSupplier) throws X {
-        final int children = numOfChildrenFromValue(value);
+        checkArgument(value instanceof NormalizedNodeContainer, "Value %s is not a NormalizedNodeContainer", value);
+        final int children = ((NormalizedNodeContainer) value).size();
         if (minElements > children) {
             throw exceptionSupplier.get(children, value.getIdentifier()
                 + " does not have enough elements (" + children + "), needs at least " + minElements);
@@ -76,17 +77,5 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return super.addToStringAttributes(helper.add("min", minElements).add("max", maxElements));
-    }
-
-    private static int numOfChildrenFromValue(final NormalizedNode<?, ?> value) {
-        if (value instanceof NormalizedNodeContainer) {
-            return ((NormalizedNodeContainer<?, ?, ?>) value).size();
-        } else if (value instanceof UnkeyedListNode) {
-            return ((UnkeyedListNode) value).getSize();
-        }
-
-        throw new IllegalArgumentException(String.format(
-                "Unexpected type '%s', expected types are NormalizedNodeContainer and UnkeyedListNode",
-                value.getClass()));
     }
 }
