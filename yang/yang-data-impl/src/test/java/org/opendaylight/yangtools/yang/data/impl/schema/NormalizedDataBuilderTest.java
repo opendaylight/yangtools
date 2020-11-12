@@ -70,9 +70,8 @@ public class NormalizedDataBuilderTest {
         LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withChildValue(1)
-                .withChild(
-                        Builders.<Integer>leafSetEntryBuilder()
-                                .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
+                .withChild(Builders.<Integer>leafSetEntryBuilder()
+                        .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
                 .build();
         builder.withChild(leafList);
 
@@ -116,8 +115,10 @@ public class NormalizedDataBuilderTest {
         builder.withChild(leafChild);
 
         LeafListSchemaNode leafListSchemaNode = (LeafListSchemaNode) getSchemaNode(schema, "test", "leafList");
-        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder(leafListSchemaNode).withChildValue(1)
-                .withChild(Builders.<Integer>leafSetEntryBuilder(leafListSchemaNode).withValue(3).build()).build();
+        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder(leafListSchemaNode)
+                .withChildValue(1)
+                .withChild(Builders.<Integer>leafSetEntryBuilder(leafListSchemaNode).withValue(3).build())
+                .build();
         builder.withChild(leafList);
 
         ListSchemaNode listSchema = (ListSchemaNode) getSchemaNode(schema, "test", "list");

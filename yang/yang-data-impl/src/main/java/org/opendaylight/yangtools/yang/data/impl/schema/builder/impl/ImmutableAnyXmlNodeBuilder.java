@@ -22,6 +22,12 @@ public class ImmutableAnyXmlNodeBuilder
     }
 
     @Override
+    public ImmutableAnyXmlNodeBuilder withValue(final DOMSource withValue) {
+        super.withValue(withValue);
+        return this;
+    }
+
+    @Override
     public DOMSourceAnyxmlNode build() {
         return new ImmutableXmlNode(getNodeIdentifier(), getValue());
     }

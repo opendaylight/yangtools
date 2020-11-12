@@ -42,7 +42,7 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topCont);
         xmlParser.parse(reader);
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -62,7 +62,7 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topCont);
         xmlParser.parse(reader);
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -82,7 +82,7 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topCont);
         xmlParser.parse(reader);
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 }

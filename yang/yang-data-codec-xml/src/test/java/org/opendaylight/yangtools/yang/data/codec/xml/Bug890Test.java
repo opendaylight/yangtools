@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -73,18 +72,17 @@ public class Bug890Test {
         assertTrue(result.getResult() instanceof ContainerNode);
         final ContainerNode rootContainer = (ContainerNode) result.getResult();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> myLeaf =
-                rootContainer.getChild(new NodeIdentifier(OUTGOING_LABELS_QNAME));
-        assertTrue(myLeaf.orElse(null) instanceof ContainerNode);
+        DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(OUTGOING_LABELS_QNAME));
+        assertTrue(myLeaf instanceof ContainerNode);
 
-        ContainerNode outgoingLabelsContainer = (ContainerNode)myLeaf.get();
-        Optional<DataContainerChild<? extends PathArgument, ?>> outgoingLabelsList =
-                outgoingLabelsContainer.getChild(new NodeIdentifier(OUTGOING_LABELS_QNAME));
-        assertTrue(outgoingLabelsList.orElse(null) instanceof MapNode);
-        MapNode outgoingLabelsMap = (MapNode) outgoingLabelsList.get();
+        ContainerNode outgoingLabelsContainer = (ContainerNode)myLeaf;
+        DataContainerChild outgoingLabelsList =
+                outgoingLabelsContainer.childByArg(new NodeIdentifier(OUTGOING_LABELS_QNAME));
+        assertTrue(outgoingLabelsList instanceof MapNode);
+        MapNode outgoingLabelsMap = (MapNode) outgoingLabelsList;
 
         assertEquals(2, outgoingLabelsMap.size());
-        Collection<MapEntryNode> labels = outgoingLabelsMap.getValue();
+        Collection<MapEntryNode> labels = outgoingLabelsMap.body();
         NodeIdentifierWithPredicates firstNodeId =
                 NodeIdentifierWithPredicates.of(OUTGOING_LABELS_QNAME, INDEX_QNAME, 0);
         NodeIdentifierWithPredicates secondNodeId =
