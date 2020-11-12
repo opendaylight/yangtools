@@ -89,14 +89,14 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    public void write(final YangInstanceIdentifier path, final NormalizedNode data) {
         checkSealed();
         checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).write(data);
     }
 
     @Override
-    public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    public void merge(final YangInstanceIdentifier path, final NormalizedNode data) {
         checkSealed();
         checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).merge(data, version);
@@ -110,7 +110,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
+    public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
         /*
          * Walk the tree from the top, looking for the first node between root and
          * the requested path which has been modified. If no such node exists,
@@ -123,7 +123,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         final Optional<? extends TreeNode> result = resolveSnapshot(key, mod);
         if (result.isPresent()) {
-            final NormalizedNode<?, ?> data = result.get().getData();
+            final NormalizedNode data = result.get().getData();
             return NormalizedNodes.findNode(key, data, path);
         }
 
@@ -277,13 +277,13 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
     }
 
-    static void checkIdentifierReferencesData(final PathArgument arg, final NormalizedNode<?, ?> data) {
+    static void checkIdentifierReferencesData(final PathArgument arg, final NormalizedNode data) {
         checkArgument(arg.equals(data.getIdentifier()),
             "Instance identifier references %s but data identifier is %s", arg, data.getIdentifier());
     }
 
     private void checkIdentifierReferencesData(final YangInstanceIdentifier path,
-            final NormalizedNode<?, ?> data) {
+            final NormalizedNode data) {
         final PathArgument arg;
 
         if (!path.isEmpty()) {

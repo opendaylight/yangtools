@@ -22,5 +22,5 @@ public interface XPathDocument {
      *
      * @return This document's root node.
      */
-    @NonNull NormalizedNode<?, ?> getRootNode();
+    @NonNull NormalizedNode getRootNode();
 }

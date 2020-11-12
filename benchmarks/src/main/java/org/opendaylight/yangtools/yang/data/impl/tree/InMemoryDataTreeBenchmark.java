@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -78,7 +79,7 @@ public class InMemoryDataTreeBenchmark {
     private static final MapNode TEN_ITEM_INNER_LIST = initInnerListItems(10);
 
     private static MapNode initInnerListItems(final int count) {
-        final CollectionNodeBuilder<MapEntryNode, MapNode> mapEntryBuilder = ImmutableNodes
+        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapEntryBuilder = ImmutableNodes
             .mapNodeBuilder(BenchmarkModel.INNER_LIST);
 
         for (int i = 0; i < count; ++i) {
@@ -89,14 +90,14 @@ public class InMemoryDataTreeBenchmark {
         return mapEntryBuilder.build();
     }
 
-    private static final NormalizedNode<?, ?>[] OUTER_LIST_ONE_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_100K,
+    private static final NormalizedNode[] OUTER_LIST_ONE_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_100K,
         ONE_ITEM_INNER_LIST);
-    private static final NormalizedNode<?, ?>[] OUTER_LIST_TWO_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_50K,
+    private static final NormalizedNode[] OUTER_LIST_TWO_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_50K,
         TWO_ITEM_INNER_LIST);
-    private static final NormalizedNode<?, ?>[] OUTER_LIST_TEN_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_10K,
+    private static final NormalizedNode[] OUTER_LIST_TEN_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_10K,
         TEN_ITEM_INNER_LIST);
 
-    private static NormalizedNode<?,?>[] initOuterListItems(final int outerListItemsCount, final MapNode innerList) {
+    private static NormalizedNode[] initOuterListItems(final int outerListItemsCount, final MapNode innerList) {
         return Arrays.stream(OUTER_LIST_IDS).limit(outerListItemsCount)
                 .map(id -> ImmutableNodes.mapEntryBuilder().withNodeIdentifier(id).withChild(innerList).build())
                 .collect(Collectors.toList()).toArray(new NormalizedNode[0]);

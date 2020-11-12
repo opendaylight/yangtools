@@ -24,7 +24,7 @@ public interface DataTreeSnapshot extends EffectiveModelContextProvider {
      * @param path Path of the node
      * @return Optional result encapsulating the presence and value of the node
      */
-    Optional<NormalizedNode<?, ?>> readNode(YangInstanceIdentifier path);
+    Optional<NormalizedNode> readNode(YangInstanceIdentifier path);
 
     /**
      * Create a new data tree modification based on this snapshot, using the

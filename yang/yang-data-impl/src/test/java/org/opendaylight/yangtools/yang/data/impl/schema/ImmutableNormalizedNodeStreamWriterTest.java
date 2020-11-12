@@ -38,9 +38,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 
@@ -128,18 +129,19 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                 .forStreamWriter(immutableNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(buildOuterContainerNode());
 
-        final NormalizedNode<?, ?> output = result.getResult();
+        final NormalizedNode output = result.getResult();
         assertNotNull(output);
 
-        final NormalizedNode<?, ?> expectedNormalizedNode = buildOuterContainerNode();
+        final NormalizedNode expectedNormalizedNode = buildOuterContainerNode();
         assertNotNull(expectedNormalizedNode);
 
         assertEquals(expectedNormalizedNode, output);
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    private NormalizedNode buildOuterContainerNode() {
         // my-container-1
-        MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
+        SystemMapNode myKeyedListNode = Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "listkeyvalue1"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList1))
@@ -153,7 +155,7 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList2))
                                 .withValue("listleafvalue22").build()).build()).build();
 
-        OrderedMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
             new NodeIdentifier(myOrderedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(myOrderedList, myKeyLeafInOrderedList, "olistkeyvalue1"))
@@ -182,21 +184,24 @@ public class ImmutableNormalizedNodeStreamWriterTest {
         LeafNode<?> myLeaf1Node = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeaf1))
                 .withValue("value1").build();
 
-        LeafSetNode<?> myLeafListNode = Builders.leafSetBuilder().withNodeIdentifier(new NodeIdentifier(myLeafList))
+        LeafSetNode<?> myLeafListNode = Builders.leafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myLeafList))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myLeafList, "lflvalue1")).withValue("lflvalue1").build())
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
-                        new NodeWithValue<>(myLeafList, "lflvalue2")).withValue("lflvalue2").build()).build();
+                        new NodeWithValue<>(myLeafList, "lflvalue2")).withValue("lflvalue2").build())
+                .build();
 
-        LeafSetNode<?> myOrderedLeafListNode = Builders.orderedLeafSetBuilder().withNodeIdentifier(
-                new NodeIdentifier(myOrderedLeafList))
+        LeafSetNode<?> myOrderedLeafListNode = Builders.orderedLeafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myOrderedLeafList))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myOrderedLeafList, "olflvalue1")).withValue("olflvalue1").build())
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
-                        new NodeWithValue<>(myOrderedLeafList, "olflvalue2")).withValue("olflvalue2").build()).build();
+                        new NodeWithValue<>(myOrderedLeafList, "olflvalue2")).withValue("olflvalue2").build())
+                .build();
 
-        ContainerNode myContainer1Node = Builders.containerBuilder().withNodeIdentifier(
-                new NodeIdentifier(myContainer1))
+        ContainerNode myContainer1Node = Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myContainer1))
                 .withChild(myKeyedListNode)
                 .withChild(myOrderedListNode)
                 .withChild(myUnkeyedListNode)
