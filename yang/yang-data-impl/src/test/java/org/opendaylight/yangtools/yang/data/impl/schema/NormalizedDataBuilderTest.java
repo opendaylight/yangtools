@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -67,7 +68,7 @@ public class NormalizedDataBuilderTest {
         builder.withChild(leafChild);
 
         // leafList
-        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder()
+        LeafSetNode<Unordered, Integer> leafList = Builders.<Integer>leafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withChildValue(1)
                 .withChild(
@@ -116,8 +117,10 @@ public class NormalizedDataBuilderTest {
         builder.withChild(leafChild);
 
         LeafListSchemaNode leafListSchemaNode = (LeafListSchemaNode) getSchemaNode(schema, "test", "leafList");
-        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder(leafListSchemaNode).withChildValue(1)
-                .withChild(Builders.<Integer>leafSetEntryBuilder(leafListSchemaNode).withValue(3).build()).build();
+        LeafSetNode<Unordered, Integer> leafList = Builders.<Integer>leafSetBuilder(leafListSchemaNode)
+                .withChildValue(1)
+                .withChild(Builders.<Integer>leafSetEntryBuilder(leafListSchemaNode).withValue(3).build())
+                .build();
         builder.withChild(leafList);
 
         ListSchemaNode listSchema = (ListSchemaNode) getSchemaNode(schema, "test", "list");

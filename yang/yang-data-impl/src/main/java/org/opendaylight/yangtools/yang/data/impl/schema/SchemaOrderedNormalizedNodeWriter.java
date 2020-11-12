@@ -65,7 +65,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     @Override
-    public SchemaOrderedNormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
+    public SchemaOrderedNormalizedNodeWriter write(final NormalizedNode node) throws IOException {
         if (Objects.equals(root, schemaContext)) {
             currentSchemaNode = schemaContext.getDataChildByName(node.getNodeType());
         } else {
@@ -82,7 +82,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
      * @return NormalizedNodeWriter this
      * @throws IOException when thrown from the backing writer.
      */
-    public SchemaOrderedNormalizedNodeWriter write(final Collection<DataContainerChild<?,?>> nodes) throws IOException {
+    public SchemaOrderedNormalizedNodeWriter write(final Collection<DataContainerChild> nodes) throws IOException {
         currentSchemaNode = root;
         if (writeChildren(nodes, currentSchemaNode, false)) {
             return this;
@@ -91,7 +91,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         throw new IllegalStateException("It wasn't possible to serialize nodes " + nodes);
     }
 
-    private SchemaOrderedNormalizedNodeWriter write(final NormalizedNode<?, ?> node, final SchemaNode dataSchemaNode)
+    private SchemaOrderedNormalizedNodeWriter write(final NormalizedNode node, final SchemaNode dataSchemaNode)
             throws IOException {
 
         //Set current schemaNode
@@ -112,22 +112,22 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         throw new IllegalStateException("It wasn't possible to serialize node " + node);
     }
 
-    private void write(final List<NormalizedNode<?, ?>> nodes, final SchemaNode dataSchemaNode) throws IOException {
-        for (final NormalizedNode<?, ?> node : nodes) {
+    private void write(final List<NormalizedNode> nodes, final SchemaNode dataSchemaNode) throws IOException {
+        for (final NormalizedNode node : nodes) {
             write(node, dataSchemaNode);
         }
     }
 
     @Override
-    protected boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
+    protected boolean writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
         return writeChildren(children, currentSchemaNode, true);
     }
 
-    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children,
-            final SchemaNode parentSchemaNode, final boolean endParent) throws IOException {
+    private boolean writeChildren(final Iterable<? extends NormalizedNode> children, final SchemaNode parentSchemaNode,
+            final boolean endParent) throws IOException {
         //Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
-        final ArrayListMultimap<QName, NormalizedNode<?, ?>> qNameToNodes = ArrayListMultimap.create();
-        for (final NormalizedNode<?, ?> child : children) {
+        final ArrayListMultimap<QName, NormalizedNode> qNameToNodes = ArrayListMultimap.create();
+        for (final NormalizedNode child : children) {
             if (child instanceof AugmentationNode) {
                 qNameToNodes.putAll(resolveAugmentations(child));
             } else {
@@ -152,7 +152,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
                 }
             }
         } else {
-            for (final NormalizedNode<?, ?> child : children) {
+            for (final NormalizedNode child : children) {
                 writeLeaf(child);
             }
         }
@@ -162,7 +162,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         return true;
     }
 
-    private SchemaOrderedNormalizedNodeWriter writeLeaf(final NormalizedNode<?, ?> node) throws IOException {
+    private SchemaOrderedNormalizedNodeWriter writeLeaf(final NormalizedNode node) throws IOException {
         if (wasProcessAsSimpleNode(node)) {
             return this;
         }
@@ -170,9 +170,9 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         throw new IllegalStateException("It wasn't possible to serialize node " + node);
     }
 
-    private ArrayListMultimap<QName, NormalizedNode<?, ?>> resolveAugmentations(final NormalizedNode<?, ?> child) {
-        final ArrayListMultimap<QName, NormalizedNode<?, ?>> resolvedAugs = ArrayListMultimap.create();
-        for (final NormalizedNode<?, ?> node : ((AugmentationNode) child).getValue()) {
+    private ArrayListMultimap<QName, NormalizedNode> resolveAugmentations(final NormalizedNode child) {
+        final ArrayListMultimap<QName, NormalizedNode> resolvedAugs = ArrayListMultimap.create();
+        for (final NormalizedNode node : ((AugmentationNode) child).body()) {
             if (node instanceof AugmentationNode) {
                 resolvedAugs.putAll(resolveAugmentations(node));
             } else {

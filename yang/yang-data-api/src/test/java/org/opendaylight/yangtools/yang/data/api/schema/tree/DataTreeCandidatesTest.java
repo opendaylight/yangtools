@@ -49,7 +49,7 @@ public class DataTreeCandidatesTest {
     @Test
     public void testFromNormalizedNode() {
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         final DataTreeCandidate dataTreeCandidate = DataTreeCandidates.fromNormalizedNode(mockedRootPath,
                 mockedNormalizedNode);
 
@@ -135,7 +135,7 @@ public class DataTreeCandidatesTest {
         doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
         doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
 
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
@@ -163,7 +163,7 @@ public class DataTreeCandidatesTest {
 
         final DataTreeCandidateNode mockedChildNode2 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.WRITE).when(mockedChildNode2).getModificationType();
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedChildNode2).getDataAfter();
         final PathArgument mockedPathArgument2 = mock(PathArgument.class);
         doReturn(mockedPathArgument2).when(mockedChildNode2).getIdentifier();

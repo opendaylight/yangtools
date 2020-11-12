@@ -13,49 +13,48 @@ import java.util.Collections;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedMapNodeBuilder {
+public class ImmutableUserMapNodeSchemaAwareBuilder extends ImmutableUserMapNodeBuilder {
     private final ListSchemaNode schema;
 
-    protected ImmutableOrderedMapNodeSchemaAwareBuilder(final ListSchemaNode schema) {
+    protected ImmutableUserMapNodeSchemaAwareBuilder(final ListSchemaNode schema) {
         this.schema = requireNonNull(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    protected ImmutableOrderedMapNodeSchemaAwareBuilder(final ListSchemaNode schema,
-            final ImmutableOrderedMapNode node) {
+    protected ImmutableUserMapNodeSchemaAwareBuilder(final ListSchemaNode schema,
+            final ImmutableUserMapNode node) {
         super(node);
         this.schema = requireNonNull(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema) {
-        return new ImmutableOrderedMapNodeSchemaAwareBuilder(schema);
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, UserMapNode> create(final ListSchemaNode schema) {
+        return new ImmutableUserMapNodeSchemaAwareBuilder(schema);
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema,
-        final MapNode node) {
-        if (!(node instanceof ImmutableOrderedMapNode)) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, UserMapNode> create(final ListSchemaNode schema,
+            final UserMapNode node) {
+        if (!(node instanceof ImmutableUserMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
 
-        return new ImmutableOrderedMapNodeSchemaAwareBuilder(schema, (ImmutableOrderedMapNode) node);
+        return new ImmutableUserMapNodeSchemaAwareBuilder(schema, (ImmutableUserMapNode) node);
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withChild(final MapEntryNode child) {
+    public CollectionNodeBuilder<MapEntryNode, UserMapNode> withChild(final MapEntryNode child) {
         DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(),
             schema, Collections.singleton(schema.getQName()));
         return super.withChild(child);
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withNodeIdentifier(
+    public CollectionNodeBuilder<MapEntryNode, UserMapNode> withNodeIdentifier(
             final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
