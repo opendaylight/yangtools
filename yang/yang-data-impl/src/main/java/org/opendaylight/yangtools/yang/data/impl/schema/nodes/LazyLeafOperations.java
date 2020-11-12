@@ -30,14 +30,13 @@ public final class LazyLeafOperations {
         // Hidden on purpose
     }
 
-    public static @Nullable DataContainerChild<?, ?> getChild(final Map<PathArgument, Object> map,
-            final PathArgument key) {
+    public static @Nullable DataContainerChild getChild(final Map<PathArgument, Object> map, final PathArgument key) {
         final Object value = map.get(key);
         return value == null ? null : decodeChild(key, value);
     }
 
-    public static void putChild(final Map<PathArgument, Object> map, final DataContainerChild<?, ?> child) {
-        final DataContainerChild<?, ?> node = requireNonNull(child);
+    public static void putChild(final Map<PathArgument, Object> map, final DataContainerChild child) {
+        final DataContainerChild node = requireNonNull(child);
         map.put(node.getIdentifier(), encodeExpendableChild(node));
     }
 
@@ -46,17 +45,17 @@ public final class LazyLeafOperations {
         return ImmutableNodes.leafNode((NodeIdentifier) key, value);
     }
 
-    private static @Nullable DataContainerChild<?, ?> decodeChild(final PathArgument key, final @NonNull Object value) {
+    private static @Nullable DataContainerChild decodeChild(final PathArgument key, final @NonNull Object value) {
         return decodeExpendableChild(key, value);
     }
 
-    private static @NonNull DataContainerChild<?, ?> decodeExpendableChild(final PathArgument key,
-            @NonNull final Object value) {
-        return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value : coerceLeaf(key, value);
+    private static @NonNull DataContainerChild decodeExpendableChild(final PathArgument key,
+            final @NonNull Object value) {
+        return value instanceof DataContainerChild ? (DataContainerChild) value : coerceLeaf(key, value);
     }
 
-    private static @NonNull Object encodeExpendableChild(final @NonNull DataContainerChild<?, ?> node) {
-        return node instanceof LeafNode ? verifyEncode(((LeafNode<?>) node).getValue()) : node;
+    private static @NonNull Object encodeExpendableChild(final @NonNull DataContainerChild node) {
+        return node instanceof LeafNode ? verifyEncode(((LeafNode<?>) node).body()) : node;
     }
 
     private static @NonNull Object verifyEncode(final @NonNull Object value) {

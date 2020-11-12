@@ -99,7 +99,7 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
      * @throws IllegalArgumentException if metadata does not match data
      * @throws IOException when thrown from the backing writer.
      */
-    public @NonNull NormalizedMetadataWriter write(final NormalizedNode<?, ?> data, final NormalizedMetadata metadata)
+    public @NonNull NormalizedMetadataWriter write(final NormalizedNode data, final NormalizedMetadata metadata)
             throws IOException {
         final PathArgument dataId = data.getIdentifier();
         final PathArgument metaId = metadata.getIdentifier();

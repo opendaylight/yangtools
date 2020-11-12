@@ -128,16 +128,16 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                 .forStreamWriter(immutableNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(buildOuterContainerNode());
 
-        final NormalizedNode<?, ?> output = result.getResult();
+        final NormalizedNode output = result.getResult();
         assertNotNull(output);
 
-        final NormalizedNode<?, ?> expectedNormalizedNode = buildOuterContainerNode();
+        final NormalizedNode expectedNormalizedNode = buildOuterContainerNode();
         assertNotNull(expectedNormalizedNode);
 
         assertEquals(expectedNormalizedNode, output);
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    private NormalizedNode buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(

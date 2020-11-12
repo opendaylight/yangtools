@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 public class NormalizedNodeDataTreeCandidateNodeTest {
 
     @Test
     public void testNormalizedNodeDataTreeCandidateNode() {
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNode);
 
@@ -44,14 +44,14 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         assertEquals(Optional.of(mockedNormalizedNode), normalizedNodeDataTreeCandidateNode.getDataAfter());
         assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getDataBefore());
 
-        final NormalizedNodeContainer mockedNormalizedNodeContainer = mock(NormalizedNodeContainer.class);
+        final DistinctNodeContainer mockedNormalizedNodeContainer = mock(DistinctNodeContainer.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode2 = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNodeContainer);
-        final NormalizedNode<?, ?> mockedChildNormNode1 = mock(NormalizedNode.class);
-        final NormalizedNode<?, ?> mockedChildNormNode2 = mock(NormalizedNode.class);
-        final Collection<NormalizedNode<?, ?>> mockedChildNodes = Arrays.asList(mockedChildNormNode1,
+        final NormalizedNode mockedChildNormNode1 = mock(NormalizedNode.class);
+        final NormalizedNode mockedChildNormNode2 = mock(NormalizedNode.class);
+        final Collection<NormalizedNode> mockedChildNodes = Arrays.asList(mockedChildNormNode1,
                 mockedChildNormNode2, null);
-        doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).getValue();
+        doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).body();
         final Collection<DataTreeCandidateNode> childNodes2 = normalizedNodeDataTreeCandidateNode2.getChildNodes();
         assertEquals(3, childNodes2.size());
 
