@@ -37,7 +37,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         this.nodeIdentifier = node.getIdentifier();
         // FIXME: clean this up, notably reuse unmodified lists
         this.value = new LinkedList<>();
-        Iterables.addAll(value, node.getValue());
+        Iterables.addAll(value, node.body());
         this.dirty = true;
     }
 
@@ -125,7 +125,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public ImmutableList<UnkeyedListEntryNode> getValue() {
+        public ImmutableList<UnkeyedListEntryNode> body() {
             return ImmutableList.of();
         }
 
@@ -135,13 +135,13 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return 0;
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-            return Collections.emptyList().equals(other.getValue());
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
+            return Collections.emptyList().equals(other.body());
         }
 
         @Override
@@ -168,7 +168,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
             return children.equals(((ImmutableUnkeyedListNode) other).children);
         }
 
@@ -178,7 +178,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return children.size();
         }
     }

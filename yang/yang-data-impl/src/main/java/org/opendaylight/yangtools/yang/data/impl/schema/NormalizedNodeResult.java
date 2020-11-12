@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 public class NormalizedNodeResult {
     private boolean finished = false;
-    private NormalizedNode<?,?> result;
+    private NormalizedNode result;
 
-    public NormalizedNode<?, ?> getResult() {
+    public NormalizedNode getResult() {
         return result;
     }
 
@@ -34,7 +34,7 @@ public class NormalizedNodeResult {
         return finished;
     }
 
-    void setResult(final NormalizedNode<?, ?> result) {
+    void setResult(final NormalizedNode result) {
         if (finished) {
             throw new ResultAlreadySetException("Normalized Node result was already set.", this.result);
         }

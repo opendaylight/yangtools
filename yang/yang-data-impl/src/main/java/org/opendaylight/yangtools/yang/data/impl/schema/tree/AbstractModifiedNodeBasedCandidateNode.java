@@ -63,9 +63,9 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @SuppressWarnings("unchecked")
-    private static NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getContainer(
+    private static NormalizedNodeContainer<?, PathArgument, NormalizedNode> getContainer(
             final @Nullable TreeNode meta) {
-        return meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>)meta.getData();
+        return meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode>)meta.getData();
     }
 
     private ChildNode childNode(final ModifiedNode childMod) {
@@ -87,7 +87,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
                     return ImmutableList.of();
                 }
 
-                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
+                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).body(),
                     DataTreeCandidateNodes::unmodified);
             case DELETE:
             case WRITE:
@@ -107,17 +107,17 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         return verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
     }
 
-    private static @NonNull Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
+    private static @NonNull Optional<NormalizedNode> optionalData(final TreeNode meta) {
         return meta == null ? Optional.empty() : Optional.of(meta.getData());
     }
 
     @Override
-    public final Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public final Optional<NormalizedNode> getDataAfter() {
         return optionalData(newMeta);
     }
 
     @Override
-    public final Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public final Optional<NormalizedNode> getDataBefore() {
         return optionalData(oldMeta);
     }
 

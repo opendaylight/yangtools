@@ -7,24 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Interface holding the common trait of {@link LeafSetEntryNode} and {@link LeafNode}, which both hold a value.
  *
- * @param <K> Local identifier of node
- * @param <V> Value of node
+ * @param <V> Value of node, which needs to be a well-published simple value type.
  */
-public interface ValueNode<K extends PathArgument, V> extends NormalizedNode<K, V> {
+@NonNullByDefault
+public interface ValueNode<V> extends NormalizedNode {
     /**
-     * Returns value of held by this node.
+     * {@inheritDoc}
      *
+     * <p>
      * <b>Implementation note</b>
-     * Invocation of {@link #getValue()} must provide the same value as value in {@link #getIdentifier()}.
-     * {@code true == this.getIdentifier().getValue().equals(this.getValue())}.
-     *
-     * @return Returned value of this node. Value SHOULD meet criteria defined by schema.
+     * Invocation of {@code body()} must provide the same value as value in {@link #getIdentifier()}.
+     * {@code true == this.getIdentifier().getValue().equals(this.body())}.
      */
     @Override
-    V getValue();
+    V body();
+
+    @Override
+    default StringBuilder appendToString(final StringBuilder sb) {
+        return sb.append(body());
+    }
 }

@@ -7,30 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, V> extends AbstractIdentifiable<K>
-        implements NormalizedNode<K, V>, Immutable {
+public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, V> implements NormalizedNode, Immutable {
+    private final @NonNull K identifier;
+
     protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
-        super(nodeIdentifier);
+        this.identifier = requireNonNull(nodeIdentifier);
     }
 
     @Override
-    public final QName getNodeType() {
-        return getIdentifier().getNodeType();
+    public final K getIdentifier() {
+        return identifier;
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("value", getValue());
+        return super.addToStringAttributes(toStringHelper).add("body", body());
     }
 
-    protected abstract boolean valueEquals(AbstractImmutableNormalizedNode<?, ?> other);
+    protected abstract boolean valueEquals(AbstractImmutableNormalizedNode other);
 
     protected abstract int valueHashCode();
 
@@ -43,7 +45,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, V>
             return false;
         }
 
-        final AbstractImmutableNormalizedNode<?, ?> other = (AbstractImmutableNormalizedNode<?, ?>)obj;
+        final AbstractImmutableNormalizedNode other = (AbstractImmutableNormalizedNode)obj;
         return getIdentifier().equals(other.getIdentifier()) && valueEquals(other);
     }
 

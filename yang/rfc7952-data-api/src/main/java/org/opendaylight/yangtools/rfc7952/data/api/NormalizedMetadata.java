@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 /**
  * RFC7952 metadata counterpart to a {@link NormalizedNode}. This interface is meant to be used as a companion to
  * a NormalizedNode instance, hence it does not support iterating over its structure like it is possible with
- * {@link NormalizedNode#getValue()}. Children may be inquired through {@link #getChildren()}.
+ * {@link NormalizedNode#body()}. Children may be inquired through {@link #getChildren()}.
  *
  * <p>
  * This model of metadata <em>does not</em> have the RFC7952 restriction on metadata attachment to {@code list}s and

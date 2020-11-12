@@ -22,7 +22,7 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     private final Map<PathArgument, TreeNode> children;
     private final Version subtreeVersion;
 
-    protected AbstractModifiedContainerNode(final NormalizedNode<?, ?> data, final Version version,
+    protected AbstractModifiedContainerNode(final NormalizedNode data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version);
         this.subtreeVersion = requireNonNull(subtreeVersion);

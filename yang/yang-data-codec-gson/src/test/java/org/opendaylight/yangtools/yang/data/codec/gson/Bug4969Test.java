@@ -48,7 +48,7 @@ public class Bug4969Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(context));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
 
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
@@ -108,7 +108,7 @@ public class Bug4969Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(context));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 }

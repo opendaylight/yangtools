@@ -137,17 +137,17 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
             return children.equals(((ImmutableOrderedLeafSetNode<?>) other).children);
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return children.size();
         }
 
         @Override
-        public Collection<LeafSetEntryNode<T>> getValue() {
+        public Collection<LeafSetEntryNode<T>> body() {
             return UnmodifiableCollection.create(children.values());
         }
     }

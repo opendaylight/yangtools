@@ -65,8 +65,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
      * @param operation Optional modify operation to be set on the last child
      * @return NormalizedNode structure corresponding to submitted instance ID
      */
-    abstract @NonNull NormalizedNode<?, ?> create(PathArgument first, Iterator<PathArgument> others,
-            Optional<NormalizedNode<?, ?>> deepestChild);
+    abstract @NonNull NormalizedNode create(PathArgument first, Iterator<PathArgument> others,
+            Optional<NormalizedNode> deepestChild);
 
     abstract boolean isMixin();
 
@@ -116,16 +116,16 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
         }
 
         @Override
-        NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-                final Optional<NormalizedNode<?, ?>> deepestChild) {
+        NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+                final Optional<NormalizedNode> deepestChild) {
             checkState(deepestChild.isPresent(), "Cannot instantiate anydata node without a value");
-            final NormalizedNode<?, ?> child = deepestChild.get();
+            final NormalizedNode child = deepestChild.get();
             checkState(child instanceof AnydataNode, "Invalid child %s", child);
             return createAnydata((AnydataNode<?>) child);
         }
 
         private <T> AnydataNode<T> createAnydata(final AnydataNode<T> child) {
-            return Builders.anydataBuilder(child.getValueObjectModel()).withValue(child.getValue())
+            return Builders.anydataBuilder(child.getValueObjectModel()).withValue(child.body())
             .withNodeIdentifier(getIdentifier()).build();
         }
     }
@@ -136,15 +136,15 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
         }
 
         @Override
-        NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-                final Optional<NormalizedNode<?, ?>> deepestChild) {
+        NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+                final Optional<NormalizedNode> deepestChild) {
             final NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> builder =
                     Builders.anyXmlBuilder()
                     .withNodeIdentifier(getIdentifier());
             if (deepestChild.isPresent()) {
-                final NormalizedNode<?, ?> child = deepestChild.get();
+                final NormalizedNode child = deepestChild.get();
                 checkState(child instanceof DOMSourceAnyxmlNode, "Invalid child %s", child);
-                builder.withValue(((DOMSourceAnyxmlNode) child).getValue());
+                builder.withValue(((DOMSourceAnyxmlNode) child).body());
             }
 
             return builder.build();
