@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
     // FIXME: YANGTOOLS-1074: we do not want this name
-    private static final @NonNull NormalizedNode<?, ?> ROOT_CONTAINER =
+    private static final @NonNull NormalizedNode ROOT_CONTAINER =
             ImmutableNodes.containerNode(SchemaContext.NAME);
 
     @Override
@@ -69,7 +69,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig, final EffectiveModelContext initialSchemaContext,
-            final NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
+            final DistinctNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
         final DataTree ret = createDataTree(treeConfig, initialSchemaContext, false);
 
         final DataTreeModification mod = ret.takeSnapshot().newModification();
@@ -97,13 +97,13 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static @NonNull DataTree createDataTree(final DataTreeConfiguration treeConfig,
             final EffectiveModelContext initialSchemaContext, final boolean maskMandatory) {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
-        final NormalizedNode<?, ?> rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
+        final NormalizedNode rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
         return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootDataNode, Version.initial()), treeConfig,
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 
-    private static @NonNull NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
+    private static @NonNull NormalizedNode createRoot(final DataNodeContainer schemaNode,
             final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
             checkArgument(schemaNode instanceof ContainerLike,
@@ -127,7 +127,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         }
     }
 
-    private static @NonNull NormalizedNode<?, ?> createRoot(final YangInstanceIdentifier path) {
+    private static @NonNull NormalizedNode createRoot(final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
             return ROOT_CONTAINER;
         }

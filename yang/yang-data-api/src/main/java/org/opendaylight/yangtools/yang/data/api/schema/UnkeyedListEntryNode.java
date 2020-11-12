@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * This nodes itself does not contain any ordering information, user supplied
  * ordering is preserved by parent node, which is instance of {@link UnkeyedListNode}.
  */
+@NonNullByDefault
 public interface UnkeyedListEntryNode extends DataContainerNode<NodeIdentifier> {
 
 }

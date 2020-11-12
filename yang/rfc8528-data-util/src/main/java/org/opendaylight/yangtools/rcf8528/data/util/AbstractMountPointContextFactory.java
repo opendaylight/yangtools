@@ -103,19 +103,19 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             final ContainerNode mountData) {
         checkArgument(SCHEMA_MOUNTS.equals(mountData.getIdentifier()), "Unexpected top-level container %s", mountData);
 
-        final Optional<DataContainerChild<?, ?>> optMountPoint = mountData.getChild(MOUNT_POINT);
+        final Optional<DataContainerChild> optMountPoint = mountData.getChild(MOUNT_POINT);
         if (optMountPoint.isEmpty()) {
             LOG.debug("mount-point list not present in {}", mountData);
             return new EmptyMountPointContext(schemaContext);
         }
 
-        final DataContainerChild<?, ?> mountPoint = optMountPoint.get();
+        final DataContainerChild mountPoint = optMountPoint.orElseThrow();
         checkArgument(mountPoint instanceof MapNode, "mount-point list %s is not a MapNode", mountPoint);
 
-        return new ImmutableMountPointContext(schemaContext, ((MapNode) mountPoint).getValue().stream().map(entry -> {
+        return new ImmutableMountPointContext(schemaContext, ((MapNode) mountPoint).body().stream().map(entry -> {
             final String moduleName = entry.getChild(MODULE).map(mod -> {
                 checkArgument(mod instanceof LeafNode, "Unexpected module leaf %s", mod);
-                final Object value = mod.getValue();
+                final Object value = mod.body();
                 checkArgument(value instanceof String, "Unexpected module leaf value %s", value);
                 return (String) value;
             }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry));
@@ -126,13 +126,13 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             return new MountPointDefinition(
                 MountPointIdentifier.of(QName.create(module, entry.getChild(LABEL).map(lbl -> {
                     checkArgument(lbl instanceof LeafNode, "Unexpected label leaf %s", lbl);
-                    final Object value = lbl.getValue();
+                    final Object value = lbl.body();
                     checkArgument(value instanceof String, "Unexpected label leaf value %s", value);
                     return (String) value;
                 }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry)))),
                 entry.getChild(CONFIG).map(cfg -> {
                     checkArgument(cfg instanceof LeafNode, "Unexpected config leaf %s", cfg);
-                    final Object value = cfg.getValue();
+                    final Object value = cfg.body();
                     checkArgument(value instanceof Boolean, "Unexpected config leaf value %s", cfg);
                     return (Boolean) value;
                 }).orElse(Boolean.TRUE),
@@ -141,7 +141,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
         }).collect(Collectors.toList()), this::createContextFactory);
     }
 
-    private static ImmutableSet<String> getSchema(final DataContainerChild<?, ?> child) {
+    private static ImmutableSet<String> getSchema(final DataContainerChild child) {
         checkArgument(child instanceof ChoiceNode, "Unexpected schema-ref choice %s", child);
         final ChoiceNode schemaRef = (ChoiceNode) child;
 

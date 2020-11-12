@@ -127,8 +127,8 @@ public class BuilderTest {
                 .build();
 
         assertNotNull(Builders.orderedMapBuilder(list));
-        assertEquals(SIZE, orderedMapNodeCreateNull.getSize());
-        assertEquals(orderedMapNodeCreateNode.getSize(), orderedMapNodeCreateNull.getSize() - 1);
+        assertEquals(SIZE, orderedMapNodeCreateNull.size());
+        assertEquals(orderedMapNodeCreateNode.size(), orderedMapNodeCreateNull.size() - 1);
         assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.getIdentifier());
         assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.getChild(0));
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
@@ -137,7 +137,7 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedLeafSetNodeBuilderTest() {
-        final NormalizedNode<?, ?> orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.<String>create()
+        final NormalizedNode orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.<String>create()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LEAF_SET_ENTRY_NODE)
                 .withChildValue("baz")
@@ -145,20 +145,20 @@ public class BuilderTest {
                 .build();
         final LinkedList<LeafSetNode<?>> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add((LeafSetNode<?>)orderedLeafSet);
-        final UnmodifiableCollection<?> leafSetCollection = (UnmodifiableCollection<?>)orderedLeafSet.getValue();
-        final NormalizedNode<?, ?> orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
+        final UnmodifiableCollection<?> leafSetCollection = (UnmodifiableCollection<?>)orderedLeafSet.body();
+        final NormalizedNode orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
             leafList).withChildValue("baz").build();
         final UnmodifiableCollection<?> SchemaAwareleafSetCollection =
-                (UnmodifiableCollection<?>)orderedMapNodeSchemaAware.getValue();
-        final NormalizedNode<?, ?> orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
+                (UnmodifiableCollection<?>) orderedMapNodeSchemaAware.body();
+        final NormalizedNode orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
             leafList,(LeafSetNode<?>)orderedLeafSet).build();
 
         assertNotNull(Builders.orderedLeafSetBuilder(leafList));
         assertNotNull(Builders.anyXmlBuilder());
         assertNotNull(orderedLeafSetShemaAware);
-        assertEquals(1, ((OrderedLeafSetNode<?>)orderedLeafSet).getSize());
-        assertEquals("baz", ((OrderedLeafSetNode<?>)orderedLeafSet).getChild(0).getValue());
-        assertNotNull(((OrderedLeafSetNode<?>)orderedLeafSet).getChild(BAR_PATH));
+        assertEquals(1, ((OrderedLeafSetNode<?>)orderedLeafSet).size());
+        assertEquals("baz", ((OrderedLeafSetNode<String>)orderedLeafSet).getChild(0).body());
+        assertNotNull(((OrderedLeafSetNode<String>)orderedLeafSet).getChild(BAR_PATH));
         assertEquals(1, leafSetCollection.size());
         assertEquals(1, SchemaAwareleafSetCollection.size());
     }
@@ -216,7 +216,7 @@ public class BuilderTest {
             // Ignored on purpose
         }
 
-        assertNotNull(unkeyedListNodeSize.getValue());
+        assertNotNull(unkeyedListNodeSize.body());
         assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.getChild(0));
         assertEquals(unkeyedListNode.getNodeType().getLocalName(), unkeyedListNodeSize.getNodeType()
                 .getLocalName());

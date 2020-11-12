@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 
 public class TreeNodeFactoryTest {
 
-    private static void checkTreeNode(final TreeNode node, final NormalizedNode<?, ?> data, final Version version) {
+    private static void checkTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
         assertSame(data, node.getData());
         assertSame(version, node.getSubtreeVersion());
         assertSame(version, node.getVersion());

@@ -49,7 +49,7 @@ public class StrictParsingModeTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, false);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 

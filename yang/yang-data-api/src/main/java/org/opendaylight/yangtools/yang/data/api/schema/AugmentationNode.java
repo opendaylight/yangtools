@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
 /**
@@ -22,9 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
  * <p>
  * Augmentation node MUST NOT be direct child of other augmentation node.
  */
-public interface AugmentationNode extends MixinNode, DataContainerNode<AugmentationIdentifier>,
-    DataContainerChild<AugmentationIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
-
+@NonNullByDefault
+public interface AugmentationNode extends DataContainerNode<AugmentationIdentifier>, DataContainerChild, MixinNode {
     /**
      * Gets identifier of augmentation node. Returned identifier of augmentation node contains all possible
      * direct child QNames.

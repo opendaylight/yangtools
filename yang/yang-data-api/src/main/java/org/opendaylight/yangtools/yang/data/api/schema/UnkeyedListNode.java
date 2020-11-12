@@ -7,23 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may
- * be quickly retrieved using key.
+ * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may be quickly retrieved using
+ * key. This node maps to the <code>list</code> statement in YANG schema, which did not define {@code key} substatement.
  *
  * <p>
- * This node maps to the <code>list</code> statement in YANG schema,
- * which did not define <code>key</code> substatement.
- *
- * <p>
- * Ordering of the elements is user-defined during construction of instance of this
- * interface. Ordered view of elements (iteration)
- * is provided by {@link #getValue()} call.
+ * Ordering of the elements is user-defined during construction of instance of this interface. Ordered view of elements
+ * (iteration) is provided by {@link #body()} call.
  */
-public interface UnkeyedListNode extends DataContainerChild<NodeIdentifier, Collection<UnkeyedListEntryNode>>,
-    OrderedNodeContainer<UnkeyedListEntryNode> {
+@NonNullByDefault
+public interface UnkeyedListNode extends OrderedNodeContainer<UnkeyedListEntryNode>, DataContainerChild {
 
 }

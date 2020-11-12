@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
 /**
@@ -15,18 +16,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  *
  * @param <T> Value type
  */
-public interface LeafSetEntryNode<T> extends NormalizedNode<NodeWithValue, T>, ValueNode<NodeWithValue, T> {
+@NonNullByDefault
+public interface LeafSetEntryNode<T> extends ValueNode<T> {
     /**
-     * Returns {@link NodeWithValue} which identifies this leaf set entry. Returned {@link NodeWithValue} contains same
-     * value as this node.
+     * {@inheritDoc}
      *
+     * <p>
      * <b>Implementation note</b>
      * Invocation of {@link NodeWithValue#getValue()} on returned instance of {@link NodeWithValue} must return the
-     * same value as invocation of {@link #getValue()}, such as following condition is always met:
-     * {@code true == this.getIdentifier().getValue().equals(this.getValue())}.
-     *
-     * @return {@link NodeWithValue} which identifies this leaf set entry.
+     * same value as invocation of {@code #body()}, such as following condition is always met:
+     * {@code true == this.getIdentifier().getValue().equals(this.body())}.
      */
     @Override
-    NodeWithValue getIdentifier();
+    NodeWithValue<T> getIdentifier();
 }
