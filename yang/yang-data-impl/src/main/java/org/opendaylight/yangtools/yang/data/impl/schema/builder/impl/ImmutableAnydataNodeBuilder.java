@@ -19,14 +19,13 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 @Beta
 public class ImmutableAnydataNodeBuilder<V>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> {
-    private final Class<V> objectModel;
+    private final @NonNull Class<V> objectModel;
 
     ImmutableAnydataNodeBuilder(final Class<V> objectModel) {
         this.objectModel = requireNonNull(objectModel);
     }
 
-    public static <V> @NonNull NormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> create(
-            final Class<V> objectModel) {
+    public static <V> NormalizedNodeBuilder<NodeIdentifier, V, AnydataNode<V>> create(final Class<V> objectModel) {
         return new ImmutableAnydataNodeBuilder<>(objectModel);
     }
 
@@ -36,8 +35,9 @@ public class ImmutableAnydataNodeBuilder<V>
     }
 
     private static final class ImmutableAnydataNode<V>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, V> implements AnydataNode<V> {
-        private final @NonNull Class<V> objectModel;
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, AnydataNode<?>, V>
+            implements AnydataNode<V> {
+        private final Class<V> objectModel;
 
         protected ImmutableAnydataNode(final NodeIdentifier nodeIdentifier, final V value, final Class<V> objectModel) {
             super(nodeIdentifier, value);
@@ -45,8 +45,13 @@ public class ImmutableAnydataNodeBuilder<V>
         }
 
         @Override
-        public Class<V> getValueObjectModel() {
+        public Class<V> bodyObjectModel() {
             return objectModel;
+        }
+
+        @Override
+        protected Class<AnydataNode<?>> implementedType() {
+            return (Class) AnydataNode.class;
         }
     }
 }

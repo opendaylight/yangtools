@@ -24,13 +24,11 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -58,7 +56,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         // lf12-any check
@@ -93,7 +91,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         // lf12-any check
@@ -152,10 +150,10 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertNotNull(result.getResult());
         assertTrue(result.getResult() instanceof ContainerNode);
 
-        final Optional<DataContainerChild<? extends PathArgument, ?>> data = ((ContainerNode) result.getResult())
-                .getChild(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
-        assertTrue(data.isPresent());
-        final String jsonOutput = normalizedNodesToJsonString(data.get(), schemaContext, SchemaPath.ROOT);
+        final DataContainerChild data = ((ContainerNode) result.getResult())
+                .childByArg(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
+        assertNotNull(data);
+        final String jsonOutput = normalizedNodesToJsonString(data, schemaContext, SchemaPath.ROOT);
         final JsonParser parser = new JsonParser();
         final JsonElement expextedJson = parser.parse(new FileReader(
             new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8));
@@ -163,14 +161,13 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertEquals(expextedJson, serializedJson);
     }
 
-    private static DOMSource getParsedAnyXmlValue(final NormalizedNode<?, ?> transformedInput, final QName anyxmlName) {
+    private static DOMSource getParsedAnyXmlValue(final NormalizedNode transformedInput, final QName anyxmlName) {
         assertTrue(transformedInput instanceof ContainerNode);
         final ContainerNode cont1 = (ContainerNode) transformedInput;
-        final DataContainerChild<? extends PathArgument, ?> child = cont1.getChild(new NodeIdentifier(anyxmlName))
-                .get();
+        final DataContainerChild child = cont1.childByArg(new NodeIdentifier(anyxmlName));
         assertTrue(child instanceof DOMSourceAnyxmlNode);
         final DOMSourceAnyxmlNode anyXmlNode = (DOMSourceAnyxmlNode) child;
-        return anyXmlNode.getValue();
+        return anyXmlNode.body();
     }
 
     private static void verifyTransformedAnyXmlNodeValue(final DOMSource expectedValue, final DOMSource actualValue) {

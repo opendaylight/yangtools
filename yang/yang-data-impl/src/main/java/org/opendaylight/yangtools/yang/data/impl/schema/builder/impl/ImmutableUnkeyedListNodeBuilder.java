@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,19 +36,19 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         this.nodeIdentifier = node.getIdentifier();
         // FIXME: clean this up, notably reuse unmodified lists
         this.value = new LinkedList<>();
-        Iterables.addAll(value, node.getValue());
+        Iterables.addAll(value, node.body());
         this.dirty = true;
     }
 
-    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
             final UnkeyedListNode node) {
         if (!(node instanceof ImmutableUnkeyedListNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
@@ -117,15 +116,14 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         return withoutChild(key);
     }
 
-    protected static final class EmptyImmutableUnkeyedListNode extends
-            AbstractImmutableNormalizedNode<NodeIdentifier, Collection<UnkeyedListEntryNode>> implements
-            UnkeyedListNode {
+    protected static final class EmptyImmutableUnkeyedListNode
+            extends AbstractImmutableNormalizedNode<NodeIdentifier, UnkeyedListNode> implements UnkeyedListNode {
         protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
             super(nodeIdentifier);
         }
 
         @Override
-        public ImmutableList<UnkeyedListEntryNode> getValue() {
+        public ImmutableList<UnkeyedListEntryNode> body() {
             return ImmutableList.of();
         }
 
@@ -135,23 +133,29 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return 0;
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-            return Collections.emptyList().equals(other.getValue());
+        protected Class<UnkeyedListNode> implementedType() {
+            return UnkeyedListNode.class;
         }
 
         @Override
         protected int valueHashCode() {
             return 1;
         }
+
+        @Override
+        protected boolean valueEquals(final UnkeyedListNode other) {
+            return other.isEmpty();
+        }
     }
 
-    protected static final class ImmutableUnkeyedListNode extends
-            AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<UnkeyedListEntryNode>>
+    protected static final class ImmutableUnkeyedListNode
+            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, UnkeyedListNode,
+                Collection<@NonNull UnkeyedListEntryNode>>
             implements UnkeyedListNode {
 
         private final ImmutableList<UnkeyedListEntryNode> children;
@@ -163,23 +167,35 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        protected int valueHashCode() {
-            return children.hashCode();
-        }
-
-        @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-            return children.equals(((ImmutableUnkeyedListNode) other).children);
-        }
-
-        @Override
         public UnkeyedListEntryNode getChild(final int position) {
             return children.get(position);
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return children.size();
+        }
+
+        @Override
+        protected Class<UnkeyedListNode> implementedType() {
+            return UnkeyedListNode.class;
+        }
+
+        @Override
+        protected int valueHashCode() {
+            return children.hashCode();
+        }
+
+        @Override
+        protected boolean valueEquals(final UnkeyedListNode other) {
+            final Collection<UnkeyedListEntryNode> otherChildren;
+            if (other instanceof ImmutableUnkeyedListNode) {
+                otherChildren = ((ImmutableUnkeyedListNode) other).children;
+            } else {
+                otherChildren = other.body();
+            }
+            return otherChildren instanceof List ? children.equals(otherChildren)
+                : Iterables.elementsEqual(children, otherChildren);
         }
     }
 }

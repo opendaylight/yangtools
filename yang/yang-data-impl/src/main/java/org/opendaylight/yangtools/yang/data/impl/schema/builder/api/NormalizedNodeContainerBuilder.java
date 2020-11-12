@@ -13,8 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public interface NormalizedNodeContainerBuilder<K extends PathArgument, CK extends PathArgument,
-        CV extends NormalizedNode<? extends CK, ?>, P extends NormalizedNode<K, ?>>
-        extends NormalizedNodeBuilder<K, Collection<CV>, P> {
+        CV extends NormalizedNode, P extends NormalizedNode> extends NormalizedNodeBuilder<K, Collection<CV>, P> {
 
     @Override
     NormalizedNodeContainerBuilder<K, CK, CV, P> withNodeIdentifier(K nodeIdentifier);

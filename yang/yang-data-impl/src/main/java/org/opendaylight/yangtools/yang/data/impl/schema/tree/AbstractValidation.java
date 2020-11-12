@@ -45,17 +45,17 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     }
 
     @Override
-    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
         delegate.mergeIntoModifiedNode(node, value, version);
     }
 
     @Override
-    final void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
+    final void quickVerifyStructure(final NormalizedNode modification) {
         delegate.quickVerifyStructure(modification);
     }
 
     @Override
-    final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    final void recursivelyVerifyStructure(final NormalizedNode value) {
         delegate.recursivelyVerifyStructure(value);
     }
 
@@ -118,7 +118,7 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     }
 
     @Override
-    void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
+    void fullVerifyStructure(final NormalizedNode modification) {
         delegate.fullVerifyStructure(modification);
         enforceOnData(modification);
     }
@@ -127,10 +127,9 @@ abstract class AbstractValidation extends ModificationApplyOperation {
         return delegate;
     }
 
-    abstract void enforceOnData(ModificationPath path, NormalizedNode<?, ?> value)
-        throws DataValidationFailedException;
+    abstract void enforceOnData(ModificationPath path, NormalizedNode value) throws DataValidationFailedException;
 
-    abstract void enforceOnData(@NonNull NormalizedNode<?, ?> data);
+    abstract void enforceOnData(@NonNull NormalizedNode data);
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {

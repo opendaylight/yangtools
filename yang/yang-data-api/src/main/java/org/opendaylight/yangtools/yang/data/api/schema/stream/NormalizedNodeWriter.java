@@ -17,7 +17,6 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
@@ -29,16 +28,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return NormalizedNodeWriter this
      * @throws IOException when thrown from the backing writer.
      */
-    public NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
+    public NormalizedNodeWriter write(final NormalizedNode node) throws IOException {
         if (wasProcessedAsCompositeNode(node)) {
             return this;
         }
@@ -134,24 +134,24 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         return children instanceof Collection ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
     }
 
-    protected boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
+    protected boolean wasProcessAsSimpleNode(final NormalizedNode node) throws IOException {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
             writer.startLeafSetEntryNode(nodeAsLeafList.getIdentifier());
-            writer.scalarValue(nodeAsLeafList.getValue());
+            writer.scalarValue(nodeAsLeafList.body());
             writer.endNode();
             return true;
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
             writer.startLeafNode(nodeAsLeaf.getIdentifier());
-            writer.scalarValue(nodeAsLeaf.getValue());
+            writer.scalarValue(nodeAsLeaf.body());
             writer.endNode();
             return true;
         } else if (node instanceof AnyxmlNode) {
             final AnyxmlNode<?> anyxmlNode = (AnyxmlNode<?>)node;
-            final Class<?> model = anyxmlNode.getValueObjectModel();
+            final Class<?> model = anyxmlNode.bodyObjectModel();
             if (writer.startAnyxmlNode(anyxmlNode.getIdentifier(), model)) {
-                final Object value = node.getValue();
+                final Object value = node.body();
                 if (DOMSource.class.isAssignableFrom(model)) {
                     verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
                     writer.domSourceValue((DOMSource) value);
@@ -165,9 +165,9 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
         } else if (node instanceof AnydataNode) {
             final AnydataNode<?> anydata = (AnydataNode<?>) node;
-            final Class<?> model = anydata.getValueObjectModel();
+            final Class<?> model = anydata.bodyObjectModel();
             if (writer.startAnydataNode(anydata.getIdentifier(), model)) {
-                writer.scalarValue(anydata.getValue());
+                writer.scalarValue(anydata.body());
                 writer.endNode();
                 return true;
             }
@@ -185,8 +185,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return True
      * @throws IOException when the writer reports it
      */
-    protected boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
-        for (final NormalizedNode<?, ?> child : children) {
+    protected boolean writeChildren(final Iterable<? extends NormalizedNode> children) throws IOException {
+        for (final NormalizedNode child : children) {
             write(child);
         }
 
@@ -195,63 +195,63 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
-        return writeChildren(node.getValue());
+        writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.body()));
+        return writeChildren(node.body());
     }
 
-    protected boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
+    protected boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
-            writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            writer.startContainerNode(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
         if (node instanceof YangModeledAnyXmlNode) {
             final YangModeledAnyXmlNode n = (YangModeledAnyXmlNode) node;
-            writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
         if (node instanceof MapEntryNode) {
             return writeMapEntryNode((MapEntryNode) node);
         }
         if (node instanceof UnkeyedListEntryNode) {
             final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
-            writer.startUnkeyedListItem(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            writer.startUnkeyedListItem(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
         if (node instanceof ChoiceNode) {
             final ChoiceNode n = (ChoiceNode) node;
-            writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
         if (node instanceof AugmentationNode) {
             final AugmentationNode n = (AugmentationNode) node;
             writer.startAugmentationNode(n.getIdentifier());
-            return writeChildren(n.getValue());
+            return writeChildren(n.body());
         }
         if (node instanceof UnkeyedListNode) {
             final UnkeyedListNode n = (UnkeyedListNode) node;
-            writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
-        if (node instanceof OrderedMapNode) {
-            final OrderedMapNode n = (OrderedMapNode) node;
-            writer.startOrderedMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+        if (node instanceof UserMapNode) {
+            final UserMapNode n = (UserMapNode) node;
+            writer.startOrderedMapNode(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
-        if (node instanceof MapNode) {
-            final MapNode n = (MapNode) node;
-            writer.startMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+        if (node instanceof SystemMapNode) {
+            final SystemMapNode n = (SystemMapNode) node;
+            writer.startMapNode(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
-        if (node instanceof OrderedLeafSetNode) {
-            final LeafSetNode<?> n = (LeafSetNode<?>) node;
-            writer.startOrderedLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+        if (node instanceof UserLeafSetNode) {
+            final UserLeafSetNode<?> n = (UserLeafSetNode<?>) node;
+            writer.startOrderedLeafSet(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
-        if (node instanceof LeafSetNode) {
-            final LeafSetNode<?> n = (LeafSetNode<?>) node;
-            writer.startLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+        if (node instanceof SystemLeafSetNode) {
+            final SystemLeafSetNode<?> n = (SystemLeafSetNode<?>) node;
+            writer.startLeafSet(n.getIdentifier(), childSizeHint(n.body()));
+            return writeChildren(n.body());
         }
 
         return false;
@@ -267,21 +267,21 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
-            nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+            nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.body()));
 
             final Set<QName> qnames = node.getIdentifier().keySet();
             // Write out all the key children
             for (final QName qname : qnames) {
-                final Optional<? extends NormalizedNode<?, ?>> child = node.getChild(new NodeIdentifier(qname));
-                if (child.isPresent()) {
-                    write(child.get());
+                final DataContainerChild child = node.childByArg(new NodeIdentifier(qname));
+                if (child != null) {
+                    write(child);
                 } else {
                     LOG.info("No child for key element {} found", qname);
                 }
             }
 
             // Write all the rest
-            return writeChildren(Iterables.filter(node.getValue(), input -> {
+            return writeChildren(Iterables.filter(node.body(), input -> {
                 if (input instanceof AugmentationNode) {
                     return true;
                 }
