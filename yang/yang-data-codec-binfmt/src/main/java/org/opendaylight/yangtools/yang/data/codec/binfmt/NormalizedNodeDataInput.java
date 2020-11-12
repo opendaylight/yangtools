@@ -45,7 +45,7 @@ public interface NormalizedNodeDataInput extends DataInput {
      * @throws IOException if an error occurs
      * @throws IllegalStateException if the dictionary has been detached
      */
-    default NormalizedNode<?, ?> readNormalizedNode() throws IOException {
+    default NormalizedNode readNormalizedNode() throws IOException {
         return readNormalizedNode(ReusableImmutableNormalizedNodeStreamWriter.create());
     }
 
@@ -57,7 +57,7 @@ public interface NormalizedNodeDataInput extends DataInput {
      * @throws IOException if an error occurs
      * @throws IllegalStateException if the dictionary has been detached
      */
-    default NormalizedNode<?, ?> readNormalizedNode(final ReusableStreamReceiver receiver) throws IOException {
+    default NormalizedNode readNormalizedNode(final ReusableStreamReceiver receiver) throws IOException {
         try {
             streamNormalizedNode(receiver);
             return receiver.getResult();
@@ -85,7 +85,7 @@ public interface NormalizedNodeDataInput extends DataInput {
      */
     NormalizedNodeStreamVersion getVersion() throws IOException;
 
-    default Optional<NormalizedNode<?, ?>> readOptionalNormalizedNode() throws IOException {
+    default Optional<NormalizedNode> readOptionalNormalizedNode() throws IOException {
         return readBoolean() ? Optional.of(readNormalizedNode()) : Optional.empty();
     }
 

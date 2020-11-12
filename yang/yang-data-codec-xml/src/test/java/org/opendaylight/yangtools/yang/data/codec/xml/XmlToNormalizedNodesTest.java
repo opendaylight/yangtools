@@ -38,9 +38,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -116,10 +116,10 @@ public class XmlToNormalizedNodesTest {
         xmlParser.flush();
         xmlParser.close();
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
-        final NormalizedNode<?, ?> expectedNormalizedNode = buildOuterContainerNode();
+        final NormalizedNode expectedNormalizedNode = buildOuterContainerNode();
         assertNotNull(expectedNormalizedNode);
 
         assertEquals(expectedNormalizedNode, transformedInput);
@@ -138,7 +138,7 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -280,7 +280,7 @@ public class XmlToNormalizedNodesTest {
         }
     }
 
-    private static NormalizedNode<?, ?> buildOuterContainerNode() {
+    private static NormalizedNode buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_KEYED_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
@@ -299,7 +299,8 @@ public class XmlToNormalizedNodesTest {
         LeafNode<?> myLeaf1Node = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(MY_LEAF_1))
                 .withValue("value1").build();
 
-        LeafSetNode<?> myLeafListNode = Builders.leafSetBuilder().withNodeIdentifier(new NodeIdentifier(MY_LEAFLIST))
+        SystemLeafSetNode<?> myLeafListNode = Builders.leafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_LEAFLIST))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(MY_LEAFLIST, "lflvalue1")).withValue("lflvalue1").build())
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(

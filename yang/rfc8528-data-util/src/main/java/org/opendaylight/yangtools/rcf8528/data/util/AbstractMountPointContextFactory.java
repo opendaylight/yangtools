@@ -14,7 +14,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableSet;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
@@ -103,19 +102,17 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             final ContainerNode mountData) {
         checkArgument(SCHEMA_MOUNTS.equals(mountData.getIdentifier()), "Unexpected top-level container %s", mountData);
 
-        final Optional<DataContainerChild<?, ?>> optMountPoint = mountData.getChild(MOUNT_POINT);
-        if (optMountPoint.isEmpty()) {
+        final DataContainerChild mountPoint = mountData.childByArg(MOUNT_POINT);
+        if (mountPoint == null) {
             LOG.debug("mount-point list not present in {}", mountData);
             return new EmptyMountPointContext(schemaContext);
         }
-
-        final DataContainerChild<?, ?> mountPoint = optMountPoint.get();
         checkArgument(mountPoint instanceof MapNode, "mount-point list %s is not a MapNode", mountPoint);
 
-        return new ImmutableMountPointContext(schemaContext, ((MapNode) mountPoint).getValue().stream().map(entry -> {
-            final String moduleName = entry.getChild(MODULE).map(mod -> {
+        return new ImmutableMountPointContext(schemaContext, ((MapNode<?>) mountPoint).body().stream().map(entry -> {
+            final String moduleName = entry.findChildByArg(MODULE).map(mod -> {
                 checkArgument(mod instanceof LeafNode, "Unexpected module leaf %s", mod);
-                final Object value = mod.getValue();
+                final Object value = mod.body();
                 checkArgument(value instanceof String, "Unexpected module leaf value %s", value);
                 return (String) value;
             }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry));
@@ -124,35 +121,35 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
             final QNameModule module = it.next().getQNameModule();
 
             return new MountPointDefinition(
-                MountPointIdentifier.of(QName.create(module, entry.getChild(LABEL).map(lbl -> {
+                MountPointIdentifier.of(QName.create(module, entry.findChildByArg(LABEL).map(lbl -> {
                     checkArgument(lbl instanceof LeafNode, "Unexpected label leaf %s", lbl);
-                    final Object value = lbl.getValue();
+                    final Object value = lbl.body();
                     checkArgument(value instanceof String, "Unexpected label leaf value %s", value);
                     return (String) value;
                 }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry)))),
-                entry.getChild(CONFIG).map(cfg -> {
+                entry.findChildByArg(CONFIG).map(cfg -> {
                     checkArgument(cfg instanceof LeafNode, "Unexpected config leaf %s", cfg);
-                    final Object value = cfg.getValue();
+                    final Object value = cfg.body();
                     checkArgument(value instanceof Boolean, "Unexpected config leaf value %s", cfg);
                     return (Boolean) value;
                 }).orElse(Boolean.TRUE),
-                getSchema(entry.getChild(SCHEMA_REF)
+                getSchema(entry.findChildByArg(SCHEMA_REF)
                     .orElseThrow(() -> new IllegalArgumentException("Missing schema-ref choice in " + entry))));
         }).collect(Collectors.toList()), this::createContextFactory);
     }
 
-    private static ImmutableSet<String> getSchema(final DataContainerChild<?, ?> child) {
+    private static ImmutableSet<String> getSchema(final DataContainerChild child) {
         checkArgument(child instanceof ChoiceNode, "Unexpected schema-ref choice %s", child);
         final ChoiceNode schemaRef = (ChoiceNode) child;
 
-        return schemaRef.getChild(SHARED_SCHEMA).map(sharedSchema -> {
+        return schemaRef.findChildByArg(SHARED_SCHEMA).map(sharedSchema -> {
             checkArgument(sharedSchema instanceof ContainerNode, "Unexpected shared-schema container %s", sharedSchema);
-            return ((ContainerNode) sharedSchema).getChild(PARENT_REFERENCE)
+            return ((ContainerNode) sharedSchema).findChildByArg(PARENT_REFERENCE)
                 // FIXME: 7.0.0: parse XPaths. Do we have enough context for that?
                 .map(parentRef -> ImmutableSet.<String>of())
                 .orElseGet(ImmutableSet::of);
         }).orElseGet(() -> {
-            checkArgument(schemaRef.getChild(INLINE).isPresent(), "Unhandled schema-ref type in %s", schemaRef);
+            checkArgument(schemaRef.findChildByArg(INLINE).isPresent(), "Unhandled schema-ref type in %s", schemaRef);
             return ImmutableSet.of();
         });
     }

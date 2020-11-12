@@ -11,7 +11,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class DeleteLeafCandidateNode extends AbstractLeafCandidateNode {
-    DeleteLeafCandidateNode(final NormalizedNode<?, ?> data) {
+    DeleteLeafCandidateNode(final NormalizedNode data) {
         super(data);
     }
 
@@ -21,12 +21,12 @@ final class DeleteLeafCandidateNode extends AbstractLeafCandidateNode {
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return Optional.empty();
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return dataOptional();
     }
 }
