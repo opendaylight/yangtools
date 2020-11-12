@@ -14,7 +14,6 @@ import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Optional;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -81,10 +79,9 @@ public class Bug5396Test {
         assertTrue(result.getResult() instanceof ContainerNode);
         final ContainerNode rootContainer = (ContainerNode) result.getResult();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> myLeaf = rootContainer.getChild(new NodeIdentifier(
+        DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(
                 QName.create(fooModuleQName, "my-leaf")));
-        assertTrue(myLeaf.orElse(null) instanceof LeafNode);
-
-        assertEquals(expectedValue, myLeaf.get().getValue());
+        assertTrue(myLeaf instanceof LeafNode);
+        assertEquals(expectedValue, myLeaf.body());
     }
 }

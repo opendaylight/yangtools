@@ -50,7 +50,7 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
             public void close() throws IOException {
                 super.close();
 
-                final NormalizedNode<?, ?> data = mountResult.getResult();
+                final NormalizedNode data = mountResult.getResult();
                 if (!(data instanceof ContainerNode)) {
                     throw new IOException("Unhandled mount data " + data);
                 }
