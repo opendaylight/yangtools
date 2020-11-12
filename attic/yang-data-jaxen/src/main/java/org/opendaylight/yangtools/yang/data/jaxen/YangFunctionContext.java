@@ -118,7 +118,7 @@ final class YangFunctionContext implements FunctionContext {
             return false;
         }
 
-        final Object nodeValue = currentNodeContext.getNode().getValue();
+        final Object nodeValue = currentNodeContext.getNode().body();
         if (!(nodeValue instanceof Set)) {
             return false;
         }
@@ -139,7 +139,7 @@ final class YangFunctionContext implements FunctionContext {
     }
 
     // deref(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.3.1
-    private static NormalizedNode<?, ?> deref(final Context context, final List<?> args) throws FunctionCallException {
+    private static NormalizedNode deref(final Context context, final List<?> args) throws FunctionCallException {
         if (!args.isEmpty()) {
             throw new FunctionCallException("deref() takes only one argument: node-set nodes.");
         }
@@ -147,7 +147,7 @@ final class YangFunctionContext implements FunctionContext {
         final NormalizedNodeContext currentNodeContext = verifyContext(context);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
-        final Object nodeValue = currentNodeContext.getNode().getValue();
+        final Object nodeValue = currentNodeContext.getNode().body();
         final TypeDefinition<?> type = correspondingSchemaNode.getType();
         if (type instanceof InstanceIdentifierTypeDefinition) {
             return nodeValue instanceof YangInstanceIdentifier
@@ -191,9 +191,9 @@ final class YangFunctionContext implements FunctionContext {
 
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
         return correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition
-                && currentNodeContext.getNode().getValue() instanceof QName ? new SimpleImmutableEntry<>(
+                && currentNodeContext.getNode().body() instanceof QName ? new SimpleImmutableEntry<>(
                         getIdentitySchemaNodeFromString((String) args.get(0), schemaContext, correspondingSchemaNode),
-                        getIdentitySchemaNodeFromQName((QName) currentNodeContext.getNode().getValue(), schemaContext))
+                        getIdentitySchemaNodeFromQName((QName) currentNodeContext.getNode().body(), schemaContext))
                         : null;
     }
 
@@ -211,7 +211,7 @@ final class YangFunctionContext implements FunctionContext {
             return DOUBLE_NAN;
         }
 
-        final Object nodeValue = currentNodeContext.getNode().getValue();
+        final Object nodeValue = currentNodeContext.getNode().body();
         if (!(nodeValue instanceof String)) {
             return DOUBLE_NAN;
         }
@@ -300,14 +300,14 @@ final class YangFunctionContext implements FunctionContext {
                     + " identity schema node in the module %s.", identityQName, module));
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByInstanceIdentifier(final YangInstanceIdentifier path,
+    private static NormalizedNode getNodeReferencedByInstanceIdentifier(final YangInstanceIdentifier path,
             final NormalizedNodeContext currentNodeContext) {
         final NormalizedNodeNavigator navigator = (NormalizedNodeNavigator) currentNodeContext.getNavigator();
-        final NormalizedNode<?, ?> rootNode = navigator.getDocument().getRootNode();
+        final NormalizedNode rootNode = navigator.getDocument().getRootNode();
         final List<PathArgument> pathArguments = path.getPathArguments();
         if (pathArguments.get(0).getNodeType().equals(rootNode.getNodeType())) {
             final List<PathArgument> relPath = pathArguments.subList(1, pathArguments.size());
-            final Optional<NormalizedNode<?, ?>> possibleNode = NormalizedNodes.findNode(rootNode, relPath);
+            final Optional<NormalizedNode> possibleNode = NormalizedNodes.findNode(rootNode, relPath);
             if (possibleNode.isPresent()) {
                 return possibleNode.get();
             }
@@ -316,10 +316,10 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByLeafref(final PathExpression xpath,
+    private static NormalizedNode getNodeReferencedByLeafref(final PathExpression xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedDataSchemaNode correspondingSchemaNode, final Object nodeValue) {
-        final NormalizedNode<?, ?> referencedNode = xpath.isAbsolute() ? getNodeReferencedByAbsoluteLeafref(xpath,
+        final NormalizedNode referencedNode = xpath.isAbsolute() ? getNodeReferencedByAbsoluteLeafref(xpath,
                 currentNodeContext, schemaContext, correspondingSchemaNode) : getNodeReferencedByRelativeLeafref(xpath,
                 currentNodeContext, schemaContext, correspondingSchemaNode);
 
@@ -327,24 +327,24 @@ final class YangFunctionContext implements FunctionContext {
             return getReferencedLeafSetEntryNode((LeafSetNode<?>) referencedNode, nodeValue);
         }
 
-        if (referencedNode instanceof LeafNode && referencedNode.getValue().equals(nodeValue)) {
+        if (referencedNode instanceof LeafNode && referencedNode.body().equals(nodeValue)) {
             return referencedNode;
         }
 
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByAbsoluteLeafref(final PathExpression xpath,
+    private static NormalizedNode getNodeReferencedByAbsoluteLeafref(final PathExpression xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedDataSchemaNode correspondingSchemaNode) {
         final LeafrefXPathStringParsingPathArgumentBuilder builder = new LeafrefXPathStringParsingPathArgumentBuilder(
                 xpath.getOriginalString(), schemaContext, correspondingSchemaNode, currentNodeContext);
         final List<PathArgument> pathArguments = builder.build();
         final NormalizedNodeNavigator navigator = (NormalizedNodeNavigator) currentNodeContext.getNavigator();
-        final NormalizedNode<?, ?> rootNode = navigator.getDocument().getRootNode();
+        final NormalizedNode rootNode = navigator.getDocument().getRootNode();
         if (pathArguments.get(0).getNodeType().equals(rootNode.getNodeType())) {
             final List<PathArgument> relPath = pathArguments.subList(1, pathArguments.size());
-            final Optional<NormalizedNode<?, ?>> possibleNode = NormalizedNodes.findNode(rootNode, relPath);
+            final Optional<NormalizedNode> possibleNode = NormalizedNodes.findNode(rootNode, relPath);
             if (possibleNode.isPresent()) {
                 return possibleNode.get();
             }
@@ -353,7 +353,7 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByRelativeLeafref(final PathExpression xpath,
+    private static NormalizedNode getNodeReferencedByRelativeLeafref(final PathExpression xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedDataSchemaNode correspondingSchemaNode) {
         NormalizedNodeContext relativeNodeContext = currentNodeContext;
@@ -369,19 +369,14 @@ final class YangFunctionContext implements FunctionContext {
         final LeafrefXPathStringParsingPathArgumentBuilder builder = new LeafrefXPathStringParsingPathArgumentBuilder(
                 xPathStringBuilder.toString(), schemaContext, correspondingSchemaNode, currentNodeContext);
         final List<PathArgument> pathArguments = builder.build();
-        final NormalizedNode<?, ?> relativeNode = relativeNodeContext.getNode();
-        final Optional<NormalizedNode<?, ?>> possibleNode = NormalizedNodes.findNode(relativeNode, pathArguments);
-        if (possibleNode.isPresent()) {
-            return possibleNode.get();
-        }
-
-        return null;
+        final NormalizedNode relativeNode = relativeNodeContext.getNode();
+        return NormalizedNodes.findNode(relativeNode, pathArguments).orElse(null);
     }
 
     private static LeafSetEntryNode<?> getReferencedLeafSetEntryNode(final LeafSetNode<?> referencedNode,
             final Object currentNodeValue) {
-        for (final LeafSetEntryNode<?> entryNode : referencedNode.getValue()) {
-            if (currentNodeValue.equals(entryNode.getValue())) {
+        for (final LeafSetEntryNode<?> entryNode : referencedNode.body()) {
+            if (currentNodeValue.equals(entryNode.body())) {
                 return entryNode;
             }
         }

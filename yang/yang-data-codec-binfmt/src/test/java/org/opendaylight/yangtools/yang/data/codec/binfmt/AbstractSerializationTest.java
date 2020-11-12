@@ -24,7 +24,7 @@ public abstract class AbstractSerializationTest {
     @Parameter(0)
     public NormalizedNodeStreamVersion version;
 
-    final <T extends NormalizedNode<?, ?>> T assertEquals(final T node, final int expectedSize) {
+    final <T extends NormalizedNode> T assertEquals(final T node, final int expectedSize) {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(baos))) {
             nnout.writeNormalizedNode(node);
@@ -35,7 +35,7 @@ public abstract class AbstractSerializationTest {
         final byte[] bytes = baos.toByteArray();
         Assert.assertEquals(expectedSize, bytes.length);
 
-        final NormalizedNode<?, ?> deser;
+        final NormalizedNode deser;
         try {
             deser = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes)).readNormalizedNode();
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public abstract class AbstractSerializationTest {
     }
 
     final <T> T assertEquals(final T value, final int expectedSize) {
-        return assertEquals(ImmutableNodes.leafNode(TestModel.TEST_QNAME, value), expectedSize).getValue();
+        return assertEquals(ImmutableNodes.leafNode(TestModel.TEST_QNAME, value), expectedSize).body();
     }
 
     final <T extends PathArgument> T assertEquals(final T arg, final int expectedSize) {

@@ -71,7 +71,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
-    public NormalizedNode<?, ?> createDocumentOne() {
+    public NormalizedNode createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(SCHEMA_CONTEXT.getQName()))
