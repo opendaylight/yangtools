@@ -11,12 +11,12 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class WriteLeafCandidateNode extends AbstractWriteCandidate {
-    WriteLeafCandidateNode(final NormalizedNode<?, ?> data) {
+    WriteLeafCandidateNode(final NormalizedNode data) {
         super(data);
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return Optional.empty();
     }
 }

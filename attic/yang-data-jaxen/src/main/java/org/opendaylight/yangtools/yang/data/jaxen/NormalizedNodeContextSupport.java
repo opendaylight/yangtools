@@ -42,7 +42,7 @@ final class NormalizedNodeContextSupport extends ContextSupport implements Effec
     NormalizedNodeContext createContext(final YangInstanceIdentifier path) {
         NormalizedNodeContext result = root;
         for (PathArgument arg : path.getPathArguments()) {
-            final Optional<NormalizedNode<?, ?>> node = NormalizedNodes.getDirectChild(result.getNode(), arg);
+            final Optional<NormalizedNode> node = NormalizedNodes.getDirectChild(result.getNode(), arg);
             checkArgument(node.isPresent(), "Node %s has no child %s", result.getNode(), arg);
             result = result.createChild(node.get());
         }

@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class DataTreeCandidatesAggregateTest {
@@ -33,9 +34,9 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testLeafUnmodifiedUnmodified() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode3 = normalizedNode("value1");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value1");
+        NormalizedNode normalizedNode3 = normalizedNode("value1");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
                 ModificationType.UNMODIFIED);
@@ -48,15 +49,15 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.UNMODIFIED, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
-        assertEquals("value1", aggregationResult.getRootNode().getDataAfter().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value1", aggregationResult.getRootNode().getDataAfter().get().body());
     }
 
     @Test
     public void testLeaftUnmodifiedWrite() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode3 = normalizedNode("value2");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value1");
+        NormalizedNode normalizedNode3 = normalizedNode("value2");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
                 ModificationType.UNMODIFIED);
@@ -69,14 +70,14 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
     }
 
     @Test
     public void testLeafUnmodifiedDelete() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value1");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value1");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
                 ModificationType.UNMODIFIED);
@@ -89,7 +90,7 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
@@ -123,8 +124,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testLeafWriteUnmodified() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value2");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value2");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
                 ModificationType.WRITE);
@@ -137,15 +138,15 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
     }
 
     @Test
     public void testLeafWriteWrite() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value2");
-        NormalizedNode<?, ?> normalizedNode3 = normalizedNode("value3");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value2");
+        NormalizedNode normalizedNode3 = normalizedNode("value3");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
                 ModificationType.WRITE);
@@ -158,13 +159,13 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
-        assertEquals("value3", aggregationResult.getRootNode().getDataAfter().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value3", aggregationResult.getRootNode().getDataAfter().get().body());
     }
 
     @Test
     public void testLeafWriteDeleteWithoutChanges() {
-        NormalizedNode<?, ?> normalizedNode = normalizedNode("value1");
+        NormalizedNode normalizedNode = normalizedNode("value1");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(null, normalizedNode,
                 ModificationType.WRITE);
@@ -183,8 +184,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testLeafWriteDelete() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value2");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value2");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, normalizedNode2,
                 ModificationType.WRITE);
@@ -197,13 +198,13 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
     @Test
     public void testLeafDeleteUnmodified() {
-        NormalizedNode<?, ?> normalizedNode = normalizedNode("value");
+        NormalizedNode normalizedNode = normalizedNode("value");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode, null,
                 ModificationType.DELETE);
@@ -216,14 +217,14 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.DELETE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value", aggregationResult.getRootNode().getDataBefore().get().getValue());
+        assertEquals("value", aggregationResult.getRootNode().getDataBefore().get().body());
         assertEquals(Optional.empty(), aggregationResult.getRootNode().getDataAfter());
     }
 
     @Test
     public void testLeafDeleteWrite() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
-        NormalizedNode<?, ?> normalizedNode2 = normalizedNode("value2");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode2 = normalizedNode("value2");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
                 ModificationType.DELETE);
@@ -236,13 +237,13 @@ public class DataTreeCandidatesAggregateTest {
         DataTreeCandidate aggregationResult = DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2));
 
         assertEquals(ModificationType.WRITE, aggregationResult.getRootNode().getModificationType());
-        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().getValue());
-        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().getValue());
+        assertEquals("value1", aggregationResult.getRootNode().getDataBefore().get().body());
+        assertEquals("value2", aggregationResult.getRootNode().getDataAfter().get().body());
     }
 
     @Test
     public void testLeafDeleteDelete() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
                 ModificationType.DELETE);
@@ -258,7 +259,7 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testLeafDeleteDisappear() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
                 ModificationType.DELETE);
@@ -274,7 +275,7 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testLeafDeleteSubtreeModified() {
-        NormalizedNode<?, ?> normalizedNode1 = normalizedNode("value1");
+        NormalizedNode normalizedNode1 = normalizedNode("value1");
 
         DataTreeCandidateNode node1 = dataTreeCandidateNode(normalizedNode1, null,
                 ModificationType.DELETE);
@@ -290,8 +291,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedUnmodified() throws NoSuchFieldException {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode,
                 ModificationType.UNMODIFIED);
@@ -314,8 +315,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedDelete() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode,
                 ModificationType.UNMODIFIED);
@@ -338,10 +339,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedWrite() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.UNMODIFIED);
@@ -364,8 +365,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedSubtreeModifiedWithoutDataBefore() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
                 ModificationType.UNMODIFIED);
@@ -388,10 +389,10 @@ public class DataTreeCandidatesAggregateTest {
     //FIXME
     @Test
     public void testUnmodifiedSubtreeModified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode2 = normalizedNode("container1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.UNMODIFIED);
@@ -414,10 +415,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedAppearedWithDataBefore() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode2 = normalizedNode("container1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.UNMODIFIED);
@@ -440,8 +441,8 @@ public class DataTreeCandidatesAggregateTest {
     //FIXME
     @Test
     public void testUnmodifiedAppeared() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
                 ModificationType.UNMODIFIED);
@@ -464,8 +465,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedDisappearWithoutDataBefore() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, null,
                 ModificationType.UNMODIFIED);
@@ -487,8 +488,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testUnmodifiedDisappear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.UNMODIFIED);
@@ -511,8 +512,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDeleteUnmodified() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, null,
                 ModificationType.DELETE);
@@ -535,10 +536,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDeleteWrite() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DELETE);
@@ -561,10 +562,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDeleteAppear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DELETE);
@@ -587,8 +588,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteUnmodified() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode,
                 ModificationType.WRITE);
@@ -611,8 +612,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteDeleteWithoutChanges() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode,
                 ModificationType.WRITE);
@@ -635,10 +636,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteDelete() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
                 ModificationType.WRITE);
@@ -661,10 +662,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteWrite() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.WRITE);
@@ -687,12 +688,12 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteSubtreeModified() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container1");
+        NormalizedNode childNode = normalizedNode("child");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode, parentNode1,
                 ModificationType.WRITE);
@@ -715,11 +716,11 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteAppear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
-        NormalizedNode<?, ?> childNode3 = normalizedNode("child3");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
+        NormalizedNode childNode3 = normalizedNode("child3");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
                 ModificationType.WRITE);
@@ -741,8 +742,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteDisappearWithoutChanges() {
-        NormalizedNode<?, ?> parentNode = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("child");
+        NormalizedNode parentNode = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("child");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode,
                 ModificationType.WRITE);
@@ -765,10 +766,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testWriteDisappear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
                 ModificationType.WRITE);
@@ -791,10 +792,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testSubtreeModifiedUnmodified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container1");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
                 ModificationType.SUBTREE_MODIFIED);
@@ -817,10 +818,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testSubtreeModifiedDelete() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container1");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container1");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode2,
                 ModificationType.SUBTREE_MODIFIED);
@@ -843,11 +844,11 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testSubtreeModifiedWrite() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("value2");
-        NormalizedNode<?, ?> childNode = normalizedNode("childNode");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode parentNode2 = normalizedNode("value2");
+        NormalizedNode childNode = normalizedNode("childNode");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.SUBTREE_MODIFIED);
@@ -870,10 +871,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testSubtreeModifiedSubtreeModified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("childNode");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("childNode");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.SUBTREE_MODIFIED);
@@ -896,11 +897,11 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testSubtreeModifiedAppear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("value2");
-        NormalizedNode<?, ?> childNode = normalizedNode("childNode");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode parentNode2 = normalizedNode("value2");
+        NormalizedNode childNode = normalizedNode("childNode");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.SUBTREE_MODIFIED);
@@ -922,9 +923,9 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testSubtreeModifiedDisappear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode = normalizedNode("childNode");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode = normalizedNode("childNode");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, parentNode1,
                 ModificationType.SUBTREE_MODIFIED);
@@ -947,8 +948,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testAppearedUnmodified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.APPEARED);
@@ -971,8 +972,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testAppearedDelete() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.APPEARED);
@@ -995,10 +996,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testAppearedWriteWithoutChanges() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("value2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode parentNode2 = normalizedNode("value2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.APPEARED);
@@ -1021,9 +1022,9 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testAppearedSubtreeModified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.APPEARED);
@@ -1046,8 +1047,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testAppearedAppeared() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.APPEARED);
@@ -1069,8 +1070,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testAppearedDisappeared() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(null, parentNode1,
                 ModificationType.APPEARED);
@@ -1093,8 +1094,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDisappearedUnmodified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DISAPPEARED);
@@ -1117,8 +1118,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDisappearedDelete() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DISAPPEARED);
@@ -1140,10 +1141,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDisappearedWrite() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container1");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container2");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container1");
+        NormalizedNode parentNode2 = normalizedNode("container2");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DISAPPEARED);
@@ -1166,9 +1167,9 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDisappearedSubtreeModified() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DISAPPEARED);
@@ -1190,10 +1191,10 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDisappearedAppeared() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> parentNode2 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
-        NormalizedNode<?, ?> childNode2 = normalizedNode("child2");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode parentNode2 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
+        NormalizedNode childNode2 = normalizedNode("child2");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DISAPPEARED);
@@ -1216,8 +1217,8 @@ public class DataTreeCandidatesAggregateTest {
 
     @Test
     public void testDisappearedDisappear() {
-        NormalizedNode<?, ?> parentNode1 = normalizedNode("container");
-        NormalizedNode<?, ?> childNode1 = normalizedNode("child1");
+        NormalizedNode parentNode1 = normalizedNode("container");
+        NormalizedNode childNode1 = normalizedNode("child1");
 
         TerminalDataTreeCandidateNode node1 = dataTreeCandidateNode(parentNode1, null,
                 ModificationType.DISAPPEARED);
@@ -1237,14 +1238,14 @@ public class DataTreeCandidatesAggregateTest {
             () -> DataTreeCandidates.aggregate(Arrays.asList(candidate1, candidate2)));
     }
 
-    private static NormalizedNode<?, ?> normalizedNode(final String value) {
-        NormalizedNode<?, ?> node = mock(NormalizedNode.class);
-        doReturn(value).when(node).getValue();
+    private static LeafNode<String> normalizedNode(final String value) {
+        LeafNode<String> node = mock(LeafNode.class);
+        doReturn(value).when(node).body();
         return node;
     }
 
-    private static TerminalDataTreeCandidateNode dataTreeCandidateNode(final NormalizedNode<?, ?> before,
-                                                                       final NormalizedNode<?, ?> after,
+    private static TerminalDataTreeCandidateNode dataTreeCandidateNode(final NormalizedNode before,
+                                                                       final NormalizedNode after,
                                                                        final ModificationType modification) {
         TerminalDataTreeCandidateNode dataTreeCandidateNode = mock(TerminalDataTreeCandidateNode.class);
         doReturn(null).when(dataTreeCandidateNode).getIdentifier();

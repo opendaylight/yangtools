@@ -9,41 +9,33 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
-public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
-        extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild<? extends PathArgument, ?>>>
-        implements DataContainerNode<K> {
+public abstract class AbstractImmutableDataContainerNode<K extends PathArgument, N extends DataContainerNode<K>>
+        extends AbstractImmutableNormalizedNode<K, N> implements DataContainerNode<K> {
     private final Map<PathArgument, Object> children;
 
     protected AbstractImmutableDataContainerNode(final Map<PathArgument, Object> children, final K nodeIdentifier) {
         super(nodeIdentifier);
-
         this.children = ImmutableOffsetMap.unorderedCopyOf(children);
     }
 
     @Override
-    public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return Optional.ofNullable(LazyLeafOperations.getChild(children, child));
+    public final DataContainerChild childByArg(final PathArgument child) {
+        return LazyLeafOperations.getChild(children, child);
     }
 
     @Override
-    public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
+    public final Collection<DataContainerChild> body() {
         return new LazyValues(children);
     }
 
     @Override
     public final int size() {
         return children.size();
-    }
-
-    @Override
-    protected int valueHashCode() {
-        return children.hashCode();
     }
 
     /**
@@ -60,7 +52,12 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     @Override
-    protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+    protected int valueHashCode() {
+        return children.hashCode();
+    }
+
+    @Override
+    protected boolean valueEquals(final N other) {
         return other instanceof AbstractImmutableDataContainerNode<?> && children.equals(
                 ((AbstractImmutableDataContainerNode<?>) other).children);
     }

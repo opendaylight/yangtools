@@ -67,7 +67,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
         if (modification.getChildren().isEmpty()) {
@@ -134,12 +134,12 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    void verifyValue(final NormalizedNode<?, ?> value) {
+    void verifyValue(final NormalizedNode value) {
         // NOOP
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode value) {
         // NOOP
     }
 
@@ -150,7 +150,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
         // Unkeyed lists are always replaced
         node.write(value);
     }

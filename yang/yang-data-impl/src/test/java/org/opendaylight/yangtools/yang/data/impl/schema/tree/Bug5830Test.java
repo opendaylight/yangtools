@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -52,7 +52,7 @@ public class Bug5830Test {
         DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final MapNode taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
+        final SystemMapNode taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK), taskNode);
         modificationTree.ready();
@@ -227,7 +227,7 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static DataContainerChild<?, ?> createTaskDataContainer(final boolean withMandatoryNode) {
+    private static DataContainerChild createTaskDataContainer(final boolean withMandatoryNode) {
         DataContainerNodeBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
@@ -237,7 +237,7 @@ public class Bug5830Test {
         return taskDataBuilder.build();
     }
 
-    private static DataContainerChild<?, ?> createTaskDataMultipleContainer(final boolean withPresenceContianer) {
+    private static DataContainerChild createTaskDataMultipleContainer(final boolean withPresenceContianer) {
         DataContainerNodeBuilder<NodeIdentifier, ContainerNode> nonPresenceContainerBuilder = Builders
                 .containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))

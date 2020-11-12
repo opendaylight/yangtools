@@ -79,7 +79,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @throws IllegalArgumentException If provided NodeModification does not adhere to the
      *         structure.
      */
-    abstract void quickVerifyStructure(NormalizedNode<?, ?> modification);
+    abstract void quickVerifyStructure(NormalizedNode modification);
 
     /**
      * Performs a full structural verification of NodeModification, such as written values / types uses right
@@ -90,7 +90,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @throws IllegalArgumentException If provided NodeModification does not adhere to the
      *         structure.
      */
-    abstract void fullVerifyStructure(NormalizedNode<?, ?> modification);
+    abstract void fullVerifyStructure(NormalizedNode modification);
 
     /**
      * Return the tracking policy for this node's children.
@@ -108,7 +108,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @param value Value which should be merge into the modification
      * @param version Data version as carried in the containing {@link InMemoryDataTreeModification}
      */
-    abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version);
+    abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode value, Version version);
 
     /**
      * Returns a suboperation for specified tree node.
@@ -119,7 +119,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     @Override
     public abstract Optional<ModificationApplyOperation> getChild(PathArgument child);
 
-    abstract void recursivelyVerifyStructure(NormalizedNode<?, ?> value);
+    abstract void recursivelyVerifyStructure(NormalizedNode value);
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 
