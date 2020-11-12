@@ -10,26 +10,26 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
-    private final NormalizedNode<?, ?> data;
+    private final NormalizedNode data;
 
-    AbstractLeafCandidateNode(final NormalizedNode<?, ?> data) {
+    AbstractLeafCandidateNode(final NormalizedNode data) {
         this.data = requireNonNull(data);
     }
 
-    final @NonNull Optional<NormalizedNode<?, ?>> dataOptional() {
+    final @NonNull Optional<NormalizedNode> dataOptional() {
         return Optional.of(data);
     }
 
     @Override
     public final Collection<DataTreeCandidateNode> getChildNodes() {
-        return Collections.emptyList();
+        return List.of();
     }
 
     @Override

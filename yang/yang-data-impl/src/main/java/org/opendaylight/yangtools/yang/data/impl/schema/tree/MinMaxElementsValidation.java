@@ -14,7 +14,6 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.RequiredElementCountException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -95,7 +94,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     }
 
     @Override
-    void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
+    void fullVerifyStructure(final NormalizedNode modification) {
         delegate.fullVerifyStructure(modification);
         checkChildren(modification);
     }
@@ -111,21 +110,21 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
         delegate.mergeIntoModifiedNode(node, value, version);
     }
 
     @Override
-    void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
+    void quickVerifyStructure(final NormalizedNode modification) {
         delegate.quickVerifyStructure(modification);
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode value) {
         delegate.recursivelyVerifyStructure(value);
     }
 
-    private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
+    private void validateMinMaxElements(final ModificationPath path, final NormalizedNode value)
             throws DataValidationFailedException {
         final PathArgument id = value.getIdentifier();
         final int children = numOfChildrenFromValue(value);
@@ -139,7 +138,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
         }
     }
 
-    private void checkChildren(final NormalizedNode<?, ?> value) {
+    private void checkChildren(final NormalizedNode value) {
         final PathArgument id = value.getIdentifier();
         final int children = numOfChildrenFromValue(value);
         checkArgument(minElements <= children, "Node %s does not have enough elements (%s), needs at least %s", id,
@@ -148,15 +147,8 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
                 maxElements);
     }
 
-    private static int numOfChildrenFromValue(final NormalizedNode<?, ?> value) {
-        if (value instanceof NormalizedNodeContainer) {
-            return ((NormalizedNodeContainer<?, ?, ?>) value).size();
-        } else if (value instanceof UnkeyedListNode) {
-            return ((UnkeyedListNode) value).getSize();
-        }
-
-        throw new IllegalArgumentException(String.format(
-                "Unexpected type '%s', expected types are NormalizedNodeContainer and UnkeyedListNode",
-                value.getClass()));
+    private static int numOfChildrenFromValue(final NormalizedNode value) {
+        checkArgument(value instanceof NormalizedNodeContainer, "Value %s is not a NormalizedNodeContainer", value);
+        return ((NormalizedNodeContainer<?, ?>) value).size();
     }
 }

@@ -5,19 +5,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -26,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class NormalizedNodesTest {
 
     @Test
@@ -40,25 +43,30 @@ public class NormalizedNodesTest {
 
         final DataContainerNode<?> mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
-        doReturn(Optional.of(mockedContainerNode)).when(mockedDataContainerNode).getChild(any(PathArgument.class));
+        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
+        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
+
         assertEquals(mockedContainerNode, NormalizedNodes.getDirectChild(mockedDataContainerNode, mockedPathArgument)
                 .get());
 
-        final MapNode mockedMapNode = mock(MapNode.class);
+        final UnorderedMapNode mockedMapNode = mock(UnorderedMapNode.class);
         final QName listQName = QName.create("test-ns", "test-list");
         final QName listKeyQName = QName.create("test-ns", "test-list-key");
         final NodeIdentifierWithPredicates nodeIdentifierWithPredicates =
                 NodeIdentifierWithPredicates.of(listQName, listKeyQName, "str-value");
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
-        doReturn(Optional.of(mockedMapEntryNode)).when(mockedMapNode).getChild(any(NodeIdentifierWithPredicates.class));
+        doReturn(mockedMapEntryNode).when(mockedMapNode).childByArg(any(NodeIdentifierWithPredicates.class));
+        doCallRealMethod().when(mockedMapNode).findChildByArg(any(NodeIdentifierWithPredicates.class));
+
         assertEquals(mockedMapEntryNode, NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates)
                 .get());
         assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedMapNode, mockedPathArgument));
 
-        final LeafSetNode<?> mockedLeafSetNode = mock(LeafSetNode.class);
+        final UnorderedLeafSetNode<?> mockedLeafSetNode = mock(UnorderedLeafSetNode.class);
         final QName leafListQName = QName.create("test-ns", "test-leaf-list");
         final NodeWithValue<?> nodeWithValue = new NodeWithValue<>(leafListQName, "str-value");
-        doReturn(Optional.of(mockedLeafSetEntryNode)).when(mockedLeafSetNode).getChild(any(NodeWithValue.class));
+        doReturn(mockedLeafSetEntryNode).when(mockedLeafSetNode).childByArg(any(NodeWithValue.class));
+        doCallRealMethod().when(mockedLeafSetNode).findChildByArg(any(NodeWithValue.class));
         assertEquals(mockedLeafSetEntryNode, NormalizedNodes.getDirectChild(mockedLeafSetNode, nodeWithValue).get());
     }
 
@@ -67,8 +75,10 @@ public class NormalizedNodesTest {
         final DataContainerNode<?> mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
         final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
-        doReturn(Optional.of(mockedContainerNode)).when(mockedDataContainerNode).getChild(any(PathArgument.class));
-        doReturn(Optional.of(mockedLeafNode)).when(mockedContainerNode).getChild(any(PathArgument.class));
+        doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
+        doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
+        doReturn(mockedLeafNode).when(mockedContainerNode).childByArg(any(PathArgument.class));
+        doCallRealMethod().when(mockedContainerNode).findChildByArg(any(PathArgument.class));
 
         final QName node1QName = QName.create("test-ns", "2016-09-16", "node1");
         final QName node2Qname = QName.create("test-ns", "2016-09-16", "node2");
@@ -98,7 +108,7 @@ public class NormalizedNodesTest {
         final QName leafNodeQName = QName.create("test-ns", "2016-09-16", "leaf-node");
         final NodeIdentifier leafNodeId = new NodeIdentifier(leafNodeQName);
         doReturn(leafNodeId).when(mockedLeafNode).getIdentifier();
-        doReturn("str-value-1").when(mockedLeafNode).getValue();
+        doReturn("str-value-1").when(mockedLeafNode).body();
 
         String stringTree = NormalizedNodes.toStringTree(mockedLeafNode);
         assertNotNull(stringTree);
@@ -109,18 +119,18 @@ public class NormalizedNodesTest {
         final AugmentationIdentifier augNodeId = new AugmentationIdentifier(ImmutableSet.of(listQName));
         doReturn(augNodeId).when(mockedAugmentationNode).getIdentifier();
 
-        final MapNode mockedMapNode = mock(MapNode.class);
+        final UnorderedMapNode mockedMapNode = mock(UnorderedMapNode.class);
         final NodeIdentifier listNodeId = new NodeIdentifier(listQName);
         doReturn(listNodeId).when(mockedMapNode).getIdentifier();
-        doReturn(Collections.singletonList(mockedMapNode)).when(mockedAugmentationNode).getValue();
+        doReturn(List.of(mockedMapNode)).when(mockedAugmentationNode).body();
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         final NodeIdentifierWithPredicates listEntryNodeId = NodeIdentifierWithPredicates.of(listQName,
                 leafNodeQName, "key-leaf-value");
         doReturn(listEntryNodeId).when(mockedMapEntryNode).getIdentifier();
-        doReturn(Collections.singletonList(mockedMapEntryNode)).when(mockedMapNode).getValue();
+        doReturn(List.of(mockedMapEntryNode)).when(mockedMapNode).body();
 
-        doReturn(Collections.singletonList(mockedLeafNode)).when(mockedMapEntryNode).getValue();
+        doReturn(List.of(mockedLeafNode)).when(mockedMapEntryNode).body();
 
         stringTree = NormalizedNodes.toStringTree(mockedAugmentationNode);
         assertNotNull(stringTree);

@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
- * An {@link AnydataNode#getValueObjectModel() anydata value object model} which can be normalized to
+ * An {@link AnydataNode#bodyObjectModel() anydata value object model} which can be normalized to
  * {@link NormalizedAnydata} when provided with proper context.
  */
 @Beta

@@ -53,7 +53,7 @@ public class DataNodeContainerValidator {
         DataValidationException.checkLegalChild(isKnownChild(child), child, schema, childNodes, augments);
     }
 
-    public DataContainerChild<?, ?> validateChild(final DataContainerChild<?, ?> child) {
+    public DataContainerChild validateChild(final DataContainerChild child) {
         validateChild(child.getIdentifier());
         return child;
     }
