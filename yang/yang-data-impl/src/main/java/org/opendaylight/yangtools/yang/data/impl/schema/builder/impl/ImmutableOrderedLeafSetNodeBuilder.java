@@ -142,12 +142,12 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return children.size();
         }
 
         @Override
-        public Collection<LeafSetEntryNode<T>> getValue() {
+        public Collection<LeafSetEntryNode<T>> body() {
             return UnmodifiableCollection.create(children.values());
         }
     }

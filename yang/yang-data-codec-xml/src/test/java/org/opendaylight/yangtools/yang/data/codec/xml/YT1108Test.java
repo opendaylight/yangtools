@@ -122,7 +122,7 @@ public class YT1108Test {
         new XMLTestCase() {}.assertXMLEqual(diff, true);
     }
 
-    private DOMResult convertNormalizedNodeToXml(NormalizedNode<?, ?> normalizedNode)
+    private DOMResult convertNormalizedNodeToXml(NormalizedNode normalizedNode)
             throws XMLStreamException, IOException {
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
 
@@ -138,7 +138,7 @@ public class YT1108Test {
         return domResult;
     }
 
-    private NormalizedNode<?, ?> buildLeafContainerNodeWithIdentityRefLeaf() {
+    private NormalizedNode buildLeafContainerNodeWithIdentityRefLeaf() {
         return Builders.containerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(fooLeafContainer))
                 .withChild(Builders.leafBuilder()
@@ -148,7 +148,7 @@ public class YT1108Test {
                 .build();
     }
 
-    private NormalizedNode<?, ?> buildLeafContainerNodeWithUnionIdentityRefLeaf() {
+    private NormalizedNode buildLeafContainerNodeWithUnionIdentityRefLeaf() {
         return Builders.containerBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(fooLeafContainer))
                 .withChild(Builders.leafBuilder()
