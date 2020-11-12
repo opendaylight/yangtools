@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "75611f73_508cb1f0",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-11-12T10:22:05Z",
+      "side": 1,
+      "message": "can t this be 2 with load factor 1? or we can even keep the 0.75 load factor. which would increase the table size first time if 2 elements will be in. 2x0.75 \u003d 1.5 and it only should increase the size if it meets the threshold or exceeds it. And it saves some more memory.",
+      "range": {
+        "startLine": 302,
+        "startChar": 51,
+        "endLine": 302,
+        "endChar": 52
+      },
+      "revId": "7dae8fcc2bd19cdac261b56987774398c90fa8e8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
