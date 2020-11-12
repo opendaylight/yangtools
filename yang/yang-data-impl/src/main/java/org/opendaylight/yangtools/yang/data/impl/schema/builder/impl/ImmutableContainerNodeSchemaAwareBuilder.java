@@ -48,7 +48,7 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
     }
 
     @Override
-    public DataContainerNodeBuilder<NodeIdentifier, ContainerNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<NodeIdentifier, ContainerNode> withChild(final DataContainerChild child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }

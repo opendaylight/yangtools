@@ -42,7 +42,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
 
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }
@@ -78,7 +78,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         final Object[] values = new Object[childrenQNamesToPaths.size()];
         int offset = 0;
         for (Entry<QName, PathArgument> entry : childrenQNamesToPaths.entrySet()) {
-            values[offset++] = nonnullKeyValue(entry.getKey(), getChild(entry.getValue())).getValue();
+            values[offset++] = nonnullKeyValue(entry.getKey(), getChild(entry.getValue())).body();
         }
         return ImmutableMapTemplate.ordered(childrenQNamesToPaths.keySet()).instantiateWithValues(values);
     }
@@ -87,12 +87,12 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         final Object[] values = new Object[keys.size()];
         int offset = 0;
         for (QName key : keys) {
-            values[offset++] = nonnullKeyValue(key, getChild(childrenQNamesToPaths.get(key))).getValue();
+            values[offset++] = nonnullKeyValue(key, getChild(childrenQNamesToPaths.get(key))).body();
         }
         return ImmutableMapTemplate.ordered(keys).instantiateWithValues(values);
     }
 
-    private DataContainerChild<?, ?> nonnullKeyValue(final QName key, final DataContainerChild<?, ?> value) {
+    private DataContainerChild nonnullKeyValue(final QName key, final DataContainerChild value) {
         if (value != null) {
             return value;
         }

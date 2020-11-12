@@ -87,7 +87,7 @@ public class DOMSourceXMLStreamReaderTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, outerContainerSchema);
         xmlParser.parse(domXMLReader);
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         // serialization

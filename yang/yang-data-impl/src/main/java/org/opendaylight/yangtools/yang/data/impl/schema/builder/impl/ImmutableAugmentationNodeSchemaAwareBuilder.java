@@ -33,7 +33,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         return super.withChild(validator.validateChild(child));
     }
 

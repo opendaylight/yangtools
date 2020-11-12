@@ -113,7 +113,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
      *
      * @return a test document
      */
-    public NormalizedNode<?, ?> createDocumentOne() {
+    public NormalizedNode createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new NodeIdentifier(SCHEMA_CONTEXT.getQName()))
@@ -136,7 +136,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
         final DataTreeModification modificationTree = new InMemoryDataTreeModification(
             new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper), rootOper);
-        final Optional<NormalizedNode<?, ?>> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
+        final Optional<NormalizedNode> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.get());
 
@@ -145,13 +145,13 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
 
         // reads node to /outer-list/1/inner_list/two/value
         // and checks if node is already present
-        final Optional<NormalizedNode<?, ?>> barTwoCModified = modificationTree.readNode(TWO_TWO_VALUE_PATH);
+        final Optional<NormalizedNode> barTwoCModified = modificationTree.readNode(TWO_TWO_VALUE_PATH);
         assertTrue(barTwoCModified.isPresent());
         assertEquals(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "test"), barTwoCModified.get());
 
         // delete node to /outer-list/1/inner_list/two/value
         modificationTree.delete(TWO_TWO_VALUE_PATH);
-        final Optional<NormalizedNode<?, ?>> barTwoCAfterDelete = modificationTree.readNode(TWO_TWO_VALUE_PATH);
+        final Optional<NormalizedNode> barTwoCAfterDelete = modificationTree.readNode(TWO_TWO_VALUE_PATH);
         assertFalse(barTwoCAfterDelete.isPresent());
     }
 
@@ -184,11 +184,11 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
             .build());
 
         // Reads list node from /test/outer-list.
-        final Optional<NormalizedNode<?, ?>> potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
+        final Optional<NormalizedNode> potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
         assertFalse(potentialOuterList.isPresent());
 
         // Reads container node from /test and verifies that it contains test node.
-        final Optional<NormalizedNode<?, ?>> potentialTest = modificationTree.readNode(TestModel.TEST_PATH);
+        final Optional<NormalizedNode> potentialTest = modificationTree.readNode(TestModel.TEST_PATH);
         assertPresentAndType(potentialTest, ContainerNode.class);
     }
 
@@ -196,7 +196,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
     public void writeSubtreeReadChildren() {
         final DataTreeModification modificationTree = createEmptyModificationTree();
         modificationTree.write(TestModel.TEST_PATH, createTestContainer());
-        final Optional<NormalizedNode<?, ?>> potential = modificationTree.readNode(TWO_TWO_PATH);
+        final Optional<NormalizedNode> potential = modificationTree.readNode(TWO_TWO_PATH);
         assertPresentAndType(potential, MapEntryNode.class);
     }
 
@@ -206,11 +206,11 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
         modificationTree.write(TestModel.TEST_PATH, createTestContainer());
 
         // We verify data are present
-        final Optional<NormalizedNode<?, ?>> potentialBeforeDelete = modificationTree.readNode(TWO_TWO_PATH);
+        final Optional<NormalizedNode> potentialBeforeDelete = modificationTree.readNode(TWO_TWO_PATH);
         assertPresentAndType(potentialBeforeDelete, MapEntryNode.class);
 
         modificationTree.delete(TWO_TWO_PATH);
-        final Optional<NormalizedNode<?, ?>> potentialAfterDelete = modificationTree.readNode(TWO_TWO_PATH);
+        final Optional<NormalizedNode> potentialAfterDelete = modificationTree.readNode(TWO_TWO_PATH);
         assertFalse(potentialAfterDelete.isPresent());
 
     }

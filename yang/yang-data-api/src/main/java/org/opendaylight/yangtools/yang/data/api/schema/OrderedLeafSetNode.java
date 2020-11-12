@@ -20,6 +20,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  *
  * @param <T> Value type of Leaf entries
  */
-public interface OrderedLeafSetNode<T> extends LeafSetNode<T>, OrderedNodeContainer<LeafSetEntryNode<T>> {
+public interface OrderedLeafSetNode<T>
+    extends LeafSetNode<T>, OrderedNodeContainer<LeafSetEntryNode<T>> {
 
 }
