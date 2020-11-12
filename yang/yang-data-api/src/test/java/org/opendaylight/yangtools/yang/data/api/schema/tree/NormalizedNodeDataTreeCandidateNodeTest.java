@@ -26,7 +26,7 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
 
     @Test
     public void testNormalizedNodeDataTreeCandidateNode() {
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNode);
 
@@ -47,11 +47,11 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         final NormalizedNodeContainer mockedNormalizedNodeContainer = mock(NormalizedNodeContainer.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode2 = new
                 NormalizedNodeDataTreeCandidateNode(mockedNormalizedNodeContainer);
-        final NormalizedNode<?, ?> mockedChildNormNode1 = mock(NormalizedNode.class);
-        final NormalizedNode<?, ?> mockedChildNormNode2 = mock(NormalizedNode.class);
-        final Collection<NormalizedNode<?, ?>> mockedChildNodes = Arrays.asList(mockedChildNormNode1,
+        final NormalizedNode mockedChildNormNode1 = mock(NormalizedNode.class);
+        final NormalizedNode mockedChildNormNode2 = mock(NormalizedNode.class);
+        final Collection<NormalizedNode> mockedChildNodes = Arrays.asList(mockedChildNormNode1,
                 mockedChildNormNode2, null);
-        doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).getValue();
+        doReturn(mockedChildNodes).when(mockedNormalizedNodeContainer).body();
         final Collection<DataTreeCandidateNode> childNodes2 = normalizedNodeDataTreeCandidateNode2.getChildNodes();
         assertEquals(3, childNodes2.size());
 

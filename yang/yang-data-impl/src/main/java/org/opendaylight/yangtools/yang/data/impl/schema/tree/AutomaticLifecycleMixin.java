@@ -36,7 +36,7 @@ final class AutomaticLifecycleMixin {
      */
     @FunctionalInterface
     interface ApplyWrite {
-        TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue,
+        TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
                 Optional<? extends TreeNode> storeMeta, Version version);
     }
 
@@ -45,7 +45,7 @@ final class AutomaticLifecycleMixin {
     }
 
     static Optional<? extends TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
-            final NormalizedNode<?, ?> emptyNode, final ModifiedNode modification,
+            final NormalizedNode emptyNode, final ModifiedNode modification,
             final Optional<? extends TreeNode> storeMeta, final Version version) {
         final Optional<? extends TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
@@ -64,7 +64,7 @@ final class AutomaticLifecycleMixin {
         return ret.isPresent() ? disappearResult(modification, ret.get(), storeMeta) : ret;
     }
 
-    private static Optional<? extends TreeNode> applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
+    private static Optional<? extends TreeNode> applyTouch(final Apply delegate, final NormalizedNode emptyNode,
             final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta, final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
         final Optional<? extends TreeNode> ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
@@ -99,17 +99,17 @@ final class AutomaticLifecycleMixin {
         return Optional.empty();
     }
 
-    private static Optional<TreeNode> fakeMeta(final NormalizedNode<?, ?> emptyNode, final Version version) {
+    private static Optional<TreeNode> fakeMeta(final NormalizedNode emptyNode, final Version version) {
         return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
     }
 
     private static boolean isEmpty(final TreeNode treeNode) {
-        final NormalizedNode<?, ?> data = treeNode.getData();
+        final NormalizedNode data = treeNode.getData();
         if (data instanceof NormalizedNodeContainer) {
-            return ((NormalizedNodeContainer<?, ?, ?>) data).getValue().isEmpty();
+            return ((NormalizedNodeContainer<?, ?, ?>) data).body().isEmpty();
         }
         if (data instanceof OrderedNodeContainer) {
-            return ((OrderedNodeContainer<?>) data).getSize() == 0;
+            return ((OrderedNodeContainer<?, ?>) data).size() == 0;
         }
         throw new IllegalStateException("Unhandled data " + data);
     }

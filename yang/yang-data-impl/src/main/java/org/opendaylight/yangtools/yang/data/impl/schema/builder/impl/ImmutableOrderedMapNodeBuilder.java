@@ -162,12 +162,7 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         }
 
         @Override
-        public int getSize() {
-            return children.size();
-        }
-
-        @Override
-        public Collection<MapEntryNode> getValue() {
+        public Collection<MapEntryNode> body() {
             return UnmodifiableCollection.create(children.values());
         }
     }

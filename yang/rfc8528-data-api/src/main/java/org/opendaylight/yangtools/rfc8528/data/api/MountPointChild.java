@@ -41,5 +41,5 @@ public interface MountPointChild {
      * @throws IOException if an underlying error occurs
      * @throws NullPointerException if any of the arguments is null
      */
-    NormalizedNode<?, ?> normalizeTo(EffectiveModelContext schemaContext) throws IOException;
+    NormalizedNode normalizeTo(EffectiveModelContext schemaContext) throws IOException;
 }

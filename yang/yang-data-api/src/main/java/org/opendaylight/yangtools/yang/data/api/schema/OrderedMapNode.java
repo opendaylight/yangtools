@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+
 /**
  * Map node which preserves user-supplied ordering.
  *
@@ -18,6 +22,13 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * Except preserving user-ordering all other semantics and behaviour is same as
  * in {@link MapNode}.
  */
-public interface OrderedMapNode extends MapNode, OrderedNodeContainer<MapEntryNode> {
-
+public interface OrderedMapNode extends MapNode, OrderedNodeContainer<NodeIdentifierWithPredicates, MapEntryNode> {
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The implementation is required to define a user-visible order.
+     */
+    @Override
+    @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
 }

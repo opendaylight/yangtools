@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -37,7 +38,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         this.nodeIdentifier = node.getIdentifier();
         // FIXME: clean this up, notably reuse unmodified lists
         this.value = new LinkedList<>();
-        Iterables.addAll(value, node.getValue());
+        Iterables.addAll(value, node.body());
         this.dirty = true;
     }
 
@@ -125,7 +126,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public ImmutableList<UnkeyedListEntryNode> getValue() {
+        public ImmutableList<UnkeyedListEntryNode> body() {
             return ImmutableList.of();
         }
 
@@ -135,13 +136,13 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return 0;
         }
 
         @Override
         protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-            return Collections.emptyList().equals(other.getValue());
+            return Collections.emptyList().equals(other.body());
         }
 
         @Override
@@ -178,8 +179,14 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public int getSize() {
+        public int size() {
             return children.size();
+        }
+
+        @Override
+        public Optional<UnkeyedListEntryNode> getChild(final NodeIdentifier child) {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 }
