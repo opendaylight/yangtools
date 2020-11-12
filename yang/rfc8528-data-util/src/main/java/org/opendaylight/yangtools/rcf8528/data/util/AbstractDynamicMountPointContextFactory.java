@@ -52,7 +52,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
                 continue;
             }
 
-            final NormalizedNode<?, ?> libData;
+            final NormalizedNode libData;
             try {
                 libData = entry.getValue().normalizeTo(optLibContext.get());
             } catch (IOException e) {
@@ -67,7 +67,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
                 return new EmptyMountPointContext(schemaContext);
             }
 
-            final NormalizedNode<?, ?> mountData;
+            final NormalizedNode mountData;
             try {
                 mountData = schemaMounts.normalizeTo(schemaContext);
             } catch (IOException e) {

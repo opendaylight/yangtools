@@ -21,8 +21,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -44,7 +43,7 @@ public class Bug7246Test {
                 .parse(new FileReader(new File(getClass().getResource("/bug7246/json/expected-output.json").toURI()),
                     StandardCharsets.UTF_8));
 
-        final DataContainerChild<? extends PathArgument, ?> inputStructure = ImmutableContainerNodeBuilder.create()
+        final ContainerNode inputStructure = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
                 .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value")).build();
         final SchemaPath rootPath = SchemaPath.create(true, qN("my-name"), qN("input"));
@@ -61,7 +60,7 @@ public class Bug7246Test {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final EffectiveModelContext schemaContext,
-            final SchemaPath path, final Writer writer, final NormalizedNode<?, ?> inputStructure)
+            final SchemaPath path, final Writer writer, final NormalizedNode inputStructure)
             throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(

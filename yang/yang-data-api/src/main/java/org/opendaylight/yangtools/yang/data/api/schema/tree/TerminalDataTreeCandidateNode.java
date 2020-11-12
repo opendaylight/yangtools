@@ -21,23 +21,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     private ModificationType modificationType;
     private final PathArgument identifier;
-    private final NormalizedNode<?, ?> before;
-    private NormalizedNode<?, ?> after;
+    private final NormalizedNode before;
+    private NormalizedNode after;
     private final HashMap<PathArgument, TerminalDataTreeCandidateNode> childNodes = new HashMap<>();
     private TerminalDataTreeCandidateNode parentNode;
 
-    TerminalDataTreeCandidateNode(PathArgument identifier, NormalizedNode<?, ?> data,
+    TerminalDataTreeCandidateNode(PathArgument identifier, NormalizedNode data,
                                   TerminalDataTreeCandidateNode parentNode) {
         this(identifier, data);
         this.parentNode = requireNonNull(parentNode);
     }
 
-    TerminalDataTreeCandidateNode(PathArgument identifier, NormalizedNode<?, ?> data) {
+    TerminalDataTreeCandidateNode(PathArgument identifier, NormalizedNode data) {
         this(identifier, ModificationType.UNMODIFIED, data, data);
     }
 
     TerminalDataTreeCandidateNode(PathArgument identifier, ModificationType modificationType,
-                                  NormalizedNode<?, ?> before, NormalizedNode<?, ?> after) {
+                                  NormalizedNode before, NormalizedNode after) {
         this.modificationType = modificationType;
         this.identifier = identifier;
         this.before = before;
@@ -66,20 +66,20 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return Optional.ofNullable(after);
     }
 
-    @NonNull Optional<NormalizedNode<?, ?>> getDataAfter(PathArgument id) {
+    @NonNull Optional<NormalizedNode> getDataAfter(PathArgument id) {
         return getNode(id).flatMap(TerminalDataTreeCandidateNode::getDataAfter);
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return Optional.ofNullable(before);
     }
 
-    @NonNull Optional<NormalizedNode<?, ?>> getDataBefore(PathArgument id) {
+    @NonNull Optional<NormalizedNode> getDataBefore(PathArgument id) {
         Optional<TerminalDataTreeCandidateNode> node = getNode(id);
         if (node.isPresent()) {
             return node.get().getDataBefore();
@@ -87,7 +87,7 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
         return Optional.empty();
     }
 
-    void setAfter(NormalizedNode<?, ?> after) {
+    void setAfter(NormalizedNode after) {
         this.after = after;
     }
 
@@ -141,7 +141,7 @@ class TerminalDataTreeCandidateNode implements DataTreeCandidateNode {
         return findNode(id);
     }
 
-    void setData(PathArgument id, NormalizedNode<?, ?> node) {
+    void setData(PathArgument id, NormalizedNode node) {
         TerminalDataTreeCandidateNode terminalDataTreeCandidateNode = getNode(id).get();
         terminalDataTreeCandidateNode.setAfter(node);
     }

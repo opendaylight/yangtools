@@ -103,13 +103,13 @@ public class Bug8083Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.RFC7951.getShared(FULL_SCHEMA_CONTEXT));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
 
         assertTrue(transformedInput instanceof ContainerNode);
         final ContainerNode container = (ContainerNode) transformedInput;
-        final NormalizedNode<?, ?> child = container.getChild(new NodeIdentifier(FOO_QNAME)).get();
+        final NormalizedNode child = container.getChild(new NodeIdentifier(FOO_QNAME)).get();
         assertTrue(child instanceof LeafNode);
-        assertEquals(TEST_IID, child.getValue());
+        assertEquals(TEST_IID, child.body());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class Bug8083Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -138,7 +138,7 @@ public class Bug8083Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -153,7 +153,7 @@ public class Bug8083Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
