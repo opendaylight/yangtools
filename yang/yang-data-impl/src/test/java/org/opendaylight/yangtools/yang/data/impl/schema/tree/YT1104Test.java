@@ -61,7 +61,7 @@ public class YT1104Test {
         writeChoice(anyXmlBuilder().withNodeIdentifier(BAZ).withValue(new DOMSource()).build());
     }
 
-    private void writeChoice(final DataContainerChild<?, ?> child) throws DataValidationFailedException {
+    private void writeChoice(final DataContainerChild child) throws DataValidationFailedException {
         final DataTreeModification mod = dataTree.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.create(FOO), choiceBuilder().withNodeIdentifier(FOO).withChild(child).build());
         mod.ready();

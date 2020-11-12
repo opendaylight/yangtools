@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 
 /**
@@ -27,18 +27,15 @@ public final class TreeNodeFactory {
      * @param version data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
-    public static TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version) {
-        if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
+    public static TreeNode createTreeNode(final NormalizedNode data, final Version version) {
+        if (data instanceof DistinctNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
-            final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container =
-                    (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+            final DistinctNodeContainer<?, ?, NormalizedNode> container =
+                    (DistinctNodeContainer<?, ?, NormalizedNode>) data;
             return new SimpleContainerNode(container, version);
         }
         if (data instanceof OrderedNodeContainer<?>) {
-            @SuppressWarnings("unchecked")
-            final OrderedNodeContainer<NormalizedNode<?, ?>> container =
-                    (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
-            return new SimpleContainerNode(container, version);
+            return new SimpleContainerNode(data, version);
         }
         return new ValueNode(data, version);
     }

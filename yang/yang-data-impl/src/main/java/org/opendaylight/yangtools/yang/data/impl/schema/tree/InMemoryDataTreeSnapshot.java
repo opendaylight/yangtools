@@ -13,8 +13,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshotCursor;
@@ -45,7 +45,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
+    public Optional<NormalizedNode> readNode(final YangInstanceIdentifier path) {
         return NormalizedNodes.findNode(rootNode.getData(), path);
     }
 
@@ -57,8 +57,8 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     @Override
     public Optional<DataTreeSnapshotCursor> openCursor(final YangInstanceIdentifier path) {
         return NormalizedNodes.findNode(rootNode.getData(), path).map(root -> {
-            checkArgument(root instanceof NormalizedNodeContainer, "Child %s is not a container", path);
-            return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (NormalizedNodeContainer<?, ?, ?>)root));
+            checkArgument(root instanceof DistinctNodeContainer, "Child %s is not a container", path);
+            return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (DistinctNodeContainer<?, ?, ?>)root));
         });
     }
 
