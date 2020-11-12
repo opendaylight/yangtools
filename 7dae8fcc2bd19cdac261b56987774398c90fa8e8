@@ -22,6 +22,30 @@
       "revId": "7dae8fcc2bd19cdac261b56987774398c90fa8e8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9d9109a_03da6afd",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 27
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-12T15:46:57Z",
+      "side": 1,
+      "message": "right, but that trades off get/put performance -- see HashMap documentation 😊",
+      "parentUuid": "75611f73_508cb1f0",
+      "range": {
+        "startLine": 302,
+        "startChar": 51,
+        "endLine": 302,
+        "endChar": 52
+      },
+      "revId": "7dae8fcc2bd19cdac261b56987774398c90fa8e8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
     }
   ]
 }
