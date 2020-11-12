@@ -85,7 +85,7 @@ public class InstanceIdToNodesTest {
                                                 .withChild(
                                                         leaf).build()).build()).build();
 
-        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf), leaf);
         assertEquals(expectedFilter, filter);
     }
@@ -105,7 +105,7 @@ public class InstanceIdToNodesTest {
                                         Builders.augmentationBuilder().withNodeIdentifier(augmentation)
                                                 .withChild(lastLeaf).build()).build()).build();
 
-        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf), lastLeaf);
         assertEquals(expectedFilter, filter);
     }
@@ -136,7 +136,7 @@ public class InstanceIdToNodesTest {
                                 .build())
                 .build();
 
-        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey, choice, leafFromCase), leaf);
         assertEquals(expectedFilter, filter);
     }
@@ -167,7 +167,7 @@ public class InstanceIdToNodesTest {
                                                                                 .build()).build()).build()).build())
                 .build();
 
-        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer), expectedStructure);
         assertEquals(expectedStructure, filter);
     }
@@ -185,7 +185,7 @@ public class InstanceIdToNodesTest {
         final ContainerNode expectedStructure = Builders.containerBuilder().withNodeIdentifier(rootContainer)
                 .withChild(lastChild).build();
 
-        NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey), outerListEntry);
         assertEquals(expectedStructure, filter);
         filter = ImmutableNodes.fromInstanceId(ctx,
@@ -205,7 +205,7 @@ public class InstanceIdToNodesTest {
                                         Builders.leafSetEntryBuilder().withNodeIdentifier(leafListWithValue)
                                                 .withValue(leafListWithValue.getValue()).build()).build()).build();
 
-        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer, leafList, leafListWithValue));
         assertEquals(expectedFilter, filter);
     }
@@ -222,7 +222,7 @@ public class InstanceIdToNodesTest {
         final NodeIdentifierWithPredicates id = NodeIdentifierWithPredicates.of(TWO_KEY_LIST.getNodeType(), misordered);
         assertArrayEquals(new Object[] { BAR, FOO }, id.keySet().toArray());
 
-        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+        final NormalizedNode filter = ImmutableNodes.fromInstanceId(ctx,
             YangInstanceIdentifier.create(TWO_KEY_LIST, id));
         assertThat(filter, isA(MapNode.class));
         final Collection<MapEntryNode> value = ((MapNode) filter).getValue();

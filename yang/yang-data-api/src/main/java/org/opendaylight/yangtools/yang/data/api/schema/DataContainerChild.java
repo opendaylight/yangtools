@@ -24,9 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * </ul>
  *
  * @param <K> Path Argument Type which is used to identify node
- * @param <V> Value type
  */
-public interface DataContainerChild<K extends PathArgument,V> extends NormalizedNode<K, V> {
+public interface DataContainerChild<K extends PathArgument> extends NormalizedNode {
     @Override
     K getIdentifier();
 }

@@ -92,7 +92,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, yangModeledAnyXML);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> output = result.getResult();
+        final NormalizedNode output = result.getResult();
         assertTrue(output instanceof YangModeledAnyXmlNode);
         final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 
@@ -129,7 +129,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, myAnyXmlData);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> output = result.getResult();
+        final NormalizedNode output = result.getResult();
         assertTrue(output instanceof YangModeledAnyXmlNode);
         final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 

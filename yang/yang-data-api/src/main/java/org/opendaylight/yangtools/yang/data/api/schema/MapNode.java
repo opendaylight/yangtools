@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
@@ -20,7 +22,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * its children and key construction is  defined by YANG <code>list</code>
  * statement and its <code>key</code> and <code>ordered-by</code> substatements.
  */
-public interface MapNode extends MixinNode, DataContainerChild<NodeIdentifier, Collection<MapEntryNode>>,
+public interface MapNode extends MixinNode, DataContainerChild<NodeIdentifier>,
         NormalizedNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode> {
 
+    @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
+
+    @Override
+    default Collection<MapEntryNode> body() {
+        return asMap().values();
+    }
 }

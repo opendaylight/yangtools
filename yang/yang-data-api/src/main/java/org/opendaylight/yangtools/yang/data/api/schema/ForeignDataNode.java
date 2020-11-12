@@ -24,12 +24,16 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <V> Value type, uniquely identifying the object model used for values
  */
 @Beta
-public interface ForeignDataNode<K extends PathArgument, V> extends DataContainerChild<K, V> {
+public interface ForeignDataNode<K extends PathArgument, V> extends DataContainerChild<K> {
     /**
      * Return the object model class, which identifies it. For example {@link DOMSourceAnyxmlNode}
      * uses {@link DOMSource} as its value object model.
      *
      * @return Object model class
      */
+    // FIXME: 7.0.0: rename this to bodyObjectModel()
     @NonNull Class<V> getValueObjectModel();
+
+    @Override
+    @NonNull V body();
 }

@@ -25,5 +25,5 @@ public interface DOMSourceAnyxmlNode extends AnyxmlNode<DOMSource> {
      * @return anyxml node value represented as DOMSource.
      */
     @Override
-    DOMSource getValue();
+    DOMSource body();
 }

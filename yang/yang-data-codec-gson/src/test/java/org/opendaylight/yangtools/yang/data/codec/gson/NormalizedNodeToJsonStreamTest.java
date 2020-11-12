@@ -289,7 +289,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         assertNotNull(cont2);
     }
 
-    private static String normalizedNodeToJsonStreamTransformation(final NormalizedNode<?, ?> inputStructure)
+    private static String normalizedNodeToJsonStreamTransformation(final NormalizedNode inputStructure)
             throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(

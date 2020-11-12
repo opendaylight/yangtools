@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
     // FIXME: YANGTOOLS-1074: we do not want this name
-    private static final @NonNull NormalizedNode<?, ?> ROOT_CONTAINER =
+    private static final @NonNull NormalizedNode ROOT_CONTAINER =
             ImmutableNodes.containerNode(SchemaContext.NAME);
 
     @Override
@@ -97,13 +97,13 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static @NonNull DataTree createDataTree(final DataTreeConfiguration treeConfig,
             final EffectiveModelContext initialSchemaContext, final boolean maskMandatory) {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
-        final NormalizedNode<?, ?> rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
+        final NormalizedNode rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
         return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootDataNode, Version.initial()), treeConfig,
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 
-    private static @NonNull NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
+    private static @NonNull NormalizedNode createRoot(final DataNodeContainer schemaNode,
             final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
             checkArgument(schemaNode instanceof ContainerLike,
@@ -127,7 +127,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         }
     }
 
-    private static @NonNull NormalizedNode<?, ?> createRoot(final YangInstanceIdentifier path) {
+    private static @NonNull NormalizedNode createRoot(final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
             return ROOT_CONTAINER;
         }

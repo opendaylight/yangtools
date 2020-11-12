@@ -105,7 +105,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, bazCont);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         assertTrue(transformedInput instanceof ContainerNode);

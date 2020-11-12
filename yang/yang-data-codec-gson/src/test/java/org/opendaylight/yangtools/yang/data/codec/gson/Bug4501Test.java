@@ -55,7 +55,7 @@ public class Bug4501Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertTrue(transformedInput instanceof UnkeyedListNode);
 
         final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;

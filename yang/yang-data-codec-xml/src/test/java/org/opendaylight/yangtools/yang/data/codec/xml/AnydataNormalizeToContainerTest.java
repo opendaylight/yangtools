@@ -59,7 +59,7 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, anyDataSchemaNode);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertTrue(transformedInput instanceof AnydataNode);
         AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;

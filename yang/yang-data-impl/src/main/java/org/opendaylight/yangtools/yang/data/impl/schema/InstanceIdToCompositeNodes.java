@@ -68,8 +68,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     @Override
     @SuppressWarnings("unchecked")
-    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> lastChild) {
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+            final Optional<NormalizedNode> lastChild) {
         if (!isMixin()) {
             final QName type = getIdentifier().getNodeType();
             if (type != null) {

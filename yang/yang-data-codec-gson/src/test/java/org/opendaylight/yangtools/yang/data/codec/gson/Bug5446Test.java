@@ -75,7 +75,7 @@ public class Bug5446Test {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
-            final NormalizedNode<?, ?> inputStructure) throws IOException {
+            final NormalizedNode inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,

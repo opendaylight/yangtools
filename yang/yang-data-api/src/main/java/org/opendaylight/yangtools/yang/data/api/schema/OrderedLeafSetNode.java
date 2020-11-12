@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+
 /**
  * Leaf set node which preserves user-supplied ordering.
  *
@@ -20,6 +22,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  *
  * @param <T> Value type of Leaf entries
  */
-public interface OrderedLeafSetNode<T> extends LeafSetNode<T>, OrderedNodeContainer<LeafSetEntryNode<T>> {
+public interface OrderedLeafSetNode<T>
+    extends LeafSetNode<T>, OrderedNodeContainer<NodeWithValue<T>, LeafSetEntryNode<T>> {
 
 }

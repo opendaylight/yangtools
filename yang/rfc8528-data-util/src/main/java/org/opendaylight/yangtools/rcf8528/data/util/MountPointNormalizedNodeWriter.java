@@ -79,7 +79,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     @Override
-    protected final boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
+    protected final boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
         if (node instanceof MountPointNode) {
             writeMountPoint((MountPointNode) node);
             return true;

@@ -137,7 +137,7 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedLeafSetNodeBuilderTest() {
-        final NormalizedNode<?, ?> orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.<String>create()
+        final NormalizedNode orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.<String>create()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LEAF_SET_ENTRY_NODE)
                 .withChildValue("baz")
@@ -146,11 +146,11 @@ public class BuilderTest {
         final LinkedList<LeafSetNode<?>> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add((LeafSetNode<?>)orderedLeafSet);
         final UnmodifiableCollection<?> leafSetCollection = (UnmodifiableCollection<?>)orderedLeafSet.getValue();
-        final NormalizedNode<?, ?> orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
+        final NormalizedNode orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
             leafList).withChildValue("baz").build();
         final UnmodifiableCollection<?> SchemaAwareleafSetCollection =
                 (UnmodifiableCollection<?>)orderedMapNodeSchemaAware.getValue();
-        final NormalizedNode<?, ?> orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
+        final NormalizedNode orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(
             leafList,(LeafSetNode<?>)orderedLeafSet).build();
 
         assertNotNull(Builders.orderedLeafSetBuilder(leafList));

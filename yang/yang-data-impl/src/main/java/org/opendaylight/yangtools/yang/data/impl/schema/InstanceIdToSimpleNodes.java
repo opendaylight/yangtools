@@ -31,8 +31,8 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     }
 
     @Override
-    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> deepestChild) {
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+            final Optional<NormalizedNode> deepestChild) {
         final NormalizedNodeBuilder<? extends PathArgument, Object,
                 ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(first);
 
