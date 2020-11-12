@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * changed is tracked by the subtree version.
  */
 abstract class AbstractContainerNode extends AbstractTreeNode {
-    protected AbstractContainerNode(final NormalizedNode<?, ?> data, final Version version) {
+    protected AbstractContainerNode(final NormalizedNode data, final Version version) {
         super(data, version);
     }
 
     @SuppressWarnings("unchecked")
-    protected final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castData() {
-        return (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) getData();
+    protected final NormalizedNodeContainer<?, PathArgument, NormalizedNode> castData() {
+        return (NormalizedNodeContainer<?, PathArgument, NormalizedNode>) getData();
     }
 
     protected final Optional<TreeNode> getChildFromData(final PathArgument childId) {
@@ -31,9 +31,9 @@ abstract class AbstractContainerNode extends AbstractTreeNode {
         return Optional.ofNullable(getChildFromData(castData(), childId, getVersion()));
     }
 
-    static TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data,
+    static TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode> data,
             final PathArgument childId, final Version version) {
-        final Optional<NormalizedNode<?, ?>> child = data.getChild(childId);
+        final Optional<NormalizedNode> child = data.getChild(childId);
         return child.isPresent() ? TreeNodeFactory.createTreeNode(child.get(), version) : null;
     }
 }

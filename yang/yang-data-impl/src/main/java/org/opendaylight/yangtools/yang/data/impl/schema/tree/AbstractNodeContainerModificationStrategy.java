@@ -102,17 +102,17 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     @Override
-    final void verifyValue(final NormalizedNode<?, ?> writtenValue) {
+    final void verifyValue(final NormalizedNode writtenValue) {
         final Class<?> nodeClass = support.requiredClass;
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
     }
 
     @Override
-    final void verifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    final void verifyValueChildren(final NormalizedNode writtenValue) {
         if (verifyChildrenStructure) {
             final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) writtenValue;
-            for (final NormalizedNode<?, ?> child : container.getValue()) {
+            for (final NormalizedNode child : container.getValue()) {
                 final Optional<ModificationApplyOperation> childOp = getChild(child.getIdentifier());
                 if (childOp.isPresent()) {
                     childOp.get().fullVerifyStructure(child);
@@ -134,7 +134,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
      *
      * @param writtenValue Effective written value
      */
-    void optionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void optionalVerifyValueChildren(final NormalizedNode writtenValue) {
         // Defaults to no-op
     }
 
@@ -144,14 +144,14 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
      *
      * @param writtenValue Effective written value
      */
-    void mandatoryVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
         // Defaults to no-op
     }
 
     @Override
-    protected final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    protected final void recursivelyVerifyStructure(final NormalizedNode value) {
         final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) value;
-        for (final NormalizedNode<?, ?> child : container.getValue()) {
+        for (final NormalizedNode child : container.getValue()) {
             final Optional<ModificationApplyOperation> childOp = getChild(child.getIdentifier());
             if (!childOp.isPresent()) {
                 throw new SchemaValidationFailedException(
@@ -164,7 +164,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
 
@@ -241,10 +241,10 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
          * we do that, ModifiedNode children will look like this node were a TOUCH and we will let applyTouch() do the
          * heavy lifting of applying the children recursively (either through here or through applyWrite().
          */
-        final NormalizedNode<?, ?> value = modification.getWrittenValue();
+        final NormalizedNode value = modification.getWrittenValue();
 
         Verify.verify(value instanceof NormalizedNodeContainer, "Attempted to merge non-container %s", value);
-        for (final NormalizedNode<?, ?> c : ((NormalizedNodeContainer<?, ?, ?>) value).getValue()) {
+        for (final NormalizedNode c : ((NormalizedNodeContainer<?, ?, ?>) value).getValue()) {
             final PathArgument id = c.getIdentifier();
             modification.modifyChild(id, resolveChildOperation(id), version);
         }
@@ -252,8 +252,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     private void mergeChildrenIntoModification(final ModifiedNode modification,
-            final Collection<? extends NormalizedNode<?, ?>> children, final Version version) {
-        for (final NormalizedNode<?, ?> c : children) {
+            final Collection<? extends NormalizedNode> children, final Version version) {
+        for (final NormalizedNode c : children) {
             final ModificationApplyOperation childOp = resolveChildOperation(c.getIdentifier());
             final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp, version);
             childOp.mergeIntoModifiedNode(childNode, c, version);
@@ -261,9 +261,9 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     @Override
-    final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value,
+    final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode value,
             final Version version) {
-        final Collection<? extends NormalizedNode<?, ?>> children =
+        final Collection<? extends NormalizedNode> children =
                 ((NormalizedNodeContainer<?, ?, ?>)value).getValue();
 
         switch (modification.getOperation()) {
@@ -390,7 +390,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         return null;
     }
 
-    static final TreeNode defaultTreeNode(final NormalizedNode<?, ?> emptyNode) {
+    static final TreeNode defaultTreeNode(final NormalizedNode emptyNode) {
         return TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION);
     }
 

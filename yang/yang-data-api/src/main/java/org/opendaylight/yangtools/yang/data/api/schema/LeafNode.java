@@ -18,12 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * @param <T> Value type
  */
-public interface LeafNode<T> extends DataContainerChild<NodeIdentifier, T>, ValueNode<NodeIdentifier, T> {
-    /**
-     * Returns value of this leaf node.
-     *
-     * @return Returned value of this leaf node. Value SHOULD meet criteria defined by schema.
-     */
-    @Override
-    T getValue();
+public interface LeafNode<T> extends DataContainerChild<NodeIdentifier>, ValueNode<T> {
+
 }

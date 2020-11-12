@@ -16,10 +16,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode {
-    private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData;
+    private final NormalizedNodeContainer<?, PathArgument, NormalizedNode> oldData;
 
-    RecursiveReplaceCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
+    RecursiveReplaceCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode> oldData,
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode> newData) {
         super(newData);
         this.oldData = requireNonNull(oldData);
     }
@@ -30,12 +30,12 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return dataOptional();
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return Optional.of(oldData);
     }
 

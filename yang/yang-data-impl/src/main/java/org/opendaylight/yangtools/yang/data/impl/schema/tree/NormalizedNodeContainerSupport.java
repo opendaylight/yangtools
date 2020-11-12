@@ -38,15 +38,15 @@ final class NormalizedNodeContainerSupport<K extends PathArgument, T extends Nor
         this(requiredClass, ChildTrackingPolicy.UNORDERED, copyBuilder, emptyBuilder);
     }
 
-    NormalizedNodeContainerBuilder<?, ?, ?, T> createBuilder(final NormalizedNode<?, ?> original) {
+    NormalizedNodeContainerBuilder<?, ?, ?, T> createBuilder(final NormalizedNode original) {
         return copyBuilder.apply(cast(original));
     }
 
-    NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
+    NormalizedNode createEmptyValue(final NormalizedNode original) {
         return emptyBuilder.get().withNodeIdentifier(cast(original).getIdentifier()).build();
     }
 
-    private T cast(final NormalizedNode<?, ?> original) {
+    private T cast(final NormalizedNode original) {
         checkArgument(requiredClass.isInstance(original), "Require %s, got %s", requiredClass, original);
         return requiredClass.cast(original);
     }

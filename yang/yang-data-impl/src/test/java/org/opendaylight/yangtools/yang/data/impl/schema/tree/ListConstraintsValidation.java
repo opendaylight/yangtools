@@ -118,7 +118,7 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        final Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
     }
@@ -149,7 +149,7 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare1);
 
         DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        Optional<NormalizedNode> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).size());
 
@@ -204,7 +204,7 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare1);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+        final Optional<NormalizedNode> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
                 .getChild(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
@@ -271,7 +271,7 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(prepare1);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
+        final Optional<NormalizedNode> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
         assertTrue(unkeyedListRead.isPresent());
         assertTrue(((UnkeyedListNode) unkeyedListRead.get()).getSize() == 1);
     }

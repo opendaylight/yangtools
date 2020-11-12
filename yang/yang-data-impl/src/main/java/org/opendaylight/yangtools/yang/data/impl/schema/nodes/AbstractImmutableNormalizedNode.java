@@ -30,7 +30,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, V>
         return super.addToStringAttributes(toStringHelper).add("value", getValue());
     }
 
-    protected abstract boolean valueEquals(AbstractImmutableNormalizedNode<?, ?> other);
+    protected abstract boolean valueEquals(AbstractImmutableNormalizedNode other);
 
     protected abstract int valueHashCode();
 
@@ -43,7 +43,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, V>
             return false;
         }
 
-        final AbstractImmutableNormalizedNode<?, ?> other = (AbstractImmutableNormalizedNode<?, ?>)obj;
+        final AbstractImmutableNormalizedNode other = (AbstractImmutableNormalizedNode)obj;
         return getIdentifier().equals(other.getIdentifier()) && valueEquals(other);
     }
 

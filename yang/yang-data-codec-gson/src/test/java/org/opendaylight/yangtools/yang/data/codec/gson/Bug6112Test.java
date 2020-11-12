@@ -45,7 +45,7 @@ public class Bug6112Test {
         schemaContext = null;
     }
 
-    private static NormalizedNode<?, ?> readJson(final String jsonPath) throws IOException, URISyntaxException {
+    private static NormalizedNode readJson(final String jsonPath) throws IOException, URISyntaxException {
         final String inputJson = loadTextFile(jsonPath);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
@@ -58,7 +58,7 @@ public class Bug6112Test {
 
     @Test
     public void testUnionIdentityrefInput() throws IOException, URISyntaxException {
-        final NormalizedNode<?, ?> transformedInput = readJson("/bug-6112/json/data-identityref.json");
+        final NormalizedNode transformedInput = readJson("/bug-6112/json/data-identityref.json");
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
         Optional<DataContainerChild<? extends PathArgument, ?>> leafValue = root.getChild(NodeIdentifier.create(
@@ -73,7 +73,7 @@ public class Bug6112Test {
 
     @Test
     public void testUnionUint8Input() throws IOException, URISyntaxException {
-        final NormalizedNode<?, ?> transformedInput = readJson("/bug-6112/json/data-uint8.json");
+        final NormalizedNode transformedInput = readJson("/bug-6112/json/data-uint8.json");
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
         Optional<DataContainerChild<? extends PathArgument, ?>> leafValue = root.getChild(NodeIdentifier.create(

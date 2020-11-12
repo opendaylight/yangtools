@@ -58,7 +58,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         // lf12-any check
@@ -93,7 +93,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
         // lf12-any check
@@ -163,7 +163,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertEquals(expextedJson, serializedJson);
     }
 
-    private static DOMSource getParsedAnyXmlValue(final NormalizedNode<?, ?> transformedInput, final QName anyxmlName) {
+    private static DOMSource getParsedAnyXmlValue(final NormalizedNode transformedInput, final QName anyxmlName) {
         assertTrue(transformedInput instanceof ContainerNode);
         final ContainerNode cont1 = (ContainerNode) transformedInput;
         final DataContainerChild<? extends PathArgument, ?> child = cont1.getChild(new NodeIdentifier(anyxmlName))
