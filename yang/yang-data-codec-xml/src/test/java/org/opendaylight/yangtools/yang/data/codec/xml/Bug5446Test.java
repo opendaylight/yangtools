@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Base64;
-import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -60,15 +58,11 @@ public class Bug5446Test extends XMLTestCase {
 
         final ContainerNode docNode = createDocNode();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> root = docNode.getChild(new NodeIdentifier(ROOT_QNAME));
-        assertTrue(root.orElse(null) instanceof ContainerNode);
+        DataContainerChild root = docNode.childByArg(new NodeIdentifier(ROOT_QNAME));
+        DataContainerChild child = ((ContainerNode) root).childByArg(new NodeIdentifier(IP_ADDRESS_QNAME));
+        LeafNode<?> ipAdress = (LeafNode<?>) child;
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child = ((ContainerNode) root.orElse(null))
-                .getChild(new NodeIdentifier(IP_ADDRESS_QNAME));
-        assertTrue(child.orElse(null) instanceof LeafNode);
-        LeafNode<?> ipAdress = (LeafNode<?>) child.get();
-
-        Object value = ipAdress.getValue();
+        Object value = ipAdress.body();
         assertTrue(value instanceof byte[]);
         assertEquals("fwAAAQ==", Base64.getEncoder().encodeToString((byte[]) value));
 
@@ -106,7 +100,7 @@ public class Bug5446Test extends XMLTestCase {
             normalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(writer, context);
             normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(normalizedNodeStreamWriter);
 
-            for (NormalizedNode<?, ?> child : normalized.getValue()) {
+            for (NormalizedNode child : normalized.body()) {
                 normalizedNodeWriter.write(child);
             }
 

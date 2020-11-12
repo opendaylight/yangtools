@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedByAware.OrderedByUser;
 
 /**
- * Normalized Node container which preserves user supplied ordering
- * and allows addressing of child elements by position.
+ * A {@link NormalizedNodeContainer} which preserves user supplied ordering and allows addressing of child elements by
+ * position.
  *
  * @param <V> child type
  */
-public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode,
-       NormalizedNode<NodeIdentifier, Collection<V>> {
+public interface OrderedNodeContainer<V extends NormalizedNode>
+        extends NormalizedNodeContainer<NodeIdentifier, V>, MixinNode, OrderedByUser {
     /**
      * Returns child node by position.
      *
@@ -25,12 +26,10 @@ public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends Mi
      * @return Child Node
      * @throws IndexOutOfBoundsException Out of bound Exception
      */
-    V getChild(int position);
+    // FIXME: 7.0.0: rename to 'childAt(int)'
+    @NonNull V getChild(int position);
 
-    /**
-     * Returns count of child nodes.
-     *
-     * @return count of child nodes.
-     */
-    int getSize();
+    // FIXME: 7.0.0: do we really mean 'List' for body?
+    //    @Override
+    //    List<V> body();
 }

@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 
 public class ImmutableContainerNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
-
     protected ImmutableContainerNodeBuilder() {
 
     }
@@ -38,8 +37,7 @@ public class ImmutableContainerNodeBuilder
         return new ImmutableContainerNodeBuilder(sizeHint);
     }
 
-    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(
-            final ContainerNode node) {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerNode node) {
         if (!(node instanceof ImmutableContainerNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

@@ -51,9 +51,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -170,7 +170,7 @@ public class NormalizedNodesToXmlTest {
         new XMLTestCase() {}.assertXMLEqual(diff, true);
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    private NormalizedNode buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
@@ -189,7 +189,8 @@ public class NormalizedNodesToXmlTest {
         LeafNode<?> myLeaf1Node = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeaf1))
                 .withValue("value1").build();
 
-        LeafSetNode<?> myLeafListNode = Builders.leafSetBuilder().withNodeIdentifier(new NodeIdentifier(myLeafList))
+        SystemLeafSetNode<?> myLeafListNode = Builders.leafSetBuilder()
+                .withNodeIdentifier(new NodeIdentifier(myLeafList))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myLeafList, "lflvalue1")).withValue("lflvalue1").build())
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(

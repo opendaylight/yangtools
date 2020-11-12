@@ -15,36 +15,37 @@ import java.util.Deque;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 
 final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTreeSnapshot> {
-    private final Deque<NormalizedNodeContainer<?, ?, ?>> stack = new ArrayDeque<>();
+    private final Deque<DistinctNodeContainer<?, ?, ?>> stack = new ArrayDeque<>();
 
     InMemoryDataTreeSnapshotCursor(final InMemoryDataTreeSnapshot parent, final YangInstanceIdentifier rootPath,
-            final NormalizedNodeContainer<?, ?, ?> normalizedNode) {
+            final DistinctNodeContainer<?, ?, ?> normalizedNode) {
         super(parent, rootPath);
         stack.push(normalizedNode);
     }
 
     @Override
     public void enter(final PathArgument child) {
-        final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.getDirectChild(stack.peek(), child);
+        final Optional<NormalizedNode> maybeChildNode = NormalizedNodes.getDirectChild(stack.peek(), child);
         checkArgument(maybeChildNode.isPresent(), "Child %s not found", child);
 
-        final NormalizedNode<?, ?> childNode = maybeChildNode.get();
+        final NormalizedNode childNode = maybeChildNode.get();
         checkArgument(childNode instanceof NormalizedNodeContainer, "Child %s is not a container", child);
-        stack.push((NormalizedNodeContainer<?, ?, ?>) childNode);
+        stack.push((DistinctNodeContainer<?, ?, ?>) childNode);
     }
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public void enter(final Iterable<PathArgument> path) {
-        final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.findNode(stack.peek(), path);
+        final Optional<NormalizedNode> maybeChildNode = NormalizedNodes.findNode(stack.peek(), path);
         checkArgument(maybeChildNode.isPresent(), "Child %s not found", path);
 
-        final NormalizedNode<?, ?> childNode = maybeChildNode.get();
+        final NormalizedNode childNode = maybeChildNode.get();
         checkArgument(childNode instanceof NormalizedNodeContainer, "Child %s is not a container", path);
 
         int depth = 0;
@@ -73,7 +74,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(final PathArgument child) {
+    public Optional<NormalizedNode> readNode(final PathArgument child) {
         return NormalizedNodes.findNode(stack.peek(), child);
     }
 }

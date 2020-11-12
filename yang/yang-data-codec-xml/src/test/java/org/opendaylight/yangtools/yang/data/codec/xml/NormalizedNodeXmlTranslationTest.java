@@ -55,8 +55,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -130,8 +131,8 @@ public class NormalizedNodeXmlTranslationTest {
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> b = containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
-        final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
-                getNodeIdentifier("list"));
+        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> listBuilder =
+                Builders.mapBuilder().withNodeIdentifier(getNodeIdentifier("list"));
 
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
                 .mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
@@ -150,7 +151,7 @@ public class NormalizedNodeXmlTranslationTest {
         booleanBuilder.withValue(Boolean.FALSE);
         b.withChild(booleanBuilder.build());
 
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder = Builders.leafSetBuilder()
+        final ListNodeBuilder<Object, SystemLeafSetNode<Object>> leafListBuilder = Builders.leafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leafList"));
 
         final NormalizedNodeBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder = Builders
@@ -271,7 +272,7 @@ public class NormalizedNodeXmlTranslationTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, containerNode);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> built = result.getResult();
+        final NormalizedNode built = result.getResult();
         assertNotNull(built);
 
         if (expectedNode != null) {

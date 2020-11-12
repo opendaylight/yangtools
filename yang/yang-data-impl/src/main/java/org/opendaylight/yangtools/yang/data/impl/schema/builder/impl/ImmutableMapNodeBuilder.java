@@ -7,28 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
-public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, MapNode> {
+public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
     private static final int DEFAULT_CAPACITY = 4;
 
     private final Map<NodeIdentifierWithPredicates, MapEntryNode> value;
-    private NodeIdentifier nodeIdentifier;
+
+    private @Nullable NodeIdentifier nodeIdentifier = null;
 
     protected ImmutableMapNodeBuilder() {
         this.value = new HashMap<>(DEFAULT_CAPACITY);
@@ -47,15 +49,15 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         this.value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create() {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create() {
         return new ImmutableMapNodeBuilder();
     }
 
-    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create(final int sizeHint) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final int sizeHint) {
         return new ImmutableMapNodeBuilder(sizeHint);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final MapNode node) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, SystemMapNode> create(final SystemMapNode node) {
         if (!(node instanceof ImmutableMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -64,19 +66,19 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
+    public ImmutableMapNodeBuilder withChild(final MapEntryNode child) {
         this.value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final PathArgument key) {
+    public ImmutableMapNodeBuilder withoutChild(final PathArgument key) {
         this.value.remove(key);
         return this;
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final Collection<MapEntryNode> withValue) {
+    public ImmutableMapNodeBuilder withValue(final Collection<MapEntryNode> withValue) {
         // TODO replace or putAll ?
         for (final MapEntryNode mapEntryNode : withValue) {
             withChild(mapEntryNode);
@@ -86,30 +88,28 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
+    public ImmutableMapNodeBuilder withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
         this.nodeIdentifier = withNodeIdentifier;
         return this;
     }
 
     @Override
-    public MapNode build() {
+    public SystemMapNode build() {
         return new ImmutableMapNode(nodeIdentifier, MapAdaptor.getDefaultInstance().optimize(value));
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> addChild(
-            final MapEntryNode child) {
+    public ImmutableMapNodeBuilder addChild(final MapEntryNode child) {
         return withChild(child);
     }
 
     @Override
-    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, MapEntryNode, MapNode> removeChild(
-            final PathArgument key) {
+    public ImmutableMapNodeBuilder removeChild(final PathArgument key) {
         return withoutChild(key);
     }
 
-    protected static final class ImmutableMapNode
-            extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>> implements MapNode {
+    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<NodeIdentifier>
+            implements SystemMapNode {
 
         private final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
@@ -120,13 +120,15 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         }
 
         @Override
-        public Optional<MapEntryNode> getChild(final NodeIdentifierWithPredicates child) {
-            return Optional.ofNullable(children.get(child));
+        public MapEntryNode childByArg(final NodeIdentifierWithPredicates child) {
+            return children.get(child);
         }
 
         @Override
-        public Collection<MapEntryNode> getValue() {
-            return UnmodifiableCollection.create(children.values());
+        public Map<NodeIdentifierWithPredicates, MapEntryNode> asMap() {
+            // FIXME: we need unmasking here, i.e. UnmodifiableMap
+            return children instanceof ImmutableMap || children instanceof Immutable ? children
+                : Collections.unmodifiableMap(children);
         }
 
         @Override
@@ -140,7 +142,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?> other) {
             return children.equals(((ImmutableMapNode) other).children);
         }
     }
