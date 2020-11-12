@@ -61,7 +61,7 @@ public class Bug7246Test {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final EffectiveModelContext schemaContext,
-            final SchemaPath path, final Writer writer, final NormalizedNode<?, ?> inputStructure)
+            final SchemaPath path, final Writer writer, final NormalizedNode inputStructure)
             throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(

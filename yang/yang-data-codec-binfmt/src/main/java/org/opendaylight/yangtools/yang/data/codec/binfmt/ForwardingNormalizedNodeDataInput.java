@@ -29,12 +29,12 @@ abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput imp
     }
 
     @Override
-    public final NormalizedNode<?, ?> readNormalizedNode() throws IOException {
+    public final NormalizedNode readNormalizedNode() throws IOException {
         return delegate().readNormalizedNode();
     }
 
     @Override
-    public final NormalizedNode<?, ?> readNormalizedNode(final ReusableStreamReceiver receiver) throws IOException {
+    public final NormalizedNode readNormalizedNode(final ReusableStreamReceiver receiver) throws IOException {
         return delegate().readNormalizedNode(receiver);
     }
 

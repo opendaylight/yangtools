@@ -157,17 +157,12 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
             return children.equals(((ImmutableOrderedMapNode) other).children);
         }
 
         @Override
-        public int getSize() {
-            return children.size();
-        }
-
-        @Override
-        public Collection<MapEntryNode> getValue() {
+        public Collection<MapEntryNode> body() {
             return UnmodifiableCollection.create(children.values());
         }
     }

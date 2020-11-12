@@ -106,7 +106,7 @@ public class Bug5446Test extends XMLTestCase {
             normalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(writer, context);
             normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(normalizedNodeStreamWriter);
 
-            for (NormalizedNode<?, ?> child : normalized.getValue()) {
+            for (NormalizedNode child : normalized.getValue()) {
                 normalizedNodeWriter.write(child);
             }
 

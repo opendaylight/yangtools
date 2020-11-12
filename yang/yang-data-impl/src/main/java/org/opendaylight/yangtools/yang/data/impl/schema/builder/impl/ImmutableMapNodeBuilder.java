@@ -125,7 +125,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         }
 
         @Override
-        public Collection<MapEntryNode> getValue() {
+        public Collection<MapEntryNode> body() {
             return UnmodifiableCollection.create(children.values());
         }
 
@@ -140,7 +140,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         }
 
         @Override
-        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
             return children.equals(((ImmutableMapNode) other).children);
         }
     }

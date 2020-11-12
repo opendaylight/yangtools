@@ -27,18 +27,15 @@ public final class TreeNodeFactory {
      * @param version data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
-    public static TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version) {
+    public static TreeNode createTreeNode(final NormalizedNode data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
-            final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container =
-                    (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+            final NormalizedNodeContainer<?, ?, NormalizedNode> container =
+                    (NormalizedNodeContainer<?, ?, NormalizedNode>) data;
             return new SimpleContainerNode(container, version);
         }
-        if (data instanceof OrderedNodeContainer<?>) {
-            @SuppressWarnings("unchecked")
-            final OrderedNodeContainer<NormalizedNode<?, ?>> container =
-                    (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
-            return new SimpleContainerNode(container, version);
+        if (data instanceof OrderedNodeContainer<?, ?>) {
+            return new SimpleContainerNode(data, version);
         }
         return new ValueNode(data, version);
     }

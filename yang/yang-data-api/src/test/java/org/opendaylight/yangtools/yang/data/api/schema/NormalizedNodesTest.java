@@ -11,11 +11,12 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -98,7 +99,8 @@ public class NormalizedNodesTest {
         final QName leafNodeQName = QName.create("test-ns", "2016-09-16", "leaf-node");
         final NodeIdentifier leafNodeId = new NodeIdentifier(leafNodeQName);
         doReturn(leafNodeId).when(mockedLeafNode).getIdentifier();
-        doReturn("str-value-1").when(mockedLeafNode).getValue();
+        doReturn("str-value-1").when(mockedLeafNode).body();
+        doCallRealMethod().when(mockedLeafNode).appendToString(any(StringBuilder.class));
 
         String stringTree = NormalizedNodes.toStringTree(mockedLeafNode);
         assertNotNull(stringTree);
@@ -112,15 +114,15 @@ public class NormalizedNodesTest {
         final MapNode mockedMapNode = mock(MapNode.class);
         final NodeIdentifier listNodeId = new NodeIdentifier(listQName);
         doReturn(listNodeId).when(mockedMapNode).getIdentifier();
-        doReturn(Collections.singletonList(mockedMapNode)).when(mockedAugmentationNode).getValue();
+        doReturn(List.of(mockedMapNode)).when(mockedAugmentationNode).body();
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         final NodeIdentifierWithPredicates listEntryNodeId = NodeIdentifierWithPredicates.of(listQName,
                 leafNodeQName, "key-leaf-value");
         doReturn(listEntryNodeId).when(mockedMapEntryNode).getIdentifier();
-        doReturn(Collections.singletonList(mockedMapEntryNode)).when(mockedMapNode).getValue();
+        doReturn(List.of(mockedMapEntryNode)).when(mockedMapNode).body();
 
-        doReturn(Collections.singletonList(mockedLeafNode)).when(mockedMapEntryNode).getValue();
+        doReturn(List.of(mockedLeafNode)).when(mockedMapEntryNode).body();
 
         stringTree = NormalizedNodes.toStringTree(mockedAugmentationNode);
         assertNotNull(stringTree);

@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextP
 @NonNullByDefault
 public class ImmutableNormalizedAnydata extends AbstractEffectiveModelContextProvider implements NormalizedAnydata {
     private final DataSchemaNode contextNode;
-    private final NormalizedNode<?, ?> data;
+    private final NormalizedNode data;
 
     public ImmutableNormalizedAnydata(final EffectiveModelContext schemaContext, final DataSchemaNode contextNode,
-            final NormalizedNode<?, ?> data) {
+            final NormalizedNode data) {
         super(schemaContext);
         this.contextNode = requireNonNull(contextNode);
         this.data = requireNonNull(data);
@@ -38,7 +38,7 @@ public class ImmutableNormalizedAnydata extends AbstractEffectiveModelContextPro
     }
 
     @Override
-    public final NormalizedNode<?, ?> getData() {
+    public final NormalizedNode getData() {
         return data;
     }
 

@@ -84,7 +84,7 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         }
 
         // Finally build the node
-        final NormalizedNode<?, ?> parsedData = result.getResult();
+        final NormalizedNode parsedData = result.getResult();
         LOG.debug("Parsed NormalizedNodes: {}", parsedData);
 
         /*

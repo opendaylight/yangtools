@@ -25,11 +25,11 @@ public abstract class AbstractImmutableNormalizedSimpleValueNode<K extends PathA
     }
 
     @Override
-    protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+    protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
         // We can not call directly getValue.equals because of Empty Type
         // RequireInstanceStatementSupport leaves which always have NULL value
 
         // FIXME: are attributes part of hashCode/equals?
-        return Objects.deepEquals(value(), other.getValue());
+        return Objects.deepEquals(value(), other.body());
     }
 }

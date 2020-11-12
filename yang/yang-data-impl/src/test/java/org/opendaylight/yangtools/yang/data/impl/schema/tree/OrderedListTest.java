@@ -107,7 +107,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -146,7 +146,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -189,7 +189,7 @@ public class OrderedListTest {
         }
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -238,7 +238,7 @@ public class OrderedListTest {
         }
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
         assertTrue(readNode.isPresent());
     }
 
@@ -254,7 +254,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
         assertFalse(readNode.isPresent());
     }
 
@@ -269,7 +269,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
         assertFalse(readNode.isPresent());
     }
 
