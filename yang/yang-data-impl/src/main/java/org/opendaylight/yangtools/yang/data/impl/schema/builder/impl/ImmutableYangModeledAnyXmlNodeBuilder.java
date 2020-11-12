@@ -54,8 +54,7 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
     }
 
     private static final class ImmutableYangModeledAnyXmlNode extends
-            AbstractImmutableDataContainerNode<NodeIdentifier> implements YangModeledAnyXmlNode {
-
+            AbstractImmutableDataContainerNode<NodeIdentifier, YangModeledAnyXmlNode> implements YangModeledAnyXmlNode {
         private final @NonNull ContainerSchemaNode contentSchema;
 
         ImmutableYangModeledAnyXmlNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> value,
@@ -65,8 +64,14 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         }
 
         @Override
+        @Deprecated
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;
+        }
+
+        @Override
+        protected Class<YangModeledAnyXmlNode> implementedType() {
+            return YangModeledAnyXmlNode.class;
         }
     }
 }

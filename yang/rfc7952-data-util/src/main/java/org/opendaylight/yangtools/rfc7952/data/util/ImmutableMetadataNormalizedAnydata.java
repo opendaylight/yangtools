@@ -28,13 +28,13 @@ public final class ImmutableMetadataNormalizedAnydata extends ImmutableNormalize
     private final NormalizedMetadata metadata;
 
     public ImmutableMetadataNormalizedAnydata(final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode, final NormalizedNode<?, ?> data, final NormalizedMetadata metadata) {
+            final DataSchemaNode contextNode, final NormalizedNode data, final NormalizedMetadata metadata) {
         super(schemaContext, contextNode, data);
         this.metadata = requireNonNull(metadata);
     }
 
     public static ImmutableNormalizedAnydata ofOptional(final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode, final NormalizedNode<?, ?> data,
+            final DataSchemaNode contextNode, final NormalizedNode data,
             final Optional<NormalizedMetadata> metadata) {
         return metadata.isPresent()
                 ? new ImmutableMetadataNormalizedAnydata(schemaContext, contextNode, data, metadata.get())

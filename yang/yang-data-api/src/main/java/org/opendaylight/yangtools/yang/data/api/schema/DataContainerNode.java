@@ -7,37 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Abstract node which does not have value but contains valid {@link DataContainerChild} nodes. Schema of this node is
  * described by instance of {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer}.
  *
+ * <p>
+ * <b>NOTE:</b>
+ * All implementations of this interface are assumed to be {@link OrderingAware.System}, i.e. order-independent.
+ *
  * <h2>Implementation notes</h2>
  * This interface should not be implemented directly, but rather implementing one of it's subclasses
  * <ul>
- *   <li>{@link ContainerNode}
- *   <li>{@link MapEntryNode}
- *   <li>{@link UnkeyedListEntryNode}
- *   <li>{@link ChoiceNode}
- *   <li>{@link AugmentationNode}
+ *   <li>{@link AugmentationNode}</li>
+ *   <li>{@link ChoiceNode}</li>
+ *   <li>{@link ContainerNode}</li>
+ *   <li>{@link MapEntryNode} and its specializations</li>
+ *   <li>{@link UnkeyedListEntryNode}</li>
  * </ul>
  *
- * @param <K> {@link PathArgument} which identifies instance of {@link DataContainerNode}
+ * @param <K> {@link PathArgument} which identifies this instance {@link DataContainerNode}
  */
-public interface DataContainerNode<K extends PathArgument> extends
-        NormalizedNodeContainer<K, PathArgument, DataContainerChild<? extends PathArgument, ?>> {
-    /**
-     * Returns iteration of all child nodes. Order of returned child nodes may be defined by subinterfaces.
-     *
-     * <p>
-     * <b>Implementation Notes:</b>
-     * All nodes returned in this iterable, MUST also be accessible via {@link #getChild(PathArgument)} using their
-     * associated identifier.
-     *
-     * @return Iteration of all child nodes
-     */
+public interface DataContainerNode<K extends PathArgument>
+        extends DistinctNodeContainer<K, PathArgument, DataContainerChild>, OrderingAware.System {
     @Override
-    Collection<DataContainerChild<? extends PathArgument, ?>> getValue();
+    int hashCode();
+
+    @Override
+    boolean equals(Object obj);
 }

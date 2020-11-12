@@ -16,10 +16,8 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Optional;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Before;
@@ -36,14 +34,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 
 public class NormalizedNodeWriterTest {
@@ -74,57 +72,51 @@ public class NormalizedNodeWriterTest {
             () -> orderedNormalizedNodeWriter.write(mock(NormalizedNode.class)));
         assertTrue(ex.getMessage().startsWith("It wasn't possible to serialize node"));
 
-        final NormalizedNode<?, ?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
+        final LeafSetEntryNode<?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
         doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).getIdentifier();
-        doReturn("leaflist-value-1").when(mockedLeafSetEntryNode).getValue();
+        doReturn("leaflist-value-1").when(mockedLeafSetEntryNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafSetEntryNode));
 
-        final NormalizedNode<?, ?> mockedLeafNode = mock(LeafNode.class);
-        doReturn("leaf-value-1").when(mockedLeafNode).getValue();
+        final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
+        doReturn("leaf-value-1").when(mockedLeafNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafNode));
 
         final DOMSourceAnyxmlNode mockedAnyXmlNode = mock(DOMSourceAnyxmlNode.class);
-        doCallRealMethod().when(mockedAnyXmlNode).getValueObjectModel();
-        doReturn(new DOMSource()).when(mockedAnyXmlNode).getValue();
+        doCallRealMethod().when(mockedAnyXmlNode).bodyObjectModel();
+        doReturn(new DOMSource()).when(mockedAnyXmlNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedAnyXmlNode));
 
-        final NormalizedNode<?, ?> mockedContainerNode = mock(ContainerNode.class);
+        final NormalizedNode mockedContainerNode = mock(ContainerNode.class);
         assertNotNull(orderedNormalizedNodeWriter.write(mockedContainerNode));
 
-        final NormalizedNode<?, ?> mockedYangModeledAnyXmlNode = mock(YangModeledAnyXmlNode.class);
+        final NormalizedNode mockedYangModeledAnyXmlNode = mock(YangModeledAnyXmlNode.class);
         assertNotNull(orderedNormalizedNodeWriter.write(mockedYangModeledAnyXmlNode));
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "list-key-value-1"))
                 .when(mockedMapEntryNode).getIdentifier();
-        doReturn(Optional.empty()).when(mockedMapEntryNode).getChild(any(NodeIdentifier.class));
+        doReturn(null).when(mockedMapEntryNode).childByArg(any(NodeIdentifier.class));
         assertNotNull(orderedNormalizedNodeWriter.write(mockedMapEntryNode));
 
         final UnkeyedListEntryNode mockedUnkeyedListEntryNode = mock(UnkeyedListEntryNode.class);
         assertNotNull(orderedNormalizedNodeWriter.write(mockedUnkeyedListEntryNode));
 
-        final ChoiceNode mockedChoiceNode = mock(ChoiceNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedChoiceNode));
+        assertNotNull(orderedNormalizedNodeWriter.write(mock(ChoiceNode.class)));
 
-        final AugmentationNode mockedAugmentationNode = mock(AugmentationNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedAugmentationNode));
+        assertNotNull(orderedNormalizedNodeWriter.write(mock(AugmentationNode.class)));
 
         final UnkeyedListNode mockedUnkeyedListNode = mock(UnkeyedListNode.class);
-        final Set<?> value = ImmutableSet.builder().add(mockedUnkeyedListEntryNode).build();
-        doReturn(value).when(mockedUnkeyedListNode).getValue();
+        final Set<?> value = Set.of(mockedUnkeyedListEntryNode);
+        doReturn(value).when(mockedUnkeyedListNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedUnkeyedListNode));
 
-        final OrderedMapNode mockedOrderedMapNode = mock(OrderedMapNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedOrderedMapNode));
+        assertNotNull(orderedNormalizedNodeWriter.write(mock(UserMapNode.class)));
 
-        final MapNode mockedMapNode = mock(MapNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedMapNode));
+        assertNotNull(orderedNormalizedNodeWriter.write(mock(SystemMapNode.class)));
 
-        final OrderedLeafSetNode<?> mockedOrderedLeafSetNode = mock(OrderedLeafSetNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedOrderedLeafSetNode));
+        assertNotNull(orderedNormalizedNodeWriter.write(mock(UserLeafSetNode.class)));
 
-        final LeafSetNode<?> mockedLeafSetNode = mock(LeafSetNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafSetNode));
+        assertNotNull(orderedNormalizedNodeWriter.write(mock(SystemLeafSetNode.class)));
 
         orderedNormalizedNodeWriter.flush();
         orderedNormalizedNodeWriter.close();
