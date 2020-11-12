@@ -88,7 +88,7 @@ public class NormalizedNodeUtilsTest {
      *
      * @return A test document
      */
-    private static NormalizedNode<?, ?> createDocumentOne() {
+    private static NormalizedNode createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
@@ -106,13 +106,13 @@ public class NormalizedNodeUtilsTest {
 
     @Test
     public void findNodeTest() {
-        NormalizedNode<?, ?> tree = createDocumentOne();
+        NormalizedNode tree = createDocumentOne();
         assertNotNull(tree);
 
-        Optional<NormalizedNode<?, ?>> listFooResult = NormalizedNodes.findNode(tree, LIST_A_FOO_PATH);
+        Optional<NormalizedNode> listFooResult = NormalizedNodes.findNode(tree, LIST_A_FOO_PATH);
         assertTrue(listFooResult.isPresent());
 
-        Optional<NormalizedNode<?, ?>> listTwoResult = NormalizedNodes.findNode(tree, LIST_B_TWO_PATH);
+        Optional<NormalizedNode> listTwoResult = NormalizedNodes.findNode(tree, LIST_B_TWO_PATH);
         assertTrue(listTwoResult.isPresent());
     }
 }

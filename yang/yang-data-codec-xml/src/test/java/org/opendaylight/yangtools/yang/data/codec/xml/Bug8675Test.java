@@ -63,7 +63,7 @@ public class Bug8675Test {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -83,7 +83,7 @@ public class Bug8675Test {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -102,7 +102,7 @@ public class Bug8675Test {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelList);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -121,7 +121,7 @@ public class Bug8675Test {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelAnyXml);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -140,7 +140,7 @@ public class Bug8675Test {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelLeaf);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -159,7 +159,7 @@ public class Bug8675Test {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelLeafList);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 }

@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
@@ -197,7 +197,8 @@ public class BitIsSetXPathFunctionTest {
         final LeafNode<?> ordinaryLeafNode = Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ORDINARY_LEAF)).withValue("test-value").build();
 
-        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
+        final SystemMapNode myListNode = Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(MY_LIST, FLAGS, keyLeafValue))
                         .withChild(ordinaryLeafNode).build()).build();

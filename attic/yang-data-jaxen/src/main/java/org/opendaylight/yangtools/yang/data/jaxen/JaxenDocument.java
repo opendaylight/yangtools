@@ -20,17 +20,16 @@ import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextP
 @NonNullByDefault
 final class JaxenDocument extends AbstractEffectiveModelContextProvider implements XPathDocument {
     private final DataSchemaContextNode<?> schema;
-    private final NormalizedNode<?, ?> root;
+    private final NormalizedNode root;
 
-    JaxenDocument(final EffectiveModelContext context, final DataSchemaContextTree tree,
-            final NormalizedNode<?, ?> root) {
+    JaxenDocument(final EffectiveModelContext context, final DataSchemaContextTree tree, final NormalizedNode root) {
         super(context);
         this.root = requireNonNull(root);
         this.schema = requireNonNull(tree.getRoot().getChild(root.getIdentifier()));
     }
 
     @Override
-    public NormalizedNode<?, ?> getRootNode() {
+    public NormalizedNode getRootNode() {
         return root;
     }
 

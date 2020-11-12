@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import com.google.common.annotations.Beta;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * A NormalizedNode holding a value in some foreign object model. The object model is identified by a single class,
@@ -20,16 +19,24 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * <p>
  * This interface should not be implemented directly, but rather further specialized, like {@link AnyxmlNode}.
  *
- * @param <K> Local identifier of node
  * @param <V> Value type, uniquely identifying the object model used for values
  */
 @Beta
-public interface ForeignDataNode<K extends PathArgument, V> extends DataContainerChild<K, V> {
+public interface ForeignDataNode<V> extends DataContainerChild {
     /**
-     * Return the object model class, which identifies it. For example {@link DOMSourceAnyxmlNode}
-     * uses {@link DOMSource} as its value object model.
+     * {@inheritDoc}
+     *
+     * <p>
+     * The body follows the object model exposed through {@link #bodyObjectModel()}
+     */
+    @Override
+    V body();
+
+    /**
+     * Return the object model class, which identifies it. For example {@link DOMSourceAnyxmlNode} uses
+     * {@link DOMSource} as its value object model.
      *
      * @return Object model class
      */
-    @NonNull Class<V> getValueObjectModel();
+    @NonNull Class<V> bodyObjectModel();
 }

@@ -141,7 +141,7 @@ public abstract class AbstractYT1027Test {
 
     abstract String expectedUint64();
 
-    final NormalizedNode<?, ?> fromJSON(final String input) throws IOException {
+    final NormalizedNode fromJSON(final String input) throws IOException {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, codecFactory());
@@ -149,7 +149,7 @@ public abstract class AbstractYT1027Test {
         return result.getResult();
     }
 
-    private String toJSON(final NormalizedNode<?, ?> input) throws IOException {
+    private String toJSON(final NormalizedNode input) throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             codecFactory(), SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));

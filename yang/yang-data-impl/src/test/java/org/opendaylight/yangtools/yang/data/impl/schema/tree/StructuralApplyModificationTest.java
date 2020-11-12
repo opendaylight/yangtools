@@ -129,7 +129,7 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
 
     private void assertNodeExistence(final YangInstanceIdentifier outerListParentPath, final boolean shouldBePresent) {
         final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(outerListParentPath);
+        final Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(outerListParentPath);
         assertEquals(readNode.isPresent(), shouldBePresent);
     }
 
