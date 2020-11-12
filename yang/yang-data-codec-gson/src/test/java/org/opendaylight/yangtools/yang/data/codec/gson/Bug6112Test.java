@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
@@ -15,14 +16,12 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -45,7 +44,7 @@ public class Bug6112Test {
         schemaContext = null;
     }
 
-    private static NormalizedNode<?, ?> readJson(final String jsonPath) throws IOException, URISyntaxException {
+    private static NormalizedNode readJson(final String jsonPath) throws IOException, URISyntaxException {
         final String inputJson = loadTextFile(jsonPath);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
@@ -58,14 +57,14 @@ public class Bug6112Test {
 
     @Test
     public void testUnionIdentityrefInput() throws IOException, URISyntaxException {
-        final NormalizedNode<?, ?> transformedInput = readJson("/bug-6112/json/data-identityref.json");
+        final NormalizedNode transformedInput = readJson("/bug-6112/json/data-identityref.json");
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
-        Optional<DataContainerChild<? extends PathArgument, ?>> leafValue = root.getChild(NodeIdentifier.create(
+        DataContainerChild leafValue = root.childByArg(NodeIdentifier.create(
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));
 
-        assertTrue(leafValue.isPresent());
-        Object value = leafValue.get().getValue();
+        assertNotNull(leafValue);
+        Object value = leafValue.body();
         assertTrue(value instanceof QName);
         QName identityref = (QName) value;
         assertEquals(QName.create("union:identityref:test", "2016-07-12", "ident-one"), identityref);
@@ -73,13 +72,13 @@ public class Bug6112Test {
 
     @Test
     public void testUnionUint8Input() throws IOException, URISyntaxException {
-        final NormalizedNode<?, ?> transformedInput = readJson("/bug-6112/json/data-uint8.json");
+        final NormalizedNode transformedInput = readJson("/bug-6112/json/data-uint8.json");
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
-        Optional<DataContainerChild<? extends PathArgument, ?>> leafValue = root.getChild(NodeIdentifier.create(
+        DataContainerChild leafValue = root.childByArg(NodeIdentifier.create(
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));
 
-        assertTrue(leafValue.isPresent());
-        assertEquals(Uint8.valueOf(1), leafValue.get().getValue());
+        assertNotNull(leafValue);
+        assertEquals(Uint8.valueOf(1), leafValue.body());
     }
 }

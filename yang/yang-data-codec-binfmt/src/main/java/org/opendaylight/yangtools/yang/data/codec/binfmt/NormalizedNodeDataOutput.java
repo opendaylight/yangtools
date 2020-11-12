@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 public interface NormalizedNodeDataOutput extends AutoCloseable, DataOutput {
     void writeQName(QName qname) throws IOException;
 
-    void writeNormalizedNode(NormalizedNode<?, ?> normalizedNode) throws IOException;
+    void writeNormalizedNode(NormalizedNode normalizedNode) throws IOException;
 
     void writePathArgument(PathArgument pathArgument) throws IOException;
 
@@ -42,7 +42,7 @@ public interface NormalizedNodeDataOutput extends AutoCloseable, DataOutput {
     @Override
     void close() throws IOException;
 
-    default void writeOptionalNormalizedNode(final @Nullable NormalizedNode<?, ?> normalizedNode) throws IOException {
+    default void writeOptionalNormalizedNode(final @Nullable NormalizedNode normalizedNode) throws IOException {
         if (normalizedNode != null) {
             writeBoolean(true);
             writeNormalizedNode(normalizedNode);

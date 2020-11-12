@@ -51,7 +51,7 @@ public class ImmutableAugmentationNodeBuilder
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
-            final DataContainerChild<?, ?> child) {
+            final DataContainerChild child) {
         // Check nested augments
         DataValidationException.checkLegalData(!(child instanceof AugmentationNode),
                 "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", child.getNodeType(),

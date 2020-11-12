@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -83,7 +83,7 @@ public class Bug5968MergeTest {
     public void mergeInvalidContainerTest() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
-        final MapNode myList = createMap(true);
+        final SystemMapNode myList = createMap(true);
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
@@ -141,17 +141,15 @@ public class Bug5968MergeTest {
 
     private static void mergeMap(final DataTreeModification modificationTree,
             final boolean mandatoryDataMissing) throws DataValidationFailedException {
-        final MapNode myList = createMap(mandatoryDataMissing);
-        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), myList);
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMap(mandatoryDataMissing));
     }
 
-    private static MapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
-        return Builders
-                .mapBuilder()
-                .withNodeIdentifier(new NodeIdentifier(MY_LIST))
-                .withChild(
-                        mandatoryDataMissing ? createMapEntry("1", "common-value") : createMapEntry("1",
-                                "mandatory-value", "common-value")).build();
+    private static SystemMapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
+        return Builders.mapBuilder()
+            .withNodeIdentifier(new NodeIdentifier(MY_LIST))
+            .withChild(mandatoryDataMissing ? createMapEntry("1", "common-value")
+                : createMapEntry("1", "mandatory-value", "common-value"))
+            .build();
     }
 
     private static void mergeMapEntry(final DataTreeModification modificationTree, final Object listIdValue,
@@ -194,7 +192,7 @@ public class Bug5968MergeTest {
     public void mergeValidContainerTest() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
-        final MapNode myList = createMap(false);
+        final SystemMapNode myList = createMap(false);
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
@@ -288,7 +286,7 @@ public class Bug5968MergeTest {
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue));
     }
 
-    private static CollectionNodeBuilder<MapEntryNode, MapNode> createMapBuilder() {
+    private static CollectionNodeBuilder<MapEntryNode, SystemMapNode> createMapBuilder() {
         return Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST));
     }
 

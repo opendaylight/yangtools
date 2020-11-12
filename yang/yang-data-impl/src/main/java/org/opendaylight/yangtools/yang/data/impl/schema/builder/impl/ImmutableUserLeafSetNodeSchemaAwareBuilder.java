@@ -14,49 +14,48 @@ import java.util.Collections;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-public final class ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T> extends ImmutableOrderedLeafSetNodeBuilder<T> {
-
+public final class ImmutableUserLeafSetNodeSchemaAwareBuilder<T> extends ImmutableUserLeafSetNodeBuilder<T> {
     private final LeafListSchemaNode schema;
 
-    private ImmutableOrderedLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
+    private ImmutableUserLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
         this.schema = requireNonNull(schema);
         super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
-    public ImmutableOrderedLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema,
-            final ImmutableOrderedLeafSetNode<T> node) {
+    public ImmutableUserLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema,
+            final ImmutableUserLeafSetNode<T> node) {
         super(node);
         this.schema = requireNonNull(schema);
         // FIXME: Preconditions.checkArgument(schema.getQName().equals(node.getIdentifier()));
         super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
-    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
-        return new ImmutableOrderedLeafSetNodeSchemaAwareBuilder<>(schema);
+    public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create(final LeafListSchemaNode schema) {
+        return new ImmutableUserLeafSetNodeSchemaAwareBuilder<>(schema);
     }
 
-    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema,
-            final LeafSetNode<T> node) {
-        if (!(node instanceof ImmutableOrderedLeafSetNode<?>)) {
+    public static <T> @NonNull ListNodeBuilder<T, UserLeafSetNode<T>> create(final LeafListSchemaNode schema,
+            final UserLeafSetNode<T> node) {
+        if (!(node instanceof ImmutableUserLeafSetNode<?>)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
 
-        return new ImmutableOrderedLeafSetNodeSchemaAwareBuilder<>(schema, (ImmutableOrderedLeafSetNode<T>) node);
+        return new ImmutableUserLeafSetNodeSchemaAwareBuilder<>(schema, (ImmutableUserLeafSetNode<T>) node);
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T childValue) {
+    public ImmutableUserLeafSetNodeBuilder<T> withChildValue(final T childValue) {
         // TODO check value type
         return super.withChildValue(childValue);
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(final LeafSetEntryNode<T> child) {
+    public ImmutableUserLeafSetNodeBuilder<T> withChild(final LeafSetEntryNode<T> child) {
         checkArgument(schema.getQName().equals(child.getNodeType()), "Incompatible node type, should be: %s, is: %s",
             schema.getQName(), child.getNodeType());
         // TODO check value type using TypeProvider ?
@@ -66,7 +65,7 @@ public final class ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T> extends Immu
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
+    public ImmutableUserLeafSetNodeBuilder<T> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }
