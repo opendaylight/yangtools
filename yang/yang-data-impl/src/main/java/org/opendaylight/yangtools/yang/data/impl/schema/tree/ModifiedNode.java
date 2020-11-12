@@ -20,8 +20,8 @@ import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -63,7 +63,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private final PathArgument identifier;
     private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
-    private NormalizedNode<?, ?> value;
+    private NormalizedNode value;
     private ModificationType modType;
 
     // Alternative history introduced in WRITE nodes. Instantiated when we touch any child underneath such a node.
@@ -104,7 +104,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *
      * @return Currently-written value
      */
-    @NonNull NormalizedNode<?, ?> getWrittenValue() {
+    @NonNull NormalizedNode getWrittenValue() {
         return verifyNotNull(value);
     }
 
@@ -190,7 +190,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
              * value contains this component, we need to materialize it as a MERGE modification.
              */
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final Optional<NormalizedNode<?, ?>> childData = ((NormalizedNodeContainer)value).getChild(child);
+            final Optional<NormalizedNode> childData = ((DistinctNodeContainer)value).getChild(child);
             if (childData.isPresent()) {
                 childOper.mergeIntoModifiedNode(newlyCreated, childData.get(), modVersion);
             }
@@ -253,7 +253,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *
      * @param newValue new value
      */
-    void write(final NormalizedNode<?, ?> newValue) {
+    void write(final NormalizedNode newValue) {
         updateValue(LogicalOperation.WRITE, newValue);
         children.clear();
     }
@@ -336,7 +336,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param type New operation type
      * @param newValue New node value
      */
-    void updateValue(final LogicalOperation type, final NormalizedNode<?, ?> newValue) {
+    void updateValue(final LogicalOperation type, final NormalizedNode newValue) {
         this.value = requireNonNull(newValue);
         updateOperationType(type);
     }

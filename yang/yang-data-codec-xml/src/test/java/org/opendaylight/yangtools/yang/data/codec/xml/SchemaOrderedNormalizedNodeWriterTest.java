@@ -23,9 +23,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -110,11 +110,11 @@ public class SchemaOrderedNormalizedNodeWriterTest {
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
                 createQName(FOO_NAMESPACE, NAME_NODE), "rule4"));
 
-            DataContainerChild<?, ?> rules1 = Builders.orderedMapBuilder()
+            OrderedMapNode rules1 = Builders.orderedMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                     .withValue(rule1Names)
                     .build();
-            DataContainerChild<?, ?> rules2 = Builders.orderedMapBuilder()
+            OrderedMapNode rules2 = Builders.orderedMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                     .withValue(rule2Names)
                     .build();
@@ -135,11 +135,11 @@ public class SchemaOrderedNormalizedNodeWriterTest {
             policyNodes.add(pn1);
             policyNodes.add(pn2);
 
-            DataContainerChild<?, ?> policy = Builders.orderedMapBuilder()
+            OrderedMapNode policy = Builders.orderedMapBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
                     .withValue(policyNodes)
                     .build();
-            NormalizedNode<?, ?> root = Builders.containerBuilder()
+            ContainerNode root = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
                     .withChild(policy).build();
             nnw.write(root);
@@ -157,12 +157,12 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
         try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT)) {
 
-            DataContainerChild<?, ?> cont = Builders.containerBuilder()
+            ContainerNode cont = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
                     .build();
 
-            NormalizedNode<?, ?> root = Builders.containerBuilder()
+            ContainerNode root = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
                     .withChild(cont)
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))

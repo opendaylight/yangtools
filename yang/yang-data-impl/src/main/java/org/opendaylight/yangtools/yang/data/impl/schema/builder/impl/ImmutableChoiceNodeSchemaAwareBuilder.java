@@ -38,7 +38,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     }
 
     @Override
-    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withChild(final DataContainerChild child) {
         if (validator == null) {
             Optional<CaseSchemaNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
             DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);

@@ -63,9 +63,9 @@ public class Bug2690Test extends AbstractTestModelTest {
 
         final DataTreeSnapshot snapshotAfterTx = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationAfterTx = snapshotAfterTx.newModification();
-        final Optional<NormalizedNode<?, ?>> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
+        final Optional<NormalizedNode> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
-        assertEquals(2, ((NormalizedNodeContainer<?,?,?>)readNode.get()).size());
+        assertEquals(2, ((NormalizedNodeContainer<?, ?>)readNode.get()).size());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class Bug2690Test extends AbstractTestModelTest {
     }
 
     private static void verifyTestDeleteStructuralAndWriteChild(final DataTreeSnapshot snapshot) {
-        final Optional<NormalizedNode<?, ?>> readNode = snapshot.readNode(TestModel.NAME_PATH);
+        final Optional<NormalizedNode> readNode = snapshot.readNode(TestModel.NAME_PATH);
         assertTrue(readNode.isPresent());
     }
 

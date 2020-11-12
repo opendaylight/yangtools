@@ -16,6 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * @author Robert Varga
  */
 @Beta
-public interface NormalizedNodeDocument extends XPathDocument<NormalizedNode<?, ?>> {
+public interface NormalizedNodeDocument extends XPathDocument<NormalizedNode> {
 
 }
