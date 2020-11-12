@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
-        extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild<? extends PathArgument, ?>>>
+        extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild>>
         implements DataContainerNode<K> {
     private final Map<PathArgument, Object> children;
 
@@ -27,12 +26,12 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     @Override
-    public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return Optional.ofNullable(LazyLeafOperations.getChild(children, child));
+    public final DataContainerChild childByArg(final PathArgument child) {
+        return LazyLeafOperations.getChild(children, child);
     }
 
     @Override
-    public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
+    public final Collection<DataContainerChild> body() {
         return new LazyValues(children);
     }
 

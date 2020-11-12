@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 
 public final class TestingNormalizedNodeStructuresCreator {
@@ -40,8 +40,7 @@ public final class TestingNormalizedNodeStructuresCreator {
         throw new UnsupportedOperationException();
     }
 
-    @SafeVarargs
-    static ContainerNode cont1Node(final DataContainerChild<?, ?>... children) {
+    static ContainerNode cont1Node(final DataContainerChild... children) {
         return Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "cont1")))
                 .withValue(Arrays.asList(children))
@@ -107,8 +106,7 @@ public final class TestingNormalizedNodeStructuresCreator {
                 .build();
     }
 
-    @SafeVarargs
-    private static ChoiceNode choc11Node(final DataContainerChild<?, ?>... children) {
+    private static ChoiceNode choc11Node(final DataContainerChild... children) {
         return Builders.choiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc11")))
                 .withValue(Arrays.asList(children))
@@ -169,7 +167,7 @@ public final class TestingNormalizedNodeStructuresCreator {
                 .build();
     }
 
-    private static MapNode childLst11() {
+    private static SystemMapNode childLst11() {
         return Builders.mapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lst11")))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
@@ -200,7 +198,7 @@ public final class TestingNormalizedNodeStructuresCreator {
         );
     }
 
-    private static LeafSetNode<?> childLflst11() {
+    private static SystemLeafSetNode<?> childLflst11() {
         return Builders.leafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")))
                 .withChild(Builders.leafSetEntryBuilder()
@@ -212,7 +210,7 @@ public final class TestingNormalizedNodeStructuresCreator {
                 .build();
     }
 
-    private static LeafSetNode<?> childLflst11Multiline() {
+    private static SystemLeafSetNode<?> childLflst11Multiline() {
         return Builders.leafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "lflst11")))
                 .withChild(Builders.leafSetEntryBuilder()

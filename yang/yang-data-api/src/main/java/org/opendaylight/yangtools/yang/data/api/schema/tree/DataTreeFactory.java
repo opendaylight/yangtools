@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
@@ -58,5 +58,5 @@ public interface DataTreeFactory {
      * @throws IllegalArgumentException if a mismatch between the arguments is detected
      */
     @NonNull DataTree create(DataTreeConfiguration treeConfig, EffectiveModelContext initialSchemaContext,
-            NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException;
+            DistinctNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException;
 }

@@ -62,17 +62,17 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues,
+    public static void checkListKey(final DataContainerChild childNode, final Map<QName, Object> keyValues,
             final QName keyQName, final NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
 
         final Object expected = keyValues.get(keyQName);
-        final Object actual = childNode.getValue();
+        final Object actual = childNode.body();
 
         checkListKey(nodeId, keyQName, expected, actual);
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName,
+    public static void checkListKey(final DataContainerChild childNode, final QName keyQName,
             final NodeIdentifierWithPredicates nodeId) {
         if (childNode == null) {
             throw new IllegalListKeyException(keyQName, nodeId);

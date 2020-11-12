@@ -31,7 +31,7 @@ public interface NormalizedAnydata extends Immutable, EffectiveModelContextProvi
 
     DataSchemaNode getContextNode();
 
-    NormalizedNode<?, ?> getData();
+    NormalizedNode getData();
 
     default void writeTo(final NormalizedNodeStreamWriter writer) throws IOException {
         writeTo(writer, true);
