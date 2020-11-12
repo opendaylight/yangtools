@@ -13,8 +13,12 @@ module org.opendaylight.yangtools.yang.data.api {
     exports org.opendaylight.yangtools.yang.data.api.schema.tree;
     exports org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+    requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
 
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
+
+    // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
 }

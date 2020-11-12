@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 @Beta
 @Deprecated
-public interface XPathNodesetResult
-    extends XPathResult<Collection<Entry<YangInstanceIdentifier, NormalizedNode<?, ?>>>> {
+public interface XPathNodesetResult extends XPathResult<Collection<Entry<YangInstanceIdentifier, NormalizedNode>>> {
 
 }

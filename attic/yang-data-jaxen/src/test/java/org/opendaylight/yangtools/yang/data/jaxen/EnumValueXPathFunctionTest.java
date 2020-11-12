@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathDocument;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
@@ -166,7 +166,8 @@ public class EnumValueXPathFunctionTest {
         final LeafNode<?> ordinaryLeafNode = Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ORDINARY_LEAF)).withValue("test-value").build();
 
-        final MapNode alarmListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(ALARM))
+        final SystemMapNode alarmListNode = Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(ALARM))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         NodeIdentifierWithPredicates.of(ALARM, SEVERITY, keyLeafValue))
                         .withChild(ordinaryLeafNode).build()).build();

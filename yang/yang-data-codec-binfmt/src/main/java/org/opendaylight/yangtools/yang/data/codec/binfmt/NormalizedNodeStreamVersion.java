@@ -68,7 +68,7 @@ public enum NormalizedNodeStreamVersion {
     },
     /**
      * First shipping is Magnesium. Does not support {@link BigInteger} mirroring it being superseded by {@link Uint64}
-     * in {@link ValueNode#getValue()}.
+     * in {@link ValueNode#body()}.
      */
     MAGNESIUM {
         @Override
