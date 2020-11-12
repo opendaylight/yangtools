@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 public class DataTreeCandidateNodesTest {
     @Test
     public void testFromNormalizedNode() {
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         final DataTreeCandidateNode dataTreeCandidateNode = DataTreeCandidateNodes.written(mockedNormalizedNode);
         assertNotNull(dataTreeCandidateNode);
     }
@@ -41,7 +41,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
@@ -69,7 +69,7 @@ public class DataTreeCandidateNodesTest {
 
         final DataTreeCandidateNode mockedChildNode2 = mock(DataTreeCandidateNode.class);
         doReturn(ModificationType.WRITE).when(mockedChildNode2).getModificationType();
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedChildNode2).getDataAfter();
 
         final DataTreeCandidateNode mockedChildNode3 = mock(DataTreeCandidateNode.class);
@@ -106,7 +106,7 @@ public class DataTreeCandidateNodesTest {
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
 
         doReturn(ModificationType.WRITE).when(mockedDataTreeCandidateNode).getModificationType();
-        final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
+        final NormalizedNode mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, mockedRootPath, mockedDataTreeCandidateNode);
         verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));

@@ -277,7 +277,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void endNode() {
         final NormalizedNodeBuilder finishedBuilder = builders.poll();
         checkState(finishedBuilder != null, "Node which should be closed does not exists.");
-        final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
+        final NormalizedNode product = finishedBuilder.build();
         nextSchema = null;
 
         writeChild(product);
@@ -299,7 +299,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * @throws IllegalStateException if there is no open builder
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected final void writeChild(final NormalizedNode<?, ?> child) {
+    protected final void writeChild(final NormalizedNode child) {
         final NormalizedNodeContainerBuilder current = currentContainer();
         checkState(current != null, "Reached top level node, which could not be closed in this writer.");
         current.addChild(requireNonNull(child));

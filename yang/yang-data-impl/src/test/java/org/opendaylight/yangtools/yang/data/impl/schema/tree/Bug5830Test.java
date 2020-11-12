@@ -227,7 +227,7 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static DataContainerChild<?, ?> createTaskDataContainer(final boolean withMandatoryNode) {
+    private static DataContainerChild createTaskDataContainer(final boolean withMandatoryNode) {
         DataContainerNodeBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
@@ -237,7 +237,7 @@ public class Bug5830Test {
         return taskDataBuilder.build();
     }
 
-    private static DataContainerChild<?, ?> createTaskDataMultipleContainer(final boolean withPresenceContianer) {
+    private static DataContainerChild createTaskDataMultipleContainer(final boolean withPresenceContianer) {
         DataContainerNodeBuilder<NodeIdentifier, ContainerNode> nonPresenceContainerBuilder = Builders
                 .containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))

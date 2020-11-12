@@ -24,8 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  * Internal equivalent of {@link Collections}' unmodifiable Map. It does not retain
  * keySet/entrySet references, thus lowering the memory overhead.
  */
-final class UnmodifiableChildrenMap
-        implements CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
+final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataContainerChild>, Serializable {
     private static final long serialVersionUID = 1L;
 
     /*
@@ -34,11 +33,11 @@ final class UnmodifiableChildrenMap
     private static final int WRAP_THRESHOLD = 9;
 
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Delegate is expected to be Serializable")
-    private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate;
+    private final Map<PathArgument, DataContainerChild> delegate;
 
-    private transient Collection<DataContainerChild<? extends PathArgument, ?>> values = null;
+    private transient Collection<DataContainerChild> values = null;
 
-    private UnmodifiableChildrenMap(final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate) {
+    private UnmodifiableChildrenMap(final Map<PathArgument, DataContainerChild> delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
@@ -49,8 +48,7 @@ final class UnmodifiableChildrenMap
      * @param map Backing map
      * @return Unmodifiable view
      */
-    static Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> create(
-            final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> map) {
+    static Map<PathArgument, DataContainerChild> create(final Map<PathArgument, DataContainerChild> map) {
         if (map instanceof UnmodifiableChildrenMap) {
             return map;
         }
@@ -88,24 +86,23 @@ final class UnmodifiableChildrenMap
     }
 
     @Override
-    public DataContainerChild<? extends PathArgument, ?> get(final Object key) {
+    public DataContainerChild get(final Object key) {
         return delegate.get(key);
     }
 
     @Override
-    public DataContainerChild<? extends PathArgument, ?> put(final PathArgument key,
-            final DataContainerChild<? extends PathArgument, ?> value) {
+    public DataContainerChild put(final PathArgument key, final DataContainerChild value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DataContainerChild<? extends PathArgument, ?> remove(final Object key) {
+    public DataContainerChild remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public void putAll(final Map<? extends PathArgument, ? extends DataContainerChild<? extends PathArgument, ?>> m) {
+    public void putAll(final Map<? extends PathArgument, ? extends DataContainerChild> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -120,7 +117,7 @@ final class UnmodifiableChildrenMap
     }
 
     @Override
-    public Collection<DataContainerChild<? extends PathArgument, ?>> values() {
+    public Collection<DataContainerChild> values() {
         if (values == null) {
             values = Collections.unmodifiableCollection(delegate.values());
         }
@@ -128,7 +125,7 @@ final class UnmodifiableChildrenMap
     }
 
     @Override
-    public Set<Entry<PathArgument, DataContainerChild<? extends PathArgument, ?>>> entrySet() {
+    public Set<Entry<PathArgument, DataContainerChild>> entrySet() {
         /*
          * Okay, this is not as efficient as it could be -- we could save ourselves the
          * map instantiation. The cost of that would be re-implementation of a read-only
@@ -156,12 +153,10 @@ final class UnmodifiableChildrenMap
 
     @Override
     @SuppressWarnings("unchecked")
-    public Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> createMutableClone() {
+    public Map<PathArgument, DataContainerChild> createMutableClone() {
         if (delegate instanceof HashMap) {
-            return (Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>)
-                    ((HashMap<?, ?>) delegate).clone();
+            return (Map<PathArgument, DataContainerChild>) ((HashMap<?, ?>) delegate).clone();
         }
-
         return new HashMap<>(delegate);
     }
 }

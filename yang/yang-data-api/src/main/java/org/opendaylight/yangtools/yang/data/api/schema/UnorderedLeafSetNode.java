@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.ItemOrder;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.concepts.ItemOrder.Unordered;
 
 /**
  * Node representing set of simple leaf nodes. Node containing instances of {@link LeafSetEntryNode}.
@@ -21,8 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  *
  * @param <T> Type of leaf node values.
  */
-public interface LeafSetNode<@NonNull O extends ItemOrder<O>, T>
-        extends DistinctNodeContainer<NodeIdentifier, NodeWithValue<?>, LeafSetEntryNode<T>>, ItemOrder<O>,
-                DataContainerChild, MixinNode {
+public interface UnorderedLeafSetNode<T> extends LeafSetNode<@NonNull Unordered, T>, Unordered {
 
 }

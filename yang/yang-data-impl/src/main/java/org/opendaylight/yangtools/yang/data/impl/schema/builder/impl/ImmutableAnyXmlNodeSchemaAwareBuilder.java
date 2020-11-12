@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
 public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXmlNodeBuilder {
-
     private ImmutableAnyXmlNodeSchemaAwareBuilder(final AnyxmlSchemaNode schema) {
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
@@ -26,13 +25,12 @@ public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXml
     }
 
     @Override
-    public NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> withValue(final DOMSource withValue) {
+    public ImmutableAnyXmlNodeBuilder withValue(final DOMSource withValue) {
         return super.withValue(withValue);
     }
 
     @Override
-    public NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> withNodeIdentifier(
-            final NodeIdentifier withNodeIdentifier) {
+    public ImmutableAnyXmlNodeBuilder withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

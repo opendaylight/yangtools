@@ -32,9 +32,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -94,17 +92,15 @@ public class YangModeledAnyXmlSupportTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
 
         assertEquals(data, transformedInput);
     }
 
     @Test
     public void normalizedNodesToJsonTest() throws IOException, URISyntaxException, SAXException {
-        final DataContainerChild<? extends PathArgument, ?> baz = data;
-
         final Writer writer = new StringWriter();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, baz);
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, data);
 
         final JsonParser parser = new JsonParser();
         final JsonElement serializedJson = parser.parse(jsonOutput);
@@ -115,7 +111,7 @@ public class YangModeledAnyXmlSupportTest {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
-            final NormalizedNode<?, ?> inputStructure) throws IOException {
+            final NormalizedNode inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
