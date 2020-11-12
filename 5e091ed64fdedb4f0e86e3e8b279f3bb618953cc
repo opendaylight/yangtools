@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5084cb3_a0e90ff5",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 8125
+      },
+      "writtenOn": "2020-11-12T16:48:37Z",
+      "side": 1,
+      "message": "Do we really want to change these to X and Y? D and E made more sense to me.",
+      "range": {
+        "startLine": 163,
+        "startChar": 30,
+        "endLine": 163,
+        "endChar": 35
+      },
+      "revId": "5e091ed64fdedb4f0e86e3e8b279f3bb618953cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
