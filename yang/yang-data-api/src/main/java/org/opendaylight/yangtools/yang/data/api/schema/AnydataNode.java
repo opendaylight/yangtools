@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * @param <V> Value type, uniquely identifying the object model used for values
  */
 @Beta
-public interface AnydataNode<V> extends ForeignDataNode<NodeIdentifier, V> {
-
+public interface AnydataNode<V> extends ForeignDataNode<V> {
+    @Override
+    NodeIdentifier getIdentifier();
 }

@@ -28,15 +28,15 @@ public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends Immuta
     }
 
     @Override
-    public NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withValue(final T withValue) {
+    public ImmutableLeafSetEntryNodeBuilder<T> withValue(final T withValue) {
         super.withNodeIdentifier(new NodeWithValue<>(schema.getQName(), withValue));
         // TODO check value type using TypeProvider ?
-        return super.withValue(withValue);
+        super.withValue(withValue);
+        return this;
     }
 
     @Override
-    public NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(
-            final NodeWithValue withNodeIdentifier) {
+    public ImmutableLeafSetEntryNodeBuilder<T> withNodeIdentifier(final NodeWithValue withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

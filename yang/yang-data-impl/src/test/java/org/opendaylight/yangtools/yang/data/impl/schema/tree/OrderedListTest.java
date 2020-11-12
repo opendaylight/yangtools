@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -77,7 +77,7 @@ public class OrderedListTest {
     }
 
     public void modification1() throws DataValidationFailedException {
-        OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentOrderedList))
                 .withChild(createParentOrderedListEntry("pkval1", "plfval1"))
                 .withChild(createParentOrderedListEntry("pkval2", "plfval2"))
@@ -93,7 +93,7 @@ public class OrderedListTest {
         DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
         treeModification.write(path1, parentContainerNode);
 
-        OrderedMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1"))
                 .withChild(createChildOrderedListEntry("chkval2", "chlfval2")).build();
@@ -107,7 +107,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -115,7 +115,7 @@ public class OrderedListTest {
     }
 
     public void modification2() throws DataValidationFailedException {
-        OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentOrderedList))
                 .withChild(createParentOrderedListEntry("pkval3", "plfval3updated"))
                 .withChild(createParentOrderedListEntry("pkval4", "plfval4"))
@@ -131,7 +131,7 @@ public class OrderedListTest {
         YangInstanceIdentifier path1 = YangInstanceIdentifier.of(parentContainer);
         treeModification.merge(path1, parentContainerNode);
 
-        OrderedMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1updated"))
                 .withChild(createChildOrderedListEntry("chkval2", "chlfval2updated"))
@@ -146,7 +146,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -154,7 +154,7 @@ public class OrderedListTest {
     }
 
     public void modification3() throws DataValidationFailedException {
-        OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentOrderedList))
                 .withChild(createParentOrderedListEntry("pkval1", "plfval1")).build();
 
@@ -168,7 +168,7 @@ public class OrderedListTest {
         DataTreeModification treeModification = inMemoryDataTree.takeSnapshot().newModification();
         treeModification.write(path1, parentContainerNode);
 
-        OrderedMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1new")).build();
 
@@ -189,7 +189,7 @@ public class OrderedListTest {
         }
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
@@ -200,11 +200,11 @@ public class OrderedListTest {
         DataTreeModification treeModification1 = inMemoryDataTree.takeSnapshot().newModification();
         DataTreeModification treeModification2 = inMemoryDataTree.takeSnapshot().newModification();
 
-        OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
             new NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval1", "plfval1"))
                 .build();
 
-        OrderedMapNode parentOrderedListNode2 = Builders.orderedMapBuilder().withNodeIdentifier(
+        UserMapNode parentOrderedListNode2 = Builders.orderedMapBuilder().withNodeIdentifier(
             new NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval2", "plfval2"))
                 .build();
 
@@ -238,7 +238,7 @@ public class OrderedListTest {
         }
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
         assertTrue(readNode.isPresent());
     }
 
@@ -254,7 +254,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
         assertFalse(readNode.isPresent());
     }
 
@@ -269,7 +269,7 @@ public class OrderedListTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-        Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path);
+        Optional<NormalizedNode> readNode = snapshotAfterCommits.readNode(path);
         assertFalse(readNode.isPresent());
     }
 

@@ -180,7 +180,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final JsonParserStream jsonParser = JsonParserStream.createLenient(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -193,7 +193,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -206,7 +206,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
@@ -229,7 +229,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
         final NodeIdentifier containerId = new NodeIdentifier(containerQName);
 
-        final NormalizedNode<?, ?> cont1Normalized =
+        final NormalizedNode cont1Normalized =
                 containerBuilder().withNodeIdentifier(new NodeIdentifier(parentNode.getQName()))
                         .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
                                 .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
@@ -245,18 +245,18 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertEquals(cont1Normalized, transformedInput);
     }
 
     private static void verifyTransformationToNormalizedNode(final String inputJson,
-            final NormalizedNode<?, ?> awaitedStructure) {
+            final NormalizedNode awaitedStructure) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
         assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
                 transformedInput);
     }

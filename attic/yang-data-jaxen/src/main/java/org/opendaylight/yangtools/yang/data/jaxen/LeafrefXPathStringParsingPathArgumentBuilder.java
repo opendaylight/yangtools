@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -145,7 +144,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
 
         boolean inNodeIdentifierPart = false;
         NormalizedNodeContext nodeCtx = this.currentNodeCtx;
-        NormalizedNode<?, ?> node = null;
+        NormalizedNode node = null;
         for (String pathComponent : pathComponents) {
             final Matcher matcher = NODE_IDENTIFIER_PATTERN.matcher(pathComponent);
             if (UP_ONE_LEVEL.equals(pathComponent)) {
@@ -156,9 +155,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
             } else if (matcher.matches()) {
                 inNodeIdentifierPart = true;
                 if (node != null && node instanceof DataContainerNode) {
-                    final DataContainerNode dcn = (DataContainerNode) node;
-                    final Optional<NormalizedNode<?, ?>> possibleChild = dcn.getChild(new NodeIdentifier(nextQName()));
-                    node = possibleChild.isPresent() ? possibleChild.get() : null;
+                    node = ((DataContainerNode<?>) node).childByArg(new NodeIdentifier(nextQName()));
                 }
             } else {
                 throw new IllegalArgumentException(String.format(
@@ -168,7 +165,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
         }
 
         if (node != null && node instanceof LeafNode) {
-            return node.getValue();
+            return node.body();
         }
 
         throw new IllegalArgumentException("Could not resolve current function path value.");

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -17,27 +16,16 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * <h2>Implementation notes</h2>
  * This interface should not be implemented directly, but rather implementing one of it's subclasses
  * <ul>
- *   <li>{@link ContainerNode}
- *   <li>{@link MapEntryNode}
- *   <li>{@link UnkeyedListEntryNode}
- *   <li>{@link ChoiceNode}
- *   <li>{@link AugmentationNode}
+ *   <li>{@link AugmentationNode}</li>
+ *   <li>{@link ChoiceNode}</li>
+ *   <li>{@link ContainerNode}</li>
+ *   <li>{@link MapEntryNode} and its specializations</li>
+ *   <li>{@link UnkeyedListEntryNode}</li>
  * </ul>
  *
- * @param <K> {@link PathArgument} which identifies instance of {@link DataContainerNode}
+ * @param <K> {@link PathArgument} which identifies this instance {@link DataContainerNode}
  */
-public interface DataContainerNode<K extends PathArgument> extends
-        NormalizedNodeContainer<K, PathArgument, DataContainerChild<? extends PathArgument, ?>> {
-    /**
-     * Returns iteration of all child nodes. Order of returned child nodes may be defined by subinterfaces.
-     *
-     * <p>
-     * <b>Implementation Notes:</b>
-     * All nodes returned in this iterable, MUST also be accessible via {@link #getChild(PathArgument)} using their
-     * associated identifier.
-     *
-     * @return Iteration of all child nodes
-     */
-    @Override
-    Collection<DataContainerChild<? extends PathArgument, ?>> getValue();
+public interface DataContainerNode<K extends PathArgument>
+        extends DistinctNodeContainer<K, PathArgument, DataContainerChild>, OrderingAware.System {
+
 }

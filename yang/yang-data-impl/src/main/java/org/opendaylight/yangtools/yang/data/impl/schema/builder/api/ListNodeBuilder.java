@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 
-public interface ListNodeBuilder<T, V>
-        extends CollectionNodeBuilder<LeafSetEntryNode<T>, LeafSetNode<T>> {
-
+public interface ListNodeBuilder<T, V extends LeafSetNode<T>> extends CollectionNodeBuilder<LeafSetEntryNode<T>, V> {
     @Override
     ListNodeBuilder<T, V> withNodeIdentifier(NodeIdentifier nodeIdentifier);
 
@@ -29,5 +26,5 @@ public interface ListNodeBuilder<T, V>
     @Override
     ListNodeBuilder<T, V> withoutChild(PathArgument key);
 
-    @NonNull ListNodeBuilder<T, V> withChildValue(T child);
+    ListNodeBuilder<T, V> withChildValue(T child);
 }

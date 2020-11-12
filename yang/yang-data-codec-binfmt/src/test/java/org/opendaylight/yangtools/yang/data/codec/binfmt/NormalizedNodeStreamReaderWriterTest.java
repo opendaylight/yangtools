@@ -51,8 +51,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
@@ -122,7 +122,7 @@ public class NormalizedNodeStreamReaderWriterTest {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos));
 
-        NormalizedNode<?, ?> testContainer = createTestContainer();
+        NormalizedNode testContainer = createTestContainer();
         nnout.writeNormalizedNode(testContainer);
 
         QName toaster = QName.create("http://netconfcentral.org/ns/toaster","2009-11-20","toaster");
@@ -141,14 +141,14 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
 
-        NormalizedNode<?, ?> node = nnin.readNormalizedNode();
+        NormalizedNode node = nnin.readNormalizedNode();
         Assert.assertEquals(testContainer, node);
 
         node = nnin.readNormalizedNode();
         Assert.assertEquals(toasterContainer, node);
     }
 
-    private NormalizedNode<?, ?> createTestContainer() {
+    private NormalizedNode createTestContainer() {
         byte[] bytes1 = {1, 2, 3};
         LeafSetEntryNode<Object> entry1 = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
                 new NodeWithValue<>(TestModel.BINARY_LEAF_LIST_QNAME, bytes1)).withValue(bytes1).build();
@@ -196,7 +196,7 @@ public class NormalizedNodeStreamReaderWriterTest {
         NormalizedNodeDataOutput writer = version.newDataOutput(
             ByteStreams.newDataOutput(bos));
 
-        NormalizedNode<?, ?> testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
+        NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
         writer.writeNormalizedNode(testContainer);
 
         YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
@@ -210,7 +210,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         NormalizedNodeDataInput reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
 
-        NormalizedNode<?,?> node = reader.readNormalizedNode();
+        NormalizedNode node = reader.readNormalizedNode();
         Assert.assertEquals(testContainer, node);
 
         YangInstanceIdentifier newPath = reader.readYangInstanceIdentifier();
@@ -237,7 +237,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Test
     public void testWithSerializable() {
-        NormalizedNode<?, ?> input = TestModel.createTestContainer(uint64);
+        NormalizedNode input = TestModel.createTestContainer(uint64);
         SampleNormalizedNodeSerializable serializable = new SampleNormalizedNodeSerializable(version, input);
         SampleNormalizedNodeSerializable clone = clone(serializable);
         Assert.assertEquals(input, clone.getInput());
@@ -254,7 +254,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         assertEquals("http://www.w3.org/TR/html4/", xmlNode.getNamespaceURI());
 
-        NormalizedNode<?, ?> anyXmlContainer = ImmutableContainerNodeBuilder.create().withNodeIdentifier(
+        NormalizedNode anyXmlContainer = ImmutableContainerNodeBuilder.create().withNodeIdentifier(
                 new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME)).withChild(
                         Builders.anyXmlBuilder().withNodeIdentifier(new NodeIdentifier(TestModel.ANY_XML_QNAME))
                             .withValue(new DOMSource(xmlNode)).build()).build();
@@ -271,18 +271,17 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         ContainerNode deserialized = (ContainerNode)nnin.readNormalizedNode();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child =
-                deserialized.getChild(new NodeIdentifier(TestModel.ANY_XML_QNAME));
+        Optional<DataContainerChild> child = deserialized.findChildByArg(new NodeIdentifier(TestModel.ANY_XML_QNAME));
         assertEquals("AnyXml child present", true, child.isPresent());
 
         StreamResult xmlOutput = new StreamResult(new StringWriter());
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.transform(((DOMSourceAnyxmlNode)child.get()).getValue(), xmlOutput);
+        transformer.transform(((DOMSourceAnyxmlNode)child.get()).body(), xmlOutput);
 
         assertEquals("XML", xml, xmlOutput.getWriter().toString());
         assertEquals("http://www.w3.org/TR/html4/",
-            ((DOMSourceAnyxmlNode)child.get()).getValue().getNode().getNamespaceURI());
+            ((DOMSourceAnyxmlNode)child.get()).body().getNode().getNamespaceURI());
     }
 
     @Test
@@ -324,7 +323,7 @@ public class NormalizedNodeStreamReaderWriterTest {
      */
     @Test
     public void testHugeEntries() throws IOException {
-        final CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder = Builders.mapBuilder()
+        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> mapBuilder = Builders.mapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME));
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> entryBuilder =
                 Builders.mapEntryBuilder().withChild(ImmutableNodes.leafNode(TestModel.DESC_QNAME, (byte) 42));
@@ -338,7 +337,7 @@ public class NormalizedNodeStreamReaderWriterTest {
                 .build());
         }
 
-        final MapNode expected = mapBuilder.build();
+        final SystemMapNode expected = mapBuilder.build();
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
