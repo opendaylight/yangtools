@@ -203,7 +203,7 @@ public final class ImmutableNodes {
      * @param id instance identifier to convert to node structure starting from root
      * @return serialized normalized node for provided instance Id
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx,
+    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx,
             final YangInstanceIdentifier id) {
         return fromInstanceId(ctx, id, Optional.empty());
     }
@@ -217,8 +217,8 @@ public final class ImmutableNodes {
      *                       instance identifier
      * @return serialized normalized node for provided instance Id with overridden last child.
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final NormalizedNode<?, ?> deepestElement) {
+    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final NormalizedNode deepestElement) {
         return fromInstanceId(ctx, id, Optional.of(deepestElement));
     }
 
@@ -232,8 +232,8 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id with (optionally) overridden last child
      *         and (optionally) marked with specific operation attribute.
      */
-    public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final Optional<NormalizedNode<?, ?>> deepestElement) {
+    public static @NonNull NormalizedNode fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final Optional<NormalizedNode> deepestElement) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
         final Iterator<PathArgument> it = id.getPathArguments().iterator();

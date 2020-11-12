@@ -68,8 +68,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     @Override
     @SuppressWarnings("unchecked")
-    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> lastChild) {
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+            final Optional<NormalizedNode> lastChild) {
         if (!isMixin()) {
             final QName type = getIdentifier().getNodeType();
             if (type != null) {
@@ -86,7 +86,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             final InstanceIdToNodes<?> childOp = getChildOperation(childPath);
             builder.addChild(childOp.create(childPath, others, lastChild));
         } else if (lastChild.isPresent()) {
-            builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().getValue()));
+            builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().body()));
         }
 
         return builder.build();

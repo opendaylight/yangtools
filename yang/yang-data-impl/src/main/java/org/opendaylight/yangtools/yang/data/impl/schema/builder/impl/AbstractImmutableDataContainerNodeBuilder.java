@@ -86,7 +86,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
         return nodeIdentifier;
     }
 
-    protected final DataContainerChild<? extends PathArgument, ?> getChild(final PathArgument child) {
+    protected final DataContainerChild getChild(final PathArgument child) {
         return LazyLeafOperations.getChild(value, child);
     }
 
@@ -113,17 +113,16 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withValue(
-            final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
+    public DataContainerNodeBuilder<I, R> withValue(final Collection<DataContainerChild> withValue) {
         // TODO Replace or putAll ?
-        for (final DataContainerChild<? extends PathArgument, ?> dataContainerChild : withValue) {
+        for (final DataContainerChild dataContainerChild : withValue) {
             withChild(dataContainerChild);
         }
         return this;
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<I, R> withChild(final DataContainerChild child) {
         checkDirty();
         LazyLeafOperations.putChild(value, child);
         return this;
@@ -143,14 +142,12 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> addChild(
-            final DataContainerChild<? extends PathArgument, ?> child) {
+    public DataContainerNodeBuilder<I, R> addChild(final DataContainerChild child) {
         return withChild(child);
     }
 
     @Override
-    public NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild<? extends PathArgument, ?>, R>
-            removeChild(final PathArgument key) {
+    public NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild, R> removeChild(final PathArgument key) {
         return withoutChild(key);
     }
 
