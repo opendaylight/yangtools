@@ -15,22 +15,23 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Invisible;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class MapModificationStrategy extends Invisible<ListSchemaNode> {
-    private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedMapNode> ORDERED_SUPPORT =
-            new NormalizedNodeContainerSupport<>(OrderedMapNode.class, ChildTrackingPolicy.ORDERED,
-                    ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
-    private static final NormalizedNodeContainerSupport<NodeIdentifier, MapNode> UNORDERED_SUPPORT =
-            new NormalizedNodeContainerSupport<>(MapNode.class, ImmutableMapNodeBuilder::create,
+    private static final NormalizedNodeContainerSupport<NodeIdentifier, UserMapNode> ORDERED_SUPPORT =
+            new NormalizedNodeContainerSupport<>(UserMapNode.class, ChildTrackingPolicy.ORDERED,
+                    ImmutableUserMapNodeBuilder::create, ImmutableUserMapNodeBuilder::create);
+    private static final NormalizedNodeContainerSupport<NodeIdentifier, SystemMapNode> UNORDERED_SUPPORT =
+            new NormalizedNodeContainerSupport<>(SystemMapNode.class, ImmutableMapNodeBuilder::create,
                     ImmutableMapNodeBuilder::create);
 
     private final @NonNull MapNode emptyNode;

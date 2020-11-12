@@ -106,7 +106,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    void optionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void optionalVerifyValueChildren(final NormalizedNode writtenValue) {
         enforceCases(writtenValue);
     }
 
@@ -114,11 +114,11 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
         enforceCases(tree.getData());
     }
 
-    private void enforceCases(final NormalizedNode<?, ?> normalizedNode) {
+    private void enforceCases(final NormalizedNode normalizedNode) {
         Verify.verify(normalizedNode instanceof ChoiceNode);
-        final Collection<DataContainerChild<?, ?>> children = ((ChoiceNode) normalizedNode).getValue();
+        final Collection<DataContainerChild> children = ((ChoiceNode) normalizedNode).body();
         if (!children.isEmpty()) {
-            final DataContainerChild<?, ?> firstChild = children.iterator().next();
+            final DataContainerChild firstChild = children.iterator().next();
             final CaseEnforcer enforcer = Verify.verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
                 "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
                 + "in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
@@ -126,7 +126,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
             // Make sure no leaves from other cases are present
             for (final CaseEnforcer other : exclusions.get(enforcer)) {
                 for (final PathArgument id : other.getAllChildIdentifiers()) {
-                    final Optional<NormalizedNode<?, ?>> maybeChild = NormalizedNodes.getDirectChild(normalizedNode,
+                    final Optional<NormalizedNode> maybeChild = NormalizedNodes.getDirectChild(normalizedNode,
                         id);
                     Preconditions.checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
@@ -147,7 +147,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification,  final NormalizedNode<?, ?> newValue,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
         final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
         enforceCases(ret);

@@ -31,7 +31,7 @@ class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy
         }
 
         @Override
-        void mandatoryVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        void mandatoryVerifyValueChildren(final NormalizedNode writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 
@@ -44,7 +44,7 @@ class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy
         }
 
         @Override
-        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+        protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
                 final Optional<? extends TreeNode> currentMeta, final Version version) {
             final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);

@@ -28,12 +28,18 @@ public class ImmutableLeafSetEntryNodeBuilder<T>
     }
 
     private static final class ImmutableLeafSetEntryNode<T>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeWithValue, T> implements LeafSetEntryNode<T> {
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeWithValue, LeafSetEntryNode<?>, T>
+            implements LeafSetEntryNode<T> {
 
         ImmutableLeafSetEntryNode(final NodeWithValue nodeIdentifier, final T value) {
             super(nodeIdentifier, value);
             checkArgument(Objects.deepEquals(nodeIdentifier.getValue(), value),
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
+        }
+
+        @Override
+        protected Class<LeafSetEntryNode<?>> implementedType() {
+            return (Class) LeafSetEntryNode.class;
         }
     }
 }

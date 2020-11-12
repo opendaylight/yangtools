@@ -15,7 +15,6 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
 import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -50,7 +49,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
         void writeMountPoint(final MountPointNode node) throws IOException {
             try (MountPointNormalizedNodeWriter writer = forStreamWriter(mountWriter.startMountPoint(
                     node.getIdentifier(), node.getMountPointContext()))) {
-                for (DataContainerChild<? extends PathArgument, ?> child : node.getValue()) {
+                for (DataContainerChild child : node.body()) {
                     writer.write(child);
                 }
             }
@@ -79,7 +78,7 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     @Override
-    protected final boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
+    protected final boolean wasProcessedAsCompositeNode(final NormalizedNode node) throws IOException {
         if (node instanceof MountPointNode) {
             writeMountPoint((MountPointNode) node);
             return true;

@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -175,15 +174,14 @@ abstract class UniqueValidator<T> implements Immutable {
         final Iterator<NodeIdentifier> it = path.iterator();
         while (true) {
             final NodeIdentifier step = it.next();
-            final Optional<DataContainerChild<?, ?>> optNext = current.getChild(step);
-            if (optNext.isEmpty()) {
+            final DataContainerChild next = current.childByArg(step);
+            if (next == null) {
                 return null;
             }
 
-            final DataContainerChild<?, ?> next = optNext.orElseThrow();
             if (!it.hasNext()) {
                 checkState(next instanceof LeafNode, "Unexpected node %s at %s", next, path);
-                final Object value = next.getValue();
+                final Object value = next.body();
                 LOG.trace("Resolved {} to value {}", path, value);
                 return value;
             }

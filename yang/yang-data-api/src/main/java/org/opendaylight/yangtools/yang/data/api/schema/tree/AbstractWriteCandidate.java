@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 abstract class AbstractWriteCandidate extends AbstractAvailableLeafCandidateNode {
-    AbstractWriteCandidate(final NormalizedNode<?, ?> dataAfter) {
+    AbstractWriteCandidate(final NormalizedNode dataAfter) {
         super(dataAfter);
     }
 
