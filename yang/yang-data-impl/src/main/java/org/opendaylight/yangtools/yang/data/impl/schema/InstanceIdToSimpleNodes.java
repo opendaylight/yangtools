@@ -31,13 +31,13 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     }
 
     @Override
-    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> deepestChild) {
-        final NormalizedNodeBuilder<? extends PathArgument, Object,
-                ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(first);
+    final NormalizedNode create(final PathArgument first, final Iterator<PathArgument> others,
+            final Optional<NormalizedNode> deepestChild) {
+        final NormalizedNodeBuilder<? extends PathArgument, Object, ? extends NormalizedNode> builder =
+            getBuilder(first);
 
         if (deepestChild.isPresent()) {
-            builder.withValue(deepestChild.get().getValue());
+            builder.withValue(deepestChild.orElseThrow().body());
         }
 
         return builder.build();
@@ -53,8 +53,8 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         return false;
     }
 
-    abstract NormalizedNodeBuilder<? extends PathArgument, Object,
-            ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
+    abstract NormalizedNodeBuilder<? extends PathArgument, Object, ? extends NormalizedNode> getBuilder(
+        PathArgument node);
 
     static final class LeafNormalization extends InstanceIdToSimpleNodes<NodeIdentifier> {
         LeafNormalization(final LeafSchemaNode potential) {

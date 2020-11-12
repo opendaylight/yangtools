@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends NormalizedNode<?, ?>>
+final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends NormalizedNode>
         extends SchemaAwareApplyOperation<T> {
     private final @NonNull Class<V> nodeClass;
     private final @NonNull T schema;
@@ -57,14 +57,14 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // Just overwrite whatever was there, but be sure to run validation
-        final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
+        final NormalizedNode newValue = modification.getWrittenValue();
         verifyWrittenValue(newValue);
         modification.resolveModificationType(ModificationType.WRITE);
         return applyWrite(modification, newValue, null, version);
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
         return TreeNodeFactory.createTreeNode(newValue, version);
     }
@@ -76,7 +76,7 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode value, final Version version) {
         switch (node.getOperation()) {
             // Delete performs a data dependency check on existence of the node. Performing a merge
             // on DELETE means we
@@ -91,16 +91,16 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     }
 
     @Override
-    void verifyValue(final NormalizedNode<?, ?> writtenValue) {
+    void verifyValue(final NormalizedNode writtenValue) {
         verifyWrittenValue(writtenValue);
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode value) {
         verifyWrittenValue(value);
     }
 
-    private void verifyWrittenValue(final NormalizedNode<?, ?> value) {
+    private void verifyWrittenValue(final NormalizedNode value) {
         checkArgument(nodeClass.isInstance(value), "Expected an instance of %s, have %s", nodeClass, value);
     }
 }

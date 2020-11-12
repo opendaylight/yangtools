@@ -61,7 +61,7 @@ public class AnyXmlWithParamsParsingTest {
 
         final XmlParserStream xmlParser = XmlParserStream.create(writer, SCHEMA, SCHEMA_NODE);
         xmlParser.traverse(new DOMSource(doc.getDocumentElement()));
-        final NormalizedNode<?, ?> parsed = resultHolder.getResult();
+        final NormalizedNode parsed = resultHolder.getResult();
 
         final DataContainerChild<? extends PathArgument, ?> editCfg = ((ContainerNode) parsed)
                 .getChild(getNodeId(parsed, "edit-content")).get();
@@ -83,7 +83,7 @@ public class AnyXmlWithParamsParsingTest {
                 "interface-configurations xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg\""));
     }
 
-    private static NodeIdentifier getNodeId(final NormalizedNode<?, ?> parsed, final String localName) {
+    private static NodeIdentifier getNodeId(final NormalizedNode parsed, final String localName) {
         return new NodeIdentifier(QName.create(parsed.getNodeType(), localName));
     }
 

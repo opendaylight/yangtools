@@ -17,4 +17,6 @@ module org.opendaylight.yangtools.yang.data.api {
 
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
+    requires org.eclipse.jdt.annotation;
+    requires org.opendaylight.yangtools.yang.common;
 }

@@ -94,7 +94,7 @@ public class YangModeledAnyXmlSupportTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode transformedInput = result.getResult();
 
         assertEquals(data, transformedInput);
     }
@@ -115,7 +115,7 @@ public class YangModeledAnyXmlSupportTest {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
-            final NormalizedNode<?, ?> inputStructure) throws IOException {
+            final NormalizedNode inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));

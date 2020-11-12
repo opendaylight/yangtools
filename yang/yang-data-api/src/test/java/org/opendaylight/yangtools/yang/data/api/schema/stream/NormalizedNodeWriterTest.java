@@ -16,7 +16,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
@@ -74,24 +73,24 @@ public class NormalizedNodeWriterTest {
             () -> orderedNormalizedNodeWriter.write(mock(NormalizedNode.class)));
         assertTrue(ex.getMessage().startsWith("It wasn't possible to serialize node"));
 
-        final NormalizedNode<?, ?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
+        final LeafSetEntryNode<?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
         doReturn(new NodeWithValue<>(myLeafList, "leaflist-value-1")).when(mockedLeafSetEntryNode).getIdentifier();
-        doReturn("leaflist-value-1").when(mockedLeafSetEntryNode).getValue();
+        doReturn("leaflist-value-1").when(mockedLeafSetEntryNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafSetEntryNode));
 
-        final NormalizedNode<?, ?> mockedLeafNode = mock(LeafNode.class);
-        doReturn("leaf-value-1").when(mockedLeafNode).getValue();
+        final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
+        doReturn("leaf-value-1").when(mockedLeafNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafNode));
 
         final DOMSourceAnyxmlNode mockedAnyXmlNode = mock(DOMSourceAnyxmlNode.class);
         doCallRealMethod().when(mockedAnyXmlNode).getValueObjectModel();
-        doReturn(new DOMSource()).when(mockedAnyXmlNode).getValue();
+        doReturn(new DOMSource()).when(mockedAnyXmlNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedAnyXmlNode));
 
-        final NormalizedNode<?, ?> mockedContainerNode = mock(ContainerNode.class);
+        final NormalizedNode mockedContainerNode = mock(ContainerNode.class);
         assertNotNull(orderedNormalizedNodeWriter.write(mockedContainerNode));
 
-        final NormalizedNode<?, ?> mockedYangModeledAnyXmlNode = mock(YangModeledAnyXmlNode.class);
+        final NormalizedNode mockedYangModeledAnyXmlNode = mock(YangModeledAnyXmlNode.class);
         assertNotNull(orderedNormalizedNodeWriter.write(mockedYangModeledAnyXmlNode));
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
@@ -110,8 +109,8 @@ public class NormalizedNodeWriterTest {
         assertNotNull(orderedNormalizedNodeWriter.write(mockedAugmentationNode));
 
         final UnkeyedListNode mockedUnkeyedListNode = mock(UnkeyedListNode.class);
-        final Set<?> value = ImmutableSet.builder().add(mockedUnkeyedListEntryNode).build();
-        doReturn(value).when(mockedUnkeyedListNode).getValue();
+        final Set<?> value = Set.of(mockedUnkeyedListEntryNode);
+        doReturn(value).when(mockedUnkeyedListNode).body();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedUnkeyedListNode));
 
         final OrderedMapNode mockedOrderedMapNode = mock(OrderedMapNode.class);
