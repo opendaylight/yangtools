@@ -13,14 +13,14 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 final class DuplicateFinder {
-    private final Map<NormalizedNode<?, ?>, DuplicateEntry> identities = new IdentityHashMap<>();
-    private final Map<NormalizedNode<?, ?>, DuplicateEntry> duplicates = new HashMap<>();
+    private final Map<NormalizedNode, DuplicateEntry> identities = new IdentityHashMap<>();
+    private final Map<NormalizedNode, DuplicateEntry> duplicates = new HashMap<>();
 
     private DuplicateFinder() {
         // Hidden on purpose
     }
 
-    private void findDuplicates(final YangInstanceIdentifier path, final NormalizedNode<?, ?> node) {
+    private void findDuplicates(final YangInstanceIdentifier path, final NormalizedNode node) {
         final DuplicateEntry i = identities.get(node);
         if (i == null) {
             final DuplicateEntry d = duplicates.get(node);
@@ -35,7 +35,7 @@ final class DuplicateFinder {
             if (node instanceof NormalizedNodeContainer<?, ?, ?>) {
                 final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) node;
 
-                for (NormalizedNode<?, ?> c : container.getValue()) {
+                for (NormalizedNode c : container.body()) {
                     findDuplicates(path.node(c.getIdentifier()), c);
                 }
             }
@@ -52,7 +52,7 @@ final class DuplicateFinder {
      * @param node Root node, may not be null.
      * @return List of entries
      */
-    static Map<NormalizedNode<?, ?>, DuplicateEntry> findDuplicates(final NormalizedNode<?, ?> node) {
+    static Map<NormalizedNode, DuplicateEntry> findDuplicates(final NormalizedNode node) {
         final DuplicateFinder finder = new DuplicateFinder();
         finder.findDuplicates(YangInstanceIdentifier.empty(), node);
         return finder.identities;

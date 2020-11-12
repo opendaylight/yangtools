@@ -8,19 +8,15 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
  * AnyXML node with schema of contained XML data.
  */
 @Beta
-public interface YangModeledAnyXmlNode extends DataContainerNode<NodeIdentifier>,
-        DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
-
+public interface YangModeledAnyXmlNode extends DataContainerNode<NodeIdentifier>, DataContainerChild {
     /**
      * Returns the schema corresponding to the node's datea.
      *

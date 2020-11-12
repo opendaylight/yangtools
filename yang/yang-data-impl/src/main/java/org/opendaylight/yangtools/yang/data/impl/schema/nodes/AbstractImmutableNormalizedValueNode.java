@@ -23,7 +23,7 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
     }
 
     @Override
-    public final V getValue() {
+    public final V body() {
         return wrapValue(value);
     }
 

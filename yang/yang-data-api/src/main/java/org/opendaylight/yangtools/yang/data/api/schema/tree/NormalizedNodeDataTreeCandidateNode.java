@@ -23,14 +23,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * the {@link NormalizedNode} passed to it at creation time were freshly written.
  */
 final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode {
-    private final NormalizedNode<?, ?> data;
+    private final NormalizedNode data;
 
     /**
      * Create a new instance backed by supplied data.
      *
      * @param data Backing {@link NormalizedNode} data.
      */
-    NormalizedNodeDataTreeCandidateNode(final @NonNull NormalizedNode<?, ?> data) {
+    NormalizedNodeDataTreeCandidateNode(final @NonNull NormalizedNode data) {
         this.data = requireNonNull(data);
     }
 
@@ -42,7 +42,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof NormalizedNodeContainer) {
-            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(),
+            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).body(),
                 input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
         }
         return ImmutableList.of();
@@ -52,7 +52,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childIdentifier) {
         if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final Optional<? extends NormalizedNode<?, ?>> child =
+            final Optional<? extends NormalizedNode> child =
                 ((NormalizedNodeContainer)data).getChild(childIdentifier);
             return child.map(NormalizedNodeDataTreeCandidateNode::new);
         }
@@ -65,12 +65,12 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return Optional.of(data);
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return Optional.empty();
     }
 }

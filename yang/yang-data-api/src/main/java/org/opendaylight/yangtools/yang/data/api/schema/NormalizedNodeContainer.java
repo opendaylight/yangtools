@@ -26,30 +26,31 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <K> Child Node Identifier type
  * @param <V> Child Node type
  */
-public interface NormalizedNodeContainer<I extends PathArgument, K extends PathArgument,
-       V extends NormalizedNode<? extends K, ?>> extends NormalizedNode<I, Collection<V>> {
-
+public interface NormalizedNodeContainer<I extends PathArgument, K extends PathArgument, V extends NormalizedNode>
+        extends NormalizedNode {
     @Override
     I getIdentifier();
 
     /**
-     * Returns immutable iteration of child nodes of this node.
-     */
-    @Override
-    Collection<V> getValue();
-
-    /**
-     * Return the logical size of this container, i.e. the number of children in contains.
+     * Returns iteration of all child nodes. Order of returned child nodes may be defined by subinterfaces.
      *
      * <p>
-     * Default implementation defers to the collection returned by {@link #getValue()}. Implementations are strongly
-     * encouraged to provide a more efficient implementation of this method.
+     * <b>Implementation Notes:</b>
+     * All nodes returned in this iterable, MUST also be accessible via {@link #getChild(PathArgument)} using their
+     * associated identifier.
      *
-     * @return Number of child nodes in this container.
+     * @return Iteration of all child nodes
      */
-    // FIXME: 7.0.0: consider making this method non-default, but then it will conflict in OrderedLeafSet
+    @Override
+    Collection<V> body();
+
+    /**
+     * Return the logical size of this container body. The default implementation defers to {@code body().size()}.
+     *
+     * @return Size of this container's body.
+     */
     default int size() {
-        return getValue().size();
+        return body().size();
     }
 
     /**

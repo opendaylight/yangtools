@@ -139,7 +139,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
                     .withValue(policyNodes)
                     .build();
-            NormalizedNode<?, ?> root = Builders.containerBuilder()
+            NormalizedNode root = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
                     .withChild(policy).build();
             nnw.write(root);
@@ -162,7 +162,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
                     .build();
 
-            NormalizedNode<?, ?> root = Builders.containerBuilder()
+            NormalizedNode root = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
                     .withChild(cont)
                     .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))

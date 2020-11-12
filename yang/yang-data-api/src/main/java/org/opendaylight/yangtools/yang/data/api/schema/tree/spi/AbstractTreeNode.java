@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 @NonNullByDefault
 abstract class AbstractTreeNode implements TreeNode {
-    private final NormalizedNode<?, ?> data;
+    private final NormalizedNode data;
     private final Version version;
 
-    protected AbstractTreeNode(final NormalizedNode<?, ?> data, final Version version) {
+    protected AbstractTreeNode(final NormalizedNode data, final Version version) {
         this.data = requireNonNull(data);
         this.version = requireNonNull(version);
     }
@@ -39,7 +39,7 @@ abstract class AbstractTreeNode implements TreeNode {
     }
 
     @Override
-    public final NormalizedNode<?, ?> getData() {
+    public final NormalizedNode getData() {
         return data;
     }
 

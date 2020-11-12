@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateNode {
-    RecursiveUnmodifiedCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
+    RecursiveUnmodifiedCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode> data) {
         super(data);
     }
 
@@ -23,23 +23,23 @@ final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateN
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public Optional<NormalizedNode> getDataAfter() {
         return dataOptional();
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public Optional<NormalizedNode> getDataBefore() {
         return dataOptional();
     }
 
     @Override
     DataTreeCandidateNode createContainer(
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData) {
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode> childData) {
         return new RecursiveUnmodifiedCandidateNode(childData);
     }
 
     @Override
-    DataTreeCandidateNode createLeaf(final NormalizedNode<?, ?> childData) {
+    DataTreeCandidateNode createLeaf(final NormalizedNode childData) {
         return new UnmodifiedLeafCandidateNode(childData);
     }
 }

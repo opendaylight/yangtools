@@ -30,10 +30,10 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
 
     @Override
     public void enter(final PathArgument child) {
-        final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.getDirectChild(stack.peek(), child);
+        final Optional<NormalizedNode> maybeChildNode = NormalizedNodes.getDirectChild(stack.peek(), child);
         checkArgument(maybeChildNode.isPresent(), "Child %s not found", child);
 
-        final NormalizedNode<?, ?> childNode = maybeChildNode.get();
+        final NormalizedNode childNode = maybeChildNode.get();
         checkArgument(childNode instanceof NormalizedNodeContainer, "Child %s is not a container", child);
         stack.push((NormalizedNodeContainer<?, ?, ?>) childNode);
     }
@@ -41,10 +41,10 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public void enter(final Iterable<PathArgument> path) {
-        final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.findNode(stack.peek(), path);
+        final Optional<NormalizedNode> maybeChildNode = NormalizedNodes.findNode(stack.peek(), path);
         checkArgument(maybeChildNode.isPresent(), "Child %s not found", path);
 
-        final NormalizedNode<?, ?> childNode = maybeChildNode.get();
+        final NormalizedNode childNode = maybeChildNode.get();
         checkArgument(childNode instanceof NormalizedNodeContainer, "Child %s is not a container", path);
 
         int depth = 0;
@@ -73,7 +73,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(final PathArgument child) {
+    public Optional<NormalizedNode> readNode(final PathArgument child) {
         return NormalizedNodes.findNode(stack.peek(), child);
     }
 }

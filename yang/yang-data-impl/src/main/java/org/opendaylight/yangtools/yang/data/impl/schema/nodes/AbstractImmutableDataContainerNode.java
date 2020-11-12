@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
-        extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild<? extends PathArgument, ?>>>
+        extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild>>
         implements DataContainerNode<K> {
     private final Map<PathArgument, Object> children;
 
@@ -27,12 +27,12 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     @Override
-    public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
+    public final Optional<DataContainerChild> getChild(final PathArgument child) {
         return Optional.ofNullable(LazyLeafOperations.getChild(children, child));
     }
 
     @Override
-    public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
+    public final Collection<DataContainerChild> body() {
         return new LazyValues(children);
     }
 
@@ -60,7 +60,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     @Override
-    protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+    protected boolean valueEquals(final AbstractImmutableNormalizedNode other) {
         return other instanceof AbstractImmutableDataContainerNode<?> && children.equals(
                 ((AbstractImmutableDataContainerNode<?>) other).children);
     }
