@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -179,18 +179,19 @@ public class DataTreeCandidateValidatorTest2 {
 
         final ListSchemaNode devTypeListSchemaNode = (ListSchemaNode) container.findDataChildByName(deviceType).get();
 
-        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr = Builders
-                .containerBuilder(container);
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr =
+                Builders.containerBuilder(container);
 
-        final MapNode devTypeMap = createDevTypeList(devTypeListSchemaNode);
+        final SystemMapNode devTypeMap = createDevTypeList(devTypeListSchemaNode);
         devTypeContainerBldr.addChild(devTypeMap);
 
         return devTypeContainerBldr.build();
     }
 
-    private static MapNode createDevTypeList(final ListSchemaNode devTypeListSchemaNode) {
+    private static SystemMapNode createDevTypeList(final ListSchemaNode devTypeListSchemaNode) {
 
-        final CollectionNodeBuilder<MapEntryNode, MapNode> devTypeMapBldr = Builders.mapBuilder(devTypeListSchemaNode);
+        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> devTypeMapBldr =
+                Builders.mapBuilder(devTypeListSchemaNode);
 
         devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_1", "typedesc1", devTypeListSchemaNode));
         devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_2", "typedesc2", devTypeListSchemaNode));
@@ -205,8 +206,8 @@ public class DataTreeCandidateValidatorTest2 {
         final LeafNode<String> typeLeaf = ImmutableNodes.leafNode(type, typeVal);
         final LeafNode<String> descLeaf = ImmutableNodes.leafNode(desc, descVal);
 
-        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> devTypeMapEntryBldr = Builders
-                .mapEntryBuilder(devTypeListSchemaNode);
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> devTypeMapEntryBldr =
+                Builders.mapEntryBuilder(devTypeListSchemaNode);
 
         devTypeMapEntryBldr.addChild(typeLeaf);
         devTypeMapEntryBldr.addChild(descLeaf);
@@ -221,15 +222,16 @@ public class DataTreeCandidateValidatorTest2 {
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> chipsContainerBldr = Builders
                 .containerBuilder(container);
 
-        final MapNode chipsMap = createChipsList(chipsListSchemaNode);
+        final SystemMapNode chipsMap = createChipsList(chipsListSchemaNode);
         chipsContainerBldr.addChild(chipsMap);
 
         return chipsContainerBldr.build();
     }
 
-    private static MapNode createChipsList(final ListSchemaNode chipsListSchemaNode) {
+    private static SystemMapNode createChipsList(final ListSchemaNode chipsListSchemaNode) {
 
-        final CollectionNodeBuilder<MapEntryNode, MapNode> chipsMapBldr = Builders.mapBuilder(chipsListSchemaNode);
+        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> chipsMapBldr =
+            Builders.mapBuilder(chipsListSchemaNode);
 
         chipsMapBldr.addChild(createChipsListEntry("dev_type_1", "desc1", chipsListSchemaNode));
         chipsMapBldr.addChild(createChipsListEntry("dev_type_2", "desc2", chipsListSchemaNode));
@@ -259,15 +261,16 @@ public class DataTreeCandidateValidatorTest2 {
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devicesContainerBldr = Builders
                 .containerBuilder(container);
 
-        final MapNode devicesMap = createDeviceList(devicesListSchemaNode);
+        final SystemMapNode devicesMap = createDeviceList(devicesListSchemaNode);
         devicesContainerBldr.addChild(devicesMap);
 
         return devicesContainerBldr.build();
     }
 
-    private static MapNode createDeviceList(final ListSchemaNode deviceListSchemaNode) {
+    private static SystemMapNode createDeviceList(final ListSchemaNode deviceListSchemaNode) {
 
-        final CollectionNodeBuilder<MapEntryNode, MapNode> devicesMapBldr = Builders.mapBuilder(deviceListSchemaNode);
+        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> devicesMapBldr =
+                Builders.mapBuilder(deviceListSchemaNode);
 
         devicesMapBldr.addChild(createDeviceListEntry("dev_type_1", "typedesc1", 123456, "192.168.0.1",
                 deviceListSchemaNode));

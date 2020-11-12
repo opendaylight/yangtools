@@ -15,11 +15,11 @@ import org.mockito.Mockito;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
 public class TreeNodeFactoryTest {
 
-    private static void checkTreeNode(final TreeNode node, final NormalizedNode<?, ?> data, final Version version) {
+    private static void checkTreeNode(final TreeNode node, final NormalizedNode data, final Version version) {
         assertSame(data, node.getData());
         assertSame(version, node.getSubtreeVersion());
         assertSame(version, node.getVersion());
@@ -37,7 +37,7 @@ public class TreeNodeFactoryTest {
 
     @Test
     public void testOrderedNodeContainer() {
-        final OrderedMapNode data = Mockito.mock(OrderedMapNode.class);
+        final UserMapNode data = Mockito.mock(UserMapNode.class);
         final Version version = Version.initial();
         final TreeNode node = TreeNodeFactory.createTreeNode(data, version);
 

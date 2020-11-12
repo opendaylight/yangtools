@@ -13,6 +13,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -73,7 +74,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         }
     }
 
-    static AugmentationModificationStrategy from(final DataNodeContainer resolvedTree,
+    static @Nullable AugmentationModificationStrategy from(final DataNodeContainer resolvedTree,
             final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
             final DataTreeConfiguration treeConfig) {
         for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {
@@ -146,12 +147,12 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     }
 
     @Override
-    final void quickVerifyStructure(final NormalizedNode<?, ?> writtenValue) {
+    final void quickVerifyStructure(final NormalizedNode writtenValue) {
         verifyValue(writtenValue);
     }
 
     @Override
-    final void fullVerifyStructure(final NormalizedNode<?, ?> writtenValue) {
+    final void fullVerifyStructure(final NormalizedNode writtenValue) {
         verifyValue(writtenValue);
         verifyValueChildren(writtenValue);
     }
@@ -161,7 +162,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      *
      * @param writtenValue Written value
      */
-    abstract void verifyValue(NormalizedNode<?, ?> writtenValue);
+    abstract void verifyValue(NormalizedNode writtenValue);
 
     /**
      * Verify the children implied by a written value after the value itself has been verified by
@@ -169,7 +170,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      *
      * @param writtenValue Written value
      */
-    void verifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void verifyValueChildren(final NormalizedNode writtenValue) {
         // Defaults to no-op
     }
 
@@ -272,7 +273,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      */
     protected abstract TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
 
-    protected abstract TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue,
+    protected abstract TreeNode applyWrite(ModifiedNode modification, NormalizedNode newValue,
             Optional<? extends TreeNode> currentMeta, Version version);
 
     /**

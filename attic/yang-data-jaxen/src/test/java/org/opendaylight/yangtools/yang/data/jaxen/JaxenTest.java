@@ -91,9 +91,9 @@ public class JaxenTest {
         assertTrue(xpathResult instanceof XPathNodesetResult);
         XPathNodesetResult nodeset = (XPathNodesetResult) xpathResult;
 
-        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = nodeset.getValue().iterator().next();
+        Entry<YangInstanceIdentifier, NormalizedNode> entry = nodeset.getValue().iterator().next();
         assertNotNull(entry);
-        assertEquals("three", entry.getValue().getValue());
+        assertEquals("three", entry.getValue().body());
 
         convertNctx = new ConverterNamespaceContext(createPrefixes());
         navigator = new NormalizedNodeNavigator(convertNctx, (JaxenDocument) xpathDocument);
@@ -138,9 +138,9 @@ public class JaxenTest {
         assertTrue(xpathResult instanceof XPathNodesetResult);
         XPathNodesetResult nodeset = (XPathNodesetResult) xpathResult;
 
-        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = nodeset.getValue().iterator().next();
+        Entry<YangInstanceIdentifier, NormalizedNode> entry = nodeset.getValue().iterator().next();
         assertNotNull(entry);
-        assertEquals("two", entry.getValue().getValue());
+        assertEquals("two", entry.getValue().body());
     }
 
     @Test(expected = VerifyException.class)
