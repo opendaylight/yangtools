@@ -14,7 +14,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 @Beta
-public final class ImmutableMountPointNode extends AbstractIdentifiable<MountPointIdentifier>
+public final class ImmutableMountPointNode extends AbstractSimpleIdentifiable<MountPointIdentifier>
         implements MountPointNode, Immutable {
 
     private final @NonNull MountPointContext mountCtx;

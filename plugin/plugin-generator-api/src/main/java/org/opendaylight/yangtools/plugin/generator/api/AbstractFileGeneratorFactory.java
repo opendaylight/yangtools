@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 
 /**
  * Abstract base class for {@link FileGeneratorFactory} implementations. Its constructor enforces no spaces in
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
  */
 @Beta
 @NonNullByDefault
-public abstract class AbstractFileGeneratorFactory extends AbstractIdentifiable<String>
+public abstract class AbstractFileGeneratorFactory extends AbstractSimpleIdentifiable<String>
         implements FileGeneratorFactory {
     protected AbstractFileGeneratorFactory(final String identifier) {
         super(identifier);

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
  * @author Robert Varga
  */
 @Beta
-public final class YangStatementStreamSource extends AbstractIdentifiable<SourceIdentifier>
+public final class YangStatementStreamSource extends AbstractSimpleIdentifiable<SourceIdentifier>
         implements StatementStreamSource {
     private final IRStatement rootStatement;
     private final String sourceName;

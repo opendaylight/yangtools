@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> worker key type
  * @param <T> task type
  */
-abstract class AbstractBatchingExecutor<K, T> extends AbstractIdentifiable<String> {
+abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable<String> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBatchingExecutor.class);
 
     /**

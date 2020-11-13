@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
@@ -45,7 +45,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
     /**
      * Definition of a MountPoint, as known to RFC8528.
      */
-    protected static final class MountPointDefinition extends AbstractIdentifiable<MountPointIdentifier>
+    protected static final class MountPointDefinition extends AbstractSimpleIdentifiable<MountPointIdentifier>
             implements Immutable {
         private final ImmutableSet<String> parentReferences;
         private final boolean config;
@@ -147,10 +147,10 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
 
         return schemaRef.getChild(SHARED_SCHEMA).map(sharedSchema -> {
             checkArgument(sharedSchema instanceof ContainerNode, "Unexpected shared-schema container %s", sharedSchema);
-            return ((ContainerNode) sharedSchema).getChild(PARENT_REFERENCE).map(parentRef -> {
+            return ((ContainerNode) sharedSchema).getChild(PARENT_REFERENCE)
                 // FIXME: 7.0.0: parse XPaths. Do we have enough context for that?
-                return ImmutableSet.<String>of();
-            }).orElseGet(ImmutableSet::of);
+                .map(parentRef -> ImmutableSet.<String>of())
+                .orElseGet(ImmutableSet::of);
         }).orElseGet(() -> {
             checkArgument(schemaRef.getChild(INLINE).isPresent(), "Unhandled schema-ref type in %s", schemaRef);
             return ImmutableSet.of();
