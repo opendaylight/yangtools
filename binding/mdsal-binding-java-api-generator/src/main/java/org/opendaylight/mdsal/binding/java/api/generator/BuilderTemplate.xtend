@@ -502,7 +502,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         val hashMapRef = JU_HASHMAP.importedName
         val augmentTypeRef = augmentType.importedName
         return '''
-            @SuppressWarnings("unchecked")
             «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug = base.augmentations();
             if (!aug.isEmpty()) {
                 this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
