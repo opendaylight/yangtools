@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -23,7 +23,6 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <T> Item order type
  */
 @Beta
-@NonNullByDefault
 public interface ItemOrder<T extends ItemOrder<T>> {
     /**
      * Items are ordered and their order is significant. A {@link List} is an example of a collection which conforms to
@@ -55,7 +54,7 @@ public interface ItemOrder<T extends ItemOrder<T>> {
          * {@link List#equals(Object)}.
          */
         @Override
-        boolean equals(@Nullable Object obj);
+        boolean equals(Object obj);
     }
 
     /**
@@ -92,7 +91,7 @@ public interface ItemOrder<T extends ItemOrder<T>> {
          * This contract is also exposed through {@link #itemOrder()}.
          */
         @Override
-        boolean equals(@Nullable Object obj);
+        boolean equals(Object obj);
     }
 
     /**
@@ -101,7 +100,7 @@ public interface ItemOrder<T extends ItemOrder<T>> {
      *
      * @return Item order class.
      */
-    Class<T> itemOrder();
+    @NonNull Class<T> itemOrder();
 
     /**
      * {@link ItemOrder} has impact on {@link #hashCode()}.
