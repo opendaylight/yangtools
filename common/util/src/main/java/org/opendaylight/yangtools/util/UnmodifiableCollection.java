@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterators;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,17 +33,12 @@ import org.gaul.modernizer_maven_annotations.SuppressModernizer;
  */
 public final class UnmodifiableCollection<E> implements Collection<E>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final @NonNull Class<?> UNMODIFIABLE_COLLECTION_CLASS;
-    private static final @NonNull Collection<Class<?>> SINGLETON_CLASSES;
-
-    static {
-        UNMODIFIABLE_COLLECTION_CLASS = Collections.unmodifiableCollection(new ArrayList<>()).getClass();
-
-        final Builder<Class<?>> b = ImmutableSet.builder();
-        b.add(Collections.singleton(null).getClass());
-        b.add(Collections.singletonList(null).getClass());
-        SINGLETON_CLASSES = b.build();
-    }
+    private static final @NonNull Class<?> UNMODIFIABLE_COLLECTION_CLASS =
+        Collections.unmodifiableCollection(new ArrayList<>()).getClass();
+    private static final @NonNull ImmutableSet<Class<?>> SINGLETON_CLASSES = ImmutableSet.<Class<?>>builder()
+        .add(Collections.singleton(null).getClass())
+        .add(Collections.singletonList(null).getClass())
+        .build();
 
     private final @NonNull Collection<E> delegate;
 
