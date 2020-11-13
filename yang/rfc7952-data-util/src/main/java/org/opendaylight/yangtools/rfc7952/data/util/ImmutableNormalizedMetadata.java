@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -25,7 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * Immutable implementation of {@link NormalizedMetadata}.
  */
 @Beta
-public class ImmutableNormalizedMetadata extends AbstractIdentifiable<PathArgument> implements NormalizedMetadata {
+public class ImmutableNormalizedMetadata extends AbstractSimpleIdentifiable<PathArgument>
+        implements NormalizedMetadata {
     private static final class Container extends ImmutableNormalizedMetadata {
         private final @NonNull ImmutableMap<PathArgument, NormalizedMetadata> children;
 

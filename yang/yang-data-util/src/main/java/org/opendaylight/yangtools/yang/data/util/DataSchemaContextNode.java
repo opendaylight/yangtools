@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  *
  * @param <T> Path Argument type
  */
-public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractIdentifiable<T> {
+public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractSimpleIdentifiable<T> {
     private final DataSchemaNode dataSchemaNode;
 
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {

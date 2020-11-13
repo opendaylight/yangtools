@@ -17,7 +17,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointChild;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * YANG Schema Mount-supported data attached to either a {@code list} item or a {@code container}.
  */
 @Beta
-public final class MountPointData extends AbstractIdentifiable<MountPointIdentifier> {
+public final class MountPointData extends AbstractSimpleIdentifiable<MountPointIdentifier> {
     private static final Logger LOG = LoggerFactory.getLogger(MountPointData.class);
 
     private final Map<ContainerName, MountPointChild> yangLib = new EnumMap<>(ContainerName.class);

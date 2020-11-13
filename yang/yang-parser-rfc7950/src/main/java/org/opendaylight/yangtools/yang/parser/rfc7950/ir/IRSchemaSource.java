@@ -14,13 +14,14 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
 
 @Beta
-public final class IRSchemaSource extends AbstractIdentifiable<SourceIdentifier> implements SchemaSourceRepresentation {
+public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdentifier>
+        implements SchemaSourceRepresentation {
     private final @NonNull IRStatement rootStatement;
     private final @Nullable String symbolicName;
 
