@@ -19,7 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.TransformerException;
-import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
  * @author Robert Varga
  */
 @Beta
-public final class YinStatementStreamSource extends AbstractIdentifiable<SourceIdentifier>
+public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<SourceIdentifier>
         implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
     private static final LoadingCache<String, URI> URI_CACHE = CacheBuilder.newBuilder().weakValues().build(

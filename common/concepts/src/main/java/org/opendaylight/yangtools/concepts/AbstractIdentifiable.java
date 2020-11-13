@@ -17,15 +17,15 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 @Beta
 @NonNullByDefault
-public abstract class AbstractIdentifiable<T> implements Identifiable<T> {
-    private final @NonNull T identifier;
+public abstract class AbstractIdentifiable<T, I extends T> implements Identifiable<T> {
+    private final @NonNull I identifier;
 
-    protected AbstractIdentifiable(final T identifier) {
+    protected AbstractIdentifiable(final I identifier) {
         this.identifier = requireNonNull(identifier);
     }
 
     @Override
-    public final T getIdentifier() {
+    public final I getIdentifier() {
         return identifier;
     }
 
