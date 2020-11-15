@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.Ordering;
 
 final class RegularOrderedByStatement extends AbstractOrderedByStatement {
     private final @NonNull Object substatements;

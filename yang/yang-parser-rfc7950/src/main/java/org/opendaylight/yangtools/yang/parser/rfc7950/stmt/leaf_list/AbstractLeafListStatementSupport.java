@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
+import org.opendaylight.yangtools.yang.model.api.stmt.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;

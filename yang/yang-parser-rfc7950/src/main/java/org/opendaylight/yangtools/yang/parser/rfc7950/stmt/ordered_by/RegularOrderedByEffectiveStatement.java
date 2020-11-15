@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
+import org.opendaylight.yangtools.yang.model.api.stmt.Ordering;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
 final class RegularOrderedByEffectiveStatement extends WithSubstatements<Ordering, OrderedByStatement>

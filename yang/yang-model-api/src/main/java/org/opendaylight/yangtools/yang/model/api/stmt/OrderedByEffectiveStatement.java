@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 
 @Beta
 public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering, OrderedByStatement> {
