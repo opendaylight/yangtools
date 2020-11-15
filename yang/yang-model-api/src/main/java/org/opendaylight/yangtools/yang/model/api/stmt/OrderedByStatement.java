@@ -10,39 +10,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-public interface OrderedByStatement extends DeclaredStatement<OrderedByStatement.Ordering> {
-    @NonNullByDefault
-    enum Ordering {
-        SYSTEM("system"),
-        USER("user");
-
-        private String argumentString;
-
-        Ordering(final String argumentString) {
-            this.argumentString = argumentString;
-        }
-
-        public String getArgumentString() {
-            return argumentString;
-        }
-
-        public static Ordering forArgumentString(final String argumentString) {
-            switch (argumentString) {
-                case "system":
-                    return SYSTEM;
-                case "user":
-                    return USER;
-                default:
-                    throw new IllegalArgumentException("Invalid ordering string '" + argumentString + "'");
-            }
-        }
-    }
-
+public interface OrderedByStatement extends DeclaredStatement<Ordering> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.ORDERED_BY;
