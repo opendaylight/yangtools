@@ -26,8 +26,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.data.impl</Automatic-Module-Name>
                         <!-- FIXME: do not export data.impl -->
+                        <!-- FIXME: use OSGi annotations when we have R7 -->
                         <Export-Package>
                             {local-packages},
                             org.opendaylight.yangtools.yang.data.impl.*,
@@ -84,6 +84,7 @@
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -92,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
         </dependency>
 
         <dependency>
