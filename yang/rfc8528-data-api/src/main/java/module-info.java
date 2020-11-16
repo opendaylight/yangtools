@@ -14,4 +14,7 @@ module org.opendaylight.yangtools.rfc8528.data.api {
     requires transitive org.opendaylight.yangtools.yang.parser.api;
 
     requires org.opendaylight.yangtools.util;
+
+    // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
 }
