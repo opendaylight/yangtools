@@ -1,7 +1,7 @@
-module odl-datastore-test {
+module bug8291 {
     yang-version 1;
-    namespace "foo";
-    prefix foo;
+    namespace bug8291;
+    prefix bug8291;
 
     container root {
         list outer-list {

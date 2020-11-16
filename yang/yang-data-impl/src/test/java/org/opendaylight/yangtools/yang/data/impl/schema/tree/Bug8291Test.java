@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class Bug8291Test {
-    private static final String NS = "foo";
+    private static final String NS = "bug8291";
     private static final QName ROOT = QName.create(NS, "root");
     private static final QName OUTER_LIST = QName.create(NS, "outer-list");
     private static final QName OUTER_LIST_ID = QName.create(NS, "id");
@@ -38,7 +38,7 @@ public class Bug8291Test {
 
     @Before
     public void init() {
-        this.schemaContext = TestModel.createTestContext("/bug8291/foo.yang");
+        this.schemaContext = TestModel.createTestContext("/bug8291.yang");
         assertNotNull("Schema context must not be null.", this.schemaContext);
     }
 
