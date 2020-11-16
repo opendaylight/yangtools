@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.RangeSet;
 import java.util.Base64;
-import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
@@ -65,13 +64,15 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
 
     @Override
     public final byte[] deserializeImpl(final String product) {
-        final byte[] ret = DatatypeConverter.parseBase64Binary(product);
+        // https://tools.ietf.org/html/rfc4648#section-4 plus lenient to allow for MIME blocks
+        final byte[] ret = Base64.getMimeDecoder().decode(product);
         validate(ret);
         return ret;
     }
 
     @Override
     protected final String serializeImpl(final byte[] data) {
+        // We do not split data on 76 characters on output
         return Base64.getEncoder().encodeToString(data);
     }
 
