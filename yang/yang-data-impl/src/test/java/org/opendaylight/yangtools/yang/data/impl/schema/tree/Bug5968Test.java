@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public class Bug5968Test {
-    private static final String NS = "foo";
+    private static final String NS = "bug5968";
     private static final String REV = "2016-07-28";
     private static final QName ROOT = QName.create(NS, REV, "root");
     private static final QName MY_LIST = QName.create(NS, REV, "my-list");
@@ -44,7 +44,7 @@ public class Bug5968Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/bug5968/foo.yang");
+        SCHEMA_CONTEXT = TestModel.createTestContext("/bug5968.yang");
     }
 
     @AfterClass
@@ -97,9 +97,8 @@ public class Bug5968Test {
             inMemoryDataTree.commit(prepare);
             fail("Should fail due to missing mandatory leaf.");
         } catch (final IllegalArgumentException e) {
-            assertEquals(
-                    "Node (foo?revision=2016-07-28)my-list[{(foo?revision=2016-07-28)list-id=1}] is missing mandatory "
-                            + "descendant /(foo?revision=2016-07-28)mandatory-leaf", e.getMessage());
+            assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
+                + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", e.getMessage());
         }
     }
 
@@ -116,9 +115,8 @@ public class Bug5968Test {
             inMemoryDataTree.commit(prepare);
             fail("Should fail due to missing mandatory leaf.");
         } catch (final IllegalArgumentException e) {
-            assertEquals(
-                    "Node (foo?revision=2016-07-28)my-list[{(foo?revision=2016-07-28)list-id=1}] is missing mandatory "
-                            + "descendant /(foo?revision=2016-07-28)mandatory-leaf", e.getMessage());
+            assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
+                + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", e.getMessage());
         }
     }
 
@@ -136,9 +134,8 @@ public class Bug5968Test {
             inMemoryDataTree.commit(prepare);
             fail("Should fail due to missing mandatory leaf.");
         } catch (final IllegalArgumentException e) {
-            assertEquals(
-                    "Node (foo?revision=2016-07-28)my-list[{(foo?revision=2016-07-28)list-id=1}] is missing mandatory "
-                            + "descendant /(foo?revision=2016-07-28)mandatory-leaf", e.getMessage());
+            assertEquals("Node (bug5968?revision=2016-07-28)my-list[{(bug5968?revision=2016-07-28)list-id=1}] is "
+                + "missing mandatory descendant /(bug5968?revision=2016-07-28)mandatory-leaf", e.getMessage());
         }
     }
 
