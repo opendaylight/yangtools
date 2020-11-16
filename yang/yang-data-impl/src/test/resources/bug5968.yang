@@ -1,7 +1,7 @@
-module foo {
+module bug5968 {
     yang-version 1;
-    namespace "foo";
-    prefix foo;
+    namespace bug5968;
+    prefix bug5968;
 
     revision 2016-07-28 {
         description "test";

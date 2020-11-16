@@ -71,7 +71,7 @@ public class Bug5830Test {
     }
 
     private static void testPresenceContainer() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug5830/foo-presence.yang");
+        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug-5830/foo-presence.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
         testContainerIsNotPresent(schemaContext);
@@ -87,7 +87,7 @@ public class Bug5830Test {
     }
 
     private static void testNonPresenceContainer() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug5830/foo-non-presence.yang");
+        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug-5830/foo-non-presence.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
         try {
@@ -111,7 +111,7 @@ public class Bug5830Test {
     }
 
     private static void testMultipleContainers() throws DataValidationFailedException {
-        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug5830/foo-multiple.yang");
+        final EffectiveModelContext schemaContext = TestModel.createTestContext("/bug-5830/foo-multiple.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
         testContainerIsNotPresent(schemaContext);
