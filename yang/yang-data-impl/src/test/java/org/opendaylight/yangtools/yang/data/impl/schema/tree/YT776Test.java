@@ -64,7 +64,7 @@ public class YT776Test {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TestModel.createTestContext("/yt776/yt776.yang");
+        SCHEMA_CONTEXT = TestModel.createTestContext("/yt776.yang");
     }
 
     @AfterClass

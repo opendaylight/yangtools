@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Optional;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
@@ -55,6 +56,11 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final @NonNull NormalizedNode<?, ?> ROOT_CONTAINER =
             ImmutableNodes.containerNode(SchemaContext.NAME);
+
+    @Inject
+    public InMemoryDataTreeFactory() {
+        // Exposed for DI
+    }
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig) {
