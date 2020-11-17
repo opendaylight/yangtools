@@ -22,6 +22,30 @@
       "revId": "5e091ed64fdedb4f0e86e3e8b279f3bb618953cc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f552a93_c8c48e2d",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-17T00:39:50Z",
+      "side": 1,
+      "message": "Yes, but this class already uses A, D, E -- these are method-local arguments, hence we use X, Y, Z to prevent confusion (and Eclipse warns about this).",
+      "parentUuid": "c5084cb3_a0e90ff5",
+      "range": {
+        "startLine": 163,
+        "startChar": 30,
+        "endLine": 163,
+        "endChar": 35
+      },
+      "revId": "5e091ed64fdedb4f0e86e3e8b279f3bb618953cc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
