@@ -16,25 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LinkageDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MetaDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionAwareDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
 public abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement<UnqualifiedQName>>
         extends WithSubstatements<UnqualifiedQName> implements LinkageDeclaredStatement,
                 MetaDeclaredStatement<UnqualifiedQName>, RevisionAwareDeclaredStatement, BodyDeclaredStatement {
-
-    /**
-     * Deprecated.
-     *
-     * @deprecated Use {@link AbstractDeclaredEffectiveRootStatement#AbstractDeclaredEffectiveRootStatement(
-     * String, UnqualifiedQName, ImmutableList)} instead
-     */
-    @Deprecated
-    protected AbstractDeclaredEffectiveRootStatement(final StmtContext<UnqualifiedQName, ?, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
-    }
-
     protected AbstractDeclaredEffectiveRootStatement(final String rawArgument, final UnqualifiedQName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);

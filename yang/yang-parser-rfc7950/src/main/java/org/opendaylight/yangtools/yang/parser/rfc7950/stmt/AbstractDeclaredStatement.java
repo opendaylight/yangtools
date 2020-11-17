@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * An abstract base class for {@link DeclaredStatement} implementations. This is a direct competition to
@@ -55,26 +54,14 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     }
 
     public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement<A> {
-        private final String rawArgument;
-
-        /**
-         * Deprecated.
-         *
-         * @deprecated Use {@link WithRawArgument#WithRawArgument(String)} instead
-         */
-        @Deprecated(forRemoval = true)
-        protected WithRawArgument(final StmtContext<A, ?, ?> context) {
-            this(context.coerceRawStatementArgument());
-        }
+        private final @NonNull String rawArgument;
 
         protected WithRawArgument(final String rawArgument) {
-            // FIXME: 7.0.0: requireNonNull
-            this.rawArgument = rawArgument;
+            this.rawArgument = requireNonNull(rawArgument);
         }
 
         @Override
-        // FIXME: 7.0.0: @NonNull
-        public final String rawArgument() {
+        public final @NonNull String rawArgument() {
             return rawArgument;
         }
     }
@@ -116,18 +103,6 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         public abstract static class WithSubstatements extends WithRawStringArgument {
             private final @NonNull Object substatements;
 
-            /**
-             * Deprecated.
-             *
-             * @deprecated Use {@link WithSubstatements#WithSubstatements(String, ImmutableList)}
-             */
-            @Deprecated(forRemoval = true)
-            protected WithSubstatements(final StmtContext<String, ?, ?> context,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-                super(context);
-                this.substatements = maskList(substatements);
-            }
-
             protected WithSubstatements(final String rawArgument,
                     final ImmutableList<? extends DeclaredStatement<?>> substatements) {
                 super(rawArgument);
@@ -138,16 +113,6 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
                 return unmaskList(substatements);
             }
-        }
-
-        /**
-         * Deprecated.
-         *
-         * @deprecated Use {@link WithRawStringArgument#WithRawStringArgument(String)}
-         */
-        @Deprecated(forRemoval = true)
-        protected WithRawStringArgument(final StmtContext<String, ?, ?> context) {
-            super(context);
         }
 
         protected WithRawStringArgument(final String rawArgument) {
@@ -164,18 +129,6 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         public abstract static class WithSubstatements<A> extends WithArgument<A> {
             private final @NonNull Object substatements;
 
-            /**
-             * Deprecated.
-             *
-             * @deprecated Use {@link WithSubstatements#WithSubstatements(String, Object, ImmutableList)}
-             */
-            @Deprecated(forRemoval = true)
-            protected WithSubstatements(final StmtContext<A, ?, ?> context,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-                super(context);
-                this.substatements = maskList(substatements);
-            }
-
             protected WithSubstatements(final String rawArgument, final A argument,
                     final ImmutableList<? extends DeclaredStatement<?>> substatements) {
                 super(rawArgument, argument);
@@ -190,18 +143,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         private final A argument;
 
-        /**
-         * Deprecated.
-         *
-         * @deprecated Use {@link WithArgument#WithArgument(String, Object)}
-         */
-        @Deprecated(forRemoval = true)
-        protected WithArgument(final StmtContext<A, ?, ?> context) {
-            super(context);
-            argument = context.getStatementArgument();
-        }
-
-        protected WithArgument(final String rawArgument, A argument) {
+        protected WithArgument(final String rawArgument, final A argument) {
             super(rawArgument);
             this.argument = argument;
         }
