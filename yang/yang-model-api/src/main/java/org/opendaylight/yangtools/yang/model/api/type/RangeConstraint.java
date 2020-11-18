@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import com.google.common.collect.RangeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
@@ -20,5 +21,5 @@ public interface RangeConstraint<T extends Number & Comparable<T>> extends Const
      *
      * @return Set of allowed lengths.
      */
-    RangeSet<T> getAllowedRanges();
+    RangeSet<@NonNull T> getAllowedRanges();
 }

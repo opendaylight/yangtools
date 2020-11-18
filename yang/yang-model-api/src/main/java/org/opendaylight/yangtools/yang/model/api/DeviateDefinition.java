@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 
@@ -69,7 +70,7 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return set of the deviated must statements
      */
-    Collection<? extends MustDefinition> getDeviatedMusts();
+    Collection<? extends @NonNull MustDefinition> getDeviatedMusts();
 
     /**
      * Returns deviated type statement.
@@ -83,7 +84,7 @@ public interface DeviateDefinition extends EffectiveStatementEquivalent<DeviateE
      *
      * @return collection of the deviated unique statements
      */
-    Collection<? extends UniqueEffectiveStatement> getDeviatedUniques();
+    Collection<? extends @NonNull UniqueEffectiveStatement> getDeviatedUniques();
 
     /**
      * Returns deviated units statement.

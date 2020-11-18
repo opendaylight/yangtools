@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNodeAwareSchemaContext;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,7 +46,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
     private final ImmutableSet<Module> modules;
     private final ImmutableMap<QName, AnnotationSchemaNode> annotations;
 
-    protected SimpleSchemaContext(final Collection<? extends Module> modules) {
+    protected SimpleSchemaContext(final Collection<? extends @NonNull Module> modules) {
         /*
          * Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around -- better
          * than the set we got in.
