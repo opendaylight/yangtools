@@ -89,7 +89,7 @@ public class Bug6874Test {
             .build().getRootStatements().forEach(declaredStmt -> {
                 if (declaredStmt instanceof ModuleStatement) {
                     declaredStmt.declaredSubstatements().forEach(subStmt -> {
-                        if (subStmt instanceof IncludeStatement && subStmt.rawArgument().equals("child-module")) {
+                        if (subStmt instanceof IncludeStatement && "child-module".equals(subStmt.rawArgument())) {
                             subStmt.declaredSubstatements().forEach(Bug6874Test::verifyDescAndRef);
                         }
                     });
