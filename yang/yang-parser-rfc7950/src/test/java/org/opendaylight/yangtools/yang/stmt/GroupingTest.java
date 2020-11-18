@@ -124,7 +124,7 @@ public class GroupingTest {
         assertFalse(refineList.isConfiguration());
 
         final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
-        assertEquals(2, constraint.getMinElements().intValue());
+        assertEquals(2, constraint.getMinElements());
         assertNull(constraint.getMaxElements());
 
         // leaf id
