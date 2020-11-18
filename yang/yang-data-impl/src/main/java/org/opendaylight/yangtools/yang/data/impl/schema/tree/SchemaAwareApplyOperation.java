@@ -104,7 +104,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
             op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
 
-        return MinMaxElementsValidation.from(op);
+        return UniqueValidation.of(schemaNode, treeConfig, MinMaxElementsValidation.from(op));
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,
