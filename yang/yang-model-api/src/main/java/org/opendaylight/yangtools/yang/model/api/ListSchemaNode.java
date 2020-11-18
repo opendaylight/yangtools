@@ -29,7 +29,7 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      *
      * @return List of QNames of leaf identifiers of this list, empty if the list has no keys.
      */
-    @NonNull List<QName> getKeyDefinition();
+    @NonNull List<@NonNull QName> getKeyDefinition();
 
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries within a list are determined by the user
@@ -44,5 +44,5 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      *
      * @return Collection of unique constraints of this list schema node
      */
-    @NonNull Collection<? extends UniqueEffectiveStatement> getUniqueConstraints();
+    @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getUniqueConstraints();
 }

@@ -14,4 +14,5 @@ module org.opendaylight.yangtools.yang.model.util {
 
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
+    requires org.eclipse.jdt.annotation;
 }

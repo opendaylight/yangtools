@@ -68,7 +68,7 @@ public final class EffectiveStatementMixins {
     // Marker interface requiring all mixins to be derived from EffectiveStatement.
     private interface Mixin<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
         @SuppressWarnings("unchecked")
-        default <T> @NonNull Collection<? extends T> filterEffectiveStatements(final Class<T> type) {
+        default <T> @NonNull Collection<? extends @NonNull T> filterEffectiveStatements(final Class<T> type) {
             // Yeah, this is not nice, but saves one transformation
             return (Collection<? extends T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
         }
@@ -138,7 +138,7 @@ public final class EffectiveStatementMixins {
      */
     public interface MustConstraintMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, MustConstraintAware {
         @Override
-        default Collection<? extends MustDefinition> getMustConstraints() {
+        default Collection<? extends @NonNull MustDefinition> getMustConstraints() {
             return filterEffectiveStatements(MustDefinition.class);
         }
     }
@@ -417,12 +417,12 @@ public final class EffectiveStatementMixins {
         }
 
         @Override
-        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+        default Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
             return filterTypeDefinitions(this);
         }
 
         @Override
-        default Collection<? extends GroupingDefinition> getGroupings() {
+        default Collection<? extends @NonNull GroupingDefinition> getGroupings() {
             return filterEffectiveStatements(GroupingDefinition.class);
         }
 
@@ -556,11 +556,11 @@ public final class EffectiveStatementMixins {
     }
 
     static <T extends ContainerLike> T findAsContainer(final EffectiveStatement<?, ?> stmt,
-            final Class<? extends EffectiveStatement<QName, ?>> type, Class<T> target) {
+            final Class<? extends EffectiveStatement<QName, ?>> type, final Class<T> target) {
         return target.cast(stmt.findFirstEffectiveSubstatement(type).get());
     }
 
-    static Collection<? extends TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
+    static Collection<? extends @NonNull TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
         return Collections2.transform(stmt.filterEffectiveStatements(TypedefEffectiveStatement.class),
             TypedefEffectiveStatement::getTypeDefinition);
     }
