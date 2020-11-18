@@ -52,8 +52,8 @@ public class ListTest {
         assertEquals("key2", keys.get(1).getLocalName());
 
         ElementCountConstraint constraint = list.getElementCountConstraint().get();
-        assertEquals(1, constraint.getMinElements().intValue());
-        assertEquals(10, constraint.getMaxElements().intValue());
+        assertEquals(1, constraint.getMinElements());
+        assertEquals(10, constraint.getMaxElements());
 
         assertEquals(5, list.getChildNodes().size());
 

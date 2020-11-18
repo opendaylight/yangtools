@@ -268,8 +268,8 @@ public class YangParserWithContextTest {
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertFalse(refineList.isConfiguration());
         final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
-        assertEquals(2, constraint.getMinElements().intValue());
-        assertEquals(12, constraint.getMaxElements().intValue());
+        assertEquals(2, constraint.getMinElements());
+        assertEquals(12, constraint.getMaxElements());
     }
 
     @Test
