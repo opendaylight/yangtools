@@ -75,22 +75,20 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         }
 
         /*
-         * This is where things get interesting. The user has performed a write and
-         * then she applied some more modifications to it. So we need to make sense
-         * of that an apply the operations on top of the written value. We could have
-         * done it during the write, but this operation is potentially expensive, so
-         * we have left it out of the fast path.
+         * This is where things get interesting. The user has performed a write and then she applied some more
+         * modifications to it. So we need to make sense of that an apply the operations on top of the written value. We
+         * could have done it during the write, but this operation is potentially expensive, so we have left it out of
+         * the fast path.
          *
-         * As it turns out, once we materialize the written data, we can share the
-         * code path with the subtree change. So let's create an unsealed TreeNode
-         * and run the common parts on it -- which end with the node being sealed.
+         * As it turns out, once we materialize the written data, we can share the code path with the subtree change. So
+         * let's create an unsealed TreeNode and run the common parts on it -- which end with the node being sealed.
          */
         final MutableTreeNode mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
 
         @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder = ImmutableUnkeyedListEntryNodeBuilder
-            .create((UnkeyedListEntryNode) newValue);
+        final NormalizedNodeContainerBuilder dataBuilder =
+            ImmutableUnkeyedListEntryNodeBuilder.create((UnkeyedListEntryNode) newValue);
 
         return mutateChildren(mutable, dataBuilder, version, modification.getChildren());
     }

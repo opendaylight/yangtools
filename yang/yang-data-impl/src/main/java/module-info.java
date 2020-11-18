@@ -26,6 +26,8 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.rfc7952.data.util;
     requires org.opendaylight.yangtools.rfc8528.data.util;
+    requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.slf4j;
 
