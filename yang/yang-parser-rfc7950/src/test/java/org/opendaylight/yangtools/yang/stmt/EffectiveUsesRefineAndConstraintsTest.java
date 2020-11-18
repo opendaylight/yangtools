@@ -106,8 +106,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertFalse(listSchemaNode.isConfiguration());
 
         ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
-        assertEquals(10, listConstraints.getMinElements().intValue());
-        assertEquals(20, listConstraints.getMaxElements().intValue());
+        assertEquals((Object) 10, listConstraints.getMinElements());
+        assertEquals((Object) 20, listConstraints.getMaxElements());
         assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
@@ -141,8 +141,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertTrue(listSchemaNode.isConfiguration());
 
         ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
-        assertEquals(5, listConstraints.getMinElements().intValue());
-        assertEquals(7, listConstraints.getMaxElements().intValue());
+        assertEquals((Object) 5, listConstraints.getMinElements());
+        assertEquals((Object) 7, listConstraints.getMaxElements());
         assertEquals(2, listSchemaNode.getMustConstraints().size());
     }
 }
