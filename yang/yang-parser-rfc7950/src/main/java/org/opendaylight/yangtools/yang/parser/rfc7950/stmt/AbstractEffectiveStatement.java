@@ -80,7 +80,7 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
      * @throws ClassCastException if masked object does not match EffectiveStatement
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected static final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> unmaskList(
+    protected static final @NonNull ImmutableList<? extends @NonNull EffectiveStatement<?, ?>> unmaskList(
             final @NonNull Object masked) {
         return (ImmutableList) unmaskList(masked, EffectiveStatement.class);
     }

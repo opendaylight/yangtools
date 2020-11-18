@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Mix-in interface for nodes which can define must constraints.
@@ -16,10 +17,9 @@ import java.util.Collection;
  */
 public interface MustConstraintAware {
     /**
-     * Specifies the rules which the node which contains <code>must</code> YANG substatement has to match.
+     * Specifies the rules which the node which contains {@code must} YANG substatement has to match.
      *
-     * @return collection of <code>MustDefinition</code> (XPath) instances which represents the concrete data
-     *         constraints
+     * @return collection of {@code MustDefinition} (XPath) instances which represents the concrete data constraints
      */
-    Collection<? extends MustDefinition> getMustConstraints();
+    Collection<? extends @NonNull MustDefinition> getMustConstraints();
 }

@@ -35,7 +35,7 @@ public interface DocumentedNode {
      *
      * @return collection of unknown schema nodes defined under this node.
      */
-    default @NonNull Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
+    default @NonNull Collection<? extends @NonNull UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
     }
 

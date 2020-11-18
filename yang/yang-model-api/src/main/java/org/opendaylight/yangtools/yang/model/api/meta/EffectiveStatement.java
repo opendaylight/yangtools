@@ -62,7 +62,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      *
      * @return collection of all effective substatements.
      */
-    @NonNull Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements();
+    @NonNull Collection<? extends @NonNull EffectiveStatement<?, ?>> effectiveSubstatements();
 
     /**
      * Find the first effective substatement of specified type.

@@ -12,13 +12,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.RangeSet;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 final class ResolvedRangeConstraint<T extends Number & Comparable<T>> implements RangeConstraint<T>, Immutable {
+    private final ImmutableRangeSet<@NonNull T> ranges;
     private final ConstraintMetaDefinition meta;
-    private final ImmutableRangeSet<T> ranges;
 
     ResolvedRangeConstraint(final ConstraintMetaDefinition meta, final RangeSet<T> ranges) {
         this.meta = requireNonNull(meta);
@@ -46,7 +47,7 @@ final class ResolvedRangeConstraint<T extends Number & Comparable<T>> implements
     }
 
     @Override
-    public RangeSet<T> getAllowedRanges() {
+    public RangeSet<@NonNull T> getAllowedRanges() {
         return ranges;
     }
 }
