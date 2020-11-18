@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
@@ -27,16 +26,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
-        extends ModificationApplyOperation {
+        extends AbstractValidation {
     private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
 
-    private final SchemaAwareApplyOperation<T> delegate;
     private final int minElements;
     private final int maxElements;
 
     private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final Integer minElements,
             final Integer maxElements) {
-        this.delegate = requireNonNull(delegate);
+        super(delegate);
         this.minElements = minElements != null ? minElements : 0;
         this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
     }
@@ -58,7 +56,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
         Optional<? extends TreeNode> ret = modification.getValidatedNode(this, storeMeta);
         if (ret == null) {
             // Deal with the result moving on us
-            ret = delegate.apply(modification, storeMeta, version);
+            ret = delegate().apply(modification, storeMeta, version);
             if (ret.isPresent()) {
                 checkChildren(ret.get().getData());
             }
@@ -70,7 +68,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     @Override
     void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        delegate.checkApplicable(path, modification, current, version);
+        delegate().checkApplicable(path, modification, current, version);
 
         if (!(modification instanceof ModifiedNode)) {
             LOG.debug("Could not validate {}, does not implement expected class {}", modification, ModifiedNode.class);
@@ -80,7 +78,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
         // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
         // is immutable, so the result of validation will probably not change. Note we should not be checking number
-        final Optional<? extends TreeNode> maybeApplied = delegate.apply(modified, current, version);
+        final Optional<? extends TreeNode> maybeApplied = delegate().apply(modified, current, version);
         if (maybeApplied.isPresent()) {
             // We only enforce min/max on present data and rely on MandatoryLeafEnforcer to take care of the empty case
             validateMinMaxElements(path, maybeApplied.get().getData());
@@ -97,38 +95,13 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     @Override
     void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
-        delegate.fullVerifyStructure(modification);
+        delegate().fullVerifyStructure(modification);
         checkChildren(modification);
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return delegate.getChild(child);
-    }
-
-    @Override
-    ChildTrackingPolicy getChildPolicy() {
-        return delegate.getChildPolicy();
-    }
-
-    @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
-        delegate.mergeIntoModifiedNode(node, value, version);
-    }
-
-    @Override
-    void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
-        delegate.quickVerifyStructure(modification);
-    }
-
-    @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        delegate.recursivelyVerifyStructure(value);
-    }
-
-    @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("min", minElements).add("max", maxElements).add("delegate", delegate);
+        return super.addToStringAttributes(helper.add("min", minElements).add("max", maxElements));
     }
 
     private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
