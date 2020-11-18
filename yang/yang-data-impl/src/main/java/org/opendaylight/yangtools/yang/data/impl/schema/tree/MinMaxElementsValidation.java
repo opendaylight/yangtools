@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -123,6 +124,11 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     @Override
     void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         delegate.recursivelyVerifyStructure(value);
+    }
+
+    @Override
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("min", minElements).add("max", maxElements).add("delegate", delegate);
     }
 
     private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)

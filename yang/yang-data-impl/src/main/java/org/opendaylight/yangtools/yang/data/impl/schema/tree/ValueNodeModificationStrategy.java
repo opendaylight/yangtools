@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -98,6 +99,11 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     @Override
     void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         verifyWrittenValue(value);
+    }
+
+    @Override
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("value", nodeClass.getSimpleName());
     }
 
     private void verifyWrittenValue(final NormalizedNode<?, ?> value) {

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -118,4 +120,11 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     public abstract Optional<ModificationApplyOperation> getChild(PathArgument child);
 
     abstract void recursivelyVerifyStructure(NormalizedNode<?, ?> value);
+
+    abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
 }

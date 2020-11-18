@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -152,5 +153,10 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
         // Unkeyed lists are always replaced
         node.write(value);
+    }
+
+    @Override
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("entry", entryStrategy);
     }
 }
