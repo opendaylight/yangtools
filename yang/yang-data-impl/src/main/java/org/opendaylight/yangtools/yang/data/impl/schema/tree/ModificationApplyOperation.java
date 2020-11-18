@@ -18,26 +18,29 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 /**
- * Operation responsible for applying {@link ModifiedNode} on tree.
- *
- * <p>
- * Operation is composite - operation on top level node consists of
- * suboperations on child nodes. This allows to walk operation hierarchy and
+ * An operation responsible for applying {@link ModifiedNode} on tree. The operation is a hierachical composite -
+ * the operation on top level node consists of suboperations on child nodes. This allows to walk operation hierarchy and
  * invoke suboperations independently.
  *
  * <p>
  * <b>Implementation notes</b>
  * <ul>
- * <li>
- * Implementations MUST expose all nested suboperations which operates on child
- * nodes expose via {@link #getChild(PathArgument)} method.
- * <li>Same suboperations SHOULD be used when invoked via
- * {@link #apply(ModifiedNode, Optional, Version)} if applicable.
+ *   <li>Implementations MUST expose all nested suboperations which operates on child nodes expose via
+ *       {@link #getChild(PathArgument)} method.</li>
+ *   <li>Same suboperations SHOULD be used when invoked via {@link #apply(ModifiedNode, Optional, Version)},
+ *       if applicable.</li>
+ *   <li>There are exactly two base implementations:
+ *     <ul>
+ *       <li>{@link SchemaAwareApplyOperation}, which serves as the base class for stateful mutators -- directly
+ *           impacting the layout and transitions of the {@link TreeNode} hierarchy.
+ *       <li>{@link AbstractValidation}, which serves as the base class for stateless checks, which work purely on top
+ *           of the {@link TreeNode} hierarchy. These are always overlaid on top of some other
+ *           {@link ModificationApplyOperation}, ultimately leading to a {@link SchemaAwareApplyOperation}.
+ *     </ul>
+ *     This allows baseline invocations from {@link OperationWithModification} to be bimorphic in the first line of
+ *     dispatch.
+ *   </li>
  * </ul>
- *
- * <p>
- * Hierarchical composite operation which is responsible for applying
- * modification on particular subtree and creating updated subtree
  */
 abstract class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation> {
     /**
