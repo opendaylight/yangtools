@@ -26,11 +26,14 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.rfc7952.data.util;
     requires org.opendaylight.yangtools.rfc8528.data.util;
+    requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.slf4j;
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
     requires static org.osgi.service.component.annotations;
     requires static javax.inject;
     requires static metainf.services;
