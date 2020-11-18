@@ -32,5 +32,5 @@ public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintA
      *
      * @return Ordered list of Strings which specify the default values of this leaf-list
      */
-    @NonNull Collection<? extends Object> getDefaults();
+    @NonNull Collection<? extends @NonNull Object> getDefaults();
 }

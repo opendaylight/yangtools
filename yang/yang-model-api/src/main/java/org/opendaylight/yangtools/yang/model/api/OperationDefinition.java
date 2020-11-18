@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Common interface for an operation.
@@ -20,14 +21,14 @@ public interface OperationDefinition extends SchemaNode {
      *
      * @return Set of type definitions declared under this operation.
      */
-    Collection<? extends TypeDefinition<?>> getTypeDefinitions();
+    Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions();
 
     /**
      * Returns the set of grouping statements declared under this operation.
      *
      * @return Set of grouping statements declared under this operation.
      */
-    Collection<? extends GroupingDefinition> getGroupings();
+    Collection<? extends @NonNull GroupingDefinition> getGroupings();
 
     /**
      * Returns definition of input parameters for this operation.
