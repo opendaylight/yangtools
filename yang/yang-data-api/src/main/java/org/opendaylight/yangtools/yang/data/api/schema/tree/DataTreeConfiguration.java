@@ -42,9 +42,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 @Beta
 public class DataTreeConfiguration implements Immutable {
     public static final DataTreeConfiguration DEFAULT_CONFIGURATION = new Builder(TreeType.CONFIGURATION)
-            .setMandatoryNodesValidation(true).build();
+            .setMandatoryNodesValidation(true)
+            // FIXME: only once performance is there
+            .setUniqueIndexes(true)
+            .build();
     public static final DataTreeConfiguration DEFAULT_OPERATIONAL = new Builder(TreeType.OPERATIONAL)
-            .setMandatoryNodesValidation(true).build();
+            .setMandatoryNodesValidation(true)
+            // FIXME: only if needed
+            .setUniqueIndexes(true)
+            .build();
 
     private final @NonNull TreeType treeType;
     private final @NonNull YangInstanceIdentifier rootPath;
