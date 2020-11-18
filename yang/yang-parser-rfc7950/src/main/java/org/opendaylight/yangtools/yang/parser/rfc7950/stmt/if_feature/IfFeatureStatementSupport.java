@@ -69,7 +69,7 @@ public final class IfFeatureStatementSupport
 
         final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Map<Prerequisite<?>, QName> backRef = new HashMap<>();
-        for (QName feature : stmt.getStatementArgument().getReferencedFeatures()) {
+        for (QName feature : stmt.coerceStatementArgument().getReferencedFeatures()) {
             backRef.put(verifyFeatures.requiresCtx(stmt, FeatureNamespace.class, feature,
                 ModelProcessingPhase.EFFECTIVE_MODEL), feature);
         }
