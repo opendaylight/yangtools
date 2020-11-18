@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
+final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
             new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
                     ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::create);
@@ -32,7 +32,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
     private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
     private final UnkeyedListNode emptyNode;
 
-    UnkeyedListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    ListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         entryStrategy = new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig);
         emptyNode = ImmutableNodes.listNode(schema.getQName());
     }

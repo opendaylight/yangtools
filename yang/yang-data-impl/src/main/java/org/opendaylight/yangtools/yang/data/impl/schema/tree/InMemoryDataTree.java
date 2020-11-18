@@ -82,8 +82,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         if (rootSchemaNode instanceof ListSchemaNode) {
             final PathArgument arg = treeConfig.getRootPath().getLastPathArgument();
             if (arg instanceof NodeIdentifierWithPredicates) {
-                return maskMandatory ? new ListEntryModificationStrategy((ListSchemaNode) rootSchemaNode, treeConfig)
-                        : ListEntryModificationStrategy.of((ListSchemaNode) rootSchemaNode, treeConfig);
+                return maskMandatory ? new MapEntryModificationStrategy((ListSchemaNode) rootSchemaNode, treeConfig)
+                        : MapEntryModificationStrategy.of((ListSchemaNode) rootSchemaNode, treeConfig);
             }
         }
 
