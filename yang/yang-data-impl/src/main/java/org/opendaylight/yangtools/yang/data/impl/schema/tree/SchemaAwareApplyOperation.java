@@ -99,7 +99,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation<ListSchemaNode> op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
-            op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
+            op = new ListModificationStrategy(schemaNode, treeConfig);
         } else {
             op = MapModificationStrategy.of(schemaNode, treeConfig);
         }

@@ -37,7 +37,7 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
 
     private MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
         final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
-        super(support, treeConfig, ListEntryModificationStrategy.of(schema, treeConfig));
+        super(support, treeConfig, MapEntryModificationStrategy.of(schema, treeConfig));
         this.emptyNode = requireNonNull(emptyNode);
     }
 
