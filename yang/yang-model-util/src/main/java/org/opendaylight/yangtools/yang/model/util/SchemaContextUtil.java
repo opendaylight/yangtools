@@ -450,10 +450,10 @@ public final class SchemaContextUtil {
         }
 
         if (foundNode == null && parent instanceof ActionNodeContainer) {
-            foundNode = ((ActionNodeContainer) parent).getActions().stream()
-                    .filter(act -> current.equals(act.getQName())).findFirst().orElse(null);
-            if (foundNode != null && nextPath.iterator().hasNext()) {
-                foundNode = findNodeIn(foundNode, nextPath);
+            final Optional<? extends SchemaNode> next = ((ActionNodeContainer) parent).getActions().stream()
+                .filter(act -> current.equals(act.getQName())).findFirst();
+            if (next.isPresent() && nextPath.iterator().hasNext()) {
+                foundNode = findNodeIn(next.orElseThrow(), nextPath);
             }
         }
 
