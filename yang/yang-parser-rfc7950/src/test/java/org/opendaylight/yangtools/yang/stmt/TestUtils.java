@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -99,7 +100,7 @@ public final class TestUtils {
         return ctx.getModules().iterator().next();
     }
 
-    public static Optional<? extends Module> findModule(final SchemaContext context, final String moduleName) {
+    public static Optional<? extends @NonNull Module> findModule(final SchemaContext context, final String moduleName) {
         return context.getModules().stream().filter(module -> moduleName.equals(module.getName())).findAny();
     }
 

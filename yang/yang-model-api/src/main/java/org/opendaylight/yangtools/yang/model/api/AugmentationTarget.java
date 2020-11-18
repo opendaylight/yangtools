@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Interface for all nodes which are possible targets of augmentation. The
@@ -20,5 +21,5 @@ public interface AugmentationTarget {
      *
      * @return set of augmentations targeting this element.
      */
-    Collection<? extends AugmentationSchemaNode> getAvailableAugmentations();
+    @NonNull Collection<? extends @NonNull AugmentationSchemaNode> getAvailableAugmentations();
 }
