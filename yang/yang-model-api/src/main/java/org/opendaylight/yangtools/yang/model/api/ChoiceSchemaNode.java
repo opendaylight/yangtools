@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
@@ -30,7 +31,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return set of ChoiceCaseNode objects defined in this node which represents set of arguments of the YANG
      *         <code>case</code> substatement of the <code>choice</code> statement.
      */
-    Collection<? extends CaseSchemaNode> getCases();
+    Collection<? extends @NonNull CaseSchemaNode> getCases();
 
     /**
      * Returns the concrete case according to specified Q name.
@@ -54,7 +55,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @throws NullPointerException if localname is null
      */
     @Beta
-    default List<? extends CaseSchemaNode> findCaseNodes(final String localname) {
+    default List<? extends @NonNull CaseSchemaNode> findCaseNodes(final String localname) {
         return getCases().stream().filter(node -> localname.equals(node.getQName().getLocalName()))
                 .collect(ImmutableList.toImmutableList());
     }
