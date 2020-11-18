@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -40,8 +39,8 @@ public class Bug9244Test {
                 QName.create(barModule.getQNameModule(), "bar-leaf-list"));
         assertNotNull(barLeafList);
         final ElementCountConstraint constraint = barLeafList.getElementCountConstraint().get();
-        assertEquals(5, constraint.getMinElements().intValue());
-        assertEquals(10, constraint.getMaxElements().intValue());
+        assertEquals((Object) 5, constraint.getMinElements());
+        assertEquals((Object) 10, constraint.getMaxElements());
 
         final LeafSchemaNode barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf"));
