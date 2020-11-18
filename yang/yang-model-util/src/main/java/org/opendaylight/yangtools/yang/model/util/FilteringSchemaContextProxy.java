@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -123,8 +124,9 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     //dealing with imported module other than root and directly importing root
-    private static Collection<Module> getImportedModules(final Map<ModuleId, ? extends Module> allModules,
-            final Collection<? extends Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
+    private static Collection<Module> getImportedModules(final Map<ModuleId, ? extends @NonNull Module> allModules,
+            final Collection<? extends @NonNull Module> baseModules,
+            final TreeMultimap<String, Module> nameToModulesAll) {
 
         List<Module> relatedModules = new LinkedList<>();
 

@@ -22,7 +22,7 @@ public interface NotificationNodeContainer {
       *
      * @return set of notification nodes
      */
-    @NonNull Collection<? extends NotificationDefinition> getNotifications();
+    @NonNull Collection<? extends @NonNull NotificationDefinition> getNotifications();
 
     /**
      * Find a notification based on its QName. Default implementation searches the set returned by

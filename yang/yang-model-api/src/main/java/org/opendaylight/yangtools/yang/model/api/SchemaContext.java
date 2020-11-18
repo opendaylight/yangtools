@@ -49,7 +49,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return set of <code>DataSchemaNode</code> instances which represents
      *         YANG data nodes at the module top level
      */
-    Collection<? extends DataSchemaNode> getDataDefinitions();
+    @NonNull Collection<? extends @NonNull DataSchemaNode> getDataDefinitions();
 
     /**
      * Returns modules which are part of the schema context. Returned set is required to have its iteration ordered
@@ -58,7 +58,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      *
      * @return set of the modules which belong to the schema context
      */
-    Collection<? extends Module> getModules();
+    @NonNull Collection<? extends @NonNull Module> getModules();
 
     /**
      * Returns rpc definition instances which are defined as the direct
@@ -67,7 +67,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return set of <code>RpcDefinition</code> instances which represents
      *         nodes defined via <code>rpc</code> YANG keyword
      */
-    Collection<? extends RpcDefinition> getOperations();
+    @NonNull Collection<? extends @NonNull RpcDefinition> getOperations();
 
     /**
      * Returns extension definition instances which are defined as the direct
@@ -76,7 +76,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return set of <code>ExtensionDefinition</code> instances which
      *         represents nodes defined via <code>extension</code> YANG keyword
      */
-    Collection<? extends ExtensionDefinition> getExtensions();
+    @NonNull Collection<? extends ExtensionDefinition> getExtensions();
 
     /**
      * Returns the module matching specified {@link QNameModule}, if present.
@@ -170,7 +170,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      *            string with the module name
      * @return set of module instances with specified name.
      */
-    default Collection<? extends Module> findModules(final String name) {
+    default @NonNull Collection<? extends @NonNull Module> findModules(final String name) {
         return Collections2.filter(getModules(), m -> name.equals(m.getName()));
     }
 
@@ -183,7 +183,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return module instance which has namespace equal to the
      *         <code>namespace</code> or <code>null</code> in other cases
      */
-    default Collection<? extends Module> findModules(final URI namespace) {
+    default @NonNull Collection<? extends @NonNull Module> findModules(final URI namespace) {
         return Collections2.filter(getModules(), m -> namespace.equals(m.getNamespace()));
     }
 
@@ -202,7 +202,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     default Optional<NotificationDefinition> findNotification(final QName qname) {
-        final Optional<Collection<? extends NotificationDefinition>> defs = findModule(qname.getModule())
+        final Optional<Collection<? extends @NonNull NotificationDefinition>> defs = findModule(qname.getModule())
                 .map(Module::getNotifications);
         if (defs.isPresent()) {
             for (NotificationDefinition def : defs.get()) {
@@ -228,7 +228,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     @Deprecated
-    default Collection<? extends MustDefinition> getMustConstraints() {
+    default Collection<? extends @NonNull MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
 

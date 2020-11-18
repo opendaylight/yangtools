@@ -25,7 +25,7 @@ public interface ActionNodeContainer {
      *
      * @return set of action nodes
      */
-    @NonNull Collection<? extends ActionDefinition> getActions();
+    @NonNull Collection<? extends @NonNull ActionDefinition> getActions();
 
     /**
      * Find an action based on its QName. Default implementation searches the set returned by {@link #getActions()}.

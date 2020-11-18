@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -75,10 +76,10 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return set of module imports which are specified in the module as the argument of YANG {@code import}
      *         statements.
      */
-    Collection<? extends ModuleImport> getImports();
+    Collection<? extends @NonNull ModuleImport> getImports();
 
     // FIXME: YANGTOOLS-1006: this should be only in Module
-    Collection<? extends Submodule> getSubmodules();
+    Collection<? extends @NonNull Submodule> getSubmodules();
 
     /**
      * Returns {@link FeatureDefinition} instances which contain data from {@code feature} statements defined in the
@@ -90,7 +91,7 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return feature statements in lexicographical order which are specified in the module as the argument of YANG
      *         {@code feature} statements.
      */
-    Collection<? extends FeatureDefinition> getFeatures();
+    Collection<? extends @NonNull FeatureDefinition> getFeatures();
 
     /**
      * Returns {@link AugmentationSchemaNode} instances which contain data from {@code augment} statements defined
@@ -99,7 +100,7 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return set of the augmentation schema instances which are specified in the module as YANG {@code augment}
      *         statement and are lexicographically ordered
      */
-    Collection<? extends AugmentationSchemaNode> getAugmentations();
+    Collection<? extends @NonNull AugmentationSchemaNode> getAugmentations();
 
     /**
      * Returns {@link RpcDefinition} instances which contain data from {@code rpc} statements defined in the module.
@@ -107,14 +108,14 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return set of the RPC definition instances which are specified in the module as YANG {@code rpc} statements and
      *         are lexicographicaly ordered
      */
-    Collection<? extends RpcDefinition> getRpcs();
+    Collection<? extends @NonNull RpcDefinition> getRpcs();
 
     /**
      * Returns {@link Deviation} instances which contain data from {@code deviation} statements defined in the module.
      *
      * @return set of the deviation instances
      */
-    Collection<? extends Deviation> getDeviations();
+    Collection<? extends @NonNull Deviation> getDeviations();
 
     /**
      * Returns {@link IdentitySchemaNode} instances which contain data from {@code identity} statements defined in the
@@ -123,7 +124,7 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return set of identity schema node instances which are specified in the module as YANG {@code identity}
      *         statements and are lexicographically ordered
      */
-    Collection<? extends IdentitySchemaNode> getIdentities();
+    Collection<? extends @NonNull IdentitySchemaNode> getIdentities();
 
     /**
      * Returns {@link ExtensionDefinition} instances which contain data from {@code extension} statements defined in
@@ -132,5 +133,5 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return set of extension definition instances which are specified in the module as YANG {@code extension}
      *         statements and are lexicographically ordered
      */
-    Collection<? extends ExtensionDefinition> getExtensionSchemaNodes();
+    Collection<? extends @NonNull ExtensionDefinition> getExtensionSchemaNodes();
 }

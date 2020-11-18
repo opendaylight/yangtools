@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -67,7 +68,7 @@ final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind,
     }
 
     @Override
-    public Collection<? extends MustDefinition> getDeviatedMusts() {
+    public Collection<? extends @NonNull MustDefinition> getDeviatedMusts() {
         return allSubstatementsOfType(MustDefinition.class);
     }
 
@@ -78,7 +79,7 @@ final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind,
     }
 
     @Override
-    public Collection<? extends UniqueEffectiveStatement> getDeviatedUniques() {
+    public Collection<? extends @NonNull UniqueEffectiveStatement> getDeviatedUniques() {
         return allSubstatementsOfType(UniqueEffectiveStatement.class);
     }
 
