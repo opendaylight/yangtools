@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.EventListener;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Interface for listeners interested in updates of an EffectiveModelContext.
