@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -236,7 +237,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
                 Multimaps.newSetMultimap(new HashMap<>(), HashSet::new);
         final List<IdentitySchemaNode> identities = new ArrayList<>();
         for (Module module : getModules()) {
-            final Collection<? extends IdentitySchemaNode> ids = module.getIdentities();
+            final Collection<? extends @NonNull IdentitySchemaNode> ids = module.getIdentities();
             for (IdentitySchemaNode identity : ids) {
                 for (IdentitySchemaNode base : identity.getBaseIdentities()) {
                     tmp.put(base, identity);

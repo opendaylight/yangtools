@@ -31,5 +31,5 @@ public interface IdentitySchemaNode extends SchemaNode, EffectiveStatementEquiva
      * @return set of existing identities from which the new identity is derived or an empty Set if the identity is
      *         a root identity.
      */
-    @NonNull Collection<? extends IdentitySchemaNode> getBaseIdentities();
+    @NonNull Collection<? extends @NonNull IdentitySchemaNode> getBaseIdentities();
 }

@@ -34,5 +34,5 @@ public interface Deviation extends DocumentedNode, EffectiveStatementEquivalent<
      *
      * @return Collection of all deviate statements defined in this deviation.
      */
-    @NonNull Collection<? extends DeviateDefinition> getDeviates();
+    @NonNull Collection<? extends @NonNull DeviateDefinition> getDeviates();
 }
