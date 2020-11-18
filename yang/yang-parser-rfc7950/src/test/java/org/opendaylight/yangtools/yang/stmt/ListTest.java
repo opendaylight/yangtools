@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -52,8 +51,8 @@ public class ListTest {
         assertEquals("key2", keys.get(1).getLocalName());
 
         ElementCountConstraint constraint = list.getElementCountConstraint().get();
-        assertEquals(1, constraint.getMinElements().intValue());
-        assertEquals(10, constraint.getMaxElements().intValue());
+        assertEquals((Object) 1, constraint.getMinElements());
+        assertEquals((Object) 10, constraint.getMaxElements());
 
         assertEquals(5, list.getChildNodes().size());
 

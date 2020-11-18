@@ -90,8 +90,8 @@ public class DeviationResolutionTest {
         assertEquals(3, myLeafList.getDefaults().size());
 
         final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
-        assertEquals(10, constraint.getMaxElements().intValue());
-        assertEquals(5, constraint.getMinElements().intValue());
+        assertEquals((Object) 10, constraint.getMaxElements());
+        assertEquals((Object) 5, constraint.getMinElements());
         assertNotNull(myLeafList.getType().getUnits());
 
         final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
@@ -149,8 +149,8 @@ public class DeviationResolutionTest {
         assertNotNull(myLeafList);
 
         final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
-        assertEquals(6, constraint.getMaxElements().intValue());
-        assertEquals(3, constraint.getMinElements().intValue());
+        assertEquals((Object) 6, constraint.getMaxElements());
+        assertEquals((Object) 3, constraint.getMinElements());
         assertTrue(myLeafList.isConfiguration());
 
         final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
