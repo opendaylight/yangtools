@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Collection;
@@ -425,10 +424,6 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("support", support).add("verifyChildren", verifyChildrenStructure);
     }
