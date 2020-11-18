@@ -172,20 +172,18 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         }
 
         /*
-         * This is where things get interesting. The user has performed a write and
-         * then she applied some more modifications to it. So we need to make sense
-         * of that an apply the operations on top of the written value. We could have
-         * done it during the write, but this operation is potentially expensive, so
-         * we have left it out of the fast path.
+         * This is where things get interesting. The user has performed a write and then she applied some more
+         * modifications to it. So we need to make sense of that and apply the operations on top of the written value.
          *
-         * As it turns out, once we materialize the written data, we can share the
-         * code path with the subtree change. So let's create an unsealed TreeNode
-         * and run the common parts on it -- which end with the node being sealed.
+         * We could have done it during the write, but this operation is potentially expensive, so we have left it out
+         * of the fast path.
          *
-         * FIXME: this code needs to be moved out from the prepare() path and into
-         *        the read() and seal() paths. Merging of writes needs to be charged
-         *        to the code which originated this, not to the code which is
-         *        attempting to make it visible.
+         * As it turns out, once we materialize the written data, we can share the code path with the subtree change. So
+         * let's create an unsealed TreeNode and run the common parts on it -- which end with the node being sealed.
+         *
+         * FIXME: this code needs to be moved out from the prepare() path and into the read() and seal() paths. Merging
+         *        of writes needs to be charged to the code which originated this, not to the code which is attempting
+         *        to make it visible.
          */
         final MutableTreeNode mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
@@ -274,12 +272,10 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             case TOUCH:
 
                 mergeChildrenIntoModification(modification, children, version);
-                // We record empty merge value, since real children merges
-                // are already expanded. This is needed to satisfy non-null for merge
-                // original merge value can not be used since it mean different
-                // order of operation - parent changes are always resolved before
-                // children ones, and having node in TOUCH means children was modified
-                // before.
+                // We record empty merge value, since real children merges are already expanded. This is needed to
+                // satisfy non-null for merge original merge value can not be used since it mean different order of
+                // operation - parent changes are always resolved before children ones, and having node in TOUCH means
+                // children was modified before.
                 modification.updateValue(LogicalOperation.MERGE, support.createEmptyValue(value));
                 return;
             case MERGE:
@@ -320,9 +316,11 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         /*
-         * The user may have issued an empty merge operation. In this case we do not perform
-         * a data tree mutation, do not pass GO, and do not collect useless garbage. It
-         * also means the ModificationType is UNMODIFIED.
+         * The user may have issued an empty merge operation. In this case we:
+         * - do not perform a data tree mutation
+         * - do not pass GO, and
+         * - do not collect useless garbage.
+         * It also means the ModificationType is UNMODIFIED.
          */
         final Collection<ModifiedNode> children = modification.getChildren();
         if (!children.isEmpty()) {
@@ -333,12 +331,12 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
 
             /*
-             * It is possible that the only modifications under this node were empty merges,
-             * which were turned into UNMODIFIED. If that is the case, we can turn this operation
-             * into UNMODIFIED, too, potentially cascading it up to root. This has the benefit
-             * of speeding up any users, who can skip processing child nodes.
+             * It is possible that the only modifications under this node were empty merges, which were turned into
+             * UNMODIFIED. If that is the case, we can turn this operation into UNMODIFIED, too, potentially cascading
+             * it up to root. This has the benefit of speeding up any users, who can skip processing child nodes.
              *
              * In order to do that, though, we have to check all child operations are UNMODIFIED.
+             *
              * Let's do precisely that, stopping as soon we find a different result.
              */
             for (final ModifiedNode child : children) {
