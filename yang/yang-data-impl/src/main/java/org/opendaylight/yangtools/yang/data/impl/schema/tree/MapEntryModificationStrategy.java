@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class ListEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
-    private static final class EnforcingMandatory extends ListEntryModificationStrategy {
+class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
+    private static final class EnforcingMandatory extends MapEntryModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
 
         EnforcingMandatory(final ListSchemaNode schemaNode, final DataTreeConfiguration treeConfig,
@@ -64,14 +64,14 @@ class ListEntryModificationStrategy extends DataNodeContainerModificationStrateg
             new NormalizedNodeContainerSupport<>(MapEntryNode.class, ImmutableMapEntryNodeBuilder::create,
                     ImmutableMapEntryNodeBuilder::create);
 
-    ListEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    MapEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schema, treeConfig);
     }
 
-    static @NonNull ListEntryModificationStrategy of(final ListSchemaNode schema,
+    static @NonNull MapEntryModificationStrategy of(final ListSchemaNode schema,
             final DataTreeConfiguration treeConfig) {
         final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
         return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.get())
-                : new ListEntryModificationStrategy(schema, treeConfig);
+                : new MapEntryModificationStrategy(schema, treeConfig);
     }
 }

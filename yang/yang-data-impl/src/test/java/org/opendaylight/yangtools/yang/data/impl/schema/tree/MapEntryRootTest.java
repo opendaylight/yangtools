@@ -30,6 +30,6 @@ public class MapEntryRootTest extends AbstractTestModelTest {
         final InMemoryDataTree imdt = (InMemoryDataTree) dataTree;
         final InMemoryDataTreeModification mod = imdt.takeSnapshot().newModification();
         final ModificationApplyOperation strategy = mod.getStrategy();
-        assertThat(strategy, instanceOf(ListEntryModificationStrategy.class));
+        assertThat(strategy, instanceOf(MapEntryModificationStrategy.class));
     }
 }
