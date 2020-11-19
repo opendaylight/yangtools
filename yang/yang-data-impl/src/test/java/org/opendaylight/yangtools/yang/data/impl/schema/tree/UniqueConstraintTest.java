@@ -10,8 +10,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,11 +25,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -247,6 +254,52 @@ public class UniqueConstraintTest {
         writeMapEntry(inMemoryDataTree, "5", "l3", "l4", "l7");
         writeMapEntry(inMemoryDataTree, "5", "l3", "l4", "l7");
         writeMapEntry(inMemoryDataTree, "6", "l3", "l4", "l7");
+    }
+
+    @Test
+    public void getDataFromIndexTest() throws ReactorException, DataValidationFailedException {
+        final InMemoryDataTree inMemoryDataTree = initDataTree(TestModel.createTestContext("/bug4955/foo.yang"), true);
+        writeAndRemoveMapEntries(inMemoryDataTree, false);
+
+        final TreeNode taskTreeNode = inMemoryDataTree.getTipRoot()
+            .getChild(new NodeIdentifier(TASK_CONTAINER)).orElseThrow()
+            .getChild(new NodeIdentifier(TASK)).orElseThrow();
+
+        MapEntryNode expectedMapEntry = createMapEntry("2", "l2", "l3", "l6");
+
+        Optional<? extends NormalizedNode<?, ?>> dataFromIndex = taskTreeNode
+                .getFromIndex(new UniqueIndexKey(ImmutableMap.of(YangInstanceIdentifier.of(MY_LEAF_1), "l2",
+                        YangInstanceIdentifier.of(MY_LEAF_2), "l3")));
+        assertTrue(dataFromIndex.isPresent());
+        assertEquals(expectedMapEntry, dataFromIndex.get());
+
+        dataFromIndex = taskTreeNode.getFromIndex(new UniqueIndexKey(ImmutableMap.of(
+                YangInstanceIdentifier.of(MY_LEAF_2), "l3", YangInstanceIdentifier.of(MY_LEAF_1), "l2")));
+        assertTrue(dataFromIndex.isPresent());
+        assertEquals(expectedMapEntry, dataFromIndex.get());
+
+        dataFromIndex = taskTreeNode.getFromIndex(new UniqueIndexKey(ImmutableMap.of(
+                YangInstanceIdentifier.of(MY_LEAF_1), "l2", YangInstanceIdentifier.of(MY_CONTAINER).node(MY_LEAF_3),
+                "l6")));
+        assertTrue(dataFromIndex.isPresent());
+        assertEquals(expectedMapEntry, dataFromIndex.get());
+
+        dataFromIndex = taskTreeNode.getFromIndex(new UniqueIndexKey(ImmutableMap.of(
+                YangInstanceIdentifier.of(MY_CONTAINER).node(MY_LEAF_3), "l6", YangInstanceIdentifier.of(MY_LEAF_1),
+                "l2")));
+        assertTrue(dataFromIndex.isPresent());
+        assertEquals(expectedMapEntry, dataFromIndex.get());
+
+        dataFromIndex = taskTreeNode.getFromIndex(new UniqueIndexKey(ImmutableMap.of(
+                YangInstanceIdentifier.of(MY_LEAF_1), "l2", YangInstanceIdentifier.of(MY_LEAF_2), "l10")));
+        assertTrue(dataFromIndex.isPresent());
+        expectedMapEntry = createMapEntry("10", "l2", "l10", "l4");
+        assertEquals(expectedMapEntry, dataFromIndex.get());
+
+        dataFromIndex = taskTreeNode.getFromIndex(new UniqueIndexKey(ImmutableMap.of(
+                YangInstanceIdentifier.of(MY_CONTAINER).node(MY_LEAF_3), "l6", YangInstanceIdentifier.of(MY_LEAF_1),
+                "l3")));
+        assertFalse(dataFromIndex.isPresent());
     }
 
     private static InMemoryDataTree initDataTree(final EffectiveModelContext schemaContext, final boolean uniqueIndex)
