@@ -7,36 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.RequiredElementCountException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
-        extends ModificationApplyOperation {
-    private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
-
-    private final SchemaAwareApplyOperation<T> delegate;
+        extends AbstractValidation {
     private final int minElements;
     private final int maxElements;
 
     private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final Integer minElements,
             final Integer maxElements) {
-        this.delegate = requireNonNull(delegate);
+        super(delegate);
         this.minElements = minElements != null ? minElements : 0;
         this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
     }
@@ -53,105 +43,39 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
-            final Version version) {
-        Optional<? extends TreeNode> ret = modification.getValidatedNode(this, storeMeta);
-        if (ret == null) {
-            // Deal with the result moving on us
-            ret = delegate.apply(modification, storeMeta, version);
-            if (ret.isPresent()) {
-                checkChildren(ret.get().getData());
-            }
+    void enforceOnData(final NormalizedNode<?, ?> data) {
+        enforceOnData(data, (actual, message) -> new IllegalArgumentException(message));
+    }
+
+    @Override
+    void enforceOnData(final ModificationPath path, final NormalizedNode<?, ?> data)
+            throws RequiredElementCountException {
+        enforceOnData(data, (actual, message) -> new RequiredElementCountException(path.toInstanceIdentifier(),
+            minElements, maxElements, actual, message));
+    }
+
+    @FunctionalInterface
+    @NonNullByDefault
+    interface ExceptionSupplier<T extends Exception> {
+        T get(int actual, String message);
+    }
+
+    private <X extends @NonNull Exception> void enforceOnData(final NormalizedNode<?, ?> value,
+            final ExceptionSupplier<X> exceptionSupplier) throws X {
+        final int children = numOfChildrenFromValue(value);
+        if (minElements > children) {
+            throw exceptionSupplier.get(children, value.getIdentifier()
+                + " does not have enough elements (" + children + "), needs at least " + minElements);
         }
-
-        return ret;
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
-        delegate.checkApplicable(path, modification, current, version);
-
-        if (!(modification instanceof ModifiedNode)) {
-            LOG.debug("Could not validate {}, does not implement expected class {}", modification, ModifiedNode.class);
-            return;
+        if (maxElements < children) {
+            throw exceptionSupplier.get(children, value.getIdentifier()
+                + " has too many elements (" + children + "), can have at most " + maxElements);
         }
-        final ModifiedNode modified = (ModifiedNode) modification;
-
-        // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
-        // is immutable, so the result of validation will probably not change. Note we should not be checking number
-        final Optional<? extends TreeNode> maybeApplied = delegate.apply(modified, current, version);
-        if (maybeApplied.isPresent()) {
-            // We only enforce min/max on present data and rely on MandatoryLeafEnforcer to take care of the empty case
-            validateMinMaxElements(path, maybeApplied.get().getData());
-        }
-
-        // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.
-        // We know what the result of an apply operation is going to be *if* the following are kept unchanged:
-        // - the 'current' node
-        // - the schemacontext (therefore, the fact this object is associated with the modification)
-        //
-        // So let's stash the result. We will pick it up during apply operation.
-        modified.setValidatedNode(this, current, maybeApplied);
-    }
-
-    @Override
-    void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
-        delegate.fullVerifyStructure(modification);
-        checkChildren(modification);
-    }
-
-    @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return delegate.getChild(child);
-    }
-
-    @Override
-    ChildTrackingPolicy getChildPolicy() {
-        return delegate.getChildPolicy();
-    }
-
-    @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
-        delegate.mergeIntoModifiedNode(node, value, version);
-    }
-
-    @Override
-    void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
-        delegate.quickVerifyStructure(modification);
-    }
-
-    @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        delegate.recursivelyVerifyStructure(value);
     }
 
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("min", minElements).add("max", maxElements).add("delegate", delegate);
-    }
-
-    private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
-            throws DataValidationFailedException {
-        final PathArgument id = value.getIdentifier();
-        final int children = numOfChildrenFromValue(value);
-        if (minElements > children) {
-            throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements, children,
-                "%s does not have enough elements (%s), needs at least %s", id, children, minElements);
-        }
-        if (maxElements < children) {
-            throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements, children,
-                "%s has too many elements (%s), can have at most %s", id, children, maxElements);
-        }
-    }
-
-    private void checkChildren(final NormalizedNode<?, ?> value) {
-        final PathArgument id = value.getIdentifier();
-        final int children = numOfChildrenFromValue(value);
-        checkArgument(minElements <= children, "Node %s does not have enough elements (%s), needs at least %s", id,
-                children, minElements);
-        checkArgument(maxElements >= children, "Node %s has too many elements (%s), can have at most %s", id, children,
-                maxElements);
+        return super.addToStringAttributes(helper.add("min", minElements).add("max", maxElements));
     }
 
     private static int numOfChildrenFromValue(final NormalizedNode<?, ?> value) {
