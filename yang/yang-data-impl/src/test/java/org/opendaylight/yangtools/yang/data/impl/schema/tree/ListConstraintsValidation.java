@@ -243,7 +243,7 @@ public class ListConstraintsValidation {
             modificationTree.ready();
             fail("Should have failed with IAE");
         } catch (IllegalArgumentException e) {
-            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+            assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
                     + "revision=2015-02-02)min-max-leaf-list has too many elements (4), can have at most 3",
                     e.getMessage());
         }
@@ -298,7 +298,7 @@ public class ListConstraintsValidation {
             modificationTree.ready();
             fail("Should have failed with IAE");
         } catch (IllegalArgumentException e) {
-            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+            assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
                     + "revision=2015-02-02)unkeyed-list has too many elements (2), can have at most 1", e.getMessage());
         }
     }
