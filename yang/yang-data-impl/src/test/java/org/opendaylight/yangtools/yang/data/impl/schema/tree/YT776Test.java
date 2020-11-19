@@ -114,7 +114,7 @@ public class YT776Test {
             mod.ready();
             fail("Should fail with IAE");
         } catch (IllegalArgumentException e) {
-            assertEquals("Node (yt776)attributes does not have enough elements (0), needs at least 1", e.getMessage());
+            assertEquals("(yt776)attributes does not have enough elements (0), needs at least 1", e.getMessage());
         }
     }
 
@@ -166,7 +166,7 @@ public class YT776Test {
             mod.ready();
             fail("Should fail with IAE");
         } catch (IllegalArgumentException e) {
-            assertEquals("Node (yt776)attributes has too many elements (3), can have at most 2", e.getMessage());
+            assertEquals("(yt776)attributes has too many elements (3), can have at most 2", e.getMessage());
         }
     }
 
