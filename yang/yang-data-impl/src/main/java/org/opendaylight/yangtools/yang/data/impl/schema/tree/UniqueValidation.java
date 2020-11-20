@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Stopwatch;
@@ -47,33 +48,40 @@ final class UniqueValidation extends AbstractValidation {
 
     private final @NonNull ImmutableList<UniqueValidator<?>> validators;
 
-    private UniqueValidation(final ModificationApplyOperation delegate, final List<UniqueValidator<?>> validators) {
+    private UniqueValidation(final ModificationApplyOperation delegate,
+            final ImmutableList<UniqueValidator<?>> validators) {
         super(delegate);
-        this.validators = ImmutableList.copyOf(validators);
+        this.validators = requireNonNull(validators);
     }
 
     static ModificationApplyOperation of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig,
             final ModificationApplyOperation delegate) {
+        final ImmutableList<UniqueValidator<?>> validators = validatorsOf(schema, treeConfig);
+        return validators.isEmpty() ? delegate : new UniqueValidation(delegate, validators);
+    }
+
+    static ImmutableList<UniqueValidator<?>> validatorsOf(final ListSchemaNode schema,
+            final DataTreeConfiguration treeConfig) {
         final Collection<? extends @NonNull UniqueEffectiveStatement> uniques = schema.getUniqueConstraints();
         if (!treeConfig.isUniqueIndexEnabled() || uniques.isEmpty()) {
-            return delegate;
+            return ImmutableList.of();
         }
 
         final Stopwatch sw = Stopwatch.createStarted();
         final Map<Descendant, List<NodeIdentifier>> paths = new HashMap<>();
-        final List<UniqueValidator<?>> validators = uniques.stream()
+        final ImmutableList<UniqueValidator<?>> validators = uniques.stream()
             .map(unique -> UniqueValidator.of(unique.argument().stream()
                 .map(descendant -> paths.computeIfAbsent(descendant, key -> toDescendantPath(schema, key)))
                 .collect(ImmutableList.toImmutableList())))
             .collect(ImmutableList.toImmutableList());
         LOG.debug("Constructed {} validators in {}", validators.size(), sw);
 
-        return validators.isEmpty() ? delegate : new UniqueValidation(delegate, validators);
+        return validators;
     }
 
     @Override
     void enforceOnData(final NormalizedNode<?, ?> data) {
-        enforceOnData(data, (message, values) -> new IllegalArgumentException(message));
+        enforceOnData(data, (message, values) -> new UniqueValidationFailedException(message));
     }
 
     @Override
