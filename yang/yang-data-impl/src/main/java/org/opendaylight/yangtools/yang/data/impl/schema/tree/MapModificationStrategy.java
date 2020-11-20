@@ -9,23 +9,59 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Invisible;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class MapModificationStrategy extends Invisible<ListSchemaNode> {
+class MapModificationStrategy extends Invisible<ListSchemaNode> {
+    private static final class Unique extends MapModificationStrategy {
+        private final UniqueTreeNodeSupport<?> unique;
+
+        Unique(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
+                final DataTreeConfiguration treeConfig, final MapNode emptyNode,
+                final UniqueTreeNodeSupport<?> unique) {
+            super(support, schema, treeConfig, emptyNode);
+            this.unique = requireNonNull(unique);
+        }
+
+        @Override
+        TreeNode applyNestedWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+                final Optional<? extends TreeNode> currentMeta, final Version version,
+                final NormalizedNodeContainerBuilder<?, ?, ?, ?> dataBuilder) {
+            final UniqueParentMutableNode mutable = unique.newMutableTreeNode((MapNode) newValue, version);
+            super.mutateChildren(mutable, dataBuilder, version, modification.getChildren());
+
+            // We are good to go except one detail: this is a single logical write, but
+            // we have a result TreeNode which has been forced to materialized, e.g. it
+            // is larger than it needs to be. Create a new TreeNode to host the data.
+            final UniqueParentTreeNode sealed = mutable.seal();
+            final TreeNode delegate = sealed.delegate();
+            return new UniqueParentTreeNode(TreeNodeFactory.createTreeNode(delegate.getData(), delegate.getVersion()),
+                    sealed.index());
+        }
+
+        @Override
+        TreeNode applyTerminalWrite(final NormalizedNode<?, ?> newValue, final Version version) {
+            return unique.newTreeNode((MapNode) newValue, version);
+        }
+    }
+
     private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedMapNode> ORDERED_SUPPORT =
             new NormalizedNodeContainerSupport<>(OrderedMapNode.class, ChildTrackingPolicy.ORDERED,
                     ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
@@ -35,8 +71,8 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
 
     private final @NonNull MapNode emptyNode;
 
-    private MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
-        final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
+    MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
+            final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
         super(support, treeConfig, MapEntryModificationStrategy.of(schema, treeConfig));
         this.emptyNode = requireNonNull(emptyNode);
     }
@@ -51,7 +87,10 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
             support = UNORDERED_SUPPORT;
             emptyNode = ImmutableNodes.mapNode(schema.getQName());
         }
-        return new MapModificationStrategy(support, schema, treeConfig, emptyNode);
+
+        final ImmutableList<UniqueValidator<?>> validators = UniqueValidation.validatorsOf(schema, treeConfig);
+        return validators.isEmpty() ? new MapModificationStrategy(support, schema, treeConfig, emptyNode)
+            : new Unique(support, schema, treeConfig, emptyNode, UniqueTreeNodeSupport.of(validators));
     }
 
     @Override

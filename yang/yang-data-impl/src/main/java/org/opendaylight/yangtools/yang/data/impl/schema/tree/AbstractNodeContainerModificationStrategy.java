@@ -165,10 +165,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
-
         if (modification.getChildren().isEmpty()) {
-            return newValueMeta;
+            return applyTerminalWrite(newValue, version);
         }
 
         /*
@@ -185,17 +183,25 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final MutableTreeNode mutable = newValueMeta.mutable();
+        return applyNestedWrite(modification, newValue, currentMeta, version, support.createBuilder(newValue));
+    }
+
+    TreeNode applyNestedWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+            final Optional<? extends TreeNode> currentMeta, final Version version,
+            final NormalizedNodeContainerBuilder<?, ?, ?, ?> dataBuilder) {
+        final MutableTreeNode mutable = TreeNodeFactory.createTreeNode(newValue, version).mutable();
         mutable.setSubtreeVersion(version);
 
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder = support.createBuilder(newValue);
-        final TreeNode result = mutateChildren(mutable, dataBuilder, version, modification.getChildren());
+        mutateChildren(mutable, dataBuilder, version, modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return TreeNodeFactory.createTreeNode(result.getData(), version);
+        return TreeNodeFactory.createTreeNode(mutable.seal().getData(), version);
+    }
+
+    TreeNode applyTerminalWrite(final NormalizedNode<?, ?> newValue, final Version version) {
+        return TreeNodeFactory.createTreeNode(newValue, version);
     }
 
     /**
@@ -206,10 +212,9 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
      * @param data DataBuilder
      * @param nodeVersion Version of TreeNode
      * @param modifications modification operations to apply
-     * @return Sealed immutable copy of TreeNode structure with all Data Node references set.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
+    final void mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
         for (final ModifiedNode mod : modifications) {
@@ -228,7 +233,6 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         }
 
         meta.setData(data.build());
-        return meta.seal();
     }
 
     @Override
@@ -328,7 +332,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             final NormalizedNodeContainerBuilder dataBuilder = support.createBuilder(currentMeta.getData());
             final MutableTreeNode newMeta = currentMeta.mutable();
             newMeta.setSubtreeVersion(version);
-            final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
+            mutateChildren(newMeta, dataBuilder, version, children);
 
             /*
              * It is possible that the only modifications under this node were empty merges, which were turned into
@@ -342,7 +346,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             for (final ModifiedNode child : children) {
                 if (child.getModificationType() != ModificationType.UNMODIFIED) {
                     modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
-                    return ret;
+                    return newMeta.seal();
                 }
             }
         }

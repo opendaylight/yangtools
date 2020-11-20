@@ -25,5 +25,6 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * @return Optional with node if the child is existing, {@link Optional#empty()} otherwise.
      * @throws NullPointerException when {@code child} is null
      */
+    // FIXME: 7.0.0: expose nullable and add default method
     @NonNull Optional<? extends C> getChild(PathArgument child);
 }
