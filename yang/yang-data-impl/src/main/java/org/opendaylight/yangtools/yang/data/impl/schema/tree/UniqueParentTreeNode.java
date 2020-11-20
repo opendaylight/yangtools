@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+
+import static java.util.Objects.requireNonNull;
+
+import java.util.Map;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+
+final class UniqueParentTreeNode extends ForwardingTreeNode {
+    private final Map<Object, TreeNode> vectorToChild;
+
+    UniqueParentTreeNode(final TreeNode delegate, final Map<Object, TreeNode> vectorToChild) {
+        super(delegate);
+        this.vectorToChild = requireNonNull(vectorToChild);
+    }
+
+    @Override
+    ForwardingMutableTreeNode mutable(final MutableTreeNode delegate) {
+        return new UniqueParentMutableNode(delegate, vectorToChild);
+    }
+}

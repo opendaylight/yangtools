@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -23,9 +27,30 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
+class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
+    private static final class Unique extends ListModificationStrategy {
+        private final UniqueTreeNodeSupport support;
+
+        Unique(final ListSchemaNode schema, final DataTreeConfiguration treeConfig,
+                final UniqueTreeNodeSupport support) {
+            super(schema, treeConfig);
+            this.support = requireNonNull(support);
+        }
+
+        @Override
+        TreeNode newTreeNode(final UnkeyedListNode newValue, final Version version) {
+            return support.newTreeNode(newValue, version);
+        }
+
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper).add("unique", support);
+        }
+    }
+
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
             new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
                     ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::create);
@@ -38,38 +63,47 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         emptyNode = ImmutableNodes.listNode(schema.getQName());
     }
 
+    static @NonNull ListModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        final ImmutableList<UniqueValidator<?>> validators = UniqueValidation.validatorsOf(schema, treeConfig);
+        return validators.isEmpty() ? new ListModificationStrategy(schema, treeConfig)
+            : new Unique(schema, treeConfig, new UniqueTreeNodeSupport(validators));
+    }
+
     @Override
-    ListSchemaNode getSchema() {
+    final ListSchemaNode getSchema() {
         return entryStrategy.getSchema();
     }
 
     @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
-            final Version version) {
+    final Optional<? extends TreeNode> apply(final ModifiedNode modification,
+            final Optional<? extends TreeNode> storeMeta, final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
             version);
     }
 
     @Override
-    protected ChildTrackingPolicy getChildPolicy() {
+    protected final ChildTrackingPolicy getChildPolicy() {
         return ChildTrackingPolicy.ORDERED;
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected final TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         throw new IllegalStateException(String.format("Merge of modification %s on unkeyed list should never be called",
             modification));
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected final TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         throw new UnsupportedOperationException("UnkeyedList does not support subtree change.");
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+    protected final TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
+        final UnkeyedListNode newList = (UnkeyedListNode) newValue;
+        final TreeNode newValueMeta = newTreeNode(newList, version);
         if (modification.getChildren().isEmpty()) {
             return newValueMeta;
         }
@@ -86,11 +120,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         final MutableTreeNode mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
 
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder =
-            ImmutableUnkeyedListEntryNodeBuilder.create((UnkeyedListEntryNode) newValue);
-
-        return mutateChildren(mutable, dataBuilder, version, modification.getChildren());
+        return mutateChildren(mutable, ImmutableUnkeyedListNodeBuilder.create(newList), version,
+            modification.getChildren());
     }
 
     /**
@@ -127,30 +158,34 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+    public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return child instanceof NodeIdentifier ? Optional.of(entryStrategy) : Optional.empty();
     }
 
     @Override
-    void verifyValue(final NormalizedNode<?, ?> value) {
+    final void verifyValue(final NormalizedNode<?, ?> value) {
         // NOOP
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         // NOOP
     }
 
     @Override
-    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
+    protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
         // Unkeyed lists are always replaced
         node.write(value);
+    }
+
+    TreeNode newTreeNode(final UnkeyedListNode newValue, final Version version) {
+        return TreeNodeFactory.createTreeNode(newValue, version);
     }
 
     @Override

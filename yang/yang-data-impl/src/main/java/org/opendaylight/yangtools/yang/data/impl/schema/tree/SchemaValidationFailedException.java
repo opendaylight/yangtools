@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 /**
@@ -13,7 +12,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  * does not match the schema context.
  */
 public class SchemaValidationFailedException extends IllegalArgumentException {
-
     private static final long serialVersionUID = 1L;
 
     public SchemaValidationFailedException(final String message) {
@@ -23,5 +21,4 @@ public class SchemaValidationFailedException extends IllegalArgumentException {
     public SchemaValidationFailedException(final String message, final Throwable cause) {
         super(message, cause);
     }
-
 }
