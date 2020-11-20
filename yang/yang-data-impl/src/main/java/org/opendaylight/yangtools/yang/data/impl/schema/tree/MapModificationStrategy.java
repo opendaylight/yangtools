@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -25,7 +27,29 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOr
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Invisible;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class MapModificationStrategy extends Invisible<ListSchemaNode> {
+class MapModificationStrategy extends Invisible<ListSchemaNode> {
+    private static final class Unique extends MapModificationStrategy {
+        private final UniqueTreeNodeSupport<?> unique;
+
+        Unique(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
+                final DataTreeConfiguration treeConfig, final MapNode emptyNode,
+                final UniqueTreeNodeSupport<?> unique) {
+            super(support, schema, treeConfig, emptyNode);
+            this.unique = requireNonNull(unique);
+        }
+
+        @Override
+        UniqueIndexTreeNode newTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+            return new UniqueIndexTreeNode(super.newTreeNode(newValue, version));
+        }
+
+        @Override
+        UniqueIndexMutableNode newMutableTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+            final UniqueIndexTreeNode prev = newTreeNode(newValue, version);
+            return new UniqueIndexMutableNode(prev.delegate().mutable(), unique, prev);
+        }
+    }
+
     private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedMapNode> ORDERED_SUPPORT =
             new NormalizedNodeContainerSupport<>(OrderedMapNode.class, ChildTrackingPolicy.ORDERED,
                     ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
@@ -35,8 +59,8 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
 
     private final @NonNull MapNode emptyNode;
 
-    private MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
-        final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
+    MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
+            final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
         super(support, treeConfig, MapEntryModificationStrategy.of(schema, treeConfig));
         this.emptyNode = requireNonNull(emptyNode);
     }
@@ -51,7 +75,10 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
             support = UNORDERED_SUPPORT;
             emptyNode = ImmutableNodes.mapNode(schema.getQName());
         }
-        return new MapModificationStrategy(support, schema, treeConfig, emptyNode);
+
+        final ImmutableList<UniqueValidator<?>> validators = UniqueValidation.validatorsOf(schema, treeConfig);
+        return validators.isEmpty() ? new MapModificationStrategy(support, schema, treeConfig, emptyNode)
+            : new Unique(support, schema, treeConfig, emptyNode, UniqueTreeNodeSupport.of(validators));
     }
 
     @Override

@@ -165,10 +165,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
-
         if (modification.getChildren().isEmpty()) {
-            return newValueMeta;
+            return newTreeNode(newValue, version);
         }
 
         /*
@@ -185,7 +183,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final MutableTreeNode mutable = newValueMeta.mutable();
+        final MutableTreeNode mutable = newMutableTreeNode(newValue, version);
         mutable.setSubtreeVersion(version);
 
         @SuppressWarnings("rawtypes")
@@ -196,6 +194,14 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
         return TreeNodeFactory.createTreeNode(result.getData(), version);
+    }
+
+    TreeNode newTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+        return TreeNodeFactory.createTreeNode(newValue, version);
+    }
+
+    MutableTreeNode newMutableTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+        return newTreeNode(newValue, version).mutable();
     }
 
     /**

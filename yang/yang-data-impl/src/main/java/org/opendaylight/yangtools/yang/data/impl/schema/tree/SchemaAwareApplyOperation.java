@@ -99,12 +99,12 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation<ListSchemaNode> op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
-            op = new ListModificationStrategy(schemaNode, treeConfig);
+            op = ListModificationStrategy.of(schemaNode, treeConfig);
         } else {
             op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
 
-        return UniqueValidation.of(schemaNode, treeConfig, MinMaxElementsValidation.from(op));
+        return MinMaxElementsValidation.from(op);
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,
