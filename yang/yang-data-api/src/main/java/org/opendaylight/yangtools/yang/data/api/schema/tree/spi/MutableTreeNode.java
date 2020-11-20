@@ -41,6 +41,8 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * @param child New child node.
      * @throws NullPointerException if {@code child} is null
      */
+    // FIXME: 7.0.0: add a 'boolean putChild(TreeNode)', which returns the previous node
+    //               implement this a default a default method on top of putChild()
     void addChild(TreeNode child);
 
     /**
@@ -50,6 +52,7 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * @param id Child identifier.
      * @throws NullPointerException if {@code id} is null
      */
+    // FIXME: 7.0.0: we want to get the removed child!
     void removeChild(PathArgument id);
 
     /**

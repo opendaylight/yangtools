@@ -7,11 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -78,7 +73,8 @@ public class UniqueConstraintTest {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(TEST_MODEL, true);
 
 
-        verifyExceptionMessage(assertThrows(IllegalArgumentException.class, () -> writeMap(inMemoryDataTree, true)),
+        verifyExceptionMessage(assertThrows(UniqueValidationFailedException.class,
+            () -> writeMap(inMemoryDataTree, true)),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
             "}] violates unique constraint on [l2, l1] of ",
             "(foo?revision=2016-05-17)my-leaf-1",
