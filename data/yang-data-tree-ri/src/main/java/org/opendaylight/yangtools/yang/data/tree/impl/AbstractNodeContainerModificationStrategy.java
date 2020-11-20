@@ -39,9 +39,14 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     abstract static class Invisible<T extends WithStatus> extends AbstractNodeContainerModificationStrategy<T> {
         private final @NonNull SchemaAwareApplyOperation<T> entryStrategy;
 
-        Invisible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
-                final SchemaAwareApplyOperation<T> entryStrategy) {
-            super(support, treeConfig);
+        Invisible(final NormalizedNodeContainerSupport<?, ?> support,
+                final DataTreeConfiguration treeConfig, final SchemaAwareApplyOperation<T> entryStrategy) {
+            this(TreeNodeSupport.DEFAULT, support, treeConfig, entryStrategy);
+        }
+
+        Invisible(final TreeNodeSupport treeSupport, final NormalizedNodeContainerSupport<?, ?> support,
+                final DataTreeConfiguration treeConfig, final SchemaAwareApplyOperation<T> entryStrategy) {
+            super(treeSupport, support, treeConfig);
             this.entryStrategy = requireNonNull(entryStrategy);
         }
 
@@ -63,10 +68,15 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     abstract static class Visible<T extends WithStatus> extends AbstractNodeContainerModificationStrategy<T> {
         private final @NonNull T schema;
 
-        Visible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
-            final T schema) {
-            super(support, treeConfig);
+        Visible(final TreeNodeSupport treeSupport, final NormalizedNodeContainerSupport<?, ?> support,
+                final DataTreeConfiguration treeConfig, final T schema) {
+            super(treeSupport, support, treeConfig);
             this.schema = requireNonNull(schema);
+        }
+
+        Visible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
+                final T schema) {
+            this(TreeNodeSupport.DEFAULT, support, treeConfig, schema);
         }
 
         @Override
@@ -90,10 +100,11 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
 
-    AbstractNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support,
-            final DataTreeConfiguration treeConfig) {
+    AbstractNodeContainerModificationStrategy(final TreeNodeSupport treeSupport,
+            final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig) {
+        super(treeSupport);
         this.support = requireNonNull(support);
-        this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
+        verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
     @Override
@@ -165,10 +176,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNode.of(newValue, version);
-
         if (modification.getChildren().isEmpty()) {
-            return newValueMeta;
+            return newTreeNode(newValue, version);
         }
 
         /*
@@ -185,7 +194,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
          *        of writes needs to be charged to the code which originated this, not to the code which is attempting
          *        to make it visible.
          */
-        final MutableTreeNode mutable = newValueMeta.mutable();
+        final MutableTreeNode mutable = newMutableTreeNode(newValue, version);
         mutable.setSubtreeVersion(version);
 
         @SuppressWarnings("rawtypes")
@@ -195,7 +204,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         // We are good to go except one detail: this is a single logical write, but
         // we have a result TreeNode which has been forced to materialized, e.g. it
         // is larger than it needs to be. Create a new TreeNode to host the data.
-        return TreeNode.of(result.getData(), version);
+        return newTreeNode(result.getData(), version);
     }
 
     /**

@@ -66,7 +66,7 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        return TreeNode.of(newValue, version);
+        return newTreeNode(newValue, version);
     }
 
     @Override

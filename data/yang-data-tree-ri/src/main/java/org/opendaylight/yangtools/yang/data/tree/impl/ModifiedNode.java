@@ -111,12 +111,13 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return original.isPresent() ? original.get().findChildByArg(child) : Optional.empty();
     }
 
-    private Optional<? extends TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
+    private Optional<? extends TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion,
+            final @NonNull ModificationApplyOperation childOper) {
         if (writtenOriginal == null) {
             // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
             // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
             // modifications.
-            writtenOriginal = TreeNode.of(value, modVersion);
+            writtenOriginal = childOper.newTreeNode(value, modVersion);
         }
 
         return writtenOriginal.findChildByArg(child);
@@ -132,7 +133,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return Before-image tree node as observed by that child.
      */
     private Optional<? extends TreeNode> findOriginalMetadata(final @NonNull PathArgument child,
-            final Version modVersion) {
+            final Version modVersion, final @NonNull ModificationApplyOperation childOp) {
         return switch (operation) {
             case DELETE ->
                 // DELETE implies non-presence
@@ -140,7 +141,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case NONE, TOUCH, MERGE -> metadataFromSnapshot(child);
             case WRITE ->
                 // WRITE implies presence based on written data
-                metadataFromData(child, modVersion);
+                metadataFromData(child, modVersion, childOp);
         };
     }
 
@@ -166,7 +167,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             return potential;
         }
 
-        final Optional<? extends TreeNode> currentMetadata = findOriginalMetadata(child, modVersion);
+        final Optional<? extends TreeNode> currentMetadata = findOriginalMetadata(child, modVersion, childOper);
         final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childOper.getChildPolicy());
         if (operation == LogicalOperation.MERGE && value != null) {
             /*

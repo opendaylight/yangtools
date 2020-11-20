@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 
@@ -123,6 +124,10 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     public abstract ModificationApplyOperation childByArg(PathArgument arg);
 
     abstract void recursivelyVerifyStructure(NormalizedNode value);
+
+    abstract TreeNode newTreeNode(NormalizedNode newValue, Version version);
+
+    abstract MutableTreeNode newMutableTreeNode(NormalizedNode newValue, Version version);
 
     abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -37,8 +38,9 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
     private final @NonNull MapNode emptyNode;
 
     private MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
-        final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
-        super(support, treeConfig, MapEntryModificationStrategy.of(schema, treeConfig));
+            final DataTreeConfiguration treeConfig, final MapNode emptyNode, final UniqueTreeNodeSupport<?> unique) {
+        super(unique == null ? TreeNodeSupport.DEFAULT : new UniqueIndexTreeNodeSupport(unique), support, treeConfig,
+            MapEntryModificationStrategy.of(schema, treeConfig, unique));
         this.emptyNode = requireNonNull(emptyNode);
     }
 
@@ -52,7 +54,10 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
             support = UNORDERED_SUPPORT;
             emptyNode = ImmutableNodes.mapNode(schema.getQName());
         }
-        return new MapModificationStrategy(support, schema, treeConfig, emptyNode);
+
+        final ImmutableList<UniqueValidator<?>> validators = UniqueValidation.validatorsOf(schema, treeConfig);
+        return new MapModificationStrategy(support, schema, treeConfig, emptyNode,
+            validators.isEmpty() ? null : UniqueTreeNodeSupport.of(validators));
     }
 
     @Override

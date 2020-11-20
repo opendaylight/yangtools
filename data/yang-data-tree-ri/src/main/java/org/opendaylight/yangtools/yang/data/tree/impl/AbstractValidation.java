@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.tree.impl.node.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.TreeNode;
 import org.opendaylight.yangtools.yang.data.tree.impl.node.Version;
 import org.slf4j.Logger;
@@ -60,6 +61,16 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     }
 
     @Override
+    final TreeNode newTreeNode(final NormalizedNode newValue, final Version version) {
+        return delegate.newTreeNode(newValue, version);
+    }
+
+    @Override
+    final MutableTreeNode newMutableTreeNode(final NormalizedNode newValue, final Version version) {
+        return delegate.newMutableTreeNode(newValue, version);
+    }
+
+    @Override
     final Optional<? extends TreeNode> apply(final ModifiedNode modification,
             final Optional<? extends TreeNode> storeMeta, final Version version) {
         Optional<? extends TreeNode> ret = modification.getValidatedNode(this, storeMeta);
@@ -83,13 +94,12 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate.checkApplicable(path, modification, current, version);
-        if (!(modification instanceof ModifiedNode)) {
+        if (!(modification instanceof ModifiedNode modified)) {
             // FIXME: 7.0.0: turn this into a verify?
             LOG.debug("Could not validate {}, does not implement expected class {}", modification, ModifiedNode.class);
             return;
         }
 
-        final ModifiedNode modified = (ModifiedNode) modification;
         if (delegate instanceof AbstractValidation) {
             checkApplicable(path, verifyNotNull(modified.getValidatedNode(delegate, current)));
             return;
