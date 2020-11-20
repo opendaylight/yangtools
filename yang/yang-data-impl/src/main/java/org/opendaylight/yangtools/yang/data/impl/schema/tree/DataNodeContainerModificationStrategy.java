@@ -45,9 +45,16 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
     DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
             final DataTreeConfiguration treeConfig) {
-        super(support, treeConfig, schema);
+        this(TreeNodeSupport.DEFAULT, support, schema, treeConfig);
+    }
+
+    DataNodeContainerModificationStrategy(final TreeNodeSupport treeSupport,
+            final NormalizedNodeContainerSupport<?, ?> support, final T schema,
+            final DataTreeConfiguration treeConfig) {
+        super(treeSupport, support, treeConfig, schema);
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
     }
+
 
     @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
