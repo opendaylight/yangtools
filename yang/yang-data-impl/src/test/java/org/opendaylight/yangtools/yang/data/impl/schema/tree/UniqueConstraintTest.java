@@ -78,7 +78,8 @@ public class UniqueConstraintTest {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(TEST_MODEL, true);
 
 
-        verifyExceptionMessage(assertThrows(IllegalArgumentException.class, () -> writeMap(inMemoryDataTree, true)),
+        verifyExceptionMessage(assertThrows(UniqueValidationFailedException.class,
+            () -> writeMap(inMemoryDataTree, true)),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
             "}] violates unique constraint on [l2, l1] of ",
             "(foo?revision=2016-05-17)my-leaf-1",
