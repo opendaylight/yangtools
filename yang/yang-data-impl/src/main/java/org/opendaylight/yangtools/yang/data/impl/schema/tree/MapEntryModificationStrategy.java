@@ -24,9 +24,9 @@ class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy
     private static final class EnforcingMandatory extends MapEntryModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
 
-        EnforcingMandatory(final ListSchemaNode schemaNode, final DataTreeConfiguration treeConfig,
-                final MandatoryLeafEnforcer enforcer) {
-            super(schemaNode, treeConfig);
+        EnforcingMandatory(final TreeNodeSupport treeSupport, final ListSchemaNode schemaNode,
+                final DataTreeConfiguration treeConfig, final MandatoryLeafEnforcer enforcer) {
+            super(treeSupport, schemaNode, treeConfig);
             this.enforcer = requireNonNull(enforcer);
         }
 
@@ -65,13 +65,21 @@ class MapEntryModificationStrategy extends DataNodeContainerModificationStrategy
                     ImmutableMapEntryNodeBuilder::create);
 
     MapEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(SUPPORT, schema, treeConfig);
+        this(TreeNodeSupport.DEFAULT, schema, treeConfig);
+    }
+
+    MapEntryModificationStrategy(final TreeNodeSupport treeSupport, final ListSchemaNode schema,
+            final DataTreeConfiguration treeConfig) {
+        super(treeSupport, SUPPORT, schema, treeConfig);
     }
 
     static @NonNull MapEntryModificationStrategy of(final ListSchemaNode schema,
-            final DataTreeConfiguration treeConfig) {
+            final DataTreeConfiguration treeConfig, final UniqueTreeNodeSupport<?> unique) {
+        final TreeNodeSupport treeSupport = unique == null ? TreeNodeSupport.DEFAULT
+            : new UniqueVectorTreeNodeSupport(unique);
+
         final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
-        return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.get())
-                : new MapEntryModificationStrategy(schema, treeConfig);
+        return enforcer.isPresent() ? new EnforcingMandatory(treeSupport, schema, treeConfig, enforcer.get())
+                : new MapEntryModificationStrategy(treeSupport, schema, treeConfig);
     }
 }

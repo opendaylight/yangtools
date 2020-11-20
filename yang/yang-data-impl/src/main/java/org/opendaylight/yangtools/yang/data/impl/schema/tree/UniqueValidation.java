@@ -54,12 +54,6 @@ final class UniqueValidation extends AbstractValidation {
         this.validators = requireNonNull(validators);
     }
 
-    static ModificationApplyOperation of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig,
-            final ModificationApplyOperation delegate) {
-        final ImmutableList<UniqueValidator<?>> validators = validatorsOf(schema, treeConfig);
-        return validators.isEmpty() ? delegate : new UniqueValidation(delegate, validators);
-    }
-
     static ImmutableList<UniqueValidator<?>> validatorsOf(final ListSchemaNode schema,
             final DataTreeConfiguration treeConfig) {
         final Collection<? extends @NonNull UniqueEffectiveStatement> uniques = schema.getUniqueConstraints();

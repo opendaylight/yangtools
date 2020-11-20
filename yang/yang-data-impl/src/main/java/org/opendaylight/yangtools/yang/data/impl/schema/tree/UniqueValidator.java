@@ -54,6 +54,11 @@ abstract class UniqueValidator<T> implements Immutable {
         }
 
         @Override
+        Object extractValues(final DataContainerNode<?> data) {
+            return extractValue(data, decodePath(descendants));
+        }
+
+        @Override
         Map<Descendant, @Nullable Object> indexValues(final Object values) {
             return Collections.singletonMap(decodeDescendant(descendants), values);
         }
@@ -69,6 +74,13 @@ abstract class UniqueValidator<T> implements Immutable {
                 final DataContainerNode<?> data) {
             return descendants.stream()
                 .map(obj -> extractValue(valueCache, data, decodePath(obj)))
+                .collect(UniqueValues.COLLECTOR);
+        }
+
+        @Override
+        UniqueValues extractValues(final DataContainerNode<?> data) {
+            return descendants.stream()
+                .map(obj -> extractValue(data, decodePath(obj)))
                 .collect(UniqueValues.COLLECTOR);
         }
 
@@ -104,6 +116,14 @@ abstract class UniqueValidator<T> implements Immutable {
      */
     abstract @Nullable Object extractValues(Map<List<NodeIdentifier>, Object> valueCache,
         DataContainerNode<?> data);
+
+    /**
+     * Extract a value vector from a particular child.
+     *
+     * @param data Root data node
+     * @return Value vector
+     */
+    abstract @Nullable Object extractValues(DataContainerNode<?> data);
 
     /**
      * Index a value vector by associating each value with its corresponding {@link Descendant}.
