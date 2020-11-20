@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -18,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
@@ -34,19 +35,26 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
     private final UnkeyedListNode emptyNode;
 
-    ListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        entryStrategy = new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig);
+    ListModificationStrategy(final ListSchemaNode schema,
+            final DataTreeConfiguration treeConfig, final UniqueTreeNodeSupport<?> unique) {
+        super(unique == null ? TreeNodeSupport.DEFAULT : new UniqueIndexTreeNodeSupport(unique));
+        entryStrategy = new DataNodeContainerModificationStrategy<>(unique == null ? TreeNodeSupport.DEFAULT
+            : new UniqueVectorTreeNodeSupport(unique), ITEM_SUPPORT, schema, treeConfig);
         emptyNode = ImmutableNodes.listNode(schema.getQName());
     }
 
-    @Override
-    ListSchemaNode getSchema() {
+    static @NonNull ListModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        final ImmutableList<UniqueValidator<?>> validators = UniqueValidation.validatorsOf(schema, treeConfig);
+        return new ListModificationStrategy(schema, treeConfig,
+            validators.isEmpty() ? null : UniqueTreeNodeSupport.of(validators));
+    }
+
+    @Override ListSchemaNode getSchema() {
         return entryStrategy.getSchema();
     }
 
-    @Override
-    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
-            final Version version) {
+    @Override Optional<? extends TreeNode> apply(final ModifiedNode modification,
+            final Optional<? extends TreeNode> storeMeta, final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
             version);
     }
@@ -57,22 +65,24 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         throw new IllegalStateException(String.format("Merge of modification %s on unkeyed list should never be called",
             modification));
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         throw new UnsupportedOperationException("UnkeyedList does not support subtree change.");
     }
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<? extends TreeNode> currentMeta, final Version version) {
-        final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
+        final UnkeyedListNode newNode = (UnkeyedListNode) newValue;
         if (modification.getChildren().isEmpty()) {
-            return newValueMeta;
+            return newTreeNode(newNode, version);
         }
 
         /*
@@ -84,10 +94,10 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
          * As it turns out, once we materialize the written data, we can share the code path with the subtree change. So
          * let's create an unsealed TreeNode and run the common parts on it -- which end with the node being sealed.
          */
-        final MutableTreeNode mutable = newValueMeta.mutable();
+        final MutableTreeNode mutable = newMutableTreeNode(newNode, version);
         mutable.setSubtreeVersion(version);
 
-        return mutateChildren(mutable, ImmutableUnkeyedListNodeBuilder.create((UnkeyedListNode) newValue), version,
+        return mutateChildren(mutable, ImmutableUnkeyedListNodeBuilder.create(newNode), version,
             modification.getChildren());
     }
 
@@ -129,13 +139,11 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         return arg instanceof NodeIdentifier ? entryStrategy : null;
     }
 
-    @Override
-    void verifyValue(final NormalizedNode<?, ?> value) {
+    @Override void verifyValue(final NormalizedNode<?, ?> value) {
         // NOOP
     }
 
-    @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    @Override void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         // NOOP
     }
 
@@ -145,8 +153,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 
-    @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+    @Override void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
         // Unkeyed lists are always replaced
         node.write(value);
     }

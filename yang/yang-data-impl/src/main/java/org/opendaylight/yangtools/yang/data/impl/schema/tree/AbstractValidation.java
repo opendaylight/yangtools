@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.slf4j.Logger;
@@ -57,6 +58,16 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     @Override
     final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         delegate.recursivelyVerifyStructure(value);
+    }
+
+    @Override
+    final TreeNode newTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+        return delegate.newTreeNode(newValue, version);
+    }
+
+    @Override
+    final MutableTreeNode newMutableTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+        return delegate.newMutableTreeNode(newValue, version);
     }
 
     @Override

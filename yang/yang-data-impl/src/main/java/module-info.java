@@ -37,4 +37,5 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires static org.osgi.service.component.annotations;
     requires static javax.inject;
     requires static metainf.services;
+    requires com.google.common;
 }
