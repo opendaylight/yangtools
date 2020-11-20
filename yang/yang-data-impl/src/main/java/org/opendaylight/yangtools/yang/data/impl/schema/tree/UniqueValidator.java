@@ -16,6 +16,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -112,6 +113,11 @@ abstract class UniqueValidator<T> implements Immutable {
      */
     abstract Map<Descendant, @Nullable Object> indexValues(Object values);
 
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).add("paths", descendants).toString();
+    }
+
     /**
      * Encode a path for storage. Single-element paths are squashed to their only element. The inverse operation is
      * {@link #decodePath(Object)}.
@@ -119,7 +125,9 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param path Path to encode
      * @return Encoded path.
      */
-    static final Object encodePath(final List<NodeIdentifier> path) {
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+        justification = "https://github.com/spotbugs/spotbugs/issues/811")
+    private static Object encodePath(final List<NodeIdentifier> path) {
         return path.size() == 1 ? path.get(0) : ImmutableList.copyOf(path);
     }
 
@@ -129,12 +137,14 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param obj Encoded path
      * @return Decoded path
      */
-    static final @NonNull ImmutableList<NodeIdentifier> decodePath(final Object obj) {
+    private static @NonNull ImmutableList<NodeIdentifier> decodePath(final Object obj) {
         return obj instanceof NodeIdentifier ? ImmutableList.of((NodeIdentifier) obj)
             : (ImmutableList<NodeIdentifier>) obj;
     }
 
-    static final @NonNull Descendant decodeDescendant(final Object obj) {
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+        justification = "https://github.com/spotbugs/spotbugs/issues/811")
+    private static @NonNull Descendant decodeDescendant(final Object obj) {
         return Descendant.of(Collections2.transform(decodePath(obj), NodeIdentifier::getNodeType));
     }
 
@@ -146,7 +156,9 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param path Descendant path
      * @return Value for the descendant
      */
-    static final @Nullable Object extractValue(final Map<List<NodeIdentifier>, Object> valueCache,
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+        justification = "https://github.com/spotbugs/spotbugs/issues/811")
+    private static @Nullable Object extractValue(final Map<List<NodeIdentifier>, Object> valueCache,
             final DataContainerNode<?> data, final List<NodeIdentifier> path) {
         return valueCache.computeIfAbsent(path, key -> extractValue(data, key));
     }
@@ -179,10 +191,5 @@ abstract class UniqueValidator<T> implements Immutable {
             checkState(next instanceof DataContainerNode, "Unexpected node %s in %s", next, path);
             current = (DataContainerNode<?>) next;
         }
-    }
-
-    @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(this).add("paths", descendants).toString();
     }
 }
