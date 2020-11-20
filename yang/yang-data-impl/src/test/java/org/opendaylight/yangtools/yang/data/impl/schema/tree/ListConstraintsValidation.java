@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -239,14 +239,9 @@ public class ListConstraintsValidation {
         modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), fuuLeafSetEntry);
 
-        try {
-            modificationTree.ready();
-            fail("Should have failed with IAE");
-        } catch (IllegalArgumentException e) {
-            assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-                    + "revision=2015-02-02)min-max-leaf-list has too many elements (4), can have at most 3",
-                    e.getMessage());
-        }
+        assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+            + "revision=2015-02-02)min-max-leaf-list has too many elements (4), can have at most 3",
+            asserThrows(MinMaxElementsValidationFailedException.class, () -> modificationTree.ready()).getMessage());
     }
 
     @Test
@@ -294,12 +289,8 @@ public class ListConstraintsValidation {
                 .withValue(unkeyedEntries).build();
 
         modificationTree.write(UNKEYED_LIST_PATH, unkeyedListNode);
-        try {
-            modificationTree.ready();
-            fail("Should have failed with IAE");
-        } catch (IllegalArgumentException e) {
-            assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-                    + "revision=2015-02-02)unkeyed-list has too many elements (2), can have at most 1", e.getMessage());
-        }
+        assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+            + "revision=2015-02-02)unkeyed-list has too many elements (2), can have at most 1",
+            assertThrows(MinMaxElementsValidationFailedException.class, () -> modificationTree.ready()).getMessage());
     }
 }
