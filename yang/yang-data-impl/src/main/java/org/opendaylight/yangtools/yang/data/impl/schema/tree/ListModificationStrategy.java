@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
@@ -86,11 +87,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
         final MutableTreeNode mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
 
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder =
-            ImmutableUnkeyedListEntryNodeBuilder.create((UnkeyedListEntryNode) newValue);
-
-        return mutateChildren(mutable, dataBuilder, version, modification.getChildren());
+        return mutateChildren(mutable, ImmutableUnkeyedListNodeBuilder.create((UnkeyedListNode) newValue), version,
+            modification.getChildren());
     }
 
     /**
