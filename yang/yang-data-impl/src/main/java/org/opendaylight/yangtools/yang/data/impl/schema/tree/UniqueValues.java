@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.Collector;
@@ -54,16 +53,20 @@ final class UniqueValues implements Immutable, Iterable<Object> {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('[').append(wrapBinary(objects[0]));
-        for (int i = 1; i < objects.length; ++i) {
-            sb.append(", ").append(wrapBinary(objects[i]));
-        }
-        return sb.append(']').toString();
+        return toString(objects);
     }
 
-    private static Object wrapBinary(final Object obj) {
-        return obj instanceof byte[] ? Base64.getEncoder().encodeToString((byte[]) obj) : obj;
+    private static String toString(final Object[] objects) {
+        if (objects.length == 0) {
+            return "[]";
+        }
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append('[').append(BinaryValue.wrap(objects[0]));
+        for (int i = 1; i < objects.length; ++i) {
+            sb.append(", ").append(BinaryValue.wrap(objects[i]));
+        }
+        return sb.append(']').toString();
     }
 
     private static final class Itr implements Iterator<Object> {
