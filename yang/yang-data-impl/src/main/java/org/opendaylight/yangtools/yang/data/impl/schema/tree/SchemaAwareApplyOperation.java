@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -25,7 +27,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -44,7 +48,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class SchemaAwareApplyOperation<T extends WithStatus> extends ModificationApplyOperation {
+    abstract static class TreeNodeSupport implements Immutable {
+        static final TreeNodeSupport DEFAULT = new TreeNodeSupport() {
+            @Override
+            TreeNode newTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+                return TreeNodeFactory.createTreeNode(newValue, version);
+            }
+
+            @Override
+            MutableTreeNode newMutableTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+                return newTreeNode(newValue, version).mutable();
+            }
+        };
+
+        abstract TreeNode newTreeNode(NormalizedNode<?, ?> newValue, Version version);
+
+        abstract MutableTreeNode newMutableTreeNode(NormalizedNode<?, ?> newValue, Version version);
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
+
+    private final TreeNodeSupport treeSupport;
+
+    SchemaAwareApplyOperation() {
+        treeSupport = TreeNodeSupport.DEFAULT;
+    }
+
+    SchemaAwareApplyOperation(final TreeNodeSupport treeSupport) {
+        this.treeSupport = requireNonNull(treeSupport);
+    }
 
     static ModificationApplyOperation from(final DataSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) throws ExcludedDataSchemaNodeException {
@@ -99,12 +131,12 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation<ListSchemaNode> op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
-            op = new ListModificationStrategy(schemaNode, treeConfig);
+            op = ListModificationStrategy.of(schemaNode, treeConfig);
         } else {
             op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
 
-        return UniqueValidation.of(schemaNode, treeConfig, MinMaxElementsValidation.from(op));
+        return MinMaxElementsValidation.from(op);
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,
@@ -119,6 +151,16 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         final ModificationApplyOperation potential = childByArg(child);
         checkArgument(potential != null, "Operation for child %s is not defined.", child);
         return potential;
+    }
+
+    @Override
+    final TreeNode newTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+        return treeSupport.newTreeNode(newValue, version);
+    }
+
+    @Override
+    final MutableTreeNode newMutableTreeNode(final NormalizedNode<?, ?> newValue, final Version version) {
+        return treeSupport.newMutableTreeNode(newValue, version);
     }
 
     @Override
