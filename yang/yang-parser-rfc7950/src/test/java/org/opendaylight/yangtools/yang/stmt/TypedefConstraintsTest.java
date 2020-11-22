@@ -31,15 +31,10 @@ public class TypedefConstraintsTest {
     public void decimalRangeConstraintsTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/stmt-test/constraints");
 
-        assertNotNull(context);
-
         final Collection<? extends TypeDefinition<?>> typeDefinitions = context.getTypeDefinitions();
-        assertNotNull(typeDefinitions);
         assertEquals(1, typeDefinitions.size());
 
         final TypeDefinition<?> myDecimal = typeDefinitions.iterator().next();
-
-        assertNotNull(myDecimal);
         assertTrue(myDecimal instanceof DecimalTypeDefinition);
 
         final Set<? extends Range<?>> rangeConstraints = ((DecimalTypeDefinition) myDecimal).getRangeConstraint()
@@ -48,9 +43,8 @@ public class TypedefConstraintsTest {
         assertNotNull(rangeConstraints);
         assertEquals(1, rangeConstraints.size());
 
-        final DataSchemaNode dataNode = context.getDataChildByName(QName.create("urn:opendaylight.foo", "2013-10-08",
+        final DataSchemaNode dataNode = context.dataChildByName(QName.create("urn:opendaylight.foo", "2013-10-08",
             "id-decimal64"));
-        assertNotNull(dataNode);
         assertTrue(dataNode instanceof LeafSchemaNode);
 
         final LeafSchemaNode leafDecimal = (LeafSchemaNode) dataNode;

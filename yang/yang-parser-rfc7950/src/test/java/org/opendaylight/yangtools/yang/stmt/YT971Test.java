@@ -37,21 +37,19 @@ public class YT971Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/bugs/YT971/test.yang");
         assertNotNull(schemaContext);
 
-        final DataSchemaNode someContainer = schemaContext.findDataChildByName(
-            QName.create(NAMESPACE, "some-container")).get();
+        final DataSchemaNode someContainer = schemaContext.dataChildByName(QName.create(NAMESPACE, "some-container"));
         assertThat(someContainer, instanceOf(ContainerSchemaNode.class));
         final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) someContainer;
 
-        final DataSchemaNode someLeaf = containerSchemaNode.findDataChildByName(QName.create(NAMESPACE, "some-leaf"))
-                .get();
+        final DataSchemaNode someLeaf = containerSchemaNode.dataChildByName(QName.create(NAMESPACE, "some-leaf"));
         assertThat(someLeaf, instanceOf(LeafSchemaNode.class));
         final LeafSchemaNode leafSchemaNode = (LeafSchemaNode) someLeaf;
         assertEquals(Optional.of("Some string that ends with a backslash (with escape backslash too) \\"),
                      leafSchemaNode.getDescription());
         assertThat(leafSchemaNode.getType(), instanceOf(Int16TypeDefinition.class));
 
-        final DataSchemaNode someOtherLeaf = containerSchemaNode.findDataChildByName(
-                QName.create(NAMESPACE, "some-other-leaf")).get();
+        final DataSchemaNode someOtherLeaf = containerSchemaNode.dataChildByName(
+                QName.create(NAMESPACE, "some-other-leaf"));
         assertThat(someOtherLeaf, instanceOf(LeafSchemaNode.class));
 
         final LeafSchemaNode otherLeafSchemaNode = (LeafSchemaNode) someOtherLeaf;

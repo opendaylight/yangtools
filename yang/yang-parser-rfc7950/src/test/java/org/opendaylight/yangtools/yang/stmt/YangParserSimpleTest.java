@@ -99,8 +99,8 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseAnyData() {
-        final AnydataSchemaNode anydata = (AnydataSchemaNode) testModule.findDataChildByName(
-                QName.create(testModule.getQNameModule(), "data2")).orElse(null);
+        final AnydataSchemaNode anydata = (AnydataSchemaNode) testModule.dataChildByName(
+                QName.create(testModule.getQNameModule(), "data2"));
 
         assertNotNull("'anydata data not found'", anydata);
         assertEquals("RegularAnydataEffectiveStatement{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data2, "
