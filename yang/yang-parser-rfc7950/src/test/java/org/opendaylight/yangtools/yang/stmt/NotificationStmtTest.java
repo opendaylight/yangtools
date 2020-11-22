@@ -41,12 +41,12 @@ public class NotificationStmtTest {
         assertEquals("event", notification.getQName().getLocalName());
         assertEquals(3, notification.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(),
+        LeafSchemaNode leaf = (LeafSchemaNode) notification.dataChildByName(QName.create(testModule.getQNameModule(),
                 "event-class"));
         assertNotNull(leaf);
-        leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(), "severity"));
+        leaf = (LeafSchemaNode) notification.dataChildByName(QName.create(testModule.getQNameModule(), "severity"));
         assertNotNull(leaf);
-        final AnyxmlSchemaNode anyXml = (AnyxmlSchemaNode) notification.getDataChildByName(QName.create(
+        final AnyxmlSchemaNode anyXml = (AnyxmlSchemaNode) notification.dataChildByName(QName.create(
             testModule.getQNameModule(), "reporting-entity"));
         assertNotNull(anyXml);
     }

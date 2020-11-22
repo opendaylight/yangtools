@@ -28,7 +28,7 @@ public class Bug5942Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug5942");
         assertNotNull(schemaContext);
 
-        final DataSchemaNode root = schemaContext.getDataChildByName(QName.create("foo", "2016-06-02", "root"));
+        final DataSchemaNode root = schemaContext.dataChildByName(QName.create("foo", "2016-06-02", "root"));
         assertTrue(root instanceof ContainerSchemaNode);
 
         final Collection<? extends UsesNode> uses = ((ContainerSchemaNode) root).getUses();

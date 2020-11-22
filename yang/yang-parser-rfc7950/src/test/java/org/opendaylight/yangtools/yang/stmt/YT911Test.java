@@ -24,7 +24,7 @@ public class YT911Test {
     @Test
     public void testAugmentationConfig() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/YT911/foo.yang");
-        final DataSchemaNode foo = context.findDataChildByName(FOO).get();
+        final DataSchemaNode foo = context.getDataChildByName(FOO);
         assertFalse(foo.isConfiguration());
         assertTrue(foo instanceof ContainerSchemaNode);
 

@@ -21,7 +21,7 @@ public class YT983Test {
     @Test
     public void testAugmentationConfig() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/YT983/foo.yang");
-        final DataSchemaNode foo = context.findDataChildByName(FOO).get();
+        final DataSchemaNode foo = context.dataChildByName(FOO);
         assertTrue(foo instanceof LeafSchemaNode);
     }
 }

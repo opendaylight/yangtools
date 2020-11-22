@@ -31,11 +31,11 @@ public class ChoiceStmtTest {
         final Module testModule = result.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.dataChildByName(QName.create(
                 testModule.getQNameModule(), "transfer"));
         assertNotNull(container);
 
-        final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName(QName.create(
+        final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.dataChildByName(QName.create(
                 testModule.getQNameModule(), "how"));
         assertNotNull(choice);
         assertEquals(5, choice.getCases().size());

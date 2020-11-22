@@ -35,7 +35,7 @@ public class ThirdPartyExtensionPluginTest {
         reactor.addSource(StmtTestUtils.sourceForResource("/plugin-test/foo.yang"));
 
         final SchemaContext schema = reactor.buildEffective();
-        final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
+        final DataSchemaNode dataChildByName = schema.dataChildByName(QName.create(NS, REV, "root"));
         assertThat(dataChildByName, isA(ContainerSchemaNode.class));
 
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;

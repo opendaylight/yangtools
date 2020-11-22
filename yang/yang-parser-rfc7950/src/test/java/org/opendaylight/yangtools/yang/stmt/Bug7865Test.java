@@ -28,7 +28,7 @@ public class Bug7865Test {
         final SchemaContext context = TestUtils.parseYangSources("/bugs/bug7865");
         assertNotNull(context);
 
-        final DataSchemaNode root = context.getDataChildByName(foo("root"));
+        final DataSchemaNode root = context.dataChildByName(foo("root"));
         assertTrue(root instanceof ContainerSchemaNode);
         final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());

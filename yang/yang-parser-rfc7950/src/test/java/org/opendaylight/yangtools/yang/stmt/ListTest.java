@@ -38,7 +38,7 @@ public class ListTest {
         final Module testModule = result.findModules("list-test").iterator().next();
         assertNotNull(testModule);
 
-        final ListSchemaNode list = (ListSchemaNode) testModule.getDataChildByName(
+        final ListSchemaNode list = (ListSchemaNode) testModule.dataChildByName(
             QName.create(testModule.getQNameModule(), "simple-list"));
         assertNotNull(list);
 
@@ -56,29 +56,29 @@ public class ListTest {
 
         assertEquals(5, list.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
+        LeafSchemaNode leaf = (LeafSchemaNode) list.dataChildByName(QName.create(testModule.getQNameModule(),
             "key1"));
         assertNotNull(leaf);
         assertTrue(leaf.isMandatory());
         assertEquals("int32", leaf.getType().getQName().getLocalName());
 
-        leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "key2"));
+        leaf = (LeafSchemaNode) list.dataChildByName(QName.create(testModule.getQNameModule(), "key2"));
         assertNotNull(leaf);
         assertTrue(leaf.isMandatory());
         assertEquals("int16", leaf.getType().getQName().getLocalName());
 
-        leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "old-leaf"));
+        leaf = (LeafSchemaNode) list.dataChildByName(QName.create(testModule.getQNameModule(), "old-leaf"));
         assertNotNull(leaf);
         assertFalse(leaf.isMandatory());
         assertEquals("string", leaf.getType().getQName().getLocalName());
 
-        leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "young-leaf"));
+        leaf = (LeafSchemaNode) list.dataChildByName(QName.create(testModule.getQNameModule(), "young-leaf"));
         assertNotNull(leaf);
         assertFalse(leaf.isMandatory());
         assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
         assertEquals(Optional.of("default-value"), leaf.getType().getDefaultValue());
 
-        final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(
+        final LeafListSchemaNode leafList = (LeafListSchemaNode) list.dataChildByName(
             QName.create(testModule.getQNameModule(), "list-of-leaves"));
         assertNotNull(leafList);
         assertTrue(leafList.isUserOrdered());
