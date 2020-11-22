@@ -54,24 +54,23 @@ public class DeviationResolutionTest {
         assertNotNull(schemaContext);
 
         final Module importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).get();
-        final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
+        final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.dataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-a"));
         assertNotNull(myContA);
 
         assertEquals(1, myContA.getChildNodes().size());
-        assertNotNull(myContA.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-a3")));
+        assertNotNull(myContA.dataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-a3")));
 
-        final ContainerSchemaNode myContB = (ContainerSchemaNode) importedModule.getDataChildByName(
-                QName.create(importedModule.getQNameModule(), "my-cont-b"));
-        assertNull(myContB);
+        assertNull((ContainerSchemaNode) importedModule.dataChildByName(
+                QName.create(importedModule.getQNameModule(), "my-cont-b")));
 
-        final ContainerSchemaNode myContC = (ContainerSchemaNode) importedModule.getDataChildByName(
+        final ContainerSchemaNode myContC = (ContainerSchemaNode) importedModule.dataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-c"));
         assertNotNull(myContC);
 
         assertEquals(2, myContC.getChildNodes().size());
-        assertNotNull(myContC.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-c1")));
-        assertNotNull(myContC.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-c2")));
+        assertNotNull(myContC.dataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-c1")));
+        assertNotNull(myContC.dataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-c2")));
     }
 
     @Test
@@ -82,7 +81,7 @@ public class DeviationResolutionTest {
         assertNotNull(schemaContext);
 
         final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
+        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.dataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
 
@@ -94,12 +93,12 @@ public class DeviationResolutionTest {
         assertEquals((Object) 5, constraint.getMinElements());
         assertNotNull(myLeafList.getType().getUnits());
 
-        final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
+        final ListSchemaNode myList = (ListSchemaNode) barModule.dataChildByName(
                 QName.create(barModule.getQNameModule(), "my-list"));
         assertNotNull(myList);
         assertEquals(2, myList.getUniqueConstraints().size());
 
-        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
+        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.dataChildByName(
                 QName.create(barModule.getQNameModule(), "my-choice"));
         assertNotNull(myChoice);
         assertEquals("c2", myChoice.getDefaultCase().get().getQName().getLocalName());
@@ -113,14 +112,14 @@ public class DeviationResolutionTest {
         final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();
         assertEquals(2, myNotification.getMustConstraints().size());
 
-        final AnyxmlSchemaNode myAnyxml = (AnyxmlSchemaNode) barModule.getDataChildByName(
+        final AnyxmlSchemaNode myAnyxml = (AnyxmlSchemaNode) barModule.dataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anyxml"));
         assertNotNull(myAnyxml);
         assertTrue(myAnyxml.isMandatory());
         assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
 
-        final AnydataSchemaNode myAnyData = (AnydataSchemaNode) barModule.findDataChildByName(
-                QName.create(barModule.getQNameModule(), "my-anydata")).orElse(null);
+        final AnydataSchemaNode myAnyData = (AnydataSchemaNode) barModule.dataChildByName(
+                QName.create(barModule.getQNameModule(), "my-anydata"));
         assertNotNull(myAnyData);
         assertTrue(myAnyData.isMandatory());
         assertEquals(2, myAnyData.getUnknownSchemaNodes().size());

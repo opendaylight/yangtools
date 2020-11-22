@@ -110,8 +110,8 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return Optional.ofNullable(mappedChildSchemas.get(requireNonNull(name)));
+    public DataSchemaNode dataChildByName(final QName name) {
+        return mappedChildSchemas.get(requireNonNull(name));
     }
 
     @Override

@@ -66,7 +66,7 @@ public class Bug6180Test {
     }
 
     private static void verifyDoubleQuotesExpression(final SchemaContext schemaContext) {
-        final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
+        final DataSchemaNode dataNodeBar = schemaContext.dataChildByName(QName.create("foo", "2016-07-11", "bar"));
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
         assertEquals("/foo != \"bar\"", bar.getWhenCondition().orElseThrow().toString());
@@ -83,7 +83,7 @@ public class Bug6180Test {
     }
 
     private static void verifySingleQuotesExpression(final SchemaContext schemaContext) {
-        final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
+        final DataSchemaNode dataNodeBar = schemaContext.dataChildByName(QName.create("foo", "2016-07-11", "bar"));
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
         assertEquals("/foo != 'bar'", bar.getWhenCondition().orElseThrow().toString());

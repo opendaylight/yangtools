@@ -91,7 +91,7 @@ public class Bug5946Test {
 
     private static @NonNull Collection<? extends UniqueEffectiveStatement> getListConstraints(
             final SchemaContext context, final QName listQName) {
-        DataSchemaNode dataChildByName = context.getDataChildByName(listQName);
+        DataSchemaNode dataChildByName = context.dataChildByName(listQName);
         assertTrue(dataChildByName instanceof ListSchemaNode);
         return ((ListSchemaNode) dataChildByName).getUniqueConstraints();
     }

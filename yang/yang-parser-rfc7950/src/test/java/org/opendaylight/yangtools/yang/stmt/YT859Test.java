@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -31,6 +31,6 @@ public class YT859Test {
         final DataSchemaNode named = Iterables.getOnlyElement(context.findModules("xyzzy"))
             .findDataChildByName(QName.create("xyzzy", "xyzzy"), QName.create("xyzzy", "named")).orElseThrow();
         assertThat(named, instanceOf(ListSchemaNode.class));
-        assertEquals(Optional.empty(), ((ListSchemaNode) named).findDataChildByName(QName.create("foo", "foo")));
+        assertNull(((ListSchemaNode) named).dataChildByName(QName.create("foo", "foo")));
     }
 }
