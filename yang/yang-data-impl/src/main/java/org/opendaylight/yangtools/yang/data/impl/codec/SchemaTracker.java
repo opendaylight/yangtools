@@ -231,7 +231,7 @@ public final class SchemaTracker {
     public SchemaNode startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
         final SchemaNode schema = getSchema(name);
-        final boolean isAllowed = schema instanceof ContainerLike | schema instanceof NotificationDefinition;
+        final boolean isAllowed = schema instanceof ContainerLike || schema instanceof NotificationDefinition;
 
         checkArgument(isAllowed, "Node %s is not a container nor a notification", schema);
         schemaStack.push(schema);
