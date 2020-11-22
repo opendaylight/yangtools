@@ -38,12 +38,12 @@ public final class StoreTreeNodes {
      */
     public static <T extends StoreTreeNode<T>> Optional<? extends T> findNode(final T tree,
             final YangInstanceIdentifier path) {
-        Optional<? extends T> current = Optional.of(tree);
+        T current = tree;
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
-        while (current.isPresent() && pathIter.hasNext()) {
-            current = current.get().getChild(pathIter.next());
+        while (current != null && pathIter.hasNext()) {
+            current = current.childByArg(pathIter.next());
         }
-        return current;
+        return Optional.ofNullable(current);
     }
 
     public static <T extends StoreTreeNode<T>> T findNodeChecked(final T tree, final YangInstanceIdentifier path) {
@@ -51,12 +51,11 @@ public final class StoreTreeNodes {
 
         int depth = 1;
         for (PathArgument pathArg : path.getPathArguments()) {
-            Optional<? extends T> potential = current.getChild(pathArg);
-            if (potential.isEmpty()) {
+            current = current.childByArg(pathArg);
+            if (current == null) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
                         path.getAncestor(depth)));
             }
-            current = potential.get();
             ++depth;
         }
         return current;
@@ -78,19 +77,19 @@ public final class StoreTreeNodes {
 
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree,
             final YangInstanceIdentifier path, final Predicate<T> predicate) {
-        Optional<? extends T> parent = Optional.of(tree);
-        Optional<? extends T> current = Optional.of(tree);
+        T parent = tree;
+        T current = tree;
 
         int nesting = 0;
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
-        while (current.isPresent() && pathIter.hasNext() && !predicate.test(current.get())) {
+        while (current != null && pathIter.hasNext() && !predicate.test(current)) {
             parent = current;
-            current = current.get().getChild(pathIter.next());
+            current = current.childByArg(pathIter.next());
             nesting++;
         }
-        if (current.isPresent()) {
+        if (current != null) {
             final YangInstanceIdentifier currentPath = path.getAncestor(nesting);
-            return new SimpleImmutableEntry<>(currentPath, current.get());
+            return new SimpleImmutableEntry<>(currentPath, current);
         }
 
         /*
@@ -100,13 +99,13 @@ public final class StoreTreeNodes {
          * present. At any rate we verify state just to be on the safe side.
          */
         verify(nesting > 0);
-        return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent.get());
+        return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent);
     }
 
     public static <T extends StoreTreeNode<T>> Optional<? extends T> getChild(final Optional<T> parent,
             final PathArgument child) {
         if (parent.isPresent()) {
-            return parent.get().getChild(child);
+            return parent.get().findChildByArg(child);
         }
         return Optional.empty();
     }

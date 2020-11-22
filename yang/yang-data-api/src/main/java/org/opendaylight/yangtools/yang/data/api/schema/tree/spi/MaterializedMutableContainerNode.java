@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import java.util.Map;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class MaterializedMutableContainerNode extends AbstractMutableContainerNode {
@@ -17,7 +16,7 @@ final class MaterializedMutableContainerNode extends AbstractMutableContainerNod
     }
 
     @Override
-    public Optional<TreeNode> getChild(final PathArgument child) {
-        return Optional.ofNullable(getModifiedChild(child));
+    public TreeNode childByArg(final PathArgument arg) {
+        return getModifiedChild(arg);
     }
 }

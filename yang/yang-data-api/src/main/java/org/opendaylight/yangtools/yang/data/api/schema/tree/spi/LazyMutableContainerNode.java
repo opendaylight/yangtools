@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import java.util.Map;
-import java.util.Optional;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -26,12 +25,8 @@ final class LazyMutableContainerNode extends AbstractMutableContainerNode {
     }
 
     @Override
-    public Optional<TreeNode> getChild(final PathArgument childId) {
-        final TreeNode modified = getModifiedChild(childId);
-        if (modified != null) {
-            return Optional.of(modified);
-        }
-
-        return Optional.ofNullable(AbstractContainerNode.getChildFromData(getData(), childId, getVersion()));
+    public TreeNode childByArg(final PathArgument arg) {
+        final TreeNode modified = getModifiedChild(arg);
+        return modified != null ? modified : AbstractContainerNode.getChildFromData(getData(), arg, getVersion());
     }
 }

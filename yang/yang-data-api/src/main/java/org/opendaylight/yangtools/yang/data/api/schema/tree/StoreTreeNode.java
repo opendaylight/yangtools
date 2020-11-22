@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import com.google.common.base.VerifyException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -21,9 +25,32 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
     /**
      * Returns a direct child of the node.
      *
-     * @param child Identifier of child
-     * @return Optional with node if the child is existing, {@link Optional#empty()} otherwise.
+     * @param arg Identifier of child
+     * @return A node if the child is existing, {@code null} otherwise.
      * @throws NullPointerException when {@code child} is null
      */
-    @NonNull Optional<? extends C> getChild(PathArgument child);
+    @Nullable C childByArg(PathArgument arg);
+
+    /**
+     * Returns a direct child of the node.
+     *
+     * @param arg Identifier of child
+     * @return A child node
+     * @throws NullPointerException when {@code child} is null
+     * @throws VerifyException if the child does not exist
+     */
+    default @NonNull C getChildByArg(final PathArgument arg) {
+        return verifyNotNull(childByArg(arg), "Child %s does not exist");
+    }
+
+    /**
+     * Returns a direct child of the node.
+     *
+     * @param arg Identifier of child
+     * @return Optional with node if the child exists, {@link Optional#empty()} otherwise.
+     * @throws NullPointerException when {@code child} is null
+     */
+    @NonNull default Optional<C> findChildByArg(final PathArgument arg) {
+        return Optional.ofNullable(childByArg(arg));
+    }
 }

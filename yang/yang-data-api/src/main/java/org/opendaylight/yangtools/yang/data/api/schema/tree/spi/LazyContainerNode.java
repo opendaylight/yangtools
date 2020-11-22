@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Collections2;
 import java.util.Map;
-import java.util.Optional;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -39,9 +38,9 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     }
 
     @Override
-    public Optional<TreeNode> getChild(final PathArgument childId) {
+    public TreeNode childByArg(final PathArgument arg) {
         final TreeNode modified;
-        return (modified = getModifiedChild(childId)) == null ? getChildFromData(childId) : Optional.of(modified);
+        return (modified = getModifiedChild(arg)) == null ? getChildFromData(arg) : modified;
     }
 
     @Override

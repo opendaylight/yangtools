@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -26,8 +25,8 @@ final class SimpleContainerNode extends AbstractContainerNode {
     }
 
     @Override
-    public Optional<TreeNode> getChild(final PathArgument child) {
-        return getChildFromData(child);
+    public TreeNode childByArg(final PathArgument arg) {
+        return getChildFromData(arg);
     }
 
     @Override

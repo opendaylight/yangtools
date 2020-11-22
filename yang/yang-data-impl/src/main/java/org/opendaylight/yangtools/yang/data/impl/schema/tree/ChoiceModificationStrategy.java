@@ -101,8 +101,8 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return Optional.ofNullable(childNodes.get(child));
+    public ModificationApplyOperation childByArg(final PathArgument arg) {
+        return childNodes.get(arg);
     }
 
     @Override

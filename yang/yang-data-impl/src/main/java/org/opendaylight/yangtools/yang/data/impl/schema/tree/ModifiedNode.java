@@ -114,12 +114,12 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return Child modification if direct child or it's subtree was modified.
      */
     @Override
-    public Optional<ModifiedNode> getChild(final PathArgument child) {
-        return Optional.ofNullable(children.get(child));
+    public ModifiedNode childByArg(final PathArgument arg) {
+        return children.get(arg);
     }
 
     private Optional<? extends TreeNode> metadataFromSnapshot(final @NonNull PathArgument child) {
-        return original.isPresent() ? original.get().getChild(child) : Optional.empty();
+        return original.isPresent() ? original.get().findChildByArg(child) : Optional.empty();
     }
 
     private Optional<? extends TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
@@ -130,7 +130,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             writtenOriginal = TreeNodeFactory.createTreeNode(value, modVersion);
         }
 
-        return writtenOriginal.getChild(child);
+        return writtenOriginal.findChildByArg(child);
     }
 
     /**

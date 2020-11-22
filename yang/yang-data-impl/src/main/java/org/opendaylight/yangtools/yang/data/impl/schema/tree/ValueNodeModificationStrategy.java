@@ -38,7 +38,7 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode, V extends No
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+    public ModificationApplyOperation childByArg(final PathArgument arg) {
         throw new UnsupportedOperationException("Node " + schema + " is leaf type node. Child nodes not allowed");
     }
 

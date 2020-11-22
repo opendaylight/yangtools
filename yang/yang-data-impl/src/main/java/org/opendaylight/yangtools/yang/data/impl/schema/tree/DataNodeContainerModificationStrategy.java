@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -50,15 +51,15 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
     }
 
     @Override
-    public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
+    public final ModificationApplyOperation childByArg(final PathArgument arg) {
         final ImmutableMap<PathArgument, ModificationApplyOperation> local = children;
-        final ModificationApplyOperation existing = local.get(identifier);
+        final ModificationApplyOperation existing = local.get(arg);
         if (existing != null) {
-            return Optional.of(existing);
+            return existing;
         }
 
-        final ModificationApplyOperation childOperation = resolveChild(identifier);
-        return childOperation != null ? appendChild(local, identifier, childOperation) : Optional.empty();
+        final ModificationApplyOperation childOperation = resolveChild(arg);
+        return childOperation != null ? appendChild(local, arg, childOperation) : null;
     }
 
     private ModificationApplyOperation resolveChild(final PathArgument identifier) {
@@ -85,7 +86,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
         }
     }
 
-    private Optional<ModificationApplyOperation> appendChild(
+    private @Nullable ModificationApplyOperation appendChild(
             final ImmutableMap<PathArgument, ModificationApplyOperation> initial, final PathArgument identifier,
             final ModificationApplyOperation computed) {
 
@@ -100,14 +101,14 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithSt
 
             // Attempt to install the updated map
             if (UPDATER.compareAndSet(this, previous, updated)) {
-                return Optional.of(computed);
+                return computed;
             }
 
             // We have raced, acquire a new snapshot, recheck presence and retry if needed
             previous = children;
             final ModificationApplyOperation raced = previous.get(identifier);
             if (raced != null) {
-                return Optional.of(raced);
+                return raced;
             }
         }
     }

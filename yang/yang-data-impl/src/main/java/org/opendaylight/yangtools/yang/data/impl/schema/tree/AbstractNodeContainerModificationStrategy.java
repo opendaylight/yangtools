@@ -49,8 +49,8 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             return entryStrategy.getSchema();
         }
 
-        final Optional<ModificationApplyOperation> entryStrategy() {
-            return Optional.of(entryStrategy);
+        final @NonNull ModificationApplyOperation entryStrategy() {
+            return entryStrategy;
         }
 
         @Override
@@ -112,14 +112,13 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         if (verifyChildrenStructure) {
             final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) writtenValue;
             for (final NormalizedNode<?, ?> child : container.getValue()) {
-                final Optional<ModificationApplyOperation> childOp = getChild(child.getIdentifier());
-                if (childOp.isPresent()) {
-                    childOp.get().fullVerifyStructure(child);
-                } else {
+                final ModificationApplyOperation childOp = childByArg(child.getIdentifier());
+                if (childOp == null) {
                     throw new SchemaValidationFailedException(String.format(
-                            "Node %s is not a valid child of %s according to the schema.",
-                            child.getIdentifier(), container.getIdentifier()));
+                        "Node %s is not a valid child of %s according to the schema.",
+                        child.getIdentifier(), container.getIdentifier()));
                 }
+                childOp.fullVerifyStructure(child);
             }
 
             optionalVerifyValueChildren(writtenValue);
@@ -151,14 +150,14 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     protected final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) value;
         for (final NormalizedNode<?, ?> child : container.getValue()) {
-            final Optional<ModificationApplyOperation> childOp = getChild(child.getIdentifier());
-            if (!childOp.isPresent()) {
+            final ModificationApplyOperation childOp = childByArg(child.getIdentifier());
+            if (childOp == null) {
                 throw new SchemaValidationFailedException(
                     String.format("Node %s is not a valid child of %s according to the schema.",
                         child.getIdentifier(), container.getIdentifier()));
             }
 
-            childOp.get().recursivelyVerifyStructure(child);
+            childOp.recursivelyVerifyStructure(child);
         }
     }
 
@@ -214,7 +213,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
         for (final ModifiedNode mod : modifications) {
             final PathArgument id = mod.getIdentifier();
-            final Optional<? extends TreeNode> cm = meta.getChild(id);
+            final Optional<? extends TreeNode> cm = meta.findChildByArg(id);
 
             final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
@@ -410,7 +409,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             final TreeNode current, final Version version) throws DataValidationFailedException {
         for (final NodeModification childMod : modification.getChildren()) {
             final PathArgument childId = childMod.getIdentifier();
-            final Optional<? extends TreeNode> childMeta = current.getChild(childId);
+            final Optional<? extends TreeNode> childMeta = current.findChildByArg(childId);
 
             path.push(childId);
             try {

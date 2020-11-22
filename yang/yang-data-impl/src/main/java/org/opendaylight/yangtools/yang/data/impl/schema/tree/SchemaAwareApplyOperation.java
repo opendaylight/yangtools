@@ -115,10 +115,10 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
                 "Node children was modified by other transaction");
     }
 
-    protected final ModificationApplyOperation resolveChildOperation(final PathArgument child) {
-        final Optional<ModificationApplyOperation> potential = getChild(child);
-        checkArgument(potential.isPresent(), "Operation for child %s is not defined.", child);
-        return potential.get();
+    protected final @NonNull ModificationApplyOperation resolveChildOperation(final PathArgument child) {
+        final ModificationApplyOperation potential = childByArg(child);
+        checkArgument(potential != null, "Operation for child %s is not defined.", child);
+        return potential;
     }
 
     @Override

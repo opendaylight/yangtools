@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -38,7 +37,7 @@ final class LeafSetModificationStrategy extends Invisible<LeafListSchemaNode> {
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-        return identifier instanceof NodeWithValue ? entryStrategy() : Optional.empty();
+    public ModificationApplyOperation childByArg(final PathArgument arg) {
+        return arg instanceof NodeWithValue ? entryStrategy() : null;
     }
 }

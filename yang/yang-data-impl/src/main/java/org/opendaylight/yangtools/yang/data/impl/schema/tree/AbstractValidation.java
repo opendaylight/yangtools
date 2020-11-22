@@ -35,8 +35,8 @@ abstract class AbstractValidation extends ModificationApplyOperation {
     }
 
     @Override
-    public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return delegate.getChild(child);
+    public final ModificationApplyOperation childByArg(final PathArgument arg) {
+        return delegate.childByArg(arg);
     }
 
     @Override

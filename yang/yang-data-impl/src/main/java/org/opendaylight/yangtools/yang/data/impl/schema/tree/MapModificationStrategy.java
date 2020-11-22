@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -55,8 +55,8 @@ final class MapModificationStrategy extends Invisible<ListSchemaNode> {
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-        return identifier instanceof NodeIdentifierWithPredicates ? entryStrategy() : Optional.empty();
+    public ModificationApplyOperation childByArg(final PathArgument arg) {
+        return arg instanceof NodeIdentifierWithPredicates ? entryStrategy() : null;
     }
 
     @Override

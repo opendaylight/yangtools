@@ -49,7 +49,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     private static TreeNode childMeta(final TreeNode parent, final PathArgument id) {
-        return parent == null ? null : parent.getChild(id).orElse(null);
+        return parent == null ? null : parent.childByArg(id);
     }
 
     private static boolean canHaveChildren(final @Nullable TreeNode oldMeta, final @Nullable TreeNode newMeta) {
@@ -127,7 +127,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             case APPEARED:
             case DISAPPEARED:
             case SUBTREE_MODIFIED:
-                return mod.getChild(identifier).map(this::childNode);
+                final ModifiedNode child = mod.childByArg(identifier);
+                return child == null ? Optional.empty() : Optional.of(childNode(child));
             case UNMODIFIED:
                 if (!canHaveChildren(oldMeta, newMeta)) {
                     return Optional.empty();

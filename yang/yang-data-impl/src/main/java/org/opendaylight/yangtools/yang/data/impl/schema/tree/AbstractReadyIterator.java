@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 abstract class AbstractReadyIterator {
@@ -37,10 +36,9 @@ abstract class AbstractReadyIterator {
         // through it via re-entering this method on the child iterator.
         while (children.hasNext()) {
             final ModifiedNode child = children.next();
-            final Optional<ModificationApplyOperation> childOperation = op.getChild(child.getIdentifier());
-            checkState(childOperation.isPresent(), "Schema for child %s is not present.", child.getIdentifier());
+            final ModificationApplyOperation childOp = op.childByArg(child.getIdentifier());
+            checkState(childOp != null, "Schema for child %s is not present.", child.getIdentifier());
             final Collection<ModifiedNode> grandChildren = child.getChildren();
-            final ModificationApplyOperation childOp = childOperation.get();
 
             if (grandChildren.isEmpty()) {
                 // The child is empty, seal it

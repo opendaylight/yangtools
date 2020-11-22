@@ -107,7 +107,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
 
         for (final ModifiedNode mod : modifications) {
             final PathArgument id = mod.getIdentifier();
-            final Optional<? extends TreeNode> cm = meta.getChild(id);
+            final Optional<? extends TreeNode> cm = meta.findChildByArg(id);
 
             final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
@@ -125,8 +125,8 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return child instanceof NodeIdentifier ? Optional.of(entryStrategy) : Optional.empty();
+    public ModificationApplyOperation childByArg(final PathArgument arg) {
+        return arg instanceof NodeIdentifier ? entryStrategy : null;
     }
 
     @Override

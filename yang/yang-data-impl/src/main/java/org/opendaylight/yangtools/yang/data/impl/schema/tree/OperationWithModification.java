@@ -56,14 +56,12 @@ final class OperationWithModification {
      * view, one will we instantiated with specified version.
      */
     Optional<NormalizedNode<?, ?>> read(final PathArgument child, final Version version) {
-        final Optional<ModifiedNode> maybeChild = modification.getChild(child);
-        if (maybeChild.isPresent()) {
-            final ModifiedNode childNode = maybeChild.get();
-
+        final ModifiedNode childNode = modification.childByArg(child);
+        if (childNode != null) {
             Optional<? extends TreeNode> snapshot = childNode.getSnapshot();
             if (snapshot == null) {
                 // Snapshot is not present, force instantiation
-                snapshot = applyOperation.getChild(child).get().apply(childNode, childNode.getOriginal(), version);
+                snapshot = applyOperation.getChildByArg(child).apply(childNode, childNode.getOriginal(), version);
             }
 
             return snapshot.map(TreeNode::getData);
@@ -75,7 +73,7 @@ final class OperationWithModification {
         }
 
         if (snapshot.isPresent()) {
-            return snapshot.get().getChild(child).map(TreeNode::getData);
+            return snapshot.get().findChildByArg(child).map(TreeNode::getData);
         }
 
         return Optional.empty();

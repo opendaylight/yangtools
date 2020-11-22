@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * <b>Implementation notes</b>
  * <ul>
  *   <li>Implementations MUST expose all nested suboperations which operates on child nodes expose via
- *       {@link #getChild(PathArgument)} method.</li>
+ *       {@link #findChildByArg(PathArgument)} method.</li>
  *   <li>Same suboperations SHOULD be used when invoked via {@link #apply(ModifiedNode, Optional, Version)},
  *       if applicable.</li>
  *   <li>There are exactly two base implementations:
@@ -114,13 +114,13 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version);
 
     /**
-     * Returns a suboperation for specified tree node.
+     * {@inheritDoc}
      *
-     * @return Reference to suboperation for specified tree node, {@link Optional#empty()}
-     *         if suboperation is not supported for specified tree node.
+     * @return Reference to suboperation for specified tree node, {@code null} if suboperation is not supported for
+     *         specified tree node.
      */
     @Override
-    public abstract Optional<ModificationApplyOperation> getChild(PathArgument child);
+    public abstract ModificationApplyOperation childByArg(PathArgument arg);
 
     abstract void recursivelyVerifyStructure(NormalizedNode<?, ?> value);
 
