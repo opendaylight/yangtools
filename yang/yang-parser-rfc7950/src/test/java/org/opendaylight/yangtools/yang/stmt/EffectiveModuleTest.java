@@ -74,7 +74,7 @@ public class EffectiveModuleTest {
         assertEquals(Optional.of("cisco"), rootModule.getOrganization());
         assertEquals(Optional.of("cisco email"), rootModule.getContact());
 
-        final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(CONT);
+        final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.dataChildByName(CONT);
         assertNotNull(contSchemaNode);
 
         final Collection<? extends AugmentationSchemaNode> augmentations = rootModule.getAugmentations();

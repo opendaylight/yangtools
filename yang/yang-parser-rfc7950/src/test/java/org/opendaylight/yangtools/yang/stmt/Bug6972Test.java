@@ -26,7 +26,6 @@ public class Bug6972Test {
     @Test
     public void allUnitsShouldBeTheSameInstance() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug6972");
-        assertNotNull(schemaContext);
         assertEquals(3, schemaContext.getModules().size());
 
         final Revision revision = Revision.of("2016-10-20");
@@ -53,9 +52,9 @@ public class Bug6972Test {
             final QName leafQName) {
         UnitsEffectiveStatement units = null;
 
-        final ContainerSchemaNode cont = (ContainerSchemaNode) module.getDataChildByName(containerQName);
+        final ContainerSchemaNode cont = (ContainerSchemaNode) module.dataChildByName(containerQName);
         assertNotNull(cont);
-        final LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(leafQName);
+        final LeafSchemaNode leaf = (LeafSchemaNode) cont.dataChildByName(leafQName);
         assertNotNull(leaf);
 
         for (EffectiveStatement<?, ?> effStmt : ((LeafEffectiveStatement) leaf).effectiveSubstatements()) {

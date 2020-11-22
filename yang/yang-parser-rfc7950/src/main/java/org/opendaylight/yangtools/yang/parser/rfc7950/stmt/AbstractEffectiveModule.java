@@ -205,9 +205,9 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
 
     @Override
     @SuppressWarnings("checkstyle:hiddenField")
-    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+    public final DataSchemaNode dataChildByName(final QName name) {
         final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace.get(requireNonNull(name));
-        return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
+        return child instanceof DataSchemaNode ? (DataSchemaNode) child : null;
     }
 
     @Override

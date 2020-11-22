@@ -54,8 +54,7 @@ public class Bug6897Test {
 
     private static void assertContainsNotifications(final SchemaContext schemaContext, final String dataContainerName,
             final String... notificationNames) {
-        final DataSchemaNode dataChildByName = schemaContext.getDataChildByName(
-            QName.create(FOO_NS, dataContainerName));
+        final DataSchemaNode dataChildByName = schemaContext.dataChildByName(QName.create(FOO_NS, dataContainerName));
         assertTrue(dataChildByName instanceof NotificationNodeContainer);
         assertContainsNotifications((NotificationNodeContainer) dataChildByName, notificationNames);
     }

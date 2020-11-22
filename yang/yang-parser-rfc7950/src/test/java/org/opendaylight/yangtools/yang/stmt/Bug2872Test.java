@@ -34,7 +34,7 @@ public class Bug2872Test {
         final QNameModule bug2872module = QNameModule.create(URI.create("bug2872"), Revision.of("2016-06-08"));
         final QName foo = QName.create(bug2872module, "bar");
 
-        final DataSchemaNode dataSchemaNode = schema.getDataChildByName(foo);
+        final DataSchemaNode dataSchemaNode = schema.dataChildByName(foo);
         assertTrue(dataSchemaNode instanceof LeafSchemaNode);
         final LeafSchemaNode myLeaf = (LeafSchemaNode) dataSchemaNode;
 

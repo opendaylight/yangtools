@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -77,13 +78,13 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         /**
-         * Indexing support for {@link DataNodeContainer#findDataChildByName(QName)}.
+         * Indexing support for {@link DataNodeContainer#dataChildByName(QName)}.
          */
-        protected final Optional<DataSchemaNode> findDataSchemaNode(final QName name) {
+        protected final @Nullable DataSchemaNode dataSchemaNode(final QName name) {
             // Only DataNodeContainer subclasses should be calling this method
             verify(this instanceof DataNodeContainer);
             final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(name));
-            return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
+            return child instanceof DataSchemaNode ? (DataSchemaNode) child : null;
         }
 
         protected abstract Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace();
@@ -168,8 +169,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         @Override
-        public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-            return Optional.ofNullable(dataChildren.get(requireNonNull(name)));
+        public final DataSchemaNode dataChildByName(final QName name) {
+            return dataChildren.get(requireNonNull(name));
         }
     }
 
