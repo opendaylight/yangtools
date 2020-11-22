@@ -208,15 +208,15 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+    public DataSchemaNode dataChildByName(final QName name) {
         requireNonNull(name);
         for (Module module : getModules()) {
-            final Optional<DataSchemaNode> result = module.findDataChildByName(name);
-            if (result.isPresent()) {
+            final DataSchemaNode result = module.dataChildByName(name);
+            if (result != null) {
                 return result;
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     @Override

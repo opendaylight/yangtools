@@ -156,8 +156,8 @@ public class EffectiveModulesAndSubmodulesTest {
     }
 
     private static void getDataChildByNameSubTest(final SchemaContext result, final Module root) {
-        final DataSchemaNode containerInRoot = result.getDataChildByName(QName
-                .create(root.getQNameModule(), "container-in-root-module"));
+        final DataSchemaNode containerInRoot = result.dataChildByName(
+            QName.create(root.getQNameModule(), "container-in-root-module"));
         assertNotNull(containerInRoot);
         assertEquals(Optional.of("desc"), containerInRoot.getDescription());
     }

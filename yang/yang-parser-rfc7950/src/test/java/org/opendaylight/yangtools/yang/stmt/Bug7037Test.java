@@ -42,14 +42,14 @@ public class Bug7037Test {
         assertEquals(bar("container"), barExtCont.getNodeType());
         assertEquals(foo("bar-ext-con"), barExtCont.getQName());
 
-        final DataSchemaNode root = context.getDataChildByName(foo("root"));
+        final DataSchemaNode root = context.dataChildByName(foo("root"));
         assertTrue(root instanceof ContainerSchemaNode);
 
         final Collection<? extends UnknownSchemaNode> rootUnknownNodes = root.getUnknownSchemaNodes();
         assertEquals(2, rootUnknownNodes.size());
 
         final Map<QName, UnknownSchemaNode> rootUnknownNodeMap = rootUnknownNodes.stream()
-                .collect(Collectors.toMap(u -> u.getNodeType(), u -> u));
+                .collect(Collectors.toMap(UnknownSchemaNode::getNodeType, u -> u));
 
         final UnknownSchemaNode barExt = rootUnknownNodeMap.get(bar("bar-ext"));
         final Collection<? extends UnknownSchemaNode> barExtUnknownNodes = barExt.getUnknownSchemaNodes();

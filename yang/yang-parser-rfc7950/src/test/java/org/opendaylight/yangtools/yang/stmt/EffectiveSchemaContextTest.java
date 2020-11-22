@@ -66,7 +66,7 @@ public class EffectiveSchemaContextTest {
         final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = schemaContext.getUnknownSchemaNodes();
         assertEquals(3, unknownSchemaNodes.size());
 
-        assertNull(schemaContext.getDataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
+        assertNull(schemaContext.dataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
 
         assertFalse(schemaContext.findModule("foo", Revision.of("2016-08-21")).isPresent());
         assertFalse(schemaContext.findModule(URI.create("foo-namespace"), Revision.of("2016-08-21")).isPresent());

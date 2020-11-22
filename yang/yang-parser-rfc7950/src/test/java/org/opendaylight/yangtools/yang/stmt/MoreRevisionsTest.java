@@ -220,7 +220,7 @@ public class MoreRevisionsTest {
         QName lastChange = QName.create(interfacesNS20121115, "last-change");
 
         Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
-        DataSchemaNode leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
+        DataSchemaNode leafLastChange = interfacesModule20121115.dataChildByName(lastChange);
         assertNotNull(leafLastChange);
 
         assertTrue(leafLastChange instanceof LeafSchemaNode);
@@ -241,7 +241,7 @@ public class MoreRevisionsTest {
         QName lockedTime = QName.create(monitoring19700101, "locked-time");
 
         Module monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").get();
-        DataSchemaNode leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
+        DataSchemaNode leafLockedTime = monitoringModule19700101.dataChildByName(lockedTime);
         assertNotNull(leafLockedTime);
 
         assertTrue(leafLockedTime instanceof LeafSchemaNode);

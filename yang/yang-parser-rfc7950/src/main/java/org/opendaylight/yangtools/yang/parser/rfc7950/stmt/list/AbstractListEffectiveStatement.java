@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -98,8 +97,8 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
-    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return findDataSchemaNode(name);
+    public final DataSchemaNode dataChildByName(final QName name) {
+        return dataSchemaNode(name);
     }
 
     @Override
