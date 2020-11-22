@@ -46,12 +46,12 @@ public class YinFileGroupingStmtTest extends AbstractYinModulesTest {
         final Collection<? extends DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(2, children.size());
 
-        final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.findDataChildByName(QName.create(
-                testModule.getQNameModule(), "type")).get();
+        final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "type"));
         assertTrue(leaf1.isMandatory());
 
-        final LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.findDataChildByName(QName.create(
-                testModule.getQNameModule(), "name")).get();
+        final LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "name"));
         assertTrue(leaf2.isMandatory());
     }
 }

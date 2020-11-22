@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,17 +58,29 @@ public interface DataNodeContainer {
      *
      * <p>
      * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children.
+     *
+     * @param name QName of child
+     * @return child node of this DataNodeContainer if child with given name is present, {@code null} otherwise
+     * @throws NullPointerException if {@code name} is null
+     */
+    @Nullable DataSchemaNode dataChildByName(QName name);
+
+    /**
+     * Returns the child node corresponding to the specified name.
+     *
+     * <p>
+     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
      * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children. This
      * is consistent with {@code schema tree}.
      *
      * @param name QName of child
-     * @return child node of this DataNodeContainer if child with given name is present, null otherwise
-     * @deprecated Use {@link #findDataChildByName(QName)} instead.
+     * @return child node of this DataNodeContainer
      * @throws NullPointerException if {@code name} is null
+     * @throws VerifyException if the child is not present
      */
-    @Deprecated
-    default @Nullable DataSchemaNode getDataChildByName(final QName name) {
-        return findDataChildByName(name).orElse(null);
+    default @NonNull DataSchemaNode getDataChildByName(final QName name) {
+        return verifyNotNull(dataChildByName(name), "Data child %s is not present", name);
     }
 
     /**
@@ -80,7 +94,9 @@ public interface DataNodeContainer {
      * @return child node of this DataNodeContainer if child with given name is present, empty otherwise
      * @throws NullPointerException if {@code name} is null
      */
-    Optional<DataSchemaNode> findDataChildByName(QName name);
+    default Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        return Optional.ofNullable(dataChildByName(name));
+    }
 
     /**
      * Returns the child node corresponding to the specified name.

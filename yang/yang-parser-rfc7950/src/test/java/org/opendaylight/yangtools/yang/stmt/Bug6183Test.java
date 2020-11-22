@@ -41,10 +41,10 @@ public class Bug6183Test {
         assertEquals(1, context.getModules().size());
         assertEquals(4, context.getModules().iterator().next().getAugmentations().size());
 
-        assertTrue(context.getDataChildByName(foo("before")) instanceof ContainerSchemaNode);
-        assertTrue(context.getDataChildByName(foo("after")) instanceof ContainerSchemaNode);
+        assertTrue(context.dataChildByName(foo("before")) instanceof ContainerSchemaNode);
+        assertTrue(context.dataChildByName(foo("after")) instanceof ContainerSchemaNode);
 
-        final DataSchemaNode dataChildByName = context.getDataChildByName(foo("my-choice"));
+        final DataSchemaNode dataChildByName = context.dataChildByName(foo("my-choice"));
         assertTrue(dataChildByName instanceof ChoiceSchemaNode);
         final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) dataChildByName;
 
@@ -86,13 +86,13 @@ public class Bug6183Test {
 
     private static ContainerSchemaNode getContainerSchemaNode(final DataNodeContainer parent,
             final String containerName) {
-        final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(containerName));
+        final DataSchemaNode dataChildByName = parent.dataChildByName(foo(containerName));
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
         return (ContainerSchemaNode) dataChildByName;
     }
 
     private static LeafSchemaNode getLeafSchemaNode(final DataNodeContainer parent, final String leafName) {
-        final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(leafName));
+        final DataSchemaNode dataChildByName = parent.dataChildByName(foo(leafName));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
         return (LeafSchemaNode) dataChildByName;
     }

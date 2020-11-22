@@ -38,7 +38,7 @@ public class MustAndWhenStmtTest {
         final Module testModule = result.findModules("must-test").iterator().next();
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.dataChildByName(
             QName.create(testModule.getQNameModule(), "interface"));
         assertNotNull(container);
         assertTrue(container.isPresenceContainer());
@@ -74,7 +74,7 @@ public class MustAndWhenStmtTest {
         final Module testModule = result.findModules("when-test").iterator().next();
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.dataChildByName(
             QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(container);
         assertEquals("conditional-leaf = 'autumn-leaf'", container.getWhenCondition().orElseThrow().toString());

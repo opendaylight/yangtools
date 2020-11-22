@@ -35,7 +35,7 @@ public class Bug6316Test {
     }
 
     private static void verifyEnumTypedefinition(final SchemaContext context) {
-        final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "enum-leaf"));
+        final DataSchemaNode dataChildByName = context.dataChildByName(QName.create("foo", "enum-leaf"));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
         final LeafSchemaNode enumLeaf = (LeafSchemaNode) dataChildByName;
         final TypeDefinition<? extends TypeDefinition<?>> type = enumLeaf.getType();
@@ -67,7 +67,7 @@ public class Bug6316Test {
     }
 
     private static void verifyBitsTypedefinition(final SchemaContext context) {
-        final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "bits-leaf"));
+        final DataSchemaNode dataChildByName = context.dataChildByName(QName.create("foo", "bits-leaf"));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
         final LeafSchemaNode bitsLeaf = (LeafSchemaNode) dataChildByName;
         final TypeDefinition<? extends TypeDefinition<?>> type = bitsLeaf.getType();

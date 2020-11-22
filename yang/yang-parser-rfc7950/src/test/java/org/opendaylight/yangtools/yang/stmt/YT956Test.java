@@ -24,11 +24,11 @@ public class YT956Test {
     @Test
     public void testAugmentationConditional() throws Exception {
         final DataSchemaNode another = StmtTestUtils.parseYangSources("/bugs/YT956/")
-                .findDataChildByName(ANOTHER_CONTAINER).get();
+                .dataChildByName(ANOTHER_CONTAINER);
         assertThat(another, isA(ContainerSchemaNode.class));
         final ContainerSchemaNode anotherContainer = (ContainerSchemaNode) another;
 
-        final DataSchemaNode first = anotherContainer.findDataChildByName(FIRST_AUGMENT).get();
+        final DataSchemaNode first = anotherContainer.dataChildByName(FIRST_AUGMENT);
         assertThat(first, isA(ContainerSchemaNode.class));
         final ContainerSchemaNode firstAugment = (ContainerSchemaNode) first;
 
