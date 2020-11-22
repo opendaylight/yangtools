@@ -25,7 +25,7 @@ public class Bug5518Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5518");
         assertNotNull(context);
 
-        final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "root"));
+        final DataSchemaNode dataChildByName = context.dataChildByName(QName.create("foo", "root"));
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
         final Collection<? extends MustDefinition> mustConstraints = root.getMustConstraints();

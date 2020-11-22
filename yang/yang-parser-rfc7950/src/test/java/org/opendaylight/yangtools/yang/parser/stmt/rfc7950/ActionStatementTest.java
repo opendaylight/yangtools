@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.Assert.assertEquals;
@@ -56,7 +55,7 @@ public class ActionStatementTest {
 
     private static void assertContainsActions(final SchemaContext schemaContext, final String dataContainerName,
             final String... actionNames) {
-        final DataSchemaNode dataChildByName = schemaContext.getDataChildByName(QName.create(FOO_NS, FOO_REV,
+        final DataSchemaNode dataChildByName = schemaContext.dataChildByName(QName.create(FOO_NS, FOO_REV,
                 dataContainerName));
         assertTrue(dataChildByName instanceof ActionNodeContainer);
         assertContainsActions((ActionNodeContainer) dataChildByName, actionNames);

@@ -34,7 +34,7 @@ public class Bug5481Test {
 
     private static ContainerSchemaNode verifyTopContainer(final SchemaContext context) {
         QName top = QName.create("http://example.com/module1", "2016-03-09", "top");
-        DataSchemaNode dataChildByName = context.getDataChildByName(top);
+        DataSchemaNode dataChildByName = context.dataChildByName(top);
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
 
         ContainerSchemaNode topContainer = (ContainerSchemaNode) dataChildByName;
@@ -47,7 +47,7 @@ public class Bug5481Test {
     }
 
     private static void verifyExtendedLeaf(final ContainerSchemaNode topContainer) {
-        DataSchemaNode dataChildByName2 = topContainer.getDataChildByName(QName.create("http://example.com/module2",
+        DataSchemaNode dataChildByName2 = topContainer.dataChildByName(QName.create("http://example.com/module2",
                 "2016-03-09", "extended-leaf"));
         assertTrue(dataChildByName2 instanceof LeafSchemaNode);
 

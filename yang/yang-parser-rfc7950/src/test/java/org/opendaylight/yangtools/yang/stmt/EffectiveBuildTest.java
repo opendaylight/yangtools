@@ -56,32 +56,32 @@ public class EffectiveBuildTest {
         final QName q6 = QName.create(SIMPLE_MODULE_QNAME, "sub-sub-container2");
         final QName q7 = QName.create(SIMPLE_MODULE_QNAME, "grp");
 
-        ContainerSchemaNode rootCon = (ContainerSchemaNode) simpleModule.getDataChildByName(q1);
+        ContainerSchemaNode rootCon = (ContainerSchemaNode) simpleModule.dataChildByName(q1);
         assertNotNull(rootCon);
 
-        ContainerSchemaNode subCon = (ContainerSchemaNode) rootCon.getDataChildByName(q2);
+        ContainerSchemaNode subCon = (ContainerSchemaNode) rootCon.dataChildByName(q2);
         assertNotNull(subCon);
 
-        ContainerSchemaNode subSubCon = (ContainerSchemaNode) subCon.getDataChildByName(q3);
+        ContainerSchemaNode subSubCon = (ContainerSchemaNode) subCon.dataChildByName(q3);
         assertNotNull(subSubCon);
 
-        ContainerSchemaNode rootCon2 = (ContainerSchemaNode) simpleModule.getDataChildByName(q4);
+        ContainerSchemaNode rootCon2 = (ContainerSchemaNode) simpleModule.dataChildByName(q4);
         assertNotNull(rootCon2);
 
-        ContainerSchemaNode subCon2 = (ContainerSchemaNode) rootCon2.getDataChildByName(q5);
+        ContainerSchemaNode subCon2 = (ContainerSchemaNode) rootCon2.dataChildByName(q5);
         assertNotNull(subCon2);
 
-        ContainerSchemaNode subSubCon2 = (ContainerSchemaNode) subCon2.getDataChildByName(q6);
+        ContainerSchemaNode subSubCon2 = (ContainerSchemaNode) subCon2.dataChildByName(q6);
         assertNotNull(subSubCon2);
 
         GroupingDefinition grp = simpleModule.getGroupings().iterator().next();
         assertNotNull(grp);
         assertEquals(q7, grp.getQName());
 
-        ContainerSchemaNode grpSubCon2 = (ContainerSchemaNode) grp.getDataChildByName(q5);
+        ContainerSchemaNode grpSubCon2 = (ContainerSchemaNode) grp.dataChildByName(q5);
         assertNotNull(grpSubCon2);
 
-        ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode) grpSubCon2.getDataChildByName(q6);
+        ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode) grpSubCon2.dataChildByName(q6);
         assertNotNull(grpSubSubCon2);
 
         assertEquals(SchemaPath.create(true, q1, q2, q3), subSubCon.getPath());

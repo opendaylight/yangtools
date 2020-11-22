@@ -73,9 +73,9 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
     default Optional<DataSchemaNode> findDataSchemaChild(final QName qname) {
         requireNonNull(qname);
         for (CaseSchemaNode caseNode : getCases()) {
-            final Optional<DataSchemaNode> child = caseNode.findDataChildByName(qname);
-            if (child.isPresent()) {
-                return child;
+            final DataSchemaNode child = caseNode.dataChildByName(qname);
+            if (child != null) {
+                return Optional.of(child);
             }
         }
 

@@ -54,46 +54,46 @@ public class YangTypes2StmtTest {
                 .buildEffective();
         assertNotNull(result);
 
-        final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(LF_DECIMAL);
+        final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.dataChildByName(LF_DECIMAL);
         assertNotNull(lfDecimalNode);
 
         assertTrue(lfDecimalNode.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition lfDecimalNodeType = (DecimalTypeDefinition) lfDecimalNode.getType();
         assertEquals(2, lfDecimalNodeType.getFractionDigits());
 
-        final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(LF_INT8);
+        final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.dataChildByName(LF_INT8);
         assertNotNull(lfInt8Node);
         assertEquals(BaseTypes.int8Type().getClass(), lfInt8Node.getType().getClass());
 
-        final LeafSchemaNode lfInt16Node = (LeafSchemaNode) result.getDataChildByName(LF_INT16);
+        final LeafSchemaNode lfInt16Node = (LeafSchemaNode) result.dataChildByName(LF_INT16);
         assertNotNull(lfInt16Node);
         assertEquals(BaseTypes.int16Type().getClass(), lfInt16Node.getType().getClass());
 
-        final LeafSchemaNode lfInt32Node = (LeafSchemaNode) result.getDataChildByName(LF_INT32);
+        final LeafSchemaNode lfInt32Node = (LeafSchemaNode) result.dataChildByName(LF_INT32);
         assertNotNull(lfInt32Node);
         assertEquals(BaseTypes.int32Type().getClass(), lfInt32Node.getType().getClass());
 
-        final LeafSchemaNode lfInt64Node = (LeafSchemaNode) result.getDataChildByName(LF_INT64);
+        final LeafSchemaNode lfInt64Node = (LeafSchemaNode) result.dataChildByName(LF_INT64);
         assertNotNull(lfInt64Node);
         assertEquals(BaseTypes.int64Type().getClass(), lfInt64Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt8Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT8);
+        final LeafSchemaNode lfUInt8Node = (LeafSchemaNode) result.dataChildByName(LF_UINT8);
         assertNotNull(lfUInt8Node);
         assertEquals(BaseTypes.uint8Type().getClass(), lfUInt8Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt16Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT16);
+        final LeafSchemaNode lfUInt16Node = (LeafSchemaNode) result.dataChildByName(LF_UINT16);
         assertNotNull(lfUInt16Node);
         assertEquals(BaseTypes.uint16Type().getClass(), lfUInt16Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt32Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT32);
+        final LeafSchemaNode lfUInt32Node = (LeafSchemaNode) result.dataChildByName(LF_UINT32);
         assertNotNull(lfUInt32Node);
         assertEquals(BaseTypes.uint32Type().getClass(), lfUInt32Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt64Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT64);
+        final LeafSchemaNode lfUInt64Node = (LeafSchemaNode) result.dataChildByName(LF_UINT64);
         assertNotNull(lfUInt64Node);
         assertEquals(BaseTypes.uint64Type().getClass(), lfUInt64Node.getType().getClass());
 
-        final LeafSchemaNode lfBoolNode = (LeafSchemaNode) result.getDataChildByName(LF_BOOL);
+        final LeafSchemaNode lfBoolNode = (LeafSchemaNode) result.dataChildByName(LF_BOOL);
         assertNotNull(lfBoolNode);
         assertEquals(BaseTypes.booleanType().getClass(), lfBoolNode.getType().getClass());
     }
