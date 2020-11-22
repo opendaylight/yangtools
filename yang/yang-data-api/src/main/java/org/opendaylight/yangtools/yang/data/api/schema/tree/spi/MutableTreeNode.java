@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -35,22 +36,24 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
     void setSubtreeVersion(Version subtreeVersion);
 
     /**
-     * Add a new child node. This acts as add-or-replace operation, e.g. it
-     * succeeds even if a conflicting child is already present.
+     * Add a new child node. This acts as add-or-replace operation, e.g. it succeeds even if a conflicting child is
+     * already present.
      *
      * @param child New child node.
+     * @return Replaced child, or null if there was no previous child
      * @throws NullPointerException if {@code child} is null
      */
-    void addChild(TreeNode child);
+    @Nullable TreeNode putChild(TreeNode child);
 
     /**
-     * Remove a child node. This acts as delete-or-nothing operation, e.g. it
-     * succeeds even if the corresponding child is not present.
+     * Remove a child node. This acts as delete-or-nothing operation, e.g. it succeeds even if the corresponding child
+     * is not present.
      *
      * @param id Child identifier.
+     * @return Removed child, or null if there was no matching child
      * @throws NullPointerException if {@code id} is null
      */
-    void removeChild(PathArgument id);
+    @Nullable TreeNode removeChild(PathArgument id);
 
     /**
      * Finish node modification and return a read-only view of this node. After

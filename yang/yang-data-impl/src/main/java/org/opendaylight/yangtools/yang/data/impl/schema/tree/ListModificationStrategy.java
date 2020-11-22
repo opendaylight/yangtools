@@ -112,7 +112,7 @@ final class ListModificationStrategy extends SchemaAwareApplyOperation<ListSchem
             final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.get();
-                meta.addChild(tn);
+                meta.putChild(tn);
                 data.addChild(tn.getData());
             } else {
                 meta.removeChild(id);

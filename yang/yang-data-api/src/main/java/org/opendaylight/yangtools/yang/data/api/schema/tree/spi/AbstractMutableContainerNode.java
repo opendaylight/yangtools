@@ -53,13 +53,13 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     }
 
     @Override
-    public final void addChild(final TreeNode child) {
-        children.put(child.getIdentifier(), child);
+    public final TreeNode putChild(final TreeNode child) {
+        return children.put(child.getIdentifier(), child);
     }
 
     @Override
-    public final void removeChild(final PathArgument id) {
-        children.remove(requireNonNull(id));
+    public final TreeNode removeChild(final PathArgument id) {
+        return children.remove(requireNonNull(id));
     }
 
     @Override

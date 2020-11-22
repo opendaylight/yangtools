@@ -218,7 +218,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.get();
-                meta.addChild(tn);
+                meta.putChild(tn);
                 data.addChild(tn.getData());
             } else {
                 meta.removeChild(id);
