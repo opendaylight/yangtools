@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * Effective view of a {@link StmtContext} for the purposes of creating an {@link EffectiveStatement}.
  */
 @Beta
-public interface EffectiveStmtCtx extends Immutable {
+public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
     /**
      * Return parent of this context, if there is one. All statements except for top-level source statements, such as
      * {@code module} and {@code submodule}.
@@ -65,8 +64,6 @@ public interface EffectiveStmtCtx extends Immutable {
         default @NonNull SchemaPath getSchemaPath() {
             return schemaPath().orElseThrow();
         }
-
-        @NonNull StatementDefinition publicDefinition();
     }
 
     /**
@@ -78,9 +75,15 @@ public interface EffectiveStmtCtx extends Immutable {
      */
     @Beta
     interface Current<A, D extends DeclaredStatement<A>> extends Parent {
-        @NonNull StatementSource source();
+        @Deprecated
+        default @NonNull StatementSource source() {
+            return statementSource();
+        }
 
-        @NonNull StatementSourceReference sourceReference();
+        @Deprecated
+        default @NonNull StatementSourceReference sourceReference() {
+            return statementSourceReference();
+        }
 
         @NonNull CopyHistory history();
 
@@ -97,7 +100,10 @@ public interface EffectiveStmtCtx extends Immutable {
             return verifyNotNull(argument(), "Attempted to use non-existent argument");
         }
 
-        @Nullable String rawArgument();
+        @Deprecated
+        default @Nullable String rawArgument() {
+            return rawStatementArgument();
+        }
 
         @Nullable EffectiveStatement<?, ?> original();
 
@@ -112,6 +118,5 @@ public interface EffectiveStmtCtx extends Immutable {
          */
         @Deprecated
         <E extends EffectiveStatement<A, D>> @NonNull StmtContext<A, D, E> caerbannog();
-
     }
 }

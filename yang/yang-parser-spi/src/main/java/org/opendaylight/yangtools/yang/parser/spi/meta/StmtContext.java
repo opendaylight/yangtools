@@ -37,25 +37,22 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-    /**
-     * Returns the origin of the statement.
-     *
-     * @return origin of statement
-     */
-    @NonNull StatementSource getStatementSource();
+public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends CommonStmtCtx {
+    @Deprecated
+    default @NonNull StatementDefinition getPublicDefinition() {
+        return publicDefinition();
+    }
 
-    /**
-     * Returns a reference to statement source.
-     *
-     * @return reference of statement source
-     */
-    @NonNull StatementSourceReference getStatementSourceReference();
+    @Deprecated
+    default @NonNull StatementSource getStatementSource() {
+        return statementSource();
+    }
 
-    /**
-     * See {@link StatementSupport#getPublicView()}.
-     */
-    @NonNull StatementDefinition getPublicDefinition();
+    @Deprecated
+    default @NonNull StatementSourceReference getStatementSourceReference() {
+        return statementSourceReference();
+    }
 
     /**
      * Return the parent statement context, or null if this is the root statement.
@@ -72,23 +69,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
         return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
-    }
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string, or null if this statement does not have an argument.
-     */
-    @Nullable String rawStatementArgument();
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string
-     * @throws VerifyException if this statement does not have an argument
-     */
-    default @NonNull String coerceRawStatementArgument() {
-        return verifyNotNull(rawStatementArgument(), "Statement context %s does not have an argument", this);
     }
 
     /**
@@ -109,12 +89,12 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     }
 
     default <X, Y extends DeclaredStatement<X>> boolean producesDeclared(final Class<? super Y> type) {
-        return type.isAssignableFrom(getPublicDefinition().getDeclaredRepresentationClass());
+        return type.isAssignableFrom(publicDefinition().getDeclaredRepresentationClass());
     }
 
     default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<A, D>> boolean producesEffective(
             final Class<? super Z> type) {
-        return type.isAssignableFrom(getPublicDefinition().getEffectiveRepresentationClass());
+        return type.isAssignableFrom(publicDefinition().getEffectiveRepresentationClass());
     }
 
     /**

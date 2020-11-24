@@ -44,12 +44,12 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public StatementSource source() {
-        return delegate.getStatementSource();
+        return delegate.statementSource();
     }
 
     @Override
     public StatementSourceReference sourceReference() {
-        return delegate.getStatementSourceReference();
+        return delegate.statementSourceReference();
     }
 
     @Override
@@ -81,7 +81,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public StatementDefinition publicDefinition() {
-        return delegate.getPublicDefinition();
+        return delegate.publicDefinition();
     }
 
     @Override
