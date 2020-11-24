@@ -139,7 +139,7 @@ abstract class AbstractImportStatementSupport
         // When 'revision-date' of an import is not specified in yang source, we need to find revision of imported
         // module.
         final QNameModule importedModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
-        SourceException.throwIfNull(importedModule, ctx.getStatementSourceReference(),
+        SourceException.throwIfNull(importedModule, ctx.sourceReference(),
                 "Unable to find import of module %s with prefix %s.", moduleName, prefix);
         return importedModule.getRevision().orElse(null);
     }

@@ -42,7 +42,7 @@ public final class DefaultDenyWriteStatementSupport
         Effective(final Current<Void, DefaultDenyWriteStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
+            path = stmt.getEffectiveParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
         }
 
         @Override

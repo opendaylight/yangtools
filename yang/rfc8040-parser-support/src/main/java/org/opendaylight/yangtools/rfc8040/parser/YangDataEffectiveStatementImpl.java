@@ -44,7 +44,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         }
         this.maybeQNameArgument = maybeQNameArgumentInit;
 
-        path = stmt.getParent().getSchemaPath().createChild(maybeQNameArgument);
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(maybeQNameArgument);
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is

@@ -29,7 +29,7 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
             final Current<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override

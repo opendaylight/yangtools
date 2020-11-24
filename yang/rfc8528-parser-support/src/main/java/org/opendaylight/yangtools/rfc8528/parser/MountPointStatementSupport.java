@@ -47,7 +47,7 @@ public final class MountPointStatementSupport
         Effective(final Current<QName, MountPointStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getParent().getSchemaPath().createChild(argument());
+            path = stmt.getEffectiveParent().getSchemaPath().createChild(argument());
         }
 
         @Override

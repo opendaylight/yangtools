@@ -25,7 +25,7 @@ final class DefValEffectiveStatementImpl extends UnknownEffectiveStatementBase<S
     DefValEffectiveStatementImpl(final Current<String, DefValStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override

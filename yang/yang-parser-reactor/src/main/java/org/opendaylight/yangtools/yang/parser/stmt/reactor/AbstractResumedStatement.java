@@ -80,12 +80,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public final StatementSourceReference getStatementSourceReference() {
+    public final StatementSourceReference sourceReference() {
         return statementDeclSource;
     }
 
     @Override
-    public final String rawStatementArgument() {
+    public final String rawArgument() {
         return rawArgument;
     }
 

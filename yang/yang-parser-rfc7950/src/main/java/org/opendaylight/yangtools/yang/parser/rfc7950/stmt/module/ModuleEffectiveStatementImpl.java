@@ -61,8 +61,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     ModuleEffectiveStatementImpl(final Current<UnqualifiedQName, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules) {
-        super(stmt, substatements, findPrefix(stmt.caerbannog(), "module",
-            stmt.caerbannog().coerceRawStatementArgument()));
+        super(stmt, substatements, findPrefix(stmt.caerbannog(), "module", stmt.getRawArgument()));
 
         qnameModule = verifyNotNull(stmt.getFromNamespace(ModuleCtxToModuleQName.class, stmt.caerbannog()));
         this.submodules = ImmutableList.copyOf(submodules);

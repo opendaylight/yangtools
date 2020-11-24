@@ -25,7 +25,7 @@ final class DisplayHintEffectiveStatementImpl extends UnknownEffectiveStatementB
     DisplayHintEffectiveStatementImpl(final Current<String, DisplayHintStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override

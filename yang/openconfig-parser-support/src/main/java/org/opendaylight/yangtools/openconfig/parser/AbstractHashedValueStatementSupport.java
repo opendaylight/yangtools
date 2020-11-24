@@ -53,7 +53,7 @@ abstract class AbstractHashedValueStatementSupport
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
             definition = stmt.publicDefinition();
-            path = stmt.getParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
+            path = stmt.getEffectiveParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
         }
 
         @Override

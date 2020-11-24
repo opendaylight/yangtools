@@ -25,7 +25,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     ThirdPartyExtensionEffectiveStatementImpl(final Current<String, ThirdPartyExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
         valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, stmt.caerbannog());
     }
 

@@ -21,23 +21,19 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Effective view of a {@link StmtContext} for the purposes of creating an {@link EffectiveStatement}.
  */
 @Beta
-public interface EffectiveStmtCtx extends Immutable {
+public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
     /**
      * Return parent of this context, if there is one. All statements except for top-level source statements, such as
      * {@code module} and {@code submodule}.
      *
      * @return Parent context, or null if this statement is the root
      */
-    // FIXME: YANGTOOLS-1185: rename to effectiveParent()
-    @Nullable Parent parent();
+    @Nullable Parent effectiveParent();
 
     /**
      * Return parent of this context.
@@ -45,9 +41,8 @@ public interface EffectiveStmtCtx extends Immutable {
      * @return Parent context
      * @throws VerifyException if this context is already the root
      */
-    // FIXME: YANGTOOLS-1185: rename to getEffectiveParent()
-    default @NonNull Parent getParent() {
-        return verifyNotNull(parent(), "Attempted to access beyond root context");
+    default @NonNull Parent getEffectiveParent() {
+        return verifyNotNull(effectiveParent(), "Attempted to access beyond root context");
     }
 
     /**
@@ -67,8 +62,6 @@ public interface EffectiveStmtCtx extends Immutable {
         default @NonNull SchemaPath getSchemaPath() {
             return schemaPath().orElseThrow();
         }
-
-        @NonNull StatementDefinition publicDefinition();
     }
 
     /**
@@ -80,11 +73,6 @@ public interface EffectiveStmtCtx extends Immutable {
      */
     @Beta
     interface Current<A, D extends DeclaredStatement<A>> extends Parent {
-        default @NonNull StatementSource source() {
-            return sourceReference().getStatementSource();
-        }
-
-        @NonNull StatementSourceReference sourceReference();
 
         @NonNull CopyHistory history();
 
@@ -100,8 +88,6 @@ public interface EffectiveStmtCtx extends Immutable {
         default @NonNull A coerceArgument() {
             return verifyNotNull(argument(), "Attempted to use non-existent argument");
         }
-
-        @Nullable String rawArgument();
 
         @Nullable EffectiveStatement<?, ?> original();
 

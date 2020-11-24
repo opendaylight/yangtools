@@ -37,25 +37,43 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-    /**
-     * Returns the origin of the statement.
-     *
-     * @return origin of statement
-     */
-    @NonNull StatementSource getStatementSource();
+public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends CommonStmtCtx {
+    // TODO: gradually migrate callers of this method
+    default @NonNull StatementDefinition getPublicDefinition() {
+        return publicDefinition();
+    }
+
+    // TODO: gradually migrate callers of this method
+    default @NonNull StatementSource getStatementSource() {
+        return source();
+    }
+
+    // TODO: gradually migrate callers of this method
+    default @NonNull StatementSourceReference getStatementSourceReference() {
+        return sourceReference();
+    }
 
     /**
-     * Returns a reference to statement source.
+     * Return the statement argument in literal format.
      *
-     * @return reference of statement source
+     * @return raw statement argument string, or null if this statement does not have an argument.
      */
-    @NonNull StatementSourceReference getStatementSourceReference();
+    // TODO: gradually migrate callers of this method
+    default @Nullable String rawStatementArgument() {
+        return rawArgument();
+    }
 
     /**
-     * See {@link StatementSupport#getPublicView()}.
+     * Return the statement argument in literal format.
+     *
+     * @return raw statement argument string
+     * @throws VerifyException if this statement does not have an argument
      */
-    @NonNull StatementDefinition getPublicDefinition();
+    // TODO: gradually migrate callers of this method
+    default @NonNull String coerceRawStatementArgument() {
+        return getRawArgument();
+    }
 
     /**
      * Return the parent statement context, or null if this is the root statement.
@@ -72,23 +90,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
         return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
-    }
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string, or null if this statement does not have an argument.
-     */
-    @Nullable String rawStatementArgument();
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string
-     * @throws VerifyException if this statement does not have an argument
-     */
-    default @NonNull String coerceRawStatementArgument() {
-        return verifyNotNull(rawStatementArgument(), "Statement context %s does not have an argument", this);
     }
 
     /**
@@ -109,12 +110,12 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     }
 
     default <X, Y extends DeclaredStatement<X>> boolean producesDeclared(final Class<? super Y> type) {
-        return type.isAssignableFrom(getPublicDefinition().getDeclaredRepresentationClass());
+        return type.isAssignableFrom(publicDefinition().getDeclaredRepresentationClass());
     }
 
     default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<A, D>> boolean producesEffective(
             final Class<? super Z> type) {
-        return type.isAssignableFrom(getPublicDefinition().getEffectiveRepresentationClass());
+        return type.isAssignableFrom(publicDefinition().getEffectiveRepresentationClass());
     }
 
     /**
