@@ -126,7 +126,7 @@ final class SubmoduleEffectiveStatementImpl
     }
 
     @Override
-    public Collection<? extends Submodule> getSubmodules() {
+    public Collection<? extends @NonNull Submodule> getSubmodules() {
         checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
             qnameModule);
         return submodules;

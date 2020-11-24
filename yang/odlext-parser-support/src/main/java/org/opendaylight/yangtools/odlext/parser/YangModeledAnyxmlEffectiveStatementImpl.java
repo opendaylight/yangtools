@@ -105,7 +105,7 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     }
 
     @Override
-    public Collection<? extends MustDefinition> getMustConstraints() {
+    public Collection<? extends @NonNull MustDefinition> getMustConstraints() {
         return delegateSchemaNode().getMustConstraints();
     }
 

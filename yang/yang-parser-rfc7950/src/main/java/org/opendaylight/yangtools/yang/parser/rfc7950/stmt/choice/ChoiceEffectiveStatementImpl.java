@@ -77,7 +77,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
-    public Collection<? extends CaseSchemaNode> getCases() {
+    public Collection<? extends @NonNull CaseSchemaNode> getCases() {
         return filterEffectiveStatements(CaseSchemaNode.class);
     }
 
