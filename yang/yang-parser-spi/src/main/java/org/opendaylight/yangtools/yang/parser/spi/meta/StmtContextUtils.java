@@ -344,12 +344,12 @@ public final class StmtContextUtils {
     public static boolean hasAncestorOfType(final EffectiveStmtCtx stmt,
             final Collection<StatementDefinition> ancestorTypes) {
         requireNonNull(ancestorTypes);
-        Parent current = stmt.parent();
+        Parent current = stmt.effectiveParent();
         while (current != null) {
             if (ancestorTypes.contains(current.publicDefinition())) {
                 return true;
             }
-            current = current.parent();
+            current = current.effectiveParent();
         }
         return false;
     }

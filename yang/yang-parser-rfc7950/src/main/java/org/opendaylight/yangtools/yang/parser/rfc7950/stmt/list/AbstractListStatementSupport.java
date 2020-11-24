@@ -132,14 +132,14 @@ abstract class AbstractListStatementSupport extends
     }
 
     private static boolean isInstantied(final EffectiveStmtCtx ctx) {
-        Parent parent = ctx.parent();
+        Parent parent = ctx.effectiveParent();
         while (parent != null) {
             final StatementDefinition parentDef = parent.publicDefinition();
             if (UNINSTANTIATED_DATATREE_STATEMENTS.contains(parentDef)) {
                 return false;
             }
 
-            final Parent grandParent = parent.parent();
+            final Parent grandParent = parent.effectiveParent();
             if (YangStmtMapping.AUGMENT == parentDef && grandParent != null) {
                 // If this is an augment statement and its parent is either a 'module' or 'submodule' statement, we are
                 // dealing with an uninstantiated context.
