@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -30,7 +29,7 @@ final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveSta
     }
 
     @Override
-    public @NonNull Collection<? extends Object> getDefaults() {
+    public Collection<Object> getDefaults() {
         return ImmutableSet.of();
     }
 
