@@ -368,19 +368,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
-    static final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements(
+    static final @NonNull Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements(
             final List<StatementContextBase<?, ?, ?>> effective) {
         return effective instanceof ImmutableCollection ? effective : Collections.unmodifiableCollection(effective);
     }
 
-    private static List<StatementContextBase<?, ?, ?>> shrinkEffective(
+    private static @NonNull List<StatementContextBase<?, ?, ?>> shrinkEffective(
             final List<StatementContextBase<?, ?, ?>> effective) {
         return effective.isEmpty() ? ImmutableList.of() : effective;
     }
 
     public abstract void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);
 
-    static final List<StatementContextBase<?, ?, ?>> removeStatementFromEffectiveSubstatements(
+    static final @NonNull List<StatementContextBase<?, ?, ?>> removeStatementFromEffectiveSubstatements(
             final List<StatementContextBase<?, ?, ?>> effective, final StatementDefinition statementDef) {
         if (effective.isEmpty()) {
             return effective;
@@ -412,7 +412,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public abstract void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef,
             String statementArg);
 
-    static final List<StatementContextBase<?, ?, ?>> removeStatementFromEffectiveSubstatements(
+    static final @NonNull List<StatementContextBase<?, ?, ?>> removeStatementFromEffectiveSubstatements(
             final List<StatementContextBase<?, ?, ?>> effective, final StatementDefinition statementDef,
             final String statementArg) {
         if (statementArg == null) {
@@ -456,7 +456,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     public abstract void addEffectiveSubstatement(Mutable<?, ?, ?> substatement);
 
-    final List<StatementContextBase<?, ?, ?>> addEffectiveSubstatement(
+    final @NonNull List<StatementContextBase<?, ?, ?>> addEffectiveSubstatement(
             final List<StatementContextBase<?, ?, ?>> effective, final Mutable<?, ?, ?> substatement) {
         verifyStatement(substatement);
 
@@ -488,7 +488,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     abstract void addEffectiveSubstatementsImpl(Collection<? extends Mutable<?, ?, ?>> statements);
 
-    final List<StatementContextBase<?, ?, ?>> addEffectiveSubstatementsImpl(
+    final @NonNull List<StatementContextBase<?, ?, ?>> addEffectiveSubstatementsImpl(
             final List<StatementContextBase<?, ?, ?>> effective,
             final Collection<? extends Mutable<?, ?, ?>> statements) {
         final List<StatementContextBase<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, statements.size());
