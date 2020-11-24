@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -43,8 +44,13 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
     }
 
     @Override
+    public StatementSource source() {
+        return delegate.source();
+    }
+
+    @Override
     public StatementSourceReference sourceReference() {
-        return delegate.getStatementSourceReference();
+        return delegate.sourceReference();
     }
 
     @Override
@@ -76,7 +82,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public StatementDefinition publicDefinition() {
-        return delegate.getPublicDefinition();
+        return delegate.publicDefinition();
     }
 
     @Override
@@ -117,7 +123,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public String rawArgument() {
-        return delegate.rawStatementArgument();
+        return delegate.rawArgument();
     }
 
     @Override

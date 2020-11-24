@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
@@ -310,11 +309,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public final boolean isEnabledSemanticVersioning() {
         return getRoot().isEnabledSemanticVersioningImpl();
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        return getStatementSourceReference().getStatementSource();
     }
 
     @Override
@@ -765,12 +759,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public StatementDefinition getPublicDefinition() {
+    public final StatementDefinition publicDefinition() {
         return definition.getPublicView();
     }
 
     @Override
-    public ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
+    public final ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
         return getRoot().getSourceContext().newInferenceAction(phase);
     }
 
