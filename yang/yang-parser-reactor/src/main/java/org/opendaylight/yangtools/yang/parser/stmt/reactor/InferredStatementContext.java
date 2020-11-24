@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,6 +52,7 @@ import org.slf4j.LoggerFactory;
 final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
+    private static final Object DRAINED_SUBSTATEMENTS = new Object();
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
@@ -60,11 +62,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private final A argument;
 
     /**
-     * Effective substatements, lazily materialized. This field can have three states:
+     * Effective substatements, lazily materialized. This field can have four states:
      * <ul>
      *   <li>it can be {@code null}, in which case no materialization has taken place</li>
      *   <li>it can be a {@link HashMap}, in which case partial materialization has taken place</li>
      *   <li>it can be a {@link List}, in which case full materialization has taken place</li>
+     *   <li>it can be {@link #DRAINED_SUBSTATEMENTS}, in which case the statement has been built and we do not allow
+     *       access to its substatements</li>
      * </ul>
      */
     private Object substatements;
@@ -276,11 +280,25 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
-        // FIXME: do not force initialization
-        return ensureEffectiveSubstatements().stream();
+        final Object local = substatements;
+        substatements = DRAINED_SUBSTATEMENTS;
+        if (local == null || local instanceof HashMap) {
+            return createSubstatements(castMaterialized(local)).stream();
+        } else if (local instanceof List) {
+            return castEffective(local).stream();
+        } else {
+            return StreamSupport.stream(DeadSpliterator.INSTANCE, false);
+        }
     }
 
     private List<StatementContextBase<?, ?, ?>> initializeSubstatements(
+            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
+        final List<StatementContextBase<?, ?, ?>> ret = createSubstatements(materializedSchemaTree);
+        substatements = ret;
+        return ret;
+    }
+
+    private List<StatementContextBase<?, ?, ?>> createSubstatements(
             final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
@@ -298,7 +316,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final List<StatementContextBase<?, ?, ?>> ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(),
             buffer.size());
         ret.addAll((Collection) buffer);
-        substatements = ret;
         return ret;
     }
 
