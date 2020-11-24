@@ -52,7 +52,7 @@ public final class AnnotationStatementSupport
         Effective(final Current<QName, AnnotationStatement> stmt,
                   final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getParent().getSchemaPath().createChild(argument());
+            path = stmt.getEffectiveParent().getSchemaPath().createChild(argument());
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), stmt.sourceReference(),

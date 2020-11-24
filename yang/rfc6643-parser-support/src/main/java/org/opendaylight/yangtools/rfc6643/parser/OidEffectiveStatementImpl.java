@@ -27,7 +27,7 @@ final class OidEffectiveStatementImpl extends UnknownEffectiveStatementBase<Obje
     OidEffectiveStatementImpl(final Current<ObjectIdentifier, OidStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override

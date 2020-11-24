@@ -117,13 +117,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public StatementSourceReference getStatementSourceReference() {
-        return originalCtx.getStatementSourceReference();
+    public StatementSourceReference sourceReference() {
+        return originalCtx.sourceReference();
     }
 
     @Override
-    public String rawStatementArgument() {
-        return originalCtx.rawStatementArgument();
+    public String rawArgument() {
+        return originalCtx.rawArgument();
     }
 
     @Override

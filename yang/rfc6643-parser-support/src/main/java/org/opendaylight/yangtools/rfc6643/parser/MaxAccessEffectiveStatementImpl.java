@@ -26,7 +26,7 @@ final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBas
     MaxAccessEffectiveStatementImpl(final Current<MaxAccess, MaxAccessStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override

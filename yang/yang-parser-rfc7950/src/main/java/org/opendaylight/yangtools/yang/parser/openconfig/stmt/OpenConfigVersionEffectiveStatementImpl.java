@@ -27,7 +27,7 @@ final class OpenConfigVersionEffectiveStatementImpl
     OpenConfigVersionEffectiveStatementImpl(final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getParent().getSchemaPath().createChild(getNodeType());
+        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
     }
 
     @Override
