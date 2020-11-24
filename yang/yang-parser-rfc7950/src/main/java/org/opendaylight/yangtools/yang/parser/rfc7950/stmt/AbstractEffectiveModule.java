@@ -149,42 +149,42 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     }
 
     @Override
-    public Collection<? extends ModuleImport> getImports() {
+    public Collection<? extends @NonNull ModuleImport> getImports() {
         return filterSubstatements(ModuleImport.class);
     }
 
     @Override
-    public Collection<? extends FeatureDefinition> getFeatures() {
+    public Collection<? extends @NonNull FeatureDefinition> getFeatures() {
         return filterSubstatements(FeatureDefinition.class);
     }
 
     @Override
-    public Collection<? extends NotificationDefinition> getNotifications() {
+    public Collection<? extends @NonNull NotificationDefinition> getNotifications() {
         return filterSubstatements(NotificationDefinition.class);
     }
 
     @Override
-    public Collection<? extends AugmentationSchemaNode> getAugmentations() {
+    public Collection<? extends @NonNull AugmentationSchemaNode> getAugmentations() {
         return filterSubstatements(AugmentationSchemaNode.class);
     }
 
     @Override
-    public Collection<? extends RpcDefinition> getRpcs() {
+    public Collection<? extends @NonNull RpcDefinition> getRpcs() {
         return filterSubstatements(RpcDefinition.class);
     }
 
     @Override
-    public Collection<? extends Deviation> getDeviations() {
+    public Collection<? extends @NonNull Deviation> getDeviations() {
         return filterSubstatements(Deviation.class);
     }
 
     @Override
-    public Collection<? extends ExtensionDefinition> getExtensionSchemaNodes() {
+    public Collection<? extends @NonNull ExtensionDefinition> getExtensionSchemaNodes() {
         return filterSubstatements(ExtensionDefinition.class);
     }
 
     @Override
-    public Collection<? extends IdentitySchemaNode> getIdentities() {
+    public Collection<? extends @NonNull IdentitySchemaNode> getIdentities() {
         return filterSubstatements(IdentitySchemaNode.class);
     }
 

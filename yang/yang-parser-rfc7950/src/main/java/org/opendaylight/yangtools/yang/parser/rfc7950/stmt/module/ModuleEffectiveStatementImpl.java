@@ -109,7 +109,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     }
 
     @Override
-    public Collection<? extends Submodule> getSubmodules() {
+    public Collection<? extends @NonNull Submodule> getSubmodules() {
         return submodules;
     }
 
