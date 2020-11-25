@@ -37,20 +37,25 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends CommonStmtCtx<A, D> {
     /**
      * Returns the origin of the statement.
      *
      * @return origin of statement
      */
-    @NonNull StatementSource getStatementSource();
+    default @NonNull StatementSource getStatementSource() {
+        return source();
+    }
 
     /**
      * Returns a reference to statement source.
      *
      * @return reference of statement source
      */
-    @NonNull StatementSourceReference getStatementSourceReference();
+    default @NonNull StatementSourceReference getStatementSourceReference() {
+        return sourceReference();
+    }
 
     /**
      * See {@link StatementSupport#getPublicView()}.
@@ -79,7 +84,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return raw statement argument string, or null if this statement does not have an argument.
      */
-    @Nullable String rawStatementArgument();
+    default @Nullable String rawStatementArgument() {
+        return rawArgument();
+    }
 
     /**
      * Return the statement argument in literal format.
@@ -96,7 +103,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return statement argument, or null if this statement does not have an argument
      */
-    @Nullable A getStatementArgument();
+    default @Nullable A getStatementArgument() {
+        return argument();
+    }
 
     /**
      * Return the statement argument in literal format.
@@ -105,7 +114,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @throws VerifyException if this statement does not have an argument
      */
     default @NonNull A coerceStatementArgument() {
-        return verifyNotNull(getStatementArgument(), "Statement context %s does not have an argument", this);
+        return coerceArgument();
     }
 
     default <X, Y extends DeclaredStatement<X>> boolean producesDeclared(final Class<? super Y> type) {
@@ -132,24 +141,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isEnabledSemanticVersioning();
 
-    /**
-     * Return a value associated with specified key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <N> namespace type
-     * @param <T> key type
-     * @return Value, or null if there is no element
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V getFromNamespace(Class<@NonNull N> type,
-            T key);
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type);
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
     @NonNull RootStmtContext<?, ?, ?> getRoot();
 
@@ -179,7 +173,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     /**
      * Builds {@link DeclaredStatement} for statement context.
      */
-    D buildDeclared();
+    default D buildDeclared() {
+        return declared();
+    }
 
     /**
      * Builds {@link EffectiveStatement} for statement context.
@@ -210,7 +206,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return A simplified summary of the copy process.
      */
-    CopyHistory getCopyHistory();
+    default CopyHistory getCopyHistory() {
+        return history();
+    }
 
     /**
      * Return the statement context of the original definition, if this statement is an instantiated copy.
@@ -234,7 +232,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return version of root statement context
      */
-    @NonNull YangVersion getRootVersion();
+    default @NonNull YangVersion getRootVersion() {
+        return yangVersion();
+    }
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.
