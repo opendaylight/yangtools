@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-@SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
 public enum ModelProcessingPhase {
-    INIT(null),
+    INIT(),
 
     /**
      * Preliminary cross-source relationship resolution phase which collects available module names and module
@@ -41,8 +42,14 @@ public enum ModelProcessingPhase {
 
     private final @Nullable ModelProcessingPhase previousPhase;
 
-    ModelProcessingPhase(final @Nullable ModelProcessingPhase previous) {
-        this.previousPhase = previous;
+    @SuppressFBWarnings(value = "NP_STORE_INTO_NONNULL_FIELD",
+        justification = "https://github.com/spotbugs/spotbugs/issues/743")
+    ModelProcessingPhase() {
+        previousPhase = null;
+    }
+
+    ModelProcessingPhase(final ModelProcessingPhase previousPhase) {
+        this.previousPhase = requireNonNull(previousPhase);
     }
 
     /**
