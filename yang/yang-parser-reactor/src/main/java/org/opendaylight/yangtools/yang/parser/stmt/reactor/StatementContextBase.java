@@ -539,9 +539,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     final List<StatementContextBase<?, ?, ?>> beforeAddEffectiveStatementUnsafe(
             final List<StatementContextBase<?, ?, ?>> effective, final int toAdd) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
-                || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
+        if (inProgressPhase != null) {
+            verify(inProgressPhase.ordinal() >= ModelProcessingPhase.FULL_DECLARATION.ordinal(),
+                "Effective statement cannot be added in phase %s at: %s", inProgressPhase,
+                getStatementSourceReference());
+        }
 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }

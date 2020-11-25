@@ -217,11 +217,15 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private void executePhases() throws ReactorException {
         for (final ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
-            startPhase(phase);
-            loadPhaseStatements();
-            completePhaseActions();
-            endPhase(phase);
+            executePhase(phase);
         }
+    }
+
+    private void executePhase(final ModelProcessingPhase phase) throws ReactorException {
+        startPhase(phase);
+        loadPhaseStatements();
+        completePhaseActions();
+        endPhase(phase);
     }
 
     ReactorDeclaredModel build() throws ReactorException {
@@ -274,6 +278,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     @SuppressWarnings("checkstyle:illegalCatch")
     private EffectiveSchemaContext transformEffective() throws ReactorException {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
+        executePhase(ModelProcessingPhase.EFFECTIVE_VIEW);
+
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 

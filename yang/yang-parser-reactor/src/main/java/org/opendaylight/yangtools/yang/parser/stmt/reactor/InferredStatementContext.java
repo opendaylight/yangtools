@@ -35,6 +35,11 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -181,6 +186,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.argument = original.argument;
         // Substatements are initialized here
         this.substatements = new Promised(ImmutableList.of());
+        hookBuildDependency();
     }
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
@@ -196,6 +202,26 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         this.substatements = prototype instanceof InferredStatementContext
             ? new Promised(((InferredStatementContext) prototype).substatements()) : null;
+        hookBuildDependency();
+    }
+
+    private void hookBuildDependency() {
+        final ModelActionBuilder action = newInferenceAction(ModelProcessingPhase.EFFECTIVE_VIEW);
+        final Prerequisite<E> prereq = action.requiresEffective(this);
+        final Prerequisite<StatementContextBase<A, D, E>> mutation =
+            action.mutatesCtx(prototype, ModelProcessingPhase.EFFECTIVE_VIEW);
+        action.apply(new InferenceAction() {
+            @Override
+            public void apply(final InferenceContext ctx) {
+                LOG.info("Completed effective view dependency on {} [at {}]", getPublicDefinition(),
+                    getStatementSourceReference());
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                throw new InferenceException(getStatementSourceReference(), "Prerequisites %s failed", failed);
+            }
+        });
     }
 
     @Override
