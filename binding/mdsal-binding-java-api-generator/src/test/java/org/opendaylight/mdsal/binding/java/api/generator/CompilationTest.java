@@ -119,6 +119,10 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(linksClass.isInterface());
         CompilationTestUtils.assertImplementsIfc(linksClass, keyArgsClass);
         assertEquals(7, abstractMethods(linksClass).size());
+        CompilationTestUtils.assertContainsMethod(linksClass,
+            "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.links.Text", "getText", loader);
+        CompilationTestUtils.assertContainsMethod(linksClass,
+            "org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.links.Text", "requireText", loader);
 
         // Test list key constructor arguments ordering
         CompilationTestUtils.assertContainsConstructor(linksKeyClass, Byte.class, String.class, Integer.class);

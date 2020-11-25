@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
@@ -45,6 +46,22 @@ public final class CodeHelpers {
      */
     public static void validValue(final boolean expression, final Object value, final String options) {
         checkArgument(expression, "expected one of: %s \n%but was: %s", options, value);
+    }
+
+    /**
+     * Return value and check whether specified value is null and if so throws exception. This method supports
+     * require default getter methods.
+     *
+     * @param value Value itself
+     * @param name Name of the value
+     * @return Non-null value
+     * @throws NoSuchElementException if value is null
+     */
+    public static <T> @NonNull T require(final @Nullable T value, final @NonNull String name) {
+        if (value == null) {
+            throw new NoSuchElementException("Value of " + name + " is not present");
+        }
+        return value;
     }
 
     /**

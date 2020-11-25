@@ -123,6 +123,11 @@ public final class BindingMapping {
      */
     public static final @NonNull String NONNULL_PREFIX = "nonnull";
 
+    /**
+     * Prefix for require default wrapper methods. These methods always wrap a corresponding normal getter
+     * of leaf objects.
+     */
+    public static final @NonNull String REQUIRE_PREFIX = "require";
     public static final @NonNull String RPC_INPUT_SUFFIX = "Input";
     public static final @NonNull String RPC_OUTPUT_SUFFIX = "Output";
 
@@ -244,6 +249,19 @@ public final class BindingMapping {
 
     public static boolean isNonnullMethodName(final String methodName) {
         return methodName.startsWith(NONNULL_PREFIX);
+    }
+
+    public static @NonNull String getGetterMethodForRequire(final String methodName) {
+        checkArgument(isRequireMethodName(methodName));
+        return GETTER_PREFIX + methodName.substring(REQUIRE_PREFIX.length());
+    }
+
+    public static @NonNull String getRequireMethodName(final String localName) {
+        return REQUIRE_PREFIX + toFirstUpper(getPropertyName(localName));
+    }
+
+    public static boolean isRequireMethodName(final String methodName) {
+        return methodName.startsWith(REQUIRE_PREFIX);
     }
 
     public static @NonNull String getGetterSuffix(final QName name) {
