@@ -593,14 +593,13 @@ public final class StmtContextUtils {
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
-        final StmtContext<?, ?, ?> importedModule = ctx.getRoot().getFromNamespace(ImportPrefixToModuleCtx.class,
-            prefix);
+        final StmtContext<?, ?, ?> root = ctx.getRoot();
+        final StmtContext<?, ?, ?> importedModule = root.getFromNamespace(ImportPrefixToModuleCtx.class, prefix);
         final QNameModule qnameModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, importedModule);
         if (qnameModule != null) {
             return qnameModule;
         }
 
-        final StmtContext<?, ?, ?> root = ctx.getRoot();
         if (root.producesDeclared(SubmoduleStatement.class)) {
             final String moduleName = root.getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
             return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
