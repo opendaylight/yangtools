@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -126,9 +128,10 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     private @NonNull D loadDeclared() {
-        final ModelProcessingPhase phase = getCompletedPhase();
-        checkState(phase == ModelProcessingPhase.FULL_DECLARATION || phase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Cannot build declared instance after phase %s", phase);
+        final ModelProcessingPhase phase = verifyNotNull(getCompletedPhase(),
+            "Cannot build declared instance without a completed phase");
+        verify(phase.ordinal() >= ModelProcessingPhase.FULL_DECLARATION.ordinal(),
+            "Cannot build declared instance in phase %s", phase);
         return declaredInstance = definition().getFactory().createDeclared(this);
     }
 

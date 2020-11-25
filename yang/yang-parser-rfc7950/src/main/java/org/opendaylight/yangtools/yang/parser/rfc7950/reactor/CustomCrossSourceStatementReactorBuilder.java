@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 
 @Beta
 public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSourceStatementReactor> {
-    private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
     private final Map<ValidationBundleType, Collection<StatementDefinition>> reactorValidationBundles = new HashMap<>();
+    private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
 
     /**
      * Creates a new CustomCrossSourceStatementReactorBuilder object initialized by specific version bundle. Statement
@@ -47,7 +47,9 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
                 .put(ModelProcessingPhase.SOURCE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.STATEMENT_DEFINITION, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.FULL_DECLARATION, StatementSupportBundle.builder(supportedVersions))
-                .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder(supportedVersions)).build();
+                .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder(supportedVersions))
+                .put(ModelProcessingPhase.EFFECTIVE_VIEW, StatementSupportBundle.builder(supportedVersions))
+                .build();
     }
 
     public @NonNull CustomCrossSourceStatementReactorBuilder addStatementSupport(final ModelProcessingPhase phase,
@@ -123,6 +125,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
                 .setParent(stmtDefBundle).build();
         final StatementSupportBundle effectiveBundle = reactorSupportBundles.get(ModelProcessingPhase.EFFECTIVE_MODEL)
                 .setParent(fullDeclBundle).build();
+        final StatementSupportBundle effectiveViewBundle =
+                reactorSupportBundles.get(ModelProcessingPhase.EFFECTIVE_VIEW).setParent(effectiveBundle).build();
 
         final CrossSourceStatementReactor.Builder reactorBuilder = CrossSourceStatementReactor.builder()
                 .setBundle(ModelProcessingPhase.INIT, initBundle)
@@ -130,7 +134,8 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
                 .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
                 .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle)
                 .setBundle(ModelProcessingPhase.FULL_DECLARATION, fullDeclBundle)
-                .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, effectiveBundle);
+                .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, effectiveBundle)
+                .setBundle(ModelProcessingPhase.EFFECTIVE_VIEW, effectiveViewBundle);
 
         for (final Entry<ValidationBundleType, Collection<StatementDefinition>> entry : reactorValidationBundles
                 .entrySet()) {
