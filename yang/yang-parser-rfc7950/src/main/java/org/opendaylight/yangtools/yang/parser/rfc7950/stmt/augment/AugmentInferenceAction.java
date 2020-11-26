@@ -81,7 +81,7 @@ final class AugmentInferenceAction implements InferenceAction {
         //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
         try {
             copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
-            augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
+            augmentTargetCtx.addEffectiveReplicaSubstatement(augmentSourceCtx);
         } catch (final SourceException e) {
             LOG.warn("Failed to add augmentation {} defined at {}", augmentTargetCtx.sourceReference(),
                     augmentSourceCtx.sourceReference(), e);

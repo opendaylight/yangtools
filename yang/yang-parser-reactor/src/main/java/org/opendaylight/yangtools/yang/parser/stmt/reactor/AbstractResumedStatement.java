@@ -202,6 +202,15 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         return effective.stream();
     }
 
+    @Override
+    final boolean sweepEffective() {
+        substatements.forEach(StatementContextBase::sweep);
+        effective.forEach(StatementContextBase::sweep);
+        // FIXME: we want to remove effective here, but we are being reused in some cases and lifecycle there just does
+        //        not work (yet)
+        return false;
+    }
+
     /**
      * Lookup substatement by its offset in this statement.
      *

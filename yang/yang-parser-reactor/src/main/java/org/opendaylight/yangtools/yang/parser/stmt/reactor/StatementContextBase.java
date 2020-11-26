@@ -16,6 +16,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -146,15 +147,28 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable E effectiveInstance;
 
+    // Substatement refcount tracking. This mechanics deals with retaining effective substatements for the purposes of
+    // instantiating their lazy copies in InferredStatementContext. This is a simple reference counter, with two guard
+    // values. The initial value is 1 and is decremented from loadEffective().
+    // FIXME: consider fusing with 'inferenceFlags' to allow ~22 bits worth of leases
+    private short refcount = 1;
+    // This statement and its subtree have been swept
+    private static final short REFCOUNT_SWEPT_TREE = (short) 0xFFFF;
+    // This statement has been swept, do not allow further references
+    private static final short REFCOUNT_SWEPT = (short) 0xFFFE;
+    // Overflowed counter: do not perform cleanup
+    private static final short REFCOUNT_DEFUNCT = (short) 0xFFFD;
+    // No references
+    private static final short REFCOUNT_NONE = 0;
+
+    // Inference flags, hiding in the alignment shadow created by 'refcount'
+    private byte inferenceFlags = INFERENCE_SUPPORTED_BUILD_EFFECTIVE;
     // Master flag controlling whether this context can yield an effective statement
-    // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
-    //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
-    private boolean isSupportedToBuildEffective = true;
+    private static final byte INFERENCE_SUPPORTED_BUILD_EFFECTIVE = 0x01;
+    // Flag for use with AbstractResumedStatement
+    private static final byte INFERENCE_FULLY_DEFINED             = 0x02;
 
-    // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
-    private boolean fullyDefined;
-
-    // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
+    // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by 'refcount' and
     // hence improve memory layout.
     private byte flags;
 
@@ -167,8 +181,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.copyHistory = original.copyHistory;
         this.definition = original.definition;
 
-        this.isSupportedToBuildEffective = original.isSupportedToBuildEffective;
-        this.fullyDefined = original.fullyDefined;
+        this.inferenceFlags = original.inferenceFlags;
         this.completedPhase = original.completedPhase;
         this.flags = original.flags;
     }
@@ -241,12 +254,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedToBuildEffective() {
-        return isSupportedToBuildEffective;
+        return (inferenceFlags & INFERENCE_SUPPORTED_BUILD_EFFECTIVE) != 0;
     }
 
     @Override
     public void setIsSupportedToBuildEffective(final boolean isSupportedToBuildEffective) {
-        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
+        inferenceFlags = (byte) (isSupportedToBuildEffective ? inferenceFlags | INFERENCE_SUPPORTED_BUILD_EFFECTIVE
+            : inferenceFlags & ~INFERENCE_SUPPORTED_BUILD_EFFECTIVE);
     }
 
     @Override
@@ -442,6 +456,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
+     * Add a substatement which is a replica of a particular statement. The replica is not a fully mutable statement,
+     * but rather takes all its significant state from the source statement.
+     *
+     * @param stmt Source statement
+     */
+    public final void addEffectiveReplicaSubstatement(final Mutable<?, ?, ?> stmt) {
+        addEffectiveSubstatement(new ReplicaStatementContext<>(this, (StatementContextBase<?, ?, ?>) stmt));
+    }
+
+    /**
      * Adds an effective statement to collection of substatements.
      *
      * @param substatement substatement
@@ -542,11 +566,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // These two exists only due to memory optimization, should live in AbstractResumedStatement
     final boolean fullyDefined() {
-        return fullyDefined;
+        return (inferenceFlags & INFERENCE_FULLY_DEFINED) != 0;
     }
 
     final void setFullyDefined() {
-        fullyDefined = true;
+        inferenceFlags |= INFERENCE_FULLY_DEFINED;
     }
 
     @Override
@@ -556,8 +580,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this),
-            streamDeclared(), streamEffective());
+        final E ret = effectiveInstance = createEffective();
+        decRef();
+        return ret;
+    }
+
+    // Exposed for ReplicaStatementContext
+    E createEffective() {
+        return definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(),
+            streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -945,6 +976,113 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
      */
     abstract boolean hasEmptySubstatements();
+
+    /**
+     * Acquire a reference on this context. As long as there is at least one reference outstanding,
+     * {@link #buildEffective()} will not result in {@link #effectiveSubstatements()} being discarded.
+     *
+     * @throws VerifyException if {@link #effectiveSubstatements()} has already been discarded
+     */
+    final void incRef() {
+        final short current = refcount;
+        verify(current != REFCOUNT_SWEPT && current != REFCOUNT_SWEPT_TREE,
+            "Attempted to access reference count of %s", this);
+
+        if (current != REFCOUNT_DEFUNCT) {
+            // Note: can end up becoming REFCOUNT_DEFUNCT on overflow
+            refcount = (short) (current + 1);
+        }
+    }
+
+    /**
+     * Release a reference on this context. This call may result in {@link #effectiveSubstatements()} becoming
+     * unavailable.
+     */
+    final void decRef() {
+        final short current = refcount;
+        if (current == REFCOUNT_DEFUNCT) {
+            // no-op
+            LOG.trace("Disabled refcount decrement of {}", this);
+            return;
+        }
+        if (current == REFCOUNT_NONE) {
+            // Underflow, become defunct
+            LOG.warn("Statement refcount underflow, reference counting disabled for {}", this, new Throwable());
+            refcount = REFCOUNT_DEFUNCT;
+            return;
+        }
+
+        refcount = (short) (current - 1);
+        if (refcount == REFCOUNT_NONE) {
+            final StatementContextBase<?, ?, ?> parent = getParentContext();
+            if (noParentRefs(parent)) {
+                // No parent leases hence we can run our cleanup
+                LOG.trace("Releasing current {}", this);
+                if (sweepState()) {
+                    // We became REFCOUNT_SWEPT_TREE, go back to parent so it can do the same
+                    if (parent != null) {
+                        parent.sweep();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Sweep this statement context as a result of {@link #sweepEffective()}, i.e. when parent is also being swept.
+     *
+     * @return True if the
+     */
+    final boolean sweep() {
+        if (refcount == REFCOUNT_NONE) {
+            LOG.trace("Releasing child {}", this);
+            return sweepState();
+        }
+        return false;
+    }
+
+    private boolean sweepState() {
+        if (sweepEffective()) {
+            refcount = REFCOUNT_SWEPT_TREE;
+            sweepNamespaces();
+            return true;
+        }
+
+        refcount = REFCOUNT_SWEPT;
+        return false;
+    }
+
+    /**
+     * Implementation-specific sweep action. This is expected to perform a recursive {@link #sweep()} on all
+     * {@link #declaredSubstatements()} and {@link #effectiveSubstatements()} and report the result of the sweep
+     * operation.
+     *
+     * <p>
+     * {@link #effectiveSubstatements()} as well as namespaces may become inoperable as a result of this operation.
+     *
+     * @return True if the entire tree has been completely swept, false otherwise.
+     */
+    abstract boolean sweepEffective();
+
+    // Check whether there are any references to any of our parents
+    private static boolean noParentRefs(final StatementContextBase<?, ?, ?> parent) {
+        for (StatementContextBase<?, ?, ?> current = parent; current != null; current = current.getParentContext()) {
+            switch (current.refcount) {
+                case REFCOUNT_NONE:
+                    // Need to check parent
+                    break;
+                case REFCOUNT_SWEPT:
+                    // A parent has been completely swept, so it's all REFCOUNT_NONE between us and that parent
+                    return true;
+                case REFCOUNT_SWEPT_TREE:
+                    throw new VerifyException("Attempted to completely swept " + current);
+                default:
+                    // includes REFCOUNT_DEFUNCT
+                    return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
