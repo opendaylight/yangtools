@@ -86,7 +86,7 @@ abstract class AbstractChoiceStatementSupport
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
         try {
-            return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, flags, stmt.getSchemaPath(),
+            return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, flags, stmt.wrapSchemaPath(),
                 defaultCase, (ChoiceSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);

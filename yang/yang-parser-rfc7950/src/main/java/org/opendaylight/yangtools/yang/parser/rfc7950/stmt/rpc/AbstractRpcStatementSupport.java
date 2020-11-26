@@ -84,7 +84,7 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
 
         try {
             return new RpcEffectiveStatementImpl(stmt.declared(), substatements, computeFlags(substatements),
-                stmt.getSchemaPath());
+                stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
         }

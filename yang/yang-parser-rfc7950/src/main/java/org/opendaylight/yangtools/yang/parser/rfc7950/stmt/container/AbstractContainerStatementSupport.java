@@ -47,7 +47,6 @@ abstract class AbstractContainerStatementSupport
     @Override
     protected ContainerEffectiveStatement createEffective(final Current<QName, ContainerStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final SchemaPath path = stmt.getSchemaPath();
         final ContainerSchemaNode original = (ContainerSchemaNode) stmt.original();
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
@@ -60,6 +59,7 @@ abstract class AbstractContainerStatementSupport
         EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
+        final SchemaPath path = stmt.wrapSchemaPath();
         try {
             return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, flags, path, original);
         } catch (SubstatementIndexingException e) {

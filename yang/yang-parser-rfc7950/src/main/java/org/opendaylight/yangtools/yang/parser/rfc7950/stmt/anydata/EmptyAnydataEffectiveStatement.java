@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
@@ -24,14 +22,14 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 
 class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
         implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final AnydataSchemaNode original;
     private final int flags;
 
     EmptyAnydataEffectiveStatement(final AnydataStatement declared, final SchemaPath path, final int flags,
             final @Nullable AnydataSchemaNode original) {
         super(declared);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.flags = flags;
         this.original = original;
     }
@@ -39,7 +37,7 @@ class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

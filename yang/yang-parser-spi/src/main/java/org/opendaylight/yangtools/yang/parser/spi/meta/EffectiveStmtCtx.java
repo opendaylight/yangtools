@@ -67,6 +67,11 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         default @NonNull SchemaPath getSchemaPath() {
             return schemaPath().orElseThrow();
         }
+
+        @Deprecated
+        default @Nullable SchemaPath wrapSchemaPath() {
+            return SchemaPathSupport.wrap(getSchemaPath());
+        }
     }
 
     /**

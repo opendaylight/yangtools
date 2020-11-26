@@ -48,7 +48,7 @@ abstract class AbstractRefineStatementSupport
     protected final RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.getSchemaPath(),
+        return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.wrapSchemaPath(),
                 (SchemaNode) stmt.caerbannog().getEffectOfStatement().iterator().next().buildEffective());
     }
 }

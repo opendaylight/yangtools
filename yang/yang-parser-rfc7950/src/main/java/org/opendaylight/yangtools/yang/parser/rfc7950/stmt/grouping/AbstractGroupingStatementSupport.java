@@ -68,7 +68,7 @@ abstract class AbstractGroupingStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return new GroupingEffectiveStatementImpl(stmt.declared(), substatements,
-                historyAndStatusFlags(stmt.history(), substatements), stmt.getSchemaPath());
+                historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
         }
