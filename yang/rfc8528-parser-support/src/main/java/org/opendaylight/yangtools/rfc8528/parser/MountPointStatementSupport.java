@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.util.SchemaNodePropertyUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
@@ -58,6 +59,10 @@ public final class MountPointStatementSupport
         @Override
         @Deprecated
         public SchemaPath getPath() {
+            if (SchemaNodePropertyUtil.isGetPathForbidden()) {
+                throw new UnsupportedOperationException(SchemaNodePropertyUtil.SCHEMANODE_GETPATH_FORBID_PROPERTY
+                        + " property enabled - creating the SchemaPath is forbidden in SchemaNode");
+            }
             return path;
         }
 
