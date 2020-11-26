@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
     private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
@@ -35,7 +36,7 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override
