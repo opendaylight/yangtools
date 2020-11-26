@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -335,22 +336,20 @@ public final class StmtContextUtils {
      * Checks whether at least one ancestor of a StatementContext matches one from a collection of statement
      * definitions.
      *
-     * @param ctx
-     *            StatementContext to be checked
-     * @param ancestorTypes
-     *            collection of statement definitions
+     * @param stmt EffectiveStmtCtx to be checked
+     * @param ancestorTypes collection of statement definitions
      * @return true if at least one ancestor of a StatementContext matches one
      *         from collection of statement definitions, otherwise false.
      */
-    public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> ctx,
+    public static boolean hasAncestorOfType(final EffectiveStmtCtx stmt,
             final Collection<StatementDefinition> ancestorTypes) {
         requireNonNull(ancestorTypes);
-        StmtContext<?, ?, ?> current = ctx.getParentContext();
+        Parent current = stmt.parent();
         while (current != null) {
-            if (ancestorTypes.contains(current.getPublicDefinition())) {
+            if (ancestorTypes.contains(current.publicDefinition())) {
                 return true;
             }
-            current = current.getParentContext();
+            current = current.parent();
         }
         return false;
     }
@@ -358,19 +357,19 @@ public final class StmtContextUtils {
     /**
      * Checks whether all of StmtContext's ancestors of specified type have a child of specified type.
      *
-     * @param ctx StmtContext to be checked
+     * @param stmt EffectiveStmtCtx to be checked
      * @param ancestorType type of ancestor to search for
      * @param ancestorChildType type of child to search for in the specified ancestor type
      * @return true if all of StmtContext's ancestors of specified type have a child of specified type, otherwise false
      */
     public static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(
-            final StmtContext<?, ?, ?> ctx, final StatementDefinition ancestorType,
+            final EffectiveStmtCtx.Current<?, ?> stmt, final StatementDefinition ancestorType,
             final StatementDefinition ancestorChildType) {
-        requireNonNull(ctx);
+        requireNonNull(stmt);
         requireNonNull(ancestorType);
         requireNonNull(ancestorChildType);
 
-        StmtContext<?, ?, ?> current = ctx.coerceParentContext();
+        StmtContext<?, ?, ?> current = stmt.caerbannog().getParentContext();
         StmtContext<?, ?, ?> parent = current.getParentContext();
         while (parent != null) {
             if (ancestorType.equals(current.getPublicDefinition())
@@ -386,17 +385,17 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether the parent of StmtContext is of specified type.
+     * Checks whether the parent of EffectiveStmtCtx is of specified type.
      *
-     * @param ctx
-     *            StmtContext to be checked
+     * @param stmt EffectiveStmtCtx to be checked
      * @param parentType
      *            type of parent to check
      * @return true if the parent of StmtContext is of specified type, otherwise false
      */
-    public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
+    public static boolean hasParentOfType(final EffectiveStmtCtx.Current<?, ?> stmt,
+            final StatementDefinition parentType) {
         requireNonNull(parentType);
-        final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
+        final StmtContext<?, ?, ?> parentContext = stmt.caerbannog().getParentContext();
         return parentContext != null && parentType.equals(parentContext.getPublicDefinition());
     }
 
