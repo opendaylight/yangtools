@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, ExtensionStatement>
         implements ExtensionDefinition, ExtensionEffectiveStatement, DocumentedNodeMixin<QName, ExtensionStatement> {
@@ -81,7 +82,7 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override
