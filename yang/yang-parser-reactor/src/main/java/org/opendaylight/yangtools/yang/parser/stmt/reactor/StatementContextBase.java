@@ -65,7 +65,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -84,7 +83,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements Mutable<A, D, E> {
+        extends ReactorStmtCtx<A, D, E> {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -556,8 +555,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this),
-            streamDeclared(), streamEffective());
+        // Creating an effective statement does not strictly require a declared instance -- there are statements like
+        // 'input', which are implicitly defined.
+        // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
+        // we attempt to create effective statement:
+        buildDeclared();
+
+        final E ret = effectiveInstance = createEffective();
+        // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
+        // some residue.
+        releaseImplicitRef();
+        return ret;
+    }
+
+    // Exposed for ReplicaStatementContext
+    E createEffective() {
+        return definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(),
+            streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -911,7 +925,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public final StatementContextBase<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
         checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
-        return this;
+        return replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
+    }
+
+    final @NonNull StatementContextBase<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> stmt) {
+        return new ReplicaStatementContext<>(stmt, this);
     }
 
     private static void checkEffectiveModelCompleted(final StmtContext<?, ?, ?> stmt) {
@@ -951,6 +969,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
      */
     abstract boolean hasEmptySubstatements();
+
+    @Override
+    final boolean noImplictRef() {
+        return effectiveInstance != null || !isSupportedToBuildEffective();
+    }
+
+    @Override
+    final ReactorStmtCtx<?, ?, ?> parentStmtCtx() {
+        return getParentContext();
+    }
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
