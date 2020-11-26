@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 @Beta
@@ -94,7 +95,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return delegate.getPath();
+        return SchemaPathSupport.getPath(delegate.getPath());
     }
 
     @Override
