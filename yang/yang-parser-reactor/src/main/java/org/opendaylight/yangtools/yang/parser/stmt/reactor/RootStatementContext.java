@@ -13,6 +13,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -37,6 +39,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance
@@ -44,8 +48,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  */
 public final class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends AbstractResumedStatement<A, D, E> implements RootStmtContext.Mutable<A, D, E> {
-
     public static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
+    private static final Map<Class<?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
+        SchemaTreeNamespace.class, new SweptNamespace(SchemaTreeNamespace.class));
 
     private final @NonNull SourceSpecificContext sourceContext;
     private final A argument;
@@ -256,5 +263,11 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     @Override
     StatementContextBase<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         throw new UnsupportedOperationException("Root statement cannot be reparented to" + newParent);
+    }
+
+    @Override
+    void sweepNamespaces() {
+        LOG.info("Sweeping root {}", this);
+        sweepNamespaces(SWEPT_NAMESPACES);
     }
 }
