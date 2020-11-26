@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
         implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
@@ -37,7 +38,7 @@ final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, Ou
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override

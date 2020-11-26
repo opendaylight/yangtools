@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 final class GroupingEffectiveStatementImpl
         extends WithSubstatements<QName, GroupingStatement, GroupingEffectiveStatement>
@@ -62,7 +63,7 @@ final class GroupingEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override

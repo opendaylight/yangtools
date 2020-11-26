@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 final class NotificationEffectiveStatementImpl
         extends WithSubstatements<QName, NotificationStatement, NotificationEffectiveStatement>
@@ -62,7 +63,7 @@ final class NotificationEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override

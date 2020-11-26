@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffec
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode,
@@ -69,7 +70,7 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override

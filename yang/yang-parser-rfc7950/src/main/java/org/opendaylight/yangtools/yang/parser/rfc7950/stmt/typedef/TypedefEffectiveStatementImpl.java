@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override
