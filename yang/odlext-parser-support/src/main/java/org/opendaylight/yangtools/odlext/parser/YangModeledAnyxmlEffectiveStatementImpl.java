@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.ForwardingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 final class YangModeledAnyxmlEffectiveStatementImpl
@@ -64,7 +65,7 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return delegateSchemaNode().getPath();
+        return SchemaPathSupport.getPath(delegateSchemaNode().getPath());
     }
 
     @Override
