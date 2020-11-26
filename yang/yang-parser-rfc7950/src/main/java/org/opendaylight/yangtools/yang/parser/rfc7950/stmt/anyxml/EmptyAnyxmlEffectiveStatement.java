@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaNodePropertyUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 
@@ -38,6 +39,10 @@ class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
     @Override
     @Deprecated
     public final SchemaPath getPath() {
+        if (SchemaNodePropertyUtil.isGetPathForbidden()) {
+            throw new UnsupportedOperationException(SchemaNodePropertyUtil.SCHEMANODE_GETPATH_FORBID_PROPERTY
+                    + " property enabled - creating the SchemaPath is forbidden in SchemaNode");
+        }
         return path;
     }
 

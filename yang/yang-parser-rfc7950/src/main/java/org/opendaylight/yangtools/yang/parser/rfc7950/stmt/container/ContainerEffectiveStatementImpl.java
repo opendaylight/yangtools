@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
+import org.opendaylight.yangtools.yang.model.util.SchemaNodePropertyUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
@@ -70,6 +71,10 @@ final class ContainerEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
+        if (SchemaNodePropertyUtil.isGetPathForbidden()) {
+            throw new UnsupportedOperationException(SchemaNodePropertyUtil.SCHEMANODE_GETPATH_FORBID_PROPERTY
+                    + " property enabled - creating the SchemaPath is forbidden in SchemaNode");
+        }
         return path;
     }
 

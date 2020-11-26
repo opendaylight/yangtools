@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
+import org.opendaylight.yangtools.yang.model.util.SchemaNodePropertyUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
@@ -85,6 +86,10 @@ abstract class AbstractListEffectiveStatement
     @Override
     @Deprecated
     public final SchemaPath getPath() {
+        if (SchemaNodePropertyUtil.isGetPathForbidden()) {
+            throw new UnsupportedOperationException(SchemaNodePropertyUtil.SCHEMANODE_GETPATH_FORBID_PROPERTY
+                    + " property enabled - creating the SchemaPath is forbidden in SchemaNode");
+        }
         return path;
     }
 

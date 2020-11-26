@@ -13,6 +13,7 @@ module org.opendaylight.yangtools.yang.model.api {
     exports org.opendaylight.yangtools.yang.model.api.type;
     exports org.opendaylight.yangtools.yang.model.repo.api;
     exports org.opendaylight.yangtools.yang.model.repo.spi;
+    exports org.opendaylight.yangtools.yang.model.util;
 
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
 
