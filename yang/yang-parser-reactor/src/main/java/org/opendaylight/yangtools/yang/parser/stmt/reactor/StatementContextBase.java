@@ -147,6 +147,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable E effectiveInstance;
 
+    // Substatement refcount tracking. This mechanics deals with retaining effective substatements for the purposes of
+    // instantiating their lazy copies in InferredStatementContext. This is a simple reference counter, with two guard
+    // values.
+    // FIXME: consider fusing with 'fullyDefined' to allow 15 bits worth of leases
+    private byte refCount = 1;
+    // Reject all attempts at acquiring a new lease
+    private static final byte DEAD_REFCOUNT = (byte) 255;
+    // Overflowed counter: do not perform cleanup
+    private static final byte DEFUNCT_REFCOUNT = (byte) 254;
+
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
     //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
@@ -562,8 +572,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this),
-            streamDeclared(), streamEffective());
+        final E ret = effectiveInstance = definition.getFactory().createEffective(
+            new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(), streamEffective());
+        decRef();
+        return ret;
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -993,6 +1005,71 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // Resolved, make sure we cache this return
         flags |= isConfig ? SET_CONFIGURATION : HAVE_CONFIGURATION;
         return isConfig;
+    }
+
+    final void incRef() {
+        final byte current = currentLeases();
+        if (current != DEFUNCT_REFCOUNT) {
+            // Note: can end up becoming DEFUNCT_LEASES on overflow
+            refCount = (byte) (current + 1);
+        }
+    }
+
+    final void decRef() {
+        final byte current = refCount;
+        if (current == DEFUNCT_REFCOUNT) {
+            // no-op
+            return;
+        }
+        if (current == 0) {
+            // Underflow, become defunct
+            refCount = DEFUNCT_REFCOUNT;
+            return;
+        }
+
+        final byte next = (byte) (current - 1);
+        refCount = next;
+        tryReleaseEffective();
+    }
+
+    // Called recursively from releaseEffective()
+    final void tryChildReleaseEffective() {
+        if (refCount == 0) {
+            releaseEffective();
+            refCount = DEAD_REFCOUNT;
+        }
+    }
+
+    final void tryReleaseEffective() {
+        if (refCount == 0 && noParentLeases(getParentContext())) {
+            // No parent leases hence we can run our cleanup
+            releaseEffective();
+            refCount = DEAD_REFCOUNT;
+        }
+    }
+
+    abstract void releaseEffective();
+
+    private byte currentLeases() {
+        final byte current = refCount;
+        verify(current != DEAD_REFCOUNT, "Lease lifecycle violation");
+        return current;
+    }
+
+    private static boolean noParentLeases(final StatementContextBase<?, ?, ?> parent) {
+        for (StatementContextBase<?, ?, ?> current = parent; current != null; current = current.getParentContext()) {
+            switch (current.refCount) {
+                case 0:
+                    // Need to check parent
+                    break;
+                case DEAD_REFCOUNT:
+                    // Parent has been cleaned up it's a terminal no
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return true;
     }
 
     protected abstract boolean isIgnoringConfig();
