@@ -202,6 +202,25 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         return effective.stream();
     }
 
+    @Override
+    final int sweepEffective() {
+        int count = 0;
+        for (StatementContextBase<?, ?, ?> stmt : substatements) {
+            if (!stmt.sweep()) {
+                ++count;
+            }
+        }
+        for (StatementContextBase<?, ?, ?> stmt : effective) {
+            if (!stmt.sweep()) {
+                ++count;
+            }
+        }
+
+        //      substatements = null;
+        effective = null;
+        return count;
+    }
+
     /**
      * Lookup substatement by its offset in this statement.
      *

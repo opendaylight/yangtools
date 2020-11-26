@@ -147,7 +147,7 @@ final class AugmentInferenceAction implements InferenceAction {
             }
             buffer.add(copy);
         } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {
-            buffer.add(target.childReplicaOf(original));
+            buffer.add(original.replicaAsChildOf(target));
         }
     }
 
