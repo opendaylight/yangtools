@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,10 +23,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableExce
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
+    private static final Logger LOG = LoggerFactory.getLogger(NamespaceStorageSupport.class);
 
-    private Map<Class<?>, Map<?,?>> namespaces = ImmutableMap.of();
+    private Map<Class<?>, Map<?, ?>> namespaces = ImmutableMap.of();
 
     /**
      * {@inheritDoc}
@@ -69,7 +74,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     @SuppressWarnings("unchecked")
     final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getLocalNamespace(final Class<N> type) {
-        return (Map<K, V>) namespaces.get(type);
+        return (Map<K, V>) accessNamespaces().get(type);
     }
 
     final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNamespace(
@@ -104,20 +109,63 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     @SuppressWarnings("unchecked")
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
-        final Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
+        final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace == null ? null : localNamespace.get(key);
     }
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
         @SuppressWarnings("unchecked")
-        final Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
+        final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace;
+    }
+
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
+            final V value) {
+        final V ret = ensureLocalNamespace(type).put(key, value);
+        onNamespaceElementAdded(type, key, value);
+        return ret;
+    }
+
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
+            final V value) {
+        final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
+        if (ret == null) {
+            onNamespaceElementAdded(type, key, value);
+        }
+        return ret;
+    }
+
+    void sweepNamespaces() {
+        namespaces = null;
+        LOG.debug("Swept namespace storages of {}", this);
+    }
+
+    void sweepNamespaces(final Map<Class<?>, SweptNamespace> toWipe) {
+        switch (namespaces.size()) {
+            case 0:
+                namespaces = ImmutableMap.copyOf(toWipe);
+                return;
+            case 1:
+                namespaces = new HashMap<>(namespaces);
+                break;
+            default:
+                // No-op, we are ready
+        }
+
+        namespaces.putAll(toWipe);
+        LOG.info("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
+    }
+
+    private Map<Class<?>, Map<?, ?>> accessNamespaces() {
+        return verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
     }
 
     private <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> ensureLocalNamespace(final Class<N> type) {
         @SuppressWarnings("unchecked")
-        Map<K, V> ret = (Map<K,V>) namespaces.get(type);
+        Map<K, V> ret = (Map<K,V>) accessNamespaces().get(type);
         if (ret == null) {
             checkLocalNamespaceAllowed(type);
             ret = new HashMap<>(1);
@@ -140,24 +188,6 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
             }
         }
 
-        return ret;
-    }
-
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
-            final V value) {
-        final V ret = ensureLocalNamespace(type).put(key, value);
-        onNamespaceElementAdded(type, key, value);
-        return ret;
-    }
-
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
-            final V value) {
-        final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
-        if (ret == null) {
-            onNamespaceElementAdded(type, key, value);
-        }
         return ret;
     }
 }
