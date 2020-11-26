@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.SchemaNodePropertyUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
@@ -69,6 +70,10 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
     @Override
     @Deprecated
     public final SchemaPath getPath() {
+        if (SchemaNodePropertyUtil.isGetPathForbidden()) {
+            throw new UnsupportedOperationException(SchemaNodePropertyUtil.SCHEMANODE_GETPATH_FORBID_PROPERTY
+                    + " property enabled - creating the SchemaPath is forbidden in SchemaNode");
+        }
         return path;
     }
 

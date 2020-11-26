@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatemen
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.SchemaNodePropertyUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
@@ -38,6 +39,10 @@ final class OpenConfigVersionEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
+        if (SchemaNodePropertyUtil.isGetPathForbidden()) {
+            throw new UnsupportedOperationException(SchemaNodePropertyUtil.SCHEMANODE_GETPATH_FORBID_PROPERTY
+                    + " property enabled - creating the SchemaPath is forbidden in SchemaNode");
+        }
         return path;
     }
 }
