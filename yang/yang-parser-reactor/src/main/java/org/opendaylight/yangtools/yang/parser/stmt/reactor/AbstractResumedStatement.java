@@ -202,6 +202,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         return effective.stream();
     }
 
+    @Override
+    final void releaseEffective() {
+        substatements.forEach(StatementContextBase::tryReleaseEffective);
+        effective.forEach(StatementContextBase::tryReleaseEffective);
+    }
+
     /**
      * Lookup substatement by its offset in this statement.
      *

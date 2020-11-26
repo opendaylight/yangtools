@@ -147,6 +147,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable E effectiveInstance;
 
+    // Counter of outstanding copy operations against this statement. The point here is that a particular subtree may
+    // be subject to a lazy copy, in which case buildEffective() on any statement within the tree retain effective
+    // substatements until all its parents have this counter equal to zero.
+
+    // Substatement lease tracking. This mechanics deals with retaining effective substatements for the purposes of
+    // instantiating their lazy copies in InferredStatementContext. This is a simple reference counter, with two guard
+    // values.
+    // FIXME: consider fusing with 'fullyDefined' to allow 15 bits worth of leases
+    private byte leases;
+    // Reject all attempts at acquiring a new lease
+    private static final byte DEAD_LEASES = (byte) 255;
+    // Overflowed counter: do not perform cleanup
+    private static final byte DEFUNCT_LEASES = (byte) 254;
+
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
     //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
@@ -993,6 +1007,71 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // Resolved, make sure we cache this return
         flags |= isConfig ? SET_CONFIGURATION : HAVE_CONFIGURATION;
         return isConfig;
+    }
+
+    final void acquireLease() {
+        final byte current = currentLeases();
+        if (current != DEFUNCT_LEASES) {
+            // Note: can end up becoming DEFUNCT_LEASES on overflow
+            leases = (byte) (current + 1);
+        }
+    }
+
+    final void releaseLease() {
+        final byte current = leases;
+        if (current == DEFUNCT_LEASES) {
+            // no-op
+            return;
+        }
+        if (current == 0) {
+            // Underflow, become defunct
+            leases = DEFUNCT_LEASES;
+            return;
+        }
+
+        final byte next = (byte) (current - 1);
+        leases = next;
+        tryReleaseEffective();
+    }
+
+    // Called recursively from releaseEffective()
+    final void tryChildReleaseEffective() {
+        if (leases == 0) {
+            releaseEffective();
+            leases = DEAD_LEASES;
+        }
+    }
+
+    final void tryReleaseEffective() {
+        if (leases == 0 && noParentLeases(getParentContext())) {
+            // No parent leases hence we can run our cleanup
+            releaseEffective();
+            leases = DEAD_LEASES;
+        }
+    }
+
+    abstract void releaseEffective();
+
+    private byte currentLeases() {
+        final byte current = leases;
+        verify(current != DEAD_LEASES, "Lease lifecycle violation");
+        return current;
+    }
+
+    private static boolean noParentLeases(final StatementContextBase<?, ?, ?> parent) {
+        for (StatementContextBase<?, ?, ?> current = parent; current != null; current = current.getParentContext()) {
+            switch (current.leases) {
+                case 0:
+                    // Need to check parent
+                    break;
+                case DEAD_LEASES:
+                    // Parent has been cleaned up it's a terminal no
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return true;
     }
 
     protected abstract boolean isIgnoringConfig();
