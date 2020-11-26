@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Intermediate subclass of StatementContextBase facing the parser stream via implementation of ResumedStatement. This
@@ -39,6 +41,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
  */
 abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements ResumedStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractResumedStatement.class);
+
     private final @NonNull StatementSourceReference statementDeclSource;
     private final String rawArgument;
 
@@ -188,6 +192,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
+    final boolean builtDeclared() {
+        return declaredInstance != null;
+    }
+
+    @Override
     final Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
         return effective;
     }
@@ -200,6 +209,23 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     final Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
         return effective.stream();
+    }
+
+    @Override
+    final int sweepEffective() {
+        // First we need to sweep all statements, which may trigger sweeps all across the place, for example:
+        // - 'effective' member sweeping a 'substatements' member
+        // - 'substatements' member sweeping a 'substatements' member which came before it during iteration
+        // We then iterate once again, counting what remains unswept
+        substatements.stream().forEach(StatementContextBase::sweep);
+        effective.stream().forEach(StatementContextBase::sweep);
+        final int count = countUnswept(substatements) + countUnswept(effective);
+        if (count != 0) {
+            LOG.debug("{} children left to sweep from {}", count, this);
+        }
+        substatements = null;
+        effective = null;
+        return count;
     }
 
     /**
