@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "671a4e5d_14946826",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/util/SchemaNodePropertyUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-26T20:22:06Z",
+      "side": 1,
+      "message": "final",
+      "range": {
+        "startLine": 13,
+        "startChar": 7,
+        "endLine": 13,
+        "endChar": 15
+      },
+      "revId": "71059cba8e28179fe38be3e0db291ccb58abee7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b2438da_a2f9c064",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/util/SchemaNodePropertyUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-26T20:22:06Z",
+      "side": 1,
+      "message": "This is a parser thing, it should live in yang-parser-rfc7950. It also should be named sthing like \u0027SchemaPathSupport\u0027 or similar",
+      "range": {
+        "startLine": 13,
+        "startChar": 22,
+        "endLine": 13,
+        "endChar": 44
+      },
+      "revId": "71059cba8e28179fe38be3e0db291ccb58abee7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "257718c4_85fb7dfa",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/util/SchemaNodePropertyUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-26T20:22:06Z",
+      "side": 1,
+      "message": "this needs to be a runtime constant",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 48
+      },
+      "revId": "71059cba8e28179fe38be3e0db291ccb58abee7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c8c42e7_a7ee3325",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/openconfig/stmt/OpenConfigVersionEffectiveStatementImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-11-26T20:22:06Z",
+      "side": 1,
+      "message": "This is a ton of copy\u0026paste.\nThe callout should look something like:\n\npublic SchemaPath getPath() {\n    return SchemaPathSupport.getPath(path);\n}\n\ni.e. all this logic needs to be concetrated in one place",
+      "range": {
+        "startLine": 42,
+        "startChar": 7,
+        "endLine": 45,
+        "endChar": 9
+      },
+      "revId": "71059cba8e28179fe38be3e0db291ccb58abee7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
