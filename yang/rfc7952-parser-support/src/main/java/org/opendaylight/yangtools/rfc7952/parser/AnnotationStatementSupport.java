@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -76,7 +77,7 @@ public final class AnnotationStatementSupport
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return path;
+            return SchemaPathSupport.getPath(path);
         }
 
         @Override
