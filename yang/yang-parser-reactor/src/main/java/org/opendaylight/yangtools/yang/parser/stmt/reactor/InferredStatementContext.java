@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
+    private static final Object DEAD_SUBSTATEMENTS = new Object();
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
@@ -92,6 +93,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.childCopyType = requireNonNull(childCopyType);
         this.targetModule = targetModule;
         this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
+
+        // Mark prototype as blocking statement cleanup
+        prototype.incRef();
     }
 
     @Override
@@ -276,16 +280,25 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
-        // FIXME: YANGTOOLS-1184: do not force initialization
+        verify(substatements != DEAD_SUBSTATEMENTS, "Attempted to access substatements of %s", this);
         return ensureEffectiveSubstatements().stream();
+    }
+
+    @Override
+    void releaseEffective() {
+        final Object local = substatements;
+        substatements = DEAD_SUBSTATEMENTS;
+        if (local != null) {
+            castEffective(local).forEach(StatementContextBase::sweep);
+        }
     }
 
     private List<StatementContextBase<?, ?, ?>> initializeSubstatements(
             final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
-        final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
+        final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, buffer, materializedSchemaTree);
@@ -299,6 +312,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             buffer.size());
         ret.addAll((Collection) buffer);
         substatements = ret;
+
+        prototype.decRef();
         return ret;
     }
 
