@@ -66,13 +66,12 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
     void checkEffective(final Current<QName, NotificationStatement> stmt) {
         final QName argument = stmt.argument();
         final StatementSourceReference ref = stmt.sourceReference();
-        final var rabbit = stmt.caerbannog();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(rabbit, ILLEGAL_PARENTS), ref,
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), ref,
             "Notification %s is defined within an rpc, action, or another notification", argument);
         SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(rabbit, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
             "Notification %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(rabbit, YangStmtMapping.CASE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), ref,
             "Notification %s is defined within a case statement", argument);
     }
 }

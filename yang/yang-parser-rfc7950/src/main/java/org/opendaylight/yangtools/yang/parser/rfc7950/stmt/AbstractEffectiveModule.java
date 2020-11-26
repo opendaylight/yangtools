@@ -96,23 +96,19 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
         final Set<UsesNode> mutableUses = new LinkedHashSet<>();
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
 
-        final var rabbit = stmt.caerbannog();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UsesNode && !mutableUses.add((UsesNode) effectiveStatement)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(rabbit, stmt.sourceReference(),
-                        effectiveStatement);
+                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement) {
                 final TypeDefinition<?> type = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
                 if (!mutableTypeDefinitions.add(type)) {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(rabbit, stmt.sourceReference(),
-                            effectiveStatement);
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof GroupingDefinition
                     && !mutableGroupings.add((GroupingDefinition) effectiveStatement)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(rabbit, stmt.sourceReference(),
-                        effectiveStatement);
+                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, effectiveStatement);
             }
         }
 
@@ -243,10 +239,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
                 .add("prefix", prefix)
                 .add("yangVersion", getYangVersion())
                 .toString();
-    }
-
-    protected static final @NonNull String findPrefix1(final Current<?, ?> stmt, final String type, final String name) {
-        return findPrefix(stmt.caerbannog(), type, name);
     }
 
     protected static final @NonNull String findPrefix(final StmtContext<?, ?, ?> stmt, final String type,
