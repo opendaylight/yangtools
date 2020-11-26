@@ -54,11 +54,9 @@ abstract class AbstractContainerStatementSupport
                 .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
                 .toFlags();
 
-        final var ref = stmt.sourceReference();
-        final var rabbit = stmt.caerbannog();
-        EffectiveStmtUtils.checkUniqueGroupings(rabbit, substatements, ref);
-        EffectiveStmtUtils.checkUniqueTypedefs(rabbit, substatements, ref);
-        EffectiveStmtUtils.checkUniqueUses(rabbit, substatements, ref);
+        EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
+        EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
+        EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
         return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(), flags, path,
             original);

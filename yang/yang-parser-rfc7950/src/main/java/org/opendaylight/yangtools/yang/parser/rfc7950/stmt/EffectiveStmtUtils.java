@@ -30,9 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
 public final class EffectiveStmtUtils {
@@ -43,11 +42,12 @@ public final class EffectiveStmtUtils {
         // Hidden on purpose
     }
 
-    public static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
-            final StatementSourceReference ref, final EffectiveStatement<?, ?> effectiveStatement) {
-        return new SourceException(ref,
+    public static SourceException createNameCollisionSourceException(final EffectiveStmtCtx.Current<?, ?> stmt,
+            final EffectiveStatement<?, ?> effectiveStatement) {
+        return new SourceException(stmt.sourceReference(),
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
-            ctx.getRoot().rawStatementArgument(), effectiveStatement.argument(), effectiveStatement.argument());
+            stmt.caerbannog().getRoot().rawStatementArgument(), effectiveStatement.argument(),
+            effectiveStatement.argument());
     }
 
     public static Optional<ElementCountConstraint> createElementCountConstraint(final EffectiveStatement<?, ?> stmt) {
@@ -167,34 +167,33 @@ public final class EffectiveStmtUtils {
         return false;
     }
 
-    public static void checkUniqueGroupings(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements, final StatementSourceReference ref) {
-        checkUniqueNodes(ctx, statements, GroupingDefinition.class, ref);
+    public static void checkUniqueGroupings(final EffectiveStmtCtx.Current<?, ?> ctx,
+            final Collection<? extends EffectiveStatement<?, ?>> statements) {
+        checkUniqueNodes(ctx, statements, GroupingDefinition.class);
     }
 
-    public static void checkUniqueTypedefs(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements, final StatementSourceReference ref) {
+    public static void checkUniqueTypedefs(final EffectiveStmtCtx.Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> statements) {
         final Set<Object> typedefs = new HashSet<>();
-        for (EffectiveStatement<?, ?> stmt : statements) {
-            if (stmt instanceof TypedefEffectiveStatement
-                    && !typedefs.add(((TypedefEffectiveStatement) stmt).getTypeDefinition())) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, ref, stmt);
+        for (EffectiveStatement<?, ?> statement : statements) {
+            if (statement instanceof TypedefEffectiveStatement
+                    && !typedefs.add(((TypedefEffectiveStatement) statement).getTypeDefinition())) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
         }
     }
 
-    public static void checkUniqueUses(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements, final StatementSourceReference ref) {
-        checkUniqueNodes(ctx, statements, UsesNode.class, ref);
+    public static void checkUniqueUses(final EffectiveStmtCtx.Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> statements) {
+        checkUniqueNodes(stmt, statements, UsesNode.class);
     }
 
-    private static void checkUniqueNodes(final StmtContext<?, ?, ?> ctx,
-            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<?> type,
-            final StatementSourceReference ref) {
+    private static void checkUniqueNodes(final EffectiveStmtCtx.Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<?> type) {
         final Set<Object> nodes = new HashSet<>();
-        for (EffectiveStatement<?, ?> stmt : statements) {
-            if (type.isInstance(stmt) && !nodes.add(stmt)) {
-                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, ref, stmt);
+        for (EffectiveStatement<?, ?> statement : statements) {
+            if (type.isInstance(statement) && !nodes.add(statement)) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
         }
     }

@@ -56,10 +56,9 @@ abstract class AbstractListEffectiveStatement
             final ImmutableList<QName> keyDefinition) {
         super(stmt.declared(), substatements, stmt.sourceReference());
 
-        final var rabbit = stmt.caerbannog();
-        EffectiveStmtUtils.checkUniqueGroupings(rabbit, substatements, stmt.sourceReference());
-        EffectiveStmtUtils.checkUniqueTypedefs(rabbit, substatements, stmt.sourceReference());
-        EffectiveStmtUtils.checkUniqueUses(rabbit, substatements, stmt.sourceReference());
+        EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
+        EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
+        EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
         this.substatements = maskList(substatements);
         this.path = requireNonNull(path);

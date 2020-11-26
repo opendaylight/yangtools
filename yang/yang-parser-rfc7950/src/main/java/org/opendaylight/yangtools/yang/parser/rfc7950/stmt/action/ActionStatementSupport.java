@@ -95,15 +95,14 @@ public final class ActionStatementSupport extends
         final StatementSourceReference ref = stmt.sourceReference();
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
         final QName argument = stmt.coerceArgument();
-        final var rabbit = stmt.caerbannog();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(rabbit, ILLEGAL_PARENTS), ref,
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), ref,
             "Action %s is defined within a notification, rpc or another action", argument);
         SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(rabbit, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
             "Action %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(rabbit, YangStmtMapping.CASE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), ref,
             "Action %s is defined within a case statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(rabbit, YangStmtMapping.MODULE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.MODULE), ref,
             "Action %s is defined at the top level of a module", argument);
 
         return new ActionEffectiveStatementImpl(stmt.declared(), stmt.getSchemaPath(),
