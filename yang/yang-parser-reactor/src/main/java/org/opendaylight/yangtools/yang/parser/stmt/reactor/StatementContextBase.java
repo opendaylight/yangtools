@@ -16,6 +16,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -145,6 +146,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable E effectiveInstance;
+
+    // Substatement refcount tracking. This mechanics deals with retaining effective substatements for the purposes of
+    // instantiating their lazy copies in InferredStatementContext. This is a simple reference counter, with two guard
+    // values. The initial value is 1 and is decremented from loadEffective().
+    // FIXME: consider fusing with 'fullyDefined' to allow 15 bits worth of leases
+    private byte refcount = 1;
+    // Reject all attempts at acquiring a new lease
+    private static final byte REFCOUNT_SWEPT = (byte) 255;
+    // Overflowed counter: do not perform cleanup
+    private static final byte REFCOUNT_DEFUNCT = (byte) 254;
+    // No references
+    private static final byte REFCOUNT_NONE = 0;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -556,8 +569,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private E loadEffective() {
-        return effectiveInstance = definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this),
-            streamDeclared(), streamEffective());
+        final E ret = effectiveInstance = definition.getFactory().createEffective(
+            new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(), streamEffective());
+        decRef();
+        return ret;
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -947,6 +962,90 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     abstract boolean hasEmptySubstatements();
 
+
+    /**
+     * Acquire a reference on this context. As long as there is at least one reference outstanding,
+     * {@link #buildEffective()} will not result in {@link #effectiveSubstatements()} being discarded.
+     *
+     * @throws VerifyException if {@link #effectiveSubstatements()} has already been discarded
+     */
+    final void incRef() {
+        final byte current = refcount;
+        verify(current != REFCOUNT_SWEPT, "Attempted to access reference count of %s", this);
+
+        if (current != REFCOUNT_DEFUNCT) {
+            // Note: can end up becoming REFCOUNT_DEFUNCT on overflow
+            refcount = (byte) (current + 1);
+        }
+    }
+
+    /**
+     * Release a reference on this context. This call may result in {@link #effectiveSubstatements()} becoming
+     * unavailable.
+     */
+    final void decRef() {
+        final byte current = refcount;
+        if (current == REFCOUNT_DEFUNCT) {
+            // no-op
+            LOG.info("Disabled refcount decrement of {}", this);
+            return;
+        }
+        if (current == REFCOUNT_NONE) {
+            // Underflow, become defunct
+            LOG.warn("Statement refcount underflow, reference counting disabled for {}", this, new Throwable());
+            refcount = REFCOUNT_DEFUNCT;
+            return;
+        }
+
+        refcount = (byte) (current - 1);
+        if (refcount == REFCOUNT_NONE && noParentRefs(getParentContext())) {
+            // No parent leases hence we can run our cleanup
+            LOG.trace("Releasing current {}", this);
+            sweepEffective();
+            refcount = REFCOUNT_SWEPT;
+        }
+    }
+
+    /**
+     * Sweep this statement context as a result of {@link #sweepEffective()}, i.e. when parent is also being swept.
+     */
+    final void sweep() {
+        if (refcount == REFCOUNT_NONE) {
+            LOG.trace("Releasing child {}", this);
+            sweepEffective();
+            refcount = REFCOUNT_SWEPT;
+        }
+    }
+
+    /**
+     * Implementation-specific sweep action. This is expected to perform a recursive {@link #sweep()} on all
+     * {@link #declaredSubstatements()} and {@link #effectiveSubstatements()}.
+     *
+     * <p>
+     * {@link #effectiveSubstatements()} may become inoperable as a result of this operation.
+     */
+    abstract void sweepEffective();
+
+    // Check whether there are any references to any of our parents
+    private static boolean noParentRefs(final StatementContextBase<?, ?, ?> parent) {
+        for (StatementContextBase<?, ?, ?> current = parent; current != null; current = current.getParentContext()) {
+            switch (current.refcount) {
+                case REFCOUNT_NONE:
+                    // Need to check parent
+                    break;
+                case REFCOUNT_SWEPT:
+                    // A parent has been completely swept, so it's all REFCOUNT_NONE between us and that parent
+                    return true;
+                default:
+                    // includes REFCOUNT_DEFUNCT
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    protected abstract boolean isIgnoringConfig();
+
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
      * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
@@ -988,8 +1087,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         flags |= isConfig ? SET_CONFIGURATION : HAVE_CONFIGURATION;
         return isConfig;
     }
-
-    protected abstract boolean isIgnoringConfig();
 
     /**
      * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
