@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 
 abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName, IdentityStatement>
         implements IdentityEffectiveStatement, IdentitySchemaNode, SchemaNodeMixin<QName, IdentityStatement> {
@@ -31,7 +32,7 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return path;
+        return SchemaPathSupport.getPath(path);
     }
 
     @Override
