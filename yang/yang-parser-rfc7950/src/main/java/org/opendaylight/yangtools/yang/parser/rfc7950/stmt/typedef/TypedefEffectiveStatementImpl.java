@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
@@ -17,7 +15,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -60,7 +60,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     }
 
     private final @NonNull Object substatements;
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final int flags;
 
     // Accessed via TYPE_DEFINITION
@@ -73,7 +73,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     TypedefEffectiveStatementImpl(final TypedefStatement declared, final SchemaPath path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.flags = flags;
         this.substatements = maskList(substatements);
     }
@@ -86,7 +86,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -37,7 +37,7 @@ abstract class AbstractLeafListEffectiveStatement
             UserOrderedMixin<QName, LeafListStatement>, DataSchemaNodeMixin<QName, LeafListStatement>,
             MustConstraintMixin<QName, LeafListStatement> {
     private final @NonNull Object substatements;
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final @NonNull TypeDefinition<?> type;
     private final int flags;
 
@@ -45,7 +45,7 @@ abstract class AbstractLeafListEffectiveStatement
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.substatements = maskList(substatements);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.flags = flags;
         // TODO: lazy instantiation?
         this.type = buildType();
@@ -62,14 +62,14 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
-    public final @NonNull QName argument() {
+    public final QName argument() {
         return getQName();
     }
 
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

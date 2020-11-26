@@ -70,7 +70,7 @@ public final class AnydataStatementSupport
     protected AnydataEffectiveStatement createEffective(final Current<QName, AnydataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final int flags = computeFlags(stmt.history(), stmt.effectiveConfig(), substatements);
-        final SchemaPath path = stmt.getSchemaPath();
+        final SchemaPath path = stmt.wrapSchemaPath();
 
         return substatements.isEmpty()
             ? new EmptyAnydataEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))

@@ -65,7 +65,7 @@ abstract class AbstractCaseStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, computeFlags(stmt, substatements),
-                stmt.getSchemaPath(), findOriginal(stmt));
+                stmt.wrapSchemaPath(), findOriginal(stmt));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
         }
@@ -76,7 +76,7 @@ abstract class AbstractCaseStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return new UndeclaredCaseEffectiveStatement(substatements, computeFlags(stmt, substatements),
-                stmt.getSchemaPath(), findOriginal(stmt));
+                stmt.wrapSchemaPath(), findOriginal(stmt));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
         }

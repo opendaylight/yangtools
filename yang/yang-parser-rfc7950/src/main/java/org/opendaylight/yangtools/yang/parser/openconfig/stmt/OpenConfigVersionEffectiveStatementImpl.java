@@ -8,26 +8,28 @@
 package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class OpenConfigVersionEffectiveStatementImpl
         extends UnknownEffectiveStatementBase<SemVer, OpenConfigVersionStatement>
         implements OpenConfigVersionEffectiveStatement {
 
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
 
     OpenConfigVersionEffectiveStatementImpl(final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override
@@ -38,6 +40,6 @@ final class OpenConfigVersionEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 }
