@@ -116,6 +116,7 @@ abstract class AbstractAugmentStatementSupport
                 //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
                 try {
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
+                    // FIXME: YANGTOOLS-1184: this add is violating statement lifecycle: it suddenly has two parents!
                     augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                 } catch (final SourceException e) {
                     LOG.warn("Failed to add augmentation {} defined at {}", augmentTargetCtx.sourceReference(),
