@@ -90,7 +90,6 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
             stmt.sourceReference(),
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
-        final SchemaPath path = stmt.getSchemaPath();
         final LeafSchemaNode original = (LeafSchemaNode) stmt.original();
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
@@ -100,6 +99,7 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
                 .toFlags();
 
         final LeafStatement declared = stmt.declared();
+        final SchemaPath path = stmt.wrapSchemaPath();
         return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
                 : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
     }

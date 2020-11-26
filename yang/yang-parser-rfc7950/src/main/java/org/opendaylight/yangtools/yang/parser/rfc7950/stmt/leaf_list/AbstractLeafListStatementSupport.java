@@ -56,7 +56,6 @@ abstract class AbstractLeafListStatementSupport
                 findFirstStatement(substatements, TypeEffectiveStatement.class), stmt.sourceReference(),
                 "Leaf-list is missing a 'type' statement");
 
-        final SchemaPath path = stmt.getSchemaPath();
         final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
 
         final int flags = new FlagsBuilder()
@@ -85,6 +84,7 @@ abstract class AbstractLeafListStatementSupport
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
 
         final LeafListStatement declared = stmt.declared();
+        final SchemaPath path = stmt.wrapSchemaPath();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
                 ? new EmptyLeafListEffectiveStatement(declared, path, flags, substatements)

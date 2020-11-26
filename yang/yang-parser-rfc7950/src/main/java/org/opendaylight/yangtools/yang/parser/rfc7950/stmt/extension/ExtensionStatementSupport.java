@@ -116,7 +116,7 @@ public final class ExtensionStatementSupport
 
         try {
             final ExtensionEffectiveStatementImpl created = new ExtensionEffectiveStatementImpl(stmt.declared(),
-                stmt.getSchemaPath());
+                stmt.wrapSchemaPath());
             verify(tl.put(ctx, created) == null);
             try {
                 return super.createEffective(stmt, declaredSubstatements, effectiveSubstatements);
