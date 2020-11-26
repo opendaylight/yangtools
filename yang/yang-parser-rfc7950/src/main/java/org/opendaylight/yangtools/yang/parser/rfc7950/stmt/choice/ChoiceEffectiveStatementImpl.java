@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -34,7 +35,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
                    MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final int flags;
 
     ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
@@ -42,7 +43,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
             final SchemaPath path, final @Nullable CaseSchemaNode defaultCase,
             final @Nullable ChoiceSchemaNode original) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.flags = flags;
         this.defaultCase = defaultCase;
         this.original = original;
@@ -56,7 +57,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

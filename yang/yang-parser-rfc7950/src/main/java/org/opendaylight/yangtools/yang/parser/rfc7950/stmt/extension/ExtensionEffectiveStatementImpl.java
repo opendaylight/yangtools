@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -64,13 +64,13 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
 
     private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
 
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
 
     private volatile Object substatements;
 
     ExtensionEffectiveStatementImpl(final ExtensionStatement declared, final SchemaPath path) {
         super(declared);
-        this.path = requireNonNull(path);
+        this.path = path;
     }
 
     @Override
@@ -81,7 +81,7 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override
@@ -95,8 +95,7 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     public boolean isYinElement() {
         return findFirstEffectiveSubstatement(ArgumentEffectiveStatement.class)
                 .flatMap(arg -> arg.findFirstEffectiveSubstatementArgument(YinElementEffectiveStatement.class))
-                .orElse(Boolean.FALSE)
-                .booleanValue();
+                .orElse(Boolean.FALSE);
     }
 
     @Override

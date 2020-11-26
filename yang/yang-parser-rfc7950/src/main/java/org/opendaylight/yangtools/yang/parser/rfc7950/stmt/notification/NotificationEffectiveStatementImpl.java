@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -33,19 +32,19 @@ final class NotificationEffectiveStatementImpl
                    AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
                    MustConstraintMixin<QName, NotificationStatement> {
 
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final int flags;
 
     NotificationEffectiveStatementImpl(final NotificationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
             final SchemaPath path) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.flags = flags;
     }
 
     @Override
-    public @NonNull QName argument() {
+    public QName argument() {
         return getQName();
     }
 
@@ -62,7 +61,7 @@ final class NotificationEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override
