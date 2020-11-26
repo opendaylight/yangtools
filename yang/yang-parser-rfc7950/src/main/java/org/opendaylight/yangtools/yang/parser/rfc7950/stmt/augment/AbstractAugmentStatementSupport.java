@@ -108,6 +108,8 @@ abstract class AbstractAugmentStatementSupport
                 // We are targeting a context which is creating implicit nodes. In order to keep things consistent,
                 // we will need to circle back when creating effective statements.
                 if (augmentTargetCtx.hasImplicitParentSupport()) {
+                    // FIXME: YANGTOOLS-1184: so we are putting this in the source node ... which is okay, but we also
+                    //        need to deal with the target copy (below)
                     augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, augmentNode, augmentTargetCtx);
                 }
 
@@ -116,6 +118,10 @@ abstract class AbstractAugmentStatementSupport
                 //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
                 try {
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
+                    // FIXME: YANGTOOLS-1184: this add is violating statement lifecycle: it suddenly has two parents.
+                    //        Since there is no copy operation, this statement appears out of thin air, i.e. this
+                    //        support does not run onStatementAdded(). Furthermore it has an original copy type.
+                    //        Finally it would
                     augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                 } catch (final SourceException e) {
                     LOG.warn("Failed to add augmentation {} defined at {}", augmentTargetCtx.sourceReference(),
