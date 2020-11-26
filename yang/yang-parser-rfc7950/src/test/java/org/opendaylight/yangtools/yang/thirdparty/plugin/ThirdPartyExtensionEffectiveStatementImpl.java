@@ -8,24 +8,26 @@
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class ThirdPartyExtensionEffectiveStatementImpl
         extends UnknownEffectiveStatementBase<String, ThirdPartyExtensionStatement>
         implements ThirdPartyExtensionEffectiveStatement {
 
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final String valueFromNamespace;
 
     ThirdPartyExtensionEffectiveStatementImpl(final Current<String, ThirdPartyExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
         valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, stmt.caerbannog());
     }
 
@@ -42,6 +44,6 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 }

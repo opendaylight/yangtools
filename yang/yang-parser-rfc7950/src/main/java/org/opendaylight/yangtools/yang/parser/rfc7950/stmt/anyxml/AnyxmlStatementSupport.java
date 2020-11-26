@@ -70,7 +70,7 @@ public final class AnyxmlStatementSupport
     protected AnyxmlEffectiveStatement createEffective(final Current<QName, AnyxmlStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final int flags = computeFlags(stmt.history(), stmt.effectiveConfig(), substatements);
-        final SchemaPath path = stmt.getSchemaPath();
+        final SchemaPath path = stmt.wrapSchemaPath();
 
         return substatements.isEmpty()
             ? new EmptyAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))

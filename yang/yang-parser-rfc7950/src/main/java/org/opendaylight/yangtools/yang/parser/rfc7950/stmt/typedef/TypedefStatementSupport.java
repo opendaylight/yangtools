@@ -104,7 +104,7 @@ public final class TypedefStatementSupport extends
             stmt.sourceReference(),
             "Typedef '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
-        return new TypedefEffectiveStatementImpl(declared, stmt.getSchemaPath(), computeFlags(substatements),
+        return new TypedefEffectiveStatementImpl(declared, stmt.wrapSchemaPath(), computeFlags(substatements),
             substatements);
     }
 

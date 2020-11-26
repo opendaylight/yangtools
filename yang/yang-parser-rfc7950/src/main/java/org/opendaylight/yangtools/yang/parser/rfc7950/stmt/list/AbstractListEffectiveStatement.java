@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -46,7 +46,7 @@ abstract class AbstractListEffectiveStatement
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
     private final @NonNull Object substatements;
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final @NonNull Object keyDefinition;
 
     AbstractListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
@@ -55,7 +55,7 @@ abstract class AbstractListEffectiveStatement
         super(declared, substatements);
 
         this.substatements = maskList(substatements);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.keyDefinition = maskList(keyDefinition);
         this.flags = flags;
     }
@@ -71,14 +71,14 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
-    public final @NonNull QName argument() {
+    public final QName argument() {
         return getQName();
     }
 
     @Override
     @Deprecated
     public final SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

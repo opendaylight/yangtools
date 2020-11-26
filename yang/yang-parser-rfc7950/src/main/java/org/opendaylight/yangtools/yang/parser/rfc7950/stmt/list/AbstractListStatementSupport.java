@@ -73,7 +73,6 @@ abstract class AbstractListStatementSupport extends
     @Override
     protected ListEffectiveStatement createEffective(final Current<QName, ListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final SchemaPath path = stmt.getSchemaPath();
         final ListSchemaNode original = (ListSchemaNode) stmt.original();
 
         final ImmutableList<QName> keyDefinition;
@@ -112,13 +111,13 @@ abstract class AbstractListStatementSupport extends
             warnConfigList(stmt);
         }
 
-        final Optional<ElementCountConstraint> elementCountConstraint =
-                EffectiveStmtUtils.createElementCountConstraint(substatements);
-
         EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
         EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
+        final Optional<ElementCountConstraint> elementCountConstraint =
+            EffectiveStmtUtils.createElementCountConstraint(substatements);
+        final SchemaPath path = stmt.wrapSchemaPath();
         try {
             return original == null && !elementCountConstraint.isPresent()
                 ? new EmptyListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition)
