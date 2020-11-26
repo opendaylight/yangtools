@@ -59,7 +59,7 @@ abstract class AbstractOutputStatementSupport
     protected final OutputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeclaredOutputEffectiveStatement(flags, stmt.declared(), substatements, stmt.getSchemaPath());
+        return new DeclaredOutputEffectiveStatement(flags, stmt.declared(), substatements, stmt.wrapSchemaPath());
     }
 
     @Override
@@ -67,7 +67,7 @@ abstract class AbstractOutputStatementSupport
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new UndeclaredOutputEffectiveStatement(flags, substatements, stmt.getSchemaPath());
+            return new UndeclaredOutputEffectiveStatement(flags, substatements, stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
         }

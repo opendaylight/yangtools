@@ -12,8 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -28,15 +30,15 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 // FIXME: 7.0.0: do not implement SchemaNode
 public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode, DocumentedNodeMixin<Descendant, RefineStatement> {
-    private final @NonNull SchemaPath path;
-    private final SchemaNode refineTargetNode;
+    private final @NonNull SchemaNode refineTargetNode;
+    private final @Nullable SchemaPath path;
 
     RefineEffectiveStatementImpl(final RefineStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path,
             final SchemaNode refineTargetNode) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
         this.refineTargetNode = requireNonNull(refineTargetNode);
+        this.path = path;
     }
 
     public SchemaNode getRefineTargetNode() {
@@ -52,7 +54,7 @@ public final class RefineEffectiveStatementImpl extends WithSubstatements<Descen
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

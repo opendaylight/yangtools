@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -33,14 +31,14 @@ final class GroupingEffectiveStatementImpl
             DataNodeContainerMixin<QName, GroupingStatement>,
             SchemaNodeMixin<QName, GroupingStatement>, ActionNodeContainerMixin<QName, GroupingStatement>,
             NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
     private final int flags;
 
     GroupingEffectiveStatementImpl(final GroupingStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
             final SchemaPath path) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.path = path;
         this.flags = flags;
     }
 
@@ -50,7 +48,7 @@ final class GroupingEffectiveStatementImpl
     }
 
     @Override
-    public @Nullable QName argument() {
+    public QName argument() {
         return getQName();
     }
 
@@ -62,7 +60,7 @@ final class GroupingEffectiveStatementImpl
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

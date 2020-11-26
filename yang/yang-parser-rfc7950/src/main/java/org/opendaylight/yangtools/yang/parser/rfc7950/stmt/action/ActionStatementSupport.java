@@ -107,7 +107,7 @@ public final class ActionStatementSupport extends
             "Action %s is defined at the top level of a module", argument);
 
         try {
-            return new ActionEffectiveStatementImpl(stmt.declared(), stmt.getSchemaPath(),
+            return new ActionEffectiveStatementImpl(stmt.declared(), stmt.wrapSchemaPath(),
                 historyAndStatusFlags(stmt.history(), substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);

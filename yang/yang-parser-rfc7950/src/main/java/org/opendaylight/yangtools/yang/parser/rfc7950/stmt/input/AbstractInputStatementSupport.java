@@ -59,7 +59,7 @@ abstract class AbstractInputStatementSupport
     protected final InputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeclaredInputEffectiveStatement(flags, stmt.declared(), substatements, stmt.getSchemaPath());
+        return new DeclaredInputEffectiveStatement(flags, stmt.declared(), substatements, stmt.wrapSchemaPath());
     }
 
     @Override
@@ -67,7 +67,7 @@ abstract class AbstractInputStatementSupport
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new UndeclaredInputEffectiveStatement(flags, substatements, stmt.getSchemaPath());
+            return new UndeclaredInputEffectiveStatement(flags, substatements, stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
         }
