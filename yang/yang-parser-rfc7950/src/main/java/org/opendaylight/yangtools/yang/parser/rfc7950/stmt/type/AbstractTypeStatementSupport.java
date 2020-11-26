@@ -233,6 +233,7 @@ abstract class AbstractTypeStatementSupport
     @Override
     protected EffectiveStatement<String, TypeStatement> createEffective(final Current<String, TypeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final TypeStatement declared = stmt.declared();
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);
         if (substatements.isEmpty()) {
@@ -241,7 +242,6 @@ abstract class AbstractTypeStatementSupport
 
         // Now instantiate the proper effective statement for that type
         final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
-        final TypeStatement declared = stmt.declared();
         if (baseType instanceof BinaryTypeDefinition) {
             return createBinary(stmt, (BinaryTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof BitsTypeDefinition) {

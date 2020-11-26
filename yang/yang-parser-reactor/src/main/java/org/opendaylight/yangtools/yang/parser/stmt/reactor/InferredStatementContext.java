@@ -52,6 +52,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
 
+    // Sentinel object for 'substatements'
+    private static final Object SWEPT_SUBSTATEMENTS = new Object();
+
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
     private final @NonNull StmtContext<A, D, E> originalCtx;
@@ -60,11 +63,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private final A argument;
 
     /**
-     * Effective substatements, lazily materialized. This field can have three states:
+     * Effective substatements, lazily materialized. This field can have four states:
      * <ul>
      *   <li>it can be {@code null}, in which case no materialization has taken place</li>
      *   <li>it can be a {@link HashMap}, in which case partial materialization has taken place</li>
      *   <li>it can be a {@link List}, in which case full materialization has taken place</li>
+     *   <li>it can be {@link SWEPT_SUBSTATEMENTS}, in which case materialized state is no longer available</li>
      * </ul>
      */
     private Object substatements;
@@ -92,6 +96,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         this.childCopyType = requireNonNull(childCopyType);
         this.targetModule = targetModule;
         this.originalCtx = prototype.getOriginalCtx().orElse(prototype);
+
+        // Mark prototype as blocking statement cleanup
+        prototype.incRef();
     }
 
     @Override
@@ -181,6 +188,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    boolean builtDeclared() {
+        return prototype.builtDeclared();
+    }
+
+    @Override
     public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
         if (substatements instanceof List) {
@@ -252,6 +264,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
     private List<StatementContextBase<?, ?, ?>> ensureEffectiveSubstatements() {
+        accessSubstatements();
         return substatements instanceof List ? castEffective(substatements)
             : initializeSubstatements(castMaterialized(substatements));
     }
@@ -262,7 +275,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL).
         if (substatements == null) {
             return ImmutableList.of();
-        } else if (substatements instanceof HashMap) {
+        }
+        accessSubstatements();
+        if (substatements instanceof HashMap) {
             return castMaterialized(substatements).values();
         } else {
             return castEffective(substatements);
@@ -276,16 +291,35 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
-        // FIXME: YANGTOOLS-1184: do not force initialization
+        accessSubstatements();
         return ensureEffectiveSubstatements().stream();
+    }
+
+    private void accessSubstatements() {
+        verify(substatements != SWEPT_SUBSTATEMENTS, "Attempted to access substatements of %s", this);
+    }
+
+    @Override
+    int sweepEffective() {
+        final Object local = substatements;
+        substatements = SWEPT_SUBSTATEMENTS;
+        int count = 0;
+        if (local != null) {
+            for (StatementContextBase<?, ?, ?> stmt : castEffective(local)) {
+                if (!stmt.sweep()) {
+                    ++count;
+                }
+            }
+        }
+        return count;
     }
 
     private List<StatementContextBase<?, ?, ?>> initializeSubstatements(
             final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
-        final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
+        final List<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, buffer, materializedSchemaTree);
@@ -299,6 +333,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             buffer.size());
         ret.addAll((Collection) buffer);
         substatements = ret;
+
+        prototype.decRef();
         return ret;
     }
 
@@ -320,7 +356,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
         if (REUSED_DEF_SET.contains(def)) {
             LOG.debug("Reusing substatement {} for {}", substatement, this);
-            buffer.add(substatement);
+            buffer.add(substatement.replicaAsChildOf(this));
             return;
         }
 
