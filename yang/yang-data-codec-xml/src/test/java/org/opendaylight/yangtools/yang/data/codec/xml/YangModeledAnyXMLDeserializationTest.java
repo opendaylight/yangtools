@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
@@ -199,7 +200,7 @@ public class YangModeledAnyXMLDeserializationTest {
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return null;
+            return SchemaPathSupport.getPath(null);
         }
 
         @Override
