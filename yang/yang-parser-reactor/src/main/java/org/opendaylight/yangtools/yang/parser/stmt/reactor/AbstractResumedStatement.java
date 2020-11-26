@@ -188,6 +188,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
+    final boolean builtDeclared() {
+        return declaredInstance != null;
+    }
+
+    @Override
     final Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
         return effective;
     }
@@ -200,6 +205,25 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     final Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
         return effective.stream();
+    }
+
+    @Override
+    final int sweepEffective() {
+        int count = 0;
+        for (StatementContextBase<?, ?, ?> stmt : substatements) {
+            if (!stmt.sweep()) {
+                ++count;
+            }
+        }
+        for (StatementContextBase<?, ?, ?> stmt : effective) {
+            if (!stmt.sweep()) {
+                ++count;
+            }
+        }
+
+        substatements = null;
+        effective = null;
+        return count;
     }
 
     /**
