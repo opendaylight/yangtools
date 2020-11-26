@@ -117,7 +117,11 @@ abstract class AbstractAugmentStatementSupport
                 //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
                 try {
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
-                    augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
+
+                    final Mutable<?, ?, ?> augmentCopy =
+                        augmentTargetCtx.childCopyOf(augmentSourceCtx, CopyType.ORIGINAL);
+                    augmentCopy.setIsSupportedToBuildEffective(augmentSourceCtx.isSupportedToBuildEffective());
+                    augmentTargetCtx.addEffectiveSubstatement(augmentCopy);
                 } catch (final SourceException e) {
                     LOG.warn("Failed to add augmentation {} defined at {}",
                         augmentTargetCtx.getStatementSourceReference(),
