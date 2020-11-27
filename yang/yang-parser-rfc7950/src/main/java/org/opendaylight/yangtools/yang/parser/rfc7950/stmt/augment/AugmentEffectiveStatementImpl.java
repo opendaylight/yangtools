@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.WhenConditionMixin;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
         implements AugmentEffectiveStatement, AugmentationSchemaNode, QNameModuleAware,
@@ -40,8 +39,8 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
 
     AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument, final int flags,
             final QNameModule rootModuleQName, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final StatementSourceReference ref, final @Nullable AugmentationSchemaNode original) {
-        super(declared, ref, substatements);
+            final @Nullable AugmentationSchemaNode original) {
+        super(declared, substatements);
         this.argument = requireNonNull(argument);
         this.rootModuleQName = requireNonNull(rootModuleQName);
         this.flags = flags;

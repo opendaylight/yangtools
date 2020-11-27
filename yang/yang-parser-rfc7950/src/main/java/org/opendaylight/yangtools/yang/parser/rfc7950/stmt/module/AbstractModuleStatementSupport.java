@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -189,7 +190,11 @@ abstract class AbstractModuleStatementSupport
             submodules.add((Submodule) submodule);
         }
 
-        return new ModuleEffectiveStatementImpl(stmt, substatements, submodules);
+        try {
+            return new ModuleEffectiveStatementImpl(stmt, substatements, submodules);
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {

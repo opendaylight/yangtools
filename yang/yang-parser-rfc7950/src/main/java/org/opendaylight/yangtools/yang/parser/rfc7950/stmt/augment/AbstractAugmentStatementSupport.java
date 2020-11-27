@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -179,9 +180,13 @@ abstract class AbstractAugmentStatementSupport
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
 
-        return new AugmentEffectiveStatementImpl(stmt.declared(), stmt.getArgument(), flags,
-            StmtContextUtils.getRootModuleQName(stmt.caerbannog()), substatements, stmt.sourceReference(),
-            (AugmentationSchemaNode) stmt.original());
+        try {
+            return new AugmentEffectiveStatementImpl(stmt.declared(), stmt.getArgument(), flags,
+                StmtContextUtils.getRootModuleQName(stmt.caerbannog()), substatements,
+                (AugmentationSchemaNode) stmt.original());
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     private static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {

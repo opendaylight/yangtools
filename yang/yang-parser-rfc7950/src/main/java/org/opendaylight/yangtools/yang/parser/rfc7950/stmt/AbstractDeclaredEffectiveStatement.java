@@ -29,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Base stateless superclass for statements which (logically) always have an associated {@link DeclaredStatement}. This
@@ -140,7 +138,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull ImmutableMap<QName, DataSchemaNode> dataChildren;
         private final @NonNull Object substatements;
 
-        protected DefaultDataNodeContainer(final D declared, final StatementSourceReference ref,
+        protected DefaultDataNodeContainer(final D declared,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(declared);
             this.substatements = maskList(substatements);
@@ -153,8 +151,10 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                     final DataSchemaNode node = (DataSchemaNode) stmt;
                     final QName id = node.getQName();
                     final DataSchemaNode prev = tmp.put(id, node);
-                    SourceException.throwIf(prev != null, ref,
-                            "Cannot add child with name %s, a conflicting child already exists", id);
+                    if (prev != null) {
+                        throw new SubstatementIndexingException(
+                            "Cannot add child with name " + id + ", a conflicting child already exists");
+                    }
                 }
             }
 
@@ -259,9 +259,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final D declared,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                    final StatementSourceReference ref) {
-                super(declared, substatements, ref);
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, substatements);
                 this.substatements = maskList(substatements);
             }
 
@@ -275,10 +274,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull D declared;
 
         protected DefaultWithSchemaTree(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StatementSourceReference ref) {
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
-            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(ref, substatements));
+            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
         }
 
         @Override
@@ -307,9 +305,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final D declared,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                    final StatementSourceReference ref) {
-                super(declared, substatements, ref);
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, substatements);
                 this.substatements = maskList(substatements);
             }
 
@@ -324,12 +321,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull D declared;
 
         protected DefaultWithDataTree(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StatementSourceReference ref) {
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
-            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(ref, substatements);
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
-            this.dataTree = createDataTreeNamespace(ref, schema.values(), schemaTree);
+            this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
         }
 
         @Override

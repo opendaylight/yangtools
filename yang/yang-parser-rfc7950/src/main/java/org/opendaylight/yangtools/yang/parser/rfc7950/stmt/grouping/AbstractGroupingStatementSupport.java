@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -65,8 +66,12 @@ abstract class AbstractGroupingStatementSupport
     @Override
     protected GroupingEffectiveStatement createEffective(final Current<QName, GroupingStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new GroupingEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(),
-            historyAndStatusFlags(stmt.history(), substatements), stmt.getSchemaPath());
+        try {
+            return new GroupingEffectiveStatementImpl(stmt.declared(), substatements,
+                historyAndStatusFlags(stmt.history(), substatements), stmt.getSchemaPath());
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     private static void checkDeclaredConflict(final StmtContext<QName, ?, ?> ctx) {

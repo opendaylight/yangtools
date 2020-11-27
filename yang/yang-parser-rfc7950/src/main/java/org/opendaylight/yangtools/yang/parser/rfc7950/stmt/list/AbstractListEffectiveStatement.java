@@ -34,8 +34,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.UserOrderedMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.WhenConditionMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 abstract class AbstractListEffectiveStatement
         extends DefaultWithDataTree<QName, ListStatement, ListEffectiveStatement>
@@ -51,14 +49,10 @@ abstract class AbstractListEffectiveStatement
     private final @NonNull SchemaPath path;
     private final @NonNull Object keyDefinition;
 
-    AbstractListEffectiveStatement(final Current<QName, ListStatement> stmt, final SchemaPath path,
-            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    AbstractListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
-        super(stmt.declared(), substatements, stmt.sourceReference());
-
-        EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
-        EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
-        EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
+        super(declared, substatements);
 
         this.substatements = maskList(substatements);
         this.path = requireNonNull(path);

@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithSchemaTree.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement>
         implements CaseEffectiveStatementMixin {
@@ -30,9 +29,9 @@ final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, Case
     private final int flags;
 
     DeclaredCaseEffectiveStatement(final CaseStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
-            final int flags, final SchemaPath path, final @Nullable CaseSchemaNode original) {
-        super(declared, substatements, ref);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
+            final SchemaPath path, final @Nullable CaseSchemaNode original) {
+        super(declared, substatements);
         this.flags = flags;
         this.path = requireNonNull(path);
         this.original = original;
