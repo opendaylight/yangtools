@@ -5,13 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import java.util.List;
@@ -77,57 +79,45 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Enum 'purple' is not a subset of its base enumeration type "
-                    + "(foo?revision=2017-02-02)my-derived-enumeration-type."));
-        }
+    public void testInvalidRestrictedEnumeration() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Enum 'purple' is not a subset of its base enumeration type "
+            + "(foo?revision=2017-02-02)my-derived-enumeration-type."));
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-2.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidEnumDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Enum 'magenta' is not a subset of its base enumeration type "
-                    + "(foo?revision=2017-02-02)my-base-enumeration-type."));
-        }
+    public void testInvalidRestrictedEnumeration2() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-2.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidEnumDefinitionException.class));
+        assertThat(cause.getMessage(), startsWith("Enum 'magenta' is not a subset of its base enumeration type "
+            + "(foo?revision=2017-02-02)my-base-enumeration-type."));
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration3() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-3.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidEnumDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Value of enum 'red' must be the same as the value of "
-                    + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
-                    + "my-derived-enumeration-type."));
-        }
+    public void testInvalidRestrictedEnumeration3() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-3.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidEnumDefinitionException.class));
+        assertThat(cause.getMessage(), startsWith("Value of enum 'red' must be the same as the value of "
+            + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
+            + "my-derived-enumeration-type."));
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration4() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-4.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidEnumDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Value of enum 'black' must be the same as the value of "
-                    + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
-                    + "my-base-enumeration-type."));
-        }
+    public void testInvalidRestrictedEnumeration4() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-4.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidEnumDefinitionException.class));
+        assertThat(cause.getMessage(), startsWith("Value of enum 'black' must be the same as the value of "
+            + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
+            + "my-base-enumeration-type."));
     }
 
     @Test
@@ -137,29 +127,21 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidYang10RestrictedEnumeration() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-invalid.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(
-                "Restricted enumeration type is allowed only in YANG 1.1 version."));
-        }
+    public void testInvalidYang10RestrictedEnumeration() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-invalid.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Restricted enumeration type is not allowed in YANG version 1 [at "));
     }
 
     @Test
-    public void testInvalidYang10RestrictedEnumeration2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-invalid-2.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith(
-                "Restricted enumeration type is allowed only in YANG 1.1 version."));
-        }
+    public void testInvalidYang10RestrictedEnumeration2() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-invalid-2.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Restricted enumeration type is not allowed in YANG version 1 [at "));
     }
 
     @Test
@@ -211,55 +193,43 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedBits() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Bit 'bit-w' is not a subset of its base bits type "
-                    + "(bar?revision=2017-02-02)my-derived-bits-type."));
-        }
+    public void testInvalidRestrictedBits() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Bit 'bit-w' is not a subset of its base bits type "
+            + "(bar?revision=2017-02-02)my-derived-bits-type."));
     }
 
     @Test
-    public void testInvalidRestrictedBits2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-2.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidBitDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Bit 'bit-x' is not a subset of its base bits type "
-                    + "(bar?revision=2017-02-02)my-base-bits-type."));
-        }
+    public void testInvalidRestrictedBits2() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-2.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidBitDefinitionException.class));
+        assertThat(cause.getMessage(), startsWith("Bit 'bit-x' is not a subset of its base bits type "
+            + "(bar?revision=2017-02-02)my-base-bits-type."));
     }
 
     @Test
-    public void testInvalidRestrictedBits3() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-3.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidBitDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Position of bit 'bit-c' must be the same as the position of "
-                    + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-derived-bits-type."));
-        }
+    public void testInvalidRestrictedBits3() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-3.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidBitDefinitionException.class));
+        assertThat(cause.getMessage(), startsWith("Position of bit 'bit-c' must be the same as the position of "
+            + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-derived-bits-type."));
     }
 
     @Test
-    public void testInvalidRestrictedBits4() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-4.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof InvalidBitDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Position of bit 'bit-d' must be the same as the position of "
-                    + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-base-bits-type."));
-        }
+    public void testInvalidRestrictedBits4() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-4.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InvalidBitDefinitionException.class));
+        assertThat(cause.getMessage(), startsWith("Position of bit 'bit-d' must be the same as the position of "
+            + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-base-bits-type."));
     }
 
     @Test
@@ -269,27 +239,21 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidYang10RestrictedBits() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-invalid.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Restricted bits type is allowed only in YANG 1.1 version."));
-        }
+    public void testInvalidYang10RestrictedBits() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-invalid.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Restricted bits type is not allowed in YANG version 1 [at "));
     }
 
     @Test
-    public void testInvalidYang10RestrictedBits2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-invalid-2.yang");
-            fail("An exception should have been thrown.");
-        } catch (final ReactorException ex) {
-            final Throwable cause = ex.getCause();
-            assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Restricted bits type is allowed only in YANG 1.1 version."));
-        }
+    public void testInvalidYang10RestrictedBits2() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-invalid-2.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Restricted bits type is not allowed in YANG version 1 [at "));
     }
 
     private static EnumPair createEnumPair(final String name, final int value) {
