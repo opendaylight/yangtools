@@ -18,13 +18,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
 abstract class AbstractAugmentStatementSupport
         extends BaseStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAugmentStatementSupport.class);
-    private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
-    private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
     AbstractAugmentStatementSupport() {
         super(YangStmtMapping.AUGMENT);
@@ -67,12 +65,25 @@ abstract class AbstractAugmentStatementSupport
 
     @Override
     public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
-            || PATH_REL_PATTERN2.matcher(value).matches(), ctx.sourceReference(),
-            "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
-            value);
+        // As per:
+        //   https://tools.ietf.org/html/rfc6020#section-7.15
+        //   https://tools.ietf.org/html/rfc7950#section-7.17
+        //
+        // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
+        // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument
+        // is in the correct domain.
 
-        return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
+        final StatementDefinition parent = ctx.coerceParentContext().publicDefinition();
+        final boolean absolute = value.startsWith("/");
+        if (parent == YangStmtMapping.USES) {
+            SourceException.throwIf(absolute, ctx.sourceReference(),
+                "Absolute schema node identifier is not allowed when used within a uses statement");
+            return ArgumentUtils.parseDescendantSchemaNodeIdentifier(ctx, value);
+        }
+
+        SourceException.throwIf(!absolute, ctx.sourceReference(),
+            "Descendant schema node identifier is not allowed when used outside of a uses statement");
+        return ArgumentUtils.parseAbsoluteSchemaNodeIdentifier(ctx, value);
     }
 
     @Override
