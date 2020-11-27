@@ -54,6 +54,14 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
         // FIXME: 7.0.0: this should be Optional<Boolean>
         boolean effectiveConfig();
 
+        /**
+         * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
+         * {@link Optional#empty()} is returned.
+         *
+         * @return Optional SchemaPath
+         * @deprecated Use of SchemaPath in the context of effective statements is going away. Consider not providing
+         *             this information, if your users can exist without it.
+         */
         // FIXME: 7.0.0: this needs to be a tri-state present/absent/disabled
         @Deprecated
         @NonNull Optional<SchemaPath> schemaPath();
