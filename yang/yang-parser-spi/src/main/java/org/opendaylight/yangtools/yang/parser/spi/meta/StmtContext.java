@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -117,17 +116,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
             final Class<? super Z> type) {
         return type.isAssignableFrom(publicDefinition().getEffectiveRepresentationClass());
     }
-
-    /**
-     * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
-     * {@link Optional#empty()} is returned.
-     *
-     * @return Optional SchemaPath
-     * @deprecated Use of SchemaPath in the context of effective statements is going away. Consider not providing this
-     *             information, if your users can exist without it.
-     */
-    @Deprecated
-    @NonNull Optional<SchemaPath> getSchemaPath();
 
     boolean isConfiguration();
 
