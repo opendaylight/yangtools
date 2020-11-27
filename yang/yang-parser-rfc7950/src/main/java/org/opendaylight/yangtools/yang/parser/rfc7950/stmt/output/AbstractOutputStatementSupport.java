@@ -17,8 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractOutputStatementSupport
         extends BaseOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
@@ -57,15 +59,17 @@ abstract class AbstractOutputStatementSupport
     protected final OutputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeclaredOutputEffectiveStatement(flags, stmt.declared(), substatements, stmt.sourceReference(),
-            stmt.getSchemaPath());
+        return new DeclaredOutputEffectiveStatement(flags, stmt.declared(), substatements, stmt.getSchemaPath());
     }
 
     @Override
     protected final OutputEffectiveStatement createUndeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredOutputEffectiveStatement(flags, substatements, stmt.sourceReference(),
-            stmt.getSchemaPath());
+        try {
+            return new UndeclaredOutputEffectiveStatement(flags, substatements, stmt.getSchemaPath());
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 }

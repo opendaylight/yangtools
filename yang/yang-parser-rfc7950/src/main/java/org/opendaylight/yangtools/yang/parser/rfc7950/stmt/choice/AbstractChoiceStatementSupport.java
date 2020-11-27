@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -84,9 +85,12 @@ abstract class AbstractChoiceStatementSupport
                 .setConfiguration(stmt.effectiveConfig())
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
-
-        return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(), flags,
-            stmt.getSchemaPath(), defaultCase, (ChoiceSchemaNode) stmt.original());
+        try {
+            return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, flags, stmt.getSchemaPath(),
+                defaultCase, (ChoiceSchemaNode) stmt.original());
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     abstract StatementSupport<?, ?, ?> implictCase();

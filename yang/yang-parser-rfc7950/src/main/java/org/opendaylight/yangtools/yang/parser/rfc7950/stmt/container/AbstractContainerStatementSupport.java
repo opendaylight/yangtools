@@ -22,8 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractContainerStatementSupport
         extends BaseSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
@@ -58,7 +60,10 @@ abstract class AbstractContainerStatementSupport
         EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
-        return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(), flags, path,
-            original);
+        try {
+            return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, flags, path, original);
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 }

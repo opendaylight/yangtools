@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
         implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
@@ -29,9 +28,8 @@ final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, Inp
     private final int flags;
 
     DeclaredInputEffectiveStatement(final int flags, final InputStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
-            final SchemaPath path) {
-        super(declared, substatements, ref);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
+        super(declared, substatements);
         this.flags = flags;
         this.path = requireNonNull(path);
     }

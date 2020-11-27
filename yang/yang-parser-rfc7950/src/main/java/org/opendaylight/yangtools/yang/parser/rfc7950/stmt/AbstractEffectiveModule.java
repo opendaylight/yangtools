@@ -78,17 +78,17 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
 
     protected AbstractEffectiveModule(final Current<UnqualifiedQName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
-        super(stmt.declared(), substatements, stmt.sourceReference());
+        super(stmt.declared(), substatements);
 
+        // FIXME: this seems to duplicate superclass logic
         // This check is rather weird, but comes from our desire to lower memory footprint while providing both
         // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
         // concerned. This ensures that we have SchemaTree index available for use with child lookups.
-        final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree =
-                createSchemaTreeNamespace(stmt.sourceReference(), effectiveSubstatements());
+        final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTree = createSchemaTreeNamespace(substatements);
         schemaTreeNamespace = ImmutableMap.copyOf(schemaTree);
 
         // Data tree check, not currently used
-        createDataTreeNamespace(stmt.sourceReference(), schemaTree.values(), schemaTreeNamespace);
+        createDataTreeNamespace(schemaTree.values(), schemaTreeNamespace);
 
         this.prefix = requireNonNull(prefix);
 

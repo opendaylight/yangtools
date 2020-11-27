@@ -15,8 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractNotificationStatementSupport
         extends BaseSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
@@ -40,8 +42,12 @@ abstract class AbstractNotificationStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         checkEffective(stmt);
 
-        return new NotificationEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(),
+        try {
+            return new NotificationEffectiveStatementImpl(stmt.declared(), substatements,
                 historyAndStatusFlags(stmt.history(), substatements), stmt.getSchemaPath());
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     abstract void checkEffective(Current<QName, NotificationStatement> stmt);

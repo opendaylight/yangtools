@@ -23,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -184,7 +185,7 @@ public class YangParserNegativeTest {
             fail("Duplicate leaf not detected");
         } catch (SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, isA(SourceException.class));
+            assertThat(rootCause, isA(SubstatementIndexingException.class));
             assertThat(rootCause.getMessage(), containsString("Cannot add schema tree child with name "
                     + "(urn:simple.augment2.demo?revision=2014-06-02)delta, a conflicting child already exists"));
 

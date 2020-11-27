@@ -36,12 +36,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,10 +113,19 @@ abstract class AbstractListStatementSupport extends
 
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
-        return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyListEffectiveStatement(stmt, path, flags, substatements, keyDefinition)
-                : new RegularListEffectiveStatement(stmt, path, flags, substatements, keyDefinition,
-                    elementCountConstraint.orElse(null), original);
+
+        EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
+        EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
+        EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
+
+        try {
+            return original == null && !elementCountConstraint.isPresent()
+                ? new EmptyListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition)
+                    : new RegularListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition,
+                        elementCountConstraint.orElse(null), original);
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {

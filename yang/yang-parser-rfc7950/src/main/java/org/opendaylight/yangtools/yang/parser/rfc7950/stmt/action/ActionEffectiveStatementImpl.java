@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.CopyableMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationDefinitionMixin;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class ActionEffectiveStatementImpl extends WithSubstatements<QName, ActionStatement, ActionEffectiveStatement>
         implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
@@ -29,8 +28,8 @@ final class ActionEffectiveStatementImpl extends WithSubstatements<QName, Action
     private final int flags;
 
     ActionEffectiveStatementImpl(final ActionStatement declared, final SchemaPath path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref) {
-        super(declared, substatements, ref);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
     }

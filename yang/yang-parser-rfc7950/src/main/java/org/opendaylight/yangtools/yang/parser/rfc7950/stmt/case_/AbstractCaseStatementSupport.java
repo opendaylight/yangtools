@@ -21,8 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseImplicitStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractCaseStatementSupport
         extends BaseImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
@@ -60,15 +62,23 @@ abstract class AbstractCaseStatementSupport
     @Override
     protected final CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, stmt.sourceReference(),
-            computeFlags(stmt, substatements), stmt.getSchemaPath(), findOriginal(stmt));
+        try {
+            return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, computeFlags(stmt, substatements),
+                stmt.getSchemaPath(), findOriginal(stmt));
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     @Override
     protected final CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UndeclaredCaseEffectiveStatement(substatements, stmt.sourceReference(),
-            computeFlags(stmt, substatements), stmt.getSchemaPath(), findOriginal(stmt));
+        try {
+            return new UndeclaredCaseEffectiveStatement(substatements, computeFlags(stmt, substatements),
+                stmt.getSchemaPath(), findOriginal(stmt));
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     private static @Nullable CaseSchemaNode findOriginal(final Current<?, ?> stmt) {
