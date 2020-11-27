@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
@@ -48,5 +49,10 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
+        return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
     }
 }

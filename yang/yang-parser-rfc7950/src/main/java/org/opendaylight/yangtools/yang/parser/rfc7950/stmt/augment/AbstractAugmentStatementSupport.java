@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -197,7 +196,7 @@ abstract class AbstractAugmentStatementSupport
         return parent;
     }
 
-    static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
+    final void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
         final CopyType typeOfCopy = sourceCtx.coerceParentContext().producesDeclared(UsesStatement.class)
                 ? CopyType.ADDED_BY_USES_AUGMENTATION : CopyType.ADDED_BY_AUGMENTATION;
@@ -205,8 +204,7 @@ abstract class AbstractAugmentStatementSupport
          * Since Yang 1.1, if an augmentation is made conditional with a
          * "when" statement, it is allowed to add mandatory nodes.
          */
-        final boolean skipCheckOfMandatoryNodes = YangVersion.VERSION_1_1.equals(sourceCtx.getRootVersion())
-                && isConditionalAugmentStmt(sourceCtx);
+        final boolean skipCheckOfMandatoryNodes = allowsMandatory(sourceCtx);
         final boolean unsupported = !sourceCtx.isSupportedByFeatures();
 
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceCtx.mutableDeclaredSubstatements();
@@ -224,21 +222,9 @@ abstract class AbstractAugmentStatementSupport
         targetCtx.addEffectiveSubstatements(buffer);
     }
 
-    /**
-     * Checks whether supplied statement context is conditional augment
-     * statement.
-     *
-     * @param ctx
-     *            statement context to be checked
-     *
-     * @return true if supplied statement context is conditional augment
-     *         statement, otherwise false
-     */
-    private static boolean isConditionalAugmentStmt(final StmtContext<?, ?, ?> ctx) {
-        return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
-    }
+    abstract boolean allowsMandatory(StmtContext<?, ?, ?> ctx);
 
-    private static boolean hasWhenSubstatement(final StmtContext<?, ?, ?> ctx) {
+    static boolean hasWhenSubstatement(final StmtContext<?, ?, ?> ctx) {
         return ctx.hasSubstatement(WhenEffectiveStatement.class);
     }
 
