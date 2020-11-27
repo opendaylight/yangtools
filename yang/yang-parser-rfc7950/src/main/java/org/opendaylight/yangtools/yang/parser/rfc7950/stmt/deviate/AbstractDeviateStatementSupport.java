@@ -256,11 +256,11 @@ abstract class AbstractDeviateStatementSupport
     private static void addStatement(final Mutable<?, ?, ?> stmtCtxToBeAdded,
             final StatementContextBase<?, ?, ?> targetCtx) {
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
-            final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.getPublicDefinition();
+            final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
-                    && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
+                    && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
                 for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
-                    InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.getPublicDefinition()),
+                    InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
                         stmtCtxToBeAdded.getStatementSourceReference(),
                         "Deviation cannot add substatement %s to target node %s because it is already defined "
                         + "in target and can appear only once.",
@@ -284,10 +284,10 @@ abstract class AbstractDeviateStatementSupport
 
     private static void replaceStatement(final Mutable<?, ?, ?> stmtCtxToBeReplaced,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final StatementDefinition stmtToBeReplaced = stmtCtxToBeReplaced.getPublicDefinition();
+        final StatementDefinition stmtToBeReplaced = stmtCtxToBeReplaced.publicDefinition();
 
         if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
-                && YangStmtMapping.LEAF_LIST.equals(targetCtx.getPublicDefinition())) {
+                && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
             LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can "
                     + "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
                     targetCtx.getStatementArgument(), stmtCtxToBeReplaced.getStatementSourceReference());
@@ -295,7 +295,7 @@ abstract class AbstractDeviateStatementSupport
         }
 
         for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
-            if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
+            if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
                 return;
@@ -303,7 +303,7 @@ abstract class AbstractDeviateStatementSupport
         }
 
         for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
-            if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
+            if (stmtToBeReplaced.equals(targetCtxSubstatement.publicDefinition())) {
                 targetCtxSubstatement.setIsSupportedToBuildEffective(false);
                 copyStatement(stmtCtxToBeReplaced, targetCtx);
                 return;
@@ -335,20 +335,20 @@ abstract class AbstractDeviateStatementSupport
 
     private static void deleteStatement(final StmtContext<?, ?, ?> stmtCtxToBeDeleted,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.getPublicDefinition();
-        final String stmtArgument = stmtCtxToBeDeleted.rawStatementArgument();
+        final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.publicDefinition();
+        final String stmtArgument = stmtCtxToBeDeleted.rawArgument();
 
         for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
-            if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.getPublicDefinition(),
-                    targetCtxSubstatement.rawStatementArgument())) {
+            if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
+                    targetCtxSubstatement.rawSArgument())) {
                 targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeDeleted, stmtArgument);
                 return;
             }
         }
 
         for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
-            if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.getPublicDefinition(),
-                    targetCtxSubstatement.rawStatementArgument())) {
+            if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.publicDefinition(),
+                    targetCtxSubstatement.rawArgument())) {
                 targetCtxSubstatement.setIsSupportedToBuildEffective(false);
                 return;
             }
@@ -380,22 +380,22 @@ abstract class AbstractDeviateStatementSupport
         InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
                 targetCtx.getRootVersion()), deviateSubStmtCtx.getStatementSourceReference(),
                 "%s is not a valid deviation target for substatement %s.",
-                targetCtx.getStatementArgument(), deviateSubStmtCtx.getPublicDefinition().getStatementName());
+                targetCtx.getStatementArgument(), deviateSubStmtCtx.publicDefinition().getStatementName());
     }
 
     private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,
             final StmtContext<?, ?, ?> deviateTargetCtx, final YangVersion yangVersion) {
         Set<StatementDefinition> supportedDeviationTargets =
                 YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(deviateTargetCtx.getRootVersion(),
-                        deviateSubstatementCtx.getPublicDefinition());
+                        deviateSubstatementCtx.publicDefinition());
 
         if (supportedDeviationTargets == null) {
             supportedDeviationTargets = YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(YangVersion.VERSION_1,
-                    deviateSubstatementCtx.getPublicDefinition());
+                    deviateSubstatementCtx.publicDefinition());
         }
 
         // if supportedDeviationTargets is null, it means that the deviate substatement is an unknown statement
         return supportedDeviationTargets == null || supportedDeviationTargets.contains(
-                deviateTargetCtx.getPublicDefinition());
+                deviateTargetCtx.publicDefinition());
     }
 }

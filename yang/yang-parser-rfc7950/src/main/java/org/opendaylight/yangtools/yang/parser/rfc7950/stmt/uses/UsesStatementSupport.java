@@ -229,7 +229,7 @@ public final class UsesStatementSupport
         // This means that the statement that is about to be copied (and can be subjected to buildEffective() I think)
         // is actually a SchemaTreeEffectiveStatement
         if (SchemaTreeEffectiveStatement.class.isAssignableFrom(
-                stmt.getPublicDefinition().getEffectiveRepresentationClass())) {
+                stmt.publicDefinition().getEffectiveRepresentationClass())) {
             return true;
         }
 
@@ -260,7 +260,7 @@ public final class UsesStatementSupport
         if (targetCtx.getParentContext() == null) {
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
-        if (targetCtx.getPublicDefinition() == YangStmtMapping.AUGMENT) {
+        if (targetCtx.publicDefinition() == YangStmtMapping.AUGMENT) {
             return StmtContextUtils.getRootModuleQName(targetCtx);
         }
 
@@ -329,14 +329,14 @@ public final class UsesStatementSupport
     private static void addOrReplaceNode(final Mutable<?, ?, ?> refineSubstatementCtx,
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
 
-        final StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
+        final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
 
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
                 refineSubstatementCtx.getStatementSourceReference(),
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
                 refineSubstatementCtx.getRoot().rawStatementArgument(),
                 refineSubstatementCtx.coerceParentContext().getStatementArgument(),
-                refineSubstatementCtx.getPublicDefinition(), refineTargetNodeCtx.getPublicDefinition());
+                refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());
 
         if (isAllowedToAddByRefine(refineSubstatementDef)) {
             refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx);
@@ -355,16 +355,16 @@ public final class UsesStatementSupport
                 ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
-                || supportedRefineSubstatements.contains(refineSubstatementCtx.getPublicDefinition())
+                || supportedRefineSubstatements.contains(refineSubstatementCtx.publicDefinition())
                 || StmtContextUtils.isUnknownStatement(refineSubstatementCtx);
     }
 
     private static boolean isSupportedRefineTarget(final StmtContext<?, ?, ?> refineSubstatementCtx,
             final StmtContext<?, ?, ?> refineTargetNodeCtx) {
         final Collection<?> supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS.get(
-            refineSubstatementCtx.getPublicDefinition());
+            refineSubstatementCtx.publicDefinition());
 
         return supportedRefineTargets == null || supportedRefineTargets.isEmpty()
-                || supportedRefineTargets.contains(refineTargetNodeCtx.getPublicDefinition());
+                || supportedRefineTargets.contains(refineTargetNodeCtx.publicDefinition());
     }
 }

@@ -31,9 +31,9 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
 
     protected AbstractDeclaredStatement(final StmtContext<A, ?, ?> context) {
         rawArgument = context.rawStatementArgument();
-        argument = context.getStatementArgument();
-        source = context.getStatementSource();
-        definition = context.getPublicDefinition();
+        argument = context.argument();
+        source = context.source();
+        definition = context.publicDefinition();
         /*
          * Perform an explicit copy, because Collections2.transform() is lazily transformed and retains pointer to
          * original collection, which may contains references to mutable context.

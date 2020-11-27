@@ -383,7 +383,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Iterator<? extends StmtContext<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final StmtContext<?, ?, ?> next = iterator.next();
-            if (statementDef.equals(next.getPublicDefinition())) {
+            if (statementDef.equals(next.publicDefinition())) {
                 iterator.remove();
             }
         }
@@ -420,7 +420,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final Mutable<?, ?, ?> next = iterator.next();
-            if (statementDef.equals(next.getPublicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
+            if (statementDef.equals(next.publicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
                 iterator.remove();
             }
         }
@@ -874,7 +874,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
             final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
         final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
-            original.getPublicDefinition());
+            original.publicDefinition());
 
         final StatementContextBase<X, Y, Z> result;
         final InferredStatementContext<X, Y, Z> copy;
@@ -922,7 +922,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Beta
     public final StatementContextBase<?, ?, ?> wrapWithImplicit(final StatementContextBase<?, ?, ?> original) {
         final Optional<StatementSupport<?, ?, ?>> optImplicit = definition.getImplicitParentFor(
-            original.getPublicDefinition());
+            original.publicDefinition());
         if (optImplicit.isEmpty()) {
             return original;
         }
@@ -1060,7 +1060,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final SchemaPath parentPath = maybeParentPath.get();
 
         if (StmtContextUtils.isUnknownStatement(this)) {
-            return parentPath.createChild(getPublicDefinition().getStatementName());
+            return parentPath.createChild(publicDefinition().getStatementName());
         }
         final Object argument = getStatementArgument();
         if (argument instanceof QName) {

@@ -134,13 +134,13 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public @NonNull StatementDefinition getDefinition() {
-        return getPublicDefinition();
+    public StatementDefinition getDefinition() {
+        return publicDefinition();
     }
 
     @Override
-    public @NonNull StatementSourceReference getSourceReference() {
-        return getStatementSourceReference();
+    public StatementSourceReference getSourceReference() {
+        return sourceReference();
     }
 
     @Override

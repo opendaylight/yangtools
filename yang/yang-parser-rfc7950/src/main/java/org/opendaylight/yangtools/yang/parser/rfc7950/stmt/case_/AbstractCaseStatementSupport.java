@@ -33,8 +33,8 @@ abstract class AbstractCaseStatementSupport
     @Override
     protected final CaseStatement createDeclared(final StmtContext<QName, CaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+        final StatementSource source = ctx.source();
+        switch (source) {
             case CONTEXT:
                 return new RegularUndeclaredCaseStatement(ctx.coerceStatementArgument(), substatements);
             case DECLARATION:
@@ -46,8 +46,8 @@ abstract class AbstractCaseStatementSupport
 
     @Override
     protected final CaseStatement createEmptyDeclared(final StmtContext<QName, CaseStatement, ?> ctx) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+        final StatementSource source = ctx.source();
+        switch (source) {
             case CONTEXT:
                 return new EmptyUndeclaredCaseStatement(ctx.coerceStatementArgument());
             case DECLARATION:
