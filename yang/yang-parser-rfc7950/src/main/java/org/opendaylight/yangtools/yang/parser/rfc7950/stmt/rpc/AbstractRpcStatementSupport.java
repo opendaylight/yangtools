@@ -22,12 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSupport<RpcStatement, RpcEffectiveStatement> {
@@ -80,8 +82,12 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", stmt.sourceReference());
 
-        return new RpcEffectiveStatementImpl(stmt.declared(), substatements, stmt.sourceReference(),
-            computeFlags(substatements), stmt.getSchemaPath());
+        try {
+            return new RpcEffectiveStatementImpl(stmt.declared(), substatements, computeFlags(substatements),
+                stmt.getSchemaPath());
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     abstract StatementSupport<?, ?, ?> implictInput();

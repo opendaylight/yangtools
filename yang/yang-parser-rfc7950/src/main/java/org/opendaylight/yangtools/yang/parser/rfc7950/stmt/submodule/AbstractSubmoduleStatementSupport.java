@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -96,7 +97,11 @@ abstract class AbstractSubmoduleStatementSupport
         if (substatements.isEmpty()) {
             throw noBelongsTo(stmt);
         }
-        return new SubmoduleEffectiveStatementImpl(stmt, substatements);
+        try {
+            return new SubmoduleEffectiveStatementImpl(stmt, substatements);
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     private static SourceException noBelongsTo(final CommonStmtCtx stmt) {

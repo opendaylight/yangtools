@@ -259,9 +259,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final D declared,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                    final StatementSourceReference ref) {
-                super(declared, substatements, ref);
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, substatements);
                 this.substatements = maskList(substatements);
             }
 
@@ -275,10 +274,9 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull D declared;
 
         protected DefaultWithSchemaTree(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StatementSourceReference ref) {
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
-            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(ref, substatements));
+            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
         }
 
         @Override
@@ -307,9 +305,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final D declared,
-                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                    final StatementSourceReference ref) {
-                super(declared, substatements, ref);
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, substatements);
                 this.substatements = maskList(substatements);
             }
 
@@ -324,12 +321,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         private final @NonNull D declared;
 
         protected DefaultWithDataTree(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final StatementSourceReference ref) {
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
-            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(ref, substatements);
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
-            this.dataTree = createDataTreeNamespace(ref, schema.values(), schemaTree);
+            this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
         }
 
         @Override

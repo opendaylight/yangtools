@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.PresenceMixin;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class ContainerEffectiveStatementImpl
         extends WithSubstatements<QName, ContainerStatement, ContainerEffectiveStatement>
@@ -49,9 +48,9 @@ final class ContainerEffectiveStatementImpl
     private final @Nullable ContainerSchemaNode original;
 
     ContainerEffectiveStatementImpl(final ContainerStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
-            final int flags, final SchemaPath path, final ContainerSchemaNode original) {
-        super(declared, substatements, ref);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
+            final SchemaPath path, final ContainerSchemaNode original) {
+        super(declared, substatements);
         this.path = requireNonNull(path);
         this.original = original;
         this.flags = flags;
