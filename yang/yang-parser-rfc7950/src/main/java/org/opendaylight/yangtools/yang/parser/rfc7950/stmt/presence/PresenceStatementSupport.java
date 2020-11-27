@@ -40,12 +40,12 @@ public final class PresenceStatementSupport
     @Override
     protected PresenceStatement createDeclared(final StmtContext<String, PresenceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPresenceStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularPresenceStatement(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected PresenceStatement createEmptyDeclared(final StmtContext<String, PresenceStatement, ?> ctx) {
-        return new EmptyPresenceStatement(ctx.coerceRawStatementArgument());
+        return new EmptyPresenceStatement(ctx.getRawArgument());
     }
 
     @Override

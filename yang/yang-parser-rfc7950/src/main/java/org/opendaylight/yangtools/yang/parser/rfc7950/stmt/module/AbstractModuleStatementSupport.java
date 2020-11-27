@@ -75,7 +75,7 @@ abstract class AbstractModuleStatementSupport
     @Override
     public final void onPreLinkageDeclared(
             final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final String moduleName = stmt.coerceRawStatementArgument();
+        final String moduleName = stmt.getRawArgument();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
         SourceException.throwIfNull(moduleNs, stmt.sourceReference(),
@@ -115,7 +115,7 @@ abstract class AbstractModuleStatementSupport
                     qNameModule.getNamespace(), possibleDuplicateModule.sourceReference());
         }
 
-        final String moduleName = stmt.coerceRawStatementArgument();
+        final String moduleName = stmt.getRawArgument();
         final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(moduleName, revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
@@ -168,7 +168,7 @@ abstract class AbstractModuleStatementSupport
     @Override
     protected final ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ModuleStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
+        return new ModuleStatementImpl(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     @Override
@@ -206,7 +206,7 @@ abstract class AbstractModuleStatementSupport
     private static void addToSemVerModuleNamespace(
             final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt,
             final SourceIdentifier moduleIdentifier) {
-        final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(stmt.coerceRawStatementArgument(),
+        final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(stmt.getRawArgument(),
             stmt.getFromNamespace(SemanticVersionNamespace.class, stmt));
         stmt.addToNs(SemanticVersionModuleNamespace.class, id, stmt);
     }

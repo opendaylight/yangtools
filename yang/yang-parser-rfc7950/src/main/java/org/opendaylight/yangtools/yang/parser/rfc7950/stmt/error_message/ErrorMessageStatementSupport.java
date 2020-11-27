@@ -40,12 +40,12 @@ public final class ErrorMessageStatementSupport
     @Override
     protected ErrorMessageStatement createDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularErrorMessageStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularErrorMessageStatement(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected ErrorMessageStatement createEmptyDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
-        return new EmptyErrorMessageStatement(ctx.coerceRawStatementArgument());
+        return new EmptyErrorMessageStatement(ctx.getRawArgument());
     }
 
     @Override

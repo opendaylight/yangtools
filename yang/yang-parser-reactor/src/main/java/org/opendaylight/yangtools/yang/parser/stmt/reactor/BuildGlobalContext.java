@@ -261,7 +261,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
-        final String arg = root.coerceRawStatementArgument();
+        final String arg = root.getRawArgument();
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
             return RevisionSourceIdentifier.create(arg, qNameModule.getRevision());

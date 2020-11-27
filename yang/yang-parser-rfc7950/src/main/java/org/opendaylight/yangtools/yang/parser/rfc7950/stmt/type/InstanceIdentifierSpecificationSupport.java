@@ -46,13 +46,13 @@ final class InstanceIdentifierSpecificationSupport extends BaseStatementSupport<
     protected InstanceIdentifierSpecification createDeclared(
             final StmtContext<String, InstanceIdentifierSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularInstanceIdentifierSpecification(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected InstanceIdentifierSpecification createEmptyDeclared(
             final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
-        return new EmptyIdentifierSpecification(ctx.coerceRawStatementArgument());
+        return new EmptyIdentifierSpecification(ctx.getRawArgument());
     }
 
     @Override

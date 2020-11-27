@@ -40,12 +40,12 @@ public final class ContactStatementSupport
     @Override
     protected ContactStatement createDeclared(final StmtContext<String, ContactStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularContactStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularContactStatement(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected ContactStatement createEmptyDeclared(final StmtContext<String, ContactStatement, ?> ctx) {
-        return new EmptyContactStatement(ctx.coerceRawStatementArgument());
+        return new EmptyContactStatement(ctx.getRawArgument());
     }
 
     @Override

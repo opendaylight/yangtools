@@ -36,7 +36,7 @@ abstract class AbstractLeafrefSpecificationSupport
     @Override
     protected final LeafrefSpecification createDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new LeafrefSpecificationImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new LeafrefSpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override

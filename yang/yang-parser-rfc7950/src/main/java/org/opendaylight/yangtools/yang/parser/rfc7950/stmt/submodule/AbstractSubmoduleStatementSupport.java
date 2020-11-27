@@ -49,14 +49,14 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     public final void onPreLinkageDeclared(
             final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.coerceRawStatementArgument(),
+        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getRawArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
     }
 
     @Override
     public final void onLinkageDeclared(
             final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.coerceRawStatementArgument(),
+        final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.getRawArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
 
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
@@ -81,8 +81,7 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     protected final SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new SubmoduleStatementImpl(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
-            substatements);
+        return new SubmoduleStatementImpl(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
     }
 
     @Override

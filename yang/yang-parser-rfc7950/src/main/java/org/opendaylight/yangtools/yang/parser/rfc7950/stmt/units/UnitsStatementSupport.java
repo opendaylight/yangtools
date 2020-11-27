@@ -41,12 +41,12 @@ public final class UnitsStatementSupport
     @Override
     protected UnitsStatement createDeclared(final StmtContext<String, UnitsStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularUnitsStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularUnitsStatement(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected UnitsStatement createEmptyDeclared(final StmtContext<String, UnitsStatement, ?> ctx) {
-        return new EmptyUnitsStatement(ctx.coerceRawStatementArgument());
+        return new EmptyUnitsStatement(ctx.getRawArgument());
     }
 
     @Override

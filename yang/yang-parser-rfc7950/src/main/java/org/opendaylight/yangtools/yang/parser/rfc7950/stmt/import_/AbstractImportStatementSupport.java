@@ -68,7 +68,7 @@ abstract class AbstractImportStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
-                Verify.verify(moduleName.equals(importedModuleContext.coerceRawStatementArgument()));
+                Verify.verify(moduleName.equals(importedModuleContext.getRawArgument()));
                 final URI importedModuleNamespace = importedModuleContext.getFromNamespace(ModuleNameToNamespace.class,
                         moduleName);
                 Verify.verifyNotNull(importedModuleNamespace);
@@ -99,7 +99,7 @@ abstract class AbstractImportStatementSupport
     @Override
     protected final ImportStatement createDeclared(final StmtContext<String, ImportStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ImportStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new ImportStatementImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override

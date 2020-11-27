@@ -48,7 +48,7 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
     @Override
     protected Decimal64Specification createDeclared(final StmtContext<String, Decimal64Specification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Decimal64SpecificationImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new Decimal64SpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override

@@ -40,12 +40,12 @@ public final class DescriptionStatementSupport
     @Override
     protected DescriptionStatement createDeclared(final StmtContext<String, DescriptionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularDescriptionStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularDescriptionStatement(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected DescriptionStatement createEmptyDeclared(final StmtContext<String, DescriptionStatement, ?> ctx) {
-        return new EmptyDescriptionStatement(ctx.coerceRawStatementArgument());
+        return new EmptyDescriptionStatement(ctx.getRawArgument());
     }
 
     @Override
