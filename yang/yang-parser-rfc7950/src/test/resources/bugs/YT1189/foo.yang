@@ -1,0 +1,11 @@
+module foo {
+  namespace "foo";
+  prefix "foo";
+
+  container cont;
+
+  // Invalid: the path should be absolute
+  augment "cont" {
+
+  }
+}
