@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -69,6 +68,7 @@ import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -375,33 +375,22 @@ abstract class AbstractTypeStatementSupport
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
+    private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.getSchemaPath());
 
-        final YangVersion yangVersion = ctx.yangVersion();
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof BitEffectiveStatement) {
-                SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.sourceReference(),
-                        "Restricted bits type is allowed only in YANG 1.1 version.");
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
-
-                // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
-                final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
-                final Uint32 effectivePos;
-                if (declaredPosition.isEmpty()) {
-                    effectivePos = getBaseTypeBitPosition(bitSubStmt.argument(), baseType, ctx);
-                } else {
-                    effectivePos = declaredPosition.get();
-                }
-
-                builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
+                builder.addBit(addRestrictedBit(ctx, baseType, (BitEffectiveStatement) stmt));
             }
         }
 
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
+
+    abstract @NonNull Bit addRestrictedBit(@NonNull EffectiveStmtCtx stmt, @NonNull BitsTypeDefinition base,
+        @NonNull BitEffectiveStatement bit);
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final Current<?, ?> ctx,
             final BooleanTypeDefinition baseType, final TypeStatement declared,
@@ -553,18 +542,6 @@ abstract class AbstractTypeStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
-    }
-
-    private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
-            final Current<?, ?> ctx) {
-        for (Bit baseTypeBit : baseType.getBits()) {
-            if (bitName.equals(baseTypeBit.getName())) {
-                return baseTypeBit.getPosition();
-            }
-        }
-
-        throw new SourceException(ctx.sourceReference(), "Bit '%s' is not a subset of its base bits type %s.",
-            bitName, baseType.getQName());
     }
 
     private static int getBaseTypeEnumValue(final String enumName, final EnumTypeDefinition baseType,

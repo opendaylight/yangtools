@@ -9,7 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Class providing necessary support for processing YANG 1.1 Type statement.
@@ -38,5 +45,31 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         final StatementSupport<?, ?, ?> potential = ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
         return potential != null ? potential : super.getSupportSpecificForArgument(argument);
+    }
+
+    @Override
+    Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
+        // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
+        final Optional<Uint32> declaredPosition = bit.getDeclaredPosition();
+        final Uint32 effectivePos;
+        if (declaredPosition.isEmpty()) {
+            effectivePos = getBaseTypeBitPosition(bit.argument(), base, stmt);
+        } else {
+            effectivePos = declaredPosition.get();
+        }
+
+        return EffectiveTypeUtil.buildBit(bit, effectivePos);
+    }
+
+    private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
+            final EffectiveStmtCtx stmt) {
+        for (Bit baseTypeBit : baseType.getBits()) {
+            if (bitName.equals(baseTypeBit.getName())) {
+                return baseTypeBit.getPosition();
+            }
+        }
+
+        throw new SourceException(stmt.sourceReference(), "Bit '%s' is not a subset of its base bits type %s.", bitName,
+            baseType.getQName());
     }
 }
