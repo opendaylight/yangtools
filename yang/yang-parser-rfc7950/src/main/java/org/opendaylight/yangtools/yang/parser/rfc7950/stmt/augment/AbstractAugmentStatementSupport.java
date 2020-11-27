@@ -25,10 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -72,7 +75,23 @@ abstract class AbstractAugmentStatementSupport
             "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
             value);
 
-        return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
+        // As per:
+        //   https://tools.ietf.org/html/rfc6020#section-7.15
+        //   https://tools.ietf.org/html/rfc7950#section-7.17
+        //
+        // The argument is either Absolute or Descendant based on whether the statement is declared within a 'uses'
+        // statement. The mechanics differs wildly between the two cases, so let's start by ensuring our argument
+        // is in the correct domain.
+        final SchemaNodeIdentifier result = ArgumentUtils.nodeIdentifierFromPath(ctx, value);
+        final StatementDefinition parent = ctx.coerceParentContext().publicDefinition();
+        if (parent == YangStmtMapping.USES) {
+            SourceException.throwIf(result instanceof Absolute, ctx.sourceReference(),
+                "Absolute schema node identifier is not allowed when used within a uses statement");
+        } else {
+            SourceException.throwIf(result instanceof Descendant, ctx.sourceReference(),
+                "Descendant schema node identifier is not allowed when used outside of a uses statement");
+        }
+        return result;
     }
 
     @Override

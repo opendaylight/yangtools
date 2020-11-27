@@ -1,0 +1,17 @@
+module bar {
+  namespace "bar";
+  prefix "bar";
+
+  grouping grp {
+    container grp-cont;
+  }
+
+  container cont {
+    uses grp {
+      // Invalid: the path should be descendant
+      augment "/grp-cont" {
+
+      }
+    }
+  }
+}

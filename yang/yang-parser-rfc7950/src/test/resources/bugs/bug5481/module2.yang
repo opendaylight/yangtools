@@ -12,7 +12,7 @@ module module2 {
         description "Initial version.";
     }
 
-    augment "module1:top" {
+    augment "/module1:top" {
         when "module1:top = 'extended'";
         description "text";
         status deprecated;
