@@ -510,25 +510,12 @@ public final class StmtContextUtils {
         return internedQName(ctx, str);
     }
 
-    public static QName parseNodeIdentifier(StmtContext<?, ?, ?> ctx, final String prefix,
+    public static QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
-        final QNameModule module = getModuleQNameByPrefix(ctx, prefix);
-        if (module != null) {
-            return internedQName(ctx, module, localName);
-        }
-
-        if (ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-            final Optional<? extends StmtContext<?, ?, ?>> optOrigCtx = ctx.getOriginalCtx();
-            if (optOrigCtx.isPresent()) {
-                ctx = optOrigCtx.get();
-                final QNameModule origModule = getModuleQNameByPrefix(ctx, prefix);
-                if (origModule != null) {
-                    return internedQName(ctx, origModule, localName);
-                }
-            }
-        }
-
-        throw new InferenceException(ctx.getStatementSourceReference(), "Cannot resolve QNameModule for '%s'", prefix);
+        return internedQName(ctx,
+            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx.getStatementSourceReference(),
+                "Cannot resolve QNameModule for '%s'", prefix),
+            localName);
     }
 
     /**
