@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -34,37 +33,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class IfFeatureStatementSupport
+abstract class AbstractIfFeatureStatementSupport
         extends BaseStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
-    private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractIfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.IF_FEATURE)
         .build();
-    private static final IfFeatureStatementSupport INSTANCE = new IfFeatureStatementSupport();
 
-    private IfFeatureStatementSupport() {
+    AbstractIfFeatureStatementSupport() {
         super(YangStmtMapping.IF_FEATURE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
-    public static IfFeatureStatementSupport getInstance() {
-        return INSTANCE;
-    }
-
     @Override
-    public IfFeatureExpr parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
-            return IfFeaturePredicateVisitor.parseIfFeatureExpression(ctx, value);
-        }
-        return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(ctx, value));
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(
+    public final void onFullDefinitionDeclared(
             final Mutable<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
@@ -96,24 +81,24 @@ public final class IfFeatureStatementSupport
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
+    protected final SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
+    protected final IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularIfFeatureStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
             substatements);
     }
 
     @Override
-    protected IfFeatureStatement createEmptyDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
+    protected final IfFeatureStatement createEmptyDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
         return new EmptyIfFeatureStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
     }
 
     @Override
-    protected IfFeatureEffectiveStatement createEffective(final Current<IfFeatureExpr, IfFeatureStatement> stmt,
+    protected final IfFeatureEffectiveStatement createEffective(final Current<IfFeatureExpr, IfFeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyIfFeatureEffectiveStatement(stmt.declared())
             : new RegularIfFeatureEffectiveStatement(stmt.declared(), substatements);
