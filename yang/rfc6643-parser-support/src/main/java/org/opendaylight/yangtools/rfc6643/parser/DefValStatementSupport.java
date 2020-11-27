@@ -42,7 +42,7 @@ public final class DefValStatementSupport
     @Override
     protected DefValStatement createDeclared(final StmtContext<String, DefValStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new DefValStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new DefValStatementImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override

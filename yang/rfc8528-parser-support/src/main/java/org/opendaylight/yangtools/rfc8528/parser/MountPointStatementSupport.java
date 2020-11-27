@@ -94,14 +94,14 @@ public final class MountPointStatementSupport
     @Override
     public QName adaptArgumentValue(final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        return ctx.coerceStatementArgument().bindTo(targetModule).intern();
+        return ctx.getArgument().bindTo(targetModule).intern();
     }
 
     @Override
     public void onStatementAdded(final Mutable<QName, MountPointStatement, MountPointEffectiveStatement> stmt) {
-        final StatementDefinition parentDef = stmt.coerceParentContext().getPublicDefinition();
+        final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.CONTAINER != parentDef && YangStmtMapping.LIST != parentDef,
-                stmt.getStatementSourceReference(), "Mount points may only be defined at either a container or a list");
+                stmt.sourceReference(), "Mount points may only be defined at either a container or a list");
     }
 
     @Override
@@ -112,7 +112,7 @@ public final class MountPointStatementSupport
     @Override
     protected MountPointStatement createDeclared(@NonNull final StmtContext<QName, MountPointStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.coerceStatementArgument(), substatements);
+        return new Declared(ctx.getArgument(), substatements);
     }
 
     @Override

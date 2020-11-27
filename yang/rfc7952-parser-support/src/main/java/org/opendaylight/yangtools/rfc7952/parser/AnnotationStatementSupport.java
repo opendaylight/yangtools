@@ -63,7 +63,7 @@ public final class AnnotationStatementSupport
             final StmtContext<String, ?, ?> unitsStmt = StmtContextUtils.findFirstEffectiveSubstatement(
                     stmt.caerbannog(), UnitsStatement.class);
             if (unitsStmt != null) {
-                builder.setUnits(unitsStmt.getStatementArgument());
+                builder.setUnits(unitsStmt.argument());
             }
             type = builder.build();
         }
@@ -123,10 +123,9 @@ public final class AnnotationStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<QName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
-        final StatementDefinition parentDef = stmt.coerceParentContext().getPublicDefinition();
+        final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
-                stmt.getStatementSourceReference(),
-                "Annotations may only be defined at root of either a module or a submodule");
+                stmt.sourceReference(), "Annotations may only be defined at root of either a module or a submodule");
     }
 
     @Override
@@ -137,7 +136,7 @@ public final class AnnotationStatementSupport
     @Override
     protected AnnotationStatement createDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.coerceStatementArgument(), substatements);
+        return new Declared(ctx.getArgument(), substatements);
     }
 
     @Override

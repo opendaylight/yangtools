@@ -62,7 +62,7 @@ public final class AnyxmlStatementSupportOverride
                 stmt.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
         if (schemaLocations != null && !schemaLocations.isEmpty()) {
             final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
-                    .getStatementArgument();
+                    .argument();
             final Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(stmt, anyXmlSchemaNodeIdentifier);
             if (anyXmlSchema.isPresent()) {
                 return new YangModeledAnyxmlEffectiveStatementImpl(delegateStatement, anyXmlSchema.get());

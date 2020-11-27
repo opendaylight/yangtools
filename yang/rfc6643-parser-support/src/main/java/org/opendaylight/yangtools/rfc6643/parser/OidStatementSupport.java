@@ -41,7 +41,7 @@ public final class OidStatementSupport
         try {
             return ObjectIdentifier.forString(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid object identifier '%s'", value);
+            throw new SourceException(ctx.sourceReference(), e, "Invalid object identifier '%s'", value);
         }
     }
 
@@ -53,7 +53,7 @@ public final class OidStatementSupport
     @Override
     protected OidStatement createDeclared(final StmtContext<ObjectIdentifier, OidStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new OidIdStatementImpl(ctx.coerceStatementArgument(), substatements);
+        return new OidIdStatementImpl(ctx.getArgument(), substatements);
     }
 
     @Override

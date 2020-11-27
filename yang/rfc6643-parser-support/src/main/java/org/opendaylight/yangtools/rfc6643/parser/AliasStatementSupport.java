@@ -48,7 +48,7 @@ public final class AliasStatementSupport
     @Override
     protected AliasStatement createDeclared(final StmtContext<String, AliasStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new AliasStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new AliasStatementImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
