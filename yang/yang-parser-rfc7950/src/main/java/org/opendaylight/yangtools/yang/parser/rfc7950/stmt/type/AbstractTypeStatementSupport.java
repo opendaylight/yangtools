@@ -311,7 +311,7 @@ abstract class AbstractTypeStatementSupport
      * @throws SourceException if the target type cannot be found
      */
     private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final Current<String, ?> ctx) {
-        final String argument = ctx.coerceArgument();
+        final String argument = ctx.getArgument();
         switch (argument) {
             case BINARY:
                 return BuiltinEffectiveStatement.BINARY;

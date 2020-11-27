@@ -94,7 +94,7 @@ public final class ActionStatementSupport extends
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final StatementSourceReference ref = stmt.sourceReference();
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
-        final QName argument = stmt.coerceArgument();
+        final QName argument = stmt.getArgument();
         SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), ref,
             "Action %s is defined within a notification, rpc or another action", argument);
         SourceException.throwIf(

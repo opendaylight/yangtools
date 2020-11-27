@@ -102,7 +102,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public A getStatementArgument() {
+    public A argument() {
         return argument;
     }
 

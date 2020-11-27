@@ -80,7 +80,7 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
      * @param <D> Class representing declared version of this statement
      */
     @Beta
-    interface Current<A, D extends DeclaredStatement<A>> extends Parent {
+    interface Current<A, D extends DeclaredStatement<A>> extends Parent, BoundStmtCtx<A> {
 
         @NonNull CommonStmtCtx root();
 
@@ -92,12 +92,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
             T key);
 
         <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
-
-        @Nullable A argument();
-
-        default @NonNull A coerceArgument() {
-            return verifyNotNull(argument(), "Attempted to use non-existent argument");
-        }
 
         @Nullable EffectiveStatement<?, ?> original();
 
