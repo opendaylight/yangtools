@@ -13,11 +13,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -34,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -69,6 +65,7 @@ import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -375,33 +372,22 @@ abstract class AbstractTypeStatementSupport
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
+    private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.getSchemaPath());
 
-        final YangVersion yangVersion = ctx.yangVersion();
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof BitEffectiveStatement) {
-                SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.sourceReference(),
-                        "Restricted bits type is allowed only in YANG 1.1 version.");
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
-
-                // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
-                final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
-                final Uint32 effectivePos;
-                if (declaredPosition.isEmpty()) {
-                    effectivePos = getBaseTypeBitPosition(bitSubStmt.argument(), baseType, ctx);
-                } else {
-                    effectivePos = declaredPosition.get();
-                }
-
-                builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
+                builder.addBit(addRestrictedBit(ctx, baseType, (BitEffectiveStatement) stmt));
             }
         }
 
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
+
+    abstract @NonNull Bit addRestrictedBit(@NonNull EffectiveStmtCtx stmt, @NonNull BitsTypeDefinition base,
+        @NonNull BitEffectiveStatement bit);
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final Current<?, ?> ctx,
             final BooleanTypeDefinition baseType, final TypeStatement declared,
@@ -438,33 +424,22 @@ abstract class AbstractTypeStatementSupport
             typeEffectiveSchemaPath(ctx)));
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final Current<?, ?> ctx,
+    private @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final Current<?, ?> ctx,
             final EnumTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType, ctx.getSchemaPath());
 
-        final YangVersion yangVersion = ctx.yangVersion();
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof EnumEffectiveStatement) {
-                SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.sourceReference(),
-                        "Restricted enumeration type is allowed only in YANG 1.1 version.");
-
-                final EnumEffectiveStatement enumSubStmt = (EnumEffectiveStatement) stmt;
-                final Optional<Integer> declaredValue =
-                        enumSubStmt.findFirstEffectiveSubstatementArgument(ValueEffectiveStatement.class);
-                final int effectiveValue;
-                if (declaredValue.isEmpty()) {
-                    effectiveValue = getBaseTypeEnumValue(enumSubStmt.getDeclared().rawArgument(), baseType, ctx);
-                } else {
-                    effectiveValue = declaredValue.orElseThrow();
-                }
-
-                builder.addEnum(EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue));
+                builder.addEnum(addRestrictedEnum(ctx, baseType, (EnumEffectiveStatement) stmt));
             }
         }
 
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
+
+    abstract @NonNull EnumPair addRestrictedEnum(@NonNull EffectiveStmtCtx stmt, @NonNull EnumTypeDefinition base,
+        @NonNull EnumEffectiveStatement enumStmt);
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createIdentityref(final Current<?, ?> ctx,
             final IdentityrefTypeDefinition baseType, final TypeStatement declared,
@@ -553,29 +528,5 @@ abstract class AbstractTypeStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType,
             typeEffectiveSchemaPath(ctx)));
-    }
-
-    private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
-            final Current<?, ?> ctx) {
-        for (Bit baseTypeBit : baseType.getBits()) {
-            if (bitName.equals(baseTypeBit.getName())) {
-                return baseTypeBit.getPosition();
-            }
-        }
-
-        throw new SourceException(ctx.sourceReference(), "Bit '%s' is not a subset of its base bits type %s.",
-            bitName, baseType.getQName());
-    }
-
-    private static int getBaseTypeEnumValue(final String enumName, final EnumTypeDefinition baseType,
-            final Current<?, ?> ctx) {
-        for (EnumPair baseTypeEnumPair : baseType.getValues()) {
-            if (enumName.equals(baseTypeEnumPair.getName())) {
-                return baseTypeEnumPair.getValue();
-            }
-        }
-
-        throw new SourceException(ctx.sourceReference(), "Enum '%s' is not a subset of its base enumeration type %s.",
-            enumName, baseType.getQName());
     }
 }
