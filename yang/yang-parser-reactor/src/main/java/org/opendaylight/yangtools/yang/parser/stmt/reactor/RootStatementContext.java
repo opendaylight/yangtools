@@ -108,7 +108,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     @Deprecated
-    public Optional<SchemaPath> getSchemaPath() {
+    Optional<SchemaPath> schemaPath() {
         return Optional.of(SchemaPath.ROOT);
     }
 

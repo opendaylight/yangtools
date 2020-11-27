@@ -30,16 +30,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> implements EffectiveStmtCtx.Current<A, D> {
     static final Object NULL_OBJ = new Object();
 
-    private final @NonNull StmtContext<A, D, ?> delegate;
+    private final @NonNull StatementContextBase<A, D, ?> delegate;
 
     private @Nullable Object parent;
 
-    BaseCurrentEffectiveStmtCtx(final StmtContext<A, D, ?> delegate) {
+    BaseCurrentEffectiveStmtCtx(final StatementContextBase<A, D, ?> delegate) {
         this.delegate = requireNonNull(delegate);
         this.parent = null;
     }
 
-    BaseCurrentEffectiveStmtCtx(final StmtContext<A, D, ?> delegate, final Parent parent) {
+    BaseCurrentEffectiveStmtCtx(final StatementContextBase<A, D, ?> delegate, final Parent parent) {
         this.delegate = requireNonNull(delegate);
         this.parent = requireNonNull(parent);
     }
@@ -83,7 +83,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
     @Override
     @Deprecated
     public Optional<SchemaPath> schemaPath() {
-        return delegate.getSchemaPath();
+        return delegate.schemaPath();
     }
 
     @Override
@@ -105,7 +105,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     // FIXME: YANGTOOLS-1185: this should be rendered unnecessary
     private Parent loadParent() {
-        final StmtContext<?, ?, ?> parentDelegate = delegate.getParentContext();
+        final StatementContextBase<?, ?, ?> parentDelegate = delegate.getParentContext();
         if (parentDelegate == null) {
             parent = NULL_OBJ;
             return null;
