@@ -55,7 +55,7 @@ public final class YangVersionStatementSupport
     @Override
     public void onPreLinkageDeclared(
             final Mutable<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> stmt) {
-        stmt.setRootVersion(stmt.getStatementArgument());
+        stmt.setRootVersion(stmt.argument());
     }
 
     @Override

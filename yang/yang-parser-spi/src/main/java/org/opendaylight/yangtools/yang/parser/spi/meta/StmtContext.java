@@ -80,8 +80,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * Return the statement argument.
      *
      * @return statement argument, or null if this statement does not have an argument
+     * @deprecated Use {@link #argument()} instead.
      */
-    // TODO: gradually migrate callers of this method
+    @Deprecated(forRemoval = true)
     default @Nullable A getStatementArgument() {
         return argument();
     }

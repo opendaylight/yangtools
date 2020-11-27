@@ -62,7 +62,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @return Adapted argument value. The default implementation returns original value stored in context.
      */
     default A adaptArgumentValue(final StmtContext<A, D, E> ctx, final QNameModule targetModule) {
-        return ctx.getStatementArgument();
+        return ctx.argument();
     }
 
     /**

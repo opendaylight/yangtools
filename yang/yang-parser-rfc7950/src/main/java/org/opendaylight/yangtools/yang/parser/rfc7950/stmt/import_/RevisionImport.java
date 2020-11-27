@@ -92,7 +92,7 @@ final class RevisionImport {
     static SourceIdentifier getImportedSourceIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
-        return revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
-                : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.getStatementArgument());
+        return revision == null ? RevisionSourceIdentifier.create(stmt.argument())
+                : RevisionSourceIdentifier.create(stmt.argument(), revision.argument());
     }
 }

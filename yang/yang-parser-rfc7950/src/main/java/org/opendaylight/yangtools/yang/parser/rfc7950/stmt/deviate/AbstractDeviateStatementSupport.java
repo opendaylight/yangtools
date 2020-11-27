@@ -112,11 +112,11 @@ abstract class AbstractDeviateStatementSupport
     @Override
     public final void onFullDefinitionDeclared(
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx) {
-        final DeviateKind deviateKind = deviateStmtCtx.getStatementArgument();
+        final DeviateKind deviateKind = deviateStmtCtx.argument();
         getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
 
         final SchemaNodeIdentifier deviationTarget =
-                (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().getStatementArgument();
+                (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().argument();
 
         if (!isDeviationSupported(deviateStmtCtx, deviationTarget)) {
             return;
@@ -264,7 +264,7 @@ abstract class AbstractDeviateStatementSupport
                         stmtCtxToBeAdded.sourceReference(),
                         "Deviation cannot add substatement %s to target node %s because it is already defined "
                         + "in target and can appear only once.",
-                        stmtToBeAdded.getStatementName(), targetCtx.getStatementArgument());
+                        stmtToBeAdded.getStatementName(), targetCtx.argument());
                 }
             }
         }
@@ -290,7 +290,7 @@ abstract class AbstractDeviateStatementSupport
                 && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
             LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can "
                     + "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
-                    targetCtx.getStatementArgument(), stmtCtxToBeReplaced.sourceReference());
+                    targetCtx.argument(), stmtCtxToBeReplaced.sourceReference());
             return;
         }
 
@@ -320,7 +320,7 @@ abstract class AbstractDeviateStatementSupport
 
         throw new InferenceException(stmtCtxToBeReplaced.sourceReference(), "Deviation cannot replace "
                 + "substatement %s in target node %s because it does not exist in target node.",
-                stmtToBeReplaced.getStatementName(), targetCtx.getStatementArgument());
+                stmtToBeReplaced.getStatementName(), targetCtx.argument());
     }
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
@@ -356,7 +356,7 @@ abstract class AbstractDeviateStatementSupport
 
         LOG.error("Deviation cannot delete substatement {} with argument '{}' in target node {} because it does "
                 + "not exist in the target node. At line: {}", stmtToBeDeleted.getStatementName(), stmtArgument,
-                targetCtx.getStatementArgument(), stmtCtxToBeDeleted.sourceReference());
+                targetCtx.argument(), stmtCtxToBeDeleted.sourceReference());
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> stmtCtxToBeCopied,

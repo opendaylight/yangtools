@@ -46,8 +46,8 @@ abstract class AbstractIncludeStatementSupport
     public final void onPreLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
-        stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
-            : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.getStatementArgument()));
+        stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.argument())
+            : RevisionSourceIdentifier.create(stmt.argument(), revision.argument()));
     }
 
     @Override
@@ -63,7 +63,7 @@ abstract class AbstractIncludeStatementSupport
                 NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
         } else {
             requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
-                RevisionSourceIdentifier.create(submoduleName, Optional.of(revision.getStatementArgument())),
+                RevisionSourceIdentifier.create(submoduleName, Optional.of(revision.argument())),
                 SOURCE_LINKAGE);
         }
 
@@ -73,16 +73,15 @@ abstract class AbstractIncludeStatementSupport
                 final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
 
                 stmt.addToNs(IncludedModuleContext.class, revision != null
-                        ? RevisionSourceIdentifier.create(submoduleName, revision.getStatementArgument())
+                        ? RevisionSourceIdentifier.create(submoduleName, revision.argument())
                                 : RevisionSourceIdentifier.create(submoduleName), includedSubModuleContext);
-                stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.getStatementArgument(),
-                    includedSubModuleContext);
+                stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.argument(), includedSubModuleContext);
             }
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 InferenceException.throwIf(failed.contains(requiresCtxPrerequisite), stmt.sourceReference(),
-                    "Included submodule '%s' was not found: ", stmt.getStatementArgument());
+                    "Included submodule '%s' was not found: ", stmt.argument());
             }
         });
     }

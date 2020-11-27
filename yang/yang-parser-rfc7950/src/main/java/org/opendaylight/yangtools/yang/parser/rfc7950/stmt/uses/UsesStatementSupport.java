@@ -94,7 +94,7 @@ public final class UsesStatementSupport
         super.onFullDefinitionDeclared(usesNode);
 
         final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final QName groupingName = usesNode.getStatementArgument();
+        final QName groupingName = usesNode.argument();
 
         final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
                 GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
@@ -264,8 +264,8 @@ public final class UsesStatementSupport
             return StmtContextUtils.getRootModuleQName(targetCtx);
         }
 
-        final Object targetStmtArgument = targetCtx.getStatementArgument();
-        final Object sourceStmtArgument = stmtContext.getStatementArgument();
+        final Object targetStmtArgument = targetCtx.argument();
+        final Object sourceStmtArgument = stmtContext.argument();
         if (targetStmtArgument instanceof QName && sourceStmtArgument instanceof QName) {
             return ((QName) targetStmtArgument).getModule();
         }
@@ -292,7 +292,7 @@ public final class UsesStatementSupport
     }
 
     private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
-        final Object refineArgument = subStmtCtx.getStatementArgument();
+        final Object refineArgument = subStmtCtx.argument();
         InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier), subStmtCtx.sourceReference(),
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
@@ -304,9 +304,9 @@ public final class UsesStatementSupport
         final StmtContext<?, ?, ?> refineTargetNodeCtx = optRefineTargetCtx.get();
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
-                + "Refine has been skipped. At line: {}", subStmtCtx.getStatementArgument(),
-                subStmtCtx.coerceParentContext().getStatementArgument(),
-                refineTargetNodeCtx.getStatementArgument(), subStmtCtx.sourceReference());
+                + "Refine has been skipped. At line: {}", subStmtCtx.argument(),
+                subStmtCtx.coerceParentContext().argument(), refineTargetNodeCtx.argument(),
+                subStmtCtx.sourceReference());
             subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
             return;
         }

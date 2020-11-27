@@ -141,7 +141,7 @@ abstract class AbstractAugmentStatementSupport
                 }
 
                 throw new InferenceException(augmentNode.sourceReference(), "Augment target '%s' not found",
-                    augmentNode.getStatementArgument());
+                    augmentNode.argument());
             }
         });
     }
@@ -288,7 +288,7 @@ abstract class AbstractAugmentStatementSupport
          * If the statement argument is not QName, it cannot be mandatory
          * statement, therefore return false and skip mandatory nodes validation
          */
-        final Object arg = sourceCtx.getStatementArgument();
+        final Object arg = sourceCtx.argument();
         if (!(arg instanceof QName)) {
             return false;
         }
@@ -297,9 +297,8 @@ abstract class AbstractAugmentStatementSupport
         // RootStatementContext, for example
         final Mutable<?, ?, ?> root = targetCtx.getRoot();
         do {
-            final Object targetArg = targetCtx.getStatementArgument();
-            Verify.verify(targetArg instanceof QName, "Argument of augment target statement must be QName, not %s",
-                targetArg);
+            final Object targetArg = targetCtx.argument();
+            verify(targetArg instanceof QName, "Argument of augment target statement must be QName, not %s", targetArg);
             final QName targetStmtQName = (QName) targetArg;
             /*
              * If target is from another module, return true and perform mandatory nodes validation

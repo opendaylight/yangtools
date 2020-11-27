@@ -87,7 +87,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         super(prototype.definition(), CopyHistory.of(myCopyType, prototype.getCopyHistory()));
         this.parent = requireNonNull(parent);
         this.prototype = requireNonNull(prototype);
-        this.argument = targetModule == null ? prototype.getStatementArgument()
+        this.argument = targetModule == null ? prototype.argument()
                 : prototype.definition().adaptArgumentValue(prototype, targetModule);
         this.childCopyType = requireNonNull(childCopyType);
         this.targetModule = targetModule;
@@ -226,7 +226,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         } else {
             template = prototype.allSubstatementsStream()
                 .filter(stmt -> stmt.producesEffective(SchemaTreeEffectiveStatement.class)
-                    && templateQName.equals(stmt.getStatementArgument()))
+                    && templateQName.equals(stmt.argument()))
                 .findAny()
                 .orElse(null);
         }
@@ -362,7 +362,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             (StatementContextBase<?, ?, ?>) copy);
         if (existing != null) {
             throw new VerifyException(
-                "Unexpected duplicate request for " + copy.getStatementArgument() + " previous result was " + existing);
+                "Unexpected duplicate request for " + copy.argument() + " previous result was " + existing);
         }
     }
 

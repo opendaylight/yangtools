@@ -76,9 +76,9 @@ public final class ExtensionStatementSupport
         final StmtContext<Boolean, ?, ?> yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
             YinElementStatement.class);
 
-        stmt.addToNs(StatementDefinitionNamespace.class, stmt.getStatementArgument(),
+        stmt.addToNs(StatementDefinitionNamespace.class, stmt.argument(),
             new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(stmt.coerceStatementArgument(),
-                argument != null ? argument.getStatementArgument() : null,
+                argument != null ? argument.argument() : null,
                         yinElement != null && yinElement.coerceStatementArgument())));
     }
 

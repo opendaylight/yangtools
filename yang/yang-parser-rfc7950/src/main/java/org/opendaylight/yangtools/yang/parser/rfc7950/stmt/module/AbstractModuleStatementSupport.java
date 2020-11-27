@@ -104,7 +104,7 @@ abstract class AbstractModuleStatementSupport
         final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
         SourceException.throwIf(!moduleNs.isPresent(), stmt.sourceReference(),
-            "Namespace of the module [%s] is missing", stmt.getStatementArgument());
+            "Namespace of the module [%s] is missing", stmt.argument());
 
         final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
@@ -124,7 +124,7 @@ abstract class AbstractModuleStatementSupport
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
         SourceException.throwIfNull(modulePrefix, stmt.sourceReference(),
-            "Prefix of the module [%s] is missing", stmt.getStatementArgument());
+            "Prefix of the module [%s] is missing", stmt.argument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, moduleName, qNameModule);

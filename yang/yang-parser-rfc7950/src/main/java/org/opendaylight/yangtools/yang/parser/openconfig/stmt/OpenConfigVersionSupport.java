@@ -43,7 +43,7 @@ public final class OpenConfigVersionSupport
     @Override
     public void onLinkageDeclared(
             final Mutable<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> stmt) {
-        stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.getStatementArgument());
+        stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.argument());
     }
 
     @Override

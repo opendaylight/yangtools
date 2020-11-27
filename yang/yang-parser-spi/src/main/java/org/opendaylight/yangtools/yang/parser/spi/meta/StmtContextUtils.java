@@ -52,7 +52,7 @@ public final class StmtContextUtils {
             final Iterable<? extends StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
         for (final StmtContext<?, ?, ?> ctx : contexts) {
             if (ctx.producesDeclared(declaredType)) {
-                return (A) ctx.getStatementArgument();
+                return (A) ctx.argument();
             }
         }
         return null;
@@ -61,7 +61,7 @@ public final class StmtContextUtils {
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
             final Class<D> declaredType) {
-        return ctx.producesDeclared(declaredType) ? (A) ctx.getStatementArgument() : null;
+        return ctx.producesDeclared(declaredType) ? (A) ctx.argument() : null;
     }
 
     public static <A, D extends DeclaredStatement<A>> A firstSubstatementAttributeOf(
@@ -446,7 +446,7 @@ public final class StmtContextUtils {
 
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
             final StmtContext<Set<QName>, ?, ?> keyStmtCtx) {
-        return keyStmtCtx.coerceStatementArgument().contains(leafStmtCtx.getStatementArgument());
+        return keyStmtCtx.coerceStatementArgument().contains(leafStmtCtx.argument());
     }
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
@@ -455,7 +455,7 @@ public final class StmtContextUtils {
             SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
                     || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx.sourceReference(),
                     "%s statement is not allowed in %s leaf statement which is specified as a list key.",
-                    statementDef.getStatementName(), leafStmtCtx.getStatementArgument());
+                    statementDef.getStatementName(), leafStmtCtx.argument());
         });
     }
 
@@ -597,10 +597,10 @@ public final class StmtContextUtils {
         Revision revision = null;
         for (final StmtContext<?, ?, ?> subStmt : subStmts) {
             if (subStmt.producesDeclared(RevisionStatement.class)) {
-                if (revision == null && subStmt.getStatementArgument() != null) {
-                    revision = (Revision) subStmt.getStatementArgument();
+                if (revision == null && subStmt.argument() != null) {
+                    revision = (Revision) subStmt.argument();
                 } else {
-                    final Revision subArg = (Revision) subStmt.getStatementArgument();
+                    final Revision subArg = (Revision) subStmt.argument();
                     if (subArg != null && subArg.compareTo(revision) > 0) {
                         revision = subArg;
                     }

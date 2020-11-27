@@ -1061,7 +1061,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (StmtContextUtils.isUnknownStatement(this)) {
             return parentPath.createChild(publicDefinition().getStatementName());
         }
-        final Object argument = getStatementArgument();
+        final Object argument = argument();
         if (argument instanceof QName) {
             final QName qname = (QName) argument;
             if (producesDeclared(UsesStatement.class)) {

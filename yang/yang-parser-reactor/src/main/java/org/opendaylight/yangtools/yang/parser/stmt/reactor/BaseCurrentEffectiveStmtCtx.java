@@ -124,7 +124,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public A argument() {
-        return delegate.getStatementArgument();
+        return delegate.argument();
     }
 
     @Override

@@ -78,7 +78,7 @@ public final class KeyStatementSupport
 
         // This makes sure we reuse the collection when a grouping is
         // instantiated in the same module
-        return replaced ? builder.build() : ctx.getStatementArgument();
+        return replaced ? builder.build() : ctx.argument();
     }
 
     @Override

@@ -168,11 +168,11 @@ abstract class AbstractTypeStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         // if it is yang built-in type, no prerequisite is needed, so simply return
-        if (BUILT_IN_TYPES.containsKey(stmt.getStatementArgument())) {
+        if (BUILT_IN_TYPES.containsKey(stmt.argument())) {
             return;
         }
 
-        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, stmt.getStatementArgument());
+        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, stmt.argument());
         final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
                 typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
