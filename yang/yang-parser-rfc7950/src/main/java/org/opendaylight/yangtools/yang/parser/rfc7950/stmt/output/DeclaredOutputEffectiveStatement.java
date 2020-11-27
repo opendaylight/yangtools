@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
         implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
@@ -29,9 +28,8 @@ final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, Ou
     private final int flags;
 
     DeclaredOutputEffectiveStatement(final int flags, final OutputStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final StatementSourceReference ref,
-            final SchemaPath path) {
-        super(declared, substatements, ref);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
+        super(declared, substatements);
         this.flags = flags;
         this.path = requireNonNull(path);
     }

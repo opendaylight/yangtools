@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -105,7 +106,11 @@ public final class ActionStatementSupport extends
         SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.MODULE), ref,
             "Action %s is defined at the top level of a module", argument);
 
-        return new ActionEffectiveStatementImpl(stmt.declared(), stmt.getSchemaPath(),
-            historyAndStatusFlags(stmt.history(), substatements), substatements, stmt.sourceReference());
+        try {
+            return new ActionEffectiveStatementImpl(stmt.declared(), stmt.getSchemaPath(),
+                historyAndStatusFlags(stmt.history(), substatements), substatements);
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 }

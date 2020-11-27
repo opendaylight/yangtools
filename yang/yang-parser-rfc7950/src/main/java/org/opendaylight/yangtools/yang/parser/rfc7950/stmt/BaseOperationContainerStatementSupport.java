@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Specialization of {@link BaseQNameStatementSupport} for {@code input} and {@code output} statements.
@@ -48,7 +49,11 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     @Override
     protected final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createDeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
+        try {
+            return createDeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
+        } catch (SubstatementIndexingException e) {
+            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+        }
     }
 
     protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
