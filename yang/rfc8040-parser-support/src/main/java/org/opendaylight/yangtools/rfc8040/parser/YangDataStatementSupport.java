@@ -80,7 +80,7 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataStatement createDeclared(@NonNull final StmtContext<String, YangDataStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.coerceRawStatementArgument(), substatements);
+        return new Declared(ctx.getRawArgument(), substatements);
     }
 
     @Override

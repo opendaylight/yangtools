@@ -42,7 +42,7 @@ public final class ImpliedStatementSupport
     @Override
     protected ImpliedStatement createDeclared(final StmtContext<String, ImpliedStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ImpliedStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new ImpliedStatementImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override

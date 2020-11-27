@@ -40,7 +40,7 @@ public final class MaxAccessStatementSupport
     public MaxAccess parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final MaxAccess val = MaxAccess.forStringLiteral(value);
         if (val == null) {
-            throw new SourceException(ctx.getStatementSourceReference(), "Invalid max-access value '%s'", value);
+            throw new SourceException(ctx.sourceReference(), "Invalid max-access value '%s'", value);
         }
         return val;
     }
@@ -59,7 +59,7 @@ public final class MaxAccessStatementSupport
     @Override
     protected MaxAccessStatement createDeclared(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new MaxAccessStatementImpl(ctx.coerceStatementArgument(), substatements);
+        return new MaxAccessStatementImpl(ctx.getArgument(), substatements);
     }
 
     @Override

@@ -123,11 +123,11 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
             LOG.debug("No parent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (parent.getPublicDefinition() != YangStmtMapping.ANYXML) {
+        if (parent.publicDefinition() != YangStmtMapping.ANYXML) {
             LOG.debug("Parent is not an anyxml node, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (!"filter".equals(parent.rawStatementArgument())) {
+        if (!"filter".equals(parent.rawArgument())) {
             LOG.debug("Parent is not named 'filter', ignoring get-filter-element-attributes statement");
             return false;
         }
@@ -137,7 +137,7 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
             LOG.debug("No grandparent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (grandParent.getPublicDefinition() != YangStmtMapping.INPUT) {
+        if (grandParent.publicDefinition() != YangStmtMapping.INPUT) {
             LOG.debug("Grandparent is not an input node, ignoring get-filter-element-attributes statement");
             return false;
         }
@@ -147,12 +147,12 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
             LOG.debug("No grandparent, ignoring get-filter-element-attributes statement");
             return false;
         }
-        if (greatGrandParent.getPublicDefinition() != YangStmtMapping.RPC) {
+        if (greatGrandParent.publicDefinition() != YangStmtMapping.RPC) {
             LOG.debug("Grandparent is not an RPC node, ignoring get-filter-element-attributes statement");
             return false;
         }
 
-        switch (greatGrandParent.rawStatementArgument()) {
+        switch (greatGrandParent.getRawArgument()) {
             case "get":
             case "get-config":
                 return true;

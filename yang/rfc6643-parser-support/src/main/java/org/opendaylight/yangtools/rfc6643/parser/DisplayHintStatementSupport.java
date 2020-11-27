@@ -42,7 +42,7 @@ public final class DisplayHintStatementSupport
     @Override
     protected DisplayHintStatement createDeclared(final StmtContext<String, DisplayHintStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new DisplayHintStatementImpl(ctx.coerceRawStatementArgument(), substatements);
+        return new DisplayHintStatementImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
