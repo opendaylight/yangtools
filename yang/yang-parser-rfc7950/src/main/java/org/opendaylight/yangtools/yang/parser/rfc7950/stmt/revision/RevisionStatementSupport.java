@@ -56,12 +56,12 @@ public final class RevisionStatementSupport
     @Override
     protected RevisionStatement createDeclared(final StmtContext<Revision, RevisionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRevisionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularRevisionStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected RevisionStatement createEmptyDeclared(final StmtContext<Revision, RevisionStatement, ?> ctx) {
-        return new EmptyRevisionStatement(ctx.coerceStatementArgument());
+        return new EmptyRevisionStatement(ctx.getArgument());
     }
 
     @Override

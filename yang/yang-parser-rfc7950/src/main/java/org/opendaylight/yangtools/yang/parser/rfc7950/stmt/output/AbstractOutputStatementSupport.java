@@ -32,9 +32,9 @@ abstract class AbstractOutputStatementSupport
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
-                return new RegularUndeclaredOutputStatement(ctx.coerceStatementArgument(), substatements);
+                return new RegularUndeclaredOutputStatement(ctx.getArgument(), substatements);
             case DECLARATION:
-                return new RegularOutputStatement(ctx.coerceStatementArgument(), substatements);
+                return new RegularOutputStatement(ctx.getArgument(), substatements);
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }
@@ -45,9 +45,9 @@ abstract class AbstractOutputStatementSupport
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
-                return new EmptyUndeclaredOutputStatement(ctx.coerceStatementArgument());
+                return new EmptyUndeclaredOutputStatement(ctx.getArgument());
             case DECLARATION:
-                return new EmptyOutputStatement(ctx.coerceStatementArgument());
+                return new EmptyOutputStatement(ctx.getArgument());
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }

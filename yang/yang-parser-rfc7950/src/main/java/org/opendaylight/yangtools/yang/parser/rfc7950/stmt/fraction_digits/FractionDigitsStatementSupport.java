@@ -81,12 +81,12 @@ public final class FractionDigitsStatementSupport
     @Override
     protected FractionDigitsStatement createDeclared(final StmtContext<Integer, FractionDigitsStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularFractionDigitsStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularFractionDigitsStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected FractionDigitsStatement createEmptyDeclared(final StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
-        final Integer argument = ctx.coerceStatementArgument();
+        final Integer argument = ctx.getArgument();
         return verifyNotNull(EMPTY_DECLS.get(argument), "No declared instance for %s", argument);
     }
 

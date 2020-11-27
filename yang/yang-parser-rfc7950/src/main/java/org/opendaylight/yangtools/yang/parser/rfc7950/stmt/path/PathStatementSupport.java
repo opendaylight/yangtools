@@ -58,12 +58,12 @@ public final class PathStatementSupport
     @Override
     protected PathStatement createDeclared(final StmtContext<PathExpression, PathStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPathStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularPathStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected PathStatement createEmptyDeclared(final StmtContext<PathExpression, PathStatement, ?> ctx) {
-        return new EmptyPathStatement(ctx.coerceStatementArgument());
+        return new EmptyPathStatement(ctx.getArgument());
     }
 
     @Override

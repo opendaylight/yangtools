@@ -53,7 +53,7 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
 
     @Override
     protected final D createEmptyDeclared(final StmtContext<Boolean, D, ?> ctx) {
-        return ctx.coerceStatementArgument() ? emptyDeclaredTrue : emptyDeclaredFalse;
+        return ctx.getArgument() ? emptyDeclaredTrue : emptyDeclaredFalse;
     }
 
     @Override

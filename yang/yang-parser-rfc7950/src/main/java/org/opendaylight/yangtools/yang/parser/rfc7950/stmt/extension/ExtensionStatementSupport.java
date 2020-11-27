@@ -64,7 +64,7 @@ public final class ExtensionStatementSupport
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
         super.onStatementDefinitionDeclared(stmt);
 
-        QName stmtName = stmt.coerceStatementArgument();
+        QName stmtName = stmt.getArgument();
         if (OpenConfigStatements.OPENCONFIG_VERSION.getStatementName().isEqualWithoutRevision(stmtName)) {
             stmtName = stmtName.withoutRevision();
         }
@@ -77,9 +77,8 @@ public final class ExtensionStatementSupport
             YinElementStatement.class);
 
         stmt.addToNs(StatementDefinitionNamespace.class, stmt.argument(),
-            new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(stmt.coerceStatementArgument(),
-                argument != null ? argument.argument() : null,
-                        yinElement != null && yinElement.coerceStatementArgument())));
+            new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
+                argument != null ? argument.argument() : null, yinElement != null && yinElement.getArgument())));
     }
 
     @Override
@@ -90,12 +89,12 @@ public final class ExtensionStatementSupport
     @Override
     protected ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularExtensionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularExtensionStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected ExtensionStatement createEmptyDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx) {
-        return new EmptyExtensionStatement(ctx.coerceStatementArgument());
+        return new EmptyExtensionStatement(ctx.getArgument());
     }
 
     @Override

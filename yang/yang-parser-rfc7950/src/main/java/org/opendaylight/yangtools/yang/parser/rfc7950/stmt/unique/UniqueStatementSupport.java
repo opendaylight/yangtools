@@ -69,13 +69,12 @@ public final class UniqueStatementSupport
     @Override
     protected UniqueStatement createDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularUniqueStatement(ctx.getRawArgument(), ctx.coerceStatementArgument(),
-            substatements);
+        return new RegularUniqueStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected UniqueStatement createEmptyDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
-        return new EmptyUniqueStatement(ctx.getRawArgument(), ctx.coerceStatementArgument());
+        return new EmptyUniqueStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

@@ -35,7 +35,7 @@ abstract class AbstractRefineStatementSupport
     @Override
     protected final RefineStatement createDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RefineStatementImpl(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new RefineStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override

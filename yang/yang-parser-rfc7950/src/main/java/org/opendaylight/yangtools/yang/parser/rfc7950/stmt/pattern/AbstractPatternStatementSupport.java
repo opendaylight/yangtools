@@ -42,13 +42,13 @@ abstract class AbstractPatternStatementSupport
     @Override
     protected final PatternStatement createDeclared(final StmtContext<PatternExpression, PatternStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPatternStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularPatternStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final PatternStatement createEmptyDeclared(
             final StmtContext<PatternExpression, PatternStatement, ?> ctx) {
-        return new EmptyPatternStatement(ctx.coerceStatementArgument());
+        return new EmptyPatternStatement(ctx.getArgument());
     }
 
     @Override

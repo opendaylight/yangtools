@@ -81,7 +81,7 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     protected final SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new SubmoduleStatementImpl(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new SubmoduleStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override

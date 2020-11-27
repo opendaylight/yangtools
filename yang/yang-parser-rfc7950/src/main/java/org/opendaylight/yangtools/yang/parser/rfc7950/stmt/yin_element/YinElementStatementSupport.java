@@ -41,7 +41,7 @@ public final class YinElementStatementSupport
     @Override
     protected YinElementStatement createDeclared(final StmtContext<Boolean, YinElementStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularYinElementStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularYinElementStatement(ctx.getArgument(), substatements);
     }
 
     @Override

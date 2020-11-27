@@ -41,12 +41,12 @@ abstract class AbstractLeafListStatementSupport
     @Override
     protected final LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularLeafListStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularLeafListStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final LeafListStatement createEmptyDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
-        return new EmptyLeafListStatement(ctx.coerceStatementArgument());
+        return new EmptyLeafListStatement(ctx.getArgument());
     }
 
     @Override

@@ -46,6 +46,6 @@ final class BuiltinTypeStatement extends WithRawStringArgument implements TypeSt
     }
 
     static @Nullable TypeStatement lookup(final StmtContext<String, TypeStatement, ?> ctx) {
-        return BUILTINS.get(ctx.coerceStatementArgument());
+        return BUILTINS.get(ctx.getArgument());
     }
 }

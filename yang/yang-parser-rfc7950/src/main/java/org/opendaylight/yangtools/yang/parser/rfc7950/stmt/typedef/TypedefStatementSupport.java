@@ -67,7 +67,7 @@ public final class TypedefStatementSupport extends
                 // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
                 // declarations and parent declarations which have already been declared.
                 checkConflict(parent, stmt);
-                parent.addContext(TypeNamespace.class, stmt.coerceStatementArgument(), stmt);
+                parent.addContext(TypeNamespace.class, stmt.getArgument(), stmt);
             }
         }
     }
@@ -81,13 +81,13 @@ public final class TypedefStatementSupport extends
     protected TypedefStatement createDeclared(final StmtContext<QName, TypedefStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         checkDeclared(ctx);
-        return new RegularTypedefStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularTypedefStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected TypedefStatement createEmptyDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {
         checkDeclared(ctx);
-        return new EmptyTypedefStatement(ctx.coerceStatementArgument());
+        return new EmptyTypedefStatement(ctx.getArgument());
     }
 
     @Override
@@ -109,7 +109,7 @@ public final class TypedefStatementSupport extends
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final QName arg = stmt.coerceStatementArgument();
+        final QName arg = stmt.getArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(TypeNamespace.class, arg);
         // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
         SourceException.throwIf(existing != null, stmt.sourceReference(), "Duplicate name for typedef %s", arg);

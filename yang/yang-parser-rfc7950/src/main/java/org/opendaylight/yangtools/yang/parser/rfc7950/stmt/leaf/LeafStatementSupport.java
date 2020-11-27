@@ -70,12 +70,12 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
     @Override
     protected LeafStatement createDeclared(final StmtContext<QName, LeafStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularLeafStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularLeafStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected LeafStatement createEmptyDeclared(final StmtContext<QName, LeafStatement, ?> ctx) {
-        return new EmptyLeafStatement(ctx.coerceStatementArgument());
+        return new EmptyLeafStatement(ctx.getArgument());
     }
 
     @Override

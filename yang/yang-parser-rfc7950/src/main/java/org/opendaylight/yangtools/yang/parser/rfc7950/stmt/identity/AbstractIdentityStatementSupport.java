@@ -49,7 +49,7 @@ abstract class AbstractIdentityStatementSupport
     @Override
     public final void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
-        final QName qname = stmt.coerceStatementArgument();
+        final QName qname = stmt.getArgument();
         final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(IdentityNamespace.class, qname);
         SourceException.throwIf(prev != null, stmt.sourceReference(), "Duplicate identity definition %s", qname);
         stmt.addToNs(IdentityNamespace.class, qname, stmt);
@@ -58,12 +58,12 @@ abstract class AbstractIdentityStatementSupport
     @Override
     protected final IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularIdentityStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularIdentityStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final IdentityStatement createEmptyDeclared(@NonNull final StmtContext<QName, IdentityStatement, ?> ctx) {
-        return new EmptyIdentityStatement(ctx.coerceStatementArgument());
+        return new EmptyIdentityStatement(ctx.getArgument());
     }
 
     @Override

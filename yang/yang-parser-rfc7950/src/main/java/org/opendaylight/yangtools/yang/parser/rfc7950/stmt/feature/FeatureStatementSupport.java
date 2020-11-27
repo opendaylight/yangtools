@@ -54,7 +54,7 @@ public final class FeatureStatementSupport
     @Override
     public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        stmt.addContext(FeatureNamespace.class, stmt.coerceStatementArgument(), stmt);
+        stmt.addContext(FeatureNamespace.class, stmt.getArgument(), stmt);
     }
 
     @Override
@@ -65,12 +65,12 @@ public final class FeatureStatementSupport
     @Override
     protected FeatureStatement createDeclared(final StmtContext<QName, FeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularFeatureStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularFeatureStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected FeatureStatement createEmptyDeclared(@NonNull final StmtContext<QName, FeatureStatement, ?> ctx) {
-        return new EmptyFeatureStatement(ctx.coerceStatementArgument());
+        return new EmptyFeatureStatement(ctx.getArgument());
     }
 
     @Override

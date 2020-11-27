@@ -81,12 +81,12 @@ public final class ActionStatementSupport extends
     @Override
     protected ActionStatement createDeclared(final StmtContext<QName, ActionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularActionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularActionStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected ActionStatement createEmptyDeclared(final StmtContext<QName, ActionStatement, ?> ctx) {
-        return new EmptyActionStatement(ctx.coerceStatementArgument());
+        return new EmptyActionStatement(ctx.getArgument());
     }
 
     @Override

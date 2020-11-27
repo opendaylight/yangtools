@@ -55,7 +55,7 @@ abstract class AbstractIfFeatureStatementSupport
 
         final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Map<Prerequisite<?>, QName> backRef = new HashMap<>();
-        for (QName feature : stmt.coerceStatementArgument().getReferencedFeatures()) {
+        for (QName feature : stmt.getArgument().getReferencedFeatures()) {
             backRef.put(verifyFeatures.requiresCtx(stmt, FeatureNamespace.class, feature,
                 ModelProcessingPhase.EFFECTIVE_MODEL), feature);
         }
@@ -87,13 +87,13 @@ abstract class AbstractIfFeatureStatementSupport
     @Override
     protected final IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularIfFeatureStatement(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new RegularIfFeatureStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected final IfFeatureStatement createEmptyDeclared(
             final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
-        return new EmptyIfFeatureStatement(ctx.getRawArgument(), ctx.coerceStatementArgument());
+        return new EmptyIfFeatureStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

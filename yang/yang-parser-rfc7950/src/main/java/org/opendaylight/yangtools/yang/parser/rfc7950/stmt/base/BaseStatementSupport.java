@@ -52,7 +52,7 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
     public void onStatementDefinitionDeclared(final Mutable<QName, BaseStatement, BaseEffectiveStatement> baseStmtCtx) {
         final Mutable<?, ?, ?> baseParentCtx = baseStmtCtx.coerceParentContext();
         if (baseParentCtx.producesDeclared(IdentityStatement.class)) {
-            final QName baseIdentityQName = baseStmtCtx.coerceStatementArgument();
+            final QName baseIdentityQName = baseStmtCtx.getArgument();
             final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(
                 ModelProcessingPhase.STATEMENT_DEFINITION);
             baseIdentityAction.requiresCtx(baseStmtCtx, IdentityNamespace.class, baseIdentityQName,
@@ -83,12 +83,12 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
     @Override
     protected BaseStatement createDeclared(final StmtContext<QName, BaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularBaseStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularBaseStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected BaseStatement createEmptyDeclared(final StmtContext<QName, BaseStatement, ?> ctx) {
-        return new EmptyBaseStatement(ctx.coerceStatementArgument());
+        return new EmptyBaseStatement(ctx.getArgument());
     }
 
     @Override

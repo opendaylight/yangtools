@@ -41,7 +41,7 @@ public final class MandatoryStatementSupport extends
     @Override
     protected MandatoryStatement createDeclared(final StmtContext<Boolean, MandatoryStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMandatoryStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularMandatoryStatement(ctx.getArgument(), substatements);
     }
 
     @Override

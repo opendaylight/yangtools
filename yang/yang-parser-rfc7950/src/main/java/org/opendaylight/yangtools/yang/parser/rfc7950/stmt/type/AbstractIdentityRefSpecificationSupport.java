@@ -51,7 +51,7 @@ abstract class AbstractIdentityRefSpecificationSupport
         final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
                 StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class);
         for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
-            final QName baseIdentity = baseStmt.coerceStatementArgument();
+            final QName baseIdentity = baseStmt.getArgument();
             final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
             InferenceException.throwIfNull(stmtCtx, stmt.sourceReference(),
                 "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",

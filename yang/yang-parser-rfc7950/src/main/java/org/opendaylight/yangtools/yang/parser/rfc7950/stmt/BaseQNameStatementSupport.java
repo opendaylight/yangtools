@@ -39,7 +39,7 @@ public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QNam
 
     @Override
     public QName adaptArgumentValue(final StmtContext<QName, D, E> ctx, final QNameModule targetModule) {
-        return ctx.coerceStatementArgument().bindTo(targetModule).intern();
+        return ctx.getArgument().bindTo(targetModule).intern();
     }
 
     protected static final int historyAndStatusFlags(final CopyHistory history,

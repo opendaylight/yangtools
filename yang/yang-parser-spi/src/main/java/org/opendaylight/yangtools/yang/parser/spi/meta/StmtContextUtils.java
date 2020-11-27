@@ -248,7 +248,7 @@ public final class StmtContextUtils {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.publicDefinition())) {
                 containsIfFeature = true;
                 @SuppressWarnings("unchecked")
-                final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.coerceStatementArgument();
+                final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.getArgument();
                 if (argument.test(supportedFeatures)) {
                     isSupported = true;
                 } else {
@@ -446,7 +446,7 @@ public final class StmtContextUtils {
 
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
             final StmtContext<Set<QName>, ?, ?> keyStmtCtx) {
-        return keyStmtCtx.coerceStatementArgument().contains(leafStmtCtx.argument());
+        return keyStmtCtx.getArgument().contains(leafStmtCtx.argument());
     }
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {

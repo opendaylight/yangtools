@@ -47,7 +47,7 @@ final class RevisionImport {
     static void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported;
-        final String moduleName = stmt.coerceStatementArgument();
+        final String moduleName = stmt.getArgument();
         final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         if (revision == null) {
             imported = importAction.requiresCtx(stmt, ModuleNamespace.class,

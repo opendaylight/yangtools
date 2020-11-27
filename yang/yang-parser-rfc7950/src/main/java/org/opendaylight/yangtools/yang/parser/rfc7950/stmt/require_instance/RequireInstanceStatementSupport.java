@@ -42,7 +42,7 @@ public final class RequireInstanceStatementSupport
     @Override
     protected RequireInstanceStatement createDeclared(final StmtContext<Boolean, RequireInstanceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRequireInstanceStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularRequireInstanceStatement(ctx.getArgument(), substatements);
     }
 
     @Override

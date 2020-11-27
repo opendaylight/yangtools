@@ -35,7 +35,7 @@ public final class StmtContextDefaults {
         return stmt.allSubstatementsStream()
                 .filter(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type))
                 .findAny()
-                .map(ctx -> (A) ctx.coerceStatementArgument());
+                .map(ctx -> (A) ctx.getArgument());
     }
 
     /**

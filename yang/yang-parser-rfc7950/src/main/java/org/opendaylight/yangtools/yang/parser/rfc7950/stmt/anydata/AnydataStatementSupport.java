@@ -58,12 +58,12 @@ public final class AnydataStatementSupport
     @Override
     protected AnydataStatement createDeclared(final StmtContext<QName, AnydataStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularAnydataStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularAnydataStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected AnydataStatement createEmptyDeclared(final StmtContext<QName, AnydataStatement, ?> ctx) {
-        return new EmptyAnydataStatement(ctx.coerceStatementArgument());
+        return new EmptyAnydataStatement(ctx.getArgument());
     }
 
     @Override

@@ -93,8 +93,7 @@ abstract class AbstractModuleStatementSupport
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.coerceStatementArgument().getLocalName(),
-            revisionDate));
+        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getArgument().getLocalName(), revisionDate));
     }
 
     @Override
@@ -168,7 +167,7 @@ abstract class AbstractModuleStatementSupport
     @Override
     protected final ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ModuleStatementImpl(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new ModuleStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override

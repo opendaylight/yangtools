@@ -89,12 +89,12 @@ public final class StatusStatementSupport
     @Override
     protected StatusStatement createDeclared(final StmtContext<Status, StatusStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularStatusStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularStatusStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected StatusStatement createEmptyDeclared(final StmtContext<Status, StatusStatement, ?> ctx) {
-        final Status argument = ctx.coerceStatementArgument();
+        final Status argument = ctx.getArgument();
         switch (argument) {
             case CURRENT:
                 return EMPTY_CURRENT_DECL;

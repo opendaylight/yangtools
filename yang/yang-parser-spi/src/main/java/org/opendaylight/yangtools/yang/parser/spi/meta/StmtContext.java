@@ -92,8 +92,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return raw statement argument string
      * @throws VerifyException if this statement does not have an argument
+     * @deprecated Use {@link #getArgument()} instead.
      */
-    // TODO: gradually migrate callers of this method
+    @Deprecated(forRemoval = true)
     default @NonNull A coerceStatementArgument() {
         return getArgument();
     }

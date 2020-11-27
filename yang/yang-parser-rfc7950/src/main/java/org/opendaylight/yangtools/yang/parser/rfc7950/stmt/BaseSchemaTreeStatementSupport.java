@@ -35,7 +35,7 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
 
     @Override
     public final void onStatementAdded(final Mutable<QName, D, E> stmt) {
-        stmt.coerceParentContext().addToNs(SchemaTreeNamespace.class, stmt.coerceStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(SchemaTreeNamespace.class, stmt.getArgument(), stmt);
     }
 
     // Non-final because {@code input} and {@code output} are doing their own thing.

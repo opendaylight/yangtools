@@ -54,7 +54,7 @@ public final class OpenConfigVersionSupport
     @Override
     protected OpenConfigVersionStatement createDeclared(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new OpenConfigVersionStatementImpl(ctx.coerceStatementArgument(), substatements);
+        return new OpenConfigVersionStatementImpl(ctx.getArgument(), substatements);
     }
 
     @Override

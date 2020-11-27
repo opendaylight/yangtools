@@ -76,12 +76,12 @@ public final class OrderedByStatementSupport
     @Override
     protected OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularOrderedByStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularOrderedByStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected OrderedByStatement createEmptyDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
-        final Ordering argument = ctx.coerceStatementArgument();
+        final Ordering argument = ctx.getArgument();
         switch (argument) {
             case SYSTEM:
                 return EMPTY_SYSTEM_DECL;

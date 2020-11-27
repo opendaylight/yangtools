@@ -91,8 +91,7 @@ abstract class AbstractAugmentStatementSupport
         final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
-            getSearchRoot(augmentNode), SchemaTreeNamespace.class,
-            augmentNode.coerceStatementArgument().getNodeIdentifiers());
+            getSearchRoot(augmentNode), SchemaTreeNamespace.class, augmentNode.getArgument().getNodeIdentifiers());
 
         augmentAction.apply(new InferenceAction() {
             @Override
@@ -327,7 +326,7 @@ abstract class AbstractAugmentStatementSupport
                 final Optional<? extends StmtContext<?, ?, ?>> optPrevCopy = targetCtx.getPreviousCopyCtx();
                 if (optPrevCopy.isPresent()) {
                     final StmtContext<?, ?, ?> original = optPrevCopy.get();
-                    final Object origArg = original.coerceStatementArgument();
+                    final Object origArg = original.getArgument();
                     Verify.verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
 
                     if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())

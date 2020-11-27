@@ -66,12 +66,12 @@ public final class YangVersionStatementSupport
     @Override
     protected YangVersionStatement createDeclared(final StmtContext<YangVersion, YangVersionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularYangVersionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularYangVersionStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected YangVersionStatement createEmptyDeclared(final StmtContext<YangVersion, YangVersionStatement, ?> ctx) {
-        final YangVersion argument = ctx.coerceStatementArgument();
+        final YangVersion argument = ctx.getArgument();
         switch (argument) {
             case VERSION_1:
                 return EMPTY_VER1_DECL;

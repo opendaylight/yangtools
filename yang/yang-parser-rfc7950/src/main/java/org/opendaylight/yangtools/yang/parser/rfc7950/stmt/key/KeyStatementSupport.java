@@ -66,7 +66,7 @@ public final class KeyStatementSupport
             final QNameModule targetModule) {
         final Builder<QName> builder = ImmutableSet.builder();
         boolean replaced = false;
-        for (final QName qname : ctx.coerceStatementArgument()) {
+        for (final QName qname : ctx.getArgument()) {
             if (!targetModule.equals(qname.getModule())) {
                 final QName newQname = qname.bindTo(targetModule).intern();
                 builder.add(newQname);
@@ -89,12 +89,12 @@ public final class KeyStatementSupport
     @Override
     protected KeyStatement createDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularKeyStatement(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new RegularKeyStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected KeyStatement createEmptyDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx) {
-        return new EmptyKeyStatement(ctx.getRawArgument(), ctx.coerceStatementArgument());
+        return new EmptyKeyStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

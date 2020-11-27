@@ -132,12 +132,12 @@ public final class UsesStatementSupport
     @Override
     protected UsesStatement createDeclared(final StmtContext<QName, UsesStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularUsesStatement(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new RegularUsesStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected UsesStatement createEmptyDeclared(final StmtContext<QName, UsesStatement, ?> ctx) {
-        return new EmptyUsesStatement(ctx.getRawArgument(), ctx.coerceStatementArgument());
+        return new EmptyUsesStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

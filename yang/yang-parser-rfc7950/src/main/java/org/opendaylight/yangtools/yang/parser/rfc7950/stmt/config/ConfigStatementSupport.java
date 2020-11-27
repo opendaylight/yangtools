@@ -40,7 +40,7 @@ public final class ConfigStatementSupport
     @Override
     protected ConfigStatement createDeclared(final StmtContext<Boolean, ConfigStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularConfigStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularConfigStatement(ctx.getArgument(), substatements);
     }
 
     @Override

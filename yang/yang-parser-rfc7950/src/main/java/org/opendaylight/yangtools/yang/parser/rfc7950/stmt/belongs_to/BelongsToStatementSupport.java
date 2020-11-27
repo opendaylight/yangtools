@@ -59,8 +59,7 @@ public final class BelongsToStatementSupport
 
         final SourceIdentifier belongsToSourceIdentifier = getSourceIdentifier(belongsToCtx);
         final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
-            ModuleNamespaceForBelongsTo.class, belongsToCtx.coerceStatementArgument(),
-            ModelProcessingPhase.SOURCE_LINKAGE);
+            ModuleNamespaceForBelongsTo.class, belongsToCtx.getArgument(), ModelProcessingPhase.SOURCE_LINKAGE);
 
         belongsToAction.apply(new InferenceAction() {
             @Override
@@ -69,7 +68,7 @@ public final class BelongsToStatementSupport
 
                 belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToSourceIdentifier, belongsToModuleCtx);
                 belongsToCtx.addToNs(BelongsToPrefixToModuleCtx.class,
-                    findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).coerceStatementArgument(),
+                    findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getArgument(),
                     belongsToModuleCtx);
             }
 
@@ -103,7 +102,7 @@ public final class BelongsToStatementSupport
 
     private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,
             BelongsToEffectiveStatement> belongsToCtx) {
-        return RevisionSourceIdentifier.create(belongsToCtx.coerceStatementArgument());
+        return RevisionSourceIdentifier.create(belongsToCtx.getArgument());
     }
 
     @Override

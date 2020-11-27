@@ -51,10 +51,8 @@ public final class DeviationStatementSupport
     @Override
     public void onFullDefinitionDeclared(
             final Mutable<Absolute, DeviationStatement, DeviationEffectiveStatement> ctx) {
-        final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class,
-                ctx.getRoot());
-        final QNameModule targetModule = Iterables.getLast(ctx.coerceStatementArgument().getNodeIdentifiers())
-                .getModule();
+        final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot());
+        final QNameModule targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
 
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx.sourceReference(),
@@ -70,7 +68,7 @@ public final class DeviationStatementSupport
     @Override
     protected DeviationStatement createDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new DeviationStatementImpl(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new DeviationStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override

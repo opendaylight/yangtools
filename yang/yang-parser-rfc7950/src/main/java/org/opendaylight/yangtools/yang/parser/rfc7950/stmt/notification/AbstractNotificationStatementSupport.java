@@ -27,12 +27,12 @@ abstract class AbstractNotificationStatementSupport
     @Override
     protected final NotificationStatement createDeclared(final StmtContext<QName, NotificationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularNotificationStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularNotificationStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final NotificationStatement createEmptyDeclared(final StmtContext<QName, NotificationStatement, ?> ctx) {
-        return new EmptyNotificationStatement(ctx.coerceStatementArgument());
+        return new EmptyNotificationStatement(ctx.getArgument());
     }
 
     @Override

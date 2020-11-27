@@ -53,7 +53,7 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
 
     @Override
     protected final D createEmptyDeclared(final StmtContext<A, D, ?> ctx) {
-        return declaredCache.getUnchecked(ctx.coerceStatementArgument());
+        return declaredCache.getUnchecked(ctx.getArgument());
     }
 
     protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
@@ -73,7 +73,7 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
     @Override
     protected final D createDeclared(final StmtContext<A, D, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return createDeclared(ctx.coerceStatementArgument(), substatements);
+        return createDeclared(ctx.getArgument(), substatements);
     }
 
     protected abstract @NonNull D createDeclared(@NonNull A argument,

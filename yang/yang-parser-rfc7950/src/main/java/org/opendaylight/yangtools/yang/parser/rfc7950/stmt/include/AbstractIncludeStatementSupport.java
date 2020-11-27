@@ -52,9 +52,8 @@ abstract class AbstractIncludeStatementSupport
 
     @Override
     public final void onLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
-        final String submoduleName = stmt.coerceStatementArgument();
-        final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
-            RevisionDateStatement.class);
+        final String submoduleName = stmt.getArgument();
+        final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
         final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite;
@@ -63,8 +62,7 @@ abstract class AbstractIncludeStatementSupport
                 NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
         } else {
             requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
-                RevisionSourceIdentifier.create(submoduleName, Optional.of(revision.argument())),
-                SOURCE_LINKAGE);
+                RevisionSourceIdentifier.create(submoduleName, Optional.of(revision.argument())), SOURCE_LINKAGE);
         }
 
         includeAction.apply(new InferenceAction() {
@@ -89,12 +87,12 @@ abstract class AbstractIncludeStatementSupport
     @Override
     protected final IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularIncludeStatement(ctx.getRawArgument(), ctx.coerceStatementArgument(), substatements);
+        return new RegularIncludeStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected final IncludeStatement createEmptyDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
-        return new EmptyIncludeStatement(ctx.getRawArgument(), ctx.coerceStatementArgument());
+        return new EmptyIncludeStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override
