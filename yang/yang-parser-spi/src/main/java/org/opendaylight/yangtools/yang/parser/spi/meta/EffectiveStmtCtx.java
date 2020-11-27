@@ -74,6 +74,8 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
     @Beta
     interface Current<A, D extends DeclaredStatement<A>> extends Parent {
 
+        @NonNull CommonStmtCtx root();
+
         @NonNull CopyHistory history();
 
         @NonNull D declared();

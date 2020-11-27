@@ -46,7 +46,7 @@ public final class EffectiveStmtUtils {
             final EffectiveStatement<?, ?> effectiveStatement) {
         return new SourceException(stmt.sourceReference(),
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
-            stmt.caerbannog().getRoot().rawArgument(), effectiveStatement.argument(), effectiveStatement.argument());
+            stmt.root().rawArgument(), effectiveStatement.argument(), effectiveStatement.argument());
     }
 
     public static Optional<ElementCountConstraint> createElementCountConstraint(final EffectiveStatement<?, ?> stmt) {
