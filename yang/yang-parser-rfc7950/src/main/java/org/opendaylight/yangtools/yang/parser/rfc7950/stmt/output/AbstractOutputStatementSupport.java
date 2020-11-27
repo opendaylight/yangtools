@@ -29,8 +29,8 @@ abstract class AbstractOutputStatementSupport
     @Override
     protected final OutputStatement createDeclared(final StmtContext<QName, OutputStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+        final StatementSource source = ctx.source();
+        switch (source) {
             case CONTEXT:
                 return new RegularUndeclaredOutputStatement(ctx.coerceStatementArgument(), substatements);
             case DECLARATION:
@@ -42,8 +42,8 @@ abstract class AbstractOutputStatementSupport
 
     @Override
     protected final OutputStatement createEmptyDeclared(final StmtContext<QName, OutputStatement, ?> ctx) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+        final StatementSource source = ctx.source();
+        switch (source) {
             case CONTEXT:
                 return new EmptyUndeclaredOutputStatement(ctx.coerceStatementArgument());
             case DECLARATION:

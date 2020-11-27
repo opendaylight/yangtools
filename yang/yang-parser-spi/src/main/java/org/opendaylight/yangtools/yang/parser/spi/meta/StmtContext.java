@@ -38,12 +38,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  */
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends BoundStmtCtx<A> {
-    // TODO: gradually migrate callers of this method
+    @Deprecated(forRemoval = true)
     default @NonNull StatementDefinition getPublicDefinition() {
         return publicDefinition();
     }
 
-    // TODO: gradually migrate callers of this method
+    @Deprecated(forRemoval = true)
     default @NonNull StatementSource getStatementSource() {
         return source();
     }

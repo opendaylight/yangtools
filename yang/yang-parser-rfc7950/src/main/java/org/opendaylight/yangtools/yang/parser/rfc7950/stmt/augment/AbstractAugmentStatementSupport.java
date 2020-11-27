@@ -129,8 +129,8 @@ abstract class AbstractAugmentStatementSupport
                 /*
                  * Do not fail, if it is an uses-augment to an unknown node.
                  */
-                if (YangStmtMapping.USES == augmentNode.coerceParentContext().getPublicDefinition()) {
-                    final SchemaNodeIdentifier augmentArg = augmentNode.coerceStatementArgument();
+                if (YangStmtMapping.USES == augmentNode.coerceParentContext().publicDefinition()) {
+                    final SchemaNodeIdentifier augmentArg = augmentNode.getArgument();
                     final Optional<StmtContext<?, ?, ?>> targetNode = SchemaTreeNamespace.findNode(
                         getSearchRoot(augmentNode), augmentArg);
                     if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
@@ -150,14 +150,13 @@ abstract class AbstractAugmentStatementSupport
     @Override
     protected final AugmentStatement createDeclared(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularAugmentStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
-            substatements);
+        return new RegularAugmentStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected final AugmentStatement createEmptyDeclared(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
-        return new EmptyAugmentStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
+        return new EmptyAugmentStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override
@@ -190,7 +189,7 @@ abstract class AbstractAugmentStatementSupport
     private static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
         // Augment is in uses - we need to augment instantiated nodes in parent.
         final StmtContext<?, ?, ?> parent = augmentContext.coerceParentContext();
-        if (YangStmtMapping.USES == parent.getPublicDefinition()) {
+        if (YangStmtMapping.USES == parent.publicDefinition()) {
             return parent.getParentContext();
         }
         return parent;
@@ -352,7 +351,7 @@ abstract class AbstractAugmentStatementSupport
 
     private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
         StmtContext<?, ?, ?> parent = Verify.verifyNotNull(child.getParentContext(), "Child %s has not parent", child);
-        while (parent.getPublicDefinition() != YangStmtMapping.AUGMENT) {
+        while (parent.publicDefinition() != YangStmtMapping.AUGMENT) {
             parent = Verify.verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
         }
         return parent;
@@ -362,13 +361,13 @@ abstract class AbstractAugmentStatementSupport
         YangStmtMapping.WHEN, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
     private static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
-        return !NOCOPY_DEF_SET.contains(stmtContext.getPublicDefinition());
+        return !NOCOPY_DEF_SET.contains(stmtContext.publicDefinition());
     }
 
     private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.TYPEDEF);
 
     private static boolean isReusedByAugment(final StmtContext<?, ?, ?> stmtContext) {
-        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
+        return REUSED_DEF_SET.contains(stmtContext.publicDefinition());
     }
 
     static boolean isSupportedAugmentTarget(final StmtContext<?, ?, ?> substatementCtx) {
@@ -385,6 +384,6 @@ abstract class AbstractAugmentStatementSupport
 
         // if no allowed target is returned we consider all targets allowed
         return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()
-                || allowedAugmentTargets.contains(substatementCtx.getPublicDefinition());
+                || allowedAugmentTargets.contains(substatementCtx.publicDefinition());
     }
 }

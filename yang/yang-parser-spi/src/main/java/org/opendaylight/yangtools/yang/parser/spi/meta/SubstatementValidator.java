@@ -114,7 +114,7 @@ public final class SubstatementValidator {
 
         final Map<StatementDefinition, Counter> stmtCounts = new HashMap<>();
         for (StmtContext<?, ?, ?> stmtCtx : ctx.allSubstatements()) {
-            stmtCounts.computeIfAbsent(stmtCtx.getPublicDefinition(), key -> new Counter()).increment();
+            stmtCounts.computeIfAbsent(stmtCtx.publicDefinition(), key -> new Counter()).increment();
         }
 
         // Mark all mandatory statements as not present. We are using a Map instead of a Set, as it provides us with

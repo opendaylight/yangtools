@@ -315,7 +315,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
             final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
-        final StatementDefinition def = substatement.getPublicDefinition();
+        final StatementDefinition def = substatement.publicDefinition();
 
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
         if (REUSED_DEF_SET.contains(def)) {

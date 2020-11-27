@@ -29,8 +29,8 @@ abstract class AbstractInputStatementSupport
     @Override
     protected final InputStatement createDeclared(final StmtContext<QName, InputStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+        final StatementSource source = ctx.source();
+        switch (source) {
             case CONTEXT:
                 return new RegularUndeclaredInputStatement(ctx.coerceStatementArgument(), substatements);
             case DECLARATION:
@@ -42,8 +42,8 @@ abstract class AbstractInputStatementSupport
 
     @Override
     protected final InputStatement createEmptyDeclared(final StmtContext<QName, InputStatement, ?> ctx) {
-        final StatementSource source = ctx.getStatementSource();
-        switch (ctx.getStatementSource()) {
+        final StatementSource source = ctx.source();
+        switch (source) {
             case CONTEXT:
                 return new EmptyUndeclaredInputStatement(ctx.coerceStatementArgument());
             case DECLARATION:

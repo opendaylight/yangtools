@@ -222,8 +222,7 @@ public final class StmtContextUtils {
      *             if supplied statement context is null
      */
     public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return UnknownStatement.class
-                .isAssignableFrom(stmtCtx.getPublicDefinition().getDeclaredRepresentationClass());
+        return UnknownStatement.class.isAssignableFrom(stmtCtx.publicDefinition().getDeclaredRepresentationClass());
     }
 
     /**
@@ -246,7 +245,7 @@ public final class StmtContextUtils {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (final StmtContext<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
-            if (YangStmtMapping.IF_FEATURE.equals(stmt.getPublicDefinition())) {
+            if (YangStmtMapping.IF_FEATURE.equals(stmt.publicDefinition())) {
                 containsIfFeature = true;
                 @SuppressWarnings("unchecked")
                 final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.coerceStatementArgument();
@@ -270,7 +269,7 @@ public final class StmtContextUtils {
      * @return true if it is a presence container
      */
     public static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition() == YangStmtMapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.publicDefinition() == YangStmtMapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
     }
 
     /**
@@ -281,7 +280,7 @@ public final class StmtContextUtils {
      * @return true if it is a non-presence container
      */
     public static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition() == YangStmtMapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.publicDefinition() == YangStmtMapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
@@ -298,10 +297,10 @@ public final class StmtContextUtils {
      *         according to RFC6020.
      */
     public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
-        if (!(stmtCtx.getPublicDefinition() instanceof YangStmtMapping)) {
+        if (!(stmtCtx.publicDefinition() instanceof YangStmtMapping)) {
             return false;
         }
-        switch ((YangStmtMapping) stmtCtx.getPublicDefinition()) {
+        switch ((YangStmtMapping) stmtCtx.publicDefinition()) {
             case LEAF:
             case CHOICE:
             case ANYXML:
@@ -330,7 +329,7 @@ public final class StmtContextUtils {
      */
     public static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
             final StatementDefinition stmtDef) {
-        return stmtCtx.getPublicDefinition().equals(stmtDef) && !isMandatoryNode(stmtCtx);
+        return stmtCtx.publicDefinition().equals(stmtDef) && !isMandatoryNode(stmtCtx);
     }
 
     /**
@@ -406,7 +405,7 @@ public final class StmtContextUtils {
     public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
         requireNonNull(parentType);
         final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
-        return parentContext != null && parentType.equals(parentContext.getPublicDefinition());
+        return parentContext != null && parentType.equals(parentContext.publicDefinition());
     }
 
     /**
@@ -427,11 +426,11 @@ public final class StmtContextUtils {
         final StmtContext<?, ?, ?> listStmtCtx = ctx.coerceParentContext();
         final StmtContext<Set<QName>, ?, ?> keyStmtCtx = findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
 
-        if (YangStmtMapping.LEAF.equals(ctx.getPublicDefinition())) {
+        if (YangStmtMapping.LEAF.equals(ctx.publicDefinition())) {
             if (isListKey(ctx, keyStmtCtx)) {
                 disallowIfFeatureAndWhenOnListKeys(ctx);
             }
-        } else if (YangStmtMapping.USES.equals(ctx.getPublicDefinition())) {
+        } else if (YangStmtMapping.USES.equals(ctx.publicDefinition())) {
             findAllEffectiveSubstatements(listStmtCtx, LeafStatement.class).forEach(leafStmtCtx -> {
                 if (isListKey(leafStmtCtx, keyStmtCtx)) {
                     disallowIfFeatureAndWhenOnListKeys(leafStmtCtx);
@@ -452,7 +451,7 @@ public final class StmtContextUtils {
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
         leafStmtCtx.allSubstatements().forEach(leafSubstmtCtx -> {
-            final StatementDefinition statementDef = leafSubstmtCtx.getPublicDefinition();
+            final StatementDefinition statementDef = leafSubstmtCtx.publicDefinition();
             SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
                     || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx.getStatementSourceReference(),
                     "%s statement is not allowed in %s leaf statement which is specified as a list key.",
@@ -462,7 +461,7 @@ public final class StmtContextUtils {
 
     public static QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
         if (Strings.isNullOrEmpty(value)) {
-            return ctx.getPublicDefinition().getStatementName();
+            return ctx.publicDefinition().getStatementName();
         }
 
         String prefix;

@@ -53,6 +53,6 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
 
     @Override
     boolean allowsMandatory(final StmtContext<?, ?, ?> ctx) {
-        return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
+        return ctx.publicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
     }
 }

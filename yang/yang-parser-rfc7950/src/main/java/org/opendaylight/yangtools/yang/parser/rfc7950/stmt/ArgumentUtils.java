@@ -69,7 +69,7 @@ public final class ArgumentUtils {
         } else if ("false".equals(input)) {
             return Boolean.FALSE;
         } else {
-            final StatementDefinition def = ctx.getPublicDefinition();
+            final StatementDefinition def = ctx.publicDefinition();
             throw new SourceException(ctx.getStatementSourceReference(),
                 "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
                 def.getStatementName(), def.getArgumentDefinition().get().getArgumentName(), input);

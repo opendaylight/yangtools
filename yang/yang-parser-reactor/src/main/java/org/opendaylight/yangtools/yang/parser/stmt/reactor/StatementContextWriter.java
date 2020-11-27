@@ -88,7 +88,7 @@ final class StatementContextWriter implements StatementWriter {
         //       - allow endDeclared() to be moved to AbstractResumedStatement
         //       - remove the need for verify()
         StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
-        while (parentContext != null && StatementSource.CONTEXT == parentContext.getStatementSource()) {
+        while (parentContext != null && StatementSource.CONTEXT == parentContext.source()) {
             parentContext.endDeclared(phase);
             parentContext = parentContext.getParentContext();
         }
@@ -108,7 +108,7 @@ final class StatementContextWriter implements StatementWriter {
 
         // Fast path: we are entering a statement which was emitted in previous phase
         AbstractResumedStatement<?, ?, ?> existing = current.lookupSubstatement(childId);
-        while (existing != null && StatementSource.CONTEXT == existing.getStatementSource()) {
+        while (existing != null && StatementSource.CONTEXT == existing.source()) {
             existing = existing.lookupSubstatement(childId);
         }
 
