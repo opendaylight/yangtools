@@ -65,7 +65,7 @@ abstract class AbstractChoiceStatementSupport
         if (defaultArg != null) {
             final QName qname;
             try {
-                qname = QName.create(stmt.coerceArgument(), defaultArg);
+                qname = QName.create(stmt.getArgument(), defaultArg);
             } catch (IllegalArgumentException e) {
                 throw new SourceException(stmt.sourceReference(), "Default statement has invalid name '%s'",
                         defaultArg, e);

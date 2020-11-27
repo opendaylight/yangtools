@@ -183,7 +183,7 @@ abstract class AbstractAugmentStatementSupport
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .toFlags();
 
-        return new AugmentEffectiveStatementImpl(stmt.declared(), stmt.coerceArgument(), flags,
+        return new AugmentEffectiveStatementImpl(stmt.declared(), stmt.getArgument(), flags,
             StmtContextUtils.getRootModuleQName(stmt.caerbannog()), substatements, stmt.sourceReference(),
             (AugmentationSchemaNode) stmt.original());
     }

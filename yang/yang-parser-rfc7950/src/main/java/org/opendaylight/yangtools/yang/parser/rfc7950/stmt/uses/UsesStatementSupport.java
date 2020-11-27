@@ -145,7 +145,7 @@ public final class UsesStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final GroupingDefinition sourceGrouping = getSourceGrouping(stmt);
         final int flags = historyAndStatusFlags(stmt.history(), substatements);
-        final QName argument = stmt.coerceArgument();
+        final QName argument = stmt.getArgument();
         final UsesStatement declared = stmt.declared();
 
         if (substatements.isEmpty()) {
@@ -178,8 +178,7 @@ public final class UsesStatementSupport
     }
 
     private static GroupingDefinition getSourceGrouping(final Current<QName, ?> stmt) {
-        return (GroupingDefinition) stmt.getFromNamespace(GroupingNamespace.class, stmt.coerceArgument())
-                .buildEffective();
+        return (GroupingDefinition) stmt.getFromNamespace(GroupingNamespace.class, stmt.getArgument()).buildEffective();
     }
 
     /**

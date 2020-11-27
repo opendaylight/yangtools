@@ -100,7 +100,7 @@ public final class KeyStatementSupport
     @Override
     protected KeyEffectiveStatement createEffective(final Current<Set<QName>, KeyStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final Set<QName> arg = stmt.coerceArgument();
+        final Set<QName> arg = stmt.getArgument();
         final KeyStatement declared = stmt.declared();
         if (substatements.isEmpty()) {
             return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)

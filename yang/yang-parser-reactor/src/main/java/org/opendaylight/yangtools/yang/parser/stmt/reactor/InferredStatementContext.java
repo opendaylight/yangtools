@@ -398,7 +398,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public A getStatementArgument() {
+    public A argument() {
         return argument;
     }
 

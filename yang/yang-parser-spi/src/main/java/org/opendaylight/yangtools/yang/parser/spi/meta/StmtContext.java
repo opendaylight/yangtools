@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <E> Effective Statement representation
  */
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends CommonStmtCtx {
+        extends BoundStmtCtx<A> {
     // TODO: gradually migrate callers of this method
     default @NonNull StatementDefinition getPublicDefinition() {
         return publicDefinition();
@@ -75,6 +75,27 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     }
 
     /**
+     * Return the statement argument.
+     *
+     * @return statement argument, or null if this statement does not have an argument
+     */
+    // TODO: gradually migrate callers of this method
+    default @Nullable A getStatementArgument() {
+        return argument();
+    }
+
+    /**
+     * Return the statement argument in literal format.
+     *
+     * @return raw statement argument string
+     * @throws VerifyException if this statement does not have an argument
+     */
+    // TODO: gradually migrate callers of this method
+    default @NonNull A coerceStatementArgument() {
+        return getArgument();
+    }
+
+    /**
      * Return the parent statement context, or null if this is the root statement.
      *
      * @return context of parent of statement, or null if this is the root statement.
@@ -89,32 +110,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
         return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
-    }
-
-    /**
-     * Return the statement argument.
-     *
-     * @return statement argument, or null if this statement does not have an argument
-     */
-    @Nullable A getStatementArgument();
-
-    /**
-     * Return the statement argument in literal format.
-     *
-     * @return raw statement argument string
-     * @throws VerifyException if this statement does not have an argument
-     */
-    default @NonNull A coerceStatementArgument() {
-        return verifyNotNull(getStatementArgument(), "Statement context %s does not have an argument", this);
-    }
-
-    default <X, Y extends DeclaredStatement<X>> boolean producesDeclared(final Class<? super Y> type) {
-        return type.isAssignableFrom(publicDefinition().getDeclaredRepresentationClass());
-    }
-
-    default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<A, D>> boolean producesEffective(
-            final Class<? super Z> type) {
-        return type.isAssignableFrom(publicDefinition().getEffectiveRepresentationClass());
     }
 
     boolean isConfiguration();
