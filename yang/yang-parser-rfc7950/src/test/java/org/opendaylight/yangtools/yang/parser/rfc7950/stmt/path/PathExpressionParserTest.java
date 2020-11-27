@@ -52,7 +52,7 @@ public class PathExpressionParserTest {
 
     @Before
     public void before() {
-        doReturn(ref).when(ctx).getStatementSourceReference();
+        doReturn(ref).when(ctx).sourceReference();
     }
 
     @Test

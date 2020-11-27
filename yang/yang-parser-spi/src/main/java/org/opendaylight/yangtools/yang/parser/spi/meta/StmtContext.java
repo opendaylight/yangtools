@@ -48,7 +48,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         return source();
     }
 
-    // TODO: gradually migrate callers of this method
+    @Deprecated(forRemoval = true)
     default @NonNull StatementSourceReference getStatementSourceReference() {
         return sourceReference();
     }
@@ -57,8 +57,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * Return the statement argument in literal format.
      *
      * @return raw statement argument string, or null if this statement does not have an argument.
+     * @deprecated Use {@link #rawArgument()} instead.
      */
-    // TODO: gradually migrate callers of this method
+    @Deprecated(forRemoval = true)
     default @Nullable String rawStatementArgument() {
         return rawArgument();
     }

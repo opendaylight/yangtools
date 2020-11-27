@@ -63,12 +63,12 @@ public final class FractionDigitsStatementSupport
         try {
             fractionDigits = Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
-                "%s is not valid fraction-digits integer argument", value);
+            throw new SourceException(ctx.sourceReference(), e, "%s is not valid fraction-digits integer argument",
+                value);
         }
         if (fractionDigits < 1 || fractionDigits > 18) {
             throw new SourceException("fraction-digits argument should be integer within [1..18]",
-                ctx.getStatementSourceReference());
+                ctx.sourceReference());
         }
         return fractionDigits;
     }

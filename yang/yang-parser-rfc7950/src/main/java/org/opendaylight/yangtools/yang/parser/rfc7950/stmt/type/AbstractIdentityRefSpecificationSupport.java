@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractIdentityRefSpecificationSupport
         extends BaseStatementSupport<String, IdentityRefSpecification,
@@ -53,7 +53,7 @@ abstract class AbstractIdentityRefSpecificationSupport
         for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
             final QName baseIdentity = baseStmt.coerceStatementArgument();
             final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
-            InferenceException.throwIfNull(stmtCtx, stmt.getStatementSourceReference(),
+            InferenceException.throwIfNull(stmtCtx, stmt.sourceReference(),
                 "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
                     baseIdentity.getLocalName());
         }
@@ -68,7 +68,7 @@ abstract class AbstractIdentityRefSpecificationSupport
     @Override
     protected final IdentityRefSpecification createEmptyDeclared(
             final StmtContext<String, IdentityRefSpecification, ?> ctx) {
-        throw noBase(ctx.getStatementSourceReference());
+        throw noBase(ctx);
     }
 
     @Override
@@ -76,7 +76,7 @@ abstract class AbstractIdentityRefSpecificationSupport
             final Current<String, IdentityRefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noBase(stmt.sourceReference());
+            throw noBase(stmt);
         }
 
         final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(stmt.getSchemaPath());
@@ -92,7 +92,7 @@ abstract class AbstractIdentityRefSpecificationSupport
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    private static SourceException noBase(final StatementSourceReference ref) {
+    private static SourceException noBase(final CommonStmtCtx stmt) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.10.2
          *
@@ -100,6 +100,6 @@ abstract class AbstractIdentityRefSpecificationSupport
          *     statement, MUST be present at least once if the type is
          *     "identityref".
          */
-        return new SourceException("At least one base statement has to be present", ref);
+        return new SourceException("At least one base statement has to be present", stmt.sourceReference());
     }
 }

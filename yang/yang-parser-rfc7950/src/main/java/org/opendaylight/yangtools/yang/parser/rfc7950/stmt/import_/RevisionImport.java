@@ -66,7 +66,7 @@ final class RevisionImport {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
-                    ModuleCtxToModuleQName.class, importedModule), stmt.getStatementSourceReference(),
+                    ModuleCtxToModuleQName.class, importedModule), stmt.sourceReference(),
                     "Failed to find module of %s", importedModule);
 
                 linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,
@@ -82,8 +82,8 @@ final class RevisionImport {
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(stmt.getStatementSourceReference(),
-                            "Imported module [%s] was not found.", moduleName);
+                    throw new InferenceException(stmt.sourceReference(), "Imported module [%s] was not found.",
+                        moduleName);
                 }
             }
         });

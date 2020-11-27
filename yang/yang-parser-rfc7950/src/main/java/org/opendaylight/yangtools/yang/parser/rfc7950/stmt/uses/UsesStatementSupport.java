@@ -117,9 +117,9 @@ public final class UsesStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(sourceGroupingPre),
-                        usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
-                throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
+                InferenceException.throwIf(failed.contains(sourceGroupingPre), usesNode.sourceReference(),
+                    "Grouping '%s' was not resolved.", groupingName);
+                throw new InferenceException("Unknown error occurred.", usesNode.sourceReference());
             }
         });
     }
@@ -293,13 +293,12 @@ public final class UsesStatementSupport
 
     private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
         final Object refineArgument = subStmtCtx.getStatementArgument();
-        InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier),
-            subStmtCtx.getStatementSourceReference(),
+        InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier), subStmtCtx.sourceReference(),
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
         final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaTreeNamespace.findNode(
             usesParentCtx, (SchemaNodeIdentifier) refineArgument);
-        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx.getStatementSourceReference(),
+        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx.sourceReference(),
             "Refine target node %s not found.", refineArgument);
 
         final StmtContext<?, ?, ?> refineTargetNodeCtx = optRefineTargetCtx.get();
@@ -307,7 +306,7 @@ public final class UsesStatementSupport
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", subStmtCtx.getStatementArgument(),
                 subStmtCtx.coerceParentContext().getStatementArgument(),
-                refineTargetNodeCtx.getStatementArgument(), subStmtCtx.getStatementSourceReference());
+                refineTargetNodeCtx.getStatementArgument(), subStmtCtx.sourceReference());
             subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
             return;
         }
@@ -332,10 +331,9 @@ public final class UsesStatementSupport
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
 
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
-                refineSubstatementCtx.getStatementSourceReference(),
+                refineSubstatementCtx.sourceReference(),
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
-                refineSubstatementCtx.getRoot().rawStatementArgument(),
-                refineSubstatementCtx.coerceParentContext().getStatementArgument(),
+                refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
                 refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());
 
         if (isAllowedToAddByRefine(refineSubstatementDef)) {

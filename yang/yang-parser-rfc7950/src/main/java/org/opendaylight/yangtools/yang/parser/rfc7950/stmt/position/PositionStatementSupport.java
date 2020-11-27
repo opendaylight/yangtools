@@ -38,8 +38,7 @@ public final class PositionStatementSupport
         try {
             return Uint32.valueOf(value).intern();
         } catch (IllegalArgumentException e) {
-            throw new SourceException(String.format("Bit position value %s is not valid integer", value),
-                    ctx.getStatementSourceReference(), e);
+            throw new SourceException(ctx.sourceReference(), e, "Bit position value %s is not valid integer", value);
         }
     }
 

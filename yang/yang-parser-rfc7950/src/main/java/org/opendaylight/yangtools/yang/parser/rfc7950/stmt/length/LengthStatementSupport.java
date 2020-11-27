@@ -60,10 +60,10 @@ public final class LengthStatementSupport
                 max = parseIntegerConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
-                        "Length constraint %s has descending order of boundaries; should be ascending.", singleRange);
-                SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
-                        "Wrong number of boundaries in length constraint %s.", singleRange);
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.sourceReference(),
+                    "Length constraint %s has descending order of boundaries; should be ascending.", singleRange);
+                SourceException.throwIf(boundaries.hasNext(), ctx.sourceReference(),
+                    "Wrong number of boundaries in length constraint %s.", singleRange);
             } else {
                 max = min;
             }
@@ -71,7 +71,7 @@ public final class LengthStatementSupport
             // some of intervals overlapping
             InferenceException.throwIf(ranges.size() > 1
                 && ArgumentUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
-                        ctx.getStatementSourceReference(),  "Some of the length ranges in %s are not disjoint", value);
+                        ctx.sourceReference(),  "Some of the length ranges in %s are not disjoint", value);
             ranges.add(ValueRange.of(min, max));
         }
 
@@ -113,7 +113,7 @@ public final class LengthStatementSupport
         try {
             return new BigInteger(value);
         } catch (final NumberFormatException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e, "Value %s is not a valid integer", value);
+            throw new SourceException(ctx.sourceReference(), e, "Value %s is not a valid integer", value);
         }
     }
 }

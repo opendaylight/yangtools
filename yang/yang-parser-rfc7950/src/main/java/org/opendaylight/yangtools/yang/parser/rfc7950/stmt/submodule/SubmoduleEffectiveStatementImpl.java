@@ -149,8 +149,8 @@ final class SubmoduleEffectiveStatementImpl
     private static @NonNull String findSubmodulePrefix(final StmtContext<UnqualifiedQName, ?, ?> ctx) {
         final String name = ctx.getRawArgument();
         final StmtContext<?, ?, ?> belongsTo = SourceException.throwIfNull(
-                StmtContextUtils.findFirstDeclaredSubstatement(ctx, BelongsToStatement.class),
-                ctx.sourceReference(), "Unable to find belongs-to statement in submodule %s.", name);
+            StmtContextUtils.findFirstDeclaredSubstatement(ctx, BelongsToStatement.class), ctx.sourceReference(),
+            "Unable to find belongs-to statement in submodule %s.", name);
         return findPrefix(belongsTo, "submodule", name);
     }
 }

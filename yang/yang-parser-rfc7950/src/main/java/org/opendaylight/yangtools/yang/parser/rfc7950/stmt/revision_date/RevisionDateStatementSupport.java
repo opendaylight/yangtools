@@ -40,7 +40,7 @@ public final class RevisionDateStatementSupport
         try {
             return Revision.of(value);
         } catch (DateTimeParseException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
+            throw new SourceException(ctx.sourceReference(), e,
                 "Revision value %s is not in required format yyyy-MM-dd", value);
         }
     }

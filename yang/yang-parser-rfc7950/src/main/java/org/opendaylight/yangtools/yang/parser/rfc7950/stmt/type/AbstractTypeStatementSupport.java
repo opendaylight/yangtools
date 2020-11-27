@@ -190,7 +190,7 @@ abstract class AbstractTypeStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
+                InferenceException.throwIf(failed.contains(typePrereq), stmt.sourceReference(),
                     "Type [%s] was not found.", typeQName);
             }
         });
@@ -341,9 +341,9 @@ abstract class AbstractTypeStatementSupport
                 return BuiltinEffectiveStatement.UINT64;
             default:
                 final QName qname = StmtContextUtils.parseNodeIdentifier(ctx.caerbannog(), argument);
-                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
-                        SourceException.throwIfNull(ctx.getFromNamespace(TypeNamespace.class, qname),
-                            ctx.sourceReference(), "Type '%s' not found", qname);
+                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef = SourceException.throwIfNull(
+                    ctx.getFromNamespace(TypeNamespace.class, qname), ctx.sourceReference(),
+                    "Type '%s' not found", qname);
                 return typedef.buildEffective().asTypeEffectiveStatement();
         }
     }
@@ -477,8 +477,7 @@ abstract class AbstractTypeStatementSupport
         try {
             return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
         } catch (InvalidRangeConstraintException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Invalid range constraint: %s",
-                e.getOffendingRanges());
+            throw new SourceException(ctx.sourceReference(), e, "Invalid range constraint: %s", e.getOffendingRanges());
         }
     }
 

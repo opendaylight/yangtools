@@ -58,7 +58,7 @@ final class UnrecognizedStatementSupport
     @Override
     protected UnrecognizedStatement createDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new UnrecognizedStatementImpl(ctx.rawStatementArgument(), ctx.publicDefinition(), substatements);
+        return new UnrecognizedStatementImpl(ctx.rawArgument(), ctx.publicDefinition(), substatements);
     }
 
     @Override

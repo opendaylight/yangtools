@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
@@ -55,7 +56,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelon
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractModuleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
@@ -68,7 +68,7 @@ abstract class AbstractModuleStatementSupport
         try {
             return UnqualifiedQName.of(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(e.getMessage(), ctx.getStatementSourceReference(), e);
+            throw new SourceException(e.getMessage(), ctx.sourceReference(), e);
         }
     }
 
@@ -78,12 +78,12 @@ abstract class AbstractModuleStatementSupport
         final String moduleName = stmt.coerceRawStatementArgument();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
-        SourceException.throwIfNull(moduleNs, stmt.getStatementSourceReference(),
+        SourceException.throwIfNull(moduleNs, stmt.sourceReference(),
             "Namespace of the module [%s] is missing", moduleName);
         stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
+        SourceException.throwIfNull(modulePrefix, stmt.sourceReference(),
             "Prefix of the module [%s] is missing", moduleName);
         stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs);
 
@@ -103,7 +103,7 @@ abstract class AbstractModuleStatementSupport
 
         final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
-        SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
+        SourceException.throwIf(!moduleNs.isPresent(), stmt.sourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
         final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
@@ -111,8 +111,8 @@ abstract class AbstractModuleStatementSupport
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
-            throw new SourceException(stmt.getStatementSourceReference(), "Module namespace collision: %s. At %s",
-                    qNameModule.getNamespace(), possibleDuplicateModule.getStatementSourceReference());
+            throw new SourceException(stmt.sourceReference(), "Module namespace collision: %s. At %s",
+                    qNameModule.getNamespace(), possibleDuplicateModule.sourceReference());
         }
 
         final String moduleName = stmt.coerceRawStatementArgument();
@@ -123,7 +123,7 @@ abstract class AbstractModuleStatementSupport
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
+        SourceException.throwIfNull(modulePrefix, stmt.sourceReference(),
             "Prefix of the module [%s] is missing", stmt.getStatementArgument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
@@ -173,14 +173,14 @@ abstract class AbstractModuleStatementSupport
 
     @Override
     protected final ModuleStatement createEmptyDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx) {
-        throw noNamespace(ctx.getStatementSourceReference());
+        throw noNamespace(ctx);
     }
 
     @Override
     protected final ModuleEffectiveStatement createEffective(final Current<UnqualifiedQName, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noNamespace(stmt.sourceReference());
+            throw noNamespace(stmt);
         }
 
         final List<Submodule> submodules = new ArrayList<>();
@@ -199,8 +199,8 @@ abstract class AbstractModuleStatementSupport
         return submodules == null ? List.of() : submodules.values();
     }
 
-    private static SourceException noNamespace(final @NonNull StatementSourceReference ref) {
-        return new SourceException("No namespace declared in module", ref);
+    private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {
+        return new SourceException("No namespace declared in module", stmt.sourceReference());
     }
 
     private static void addToSemVerModuleNamespace(

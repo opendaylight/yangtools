@@ -61,9 +61,9 @@ public final class RangeStatementSupport
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
-                        "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
-                SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.sourceReference(),
+                    "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
+                SourceException.throwIf(boundaries.hasNext(), ctx.sourceReference(),
                     "Wrong number of boundaries in range constraint %s", singleRange);
             } else {
                 max = min;
@@ -72,7 +72,7 @@ public final class RangeStatementSupport
             // some of intervals overlapping
             InferenceException.throwIf(ranges.size() > 1
                 && ArgumentUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
-                ctx.getStatementSourceReference(),  "Some of the value ranges in %s are not disjoint", rangeArgument);
+                ctx.sourceReference(),  "Some of the value ranges in %s are not disjoint", rangeArgument);
             ranges.add(ValueRange.of(min, max));
         }
 
@@ -114,8 +114,7 @@ public final class RangeStatementSupport
         try {
             return value.indexOf('.') != -1 ? new BigDecimal(value) : new BigInteger(value);
         } catch (final NumberFormatException e) {
-            throw new SourceException(String.format("Value %s is not a valid decimal number", value),
-                    ctx.getStatementSourceReference(), e);
+            throw new SourceException(ctx.sourceReference(), e, "Value %s is not a valid decimal number", value);
         }
     }
 }

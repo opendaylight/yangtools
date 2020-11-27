@@ -39,14 +39,13 @@ public final class XPathSupport {
         try {
             parsed = parser.parseExpression(xpath);
         } catch (XPathExpressionException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
-                "Argument \"%s\" is not valid XPath string", xpath);
+            throw new SourceException(ctx.sourceReference(), e, "Argument \"%s\" is not valid XPath string", xpath);
         }
 
         if (ctx.getRootVersion().compareTo(parsed.getYangVersion()) < 0) {
             LOG.warn("{} features required in {} context to parse expression '{}' [at {}]",
                 parsed.getYangVersion().getReference(), ctx.getRootVersion().getReference(), xpath,
-                ctx.getStatementSourceReference());
+                ctx.sourceReference());
         }
         return parsed;
     }

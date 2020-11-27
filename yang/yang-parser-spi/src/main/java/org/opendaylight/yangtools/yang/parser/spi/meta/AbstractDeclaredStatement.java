@@ -30,7 +30,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     private final String rawArgument;
 
     protected AbstractDeclaredStatement(final StmtContext<A, ?, ?> context) {
-        rawArgument = context.rawStatementArgument();
+        rawArgument = context.rawArgument();
         argument = context.argument();
         source = context.source();
         definition = context.publicDefinition();

@@ -17,10 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpeci
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractLeafrefSpecificationSupport
         extends BaseStatementSupport<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> {
@@ -41,7 +41,7 @@ abstract class AbstractLeafrefSpecificationSupport
 
     @Override
     protected final LeafrefSpecification createEmptyDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx) {
-        throw noPath(ctx.getStatementSourceReference());
+        throw noPath(ctx);
     }
 
     @Override
@@ -49,7 +49,7 @@ abstract class AbstractLeafrefSpecificationSupport
             final Current<String, LeafrefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noPath(stmt.sourceReference());
+            throw noPath(stmt);
         }
 
         final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(stmt.getSchemaPath());
@@ -65,13 +65,13 @@ abstract class AbstractLeafrefSpecificationSupport
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    private static SourceException noPath(final StatementSourceReference ref) {
+    private static SourceException noPath(final CommonStmtCtx stmt) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.12
          *
          *     When the type is "union", the "type" statement (Section 7.4) MUST be
          *     present.
          */
-        return new SourceException("A path statement has to be present", ref);
+        return new SourceException("A path statement has to be present", stmt.sourceReference());
     }
 }

@@ -63,7 +63,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
         final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
-        this.argument = def.parseArgumentValue(this, rawStatementArgument());
+        this.argument = def.parseArgumentValue(this, rawArgument());
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
@@ -234,7 +234,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     void setRootVersionImpl(final YangVersion version) {
         checkArgument(sourceContext.globalContext().getSupportedVersions().contains(version),
-                "Unsupported yang version %s in %s", version, getStatementSourceReference());
+                "Unsupported yang version %s in %s", version, sourceReference());
         checkState(this.rootVersion == null, "Version of root %s has been already set to %s", argument,
                 this.rootVersion);
         this.rootVersion = requireNonNull(version);

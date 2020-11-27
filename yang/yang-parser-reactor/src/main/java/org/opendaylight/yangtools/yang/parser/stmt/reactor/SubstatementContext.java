@@ -33,7 +33,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.parent = requireNonNull(parent, "Parent must not be null");
-        this.argument = def.parseArgumentValue(this, rawStatementArgument());
+        this.argument = def.parseArgumentValue(this, rawArgument());
     }
 
     // FIXME: YANGTOOLS-784: this constructor is only called in contexts where a different implementation

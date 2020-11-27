@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Spe
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class Decimal64SpecificationSupport extends BaseStatementSupport<String, Decimal64Specification,
         EffectiveStatement<String, Decimal64Specification>> {
@@ -53,7 +53,7 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
 
     @Override
     protected Decimal64Specification createEmptyDeclared(final StmtContext<String, Decimal64Specification, ?> ctx) {
-        throw noFracDigits(ctx.getStatementSourceReference());
+        throw noFracDigits(ctx);
     }
 
     @Override
@@ -61,7 +61,7 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
             final Current<String, Decimal64Specification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noFracDigits(stmt.sourceReference());
+            throw noFracDigits(stmt);
         }
 
         final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.getSchemaPath());
@@ -78,13 +78,13 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    private static SourceException noFracDigits(final StatementSourceReference ref) {
+    private static SourceException noFracDigits(final CommonStmtCtx stmt) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.3.4
          *
          *     The "fraction-digits" statement, which is a substatement to the
          *     "type" statement, MUST be present if the type is "decimal64".
          */
-        return new SourceException("At least one fraction-digits statement has to be present", ref);
+        return new SourceException("At least one fraction-digits statement has to be present", stmt.sourceReference());
     }
 }

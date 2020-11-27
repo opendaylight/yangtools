@@ -105,8 +105,8 @@ abstract class AbstractDeviateStatementSupport
 
     @Override
     public final DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value),
-            ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", value);
+        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value), ctx.sourceReference(),
+            "String '%s' is not valid deviate argument", value);
     }
 
     @Override
@@ -162,7 +162,7 @@ abstract class AbstractDeviateStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                throw new InferenceException(deviateStmtCtx.coerceParentContext().getStatementSourceReference(),
+                throw new InferenceException(deviateStmtCtx.coerceParentContext().sourceReference(),
                     "Deviation target '%s' not found.", deviationTarget);
             }
         });
@@ -261,7 +261,7 @@ abstract class AbstractDeviateStatementSupport
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
                 for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
-                        stmtCtxToBeAdded.getStatementSourceReference(),
+                        stmtCtxToBeAdded.sourceReference(),
                         "Deviation cannot add substatement %s to target node %s because it is already defined "
                         + "in target and can appear only once.",
                         stmtToBeAdded.getStatementName(), targetCtx.getStatementArgument());
@@ -290,7 +290,7 @@ abstract class AbstractDeviateStatementSupport
                 && YangStmtMapping.LEAF_LIST.equals(targetCtx.publicDefinition())) {
             LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can "
                     + "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
-                    targetCtx.getStatementArgument(), stmtCtxToBeReplaced.getStatementSourceReference());
+                    targetCtx.getStatementArgument(), stmtCtxToBeReplaced.sourceReference());
             return;
         }
 
@@ -318,7 +318,7 @@ abstract class AbstractDeviateStatementSupport
             return;
         }
 
-        throw new InferenceException(stmtCtxToBeReplaced.getStatementSourceReference(), "Deviation cannot replace "
+        throw new InferenceException(stmtCtxToBeReplaced.sourceReference(), "Deviation cannot replace "
                 + "substatement %s in target node %s because it does not exist in target node.",
                 stmtToBeReplaced.getStatementName(), targetCtx.getStatementArgument());
     }
@@ -356,7 +356,7 @@ abstract class AbstractDeviateStatementSupport
 
         LOG.error("Deviation cannot delete substatement {} with argument '{}' in target node {} because it does "
                 + "not exist in the target node. At line: {}", stmtToBeDeleted.getStatementName(), stmtArgument,
-                targetCtx.getStatementArgument(), stmtCtxToBeDeleted.getStatementSourceReference());
+                targetCtx.getStatementArgument(), stmtCtxToBeDeleted.sourceReference());
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> stmtCtxToBeCopied,
@@ -378,9 +378,9 @@ abstract class AbstractDeviateStatementSupport
     private static void validateDeviationTarget(final StmtContext<?, ?, ?> deviateSubStmtCtx,
             final StmtContext<?, ?, ?> targetCtx) {
         InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
-                targetCtx.getRootVersion()), deviateSubStmtCtx.getStatementSourceReference(),
-                "%s is not a valid deviation target for substatement %s.",
-                targetCtx.getStatementArgument(), deviateSubStmtCtx.publicDefinition().getStatementName());
+            targetCtx.getRootVersion()), deviateSubStmtCtx.sourceReference(),
+            "%s is not a valid deviation target for substatement %s.", targetCtx.argument(),
+            deviateSubStmtCtx.publicDefinition().getStatementName());
     }
 
     private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,

@@ -34,8 +34,7 @@ abstract class AbstractPatternStatementSupport
         try {
             Pattern.compile(pattern);
         } catch (final PatternSyntaxException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
-                "Pattern \"%s\" failed to compile", pattern);
+            throw new SourceException(ctx.sourceReference(), e, "Pattern \"%s\" failed to compile", pattern);
         }
         return PatternExpression.of(value, pattern);
     }

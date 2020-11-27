@@ -73,15 +73,15 @@ abstract class AbstractImportStatementSupport
                         moduleName);
                 Verify.verifyNotNull(importedModuleNamespace);
                 final String impPrefix = SourceException.throwIfNull(
-                    firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class),
-                    stmt.getStatementSourceReference(), "Missing prefix statement");
+                    firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt.sourceReference(),
+                    "Missing prefix statement");
 
                 stmt.addToNs(ImpPrefixToNamespace.class, impPrefix, importedModuleNamespace);
             }
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(imported), stmt.getStatementSourceReference(),
+                InferenceException.throwIf(failed.contains(imported), stmt.sourceReference(),
                         "Imported module [%s] was not found.", moduleName);
             }
         });

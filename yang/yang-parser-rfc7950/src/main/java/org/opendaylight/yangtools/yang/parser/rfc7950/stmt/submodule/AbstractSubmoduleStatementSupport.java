@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractSubmoduleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> {
@@ -42,7 +42,7 @@ abstract class AbstractSubmoduleStatementSupport
         try {
             return UnqualifiedQName.of(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(e.getMessage(), ctx.getStatementSourceReference(), e);
+            throw new SourceException(e.getMessage(), ctx.sourceReference(), e);
         }
     }
 
@@ -62,8 +62,8 @@ abstract class AbstractSubmoduleStatementSupport
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
             possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
-            throw new SourceException(stmt.getStatementSourceReference(), "Submodule name collision: %s. At %s",
-                    stmt.rawStatementArgument(), possibleDuplicateSubmodule.getStatementSourceReference());
+            throw new SourceException(stmt.sourceReference(), "Submodule name collision: %s. At %s",
+                    stmt.rawArgument(), possibleDuplicateSubmodule.sourceReference());
         }
 
         stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
@@ -71,10 +71,10 @@ abstract class AbstractSubmoduleStatementSupport
         final String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
         final StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(stmt, 0,
                 BelongsToStatement.class, PrefixStatement.class);
-        SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(),
-                "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawStatementArgument());
+        SourceException.throwIfNull(prefixSubStmtCtx, stmt.sourceReference(),
+                "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
 
-        final String prefix = prefixSubStmtCtx.rawStatementArgument();
+        final String prefix = prefixSubStmtCtx.rawArgument();
         stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
     }
 
@@ -88,19 +88,19 @@ abstract class AbstractSubmoduleStatementSupport
     @Override
     protected final SubmoduleStatement createEmptyDeclared(
             final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx) {
-        throw noBelongsTo(ctx.getStatementSourceReference());
+        throw noBelongsTo(ctx);
     }
 
     @Override
     protected SubmoduleEffectiveStatement createEffective(final Current<UnqualifiedQName, SubmoduleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noBelongsTo(stmt.sourceReference());
+            throw noBelongsTo(stmt);
         }
         return new SubmoduleEffectiveStatementImpl(stmt, substatements);
     }
 
-    private static SourceException noBelongsTo(final StatementSourceReference ref) {
-        return new SourceException("No belongs-to declared in submodule", ref);
+    private static SourceException noBelongsTo(final CommonStmtCtx stmt) {
+        return new SourceException("No belongs-to declared in submodule", stmt.sourceReference());
     }
 }

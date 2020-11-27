@@ -245,7 +245,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
             final String name) {
         return SourceException.throwIfNull(
             StmtContextUtils.firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class),
-            stmt.getStatementSourceReference(), "Unable to resolve prefix for %s %s.", type, name);
+            stmt.sourceReference(), "Unable to resolve prefix for %s %s.", type, name);
     }
 
     // Alright. this is quite ugly

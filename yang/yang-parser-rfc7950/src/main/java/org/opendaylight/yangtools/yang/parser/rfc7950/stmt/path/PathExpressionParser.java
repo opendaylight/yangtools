@@ -79,7 +79,7 @@ class PathExpressionParser {
         final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromString(pathArg));
         final LeafRefPathParser parser = new LeafRefPathParser(new CommonTokenStream(lexer));
         final Path_argContext path = SourceExceptionParser.parse(lexer, parser, parser::path_arg,
-            ctx.getStatementSourceReference());
+            ctx.sourceReference());
 
         final ParseTree childPath = path.getChild(0);
         final Steps steps;

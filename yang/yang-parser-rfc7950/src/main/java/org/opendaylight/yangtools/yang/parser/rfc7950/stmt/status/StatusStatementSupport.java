@@ -63,7 +63,7 @@ public final class StatusStatementSupport
             case "obsolete":
                 return Status.OBSOLETE;
             default:
-                throw new SourceException(ctx.getStatementSourceReference(),
+                throw new SourceException(ctx.sourceReference(),
                     "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
         }
     }

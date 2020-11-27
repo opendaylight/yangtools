@@ -55,9 +55,9 @@ public final class UniqueStatementSupport
     @Override
     public ImmutableSet<Descendant> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final ImmutableSet<Descendant> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
-        SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
-                "Invalid argument value '%s' of unique statement. The value must contains at least "
-                        + "one descendant schema node identifier.", value);
+        SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.sourceReference(),
+            "Invalid argument value '%s' of unique statement. The value must contains at least one descendant schema "
+                + "node identifier.", value);
         return uniqueConstraints;
     }
 
@@ -94,9 +94,9 @@ public final class UniqueStatementSupport
         final Set<Descendant> uniqueConstraintNodes = new HashSet<>();
         for (final String uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
             final SchemaNodeIdentifier nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
-            SourceException.throwIf(nodeIdentifier instanceof Absolute, ctx.getStatementSourceReference(),
-                    "Unique statement argument '%s' contains schema node identifier '%s' "
-                            + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
+            SourceException.throwIf(nodeIdentifier instanceof Absolute, ctx.sourceReference(),
+                "Unique statement argument '%s' contains schema node identifier '%s' which is not in the descendant "
+                    + "node identifier form.", argumentValue, uniqueArgToken);
             uniqueConstraintNodes.add((Descendant) nodeIdentifier);
         }
         return ImmutableSet.copyOf(uniqueConstraintNodes);

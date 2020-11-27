@@ -85,17 +85,16 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
         final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
             SchemaTreeNamespace.class, key, value);
 
         if (prev != null) {
-            throw new SourceException(value.getStatementSourceReference(),
+            throw new SourceException(value.sourceReference(),
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
-                value.getRoot().rawStatementArgument(), key, prev.getStatementArgument(),
-                prev.getStatementSourceReference());
+                value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
         }
     }
 
@@ -141,7 +140,7 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
         final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
             current, UnknownStatement.class);
         for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
-            if (localName.equals(unknownSubstatement.rawStatementArgument())) {
+            if (localName.equals(unknownSubstatement.rawArgument())) {
                 return unknownSubstatement;
             }
         }

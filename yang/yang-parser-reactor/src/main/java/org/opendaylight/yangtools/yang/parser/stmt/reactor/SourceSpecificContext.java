@@ -152,7 +152,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
                     root.getRootIdentifier());
         } else {
             final QName rootStatement = root.definition().getStatementName();
-            final String rootArgument = root.rawStatementArgument();
+            final String rootArgument = root.rawArgument();
 
             checkState(Objects.equals(def.getStatementName(), rootStatement) && Objects.equals(argument, rootArgument),
                 "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
@@ -333,8 +333,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         }
 
         final String message = String.format("Yang model processing phase %s failed", identifier);
-        final InferenceException e = new InferenceException(message, root.getStatementSourceReference(),
-            exceptions.get(0));
+        final InferenceException e = new InferenceException(message, root.sourceReference(), exceptions.get(0));
         exceptions.listIterator(1).forEachRemaining(e::addSuppressed);
 
         return Optional.of(e);

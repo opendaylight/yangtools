@@ -112,8 +112,7 @@ public final class TypedefStatementSupport extends
         final QName arg = stmt.coerceStatementArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(TypeNamespace.class, arg);
         // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
-        SourceException.throwIf(existing != null, stmt.getStatementSourceReference(), "Duplicate name for typedef %s",
-                arg);
+        SourceException.throwIf(existing != null, stmt.sourceReference(), "Duplicate name for typedef %s", arg);
     }
 
     private static void checkDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {

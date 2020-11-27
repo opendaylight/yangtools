@@ -53,7 +53,7 @@ public final class OrderedByStatementSupport
         try {
             return Ordering.forArgument(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid ordered-by argument '%s'", value);
+            throw new SourceException(ctx.sourceReference(), e, "Invalid ordered-by argument '%s'", value);
         }
     }
 

@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecifi
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class UnionSpecificationSupport
         extends BaseStatementSupport<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> {
@@ -52,7 +52,7 @@ final class UnionSpecificationSupport
 
     @Override
     protected UnionSpecification createEmptyDeclared(final StmtContext<String, UnionSpecification, ?> ctx) {
-        throw noType(ctx.getStatementSourceReference());
+        throw noType(ctx);
     }
 
     @Override
@@ -60,7 +60,7 @@ final class UnionSpecificationSupport
             final Current<String, UnionSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noType(stmt.sourceReference());
+            throw noType(stmt);
         }
 
         final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.getSchemaPath());
@@ -74,13 +74,13 @@ final class UnionSpecificationSupport
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    private static SourceException noType(final @NonNull StatementSourceReference ref) {
+    private static SourceException noType(final @NonNull CommonStmtCtx stmt) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.12
          *
          *     When the type is "union", the "type" statement (Section 7.4) MUST be
          *     present.
          */
-        return new SourceException("At least one type statement has to be present", ref);
+        return new SourceException("At least one type statement has to be present", stmt.sourceReference());
     }
 }

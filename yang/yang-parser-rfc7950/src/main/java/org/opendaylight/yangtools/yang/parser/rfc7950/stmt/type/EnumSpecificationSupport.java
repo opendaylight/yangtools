@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class EnumSpecificationSupport
         extends BaseStatementSupport<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> {
@@ -52,7 +52,7 @@ final class EnumSpecificationSupport
 
     @Override
     protected EnumSpecification createEmptyDeclared(final StmtContext<String, EnumSpecification, ?> ctx) {
-        throw noEnum(ctx.getStatementSourceReference());
+        throw noEnum(ctx);
     }
 
     @Override
@@ -60,7 +60,7 @@ final class EnumSpecificationSupport
             final Current<String, EnumSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noEnum(stmt.sourceReference());
+            throw noEnum(stmt);
         }
 
         final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.getSchemaPath());
@@ -96,14 +96,14 @@ final class EnumSpecificationSupport
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    private static SourceException noEnum(final StatementSourceReference ref) {
+    private static SourceException noEnum(final CommonStmtCtx stmt) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.6.4
          *
          *     The "enum" statement, which is a substatement to the "type"
          *     statement, MUST be present if the type is "enumeration".
          */
-        return new SourceException("At least one enum statement has to be present", ref);
+        return new SourceException("At least one enum statement has to be present", stmt.sourceReference());
     }
 
 }

@@ -127,7 +127,7 @@ abstract class AbstractListStatementSupport extends
             ((Mutable<?, ?, ?>) warnCtx).addToNs(ConfigListWarningNamespace.class, Boolean.TRUE, Boolean.TRUE);
             LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
                     + "this is fine with OpenDaylight, it can cause interoperability issues with other systems "
-                    + "[defined at {}]", ctx.getStatementArgument(), warnCtx.getStatementSourceReference());
+                    + "[defined at {}]", ctx.getStatementArgument(), warnCtx.sourceReference());
         }
     }
 

@@ -67,7 +67,7 @@ abstract class AbstractAugmentStatementSupport
     @Override
     public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
-            || PATH_REL_PATTERN2.matcher(value).matches(), ctx.getStatementSourceReference(),
+            || PATH_REL_PATTERN2.matcher(value).matches(), ctx.sourceReference(),
             "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
             value);
 
@@ -118,9 +118,8 @@ abstract class AbstractAugmentStatementSupport
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
                     augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                 } catch (final SourceException e) {
-                    LOG.warn("Failed to add augmentation {} defined at {}",
-                        augmentTargetCtx.getStatementSourceReference(),
-                            augmentSourceCtx.getStatementSourceReference(), e);
+                    LOG.warn("Failed to add augmentation {} defined at {}", augmentTargetCtx.sourceReference(),
+                            augmentSourceCtx.sourceReference(), e);
                 }
             }
 
@@ -136,13 +135,13 @@ abstract class AbstractAugmentStatementSupport
                     if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         LOG.warn("Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
-                            augmentArg, augmentNode.getStatementSourceReference());
+                            augmentArg, augmentNode.sourceReference());
                         return;
                     }
                 }
 
-                throw new InferenceException(augmentNode.getStatementSourceReference(),
-                        "Augment target '%s' not found", augmentNode.getStatementArgument());
+                throw new InferenceException(augmentNode.sourceReference(), "Augment target '%s' not found",
+                    augmentNode.getStatementArgument());
             }
         });
     }
@@ -257,11 +256,10 @@ abstract class AbstractAugmentStatementSupport
         if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
             for (final StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
                 if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
-                    InferenceException.throwIf(
-                        Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument()),
-                        sourceCtx.getStatementSourceReference(),
+                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()),
+                        sourceCtx.sourceReference(),
                         "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawStatementArgument());
+                        sourceCtx.rawArgument());
                 }
             }
         }
@@ -279,10 +277,9 @@ abstract class AbstractAugmentStatementSupport
             sourceCtx.allSubstatementsStream().forEach(AbstractAugmentStatementSupport::checkForMandatoryNodes);
         }
 
-        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx),
-                sourceCtx.getStatementSourceReference(),
-                "An augment cannot add node '%s' because it is mandatory and in module different than target",
-                sourceCtx.rawStatementArgument());
+        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx.sourceReference(),
+            "An augment cannot add node '%s' because it is mandatory and in module different than target",
+            sourceCtx.rawArgument());
     }
 
     private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,

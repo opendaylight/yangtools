@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class BitsSpecificationSupport
         extends BaseStatementSupport<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> {
@@ -54,7 +54,7 @@ final class BitsSpecificationSupport
 
     @Override
     protected BitsSpecification createEmptyDeclared(final StmtContext<String, BitsSpecification, ?> ctx) {
-        throw noBits(ctx.getStatementSourceReference());
+        throw noBits(ctx);
     }
 
     @Override
@@ -62,7 +62,7 @@ final class BitsSpecificationSupport
             final Current<String, BitsSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            throw noBits(stmt.sourceReference());
+            throw noBits(stmt);
         }
 
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(stmt.getSchemaPath());
@@ -97,13 +97,13 @@ final class BitsSpecificationSupport
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
     }
 
-    private static SourceException noBits(final StatementSourceReference ref) {
+    private static SourceException noBits(final CommonStmtCtx stmt) {
         /*
          *  https://tools.ietf.org/html/rfc7950#section-9.7.4:
          *
          *     The "bit" statement, which is a substatement to the "type" statement,
          *     MUST be present if the type is "bits".
          */
-        return new SourceException("At least one bit statement has to be present", ref);
+        return new SourceException("At least one bit statement has to be present", stmt.sourceReference());
     }
 }

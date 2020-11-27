@@ -167,7 +167,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
                     final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
+                "Declared statement cannot be added in effective phase at: %s", sourceReference());
 
         final Optional<StatementSupport<?, ?, ?>> implicitParent =
                 definition().getImplicitParentFor(def.getPublicView());

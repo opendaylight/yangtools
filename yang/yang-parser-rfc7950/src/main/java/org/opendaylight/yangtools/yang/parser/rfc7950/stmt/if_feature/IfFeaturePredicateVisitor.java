@@ -41,7 +41,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
         final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
         final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(new CommonTokenStream(lexer));
         final IfFeatureExpr ret = new IfFeaturePredicateVisitor(ctx).visit(SourceExceptionParser.parse(lexer, parser,
-            parser::if_feature_expr, ctx.getStatementSourceReference()));
+            parser::if_feature_expr, ctx.sourceReference()));
 
         return ret;
     }
@@ -79,7 +79,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
         }
 
         throw new SourceException("Unexpected grammar context during parsing of IfFeature expression. "
-                + "Most probably IfFeature grammar has been changed.", stmtCtx.getStatementSourceReference());
+                + "Most probably IfFeature grammar has been changed.", stmtCtx.sourceReference());
     }
 
     @Override

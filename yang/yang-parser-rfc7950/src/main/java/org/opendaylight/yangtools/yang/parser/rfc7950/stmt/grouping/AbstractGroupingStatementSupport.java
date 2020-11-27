@@ -84,7 +84,6 @@ abstract class AbstractGroupingStatementSupport
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
         final QName arg = stmt.coerceStatementArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
-        SourceException.throwIf(existing != null, stmt.getStatementSourceReference(), "Duplicate name for grouping %s",
-                arg);
+        SourceException.throwIf(existing != null, stmt.sourceReference(), "Duplicate name for grouping %s", arg);
     }
 }

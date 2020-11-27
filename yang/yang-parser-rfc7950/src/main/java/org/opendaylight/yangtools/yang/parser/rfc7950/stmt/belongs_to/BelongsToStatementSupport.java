@@ -76,8 +76,8 @@ public final class BelongsToStatementSupport
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(belongsToPrereq)) {
-                    throw new InferenceException(belongsToCtx.getStatementSourceReference(),
-                        "Module '%s' from belongs-to was not found", belongsToCtx.getStatementArgument());
+                    throw new InferenceException(belongsToCtx.sourceReference(),
+                        "Module '%s' from belongs-to was not found", belongsToCtx.argument());
                 }
             }
         });

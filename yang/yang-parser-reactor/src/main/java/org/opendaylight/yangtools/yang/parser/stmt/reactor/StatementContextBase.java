@@ -420,7 +420,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final Mutable<?, ?, ?> next = iterator.next();
-            if (statementDef.equals(next.publicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
+            if (statementDef.equals(next.publicDefinition()) && statementArg.equals(next.rawArgument())) {
                 iterator.remove();
             }
         }
@@ -435,7 +435,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
         //                       StatementContextBase subclass.
         final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
-                ImplicitSubstatement.of(getStatementSourceReference()), rawArg);
+                ImplicitSubstatement.of(sourceReference()), rawArg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
         return ret;
@@ -526,7 +526,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             final List<StatementContextBase<?, ?, ?>> effective, final int toAdd) {
         // We cannot allow statement to be further mutated
         verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
-            getStatementSourceReference());
+            sourceReference());
         return beforeAddEffectiveStatementUnsafe(effective, toAdd);
     }
 
@@ -535,7 +535,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
+                "Effective statement cannot be added in declared phase at: %s", sourceReference());
 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
@@ -781,8 +781,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException if any of the arguments is null
      */
     void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
-        checkNotNull(phase, "Statement context processing phase cannot be null at: %s", getStatementSourceReference());
-        checkNotNull(listener, "Statement context phase listener cannot be null at: %s", getStatementSourceReference());
+        checkNotNull(phase, "Statement context processing phase cannot be null at: %s", sourceReference());
+        checkNotNull(listener, "Statement context phase listener cannot be null at: %s", sourceReference());
 
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
@@ -808,7 +808,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
-                getStatementSourceReference());
+                sourceReference());
             finishedPhase = finishedPhase.getPreviousPhase();
         }
 
@@ -881,8 +881,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         if (implicitParent.isPresent()) {
             final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
-            result = new SubstatementContext(this, def, original.getStatementSourceReference(),
-                original.rawStatementArgument(), original.getStatementArgument(), type);
+            result = new SubstatementContext(this, def, original.sourceReference(), original.rawArgument(),
+                original.argument(), type);
 
             final CopyType childCopyType;
             switch (type) {
@@ -930,8 +930,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.get());
         final CopyType type = original.getCopyHistory().getLastOperation();
         final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
-            original.getStatementSourceReference(), original.rawStatementArgument(), original.getStatementArgument(),
-            type);
+            original.sourceReference(), original.rawArgument(), original.argument(), type);
 
         result.addEffectiveSubstatement(original.reparent(result));
         result.setCompletedPhase(original.getCompletedPhase());
@@ -976,7 +975,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             isConfig = optConfig.orElseThrow();
             if (isConfig) {
                 // Validity check: if parent is config=false this cannot be a config=true
-                InferenceException.throwIf(!parent.isConfiguration(), getStatementSourceReference(),
+                InferenceException.throwIf(!parent.isConfiguration(), sourceReference(),
                         "Parent node has config=false, this node must not be specifed as config=true");
             }
         } else {
@@ -1094,6 +1093,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition).add("rawArgument", rawStatementArgument());
+        return toStringHelper.add("definition", definition).add("rawArgument", rawArgument());
     }
 }
