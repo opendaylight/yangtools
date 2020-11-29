@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -90,8 +91,8 @@ abstract class AbstractCaseStatementSupport
         return new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig()
-                    && stmt.caerbannog().allSubstatementsStream().anyMatch(StmtContext::isConfiguration))
+                .setConfiguration(stmt.effectiveConfig() && substatements.stream().anyMatch(
+                    sub -> sub instanceof DataSchemaNode && ((DataSchemaNode) sub).isConfiguration()))
                 .toFlags();
     }
 }
