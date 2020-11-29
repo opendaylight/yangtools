@@ -64,6 +64,9 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
         this.argument = def.parseArgumentValue(this, rawArgument());
+
+        // Prevent sweeping of namespaces
+        incRef();
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,

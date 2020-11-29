@@ -863,7 +863,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             case CONTEXT_INDEPENDENT:
                 if (hasEmptySubstatements()) {
                     // This statement is context-independent and has no substatements -- hence it can be freely shared.
-                    return Optional.of(this);
+                    return Optional.of(parent.childReplicaOf(this));
                 }
                 // FIXME: YANGTOOLS-694: filter out all context-independent substatements, eliminate fall-through
                 // fall through
