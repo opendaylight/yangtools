@@ -364,7 +364,7 @@ abstract class AbstractDeviateStatementSupport
         // we need to make a copy of the statement context only if it is an unknown statement, otherwise
         // we can reuse the original statement context
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeCopied)) {
-            targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied);
+            targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied.replicaAsChildOf(targetCtx));
         } else {
             targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeCopied, CopyType.ORIGINAL));
         }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
@@ -290,6 +291,23 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type) {
             return childCopyOf(stmt, type, null);
+        }
+
+        /**
+         * Create a replica of this statement as a substatement of specified {@code parent}. The replica must not be
+         * modified and acts as a source of {@link EffectiveStatement} from outside of {@code parent}'s subtree.
+         *
+         * <p>
+         * The default implementation returns {@code this}.
+         *
+         * @param parent P
+         * @return replica of the statement
+         * @throws IllegalArgumentException if this statement cannot be replicated into parent, for example because it
+         *                                  comes from an alien implementation.
+         */
+        default @NonNull Mutable<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+            checkArgument(parent != null);
+            return this;
         }
 
         @Beta
