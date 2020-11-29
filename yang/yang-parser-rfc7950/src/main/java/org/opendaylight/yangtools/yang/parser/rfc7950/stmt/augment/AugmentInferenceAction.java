@@ -47,7 +47,6 @@ final class AugmentInferenceAction implements InferenceAction {
     private static final Logger LOG = LoggerFactory.getLogger(AugmentInferenceAction.class);
     private static final ImmutableSet<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
         YangStmtMapping.WHEN, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
-    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.TYPEDEF);
 
     private final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode;
     private final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target;
@@ -81,7 +80,7 @@ final class AugmentInferenceAction implements InferenceAction {
         //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
         try {
             copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
-            augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
+            augmentTargetCtx.addEffectiveSubstatement(augmentTargetCtx.childReplicaOf(augmentSourceCtx));
         } catch (final SourceException e) {
             LOG.warn("Failed to add augmentation {} defined at {}", augmentTargetCtx.sourceReference(),
                     augmentSourceCtx.sourceReference(), e);
@@ -148,8 +147,8 @@ final class AugmentInferenceAction implements InferenceAction {
                 copy.setIsSupportedToBuildEffective(false);
             }
             buffer.add(copy);
-        } else if (isReusedByAugment(original) && !unsupported) {
-            buffer.add(original);
+        } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {
+            buffer.add(target.childReplicaOf(original));
         }
     }
 
@@ -264,10 +263,6 @@ final class AugmentInferenceAction implements InferenceAction {
 
     private static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
         return !NOCOPY_DEF_SET.contains(stmtContext.publicDefinition());
-    }
-
-    private static boolean isReusedByAugment(final StmtContext<?, ?, ?> stmtContext) {
-        return REUSED_DEF_SET.contains(stmtContext.publicDefinition());
     }
 
     private static boolean isSupportedAugmentTarget(final StmtContext<?, ?, ?> substatementCtx) {
