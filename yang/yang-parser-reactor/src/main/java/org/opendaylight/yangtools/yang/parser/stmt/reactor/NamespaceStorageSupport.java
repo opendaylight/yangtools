@@ -135,7 +135,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return ret;
     }
 
-    final void sweepNamespaces() {
+    void sweepNamespaces() {
         namespaces = null;
     }
 

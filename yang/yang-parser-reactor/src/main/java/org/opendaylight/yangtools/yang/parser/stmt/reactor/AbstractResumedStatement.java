@@ -204,11 +204,24 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     final boolean sweepEffective() {
-        substatements.forEach(StatementContextBase::sweep);
-        effective.forEach(StatementContextBase::sweep);
-        // FIXME: we want to remove effective here, but we are being reused in some cases and lifecycle there just does
-        //        not work (yet)
-        return false;
+        boolean declaredResult = true;
+        for (AbstractResumedStatement<?, ?, ?> stmt : substatements) {
+            if (!stmt.sweep()) {
+                declaredResult = false;
+            }
+        }
+        boolean effectiveResult = true;
+        if (effective != null) {
+            for (StatementContextBase<?, ?, ?> stmt : effective) {
+                if (!stmt.sweep()) {
+                    effectiveResult = false;
+                }
+            }
+            if (effectiveResult) {
+                effective = null;
+            }
+        }
+        return declaredResult && effectiveResult;
     }
 
     /**

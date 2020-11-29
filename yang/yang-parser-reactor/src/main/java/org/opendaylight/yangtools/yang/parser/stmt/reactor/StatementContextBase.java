@@ -863,7 +863,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             case CONTEXT_INDEPENDENT:
                 if (hasEmptySubstatements()) {
                     // This statement is context-independent and has no substatements -- hence it can be freely shared.
-                    return Optional.of(this);
+                    return Optional.of(parent.childReplicaOf(this));
                 }
                 // FIXME: YANGTOOLS-694: filter out all context-independent substatements, eliminate fall-through
                 // fall through
@@ -1017,7 +1017,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 if (sweepState()) {
                     // We became REFCOUNT_SWEPT_TREE, go back to parent so it can do the same
                     if (parent != null) {
-                        parent.sweep();
+                        parent.sweepFromChild();
                     }
                 }
             }
@@ -1027,7 +1027,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * Sweep this statement context as a result of {@link #sweepEffective()}, i.e. when parent is also being swept.
      *
-     * @return True if the
+     * @return True if the state has been swept
      */
     final boolean sweep() {
         if (refcount == REFCOUNT_NONE) {
@@ -1046,6 +1046,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         refcount = REFCOUNT_SWEPT;
         return false;
+    }
+
+    // A child has transitioned to REFCOUNT_SWEPT_TREE, let's see if we can do the same
+    private void sweepFromChild() {
+        if (refcount == REFCOUNT_SWEPT && sweepEffective()) {
+            refcount = REFCOUNT_SWEPT_TREE;
+            final StatementContextBase<?, ?, ?> parent = getParentContext();
+            if (parent != null) {
+                parent.sweepFromChild();
+            }
+        }
     }
 
     /**
@@ -1068,10 +1079,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     // Need to check parent
                     break;
                 case REFCOUNT_SWEPT:
+                case REFCOUNT_SWEPT_TREE:
                     // A parent has been completely swept, so it's all REFCOUNT_NONE between us and that parent
                     return true;
-                case REFCOUNT_SWEPT_TREE:
-                    throw new VerifyException("Attempted to completely swept " + current);
                 default:
                     // includes REFCOUNT_DEFUNCT
                     return false;

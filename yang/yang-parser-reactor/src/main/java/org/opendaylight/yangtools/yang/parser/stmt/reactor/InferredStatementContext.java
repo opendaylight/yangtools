@@ -299,7 +299,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final Object local = substatements;
         substatements = SWEPT_SUBSTATEMENTS;
         boolean result = true;
-        if (local != null) {
+        if (local != null && local != SWEPT_SUBSTATEMENTS) {
             for (StatementContextBase<?, ?, ?> stmt : castEffective(local)) {
                 if (!stmt.sweep()) {
                     result = false;
