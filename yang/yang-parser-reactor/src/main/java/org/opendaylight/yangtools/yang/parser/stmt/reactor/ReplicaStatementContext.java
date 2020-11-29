@@ -83,6 +83,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    boolean hasEmptySubstatements() {
+        return source.hasEmptySubstatements();
+    }
+
+    @Override
     Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
         return ImmutableList.of();
     }
@@ -131,11 +136,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     StatementContextBase<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    boolean hasEmptySubstatements() {
         throw new UnsupportedOperationException();
     }
 
