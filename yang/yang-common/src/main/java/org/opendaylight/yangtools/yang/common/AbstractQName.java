@@ -72,12 +72,25 @@ public abstract class AbstractQName implements Identifier, WritableObject {
         return new QName(namespace, getLocalName());
     }
 
+    /**
+     * Check whether a string is a valid {@code localName}.
+     *
+     * @param str String to check
+     * @return True if the string usable as a local name, false otherwise
+     */
+    public static final boolean isValidLocalName(final @Nullable String str) {
+        return str != null && !str.isEmpty() && checkContent(str);
+    }
+
     abstract Object writeReplace();
 
     static final String checkLocalName(final @Nullable String localName) {
         checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
-        checkArgument(IDENTIFIER_START.matches(localName.charAt(0)) && NOT_IDENTIFIER_PART.indexIn(localName, 1) == -1,
-                "String '%s' is not a valid identifier", localName);
+        checkArgument(checkContent(localName), "String '%s' is not a valid identifier", localName);
         return localName;
+    }
+
+    private static boolean checkContent(final String localName) {
+        return IDENTIFIER_START.matches(localName.charAt(0)) && NOT_IDENTIFIER_PART.indexIn(localName, 1) == -1;
     }
 }
