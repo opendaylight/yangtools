@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -38,17 +40,11 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
         // FIXME: Remove following section after fixing 4380
         final UnknownSchemaNode original = (UnknownSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
                 .orElse(null);
-        if (original != null) {
-            this.maybeQNameArgument = original.getQName();
+        if (original == null) {
+            final QName qname = qnameFromArgument(ctx);
+            maybeQNameArgument = qname != null ? qname : getNodeType();
         } else {
-            QName maybeQNameArgumentInit = null;
-            try {
-                maybeQNameArgumentInit = StmtContextUtils.qnameFromArgument(ctx, argument());
-            } catch (SourceException e) {
-                LOG.debug("Not constructing QName from {}", argument(), e);
-                maybeQNameArgumentInit = getNodeType();
-            }
-            this.maybeQNameArgument = maybeQNameArgumentInit;
+            maybeQNameArgument = original.getQName();
         }
 
         SchemaPath maybePath;
@@ -76,5 +72,29 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     @Override
     public StatementDefinition statementDefinition() {
         return getDeclared().statementDefinition();
+    }
+
+    private static QName qnameFromArgument(final StmtContext<String, UnrecognizedStatement, ?> stmt) {
+        final String value = stmt.getStatementArgument();
+        if (value == null || value.isEmpty()) {
+            return stmt.getPublicDefinition().getStatementName();
+        }
+
+        final int colon = value.indexOf(':');
+        if (colon == -1) {
+            if (AbstractQName.isValidLocalName(value)) {
+                return QName.unsafeOf(StmtContextUtils.getRootModuleQName(stmt), value).intern();
+            }
+            return null;
+        }
+
+        final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt, value.substring(0, colon));
+        if (qnameModule == null) {
+            return null;
+        }
+
+        final int next = value.indexOf(':', colon + 1);
+        final String localName = next == -1 ? value.substring(colon + 1) : value.substring(colon + 1, next);
+        return QName.create(qnameModule, localName).intern();
     }
 }
