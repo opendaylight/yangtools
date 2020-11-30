@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -39,14 +40,8 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
         if (original != null) {
             this.maybeQNameArgument = original.getQName();
         } else {
-            QName maybeQNameArgumentInit = null;
-            try {
-                maybeQNameArgumentInit = StmtContextUtils.qnameFromArgument(stmt.caerbannog(), argument());
-            } catch (SourceException e) {
-                LOG.debug("Not constructing QName from {}", argument(), e);
-                maybeQNameArgumentInit = getNodeType();
-            }
-            this.maybeQNameArgument = maybeQNameArgumentInit;
+            this.maybeQNameArgument = AbstractQName.isValidLocalName(argument())
+                ? StmtContextUtils.qnameFromArgument(stmt.caerbannog(), argument()) : getNodeType();
         }
 
         SchemaPath maybePath;
