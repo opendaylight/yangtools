@@ -319,8 +319,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
         if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Reusing substatement {} for {}", substatement, this);
-            buffer.add(substatement);
+            LOG.trace("Reusing substatement {} for {}", substatement, this);
+            buffer.add(substatement.replicaAsChildOf(this));
             return;
         }
 
