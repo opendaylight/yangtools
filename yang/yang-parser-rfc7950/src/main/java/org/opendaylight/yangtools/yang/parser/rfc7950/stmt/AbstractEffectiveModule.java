@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
@@ -55,9 +54,9 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffec
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<UnqualifiedQName>,
@@ -214,11 +213,13 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
                 .toString();
     }
 
-    protected static final @NonNull String findPrefix(final StmtContext<?, ?, ?> stmt, final String type,
-            final String name) {
-        return SourceException.throwIfNull(
-            StmtContextUtils.firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class),
-            stmt.sourceReference(), "Unable to resolve prefix for %s %s.", type, name);
+    protected static final @NonNull String findPrefix(final StatementSourceReference ref,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements, final String type, final String name) {
+        return substatements.stream()
+            .filter(PrefixEffectiveStatement.class::isInstance)
+            .map(prefix -> ((PrefixEffectiveStatement) prefix).argument())
+            .findAny()
+            .orElseThrow(() -> new SourceException(ref, "Unable to resolve prefix for %s %s.", type, name));
     }
 
     // Alright. this is quite ugly

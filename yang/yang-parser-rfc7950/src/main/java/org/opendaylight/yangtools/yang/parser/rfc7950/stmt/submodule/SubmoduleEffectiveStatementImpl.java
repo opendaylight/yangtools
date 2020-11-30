@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.PrefixToEffectiveModuleNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.QNameModuleToPrefixNamespace;
@@ -37,11 +36,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -59,10 +58,10 @@ final class SubmoduleEffectiveStatementImpl
 
     SubmoduleEffectiveStatementImpl(final Current<UnqualifiedQName, SubmoduleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt, substatements, findSubmodulePrefix(stmt.caerbannog()));
+        super(stmt, substatements, findSubmodulePrefix(stmt, substatements));
 
         final QNameModule belongsToModuleQName = stmt.getFromNamespace(ModuleNameToModuleQName.class,
-            firstAttributeOf(stmt.caerbannog().declaredSubstatements(), BelongsToStatement.class));
+            findBelongsTo(stmt, substatements).argument());
 
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
         appendPrefixes(stmt, prefixToModuleBuilder);
@@ -146,11 +145,19 @@ final class SubmoduleEffectiveStatementImpl
         }
     }
 
-    private static @NonNull String findSubmodulePrefix(final StmtContext<UnqualifiedQName, ?, ?> ctx) {
-        final String name = ctx.getRawArgument();
-        final StmtContext<?, ?, ?> belongsTo = SourceException.throwIfNull(
-            StmtContextUtils.findFirstDeclaredSubstatement(ctx, BelongsToStatement.class), ctx.sourceReference(),
-            "Unable to find belongs-to statement in submodule %s.", name);
-        return findPrefix(belongsTo, "submodule", name);
+    private static @NonNull BelongsToEffectiveStatement findBelongsTo(final CommonStmtCtx stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.stream()
+            .filter(BelongsToEffectiveStatement.class::isInstance)
+            .map(BelongsToEffectiveStatement.class::cast)
+            .findAny().orElseThrow(() -> new SourceException(stmt.sourceReference(),
+                "Unable to find belongs-to statement in submodule %s.", stmt.rawArgument()));
+    }
+
+    private static @NonNull String findSubmodulePrefix(final CommonStmtCtx stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final String name = stmt.getRawArgument();
+        final BelongsToEffectiveStatement belongsTo = findBelongsTo(stmt, substatements);
+        return findPrefix(stmt.sourceReference(), belongsTo.effectiveSubstatements(), "submodule", name);
     }
 }

@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {
@@ -61,9 +61,9 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     ModuleEffectiveStatementImpl(final Current<UnqualifiedQName, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules) {
-        super(stmt, substatements, findPrefix(stmt.caerbannog(), "module", stmt.getRawArgument()));
+        super(stmt, substatements, findPrefix(stmt.sourceReference(), substatements, "module", stmt.getRawArgument()));
 
-        qnameModule = verifyNotNull(stmt.getFromNamespace(ModuleCtxToModuleQName.class, stmt.caerbannog()));
+        qnameModule = verifyNotNull(stmt.getFromNamespace(ModuleNameToModuleQName.class, stmt.getRawArgument()));
         this.submodules = ImmutableList.copyOf(submodules);
 
         final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
