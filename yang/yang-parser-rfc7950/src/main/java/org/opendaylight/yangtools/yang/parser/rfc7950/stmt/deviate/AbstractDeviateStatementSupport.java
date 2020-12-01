@@ -378,7 +378,7 @@ abstract class AbstractDeviateStatementSupport
     private static void validateDeviationTarget(final StmtContext<?, ?, ?> deviateSubStmtCtx,
             final StmtContext<?, ?, ?> targetCtx) {
         InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
-            targetCtx.getRootVersion()), deviateSubStmtCtx.sourceReference(),
+            targetCtx.yangVersion()), deviateSubStmtCtx.sourceReference(),
             "%s is not a valid deviation target for substatement %s.", targetCtx.argument(),
             deviateSubStmtCtx.publicDefinition().getStatementName());
     }
@@ -386,7 +386,7 @@ abstract class AbstractDeviateStatementSupport
     private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,
             final StmtContext<?, ?, ?> deviateTargetCtx, final YangVersion yangVersion) {
         Set<StatementDefinition> supportedDeviationTargets =
-                YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(deviateTargetCtx.getRootVersion(),
+                YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(yangVersion,
                         deviateSubstatementCtx.publicDefinition());
 
         if (supportedDeviationTargets == null) {

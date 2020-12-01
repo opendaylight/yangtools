@@ -61,7 +61,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public CopyHistory history() {
-        return delegate.getCopyHistory();
+        return delegate.history();
     }
 
     @Override
@@ -139,7 +139,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public YangVersion yangVersion() {
-        return delegate.getRootVersion();
+        return delegate.yangVersion();
     }
 
     @Override

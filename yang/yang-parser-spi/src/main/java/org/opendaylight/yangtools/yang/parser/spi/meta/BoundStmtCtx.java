@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
  * A {@link CommonStmtCtx} which has additionally been bound to a {@link StatementSupport}. It provides
@@ -38,4 +39,11 @@ public interface BoundStmtCtx<A> extends CommonStmtCtx {
     default @NonNull A getArgument() {
         return verifyNotNull(argument(), "Attempted to use non-existent argument of %s", this);
     }
+
+    /**
+     * Return the {@link YangVersion} associated with this statement.
+     *
+     * @return YANG version used to bind this statement
+     */
+    @NonNull YangVersion yangVersion();
 }

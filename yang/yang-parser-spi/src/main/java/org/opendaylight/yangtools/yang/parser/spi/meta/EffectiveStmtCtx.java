@@ -16,7 +16,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  * Effective view of a {@link StmtContext} for the purposes of creating an {@link EffectiveStatement}.
  */
 @Beta
-public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
+public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immutable {
     /**
      * Return parent of this context, if there is one. All statements except for top-level source statements, such as
      * {@code module} and {@code submodule}.
@@ -84,8 +83,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
 
         @NonNull CommonStmtCtx root();
 
-        @NonNull CopyHistory history();
-
         @NonNull D declared();
 
         <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V getFromNamespace(Class<@NonNull N> type,
@@ -94,8 +91,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
         <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
         @Nullable EffectiveStatement<?, ?> original();
-
-        @NonNull YangVersion yangVersion();
 
         /**
          * Summon the <a href="https://en.wikipedia.org/wiki/Rabbit_of_Caerbannog">Rabbit of Caerbannog</a>.

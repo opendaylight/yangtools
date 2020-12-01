@@ -146,9 +146,9 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
          */
         if (root == null) {
             root = new RootStatementContext<>(this, def, ref, argument);
-        } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.getRootVersion())
+        } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.yangVersion())
                 && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.getRootVersion(),
+            root = new RootStatementContext<>(this, def, ref, argument, root.yangVersion(),
                     root.getRootIdentifier());
         } else {
             final QName rootStatement = root.definition().getStatementName();
@@ -170,7 +170,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
      * @return version of root statement context
      */
     YangVersion getRootVersion() {
-        return root != null ? root.getRootVersion() : RootStatementContext.DEFAULT_VERSION;
+        return root != null ? root.yangVersion() : RootStatementContext.DEFAULT_VERSION;
     }
 
     void startPhase(final ModelProcessingPhase phase) {

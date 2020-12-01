@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <E> Effective Statement representation
  */
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends BoundStmtCtx<A> {
+        extends BoundStmtCtx<A>, StmtContextCompat {
     @Deprecated(forRemoval = true)
     default @NonNull StatementDefinition getPublicDefinition() {
         return publicDefinition();
@@ -187,7 +187,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     /*
      * FIXME: YANGTOOLS-784: the next three methods are closely related to the copy process:
-     *        - getCopyHistory() is a brief summary of what went on
+     *        - copyHistory() is a brief summary of what went on
      *        - getOriginalContext() points to the CopyHistory.ORIGINAL
      *        - getPreviousCopyCtx() points to the immediate predecessor forming a singly-linked list terminated
      *          at getOriginalContext()
@@ -197,13 +197,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *        account when creating the argument. At least parts of this are only needed during buildEffective()
      *        and hence should become arguments to that method.
      */
-
-    /**
-     * Return the executive summary of the copy process that has produced this context.
-     *
-     * @return A simplified summary of the copy process.
-     */
-    CopyHistory getCopyHistory();
 
     /**
      * Return the statement context of the original definition, if this statement is an instantiated copy.
@@ -221,13 +214,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     Optional<StmtContext<A, D, E>> getPreviousCopyCtx();
 
     ModelProcessingPhase getCompletedPhase();
-
-    /**
-     * Return version of root statement context.
-     *
-     * @return version of root statement context
-     */
-    @NonNull YangVersion getRootVersion();
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.

@@ -288,7 +288,7 @@ public final class UsesStatementSupport
         /*
          * In case of Yang 1.1, checks whether features are supported.
          */
-        return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || subStmtCtx.isSupportedByFeatures();
+        return !YangVersion.VERSION_1_1.equals(subStmtCtx.yangVersion()) || subStmtCtx.isSupportedByFeatures();
     }
 
     private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {

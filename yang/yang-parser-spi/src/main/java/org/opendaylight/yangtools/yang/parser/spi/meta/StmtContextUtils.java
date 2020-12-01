@@ -440,7 +440,7 @@ public final class StmtContextUtils {
     }
 
     private static boolean isRelevantForIfFeatureAndWhenOnListKeysCheck(final StmtContext<?, ?, ?> ctx) {
-        return YangVersion.VERSION_1_1.equals(ctx.getRootVersion()) && hasParentOfType(ctx, YangStmtMapping.LIST)
+        return YangVersion.VERSION_1_1.equals(ctx.yangVersion()) && hasParentOfType(ctx, YangStmtMapping.LIST)
                 && findFirstDeclaredSubstatement(ctx.coerceParentContext(), KeyStatement.class) != null;
     }
 
@@ -483,7 +483,7 @@ public final class StmtContextUtils {
                     localName = value;
                     qnameModule = getRootModuleQName(ctx);
                 }
-                if (qnameModule == null && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     ctx = ctx.getOriginalCtx().orElse(null);
                     qnameModule = getModuleQNameByPrefix(ctx, prefix);
                 }

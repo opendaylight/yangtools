@@ -178,7 +178,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
-    public final YangVersion getRootVersion() {
+    public final YangVersion yangVersion() {
         return getRoot().getRootVersionImpl();
     }
 
