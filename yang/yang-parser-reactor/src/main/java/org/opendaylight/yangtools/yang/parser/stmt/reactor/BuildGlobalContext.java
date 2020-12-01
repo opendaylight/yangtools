@@ -238,7 +238,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         for (final SourceSpecificContext source : sources) {
-            rootStatements.add(source.getRoot().buildDeclared());
+            rootStatements.add(source.getRoot().declared());
         }
         return new ReactorDeclaredModel(rootStatements);
     }
@@ -281,7 +281,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
             for (final SourceSpecificContext source : sources) {
                 final RootStatementContext<?, ?, ?> root = source.getRoot();
                 try {
-                    rootStatements.add(root.buildDeclared());
+                    rootStatements.add(root.declared());
                     rootEffectiveStatements.add(root.buildEffective());
                 } catch (final RuntimeException ex) {
                     throw propagateException(source, ex);

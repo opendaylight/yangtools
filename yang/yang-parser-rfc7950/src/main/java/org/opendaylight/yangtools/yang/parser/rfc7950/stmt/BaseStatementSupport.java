@@ -48,7 +48,7 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
     @Override
     public final D createDeclared(final StmtContext<A, D, ?> ctx) {
         final ImmutableList<? extends DeclaredStatement<?>> substatements = ctx.declaredSubstatements().stream()
-                .map(StmtContext::buildDeclared)
+                .map(StmtContext::declared)
                 .collect(ImmutableList.toImmutableList());
         return substatements.isEmpty() ? createEmptyDeclared(ctx) : createDeclared(ctx, substatements);
     }
