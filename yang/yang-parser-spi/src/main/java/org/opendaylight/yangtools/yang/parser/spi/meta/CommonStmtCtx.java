@@ -84,4 +84,12 @@ public interface CommonStmtCtx {
     default @NonNull String getRawArgument() {
         return verifyNotNull(rawArgument(), "Statement context %s does not have an argument", this);
     }
+
+    /**
+     * Return the executive summary of the copy process that has produced this context.
+     *
+     * @return A simplified summary of the copy process.
+     */
+    @NonNull CopyHistory history();
+
 }

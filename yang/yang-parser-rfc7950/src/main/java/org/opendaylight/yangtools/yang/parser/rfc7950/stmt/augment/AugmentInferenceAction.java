@@ -230,7 +230,7 @@ final class AugmentInferenceAction implements InferenceAction {
 
             // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
             // conditional -- in which case we do not run further checks
-            if (targetCtx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+            if (targetCtx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                 final Optional<? extends StmtContext<?, ?, ?>> optPrevCopy = targetCtx.getPreviousCopyCtx();
                 if (optPrevCopy.isPresent()) {
                     final StmtContext<?, ?, ?> original = optPrevCopy.get();

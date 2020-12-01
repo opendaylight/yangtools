@@ -483,7 +483,7 @@ public final class StmtContextUtils {
                     localName = value;
                     qnameModule = getRootModuleQName(ctx);
                 }
-                if (qnameModule == null && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                if (qnameModule == null && ctx.history().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
                     ctx = ctx.getOriginalCtx().orElse(null);
                     qnameModule = getModuleQNameByPrefix(ctx, prefix);
                 }
