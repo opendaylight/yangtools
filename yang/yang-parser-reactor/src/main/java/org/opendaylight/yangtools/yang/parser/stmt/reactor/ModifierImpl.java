@@ -86,12 +86,6 @@ final class ModifierImpl implements ModelActionBuilder {
         action = null;
     }
 
-    private void applyAction() {
-        checkState(!actionApplied);
-        action.apply(ctx);
-        actionApplied = true;
-    }
-
     private <K, C extends StmtContext<?, ?, ?>, N extends StatementNamespace<K, ?, ?>> @NonNull AbstractPrerequisite<C>
             requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
                     final ModelProcessingPhase phase)  {
@@ -147,7 +141,10 @@ final class ModifierImpl implements ModelActionBuilder {
         checkState(action != null, "Action was not defined yet.");
 
         if (removeSatisfied()) {
-            applyAction();
+            if (!actionApplied) {
+                action.apply(ctx);
+                actionApplied = true;
+            }
             return true;
         }
         return false;
@@ -314,7 +311,7 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
                 final ModelProcessingPhase finishedPhase) {
-            return resolvePrereq((C) context);
+            return resolvePrereq((C) context) || tryApply();
         }
     }
 
@@ -343,7 +340,7 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
                 final ModelProcessingPhase finishedPhase) {
-            return resolvePrereq((C) context);
+            return resolvePrereq((C) context) || tryApply();
         }
 
         @Override
@@ -420,7 +417,9 @@ final class ModifierImpl implements ModelActionBuilder {
 
             if (!it.hasNext()) {
                 // Last step: we are done
-                resolvePrereq((C) value);
+                if (resolvePrereq((C) value)) {
+                    tryApply();
+                }
                 return;
             }
 
