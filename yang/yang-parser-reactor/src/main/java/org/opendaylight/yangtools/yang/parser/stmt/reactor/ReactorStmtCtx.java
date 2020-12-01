@@ -167,6 +167,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     abstract @Nullable ReactorStmtCtx<?, ?, ?> parentStmtCtx();
 
+    // Called when this statement does not have an implicit reference and have reached REFCOUNT_NONE
     private void sweepOnDecrement() {
         LOG.trace("Sweeping on decrement {}", this);
         final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
@@ -176,21 +177,28 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return;
         }
 
-        // Check whether there the parent needs to know any references to any of our parents
-        int refs = parent.refcount;
-        if (refs > REFCOUNT_SWEEPING && refs < REFCOUNT_NONE) {
+        parent.sweepOnChildDecrement();
+    }
+
+    // Called from child when it has lost its final reference
+    private void sweepOnChildDecrement() {
+        if (isAwaitingChildren()) {
             // We are a child for which our parent is waiting. Notify it and we are done.
-            parent.sweepOnChildDone();
+            sweepOnChildDone();
             return;
-        } else if (refs > REFCOUNT_NONE || refs <= REFCOUNT_SWEEPING || !parent.noImplictRef()) {
+        }
+
+        // Check parent reference count
+        final int refs = refcount;
+        if (refs > REFCOUNT_NONE || refs <= REFCOUNT_SWEEPING || !noImplictRef()) {
             // No-op
             return;
         }
 
         // parent is potentially reclaimable
-        if (parent.noParentRefs()) {
-            LOG.trace("Cleanup {} from {} to parent {}", parent.refcount, this, parent);
-            parent.sweepState();
+        if (noParentRefs()) {
+            LOG.trace("Cleanup {} of parent {}", refcount, this);
+            sweepState();
         }
     }
 
@@ -199,6 +207,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
         if (parent != null) {
             final int refs = parent.refcount;
+            // FIXME: 'noImplicitRef' is too strict here?
             if (refs > REFCOUNT_NONE || !parent.noImplictRef()) {
                 // parent with refcount or protected by views
                 return false;
@@ -211,6 +220,10 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return parent.noParentRefs();
         }
         return true;
+    }
+
+    private boolean isAwaitingChildren() {
+        return refcount > REFCOUNT_SWEEPING && refcount < REFCOUNT_NONE;
     }
 
     private void sweepOnChildDone() {
@@ -234,7 +247,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     private void sweepParent() {
         final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
         LOG.trace("Propagating to parent {}", parent);
-        if (parent != null && parent.refcount > REFCOUNT_SWEEPING && parent.refcount < REFCOUNT_NONE) {
+        if (parent != null && parent.isAwaitingChildren()) {
             parent.sweepOnChildDone();
         }
     }
