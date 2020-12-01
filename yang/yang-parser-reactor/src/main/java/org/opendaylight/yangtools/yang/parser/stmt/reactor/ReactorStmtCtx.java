@@ -174,10 +174,9 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         if (parent == null) {
             // We are the top-level object and have lost a reference. Trigger sweep if possible and we are done.
             sweepState();
-            return;
+        } else {
+            parent.sweepOnChildDecrement();
         }
-
-        parent.sweepOnChildDecrement();
     }
 
     // Called from child when it has lost its final reference
@@ -196,28 +195,25 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
 
         // parent is potentially reclaimable
-        if (noParentRefs()) {
+        if (noParentRefcount()) {
             LOG.trace("Cleanup {} of parent {}", refcount, this);
-            sweepState();
+            if (sweepState()) {
+                sweepParent();
+            }
         }
     }
 
     // FIXME: cache the resolution of this
-    private boolean noParentRefs() {
+    private boolean noParentRefcount() {
         final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
         if (parent != null) {
+            // There are three possibilities:
+            // - REFCOUNT_NONE, in which case we need to search next parent
+            // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
+            //   a reference to us
+            // - positive (> REFCOUNT_NONE), meaning parent has an explicit refcount which is holding us down
             final int refs = parent.refcount;
-            // FIXME: 'noImplicitRef' is too strict here?
-            if (refs > REFCOUNT_NONE || !parent.noImplictRef()) {
-                // parent with refcount or protected by views
-                return false;
-            }
-            if (refs < REFCOUNT_NONE) {
-                // parent is being swept already
-                return true;
-            }
-            // REFCOUNT_NONE and reclaimable, look forward
-            return parent.noParentRefs();
+            return refs == REFCOUNT_NONE ? parent.noParentRefcount() : refs < REFCOUNT_NONE;
         }
         return true;
     }
