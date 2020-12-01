@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
-import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  * Effective view of a {@link StmtContext} for the purposes of creating an {@link EffectiveStatement}.
@@ -79,16 +77,11 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
      * @param <D> Class representing declared version of this statement
      */
     @Beta
-    interface Current<A, D extends DeclaredStatement<A>> extends Parent, BoundStmtCtx<A> {
+    interface Current<A, D extends DeclaredStatement<A>> extends Parent, BoundStmtCtx<A>, NamespaceStmtCtx {
 
         @NonNull CommonStmtCtx root();
 
         @NonNull D declared();
-
-        <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V getFromNamespace(Class<@NonNull N> type,
-            T key);
-
-        <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
         @Nullable EffectiveStatement<?, ?> original();
 
