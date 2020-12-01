@@ -194,13 +194,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
 
     /**
-     * Return the executive summary of the copy process that has produced this context.
-     *
-     * @return A simplified summary of the copy process.
-     */
-    CopyHistory getCopyHistory();
-
-    /**
      * Return the statement context of the original definition, if this statement is an instantiated copy.
      *
      * @return Original definition, if this statement was copied.
@@ -216,13 +209,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     Optional<StmtContext<A, D, E>> getPreviousCopyCtx();
 
     ModelProcessingPhase getCompletedPhase();
-
-    /**
-     * Return version of root statement context.
-     *
-     * @return version of root statement context
-     */
-    @NonNull YangVersion getRootVersion();
 
     /**
      * An mutable view of an inference context associated with an instance of a statement.
