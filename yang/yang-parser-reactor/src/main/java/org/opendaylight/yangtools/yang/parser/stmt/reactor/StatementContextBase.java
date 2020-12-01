@@ -249,7 +249,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public CopyHistory getCopyHistory() {
+    public CopyHistory history() {
         return copyHistory;
     }
 
@@ -281,7 +281,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final YangVersion getRootVersion() {
+    public final YangVersion yangVersion() {
         return getRoot().getRootVersionImpl();
     }
 
@@ -952,7 +952,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
 
         final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.get());
-        final CopyType type = original.getCopyHistory().getLastOperation();
+        final CopyType type = original.history().getLastOperation();
         final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
             original.sourceReference(), original.rawArgument(), original.argument(), type);
 

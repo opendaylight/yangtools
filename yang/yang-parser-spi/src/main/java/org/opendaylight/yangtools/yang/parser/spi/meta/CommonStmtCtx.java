@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -84,4 +85,19 @@ public interface CommonStmtCtx {
     default @NonNull String getRawArgument() {
         return verifyNotNull(rawArgument(), "Statement context %s does not have an argument", this);
     }
+
+    /**
+     * Return the executive summary of the copy process that has produced this context.
+     *
+     * @return A simplified summary of the copy process.
+     */
+    @NonNull CopyHistory history();
+
+
+    /**
+     * Return version of root statement context.
+     *
+     * @return version of root statement context
+     */
+    @NonNull YangVersion yangVersion();
 }
