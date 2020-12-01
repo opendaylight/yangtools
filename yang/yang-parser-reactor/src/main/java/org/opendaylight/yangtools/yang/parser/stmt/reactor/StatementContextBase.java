@@ -557,9 +557,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private E loadEffective() {
         // Creating an effective statement does not strictly require a declared instance -- there are statements like
         // 'input', which are implicitly defined.
-        // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
+        // Our implementation design makes an invariant assumption that declared() has been called by the time
         // we attempt to create effective statement:
-        buildDeclared();
+        declared();
 
         final E ret = effectiveInstance = createEffective();
         // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up

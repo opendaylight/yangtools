@@ -39,7 +39,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
          * original collection, which may contains references to mutable context.
          */
         substatements = ImmutableList.copyOf(Collections2.transform(context.declaredSubstatements(),
-            StmtContext::buildDeclared));
+            StmtContext::declared));
     }
 
     @Override
