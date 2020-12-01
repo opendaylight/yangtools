@@ -84,8 +84,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, Immutable {
 
         @NonNull CommonStmtCtx root();
 
-        @NonNull CopyHistory history();
-
         @NonNull D declared();
 
         <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V getFromNamespace(Class<@NonNull N> type,

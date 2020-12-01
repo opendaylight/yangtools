@@ -194,13 +194,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
 
     /**
-     * Return the executive summary of the copy process that has produced this context.
-     *
-     * @return A simplified summary of the copy process.
-     */
-    CopyHistory getCopyHistory();
-
-    /**
      * Return the statement context of the original definition, if this statement is an instantiated copy.
      *
      * @return Original definition, if this statement was copied.

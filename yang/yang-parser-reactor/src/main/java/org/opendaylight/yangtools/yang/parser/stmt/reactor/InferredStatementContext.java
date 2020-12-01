@@ -84,7 +84,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
             final CopyType myCopyType, final CopyType childCopyType, final QNameModule targetModule) {
-        super(prototype.definition(), CopyHistory.of(myCopyType, prototype.getCopyHistory()));
+        super(prototype.definition(), CopyHistory.of(myCopyType, prototype.history()));
         this.parent = requireNonNull(parent);
         this.prototype = requireNonNull(prototype);
         this.argument = targetModule == null ? prototype.argument()
