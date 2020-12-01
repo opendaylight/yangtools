@@ -200,6 +200,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
+    /**
+     * Local knowledge of {@link #refcount} values up to statement root. We use this field to prevent recursive lookups
+     * in {@link #noParentRefs(StatementContextBase)} -- once we discover a parent reference once, we keep that
+     * knowledge and update it when {@link #sweep()} is invoked.
+     */
+    private final byte parentRef = PARENTREF_UNKNOWN;
+    private static final byte PARENTREF_UNKNOWN = 0;
+    private static final byte PARENTREF_ABSENT  = 1;
+    private static final byte PARENTREF_PRESENT = 2;
+
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
     //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
