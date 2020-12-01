@@ -11,9 +11,10 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
-public interface ConfigListWarningNamespace extends IdentifierNamespace<Boolean, Boolean> {
-    NamespaceBehaviour<Boolean, Boolean, @NonNull ConfigListWarningNamespace> BEHAVIOUR =
-            NamespaceBehaviour.statementLocal(ConfigListWarningNamespace.class);
+public interface ConfigListWarningNamespace extends IdentifierNamespace<StatementSourceReference, Boolean> {
+    NamespaceBehaviour<StatementSourceReference, Boolean, @NonNull ConfigListWarningNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(ConfigListWarningNamespace.class);
 }
