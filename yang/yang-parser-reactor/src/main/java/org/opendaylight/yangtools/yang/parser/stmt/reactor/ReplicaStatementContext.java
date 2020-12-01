@@ -13,11 +13,19 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
@@ -28,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * designated source.
  */
 final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> {
+        extends ReactorStmtCtx<A, D, E> {
     private static final Logger LOG = LoggerFactory.getLogger(ReplicaStatementContext.class);
 
     private final StatementContextBase<?, ?, ?> parent;
@@ -95,6 +103,26 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    public CopyHistory getCopyHistory() {
+        return source.getCopyHistory();
+    }
+
+    @Override
+    public ModelProcessingPhase getCompletedPhase() {
+        return source.getCompletedPhase();
+    }
+
+    @Override
+    public StatementDefinition publicDefinition() {
+        return source.publicDefinition();
+    }
+
+    @Override
+    StatementDefinitionContext<A, D, E> definition() {
+        return source.definition();
+    }
+
+    @Override
     boolean hasEmptySubstatements() {
         return source.hasEmptySubstatements();
     }
@@ -123,27 +151,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
-            final String statementArg) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     Stream<? extends StmtContext<?, ?, ?>> streamDeclared() {
         throw new UnsupportedOperationException();
     }
@@ -153,23 +160,12 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    StatementContextBase<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
-        throw new UnsupportedOperationException();
-    }
-
     /*
      * KEEP THINGS ORGANIZED!
      *
      * below methods exist in the same form in InferredStatementContext/SubstatementContext. If any adjustment is made
      * here, make sure it is properly updated there.
      */
-    @Override
-    @Deprecated
-    Optional<SchemaPath> schemaPath() {
-        return substatementGetSchemaPath();
-    }
-
     @Override
     public StatementContextBase<?, ?, ?> getParentContext() {
         return parent;
@@ -203,5 +199,62 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     protected boolean isParentSupportedByFeatures() {
         return parent.isSupportedByFeatures();
+    }
+
+    @Override
+    public <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(final Class<@NonNull N> type,
+        final T key, final U value) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type, @Nullable final QNameModule targetModule) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NonNull Mutable<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+        @Nullable final QNameModule targetModule) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public @NonNull ModelActionBuilder newInferenceAction(@NonNull final ModelProcessingPhase phase) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<@NonNull N> namespace, final KT key,
+        final StmtContext<?, ?, ?> stmt) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
