@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,16 +130,16 @@ abstract class AbstractListStatementSupport extends
     }
 
     private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {
-        final StmtContext<QName, ListStatement, ListEffectiveStatement> ctx = stmt.caerbannog();
-        final StmtContext<QName, ListStatement, ListEffectiveStatement> warnCtx = ctx.getOriginalCtx().orElse(ctx);
-        final Boolean warned = warnCtx.getFromNamespace(ConfigListWarningNamespace.class, Boolean.TRUE);
+        final StatementSourceReference ref = stmt.sourceReference();
+        final Boolean warned = stmt.getFromNamespace(ConfigListWarningNamespace.class, ref);
         // Hacky check if we have issued a warning for the original statement
         if (warned == null) {
-            verify(warnCtx instanceof Mutable, "Unexpected context %s", warnCtx);
-            ((Mutable<?, ?, ?>) warnCtx).addToNs(ConfigListWarningNamespace.class, Boolean.TRUE, Boolean.TRUE);
+            final StmtContext<?, ?, ?> ctx = stmt.caerbannog();
+            verify(ctx instanceof Mutable, "Unexpected context %s", ctx);
+            ((Mutable<?, ?, ?>) ctx).addToNs(ConfigListWarningNamespace.class, ref, Boolean.TRUE);
             LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
                     + "this is fine with OpenDaylight, it can cause interoperability issues with other systems "
-                    + "[defined at {}]", ctx.argument(), warnCtx.sourceReference());
+                    + "[defined at {}]", stmt.argument(), ref);
         }
     }
 
