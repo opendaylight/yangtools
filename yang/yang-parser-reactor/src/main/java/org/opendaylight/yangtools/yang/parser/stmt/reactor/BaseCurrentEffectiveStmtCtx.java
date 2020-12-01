@@ -70,9 +70,19 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
     }
 
     @Override
-    public <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
-            final Class<@NonNull N> type, final T key) {
-        return delegate.getFromNamespace(type, key);
+    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> localNamespace(final Class<@NonNull N> nsType) {
+        return delegate.localNamespace(nsType);
+    }
+
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> namespace(final Class<@NonNull N> nsType) {
+        return delegate.namespace(nsType);
+    }
+
+    @Override
+    public <K, V, T extends K, N extends IdentifierNamespace<K, V>> V namespaceItem(final Class<@NonNull N> type,
+            final T key) {
+        return delegate.namespaceItem(type, key);
     }
 
     @Override
@@ -114,12 +124,6 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
         final Parent ret = new BaseCurrentEffectiveStmtCtx<>(parentDelegate);
         parent = ret;
         return ret;
-    }
-
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V>
-            getAllFromCurrentStmtCtxNamespace(final Class<N> type) {
-        return delegate.getAllFromCurrentStmtCtxNamespace(type);
     }
 
     @Override

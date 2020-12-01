@@ -14,7 +14,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -37,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <E> Effective Statement representation
  */
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends BoundStmtCtx<A>, StmtContextCompat {
+        extends BoundStmtCtx<A>, NamespaceStmtCtx, StmtContextCompat {
     @Deprecated(forRemoval = true)
     default @NonNull StatementDefinition getPublicDefinition() {
         return publicDefinition();
@@ -119,25 +118,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     boolean isConfiguration();
 
     boolean isEnabledSemanticVersioning();
-
-    /**
-     * Return a value associated with specified key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <N> namespace type
-     * @param <T> key type
-     * @return Value, or null if there is no element
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V getFromNamespace(Class<@NonNull N> type,
-            T key);
-
-    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type);
-
-    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
     /**
      * Returns the model root for this statement.
