@@ -144,12 +144,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public D buildDeclared() {
+    public D declared() {
         /*
          * Share original instance of declared statement between all effective statements which have been copied or
          * derived from this original declared statement.
          */
-        return originalCtx.buildDeclared();
+        return originalCtx.declared();
     }
 
     @Override

@@ -125,7 +125,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public final D buildDeclared() {
+    public final D declared() {
         final D existing;
         return (existing = declaredInstance) != null ? existing : loadDeclared();
     }
