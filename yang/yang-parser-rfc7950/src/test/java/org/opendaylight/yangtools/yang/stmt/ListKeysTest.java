@@ -7,73 +7,54 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ListKeysTest {
-
     @Test
-    public void correctListKeysTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/list-keys-test/correct-list-keys-test.yang"))
-                .buildEffective();
-        assertNotNull(result);
+    public void correctListKeysTest() throws Exception {
+        StmtTestUtils.parseYangSource("/list-keys-test/correct-list-keys-test.yang");
     }
 
     @Test
     public void incorrectListKeysTest1() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test.yang"));
-        try {
-            reactor.buildEffective();
-            fail("effective build should fail due to list instead of leaf referenced in list key");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
-        }
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
     }
 
     @Test
     public void incorrectListKeysTest2() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test2.yang"));
-        try {
-            reactor.buildEffective();
-            fail("effective build should fail due to missing leaf referenced in list key");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
-        }
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test2.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
     }
 
     @Test
     public void incorrectListKeysTest3() {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test3.yang"));
-        try {
-            reactor.buildEffective();
-            fail("effective build should fail due to list instead of leaf in grouping referenced in list key");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Key 'grp_list' misses node 'grp_list'"));
-        }
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test3.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Key 'grp_list' misses node 'grp_list'"));
     }
 
     @Test
     public void incorrectListKeysTest4()  {
-        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test4.yang"));
-        try {
-            reactor.buildEffective();
-            fail("effective build should fail due to list instead of leaf in grouping augmented to list referenced "
-                    + "in list key");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
-        }
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/list-keys-test/incorrect-list-keys-test4.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
     }
 }
