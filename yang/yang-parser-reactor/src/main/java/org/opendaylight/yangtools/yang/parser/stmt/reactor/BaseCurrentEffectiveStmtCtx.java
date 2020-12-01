@@ -66,7 +66,7 @@ final class BaseCurrentEffectiveStmtCtx<A, D extends DeclaredStatement<A>> imple
 
     @Override
     public D declared() {
-        return delegate.buildDeclared();
+        return delegate.declared();
     }
 
     @Override

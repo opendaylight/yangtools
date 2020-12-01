@@ -77,11 +77,9 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
      * @param <D> Class representing declared version of this statement
      */
     @Beta
-    interface Current<A, D extends DeclaredStatement<A>> extends Parent, BoundStmtCtx<A>, NamespaceStmtCtx {
+    interface Current<A, D extends DeclaredStatement<A>> extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
 
         @NonNull CommonStmtCtx root();
-
-        @NonNull D declared();
 
         @Nullable EffectiveStatement<?, ?> original();
 

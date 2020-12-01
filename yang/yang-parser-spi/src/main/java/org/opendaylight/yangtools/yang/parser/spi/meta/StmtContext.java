@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * @param <E> Effective Statement representation
  */
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends BoundStmtCtx<A>, NamespaceStmtCtx, StmtContextCompat {
+        extends NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
     @Deprecated(forRemoval = true)
     default @NonNull StatementDefinition getPublicDefinition() {
         return publicDefinition();
@@ -148,11 +148,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     default Stream<? extends StmtContext<?, ?, ?>> allSubstatementsStream() {
         return Streams.concat(declaredSubstatements().stream(), effectiveSubstatements().stream());
     }
-
-    /**
-     * Builds {@link DeclaredStatement} for statement context.
-     */
-    D buildDeclared();
 
     /**
      * Builds {@link EffectiveStatement} for statement context.

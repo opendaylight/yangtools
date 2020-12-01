@@ -59,7 +59,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     /**
      * Substatement refcount tracking. This mechanics deals with retaining substatements for the purposes of
      * instantiating their lazy copies in InferredStatementContext. It works in concert with {@link #buildEffective()}
-     * and {@link #buildDeclared()}: declared/effective statement views hold an implicit reference and refcount-based
+     * and {@link #declared()}: declared/effective statement views hold an implicit reference and refcount-based
      * sweep is not activated until they are done (or this statement is not {@link #isSupportedToBuildEffective}).
      *
      * <p>
@@ -283,7 +283,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         // 'input', which are implicitly defined.
         // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
         // we attempt to create effective statement:
-        buildDeclared();
+        declared();
 
         final E ret = effectiveInstance = createEffective();
         // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up

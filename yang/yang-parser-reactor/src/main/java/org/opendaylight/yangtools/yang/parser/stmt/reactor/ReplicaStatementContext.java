@@ -53,8 +53,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public D buildDeclared() {
-        return source.buildDeclared();
+    public D declared() {
+        return source.declared();
     }
 
     @Override
