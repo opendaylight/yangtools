@@ -184,7 +184,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(
             final StmtContext<?, ? extends D, ?> context) {
-        return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContext::buildDeclared);
+        return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContext::declared);
     }
 
     @Override
@@ -193,7 +193,7 @@ final class ModifierImpl implements ModelActionBuilder {
             requiresDeclared(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?, D, ?>> rawContext = requiresCtxImpl(context, namespace, key,
             FULL_DECLARATION);
-        return rawContext.transform(StmtContext::buildDeclared);
+        return rawContext.transform(StmtContext::declared);
     }
 
     @Override
