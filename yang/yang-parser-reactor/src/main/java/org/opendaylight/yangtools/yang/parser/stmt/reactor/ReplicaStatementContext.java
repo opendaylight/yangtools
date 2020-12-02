@@ -20,8 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A replica of a different statement. It does not allow modification, but produces an effective statement from a
@@ -29,12 +27,8 @@ import org.slf4j.LoggerFactory;
  */
 final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> {
-    private static final Logger LOG = LoggerFactory.getLogger(ReplicaStatementContext.class);
-
     private final StatementContextBase<?, ?, ?> parent;
     private final StatementContextBase<A, D, E> source;
-
-    private final boolean haveRef;
 
     ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> source) {
         super(source);
@@ -42,10 +36,9 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
             source.incRef();
-            haveRef = true;
+            setFullyDefined();
         } else {
             setIsSupportedToBuildEffective(false);
-            haveRef = false;
         }
     }
 
@@ -106,7 +99,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     int sweepSubstatements() {
-        if (haveRef) {
+        if (fullyDefined()) {
             source.decRef();
         }
         return 0;

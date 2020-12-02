@@ -433,7 +433,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return false;
     }
 
-    // These two exists only due to memory optimization, should live in AbstractResumedStatement
+    // These two exists only due to memory optimization, should live in AbstractResumedStatement. We are also reusing
+    // this for ReplicaStatementContext's refcount tracking.
     final boolean fullyDefined() {
         return fullyDefined;
     }
