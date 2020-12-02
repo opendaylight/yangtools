@@ -217,8 +217,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         // - 'effective' member sweeping a 'substatements' member
         // - 'substatements' member sweeping a 'substatements' member which came before it during iteration
         // We then iterate once again, counting what remains unswept
-        substatements.stream().forEach(StatementContextBase::sweep);
-        effective.stream().forEach(StatementContextBase::sweep);
+        sweep(substatements);
+        sweep(effective);
         final int count = countUnswept(substatements) + countUnswept(effective);
         if (count != 0) {
             LOG.debug("{} children left to sweep from {}", count, this);

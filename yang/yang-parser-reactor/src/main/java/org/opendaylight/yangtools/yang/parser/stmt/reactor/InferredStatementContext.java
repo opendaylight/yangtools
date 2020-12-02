@@ -306,7 +306,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         int count = 0;
         if (local != null) {
             final List<StatementContextBase<?, ?, ?>> list = castEffective(local);
-            list.stream().forEach(StatementContextBase::sweep);
+            sweep(list);
             count = countUnswept(list);
         }
         return count;

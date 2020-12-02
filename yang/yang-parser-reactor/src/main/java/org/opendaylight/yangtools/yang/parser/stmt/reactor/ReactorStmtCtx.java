@@ -134,10 +134,16 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     /**
      * Sweep this statement context as a result of {@link #sweepSubstatements()}, i.e. when parent is also being swept.
      */
-    final void sweep() {
+    private void sweep() {
         if (isSweepable()) {
             LOG.trace("Releasing {}", this);
             sweepState();
+        }
+    }
+
+    static final void sweep(final Collection<? extends ReactorStmtCtx<?, ?, ?>> substatements) {
+        for (ReactorStmtCtx<?, ?, ?> stmt : substatements) {
+            stmt.sweep();
         }
     }
 
@@ -152,7 +158,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     /**
-     * Implementation-specific sweep action. This is expected to perform a recursive {@link #sweep()} on all
+     * Implementation-specific sweep action. This is expected to perform a recursive {@link #sweep(Collection)} on all
      * {@link #declaredSubstatements()} and {@link #effectiveSubstatements()} and report the result of the sweep
      * operation.
      *
