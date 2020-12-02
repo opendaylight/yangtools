@@ -83,6 +83,16 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
     /**
+     * Local knowledge of {@link #refcount} values up to statement root. We use this field to prevent recursive lookups
+     * in {@link #noParentRefs(StatementContextBase)} -- once we discover a parent reference once, we keep that
+     * knowledge and update it when {@link #sweep()} is invoked.
+     */
+    private byte parentRef = PARENTREF_UNKNOWN;
+    private static final byte PARENTREF_UNKNOWN = -1;
+    private static final byte PARENTREF_ABSENT  = 0;
+    private static final byte PARENTREF_PRESENT = 1;
+
+    /**
      * Acquire a reference on this context. As long as there is at least one reference outstanding,
      * {@link #buildEffective()} will not result in {@link #effectiveSubstatements()} being discarded.
      *
@@ -119,6 +129,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
         refcount = current - 1;
         LOG.trace("Refcount {} on {}", refcount, this);
+        // FIXME: even if we are not sweepable, we should update children's view of parentRefs and trigger any sweeps
+        //        coming from those quarters
         if (isSweepable()) {
             // We are no longer guarded by effective instance
             sweepOnDecrement();
@@ -135,6 +147,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * Sweep this statement context as a result of {@link #sweepSubstatements()}, i.e. when parent is also being swept.
      */
     private void sweep() {
+        parentRef = PARENTREF_ABSENT;
         if (isSweepable()) {
             LOG.trace("Releasing {}", this);
             sweepState();
@@ -176,7 +189,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // Called when this statement does not have an implicit reference and have reached REFCOUNT_NONE
     private void sweepOnDecrement() {
         LOG.trace("Sweeping on decrement {}", this);
-        if (noParentRefcount()) {
+        if (noParentRef()) {
             // No further parent references, sweep our state.
             sweepState();
         }
@@ -204,7 +217,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
 
         // parent is potentially reclaimable
-        if (noParentRefcount()) {
+        if (noParentRef()) {
             LOG.trace("Cleanup {} of parent {}", refcount, this);
             if (sweepState()) {
                 final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
@@ -215,19 +228,30 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
     }
 
-    // FIXME: cache the resolution of this
-    private boolean noParentRefcount() {
+    private boolean noParentRef() {
+        return parentRefcount() == PARENTREF_ABSENT;
+    }
+
+    private byte parentRefcount() {
+        final byte refs;
+        return (refs = parentRef) != PARENTREF_UNKNOWN ? refs : (parentRef = loadParentRefcount());
+    }
+
+    private byte loadParentRefcount() {
         final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
-        if (parent != null) {
-            // There are three possibilities:
-            // - REFCOUNT_NONE, in which case we need to search next parent
-            // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
-            //   a reference to us
-            // - positive (> REFCOUNT_NONE), meaning parent has an explicit refcount which is holding us down
-            final int refs = parent.refcount;
-            return refs == REFCOUNT_NONE ? parent.noParentRefcount() : refs < REFCOUNT_NONE;
+        if (parent == null) {
+            return PARENTREF_ABSENT;
         }
-        return true;
+        // There are three possibilities:
+        // - REFCOUNT_NONE, in which case we need to search next parent
+        // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
+        //   a reference to us
+        // - positive (> REFCOUNT_NONE), meaning parent has an explicit refcount which is holding us down
+        final int refs = parent.refcount;
+        if (refs == REFCOUNT_NONE) {
+            return parent.parentRefcount();
+        }
+        return refs < REFCOUNT_NONE ? PARENTREF_ABSENT : PARENTREF_PRESENT;
     }
 
     private boolean isAwaitingChildren() {
