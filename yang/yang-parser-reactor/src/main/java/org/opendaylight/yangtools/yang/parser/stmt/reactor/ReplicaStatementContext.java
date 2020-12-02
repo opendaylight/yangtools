@@ -55,8 +55,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public boolean isConfiguration() {
-        return source.isConfiguration();
+    public boolean effectiveConfig() {
+        return source.effectiveConfig();
     }
 
     @Override
@@ -161,7 +161,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
      */
     @Override
     @Deprecated
-    Optional<SchemaPath> schemaPath() {
+    public Optional<SchemaPath> schemaPath() {
         return substatementGetSchemaPath();
     }
 

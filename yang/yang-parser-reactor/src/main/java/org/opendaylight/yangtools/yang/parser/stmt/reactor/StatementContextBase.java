@@ -50,8 +50,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -83,7 +85,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends ReactorStmtCtx<A, D, E> {
+        extends ReactorStmtCtx<A, D, E> implements Current<A, D> {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -237,6 +239,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     protected abstract boolean isParentSupportedByFeatures();
+
+    @Override
+    public @Nullable Parent effectiveParent() {
+        return getParentContext();
+    }
+
+    @Override
+    public @NonNull CommonStmtCtx root() {
+        return getRoot();
+    }
+
+    @Override
+    public @Nullable EffectiveStatement<?, ?> original() {
+        return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+    }
+
+    @Override
+    public @NonNull StmtContext caerbannog() {
+        return this;
+    }
 
     @Override
     public boolean isSupportedToBuildEffective() {
@@ -570,7 +592,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // Exposed for ReplicaStatementContext
     E createEffective() {
-        return definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(),
+        return definition.getFactory().createEffective(this, streamDeclared(),
             streamEffective());
     }
 
@@ -982,18 +1004,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
-     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
+     * every time {@link #effectiveConfig()} is invoked. This is quite expensive because it causes a linear search
      * for the (usually non-existent) config statement.
      *
      * <p>
      * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
-     * result without performing any lookups, solely to support {@link SubstatementContext#isConfiguration()}.
+     * result without performing any lookups, solely to support {@link SubstatementContext#effectiveConfig()}.
      *
      * <p>
      * Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
      *       {@link #isIgnoringConfig(StatementContextBase)}.
      */
-    final boolean isConfiguration(final StatementContextBase<?, ?, ?> parent) {
+    final boolean effectiveConfig(final StatementContextBase<?, ?, ?> parent) {
         final int fl = flags & SET_CONFIGURATION;
         if (fl != 0) {
             return fl == SET_CONFIGURATION;
@@ -1009,12 +1031,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             isConfig = optConfig.orElseThrow();
             if (isConfig) {
                 // Validity check: if parent is config=false this cannot be a config=true
-                InferenceException.throwIf(!parent.isConfiguration(), sourceReference(),
+                InferenceException.throwIf(!parent.effectiveConfig(), sourceReference(),
                         "Parent node has config=false, this node must not be specifed as config=true");
             }
         } else {
             // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parent.isConfiguration();
+            isConfig = parent.effectiveConfig();
         }
 
         // Resolved, make sure we cache this return
@@ -1030,8 +1052,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * {@link SubstatementContext#isIgnoringConfig()}.
      *
      * <p>
-     * Note: use of this method implies that {@link #isConfiguration()} is realized with
-     *       {@link #isConfiguration(StatementContextBase)}.
+     * Note: use of this method implies that {@link #effectiveConfig()} is realized with
+     *       {@link #effectiveConfig(StatementContextBase)}.
      */
     final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
         final int fl = flags & SET_IGNORE_CONFIG;
@@ -1067,8 +1089,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         flags |= HAVE_IGNORE_IF_FEATURE;
         return false;
     }
-
-    abstract @NonNull Optional<SchemaPath> schemaPath();
 
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
