@@ -108,12 +108,12 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     @Deprecated
-    Optional<SchemaPath> schemaPath() {
+    public Optional<SchemaPath> schemaPath() {
         return Optional.of(SchemaPath.ROOT);
     }
 
     @Override
-    public boolean isConfiguration() {
+    public boolean effectiveConfig() {
         return true;
     }
 
