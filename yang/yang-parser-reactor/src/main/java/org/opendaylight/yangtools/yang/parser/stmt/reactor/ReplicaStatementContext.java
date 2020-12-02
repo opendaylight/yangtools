@@ -98,6 +98,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    void markNoParentRef() {
+        // No-op
+    }
+
+    @Override
     int sweepSubstatements() {
         if (fullyDefined()) {
             source.decRef();
