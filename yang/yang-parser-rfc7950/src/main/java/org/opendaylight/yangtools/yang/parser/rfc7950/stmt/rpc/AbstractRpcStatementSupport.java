@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,6 +54,7 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
     public final void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
+        verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
             ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implictInput(), null);
         }
