@@ -14,19 +14,27 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +102,47 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
     private @Nullable E effectiveInstance;
+
+    // Master flag controlling whether this context can yield an effective statement
+    // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
+    //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
+    private boolean isSupportedToBuildEffective = true;
+
+    // Flag bit assignments
+    private static final int IS_SUPPORTED_BY_FEATURES    = 0x01;
+    private static final int HAVE_SUPPORTED_BY_FEATURES  = 0x02;
+    private static final int IS_IGNORE_IF_FEATURE        = 0x04;
+    private static final int HAVE_IGNORE_IF_FEATURE      = 0x08;
+    // Note: these four are related
+    private static final int IS_IGNORE_CONFIG            = 0x10;
+    private static final int HAVE_IGNORE_CONFIG          = 0x20;
+    private static final int IS_CONFIGURATION            = 0x40;
+    private static final int HAVE_CONFIGURATION          = 0x80;
+
+    // Have-and-set flag constants, also used as masks
+    private static final int SET_SUPPORTED_BY_FEATURES = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
+    private static final int SET_CONFIGURATION = HAVE_CONFIGURATION | IS_CONFIGURATION;
+    // Note: implies SET_CONFIGURATION, allowing fewer bit operations to be performed
+    private static final int SET_IGNORE_CONFIG = HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG | SET_CONFIGURATION;
+    private static final int SET_IGNORE_IF_FEATURE = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
+
+    // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
+    // hence improve memory layout.
+    private byte flags;
+
+    // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
+    // FIXME: move this out once we have JDK15+
+    private boolean fullyDefined;
+
+    ReactorStmtCtx() {
+        // Empty on purpose
+    }
+
+    ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original) {
+        isSupportedToBuildEffective = original.isSupportedToBuildEffective;
+        fullyDefined = original.fullyDefined;
+        flags = original.flags;
+    }
 
     //
     //
@@ -235,6 +284,151 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+    //
+    //
+    // Flags-based mechanics. These include public interfaces as well as all the crud we have lurking in our alignment
+    // shadow.
+    //
+    //
+
+    @Override
+    public final boolean isSupportedToBuildEffective() {
+        return isSupportedToBuildEffective;
+    }
+
+    @Override
+    public final void setIsSupportedToBuildEffective(final boolean isSupportedToBuildEffective) {
+        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
+    }
+
+    @Override
+    public final boolean isSupportedByFeatures() {
+        final int fl = flags & SET_SUPPORTED_BY_FEATURES;
+        if (fl != 0) {
+            return fl == SET_SUPPORTED_BY_FEATURES;
+        }
+        if (isIgnoringIfFeatures()) {
+            flags |= SET_SUPPORTED_BY_FEATURES;
+            return true;
+        }
+
+        /*
+         * If parent is supported, we need to check if-features statements of this context.
+         */
+        if (isParentSupportedByFeatures()) {
+            // If the set of supported features has not been provided, all features are supported by default.
+            final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
+                    SupportedFeatures.SUPPORTED_FEATURES);
+            if (supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures)) {
+                flags |= SET_SUPPORTED_BY_FEATURES;
+                return true;
+            }
+        }
+
+        // Either parent is not supported or this statement is not supported
+        flags |= HAVE_SUPPORTED_BY_FEATURES;
+        return false;
+    }
+
+    protected abstract boolean isParentSupportedByFeatures();
+
+    /**
+     * Config statements are not all that common which means we are performing a recursive search towards the root
+     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
+     * for the (usually non-existent) config statement.
+     *
+     * <p>
+     * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
+     * result without performing any lookups, solely to support {@link SubstatementContext#isConfiguration()}.
+     *
+     * <p>
+     * Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
+     *       {@link #isIgnoringConfig(StatementContextBase)}.
+     */
+    final boolean isConfiguration(final StatementContextBase<?, ?, ?> parent) {
+        final int fl = flags & SET_CONFIGURATION;
+        if (fl != 0) {
+            return fl == SET_CONFIGURATION;
+        }
+        if (isIgnoringConfig(parent)) {
+            // Note: SET_CONFIGURATION has been stored in flags
+            return true;
+        }
+
+        final boolean isConfig;
+        final Optional<Boolean> optConfig = findSubstatementArgument(ConfigEffectiveStatement.class);
+        if (optConfig.isPresent()) {
+            isConfig = optConfig.orElseThrow();
+            if (isConfig) {
+                // Validity check: if parent is config=false this cannot be a config=true
+                InferenceException.throwIf(!parent.isConfiguration(), sourceReference(),
+                        "Parent node has config=false, this node must not be specifed as config=true");
+            }
+        } else {
+            // If "config" statement is not specified, the default is the same as the parent's "config" value.
+            isConfig = parent.isConfiguration();
+        }
+
+        // Resolved, make sure we cache this return
+        flags |= isConfig ? SET_CONFIGURATION : HAVE_CONFIGURATION;
+        return isConfig;
+    }
+
+    protected abstract boolean isIgnoringConfig();
+
+    /**
+     * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
+     * keep on returning the same result without performing any lookups. Exists only to support
+     * {@link SubstatementContext#isIgnoringConfig()}.
+     *
+     * <p>
+     * Note: use of this method implies that {@link #isConfiguration()} is realized with
+     *       {@link #isConfiguration(StatementContextBase)}.
+     */
+    final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
+        final int fl = flags & SET_IGNORE_CONFIG;
+        if (fl != 0) {
+            return fl == SET_IGNORE_CONFIG;
+        }
+        if (definition().support().isIgnoringConfig() || parent.isIgnoringConfig()) {
+            flags |= SET_IGNORE_CONFIG;
+            return true;
+        }
+
+        flags |= HAVE_IGNORE_CONFIG;
+        return false;
+    }
+
+    protected abstract boolean isIgnoringIfFeatures();
+
+    /**
+     * This method maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
+     * keep on returning the same result without performing any lookups. Exists only to support
+     * {@link SubstatementContext#isIgnoringIfFeatures()}.
+     */
+    final boolean isIgnoringIfFeatures(final StatementContextBase<?, ?, ?> parent) {
+        final int fl = flags & SET_IGNORE_IF_FEATURE;
+        if (fl != 0) {
+            return fl == SET_IGNORE_IF_FEATURE;
+        }
+        if (definition().support().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures()) {
+            flags |= SET_IGNORE_IF_FEATURE;
+            return true;
+        }
+
+        flags |= HAVE_IGNORE_IF_FEATURE;
+        return false;
+    }
+
+    // These two exists only due to memory optimization, should live in AbstractResumedStatement
+    final boolean fullyDefined() {
+        return fullyDefined;
+    }
+
+    final void setFullyDefined() {
+        fullyDefined = true;
+    }
 
     //
     //
