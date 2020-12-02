@@ -24,6 +24,9 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
     /**
      * Returns the schema path of the instance of the type {@code SchemaNode}.
      *
+     * <p>
+     * The default implementation throws an {@link UnsupportedOperationException}.
+     *
      * @return schema path of the schema node
      * @throws UnsupportedOperationException when the implementation does not support per-node unique paths
      * @deprecated The idea of identifying SchemaNodes through a global path does not work. There are two problems:
@@ -38,5 +41,7 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      *             </ul>
      */
     @Deprecated
-    @NonNull SchemaPath getPath();
+    default @NonNull SchemaPath getPath() {
+        return SchemaNodeDefaults.throwUnsupported(this);
+    }
 }
