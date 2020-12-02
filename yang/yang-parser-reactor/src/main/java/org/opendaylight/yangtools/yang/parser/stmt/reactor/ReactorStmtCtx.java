@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.slf4j.Logger;
@@ -319,6 +320,20 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+    /**
+     * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
+     * this method does nothing.
+     *
+     * @param phase to be executed (completed)
+     * @return true if phase was successfully completed
+     * @throws SourceException when an error occurred in source parsing
+     */
+    final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
+        return phase.isCompletedBy(getCompletedPhase()) || doTryToCompletePhase(phase);
+    }
+
+    abstract boolean doTryToCompletePhase(ModelProcessingPhase phase);
 
     //
     //

@@ -149,12 +149,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public CopyHistory history() {
+    public final CopyHistory history() {
         return copyHistory;
     }
 
     @Override
-    public ModelProcessingPhase getCompletedPhase() {
+    public final ModelProcessingPhase getCompletedPhase() {
         return completedPhase;
     }
 
@@ -171,19 +171,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     static final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements(
-            final List<StatementContextBase<?, ?, ?>> effective) {
+            final List<ReactorStmtCtx<?, ?, ?>> effective) {
         return effective instanceof ImmutableCollection ? effective : Collections.unmodifiableCollection(effective);
     }
 
-    private static List<StatementContextBase<?, ?, ?>> shrinkEffective(
-            final List<StatementContextBase<?, ?, ?>> effective) {
+    private static List<ReactorStmtCtx<?, ?, ?>> shrinkEffective(final List<ReactorStmtCtx<?, ?, ?>> effective) {
         return effective.isEmpty() ? ImmutableList.of() : effective;
     }
 
     public abstract void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);
 
-    static final List<StatementContextBase<?, ?, ?>> removeStatementFromEffectiveSubstatements(
-            final List<StatementContextBase<?, ?, ?>> effective, final StatementDefinition statementDef) {
+    static final List<ReactorStmtCtx<?, ?, ?>> removeStatementFromEffectiveSubstatements(
+            final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition statementDef) {
         if (effective.isEmpty()) {
             return effective;
         }
@@ -214,8 +213,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public abstract void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef,
             String statementArg);
 
-    static final List<StatementContextBase<?, ?, ?>> removeStatementFromEffectiveSubstatements(
-            final List<StatementContextBase<?, ?, ?>> effective, final StatementDefinition statementDef,
+    static final List<ReactorStmtCtx<?, ?, ?>> removeStatementFromEffectiveSubstatements(
+            final List<ReactorStmtCtx<?, ?, ?>> effective, final StatementDefinition statementDef,
             final String statementArg) {
         if (statementArg == null) {
             return removeStatementFromEffectiveSubstatements(effective, statementDef);
@@ -225,7 +224,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return effective;
         }
 
-        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        final Iterator<ReactorStmtCtx<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final Mutable<?, ?, ?> next = iterator.next();
             if (statementDef.equals(next.publicDefinition()) && statementArg.equals(next.rawArgument())) {
@@ -258,12 +257,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     public abstract void addEffectiveSubstatement(Mutable<?, ?, ?> substatement);
 
-    final List<StatementContextBase<?, ?, ?>> addEffectiveSubstatement(
-            final List<StatementContextBase<?, ?, ?>> effective, final Mutable<?, ?, ?> substatement) {
+    final List<ReactorStmtCtx<?, ?, ?>> addEffectiveSubstatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
+            final Mutable<?, ?, ?> substatement) {
         verifyStatement(substatement);
 
-        final List<StatementContextBase<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, 1);
-        final StatementContextBase<?, ?, ?> stmt = (StatementContextBase<?, ?, ?>) substatement;
+        final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, 1);
+        final ReactorStmtCtx<?, ?, ?> stmt = (ReactorStmtCtx<?, ?, ?>) substatement;
         final ModelProcessingPhase phase = completedPhase;
         if (phase != null) {
             ensureCompletedPhase(stmt, phase);
@@ -290,10 +289,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     abstract void addEffectiveSubstatementsImpl(Collection<? extends Mutable<?, ?, ?>> statements);
 
-    final List<StatementContextBase<?, ?, ?>> addEffectiveSubstatementsImpl(
-            final List<StatementContextBase<?, ?, ?>> effective,
+    final List<ReactorStmtCtx<?, ?, ?>> addEffectiveSubstatementsImpl(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final Collection<? extends Mutable<?, ?, ?>> statements) {
-        final List<StatementContextBase<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, statements.size());
+        final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, statements.size());
         final Collection<? extends StatementContextBase<?, ?, ?>> casted =
             (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
         final ModelProcessingPhase phase = completedPhase;
@@ -307,39 +305,38 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return resized;
     }
 
-    abstract Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete();
+    abstract Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete();
 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
         verifyStatement(stmt);
         final ModelProcessingPhase phase = completedPhase;
         if (phase != null) {
-            ensureCompletedPhase((StatementContextBase<?, ?, ?>) stmt, phase);
+            ensureCompletedPhase((ReactorStmtCtx<?, ?, ?>) stmt, phase);
         }
     }
 
     // Make sure target statement has transitioned at least to specified phase. This method is just before we take
     // allow a statement to become our substatement. This is needed to ensure that every statement tree does not contain
     // any statements which did not complete the same phase as the root statement.
-    private static void ensureCompletedPhase(final StatementContextBase<?, ?, ?> stmt,
-            final ModelProcessingPhase phase) {
+    private static void ensureCompletedPhase(final ReactorStmtCtx<?, ?, ?> stmt, final ModelProcessingPhase phase) {
         verify(stmt.tryToCompletePhase(phase), "Statement %s cannot complete phase %s", stmt, phase);
     }
 
     private static void verifyStatement(final Mutable<?, ?, ?> stmt) {
-        verify(stmt instanceof StatementContextBase, "Unexpected statement %s", stmt);
+        verify(stmt instanceof ReactorStmtCtx, "Unexpected statement %s", stmt);
     }
 
-    private List<StatementContextBase<?, ?, ?>> beforeAddEffectiveStatement(
-            final List<StatementContextBase<?, ?, ?>> effective, final int toAdd) {
+    private List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
+            final int toAdd) {
         // We cannot allow statement to be further mutated
         verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
             sourceReference());
         return beforeAddEffectiveStatementUnsafe(effective, toAdd);
     }
 
-    final List<StatementContextBase<?, ?, ?>> beforeAddEffectiveStatementUnsafe(
-            final List<StatementContextBase<?, ?, ?>> effective, final int toAdd) {
+    final List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatementUnsafe(final List<ReactorStmtCtx<?, ?, ?>> effective,
+            final int toAdd) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
@@ -358,19 +355,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamEffective();
 
-    /**
-     * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
-     * this method does nothing.
-     *
-     * @param phase to be executed (completed)
-     * @return true if phase was successfully completed
-     * @throws SourceException when an error occurred in source parsing
-     */
-    final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
-        return phase.isCompletedBy(completedPhase) || doTryToCompletePhase(phase);
-    }
-
-    private boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
+    @Override
+    final boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
         final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
         if (completeChildren(phase) && finished) {
             onPhaseCompleted(phase);
@@ -384,7 +370,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
             finished &= child.tryToCompletePhase(phase);
         }
-        for (final StatementContextBase<?, ?, ?> child : effectiveChildrenToComplete()) {
+        for (final ReactorStmtCtx<?, ?, ?> child : effectiveChildrenToComplete()) {
             finished &= child.tryToCompletePhase(phase);
         }
         return finished;
@@ -678,12 +664,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final StatementContextBase<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+    public final ReactorStmtCtx<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
         checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
         return replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
     }
 
-    final @NonNull StatementContextBase<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> stmt) {
+    final @NonNull ReplicaStatementContext<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> stmt) {
         return new ReplicaStatementContext<>(stmt, this);
     }
 
