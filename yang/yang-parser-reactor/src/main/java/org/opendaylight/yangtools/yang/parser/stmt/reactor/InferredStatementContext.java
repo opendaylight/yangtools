@@ -295,6 +295,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    void markNoParentRef() {
+        final Object local = substatements;
+        if (local != null) {
+            markNoParentRef(castEffective(local));
+        }
+    }
+
+    @Override
     int sweepSubstatements() {
         final Object local = substatements;
         substatements = SWEPT_SUBSTATEMENTS;
