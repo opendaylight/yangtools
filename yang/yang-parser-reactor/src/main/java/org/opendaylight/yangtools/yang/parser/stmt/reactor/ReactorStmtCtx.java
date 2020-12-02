@@ -175,11 +175,14 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // Called when this statement does not have an implicit reference and have reached REFCOUNT_NONE
     private void sweepOnDecrement() {
         LOG.trace("Sweeping on decrement {}", this);
-        final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
-        if (parent == null) {
-            // We are the top-level object and have lost a reference. Trigger sweep if possible and we are done.
+        if (noParentRefcount()) {
+            // No further parent references, sweep our state.
             sweepState();
-        } else {
+        }
+
+        // Propagate towards parent if there is one
+        final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
+        if (parent != null) {
             parent.sweepOnChildDecrement();
         }
     }
