@@ -46,7 +46,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     private final @NonNull StatementSourceReference statementDeclSource;
     private final String rawArgument;
 
-    private List<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
+    private List<ReactorStmtCtx<?, ?, ?>> effective = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
     private @Nullable D declaredInstance;
 
@@ -192,7 +192,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    final Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
+    final Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
         return effective;
     }
 
