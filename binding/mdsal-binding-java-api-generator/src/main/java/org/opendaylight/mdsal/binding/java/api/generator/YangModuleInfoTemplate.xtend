@@ -89,6 +89,7 @@ class YangModuleInfoTemplate {
         collectSubmodules(submodules, module)
 
         val body = '''
+            @«JavaFileTemplate.GENERATED»("mdsal-binding-generator")
             public final class «MODULE_INFO_CLASS_NAME» extends ResourceYangModuleInfo {
                 «val rev = module.revision»
                 private static final @NonNull QName NAME = QName.create("«module.QNameModule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();

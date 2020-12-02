@@ -68,6 +68,7 @@ class EnumTemplate extends BaseTemplate {
      */
     override body() '''
         «enums.formatDataForJavaDoc.wrapToDocumentation»
+        «generatedAnnotation»
         public enum «enums.name» implements «org.opendaylight.yangtools.yang.binding.Enumeration.importedName» {
             «writeEnumeration(enums)»
 
