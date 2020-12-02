@@ -9,15 +9,19 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -26,11 +30,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * designated source.
  */
 final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> {
+        extends ReactorStmtCtx<A, D, E> {
     private final StatementContextBase<?, ?, ?> parent;
-    private final StatementContextBase<A, D, E> source;
+    private final ReactorStmtCtx<A, D, E> source;
 
-    ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> source) {
+    ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final ReactorStmtCtx<A, D, E> source) {
         super(source);
         this.parent = requireNonNull(parent);
         this.source = requireNonNull(source);
@@ -88,13 +92,29 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    boolean hasEmptySubstatements() {
-        return source.hasEmptySubstatements();
+    public ModelProcessingPhase getCompletedPhase() {
+        return source.getCompletedPhase();
     }
 
     @Override
-    Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
-        return ImmutableList.of();
+    public CopyHistory getCopyHistory() {
+        return source.getCopyHistory();
+    }
+
+    @Override
+    public Mutable<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+        return source.replicaAsChildOf(parent);
+    }
+
+    @Override
+    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+            final QNameModule targetModule) {
+        return source.copyAsChildOf(parent, type, targetModule);
+    }
+
+    @Override
+    StatementDefinitionContext<A, D, E> definition() {
+        return source.definition();
     }
 
     @Override
@@ -106,43 +126,40 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    public <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
+            final Class<@NonNull N> type, final T key, final U value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Optional<StmtContext<A, D, E>> getPreviousCopyCtx() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<@NonNull N> namespace,
+            final KT key, final StmtContext<?, ?, ?> stmt) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
-            final String statementArg) {
+    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+    public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    Stream<? extends StmtContext<?, ?, ?>> streamDeclared() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    StatementContextBase<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
+    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
+            final QNameModule targetModule) {
         throw new UnsupportedOperationException();
     }
 
