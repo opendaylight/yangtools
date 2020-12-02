@@ -20,17 +20,24 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -133,6 +140,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
     // FIXME: move this out once we have JDK15+
     private boolean fullyDefined;
+
+    // SchemaPath cache for use with SubstatementContext and InferredStatementContext. This hurts RootStatementContext
+    // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
+    @Deprecated
+    private volatile SchemaPath schemaPath;
 
     ReactorStmtCtx() {
         // Empty on purpose
@@ -428,6 +440,65 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     final void setFullyDefined() {
         fullyDefined = true;
+    }
+
+    //
+    //
+    // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.
+    //
+    //
+
+    abstract @NonNull Optional<SchemaPath> schemaPath();
+
+    // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
+    @Deprecated
+    final @NonNull Optional<SchemaPath> substatementGetSchemaPath() {
+        SchemaPath local = schemaPath;
+        if (local == null) {
+            synchronized (this) {
+                local = schemaPath;
+                if (local == null) {
+                    schemaPath = local = createSchemaPath((StatementContextBase<?, ?, ?>) coerceParentContext());
+                }
+            }
+        }
+
+        return Optional.ofNullable(local);
+    }
+
+    @Deprecated
+    private SchemaPath createSchemaPath(final StatementContextBase<?, ?, ?> parent) {
+        final Optional<SchemaPath> maybeParentPath = parent.schemaPath();
+        verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
+        final SchemaPath parentPath = maybeParentPath.get();
+
+        if (StmtContextUtils.isUnknownStatement(this)) {
+            return parentPath.createChild(publicDefinition().getStatementName());
+        }
+        final Object argument = argument();
+        if (argument instanceof QName) {
+            final QName qname = (QName) argument;
+            if (producesDeclared(UsesStatement.class)) {
+                return maybeParentPath.orElse(null);
+            }
+
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof String) {
+            // FIXME: This may yield illegal argument exceptions
+            final Optional<StmtContext<A, D, E>> originalCtx = getOriginalCtx();
+            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof SchemaNodeIdentifier
+                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
+                        || producesDeclared(DeviationStatement.class))) {
+
+            return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
+        }
+
+        // FIXME: this does not look right
+        return maybeParentPath.orElse(null);
     }
 
     //
