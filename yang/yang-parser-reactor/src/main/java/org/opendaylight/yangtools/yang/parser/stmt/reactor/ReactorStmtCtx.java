@@ -9,12 +9,23 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Verify.verify;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +95,122 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     private @Nullable E effectiveInstance;
 
+    //
+    //
+    // Common public interface contracts with simple mechanics. Please keep this in one logical block, so we do not end
+    // up mixing concerns and simple details with more complex logic.
+    //
+    //
+
     @Override
     public abstract StatementContextBase<?, ?, ?> getParentContext();
+
+    @Override
+    public abstract RootStatementContext<?, ?, ?> getRoot();
+
+    @Override
+    public abstract Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
+
+    @Override
+    public final @NonNull Registry getBehaviourRegistry() {
+        return getRoot().getBehaviourRegistryImpl();
+    }
+
+    @Override
+    public final YangVersion getRootVersion() {
+        return getRoot().getRootVersionImpl();
+    }
+
+    @Override
+    public final void setRootVersion(final YangVersion version) {
+        getRoot().setRootVersionImpl(version);
+    }
+
+    @Override
+    public final void addMutableStmtToSeal(final MutableStatement mutableStatement) {
+        getRoot().addMutableStmtToSealImpl(mutableStatement);
+    }
+
+    @Override
+    public final void addRequiredSource(final SourceIdentifier dependency) {
+        getRoot().addRequiredSourceImpl(dependency);
+    }
+
+    @Override
+    public final void setRootIdentifier(final SourceIdentifier identifier) {
+        getRoot().setRootIdentifierImpl(identifier);
+    }
+
+    @Override
+    public final boolean isEnabledSemanticVersioning() {
+        return getRoot().isEnabledSemanticVersioningImpl();
+    }
+
+    @Override
+    public final ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
+        return getRoot().getSourceContext().newInferenceAction(phase);
+    }
+
+    @Override
+    public final StatementDefinition publicDefinition() {
+        return definition().getPublicView();
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("definition", definition()).add("rawArgument", rawArgument());
+    }
+
+    /**
+     * Return the context in which this statement was defined.
+     *
+     * @return statement definition
+     */
+    abstract @NonNull StatementDefinitionContext<A, D, E> definition();
+
+    //
+    //
+    // NamespaceStorageSupport/Mutable integration methods. Keep these together.
+    //
+    //
+
+    @Override
+    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
+            final Class<@NonNull N> type, final T key) {
+        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
+    }
+
+    @Override
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> type) {
+        return getNamespace(type);
+    }
+
+    @Override
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(
+            final Class<N> type) {
+        return getLocalNamespace(type);
+    }
+
+    @Override
+    protected final void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
+        definition().checkNamespaceAllowed(type);
+    }
+
+    @Override
+    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
+            final V value) {
+        // definition().onNamespaceElementAdded(this, type, key, value);
+    }
+
+    //
+    //
+    // Statement build entry points -- both public and package-private.
+    //
+    //
 
     @Override
     public final E buildEffective() {

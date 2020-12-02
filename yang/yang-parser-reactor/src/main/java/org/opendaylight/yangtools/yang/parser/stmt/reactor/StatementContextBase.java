@@ -14,8 +14,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -28,7 +26,6 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -37,7 +34,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -49,18 +45,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -263,98 +255,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.completedPhase = completedPhase;
     }
 
-    /**
-     * Returns the model root for this statement.
-     *
-     * @return root context of statement
-     */
-    @Override
-    public abstract RootStatementContext<?, ?, ?> getRoot();
-
-    @Override
-    public final @NonNull Registry getBehaviourRegistry() {
-        return getRoot().getBehaviourRegistryImpl();
-    }
-
-    @Override
-    public final YangVersion getRootVersion() {
-        return getRoot().getRootVersionImpl();
-    }
-
-    @Override
-    public final void setRootVersion(final YangVersion version) {
-        getRoot().setRootVersionImpl(version);
-    }
-
-    @Override
-    public final void addMutableStmtToSeal(final MutableStatement mutableStatement) {
-        getRoot().addMutableStmtToSealImpl(mutableStatement);
-    }
-
-    @Override
-    public final void addRequiredSource(final SourceIdentifier dependency) {
-        getRoot().addRequiredSourceImpl(dependency);
-    }
-
-    @Override
-    public final void setRootIdentifier(final SourceIdentifier identifier) {
-        getRoot().setRootIdentifierImpl(identifier);
-    }
-
-    @Override
-    public final boolean isEnabledSemanticVersioning() {
-        return getRoot().isEnabledSemanticVersioningImpl();
-    }
-
-    @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(
-            final Class<N> type) {
-        return getLocalNamespace(type);
-    }
-
-    @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> type) {
-        return getNamespace(type);
-    }
-
-    /**
-     * Associate a value with a key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param value value
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <N> namespace type
-     * @param <T> key type
-     * @param <U> value type
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
     @Override
     public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
             final Class<@NonNull N> type, final T key, final U value) {
         addToNamespace(type, key, value);
-    }
-
-    @Override
-    public abstract Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
-
-    /**
-     * Return a value associated with specified key within a namespace.
-     *
-     * @param type Namespace type
-     * @param key Key
-     * @param <K> namespace key type
-     * @param <V> namespace value type
-     * @param <N> namespace type
-     * @param <T> key type
-     * @return Value, or null if there is no element
-     * @throws NamespaceNotAvailableException when the namespace is not available.
-     */
-    @Override
-    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
-            final Class<@NonNull N> type, final T key) {
-        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
     static final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements(
@@ -658,24 +562,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         definition.onDeclarationFinished(this, phase);
     }
 
-    /**
-     * Return the context in which this statement was defined.
-     *
-     * @return statement definition
-     */
-    protected final @NonNull StatementDefinitionContext<A, D, E> definition() {
+    @Override
+    final StatementDefinitionContext<A, D, E> definition() {
         return definition;
-    }
-
-    @Override
-    protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
-        definition.checkNamespaceAllowed(type);
-    }
-
-    @Override
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
-            final V value) {
-        // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
     final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
@@ -747,16 +636,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             type);
 
         return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-    }
-
-    @Override
-    public final StatementDefinition publicDefinition() {
-        return definition.getPublicView();
-    }
-
-    @Override
-    public final ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
-        return getRoot().getSourceContext().newInferenceAction(phase);
     }
 
     private static <T> Multimap<ModelProcessingPhase, T> newMultimap() {
@@ -1086,14 +965,5 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         // FIXME: this does not look right
         return maybeParentPath.orElse(null);
-    }
-
-    @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
-    }
-
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition).add("rawArgument", rawArgument());
     }
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -47,7 +48,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @return registry of source context
      */
-    public abstract Registry getBehaviourRegistry();
+    public abstract @NonNull Registry getBehaviourRegistry();
 
     protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
         // NOOP

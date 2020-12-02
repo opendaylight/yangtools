@@ -139,6 +139,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
+    /**
+     * Returns the model root for this statement.
+     *
+     * @return root context of statement
+     */
     @NonNull RootStmtContext<?, ?, ?> getRoot();
 
     /**
