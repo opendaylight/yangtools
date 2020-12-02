@@ -143,7 +143,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
     private @Nullable ModelProcessingPhase completedPhase;
-    private @Nullable E effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -545,27 +544,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         fullyDefined = true;
     }
 
-    @Override
-    public E buildEffective() {
-        final E existing;
-        return (existing = effectiveInstance) != null ? existing : loadEffective();
-    }
-
-    private E loadEffective() {
-        // Creating an effective statement does not strictly require a declared instance -- there are statements like
-        // 'input', which are implicitly defined.
-        // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
-        // we attempt to create effective statement:
-        buildDeclared();
-
-        final E ret = effectiveInstance = createEffective();
-        // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
-        // some residue.
-        releaseImplicitRef();
-        return ret;
-    }
-
     // Exposed for ReplicaStatementContext
+    @Override
     E createEffective() {
         return definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(),
             streamEffective());
@@ -966,11 +946,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
      */
     abstract boolean hasEmptySubstatements();
-
-    @Override
-    final boolean noImplictRef() {
-        return effectiveInstance != null || !isSupportedToBuildEffective();
-    }
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root

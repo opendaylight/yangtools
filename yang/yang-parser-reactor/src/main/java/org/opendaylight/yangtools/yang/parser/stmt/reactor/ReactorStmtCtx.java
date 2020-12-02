@@ -11,6 +11,8 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.VerifyException;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -80,8 +82,41 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
+    private @Nullable E effectiveInstance;
+
     @Override
     public abstract StatementContextBase<?, ?, ?> getParentContext();
+
+    @Override
+    public final E buildEffective() {
+        final E existing;
+        return (existing = effectiveInstance) != null ? existing : loadEffective();
+    }
+
+    private E loadEffective() {
+        // Creating an effective statement does not strictly require a declared instance -- there are statements like
+        // 'input', which are implicitly defined.
+        // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
+        // we attempt to create effective statement:
+        buildDeclared();
+
+        final E ret = effectiveInstance = createEffective();
+        // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
+        // some residue.
+        if (refcount == REFCOUNT_NONE) {
+            sweepOnDecrement();
+        }
+        return ret;
+    }
+
+    abstract @NonNull E createEffective();
+
+    //
+    //
+    // Reference counting mechanics start. Please keep these methods in one block for clarity. Note this does not
+    // contribute to state visible outside of this package.
+    //
+    //
 
     /**
      * Acquire a reference on this context. As long as there is at least one reference outstanding,
@@ -126,12 +161,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
     }
 
-    final void releaseImplicitRef() {
-        if (refcount == REFCOUNT_NONE) {
-            sweepOnDecrement();
-        }
-    }
-
     /**
      * Sweep this statement context as a result of {@link #sweepSubstatements()}, i.e. when parent is also being swept.
      */
@@ -169,8 +198,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * @return True if the entire tree has been completely swept, false otherwise.
      */
     abstract int sweepSubstatements();
-
-    abstract boolean noImplictRef();
 
     // Called when this statement does not have an implicit reference and have reached REFCOUNT_NONE
     private void sweepOnDecrement() {
@@ -212,6 +239,10 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
                 }
             }
         }
+    }
+
+    private boolean noImplictRef() {
+        return effectiveInstance != null || !isSupportedToBuildEffective();
     }
 
     // FIXME: cache the resolution of this
