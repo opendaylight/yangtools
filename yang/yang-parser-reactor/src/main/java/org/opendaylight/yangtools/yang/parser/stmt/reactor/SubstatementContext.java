@@ -58,7 +58,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
      */
     @Override
     @Deprecated
-    Optional<SchemaPath> schemaPath() {
+    public Optional<SchemaPath> schemaPath() {
         return substatementGetSchemaPath();
     }
 
@@ -88,8 +88,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public boolean isConfiguration() {
-        return isConfiguration(parent);
+    public boolean effectiveConfig() {
+        return effectiveConfig(parent);
     }
 
     @Override

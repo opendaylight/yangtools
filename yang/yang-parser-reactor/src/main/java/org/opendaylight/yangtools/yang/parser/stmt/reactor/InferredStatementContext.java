@@ -393,7 +393,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
      */
     @Override
     @Deprecated
-    Optional<SchemaPath> schemaPath() {
+    public Optional<SchemaPath> schemaPath() {
         return substatementGetSchemaPath();
     }
 
@@ -423,8 +423,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public boolean isConfiguration() {
-        return isConfiguration(parent);
+    public boolean effectiveConfig() {
+        return effectiveConfig(parent);
     }
 
     @Override
