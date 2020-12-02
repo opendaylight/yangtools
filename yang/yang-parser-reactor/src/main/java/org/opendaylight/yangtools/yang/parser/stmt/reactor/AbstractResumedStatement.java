@@ -207,6 +207,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
+    final void markNoParentRef() {
+        markNoParentRef(substatements);
+        markNoParentRef(effective);
+    }
+
+    @Override
     final int sweepSubstatements() {
         // First we need to sweep all statements, which may trigger sweeps all across the place, for example:
         // - 'effective' member sweeping a 'substatements' member
