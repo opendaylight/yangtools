@@ -258,14 +258,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     // Instantiate this statement's effective substatements. Note this method has side-effects in namespaces and overall
     // BuildGlobalContext, hence it must be called at most once.
-    private List<StatementContextBase<?, ?, ?>> ensureEffectiveSubstatements() {
+    private List<ReactorStmtCtx<?, ?, ?>> ensureEffectiveSubstatements() {
         accessSubstatements();
         return substatements instanceof List ? castEffective(substatements)
             : initializeSubstatements(castMaterialized(substatements));
     }
 
     @Override
-    Iterable<StatementContextBase<?, ?, ?>> effectiveChildrenToComplete() {
+    Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
         // When we have not initialized, there are no statements to catch up: we will catch up when we are copying
         // from prototype (which is already at ModelProcessingPhase.EFFECTIVE_MODEL).
         if (substatements == null) {
@@ -300,15 +300,15 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         substatements = SWEPT_SUBSTATEMENTS;
         int count = 0;
         if (local != null) {
-            final List<StatementContextBase<?, ?, ?>> list = castEffective(local);
+            final List<ReactorStmtCtx<?, ?, ?>> list = castEffective(local);
             sweep(list);
             count = countUnswept(list);
         }
         return count;
     }
 
-    private List<StatementContextBase<?, ?, ?>> initializeSubstatements(
-            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
+    private List<ReactorStmtCtx<?, ?, ?>> initializeSubstatements(
+            final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree) {
         final Collection<? extends StatementContextBase<?, ?, ?>> declared = prototype.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = prototype.mutableEffectiveSubstatements();
 
@@ -322,8 +322,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             copySubstatement(stmtContext, buffer, materializedSchemaTree);
         }
 
-        final List<StatementContextBase<?, ?, ?>> ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(),
-            buffer.size());
+        final List<ReactorStmtCtx<?, ?, ?>> ret = beforeAddEffectiveStatementUnsafe(ImmutableList.of(), buffer.size());
         ret.addAll((Collection) buffer);
         substatements = ret;
 
@@ -343,7 +342,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         YangStmtMapping.USES);
 
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
-            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree) {
+            final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree) {
         final StatementDefinition def = substatement.publicDefinition();
 
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
@@ -358,7 +357,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         //
         // We could also perform a Map.containsKey() and perform a bulk add, but that would mean the statement order
         // against parent would change -- and we certainly do not want that to happen.
-        final StatementContextBase<?, ?, ?> materialized = findMaterialized(materializedSchemaTree, substatement);
+        final ReactorStmtCtx<?, ?, ?> materialized = findMaterialized(materializedSchemaTree, substatement);
         if (materialized == null) {
             copySubstatement(substatement).ifPresent(copy -> {
                 ensureCompletedPhase(copy);
@@ -374,7 +373,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private void addMaterialized(final StmtContext<?, ?, ?> template, final Mutable<?, ?, ?> copy) {
-        final HashMap<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree;
+        final HashMap<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree;
         if (substatements == null) {
             // Lazy initialization of backing map. We do not expect this to be used often or multiple times -- each hit
             // here means an inference along schema tree, such as deviate/augment. HashMap requires power-of-two and
@@ -395,21 +394,20 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
     }
 
-    private static @Nullable StatementContextBase<?, ?, ?> findMaterialized(
-            final Map<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> materializedSchemaTree,
+    private static @Nullable ReactorStmtCtx<?, ?, ?> findMaterialized(
+            final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree,
             final StmtContext<?, ?, ?> template) {
         return materializedSchemaTree == null ? null : materializedSchemaTree.get(template);
     }
 
     @SuppressWarnings("unchecked")
-    private static List<StatementContextBase<?, ?, ?>> castEffective(final Object substatements) {
-        return (List<StatementContextBase<?, ?, ?>>) substatements;
+    private static List<ReactorStmtCtx<?, ?, ?>> castEffective(final Object substatements) {
+        return (List<ReactorStmtCtx<?, ?, ?>>) substatements;
     }
 
     @SuppressWarnings("unchecked")
-    private static HashMap<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> castMaterialized(
-            final Object substatements) {
-        return (HashMap<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>>) substatements;
+    private static HashMap<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> castMaterialized(final Object substatements) {
+        return (HashMap<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>>) substatements;
     }
 
     // Statement copy mess ends here
