@@ -115,8 +115,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
     }
 
-    boolean isConfiguration();
-
     boolean isEnabledSemanticVersioning();
 
     /**

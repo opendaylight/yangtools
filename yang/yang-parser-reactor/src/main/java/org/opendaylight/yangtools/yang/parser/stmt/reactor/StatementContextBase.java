@@ -351,8 +351,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Exposed for ReplicaStatementContext
     @Override
     E createEffective() {
-        return definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(),
-            streamEffective());
+        return definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();

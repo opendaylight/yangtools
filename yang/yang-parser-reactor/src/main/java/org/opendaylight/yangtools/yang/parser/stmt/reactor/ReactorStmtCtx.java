@@ -32,6 +32,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -53,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements Mutable<A, D, E> {
+        extends NamespaceStorageSupport implements Mutable<A, D, E>, Current<A, D> {
     private static final Logger LOG = LoggerFactory.getLogger(ReactorStmtCtx.class);
 
     /**
@@ -218,6 +220,28 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
+    public final Parent effectiveParent() {
+        return getParentContext();
+    }
+
+    @Override
+    public final CommonStmtCtx root() {
+        return getRoot();
+    }
+
+    @Override
+    public final EffectiveStatement<?, ?> original() {
+        return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+    }
+
+    @Override
+    @Deprecated
+    @SuppressWarnings("unchecked")
+    public final <Z extends EffectiveStatement<A, D>> StmtContext<A, D, Z> caerbannog() {
+        return (StmtContext<A, D, Z>) this;
+    }
+
+    @Override
     public final String toString() {
         return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
@@ -373,12 +397,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             isConfig = optConfig.orElseThrow();
             if (isConfig) {
                 // Validity check: if parent is config=false this cannot be a config=true
-                InferenceException.throwIf(!parent.isConfiguration(), sourceReference(),
+                InferenceException.throwIf(!parent.effectiveConfig(), sourceReference(),
                         "Parent node has config=false, this node must not be specifed as config=true");
             }
         } else {
             // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parent.isConfiguration();
+            isConfig = parent.effectiveConfig();
         }
 
         // Resolved, make sure we cache this return
@@ -447,8 +471,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.
     //
     //
-
-    abstract @NonNull Optional<SchemaPath> schemaPath();
 
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
