@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.VerifyException;
 import java.util.Collection;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -80,6 +79,9 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * This is the lowest value observable, making it easier on checking others on equality.
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
+
+    @Override
+    public abstract StatementContextBase<?, ?, ?> getParentContext();
 
     /**
      * Acquire a reference on this context. As long as there is at least one reference outstanding,
@@ -170,8 +172,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     abstract boolean noImplictRef();
 
-    abstract @Nullable ReactorStmtCtx<?, ?, ?> parentStmtCtx();
-
     // Called when this statement does not have an implicit reference and have reached REFCOUNT_NONE
     private void sweepOnDecrement() {
         LOG.trace("Sweeping on decrement {}", this);
@@ -181,7 +181,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
 
         // Propagate towards parent if there is one
-        final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
+        final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
         if (parent != null) {
             parent.sweepOnChildDecrement();
         }
@@ -206,7 +206,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         if (noParentRefcount()) {
             LOG.trace("Cleanup {} of parent {}", refcount, this);
             if (sweepState()) {
-                final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
+                final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
                 if (parent != null) {
                     parent.sweepOnChildDecrement();
                 }
@@ -216,7 +216,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     // FIXME: cache the resolution of this
     private boolean noParentRefcount() {
-        final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
+        final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
         if (parent != null) {
             // There are three possibilities:
             // - REFCOUNT_NONE, in which case we need to search next parent
@@ -251,7 +251,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         LOG.trace("Child refcount {}", refcount);
         if (refcount == REFCOUNT_NONE) {
             sweepDone();
-            final ReactorStmtCtx<?, ?, ?> parent = parentStmtCtx();
+            final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
             LOG.trace("Propagating to parent {}", parent);
             if (parent != null && parent.isAwaitingChildren()) {
                 parent.sweepOnChildDone();

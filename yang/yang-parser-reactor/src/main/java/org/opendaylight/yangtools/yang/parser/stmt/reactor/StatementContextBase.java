@@ -264,9 +264,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.completedPhase = completedPhase;
     }
 
-    @Override
-    public abstract StatementContextBase<?, ?, ?> getParentContext();
-
     /**
      * Returns the model root for this statement.
      *
@@ -973,11 +970,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     final boolean noImplictRef() {
         return effectiveInstance != null || !isSupportedToBuildEffective();
-    }
-
-    @Override
-    final ReactorStmtCtx<?, ?, ?> parentStmtCtx() {
-        return getParentContext();
     }
 
     /**
