@@ -31,11 +31,19 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
@@ -47,6 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -146,6 +155,21 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             effectOfStatement = new ArrayList<>(ctxs.size());
         }
         effectOfStatement.addAll(ctxs);
+    }
+
+    @Override
+    public @Nullable Parent effectiveParent() {
+        return getParentContext();
+    }
+
+    @Override
+    public @NonNull CommonStmtCtx root() {
+        return getRoot();
+    }
+
+    @Override
+    public @Nullable EffectiveStatement<?, ?> original() {
+        return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
     }
 
     @Override
@@ -351,7 +375,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Exposed for ReplicaStatementContext
     @Override
     E createEffective() {
-        return definition.getFactory().createEffective(new BaseCurrentEffectiveStmtCtx<>(this), streamDeclared(),
+        return definition.getFactory().createEffective(this, streamDeclared(),
             streamEffective());
     }
 
@@ -725,4 +749,39 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @return True if {@link #allSubstatements()} and {@link #allSubstatementsStream()} would return an empty stream.
      */
     abstract boolean hasEmptySubstatements();
+
+    @Deprecated
+    private SchemaPath createSchemaPath(final StatementContextBase<?, ?, ?> parent) {
+        final Optional<SchemaPath> maybeParentPath = parent.schemaPath();
+        verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
+        final SchemaPath parentPath = maybeParentPath.get();
+
+        if (StmtContextUtils.isUnknownStatement(this)) {
+            return parentPath.createChild(publicDefinition().getStatementName());
+        }
+        final Object argument = argument();
+        if (argument instanceof QName) {
+            final QName qname = (QName) argument;
+            if (producesDeclared(UsesStatement.class)) {
+                return maybeParentPath.orElse(null);
+            }
+
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof String) {
+            // FIXME: This may yield illegal argument exceptions
+            final Optional<StmtContext<A, D, E>> originalCtx = getOriginalCtx();
+            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof SchemaNodeIdentifier
+                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
+                        || producesDeclared(DeviationStatement.class))) {
+
+            return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
+        }
+
+        // FIXME: this does not look right
+        return maybeParentPath.orElse(null);
+    }
 }
