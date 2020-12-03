@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -37,12 +39,13 @@ public final class DefaultDenyWriteStatementSupport
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyWriteStatement>
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
-        private final @NonNull SchemaPath path;
+        private final @Nullable SchemaPath path;
 
         Effective(final Current<Void, DefaultDenyWriteStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getEffectiveParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath()
+                    .createChild(stmt.publicDefinition().getStatementName()));
         }
 
         @Override

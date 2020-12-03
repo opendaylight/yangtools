@@ -78,7 +78,7 @@ public final class RestrictedTypes {
     }
 
     public static @NonNull LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(
-            final @NonNull BinaryTypeDefinition baseType, final @NonNull SchemaPath path) {
+            final @NonNull BinaryTypeDefinition baseType, final @Nullable SchemaPath path) {
         return new LengthRestrictedTypeBuilder<>(baseType, path) {
             @Override
             BinaryTypeDefinition buildType(final @Nullable LengthConstraint constraint) {
@@ -102,7 +102,7 @@ public final class RestrictedTypes {
     }
 
     public static @NonNull TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(
-            final @NonNull BooleanTypeDefinition baseType, final @NonNull SchemaPath path) {
+            final @NonNull BooleanTypeDefinition baseType, final @Nullable SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<>(baseType, path) {
             @Override
             BooleanTypeDefinition buildType() {

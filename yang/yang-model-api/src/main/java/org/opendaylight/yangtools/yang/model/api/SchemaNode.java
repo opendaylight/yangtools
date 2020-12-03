@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -41,7 +42,7 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      *             </ul>
      */
     @Deprecated
-    default @NonNull SchemaPath getPath() {
+    default @Nullable SchemaPath getPath() {
         return SchemaNodeDefaults.throwUnsupported(this);
     }
 }
