@@ -69,7 +69,7 @@ abstract class AbstractModuleStatementSupport
         try {
             return UnqualifiedQName.of(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(e.getMessage(), ctx.sourceReference(), e);
+            throw new SourceException(e.getMessage(), ctx, e);
         }
     }
 
@@ -78,13 +78,13 @@ abstract class AbstractModuleStatementSupport
             final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final String moduleName = stmt.getRawArgument();
 
-        final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
-        SourceException.throwIfNull(moduleNs, stmt.sourceReference(),
+        final URI moduleNs = SourceException.throwIfNull(
+            firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", moduleName);
         stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
 
-        final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        SourceException.throwIfNull(modulePrefix, stmt.sourceReference(),
+        final String modulePrefix = SourceException.throwIfNull(
+            firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
             "Prefix of the module [%s] is missing", moduleName);
         stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs);
 
@@ -103,7 +103,7 @@ abstract class AbstractModuleStatementSupport
 
         final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
-        SourceException.throwIf(!moduleNs.isPresent(), stmt.sourceReference(),
+        SourceException.throwIf(!moduleNs.isPresent(), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
 
         final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
@@ -111,8 +111,8 @@ abstract class AbstractModuleStatementSupport
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
-            throw new SourceException(stmt.sourceReference(), "Module namespace collision: %s. At %s",
-                    qNameModule.getNamespace(), possibleDuplicateModule.sourceReference());
+            throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.getNamespace(),
+                possibleDuplicateModule.sourceReference());
         }
 
         final String moduleName = stmt.getRawArgument();
@@ -123,8 +123,7 @@ abstract class AbstractModuleStatementSupport
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        SourceException.throwIfNull(modulePrefix, stmt.sourceReference(),
-            "Prefix of the module [%s] is missing", stmt.argument());
+        SourceException.throwIfNull(modulePrefix, stmt, "Prefix of the module [%s] is missing", stmt.argument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, moduleName, qNameModule);
@@ -193,7 +192,7 @@ abstract class AbstractModuleStatementSupport
         try {
             return new ModuleEffectiveStatementImpl(stmt, substatements, submodules);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 
@@ -204,7 +203,7 @@ abstract class AbstractModuleStatementSupport
     }
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {
-        return new SourceException("No namespace declared in module", stmt.sourceReference());
+        return new SourceException("No namespace declared in module", stmt);
     }
 
     private static void addToSemVerModuleNamespace(

@@ -66,7 +66,7 @@ final class RevisionImport {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
-                    ModuleCtxToModuleQName.class, importedModule), stmt.sourceReference(),
+                    ModuleCtxToModuleQName.class, importedModule), stmt,
                     "Failed to find module of %s", importedModule);
 
                 linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,

@@ -82,12 +82,11 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
     protected LeafEffectiveStatement createEffective(final Current<QName, LeafStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-            findFirstStatement(substatements, TypeEffectiveStatement.class), stmt.sourceReference(),
-                "Leaf is missing a 'type' statement");
+            findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
+            "Leaf is missing a 'type' statement");
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt),
-            stmt.sourceReference(),
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt), stmt,
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         final SchemaPath path = stmt.getSchemaPath();

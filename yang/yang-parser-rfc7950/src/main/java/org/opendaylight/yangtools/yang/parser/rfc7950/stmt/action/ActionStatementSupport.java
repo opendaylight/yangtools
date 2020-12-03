@@ -96,21 +96,21 @@ public final class ActionStatementSupport extends
         final StatementSourceReference ref = stmt.sourceReference();
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
         final QName argument = stmt.getArgument();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), ref,
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), stmt,
             "Action %s is defined within a notification, rpc or another action", argument);
         SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), stmt,
             "Action %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), stmt,
             "Action %s is defined within a case statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.MODULE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.MODULE), stmt,
             "Action %s is defined at the top level of a module", argument);
 
         try {
             return new ActionEffectiveStatementImpl(stmt.declared(), stmt.getSchemaPath(),
                 historyAndStatusFlags(stmt.history(), substatements), substatements);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 }

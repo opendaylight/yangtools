@@ -39,7 +39,7 @@ public final class XPathSupport {
         try {
             parsed = parser.parseExpression(xpath);
         } catch (XPathExpressionException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Argument \"%s\" is not valid XPath string", xpath);
+            throw new SourceException(ctx, e, "Argument \"%s\" is not valid XPath string", xpath);
         }
 
         if (ctx.yangVersion().compareTo(parsed.getYangVersion()) < 0) {

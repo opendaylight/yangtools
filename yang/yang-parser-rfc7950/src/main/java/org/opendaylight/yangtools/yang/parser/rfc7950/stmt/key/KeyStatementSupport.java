@@ -56,8 +56,7 @@ public final class KeyStatementSupport
 
         // Throws NPE on nulls, retains first inserted value, cannot be modified
         final ImmutableSet<QName> ret = builder.build();
-        SourceException.throwIf(ret.size() != tokens, ctx.sourceReference(), "Key argument '%s' contains duplicates",
-            value);
+        SourceException.throwIf(ret.size() != tokens, ctx, "Key argument '%s' contains duplicates", value);
         return ret;
     }
 

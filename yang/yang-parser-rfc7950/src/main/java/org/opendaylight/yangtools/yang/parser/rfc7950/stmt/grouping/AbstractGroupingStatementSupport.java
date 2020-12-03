@@ -70,7 +70,7 @@ abstract class AbstractGroupingStatementSupport
             return new GroupingEffectiveStatementImpl(stmt.declared(), substatements,
                 historyAndStatusFlags(stmt.history(), substatements), stmt.getSchemaPath());
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 
@@ -89,6 +89,6 @@ abstract class AbstractGroupingStatementSupport
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
         final QName arg = stmt.getArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
-        SourceException.throwIf(existing != null, stmt.sourceReference(), "Duplicate name for grouping %s", arg);
+        SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 }

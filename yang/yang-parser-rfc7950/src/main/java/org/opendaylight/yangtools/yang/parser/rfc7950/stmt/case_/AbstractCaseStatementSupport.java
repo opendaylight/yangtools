@@ -67,7 +67,7 @@ abstract class AbstractCaseStatementSupport
             return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, computeFlags(stmt, substatements),
                 stmt.getSchemaPath(), findOriginal(stmt));
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 
@@ -78,7 +78,7 @@ abstract class AbstractCaseStatementSupport
             return new UndeclaredCaseEffectiveStatement(substatements, computeFlags(stmt, substatements),
                 stmt.getSchemaPath(), findOriginal(stmt));
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 

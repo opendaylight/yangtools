@@ -60,9 +60,9 @@ public final class LengthStatementSupport
                 max = parseIntegerConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.sourceReference(),
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx,
                     "Length constraint %s has descending order of boundaries; should be ascending.", singleRange);
-                SourceException.throwIf(boundaries.hasNext(), ctx.sourceReference(),
+                SourceException.throwIf(boundaries.hasNext(), ctx,
                     "Wrong number of boundaries in length constraint %s.", singleRange);
             } else {
                 max = min;
@@ -111,8 +111,8 @@ public final class LengthStatementSupport
 
         try {
             return new BigInteger(value);
-        } catch (final NumberFormatException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Value %s is not a valid integer", value);
+        } catch (NumberFormatException e) {
+            throw new SourceException(ctx, e, "Value %s is not a valid integer", value);
         }
     }
 }

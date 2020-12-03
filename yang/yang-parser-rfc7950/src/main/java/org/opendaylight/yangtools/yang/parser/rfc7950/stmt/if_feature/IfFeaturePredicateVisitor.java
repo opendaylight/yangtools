@@ -79,7 +79,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
         }
 
         throw new SourceException("Unexpected grammar context during parsing of IfFeature expression. "
-                + "Most probably IfFeature grammar has been changed.", stmtCtx.sourceReference());
+                + "Most probably IfFeature grammar has been changed.", stmtCtx);
     }
 
     @Override

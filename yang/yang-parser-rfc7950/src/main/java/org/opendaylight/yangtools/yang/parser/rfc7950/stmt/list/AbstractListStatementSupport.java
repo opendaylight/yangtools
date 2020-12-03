@@ -125,7 +125,7 @@ abstract class AbstractListStatementSupport extends
                     : new RegularListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition,
                         elementCountConstraint.orElse(null), original);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 
