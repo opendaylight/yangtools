@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 @Beta
@@ -44,7 +45,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         }
         this.maybeQNameArgument = maybeQNameArgumentInit;
 
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(maybeQNameArgument);
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(maybeQNameArgument));
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is

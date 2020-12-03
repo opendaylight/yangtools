@@ -70,7 +70,7 @@ abstract class AbstractIdentityStatementSupport
     protected final IdentityEffectiveStatement createEffective(final Current<QName, IdentityStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            return new EmptyIdentityEffectiveStatement(stmt.declared(), stmt.getSchemaPath());
+            return new EmptyIdentityEffectiveStatement(stmt.declared(), stmt.wrapSchemaPath());
         }
 
         final List<IdentitySchemaNode> identities = new ArrayList<>();
@@ -86,7 +86,7 @@ abstract class AbstractIdentityStatementSupport
             }
         }
 
-        return new RegularIdentityEffectiveStatement(stmt.declared(), stmt.getSchemaPath(), new FlagsBuilder()
+        return new RegularIdentityEffectiveStatement(stmt.declared(), stmt.wrapSchemaPath(), new FlagsBuilder()
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .toFlags(), substatements, ImmutableSet.copyOf(identities));
     }

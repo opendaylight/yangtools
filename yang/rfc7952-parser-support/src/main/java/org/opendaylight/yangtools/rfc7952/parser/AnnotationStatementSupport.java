@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -52,7 +53,7 @@ public final class AnnotationStatementSupport
         Effective(final Current<QName, AnnotationStatement> stmt,
                   final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getEffectiveParent().getSchemaPath().createChild(argument());
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(argument()));
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), stmt.sourceReference(),
