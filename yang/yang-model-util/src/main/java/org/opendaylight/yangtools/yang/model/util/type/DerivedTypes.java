@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -48,7 +49,7 @@ public final class DerivedTypes {
     }
 
     public static @NonNull DerivedTypeBuilder<?> derivedTypeBuilder(final @NonNull TypeDefinition<?> baseType,
-            final @NonNull SchemaPath path) {
+            final @Nullable SchemaPath path) {
         if (baseType instanceof BinaryTypeDefinition) {
             return derivedBinaryBuilder((BinaryTypeDefinition) baseType, path);
         } else if (baseType instanceof BitsTypeDefinition) {
@@ -93,7 +94,7 @@ public final class DerivedTypes {
     }
 
     public static @NonNull DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
-            final @NonNull BinaryTypeDefinition baseType, final @NonNull SchemaPath path) {
+            final @NonNull BinaryTypeDefinition baseType, final @Nullable SchemaPath path) {
         return new DerivedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             public BinaryTypeDefinition build() {
@@ -115,7 +116,7 @@ public final class DerivedTypes {
     }
 
     public static @NonNull DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
-            final @NonNull BooleanTypeDefinition baseType, final @NonNull SchemaPath path) {
+            final @NonNull BooleanTypeDefinition baseType, final @Nullable SchemaPath path) {
         return new DerivedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             public BooleanTypeDefinition build() {
