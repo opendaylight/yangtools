@@ -105,7 +105,7 @@ abstract class AbstractDeviateStatementSupport
 
     @Override
     public final DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value), ctx.sourceReference(),
+        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value), ctx,
             "String '%s' is not valid deviate argument", value);
     }
 

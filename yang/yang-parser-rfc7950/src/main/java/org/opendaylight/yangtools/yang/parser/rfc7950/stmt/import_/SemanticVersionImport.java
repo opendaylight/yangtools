@@ -150,7 +150,7 @@ final class SemanticVersionImport {
                 stmt.addToNs(ImportPrefixToSemVerSourceIdentifier.class, impPrefix, semVerModuleIdentifier);
 
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
-                    ModuleCtxToModuleQName.class, importedModule), stmt.sourceReference(),
+                    ModuleCtxToModuleQName.class, importedModule), stmt,
                     "Failed to find module of %s", importedModule);
 
                 final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),

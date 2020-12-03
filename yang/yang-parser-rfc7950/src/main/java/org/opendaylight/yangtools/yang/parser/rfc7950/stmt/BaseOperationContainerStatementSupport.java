@@ -52,7 +52,7 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
         try {
             return createDeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 

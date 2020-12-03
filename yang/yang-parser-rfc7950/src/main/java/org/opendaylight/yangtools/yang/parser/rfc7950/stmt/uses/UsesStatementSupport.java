@@ -331,7 +331,7 @@ public final class UsesStatementSupport
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
 
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
-                refineSubstatementCtx.sourceReference(),
+                refineSubstatementCtx,
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
                 refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
                 refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());

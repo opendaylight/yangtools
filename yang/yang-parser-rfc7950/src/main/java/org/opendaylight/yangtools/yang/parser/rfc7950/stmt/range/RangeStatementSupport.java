@@ -61,9 +61,9 @@ public final class RangeStatementSupport
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.sourceReference(),
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx,
                     "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
-                SourceException.throwIf(boundaries.hasNext(), ctx.sourceReference(),
+                SourceException.throwIf(boundaries.hasNext(), ctx,
                     "Wrong number of boundaries in range constraint %s", singleRange);
             } else {
                 max = min;
@@ -113,7 +113,7 @@ public final class RangeStatementSupport
         try {
             return value.indexOf('.') != -1 ? new BigDecimal(value) : new BigInteger(value);
         } catch (final NumberFormatException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Value %s is not a valid decimal number", value);
+            throw new SourceException(ctx, e, "Value %s is not a valid decimal number", value);
         }
     }
 }
