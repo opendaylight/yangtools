@@ -46,7 +46,7 @@ abstract class AbstractNotificationStatementSupport
             return new NotificationEffectiveStatementImpl(stmt.declared(), substatements,
                 historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 

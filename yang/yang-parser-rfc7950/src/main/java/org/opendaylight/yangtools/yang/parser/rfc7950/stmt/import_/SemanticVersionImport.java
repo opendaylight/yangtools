@@ -150,8 +150,7 @@ final class SemanticVersionImport {
                 stmt.addToNs(ImportPrefixToSemVerSourceIdentifier.class, impPrefix, semVerModuleIdentifier);
 
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
-                    ModuleCtxToModuleQName.class, importedModule), stmt.sourceReference(),
-                    "Failed to find module of %s", importedModule);
+                    ModuleCtxToModuleQName.class, importedModule), stmt, "Failed to find module of %s", importedModule);
 
                 final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                     NamespaceStatement.class);
@@ -162,9 +161,9 @@ final class SemanticVersionImport {
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(stmt.sourceReference(),
-                            "Unable to find module compatible with requested import [%s(%s)].", moduleName,
-                            getRequestedImportVersionString(stmt));
+                    throw new InferenceException(stmt,
+                        "Unable to find module compatible with requested import [%s(%s)].", moduleName,
+                        getRequestedImportVersionString(stmt));
                 }
             }
         });

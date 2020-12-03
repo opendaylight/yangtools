@@ -100,8 +100,8 @@ public final class MountPointStatementSupport
     @Override
     public void onStatementAdded(final Mutable<QName, MountPointStatement, MountPointEffectiveStatement> stmt) {
         final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
-        SourceException.throwIf(YangStmtMapping.CONTAINER != parentDef && YangStmtMapping.LIST != parentDef,
-                stmt.sourceReference(), "Mount points may only be defined at either a container or a list");
+        SourceException.throwIf(YangStmtMapping.CONTAINER != parentDef && YangStmtMapping.LIST != parentDef, stmt,
+            "Mount points may only be defined at either a container or a list");
     }
 
     @Override

@@ -247,8 +247,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         @SuppressWarnings("unchecked")
         final Mutable<QName, Y, Z> ret = (Mutable<QName, Y, Z>) copySubstatement((Mutable<?, ?, ?>) template)
-            .orElseThrow(() -> new InferenceException(sourceReference(),
-                "Failed to materialize child %s template %s", qname, template));
+            .orElseThrow(
+                () -> new InferenceException(this, "Failed to materialize child %s template %s", qname, template));
         ensureCompletedPhase(ret);
         addMaterialized(template, ret);
 
