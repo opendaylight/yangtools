@@ -294,7 +294,10 @@ abstract class AbstractTypeStatementSupport
     }
 
     static final SchemaPath typeEffectiveSchemaPath(final Current<?, ?> stmt) {
-        final SchemaPath path = stmt.getSchemaPath();
+        final SchemaPath path = stmt.wrapSchemaPath();
+        if (path == null) {
+            // SchemaPath is forbidden with a system property
+        }
         final SchemaPath parent = path.getParent();
         final QName parentQName = parent.getLastComponent();
         checkArgument(parentQName != null, "Path %s has an empty parent", path);
@@ -375,7 +378,7 @@ abstract class AbstractTypeStatementSupport
     private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.getSchemaPath());
+        final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.wrapSchemaPath());
 
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof BitEffectiveStatement) {
@@ -427,7 +430,7 @@ abstract class AbstractTypeStatementSupport
     private @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final Current<?, ?> ctx,
             final EnumTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType, ctx.getSchemaPath());
+        final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType, ctx.wrapSchemaPath());
 
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof EnumEffectiveStatement) {

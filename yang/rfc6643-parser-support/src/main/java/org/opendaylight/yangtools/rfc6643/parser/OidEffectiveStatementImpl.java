@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 
 final class OidEffectiveStatementImpl extends UnknownEffectiveStatementBase<ObjectIdentifier, OidStatement>
         implements OidEffectiveStatement, OidSchemaNode {
@@ -27,7 +28,7 @@ final class OidEffectiveStatementImpl extends UnknownEffectiveStatementBase<Obje
     OidEffectiveStatementImpl(final Current<ObjectIdentifier, OidStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override
