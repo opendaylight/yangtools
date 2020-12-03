@@ -63,7 +63,7 @@ abstract class AbstractContainerStatementSupport
         try {
             return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, flags, path, original);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 }

@@ -100,8 +100,7 @@ public final class TypedefStatementSupport extends
             TypeEffectiveStatement.class);
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
-            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeEffectiveStmt, dflt),
-            stmt.sourceReference(),
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeEffectiveStmt, dflt), stmt,
             "Typedef '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         return new TypedefEffectiveStatementImpl(declared, stmt.wrapSchemaPath(), computeFlags(substatements),
@@ -112,7 +111,7 @@ public final class TypedefStatementSupport extends
         final QName arg = stmt.getArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(TypeNamespace.class, arg);
         // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
-        SourceException.throwIf(existing != null, stmt.sourceReference(), "Duplicate name for typedef %s", arg);
+        SourceException.throwIf(existing != null, stmt, "Duplicate name for typedef %s", arg);
     }
 
     private static void checkDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {

@@ -41,7 +41,7 @@ public final class OidStatementSupport
         try {
             return ObjectIdentifier.forString(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Invalid object identifier '%s'", value);
+            throw new SourceException(ctx, e, "Invalid object identifier '%s'", value);
         }
     }
 

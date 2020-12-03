@@ -38,7 +38,7 @@ public final class ValueStatementSupport
         try {
             return Integer.valueOf(value);
         } catch (NumberFormatException e) {
-            throw new SourceException(ctx.sourceReference(), e,
+            throw new SourceException(ctx, e,
                 "%s is not valid value statement integer argument in a range of -2147483648..2147483647", value);
         }
     }

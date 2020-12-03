@@ -89,7 +89,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
             }
         }
 
-        throw new SourceException(stmt.sourceReference(), "Bit '%s' is not a subset of its base bits type %s.", bitName,
+        throw new SourceException(stmt, "Bit '%s' is not a subset of its base bits type %s.", bitName,
             baseType.getQName());
     }
 
@@ -102,8 +102,8 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
             }
         }
 
-        throw new SourceException(ctx.sourceReference(), "Enum '%s' is not a subset of its base enumeration type %s.",
-            enumName, baseType.getQName());
+        throw new SourceException(ctx, "Enum '%s' is not a subset of its base enumeration type %s.", enumName,
+            baseType.getQName());
     }
 
 }

@@ -150,14 +150,13 @@ final class SubmoduleEffectiveStatementImpl
         return substatements.stream()
             .filter(BelongsToEffectiveStatement.class::isInstance)
             .map(BelongsToEffectiveStatement.class::cast)
-            .findAny().orElseThrow(() -> new SourceException(stmt.sourceReference(),
+            .findAny().orElseThrow(() -> new SourceException(stmt,
                 "Unable to find belongs-to statement in submodule %s.", stmt.rawArgument()));
     }
 
     private static @NonNull String findSubmodulePrefix(final CommonStmtCtx stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final String name = stmt.getRawArgument();
-        final BelongsToEffectiveStatement belongsTo = findBelongsTo(stmt, substatements);
-        return findPrefix(stmt.sourceReference(), belongsTo.effectiveSubstatements(), "submodule", name);
+        return findPrefix(stmt, findBelongsTo(stmt, substatements).effectiveSubstatements(), "submodule",
+            stmt.getRawArgument());
     }
 }

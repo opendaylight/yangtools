@@ -190,8 +190,7 @@ abstract class AbstractTypeStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(typePrereq), stmt.sourceReference(),
-                    "Type [%s] was not found.", typeQName);
+                InferenceException.throwIf(failed.contains(typePrereq), stmt, "Type [%s] was not found.", typeQName);
             }
         });
     }
@@ -342,8 +341,7 @@ abstract class AbstractTypeStatementSupport
             default:
                 final QName qname = StmtContextUtils.parseNodeIdentifier(ctx.caerbannog(), argument);
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef = SourceException.throwIfNull(
-                    ctx.getFromNamespace(TypeNamespace.class, qname), ctx.sourceReference(),
-                    "Type '%s' not found", qname);
+                    ctx.getFromNamespace(TypeNamespace.class, qname), ctx, "Type '%s' not found", qname);
                 return typedef.buildEffective().asTypeEffectiveStatement();
         }
     }
@@ -361,10 +359,9 @@ abstract class AbstractTypeStatementSupport
                 try {
                     builder.setLengthConstraint(length, length.argument());
                 } catch (IllegalStateException e) {
-                    throw new SourceException(ctx.sourceReference(), e, "Multiple length constraints encountered");
+                    throw new SourceException(ctx, e, "Multiple length constraints encountered");
                 } catch (InvalidLengthConstraintException e) {
-                    throw new SourceException(ctx.sourceReference(), e, "Invalid length constraint %s",
-                        length.argument());
+                    throw new SourceException(ctx, e, "Invalid length constraint %s", length.argument());
                 }
             }
         }
@@ -409,7 +406,7 @@ abstract class AbstractTypeStatementSupport
             }
             if (stmt instanceof FractionDigitsEffectiveStatement) {
                 final Integer digits = ((FractionDigitsEffectiveStatement)stmt).argument();
-                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx.sourceReference(),
+                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx,
                     "Cannot override fraction-digits from base type %s to %s", baseType, digits);
             }
         }
@@ -477,7 +474,7 @@ abstract class AbstractTypeStatementSupport
         try {
             return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
         } catch (InvalidRangeConstraintException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Invalid range constraint: %s", e.getOffendingRanges());
+            throw new SourceException(ctx, e, "Invalid range constraint: %s", e.getOffendingRanges());
         }
     }
 
@@ -508,10 +505,9 @@ abstract class AbstractTypeStatementSupport
                 try {
                     builder.setLengthConstraint(length, length.argument());
                 } catch (IllegalStateException e) {
-                    throw new SourceException(ctx.sourceReference(), e, "Multiple length constraints encountered");
+                    throw new SourceException(ctx, e, "Multiple length constraints encountered");
                 } catch (InvalidLengthConstraintException e) {
-                    throw new SourceException(ctx.sourceReference(), e, "Invalid length constraint %s",
-                        length.argument());
+                    throw new SourceException(ctx, e, "Invalid length constraint %s", length.argument());
                 }
             }
             if (stmt instanceof PatternEffectiveStatement) {

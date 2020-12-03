@@ -43,7 +43,7 @@ abstract class AbstractSubmoduleStatementSupport
         try {
             return UnqualifiedQName.of(value);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(e.getMessage(), ctx.sourceReference(), e);
+            throw new SourceException(e.getMessage(), ctx, e);
         }
     }
 
@@ -63,17 +63,16 @@ abstract class AbstractSubmoduleStatementSupport
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
             possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
-            throw new SourceException(stmt.sourceReference(), "Submodule name collision: %s. At %s",
-                    stmt.rawArgument(), possibleDuplicateSubmodule.sourceReference());
+            throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
+                possibleDuplicateSubmodule.sourceReference());
         }
 
         stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
         final String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
-        final StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(stmt, 0,
-                BelongsToStatement.class, PrefixStatement.class);
-        SourceException.throwIfNull(prefixSubStmtCtx, stmt.sourceReference(),
-                "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
+        final StmtContext<?, ?, ?> prefixSubStmtCtx = SourceException.throwIfNull(
+            findFirstDeclaredSubstatement(stmt, 0, BelongsToStatement.class, PrefixStatement.class), stmt,
+            "Prefix of belongsTo statement is missing in submodule [%s]", stmt.rawArgument());
 
         final String prefix = prefixSubStmtCtx.rawArgument();
         stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
@@ -100,11 +99,11 @@ abstract class AbstractSubmoduleStatementSupport
         try {
             return new SubmoduleEffectiveStatementImpl(stmt, substatements);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 
     private static SourceException noBelongsTo(final CommonStmtCtx stmt) {
-        return new SourceException("No belongs-to declared in submodule", stmt.sourceReference());
+        return new SourceException("No belongs-to declared in submodule", stmt);
     }
 }

@@ -26,6 +26,11 @@ public class InvalidSubstatementException extends SourceException {
         super(message, source, cause);
     }
 
+    public InvalidSubstatementException(final @NonNull CommonStmtCtx stmt, final @NonNull String format,
+            final Object... args) {
+        this(stmt.sourceReference(), format, args);
+    }
+
     public InvalidSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
         this(String.format(format, args), source);

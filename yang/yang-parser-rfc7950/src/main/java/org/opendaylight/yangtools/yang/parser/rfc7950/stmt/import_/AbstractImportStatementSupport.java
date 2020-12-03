@@ -73,7 +73,7 @@ abstract class AbstractImportStatementSupport
                         moduleName);
                 Verify.verifyNotNull(importedModuleNamespace);
                 final String impPrefix = SourceException.throwIfNull(
-                    firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt.sourceReference(),
+                    firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
 
                 stmt.addToNs(ImpPrefixToNamespace.class, impPrefix, importedModuleNamespace);
@@ -81,8 +81,8 @@ abstract class AbstractImportStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(imported), stmt.sourceReference(),
-                        "Imported module [%s] was not found.", moduleName);
+                InferenceException.throwIf(failed.contains(imported), stmt, "Imported module [%s] was not found.",
+                    moduleName);
             }
         });
     }
@@ -138,9 +138,9 @@ abstract class AbstractImportStatementSupport
             final String moduleName, final String prefix) {
         // When 'revision-date' of an import is not specified in yang source, we need to find revision of imported
         // module.
-        final QNameModule importedModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
-        SourceException.throwIfNull(importedModule, ctx.sourceReference(),
-                "Unable to find import of module %s with prefix %s.", moduleName, prefix);
+        final QNameModule importedModule = SourceException.throwIfNull(
+            StmtContextUtils.getModuleQNameByPrefix(ctx, prefix), ctx,
+            "Unable to find import of module %s with prefix %s.", moduleName, prefix);
         return importedModule.getRevision().orElse(null);
     }
 }

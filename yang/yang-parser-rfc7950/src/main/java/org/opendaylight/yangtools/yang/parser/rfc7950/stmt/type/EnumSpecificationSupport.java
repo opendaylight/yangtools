@@ -74,8 +74,8 @@ final class EnumSpecificationSupport
                 final int effectiveValue;
                 if (declaredValue.isEmpty()) {
                     if (highestValue != null) {
-                        SourceException.throwIf(highestValue == 2147483647, stmt.sourceReference(),
-                                "Enum '%s' must have a value statement", enumSubStmt);
+                        SourceException.throwIf(highestValue == 2147483647, stmt,
+                            "Enum '%s' must have a value statement", enumSubStmt);
                         effectiveValue = highestValue + 1;
                     } else {
                         effectiveValue = 0;
@@ -103,7 +103,7 @@ final class EnumSpecificationSupport
          *     The "enum" statement, which is a substatement to the "type"
          *     statement, MUST be present if the type is "enumeration".
          */
-        return new SourceException("At least one enum statement has to be present", stmt.sourceReference());
+        return new SourceException("At least one enum statement has to be present", stmt);
     }
 
 }

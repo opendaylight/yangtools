@@ -40,7 +40,7 @@ public final class MaxAccessStatementSupport
     public MaxAccess parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final MaxAccess val = MaxAccess.forStringLiteral(value);
         if (val == null) {
-            throw new SourceException(ctx.sourceReference(), "Invalid max-access value '%s'", value);
+            throw new SourceException(ctx, "Invalid max-access value '%s'", value);
         }
         return val;
     }

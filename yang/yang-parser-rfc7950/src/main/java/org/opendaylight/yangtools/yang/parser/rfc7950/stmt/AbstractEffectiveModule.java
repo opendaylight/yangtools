@@ -52,11 +52,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<UnqualifiedQName>,
@@ -213,13 +213,13 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
                 .toString();
     }
 
-    protected static final @NonNull String findPrefix(final StatementSourceReference ref,
+    protected static final @NonNull String findPrefix(final CommonStmtCtx stmt,
             final Collection<? extends EffectiveStatement<?, ?>> substatements, final String type, final String name) {
         return substatements.stream()
             .filter(PrefixEffectiveStatement.class::isInstance)
             .map(prefix -> ((PrefixEffectiveStatement) prefix).argument())
             .findAny()
-            .orElseThrow(() -> new SourceException(ref, "Unable to resolve prefix for %s %s.", type, name));
+            .orElseThrow(() -> new SourceException(stmt, "Unable to resolve prefix for %s %s.", type, name));
     }
 
     // Alright. this is quite ugly

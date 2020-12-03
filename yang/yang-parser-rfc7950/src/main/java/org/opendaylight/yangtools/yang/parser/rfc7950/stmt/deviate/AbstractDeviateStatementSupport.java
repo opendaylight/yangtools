@@ -105,7 +105,7 @@ abstract class AbstractDeviateStatementSupport
 
     @Override
     public final DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value), ctx.sourceReference(),
+        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value), ctx,
             "String '%s' is not valid deviate argument", value);
     }
 
@@ -162,8 +162,8 @@ abstract class AbstractDeviateStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                throw new InferenceException(deviateStmtCtx.coerceParentContext().sourceReference(),
-                    "Deviation target '%s' not found.", deviationTarget);
+                throw new InferenceException(deviateStmtCtx.coerceParentContext(), "Deviation target '%s' not found.",
+                    deviationTarget);
             }
         });
     }
@@ -261,7 +261,7 @@ abstract class AbstractDeviateStatementSupport
                     && YangStmtMapping.LEAF.equals(targetCtx.publicDefinition())) {
                 for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.publicDefinition()),
-                        stmtCtxToBeAdded.sourceReference(),
+                        stmtCtxToBeAdded,
                         "Deviation cannot add substatement %s to target node %s because it is already defined "
                         + "in target and can appear only once.",
                         stmtToBeAdded.getStatementName(), targetCtx.argument());
@@ -318,9 +318,9 @@ abstract class AbstractDeviateStatementSupport
             return;
         }
 
-        throw new InferenceException(stmtCtxToBeReplaced.sourceReference(), "Deviation cannot replace "
-                + "substatement %s in target node %s because it does not exist in target node.",
-                stmtToBeReplaced.getStatementName(), targetCtx.argument());
+        throw new InferenceException(stmtCtxToBeReplaced,
+            "Deviation cannot replace substatement %s in target node %s because it does not exist in target node.",
+            stmtToBeReplaced.getStatementName(), targetCtx.argument());
     }
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
@@ -378,7 +378,7 @@ abstract class AbstractDeviateStatementSupport
     private static void validateDeviationTarget(final StmtContext<?, ?, ?> deviateSubStmtCtx,
             final StmtContext<?, ?, ?> targetCtx) {
         InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
-            targetCtx.yangVersion()), deviateSubStmtCtx.sourceReference(),
+            targetCtx.yangVersion()), deviateSubStmtCtx,
             "%s is not a valid deviation target for substatement %s.", targetCtx.argument(),
             deviateSubStmtCtx.publicDefinition().getStatementName());
     }

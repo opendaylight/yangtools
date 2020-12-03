@@ -73,8 +73,8 @@ abstract class AbstractIfFeatureStatementSupport
                     unresolvedFeatures.add(verifyNotNull(backRef.get(prereq)));
                 }
 
-                throw new InferenceException(stmt.sourceReference(),
-                    "Failed to resolve feature references %s in \"%s\"", unresolvedFeatures, stmt.rawArgument());
+                throw new InferenceException(stmt, "Failed to resolve feature references %s in \"%s\"",
+                    unresolvedFeatures, stmt.rawArgument());
             }
         });
     }
