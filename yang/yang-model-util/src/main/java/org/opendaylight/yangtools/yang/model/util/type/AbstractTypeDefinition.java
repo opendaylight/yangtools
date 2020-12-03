@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -20,10 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
     private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
-    private final @NonNull SchemaPath path;
+    private final @Nullable SchemaPath path;
 
     AbstractTypeDefinition(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        this.path = requireNonNull(path);
+        this.path = path;
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
     }
 

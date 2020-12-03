@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc6241.parser;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -45,12 +47,13 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
     private static final class Effective
             extends UnknownEffectiveStatementBase<Void, GetFilterElementAttributesStatement>
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
-        private final @NonNull SchemaPath path;
+        private final @Nullable SchemaPath path;
 
         Effective(final Current<Void, GetFilterElementAttributesStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getEffectiveParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath()
+                    .createChild(stmt.publicDefinition().getStatementName()));
         }
 
         @Override
