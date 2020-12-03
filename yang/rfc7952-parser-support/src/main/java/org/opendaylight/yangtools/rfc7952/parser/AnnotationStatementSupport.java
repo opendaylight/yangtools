@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc7952.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -47,12 +49,12 @@ public final class AnnotationStatementSupport
             implements AnnotationEffectiveStatement, AnnotationSchemaNode {
 
         private final @NonNull TypeDefinition<?> type;
-        private final @NonNull SchemaPath path;
+        private final @Nullable SchemaPath path;
 
         Effective(final Current<QName, AnnotationStatement> stmt,
                   final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getEffectiveParent().getSchemaPath().createChild(argument());
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(argument()));
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), stmt,
