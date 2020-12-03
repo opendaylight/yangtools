@@ -79,7 +79,7 @@ abstract class AbstractIdentityRefSpecificationSupport
             throw noBase(stmt);
         }
 
-        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(stmt.getSchemaPath());
+        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(stmt.wrapSchemaPath());
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof BaseEffectiveStatement) {
                 final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();

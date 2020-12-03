@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -37,12 +40,13 @@ public final class DefaultDenyAllStatementSupport
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyAllStatement>
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
-        private final @NonNull SchemaPath path;
+        private final @Nullable SchemaPath path;
 
         Effective(final Current<Void, DefaultDenyAllStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getEffectiveParent().getSchemaPath().createChild(stmt.publicDefinition().getStatementName());
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath()
+                    .createChild(stmt.publicDefinition().getStatementName()));
         }
 
         @Override
@@ -53,7 +57,7 @@ public final class DefaultDenyAllStatementSupport
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return path;
+            return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
         }
 
         @Override

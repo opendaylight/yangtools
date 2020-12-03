@@ -63,7 +63,7 @@ final class UnionSpecificationSupport
             throw noType(stmt);
         }
 
-        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.getSchemaPath());
+        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(stmt.wrapSchemaPath());
 
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof TypeEffectiveStatement) {
