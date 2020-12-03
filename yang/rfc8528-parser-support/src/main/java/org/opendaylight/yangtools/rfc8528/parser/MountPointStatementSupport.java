@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.rfc8528.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -24,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -42,12 +45,12 @@ public final class MountPointStatementSupport
     private static final class Effective extends UnknownEffectiveStatementBase<QName, MountPointStatement>
             implements MountPointEffectiveStatement, MountPointSchemaNode {
 
-        private final @NonNull SchemaPath path;
+        private final @Nullable SchemaPath path;
 
         Effective(final Current<QName, MountPointStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = stmt.getEffectiveParent().getSchemaPath().createChild(argument());
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(argument()));
         }
 
         @Override
@@ -58,7 +61,7 @@ public final class MountPointStatementSupport
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return path;
+            return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
         }
 
         @Override
