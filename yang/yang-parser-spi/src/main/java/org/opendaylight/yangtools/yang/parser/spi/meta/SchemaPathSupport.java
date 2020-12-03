@@ -16,10 +16,24 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Beta
 // FIXME: remove this class once we ditch SchemaPath.getPath()
 public abstract class SchemaPathSupport implements Immutable {
+    private static final class Disabled extends SchemaPathSupport {
+        @Override
+        QName effectivePath(final SchemaPath path) {
+            return verifyNotNull(path.getLastComponent());
+        }
+
+        @Override
+        SchemaPath optionalPath(final SchemaPath path) {
+            return null;
+        }
+    }
+
     private static final class Enabled extends SchemaPathSupport {
         @Override
         SchemaPath effectivePath(final SchemaPath path) {
@@ -32,7 +46,21 @@ public abstract class SchemaPathSupport implements Immutable {
         }
     }
 
-    private static final SchemaPathSupport DEFAULT = new Enabled();
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaPathSupport.class);
+    private static final String ENABLE_PROPERTY = "org.opendaylight.yangtools.schemanode.getpath";
+
+    private static final SchemaPathSupport DEFAULT;
+
+    static {
+        // Forbid creating the SchemaPath in SchemaNode if property "schemanode.getpath.forbid" is set to "enabled"
+        // schemanode.getpath.forbid=enabled
+        if (System.getProperty(ENABLE_PROPERTY, "enabled").equals("disabled")) {
+            LOG.info("SchemaNode.getPath() support disabled");
+            DEFAULT = new Disabled();
+        } else {
+            DEFAULT = new Enabled();
+        }
+    }
 
     private SchemaPathSupport() {
         // Hidden on purpose
