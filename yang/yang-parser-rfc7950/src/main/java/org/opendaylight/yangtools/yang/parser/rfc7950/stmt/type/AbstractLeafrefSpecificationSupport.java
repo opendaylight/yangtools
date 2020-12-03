@@ -52,7 +52,7 @@ abstract class AbstractLeafrefSpecificationSupport
             throw noPath(stmt);
         }
 
-        final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(stmt.getSchemaPath());
+        final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(stmt.wrapSchemaPath());
 
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof PathEffectiveStatement) {

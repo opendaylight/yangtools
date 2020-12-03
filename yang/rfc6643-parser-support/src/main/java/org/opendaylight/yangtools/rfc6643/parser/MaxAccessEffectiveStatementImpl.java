@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 
 final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBase<MaxAccess, MaxAccessStatement>
         implements MaxAccessEffectiveStatement, MaxAccessSchemaNode {
@@ -26,7 +27,7 @@ final class MaxAccessEffectiveStatementImpl extends UnknownEffectiveStatementBas
     MaxAccessEffectiveStatementImpl(final Current<MaxAccess, MaxAccessStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override
