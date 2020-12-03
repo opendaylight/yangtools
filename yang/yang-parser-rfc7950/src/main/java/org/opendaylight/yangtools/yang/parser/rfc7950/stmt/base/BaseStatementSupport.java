@@ -67,8 +67,7 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
 
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    throw new InferenceException(baseStmtCtx.sourceReference(),
-                        "Unable to resolve identity %s and base identity %s",
+                    throw new InferenceException(baseStmtCtx, "Unable to resolve identity %s and base identity %s",
                         baseParentCtx.argument(), baseStmtCtx.argument());
                 }
             });

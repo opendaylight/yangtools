@@ -53,9 +53,8 @@ abstract class AbstractAugmentStatementSupport
     @Override
     public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
-            || PATH_REL_PATTERN2.matcher(value).matches(), ctx.sourceReference(),
-            "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
-            value);
+            || PATH_REL_PATTERN2.matcher(value).matches(), ctx,
+            "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses", value);
 
         // As per:
         //   https://tools.ietf.org/html/rfc6020#section-7.15
@@ -67,10 +66,10 @@ abstract class AbstractAugmentStatementSupport
         final SchemaNodeIdentifier result = ArgumentUtils.nodeIdentifierFromPath(ctx, value);
         final StatementDefinition parent = ctx.coerceParentContext().publicDefinition();
         if (parent == YangStmtMapping.USES) {
-            SourceException.throwIf(result instanceof Absolute, ctx.sourceReference(),
+            SourceException.throwIf(result instanceof Absolute, ctx,
                 "Absolute schema node identifier is not allowed when used within a uses statement");
         } else {
-            SourceException.throwIf(result instanceof Descendant, ctx.sourceReference(),
+            SourceException.throwIf(result instanceof Descendant, ctx,
                 "Descendant schema node identifier is not allowed when used outside of a uses statement");
         }
         return result;
@@ -137,7 +136,7 @@ abstract class AbstractAugmentStatementSupport
                 StmtContextUtils.getRootModuleQName(stmt.caerbannog()), substatements,
                 (AugmentationSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 

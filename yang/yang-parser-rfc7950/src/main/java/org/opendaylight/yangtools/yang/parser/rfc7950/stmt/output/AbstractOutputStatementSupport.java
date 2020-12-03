@@ -69,7 +69,7 @@ abstract class AbstractOutputStatementSupport
         try {
             return new UndeclaredOutputEffectiveStatement(flags, substatements, stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 }

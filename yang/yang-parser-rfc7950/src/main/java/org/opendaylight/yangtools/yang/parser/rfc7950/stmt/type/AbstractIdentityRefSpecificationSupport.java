@@ -53,9 +53,9 @@ abstract class AbstractIdentityRefSpecificationSupport
         for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
             final QName baseIdentity = baseStmt.getArgument();
             final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
-            InferenceException.throwIfNull(stmtCtx, stmt.sourceReference(),
+            InferenceException.throwIfNull(stmtCtx, stmt,
                 "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
-                    baseIdentity.getLocalName());
+                baseIdentity.getLocalName());
         }
     }
 
@@ -100,6 +100,6 @@ abstract class AbstractIdentityRefSpecificationSupport
          *     statement, MUST be present at least once if the type is
          *     "identityref".
          */
-        return new SourceException("At least one base statement has to be present", stmt.sourceReference());
+        return new SourceException("At least one base statement has to be present", stmt);
     }
 }

@@ -117,9 +117,9 @@ public final class UsesStatementSupport
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(sourceGroupingPre), usesNode.sourceReference(),
+                InferenceException.throwIf(failed.contains(sourceGroupingPre), usesNode,
                     "Grouping '%s' was not resolved.", groupingName);
-                throw new InferenceException("Unknown error occurred.", usesNode.sourceReference());
+                throw new InferenceException("Unknown error occurred.", usesNode);
             }
         });
     }
@@ -293,13 +293,13 @@ public final class UsesStatementSupport
 
     private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
         final Object refineArgument = subStmtCtx.argument();
-        InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier), subStmtCtx.sourceReference(),
+        InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier), subStmtCtx,
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
         final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaTreeNamespace.findNode(
             usesParentCtx, (SchemaNodeIdentifier) refineArgument);
-        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx.sourceReference(),
-            "Refine target node %s not found.", refineArgument);
+        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx, "Refine target node %s not found.",
+            refineArgument);
 
         final StmtContext<?, ?, ?> refineTargetNodeCtx = optRefineTargetCtx.get();
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
@@ -331,7 +331,7 @@ public final class UsesStatementSupport
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.publicDefinition();
 
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
-                refineSubstatementCtx.sourceReference(),
+                refineSubstatementCtx,
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
                 refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
                 refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());

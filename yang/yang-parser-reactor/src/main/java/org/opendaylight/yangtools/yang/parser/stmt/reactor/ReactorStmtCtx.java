@@ -412,8 +412,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             isConfig = optConfig.orElseThrow();
             if (isConfig) {
                 // Validity check: if parent is config=false this cannot be a config=true
-                InferenceException.throwIf(!parent.effectiveConfig(), sourceReference(),
-                        "Parent node has config=false, this node must not be specifed as config=true");
+                InferenceException.throwIf(!parent.effectiveConfig(), this,
+                    "Parent node has config=false, this node must not be specifed as config=true");
             }
         } else {
             // If "config" statement is not specified, the default is the same as the parent's "config" value.

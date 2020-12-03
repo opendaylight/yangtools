@@ -38,7 +38,7 @@ public final class MinElementsStatementSupport
         try {
             return Integer.valueOf(value);
         } catch (NumberFormatException e) {
-            throw new SourceException("Invalid min-elements argument", ctx.sourceReference(), e);
+            throw new SourceException("Invalid min-elements argument", ctx, e);
         }
     }
 

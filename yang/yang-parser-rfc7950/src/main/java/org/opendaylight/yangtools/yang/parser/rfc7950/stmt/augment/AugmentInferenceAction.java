@@ -103,8 +103,7 @@ final class AugmentInferenceAction implements InferenceAction {
             }
         }
 
-        throw new InferenceException(augmentNode.sourceReference(), "Augment target '%s' not found",
-            augmentNode.argument());
+        throw new InferenceException(augmentNode, "Augment target '%s' not found", augmentNode.argument());
     }
 
     private void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
@@ -163,8 +162,7 @@ final class AugmentInferenceAction implements InferenceAction {
         if (sourceCtx.producesDeclared(DataDefinitionStatement.class)) {
             for (final StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
                 if (subStatement.producesDeclared(DataDefinitionStatement.class)) {
-                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()),
-                        sourceCtx.sourceReference(),
+                    InferenceException.throwIf(Objects.equals(sourceCtx.argument(), subStatement.argument()), sourceCtx,
                         "An augment cannot add node named '%s' because this name is already used in target",
                         sourceCtx.rawArgument());
                 }
@@ -184,7 +182,7 @@ final class AugmentInferenceAction implements InferenceAction {
             sourceCtx.allSubstatementsStream().forEach(AugmentInferenceAction::checkForMandatoryNodes);
         }
 
-        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx.sourceReference(),
+        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx,
             "An augment cannot add node '%s' because it is mandatory and in module different than target",
             sourceCtx.rawArgument());
     }

@@ -150,7 +150,7 @@ final class SubmoduleEffectiveStatementImpl
         return substatements.stream()
             .filter(BelongsToEffectiveStatement.class::isInstance)
             .map(BelongsToEffectiveStatement.class::cast)
-            .findAny().orElseThrow(() -> new SourceException(stmt.sourceReference(),
+            .findAny().orElseThrow(() -> new SourceException(stmt,
                 "Unable to find belongs-to statement in submodule %s.", stmt.rawArgument()));
     }
 

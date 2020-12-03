@@ -85,6 +85,6 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
          *     The "fraction-digits" statement, which is a substatement to the
          *     "type" statement, MUST be present if the type is "decimal64".
          */
-        return new SourceException("At least one fraction-digits statement has to be present", stmt.sourceReference());
+        return new SourceException("At least one fraction-digits statement has to be present", stmt);
     }
 }

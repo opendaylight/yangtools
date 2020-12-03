@@ -131,9 +131,8 @@ public final class SubstatementValidator {
             if (cardinality == null) {
                 if (ctx.getFromNamespace(ExtensionNamespace.class, key.getStatementName()) == null) {
                     final StmtContext<?, ?, ?> root = ctx.getRoot();
-                    throw new InvalidSubstatementException(ctx.sourceReference(),
-                        "%s is not valid for %s. Error in module %s (%s)", key, currentStatement, root.rawArgument(),
-                        ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
+                    throw new InvalidSubstatementException(ctx, "%s is not valid for %s. Error in module %s (%s)", key,
+                        currentStatement, root.rawArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
                 }
 
                 continue;
@@ -142,7 +141,7 @@ public final class SubstatementValidator {
             if (cardinality.getMin() > 0) {
                 if (cardinality.getMin() > value) {
                     final StmtContext<?, ?, ?> root = ctx.getRoot();
-                    throw new InvalidSubstatementException(ctx.sourceReference(),
+                    throw new InvalidSubstatementException(ctx,
                         "Minimal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
                         cardinality.getMin(), value, root.rawArgument(),
                         ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
@@ -153,7 +152,7 @@ public final class SubstatementValidator {
             }
             if (cardinality.getMax() < value) {
                 final StmtContext<?, ?, ?> root = ctx.getRoot();
-                throw new InvalidSubstatementException(ctx.sourceReference(),
+                throw new InvalidSubstatementException(ctx,
                     "Maximal count of %s for %s is %s, detected %s. Error in module %s (%s)", key, currentStatement,
                     cardinality.getMax(), value, root.rawArgument(),
                     ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
@@ -165,7 +164,7 @@ public final class SubstatementValidator {
             final Entry<StatementDefinition, Cardinality> e = missingMandatory.entrySet().iterator().next();
             final StmtContext<?, ?, ?> root = ctx.getRoot();
 
-            throw new MissingSubstatementException(ctx.sourceReference(),
+            throw new MissingSubstatementException(ctx,
                 "%s is missing %s. Minimal count is %s. Error in module %s (%s)", currentStatement, e.getKey(),
                 e.getValue().getMin(), root.rawArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class, root));
         }
