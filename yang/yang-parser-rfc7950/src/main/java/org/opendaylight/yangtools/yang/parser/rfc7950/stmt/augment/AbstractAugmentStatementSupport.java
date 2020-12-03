@@ -53,9 +53,8 @@ abstract class AbstractAugmentStatementSupport
     @Override
     public final SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
-            || PATH_REL_PATTERN2.matcher(value).matches(), ctx.sourceReference(),
-            "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
-            value);
+            || PATH_REL_PATTERN2.matcher(value).matches(), ctx,
+            "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses", value);
 
         // As per:
         //   https://tools.ietf.org/html/rfc6020#section-7.15

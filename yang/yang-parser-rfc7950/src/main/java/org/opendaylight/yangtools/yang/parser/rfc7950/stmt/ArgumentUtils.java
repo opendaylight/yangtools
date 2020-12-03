@@ -70,8 +70,7 @@ public final class ArgumentUtils {
             return Boolean.FALSE;
         } else {
             final StatementDefinition def = ctx.publicDefinition();
-            throw new SourceException(ctx.sourceReference(),
-                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
+            throw new SourceException(ctx, "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
                 def.getStatementName(), def.getArgumentDefinition().get().getArgumentName(), input);
         }
     }
@@ -109,7 +108,7 @@ public final class ArgumentUtils {
         }
 
         if (qnames.isEmpty()) {
-            throw new SourceException("Schema node identifier must not be empty", ctx.sourceReference());
+            throw new SourceException("Schema node identifier must not be empty", ctx);
         }
         return qnames;
     }

@@ -63,8 +63,8 @@ abstract class AbstractSubmoduleStatementSupport
         final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
             possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
-            throw new SourceException(stmt.sourceReference(), "Submodule name collision: %s. At %s",
-                    stmt.rawArgument(), possibleDuplicateSubmodule.sourceReference());
+            throw new SourceException(stmt, "Submodule name collision: %s. At %s", stmt.rawArgument(),
+                possibleDuplicateSubmodule.sourceReference());
         }
 
         stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
@@ -105,6 +105,6 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     private static SourceException noBelongsTo(final CommonStmtCtx stmt) {
-        return new SourceException("No belongs-to declared in submodule", stmt.sourceReference());
+        return new SourceException("No belongs-to declared in submodule", stmt);
     }
 }

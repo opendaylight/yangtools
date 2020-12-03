@@ -72,6 +72,6 @@ abstract class AbstractLeafrefSpecificationSupport
          *     When the type is "union", the "type" statement (Section 7.4) MUST be
          *     present.
          */
-        return new SourceException("A path statement has to be present", stmt.sourceReference());
+        return new SourceException("A path statement has to be present", stmt);
     }
 }

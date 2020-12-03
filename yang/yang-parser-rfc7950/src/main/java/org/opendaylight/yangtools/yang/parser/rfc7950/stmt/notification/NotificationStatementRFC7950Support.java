@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Class providing necessary support for processing YANG 1.1 Notification
@@ -65,13 +64,12 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
     @Override
     void checkEffective(final Current<QName, NotificationStatement> stmt) {
         final QName argument = stmt.argument();
-        final StatementSourceReference ref = stmt.sourceReference();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), ref,
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), stmt,
             "Notification %s is defined within an rpc, action, or another notification", argument);
         SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), ref,
+            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), stmt,
             "Notification %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), ref,
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), stmt,
             "Notification %s is defined within a case statement", argument);
     }
 }

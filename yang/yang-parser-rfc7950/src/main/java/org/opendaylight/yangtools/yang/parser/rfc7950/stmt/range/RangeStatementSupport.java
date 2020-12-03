@@ -61,7 +61,7 @@ public final class RangeStatementSupport
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.sourceReference(),
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx,
                     "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
                 SourceException.throwIf(boundaries.hasNext(), ctx.sourceReference(),
                     "Wrong number of boundaries in range constraint %s", singleRange);

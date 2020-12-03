@@ -75,8 +75,7 @@ abstract class AbstractLeafListStatementSupport
         // FIXME: We need to interpret the default value in terms of supplied element type
         SourceException.throwIf(
                 EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, defaultValues),
-                stmt.sourceReference(),
-                "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+                stmt, "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
                 stmt.argument(), defaultValues);
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict

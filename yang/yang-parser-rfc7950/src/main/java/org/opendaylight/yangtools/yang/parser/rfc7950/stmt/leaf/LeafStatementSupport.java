@@ -87,8 +87,7 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
         final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
         SourceException.throwIf(
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt),
-            stmt.sourceReference(),
-            "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
+            stmt, "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         final SchemaPath path = stmt.getSchemaPath();
         final LeafSchemaNode original = (LeafSchemaNode) stmt.original();

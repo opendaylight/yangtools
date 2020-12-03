@@ -67,8 +67,7 @@ public final class FractionDigitsStatementSupport
                 value);
         }
         if (fractionDigits < 1 || fractionDigits > 18) {
-            throw new SourceException("fraction-digits argument should be integer within [1..18]",
-                ctx.sourceReference());
+            throw new SourceException("fraction-digits argument should be integer within [1..18]", ctx);
         }
         return fractionDigits;
     }

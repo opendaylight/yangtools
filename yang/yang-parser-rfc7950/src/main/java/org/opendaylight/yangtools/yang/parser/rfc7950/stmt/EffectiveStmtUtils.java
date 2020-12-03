@@ -44,7 +44,7 @@ public final class EffectiveStmtUtils {
 
     public static SourceException createNameCollisionSourceException(final EffectiveStmtCtx.Current<?, ?> stmt,
             final EffectiveStatement<?, ?> effectiveStatement) {
-        return new SourceException(stmt.sourceReference(),
+        return new SourceException(stmt,
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
             stmt.root().rawArgument(), effectiveStatement.argument(), effectiveStatement.argument());
     }

@@ -103,7 +103,7 @@ final class EnumSpecificationSupport
          *     The "enum" statement, which is a substatement to the "type"
          *     statement, MUST be present if the type is "enumeration".
          */
-        return new SourceException("At least one enum statement has to be present", stmt.sourceReference());
+        return new SourceException("At least one enum statement has to be present", stmt);
     }
 
 }

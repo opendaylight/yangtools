@@ -68,8 +68,7 @@ abstract class AbstractChoiceStatementSupport
             try {
                 qname = QName.create(stmt.getArgument(), defaultArg);
             } catch (IllegalArgumentException e) {
-                throw new SourceException(stmt.sourceReference(), "Default statement has invalid name '%s'", defaultArg,
-                    e);
+                throw new SourceException(stmt, e, "Default statement has invalid name '%s'", defaultArg);
             }
 
             // FIXME: this does not work with submodules, as they are

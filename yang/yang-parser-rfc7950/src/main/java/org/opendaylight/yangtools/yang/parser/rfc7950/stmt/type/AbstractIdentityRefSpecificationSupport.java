@@ -100,6 +100,6 @@ abstract class AbstractIdentityRefSpecificationSupport
          *     statement, MUST be present at least once if the type is
          *     "identityref".
          */
-        return new SourceException("At least one base statement has to be present", stmt.sourceReference());
+        return new SourceException("At least one base statement has to be present", stmt);
     }
 }

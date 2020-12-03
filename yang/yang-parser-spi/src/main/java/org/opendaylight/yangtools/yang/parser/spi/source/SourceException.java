@@ -13,6 +13,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 
 /**
  * Thrown to indicate error in YANG model source.
@@ -33,6 +34,17 @@ public class SourceException extends RuntimeException {
     public SourceException(final @NonNull String message, final @NonNull StatementSourceReference source) {
         super(createMessage(message, source));
         sourceRef = source;
+    }
+
+    /**
+     * Create a new instance with the specified message and source. The message will be appended with the source
+     * reference.
+     *
+     * @param message Context message
+     * @param stmt Statement context, not retained
+     */
+    public SourceException(final @NonNull String message, final @NonNull CommonStmtCtx stmt) {
+        this(message, stmt.sourceReference());
     }
 
     /**
@@ -66,6 +78,18 @@ public class SourceException extends RuntimeException {
      * Create a new instance with the specified source and a formatted message. The message will be appended with
      * the source reference.
      *
+     * @param stmt Statement context, not retained
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     */
+    public SourceException(final @NonNull CommonStmtCtx stmt, final @NonNull String format, final Object... args) {
+        this(stmt.sourceReference(), format, args);
+    }
+
+    /**
+     * Create a new instance with the specified source and a formatted message. The message will be appended with
+     * the source reference.
+     *
      * @param source Statement source
      * @param cause Underlying cause of this exception
      * @param format Format string, according to {@link String#format(String, Object...)}.
@@ -83,6 +107,23 @@ public class SourceException extends RuntimeException {
      */
     public @NonNull StatementSourceReference getSourceReference() {
         return sourceRef;
+    }
+
+    /**
+     * Throw an instance of this exception if an expression evaluates to true. If the expression evaluates to false,
+     * this method does nothing.
+     *
+     * @param expression Expression to be evaluated
+     * @param source Statement source reference
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @throws SourceException if the expression evaluates to true.
+     */
+    public static void throwIf(final boolean expression, final @NonNull CommonStmtCtx stmt,
+            final @NonNull String format, final Object... args) {
+        if (expression) {
+            throw new SourceException(stmt, format, args);
+        }
     }
 
     /**

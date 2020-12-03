@@ -409,7 +409,7 @@ abstract class AbstractTypeStatementSupport
             }
             if (stmt instanceof FractionDigitsEffectiveStatement) {
                 final Integer digits = ((FractionDigitsEffectiveStatement)stmt).argument();
-                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx.sourceReference(),
+                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx,
                     "Cannot override fraction-digits from base type %s to %s", baseType, digits);
             }
         }

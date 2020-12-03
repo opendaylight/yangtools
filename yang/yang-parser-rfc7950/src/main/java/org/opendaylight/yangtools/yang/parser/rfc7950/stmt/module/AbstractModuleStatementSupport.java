@@ -111,8 +111,8 @@ abstract class AbstractModuleStatementSupport
         final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
-            throw new SourceException(stmt.sourceReference(), "Module namespace collision: %s. At %s",
-                    qNameModule.getNamespace(), possibleDuplicateModule.sourceReference());
+            throw new SourceException(stmt, "Module namespace collision: %s. At %s", qNameModule.getNamespace(),
+                possibleDuplicateModule.sourceReference());
         }
 
         final String moduleName = stmt.getRawArgument();
@@ -204,7 +204,7 @@ abstract class AbstractModuleStatementSupport
     }
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {
-        return new SourceException("No namespace declared in module", stmt.sourceReference());
+        return new SourceException("No namespace declared in module", stmt);
     }
 
     private static void addToSemVerModuleNamespace(
