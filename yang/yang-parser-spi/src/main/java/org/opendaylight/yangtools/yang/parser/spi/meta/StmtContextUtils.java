@@ -544,7 +544,7 @@ public final class StmtContextUtils {
         return internedQName(ctx, getRootModuleQName(ctx), localName);
     }
 
-    private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QNameModule module,
+    private static QName internedQName(final CommonStmtCtx ctx, final QNameModule module,
             final String localName) {
         final QName template;
         try {
