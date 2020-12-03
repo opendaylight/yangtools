@@ -13,10 +13,12 @@ import org.opendaylight.yangtools.rfc6643.model.api.ImpliedEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 
 final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, ImpliedStatement>
         implements ImpliedEffectiveStatement, ImpliedSchemaNode {
@@ -26,7 +28,7 @@ final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<
     ImpliedEffectiveStatementImpl(final Current<String, ImpliedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override
@@ -37,7 +39,7 @@ final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

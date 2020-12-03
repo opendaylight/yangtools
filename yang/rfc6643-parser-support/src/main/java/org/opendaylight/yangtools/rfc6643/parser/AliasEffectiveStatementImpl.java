@@ -13,10 +13,12 @@ import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasSchemaNode;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 
 final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, AliasStatement>
         implements AliasEffectiveStatement, AliasSchemaNode {
@@ -25,7 +27,7 @@ final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<St
     AliasEffectiveStatementImpl(final Current<String, AliasStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType());
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override
@@ -36,7 +38,7 @@ final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<St
     @Override
     @Deprecated
     public SchemaPath getPath() {
-        return path;
+        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

@@ -64,7 +64,7 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
             throw noFracDigits(stmt);
         }
 
-        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.getSchemaPath());
+        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(stmt.wrapSchemaPath());
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof FractionDigitsEffectiveStatement) {
                 builder.setFractionDigits(((FractionDigitsEffectiveStatement) subStmt).argument());

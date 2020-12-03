@@ -63,7 +63,7 @@ final class EnumSpecificationSupport
             throw noEnum(stmt);
         }
 
-        final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.getSchemaPath());
+        final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(stmt.wrapSchemaPath());
         Integer highestValue = null;
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof EnumEffectiveStatement) {
