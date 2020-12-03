@@ -51,7 +51,7 @@ abstract class AbstractIdentityStatementSupport
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         final QName qname = stmt.getArgument();
         final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(IdentityNamespace.class, qname);
-        SourceException.throwIf(prev != null, stmt.sourceReference(), "Duplicate identity definition %s", qname);
+        SourceException.throwIf(prev != null, stmt, "Duplicate identity definition %s", qname);
         stmt.addToNs(IdentityNamespace.class, qname, stmt);
     }
 

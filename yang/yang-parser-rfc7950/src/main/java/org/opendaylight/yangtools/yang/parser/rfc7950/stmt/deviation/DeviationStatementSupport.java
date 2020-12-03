@@ -55,7 +55,7 @@ public final class DeviationStatementSupport
         final QNameModule targetModule = Iterables.getLast(ctx.getArgument().getNodeIdentifiers()).getModule();
 
         if (currentModule.equals(targetModule)) {
-            throw new InferenceException(ctx.sourceReference(),
+            throw new InferenceException(ctx,
                     "Deviation must not target the same module as the one it is defined in: %s", currentModule);
         }
     }

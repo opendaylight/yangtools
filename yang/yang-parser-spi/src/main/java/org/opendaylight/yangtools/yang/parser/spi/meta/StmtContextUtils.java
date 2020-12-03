@@ -453,7 +453,7 @@ public final class StmtContextUtils {
         leafStmtCtx.allSubstatements().forEach(leafSubstmtCtx -> {
             final StatementDefinition statementDef = leafSubstmtCtx.publicDefinition();
             SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
-                    || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx.sourceReference(),
+                    || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx,
                     "%s statement is not allowed in %s leaf statement which is specified as a list key.",
                     statementDef.getStatementName(), leafStmtCtx.argument());
         });
@@ -489,7 +489,7 @@ public final class StmtContextUtils {
                 }
         }
 
-        return internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx.sourceReference(),
+        return internedQName(ctx, InferenceException.throwIfNull(qnameModule, ctx,
             "Cannot resolve QNameModule for '%s'", value), localName);
     }
 
@@ -503,14 +503,14 @@ public final class StmtContextUtils {
      * @throws SourceException if the string is not a valid YANG identifier
      */
     public static QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx.sourceReference(), "Identifier may not be an empty string");
+        SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
         return internedQName(ctx, str);
     }
 
     public static QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
-            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx.sourceReference(),
+            InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
                 "Cannot resolve QNameModule for '%s'", prefix),
             localName);
     }
@@ -525,7 +525,7 @@ public final class StmtContextUtils {
      * @throws SourceException if the string is not a valid YANG node identifier
      */
     public static QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx.sourceReference(), "Node identifier may not be an empty string");
+        SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
 
         final int colon = str.indexOf(':');
         if (colon == -1) {
@@ -533,9 +533,9 @@ public final class StmtContextUtils {
         }
 
         final String prefix = str.substring(0, colon);
-        SourceException.throwIf(prefix.isEmpty(), ctx.sourceReference(), "String '%s' has an empty prefix", str);
+        SourceException.throwIf(prefix.isEmpty(), ctx, "String '%s' has an empty prefix", str);
         final String localName = str.substring(colon + 1);
-        SourceException.throwIf(localName.isEmpty(), ctx.sourceReference(), "String '%s' has an empty identifier", str);
+        SourceException.throwIf(localName.isEmpty(), ctx, "String '%s' has an empty identifier", str);
 
         return parseNodeIdentifier(ctx, prefix, localName);
     }
@@ -550,7 +550,7 @@ public final class StmtContextUtils {
         try {
             template = QName.create(module, localName);
         } catch (IllegalArgumentException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Invalid identifier '%s'", localName);
+            throw new SourceException(ctx, e, "Invalid identifier '%s'", localName);
         }
         return template.intern();
     }

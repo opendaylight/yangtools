@@ -87,9 +87,8 @@ abstract class AbstractListStatementSupport extends
             }
             for (final QName keyQName : keyStmt.argument()) {
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(stmt.sourceReference(),
-                        "Key '%s' misses node '%s' in list '%s'", keyStmt.getDeclared().rawArgument(),
-                        keyQName.getLocalName(), stmt.argument());
+                    throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
+                        keyStmt.getDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
                 }
                 keyDefinitionInit.add(keyQName);
             }
@@ -124,7 +123,7 @@ abstract class AbstractListStatementSupport extends
                     : new RegularListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition,
                         elementCountConstraint.orElse(null), original);
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 

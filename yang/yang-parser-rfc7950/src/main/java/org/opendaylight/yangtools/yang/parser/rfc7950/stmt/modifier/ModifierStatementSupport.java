@@ -36,7 +36,7 @@ public final class ModifierStatementSupport
 
     @Override
     public ModifierKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SourceException.unwrap(ModifierKind.parse(value), ctx.sourceReference(),
+        return SourceException.unwrap(ModifierKind.parse(value), ctx,
             "'%s' is not valid argument of modifier statement", value);
     }
 

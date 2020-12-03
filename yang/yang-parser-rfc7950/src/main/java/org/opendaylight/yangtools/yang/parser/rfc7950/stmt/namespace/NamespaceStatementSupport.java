@@ -42,7 +42,7 @@ public final class NamespaceStatementSupport
         try {
             return new URI(value);
         } catch (URISyntaxException e) {
-            throw new SourceException(ctx.sourceReference(), e, "Invalid namespace \"%s\"", value);
+            throw new SourceException(ctx, e, "Invalid namespace \"%s\"", value);
         }
     }
 

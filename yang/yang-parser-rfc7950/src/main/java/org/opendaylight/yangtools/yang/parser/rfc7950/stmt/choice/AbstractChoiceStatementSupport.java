@@ -68,13 +68,12 @@ abstract class AbstractChoiceStatementSupport
             try {
                 qname = QName.create(stmt.getArgument(), defaultArg);
             } catch (IllegalArgumentException e) {
-                throw new SourceException(stmt.sourceReference(), "Default statement has invalid name '%s'", defaultArg,
-                    e);
+                throw new SourceException(stmt, e, "Default statement has invalid name '%s'", defaultArg);
             }
 
             // FIXME: this does not work with submodules, as they are
-            defaultCase = InferenceException.throwIfNull(findCase(qname, substatements),
-                    stmt.sourceReference(), "Default statement refers to missing case %s", qname);
+            defaultCase = InferenceException.throwIfNull(findCase(qname, substatements), stmt,
+                "Default statement refers to missing case %s", qname);
         } else {
             defaultCase = null;
         }
@@ -89,7 +88,7 @@ abstract class AbstractChoiceStatementSupport
             return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, flags, stmt.wrapSchemaPath(),
                 defaultCase, (ChoiceSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
-            throw new SourceException(e.getMessage(), stmt.sourceReference(), e);
+            throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 

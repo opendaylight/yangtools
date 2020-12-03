@@ -55,7 +55,7 @@ public final class AnnotationStatementSupport
             path = stmt.getEffectiveParent().getSchemaPath().createChild(argument());
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-                firstSubstatementOfType(TypeEffectiveStatement.class), stmt.sourceReference(),
+                firstSubstatementOfType(TypeEffectiveStatement.class), stmt,
                 "AnnotationStatementSupport %s is missing a 'type' statement", argument());
 
             final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
@@ -125,7 +125,7 @@ public final class AnnotationStatementSupport
     public void onStatementAdded(final Mutable<QName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
         final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
-                stmt.sourceReference(), "Annotations may only be defined at root of either a module or a submodule");
+                stmt, "Annotations may only be defined at root of either a module or a submodule");
     }
 
     @Override

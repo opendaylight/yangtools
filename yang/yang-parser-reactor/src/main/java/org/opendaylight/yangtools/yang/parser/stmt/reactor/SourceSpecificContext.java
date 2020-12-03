@@ -333,7 +333,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         }
 
         final String message = String.format("Yang model processing phase %s failed", identifier);
-        final InferenceException e = new InferenceException(message, root.sourceReference(), exceptions.get(0));
+        final InferenceException e = new InferenceException(message, root, exceptions.get(0));
         exceptions.listIterator(1).forEachRemaining(e::addSuppressed);
 
         return Optional.of(e);

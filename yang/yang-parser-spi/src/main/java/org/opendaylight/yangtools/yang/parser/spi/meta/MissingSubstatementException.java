@@ -26,6 +26,11 @@ public class MissingSubstatementException extends SourceException {
         super(message, source, cause);
     }
 
+    public MissingSubstatementException(final @NonNull CommonStmtCtx stmt, final @NonNull String format,
+            final Object... args) {
+        this(stmt.sourceReference(), format, args);
+    }
+
     public MissingSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
         this(String.format(format, args), source);

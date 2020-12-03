@@ -75,7 +75,7 @@ final class BitsSpecificationSupport
                 final Uint32 effectivePos;
                 if (declaredPosition.isEmpty()) {
                     if (highestPosition != null) {
-                        SourceException.throwIf(Uint32.MAX_VALUE.equals(highestPosition), stmt.sourceReference(),
+                        SourceException.throwIf(Uint32.MAX_VALUE.equals(highestPosition), stmt,
                             "Bit %s must have a position statement", bitSubStmt);
                         effectivePos = Uint32.fromIntBits(highestPosition.intValue() + 1);
                     } else {
@@ -104,6 +104,6 @@ final class BitsSpecificationSupport
          *     The "bit" statement, which is a substatement to the "type" statement,
          *     MUST be present if the type is "bits".
          */
-        return new SourceException("At least one bit statement has to be present", stmt.sourceReference());
+        return new SourceException("At least one bit statement has to be present", stmt);
     }
 }

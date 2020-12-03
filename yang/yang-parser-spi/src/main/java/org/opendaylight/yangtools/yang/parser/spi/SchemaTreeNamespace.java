@@ -92,7 +92,7 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
             SchemaTreeNamespace.class, key, value);
 
         if (prev != null) {
-            throw new SourceException(value.sourceReference(),
+            throw new SourceException(value,
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
                 value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
         }

@@ -29,14 +29,13 @@ public final class TypeStatementRFC6020Support extends AbstractTypeStatementSupp
 
     @Override
     Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
-        throw new SourceException("Restricted bits type is not allowed in YANG version 1", stmt.sourceReference());
+        throw new SourceException("Restricted bits type is not allowed in YANG version 1", stmt);
     }
 
 
     @Override
     EnumPair addRestrictedEnum(final EffectiveStmtCtx stmt, final EnumTypeDefinition base,
             final EnumEffectiveStatement enumStmt) {
-        throw new SourceException("Restricted enumeration type is not allowed in YANG version 1",
-            stmt.sourceReference());
+        throw new SourceException("Restricted enumeration type is not allowed in YANG version 1", stmt);
     }
 }
