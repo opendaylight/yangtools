@@ -42,8 +42,7 @@ public final class ExtensionStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .build();
     private static final ExtensionStatementSupport INSTANCE = new ExtensionStatementSupport();
-    // FIXME: YANGTOOLS-1185: use EffectiveStmtCtx.Current as key
-    private static final ThreadLocal<Map<StmtContext<?, ?, ?>, ExtensionEffectiveStatementImpl>> TL_BUILDERS =
+    private static final ThreadLocal<Map<Current<?, ?>, ExtensionEffectiveStatementImpl>> TL_BUILDERS =
             new ThreadLocal<>();
 
     private ExtensionStatementSupport() {
@@ -101,14 +100,13 @@ public final class ExtensionStatementSupport
     public ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
-        Map<StmtContext<?, ?, ?>, ExtensionEffectiveStatementImpl> tl = TL_BUILDERS.get();
+        Map<Current<?, ?>, ExtensionEffectiveStatementImpl> tl = TL_BUILDERS.get();
         if (tl == null) {
             tl = new IdentityHashMap<>();
             TL_BUILDERS.set(tl);
         }
 
-        final StmtContext<?, ?, ?> ctx = stmt.caerbannog();
-        final ExtensionEffectiveStatementImpl existing = tl.get(ctx);
+        final ExtensionEffectiveStatementImpl existing = tl.get(stmt);
         if (existing != null) {
             // Implies non-empty map, no cleanup necessary
             return existing;
@@ -117,11 +115,11 @@ public final class ExtensionStatementSupport
         try {
             final ExtensionEffectiveStatementImpl created = new ExtensionEffectiveStatementImpl(stmt.declared(),
                 stmt.getSchemaPath());
-            verify(tl.put(ctx, created) == null);
+            verify(tl.put(stmt, created) == null);
             try {
                 return super.createEffective(stmt, declaredSubstatements, effectiveSubstatements);
             } finally {
-                verify(tl.remove(ctx) == created);
+                verify(tl.remove(stmt) == created);
             }
         } finally {
             if (tl.isEmpty()) {
@@ -134,7 +132,7 @@ public final class ExtensionStatementSupport
     protected ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final ExtensionEffectiveStatementImpl ret = verifyNotNull(verifyNotNull(TL_BUILDERS.get(),
-            "Statement build state not initialized").get(stmt.caerbannog()), "No build state found for %s", stmt);
+            "Statement build state not initialized").get(stmt), "No build state found for %s", stmt);
         ret.setSubstatements(substatements);
         return ret;
     }
