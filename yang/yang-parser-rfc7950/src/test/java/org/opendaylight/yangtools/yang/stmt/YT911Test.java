@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -25,18 +26,18 @@ public class YT911Test {
     public void testAugmentationConfig() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSource("/bugs/YT911/foo.yang");
         final DataSchemaNode foo = context.findDataChildByName(FOO).get();
-        assertFalse(foo.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), foo.effectiveConfig());
         assertTrue(foo instanceof ContainerSchemaNode);
 
         // Instantiated node
         final DataSchemaNode bar = ((ContainerSchemaNode) foo).findDataTreeChild(BAR).get();
-        assertFalse(bar.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), bar.effectiveConfig());
         assertTrue(foo instanceof ContainerSchemaNode);
 
         // Original augmentation node
         final AugmentationSchemaNode aug = ((ContainerSchemaNode) foo).getAvailableAugmentations().iterator().next();
         final DataSchemaNode augBar = aug.findDataTreeChild(BAR).get();
-        assertTrue(augBar.isConfiguration());
+        assertEquals(Optional.empty(), augBar.effectiveConfig());
         assertTrue(foo instanceof ContainerSchemaNode);
     }
 }

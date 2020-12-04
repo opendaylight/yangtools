@@ -103,7 +103,7 @@ abstract class AbstractListStatementSupport extends
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(configuration.asLegacy())
+                .setConfiguration(configuration.asNullable())
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                     .equals(Ordering.USER))
                 .toFlags();

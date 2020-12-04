@@ -315,6 +315,6 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      * @return {@code true} if the node matches the tree type, {@code false} otherwise.
      */
     static final boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
-        return treeType == TreeType.OPERATIONAL || node.isConfiguration();
+        return treeType == TreeType.OPERATIONAL || node.effectiveConfig().orElse(Boolean.TRUE);
     }
 }

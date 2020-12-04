@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseImplicitStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -88,11 +90,43 @@ abstract class AbstractCaseStatementSupport
 
     private static int computeFlags(final Current<?, ?> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final Boolean config;
+        final EffectiveConfig effective = stmt.effectiveConfig();
+        switch (effective) {
+            case FALSE:
+                config = Boolean.FALSE;
+                break;
+            case IGNORED:
+                config = null;
+                break;
+            case TRUE:
+                final Boolean sub = substatementEffectiveConfig(substatements);
+                config = sub != null ? sub : Boolean.TRUE;
+                break;
+            case UNDETERMINED:
+                config = substatementEffectiveConfig(substatements);
+                break;
+            default:
+                throw new IllegalStateException("Unhandled effective config " + effective);
+        }
+
         return new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig().asLegacy() && substatements.stream().anyMatch(
-                    sub -> sub instanceof DataSchemaNode && ((DataSchemaNode) sub).isConfiguration()))
+                .setConfiguration(config)
                 .toFlags();
+    }
+
+    private static Boolean substatementEffectiveConfig(
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        for (EffectiveStatement<?, ?> stmt : substatements) {
+            if (stmt instanceof DataSchemaNode) {
+                final Optional<Boolean> opt = ((DataSchemaNode) stmt).effectiveConfig();
+                if (opt.isPresent()) {
+                    return opt.orElseThrow();
+                }
+            }
+        }
+        return null;
     }
 }
