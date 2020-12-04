@@ -52,7 +52,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public boolean effectiveConfig() {
+    public EffectiveConfig effectiveConfig() {
         return source.effectiveConfig();
     }
 
