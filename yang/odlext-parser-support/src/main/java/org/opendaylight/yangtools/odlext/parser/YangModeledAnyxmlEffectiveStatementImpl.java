@@ -101,7 +101,7 @@ final class YangModeledAnyxmlEffectiveStatementImpl
 
     @Override
     public boolean isMandatory() {
-        return delegateSchemaNode().isConfiguration();
+        return delegateSchemaNode().isMandatory();
     }
 
     @Override
