@@ -36,7 +36,7 @@ public final class DeviationStatementSupport
     private static final DeviationStatementSupport INSTANCE = new DeviationStatementSupport();
 
     private DeviationStatementSupport() {
-        super(YangStmtMapping.DEVIATION);
+        super(YangStmtMapping.DEVIATION, CopyPolicy.REJECT);
     }
 
     public static DeviationStatementSupport getInstance() {

@@ -28,8 +28,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 @Beta
 public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends BaseSchemaTreeStatementSupport<D, E> {
-    protected BaseImplicitStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition);
+    protected BaseImplicitStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        super(publicDefinition, copyPolicy);
     }
 
     @Override

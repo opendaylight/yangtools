@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -42,7 +43,7 @@ public final class YangDataStatementSupport
     private final SubstatementValidator validator;
 
     private YangDataStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.REJECT);
         validator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.CONTAINER)
                 .addOptional(YangStmtMapping.USES)

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupp
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -79,7 +80,7 @@ abstract class AbstractHashedValueStatementSupport
     private final SubstatementValidator validator;
 
     AbstractHashedValueStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.CONTEXT_INDEPENDENT);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 

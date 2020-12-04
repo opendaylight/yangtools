@@ -100,7 +100,7 @@ abstract class AbstractDeviateStatementSupport
             YangStmtMapping.MANDATORY, YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.MIN_ELEMENTS);
 
     AbstractDeviateStatementSupport() {
-        super(YangStmtMapping.DEVIATE);
+        super(YangStmtMapping.DEVIATE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override

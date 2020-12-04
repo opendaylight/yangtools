@@ -26,7 +26,7 @@ public final class OrganizationStatementSupport
     private static final OrganizationStatementSupport INSTANCE = new OrganizationStatementSupport();
 
     private OrganizationStatementSupport() {
-        super(YangStmtMapping.ORGANIZATION);
+        super(YangStmtMapping.ORGANIZATION, CopyPolicy.REJECT);
     }
 
     public static OrganizationStatementSupport getInstance() {

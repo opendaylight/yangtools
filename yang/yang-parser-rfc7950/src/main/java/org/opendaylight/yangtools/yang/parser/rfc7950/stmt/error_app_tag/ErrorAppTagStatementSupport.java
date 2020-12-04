@@ -25,7 +25,7 @@ public final class ErrorAppTagStatementSupport
     private static final ErrorAppTagStatementSupport INSTANCE = new ErrorAppTagStatementSupport();
 
     private ErrorAppTagStatementSupport() {
-        super(YangStmtMapping.ERROR_APP_TAG);
+        super(YangStmtMapping.ERROR_APP_TAG, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static ErrorAppTagStatementSupport getInstance() {

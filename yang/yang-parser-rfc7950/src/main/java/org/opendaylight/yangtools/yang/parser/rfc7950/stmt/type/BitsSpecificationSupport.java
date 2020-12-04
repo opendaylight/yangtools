@@ -33,7 +33,7 @@ final class BitsSpecificationSupport
         .build();
 
     BitsSpecificationSupport() {
-        super(YangStmtMapping.TYPE);
+        super(YangStmtMapping.TYPE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override

@@ -25,7 +25,7 @@ public final class PrefixStatementSupport
     private static final PrefixStatementSupport INSTANCE = new PrefixStatementSupport();
 
     private PrefixStatementSupport() {
-        super(YangStmtMapping.PREFIX);
+        super(YangStmtMapping.PREFIX, CopyPolicy.REJECT);
     }
 
     public static PrefixStatementSupport getInstance() {

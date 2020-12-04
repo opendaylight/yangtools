@@ -40,10 +40,6 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         checkArgument(publicDefinition != this);
     }
 
-    protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
-        this(publicDefinition, CopyPolicy.DECLARED_COPY);
-    }
-
     @Override
     public final StatementDefinition getPublicView() {
         return type;

@@ -47,7 +47,7 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
         .build();
 
     AbstractRpcStatementSupport() {
-        super(YangStmtMapping.RPC);
+        super(YangStmtMapping.RPC, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

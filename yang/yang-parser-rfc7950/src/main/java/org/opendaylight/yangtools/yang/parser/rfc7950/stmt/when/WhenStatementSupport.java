@@ -34,7 +34,7 @@ public final class WhenStatementSupport
     private final @NonNull XPathSupport xpathSupport;
 
     private WhenStatementSupport(final XPathSupport xpathSupport) {
-        super(YangStmtMapping.WHEN);
+        super(YangStmtMapping.WHEN, CopyPolicy.CONTEXT_INDEPENDENT);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

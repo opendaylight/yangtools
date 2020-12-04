@@ -25,7 +25,7 @@ public final class ContactStatementSupport
     private static final ContactStatementSupport INSTANCE = new ContactStatementSupport();
 
     private ContactStatementSupport() {
-        super(YangStmtMapping.CONTACT);
+        super(YangStmtMapping.CONTACT, CopyPolicy.REJECT);
     }
 
     public static ContactStatementSupport getInstance() {

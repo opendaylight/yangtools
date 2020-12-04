@@ -154,7 +154,7 @@ abstract class AbstractTypeStatementSupport
             .build();
 
     AbstractTypeStatementSupport() {
-        super(YangStmtMapping.TYPE);
+        super(YangStmtMapping.TYPE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override

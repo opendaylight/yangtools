@@ -38,7 +38,7 @@ public final class KeyStatementSupport
     private static final KeyStatementSupport INSTANCE = new KeyStatementSupport();
 
     private KeyStatementSupport() {
-        super(YangStmtMapping.KEY);
+        super(YangStmtMapping.KEY, CopyPolicy.DECLARED_COPY);
     }
 
     public static KeyStatementSupport getInstance() {

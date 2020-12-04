@@ -38,7 +38,7 @@ abstract class AbstractIdentityStatementSupport
         extends BaseQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
 
     AbstractIdentityStatementSupport() {
-        super(YangStmtMapping.IDENTITY);
+        super(YangStmtMapping.IDENTITY, CopyPolicy.DECLARED_COPY);
     }
 
     @Override
