@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Optional;
+
 /**
  * Data Schema Node represents abstract supertype from which all data tree definitions are derived. Unlike what
  * the name would suggest, this interface corresponds more to RFC7950 {@code data definition statement} than to
@@ -28,11 +30,20 @@ package org.opendaylight.yangtools.yang.model.api;
  */
 public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionAware {
     /**
-     * Returns <code>true</code> if the data represents configuration data,
-     * otherwise returns <code>false</code>.
+     * Returns {@code true} if the data represents configuration data, otherwise returns {@code false}.
      *
-     * @return <code>true</code> if the data represents configuration data,
-     *         otherwise returns <code>false</code>
+     * @return {@code true} if the data represents configuration data, otherwise returns {@code false}
+     * @deprecated Use {@link #effectiveConfig()} instead.
      */
-    boolean isConfiguration();
+    @Deprecated
+    default boolean isConfiguration() {
+        return effectiveConfig().orElse(Boolean.TRUE);
+    }
+
+    /**
+     * Return the effective value of {@code config} substatement, if applicable.
+     *
+     * @return Effective {@code config} value, or {@link Optional#empty()} not applicable.
+     */
+    Optional<Boolean> effectiveConfig();
 }
