@@ -141,7 +141,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     void sweepNamespaces() {
         namespaces = null;
-        LOG.debug("Swept namespace storages of {}", this);
+        LOG.trace("Swept namespace storages of {}", this);
     }
 
     void sweepNamespaces(final Map<Class<?>, SweptNamespace> toWipe) {
@@ -157,7 +157,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         }
 
         namespaces.putAll(toWipe);
-        LOG.debug("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
+        LOG.trace("Trimmed namespace storages of {} to {}", this, namespaces.keySet());
     }
 
     private Map<Class<?>, Map<?, ?>> accessNamespaces() {
