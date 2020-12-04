@@ -53,10 +53,11 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
     // These namespaces are well-known and not needed after the root is cleaned up
     private static final Map<Class<?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
+        // FIXME: YANGTOOLS-1197: sweep GroupingNamespace
+        // GroupingNamespace.class, new SweptNamespace(GroupingNamespace.class),
         // FIXME: somehow these two end up being referenced post-sweep
         //        this probably means we have a cross-module reference we do not account for
-//        GroupingNamespace.class, new SweptNamespace(GroupingNamespace.class),
-//        TypeNamespace.class, new SweptNamespace(TypeNamespace.class),
+        // TypeNamespace.class, new SweptNamespace(TypeNamespace.class),
         SchemaTreeNamespace.class, new SweptNamespace(SchemaTreeNamespace.class));
 
     private final @NonNull SourceSpecificContext sourceContext;

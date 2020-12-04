@@ -178,6 +178,8 @@ public final class UsesStatementSupport
     }
 
     private static GroupingDefinition getSourceGrouping(final Current<QName, ?> stmt) {
+        // FIXME: YANGTOOLS-1197: we have this lookup in inference action, just store a replica in local namespace
+        //                        during apply and pick it up when we build the statement
         return (GroupingDefinition) stmt.getFromNamespace(GroupingNamespace.class, stmt.getArgument()).buildEffective();
     }
 
