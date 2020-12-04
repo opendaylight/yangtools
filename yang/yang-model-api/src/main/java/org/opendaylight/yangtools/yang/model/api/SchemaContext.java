@@ -252,8 +252,8 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     @Deprecated
-    default boolean isConfiguration() {
-        return false;
+    default Optional<Boolean> effectiveConfig() {
+        return Optional.empty();
     }
 
     @Override
