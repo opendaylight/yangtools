@@ -93,7 +93,7 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig().asLegacy())
+                .setConfiguration(stmt.effectiveConfig().asNullable())
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
 

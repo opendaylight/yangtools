@@ -43,7 +43,7 @@ public class ListTest {
         assertNotNull(list);
 
         assertTrue(list.isUserOrdered());
-        assertTrue(list.isConfiguration());
+        assertEquals(Optional.of(Boolean.TRUE), list.effectiveConfig());
         final List<QName> keys = list.getKeyDefinition();
         assertEquals(2, keys.size());
 

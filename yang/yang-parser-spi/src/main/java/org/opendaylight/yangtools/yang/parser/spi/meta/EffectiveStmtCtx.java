@@ -78,22 +78,12 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
             }
 
             /**
-             * Return this value as a legacy boolean for use with {@link DataSchemaNode#isConfiguration()}.
+             * Return this value as a {@link Boolean} for use with {@link DataSchemaNode#effectiveConfig()}.
              *
-             * @return A simple boolean
-             * @deprecated This method is only for transition and should be eliminated once DataSchemaNode is fixed.
+             * @return A boolean or null
              */
-            @Deprecated
-            public boolean asLegacy() {
-                return config == null || config;
-            }
-
             public @Nullable Boolean asNullable() {
                 return config;
-            }
-
-            public Optional<Boolean> asOptional() {
-                return Optional.ofNullable(config);
             }
         }
 

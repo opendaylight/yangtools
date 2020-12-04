@@ -52,8 +52,8 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     }
 
     @Override
-    public boolean isConfiguration() {
-        return delegateSchemaNode().isConfiguration();
+    public Optional<Boolean> effectiveConfig() {
+        return delegateSchemaNode().effectiveConfig();
     }
 
     @Override

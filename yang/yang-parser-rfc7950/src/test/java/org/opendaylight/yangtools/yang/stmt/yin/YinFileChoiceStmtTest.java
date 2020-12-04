@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -37,7 +38,7 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
 
         assertEquals("configuration", choice.getQName().getLocalName());
         assertTrue(choice.isMandatory());
-        assertTrue(choice.isConfiguration());
+        assertEquals(Optional.of(Boolean.TRUE), choice.effectiveConfig());
         assertEquals(1, choice.getCases().size());
 
         // this choice is augmented (see main-impl.yang.xml)
@@ -52,7 +53,7 @@ public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
 
         assertEquals("state", choice.getQName().getLocalName());
         assertFalse(choice.isMandatory());
-        assertFalse(choice.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), choice.effectiveConfig());
         assertTrue(choice.getCases().isEmpty());
     }
 }

@@ -71,7 +71,7 @@ public final class AnyxmlStatementSupport
         final int flags = new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-            .setConfiguration(stmt.effectiveConfig().asLegacy())
+            .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
         final SchemaPath path = stmt.wrapSchemaPath();

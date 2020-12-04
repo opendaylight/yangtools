@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -130,15 +131,15 @@ public class YangDataExtensionTest {
 
         final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
         assertNotNull(contInYangData);
-        assertTrue(contInYangData.isConfiguration());
+        assertEquals(Optional.empty(), contInYangData.effectiveConfig());
         final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
                 QName.create(baz.getQNameModule(), "inner-cont")).get();
         assertNotNull(innerCont);
-        assertTrue(innerCont.isConfiguration());
+        assertEquals(Optional.empty(), innerCont.effectiveConfig());
         final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
                 QName.create(baz.getQNameModule(), "grp-cont")).get();
         assertNotNull(grpCont);
-        assertTrue(grpCont.isConfiguration());
+        assertEquals(Optional.empty(), grpCont.effectiveConfig());
     }
 
     @Test

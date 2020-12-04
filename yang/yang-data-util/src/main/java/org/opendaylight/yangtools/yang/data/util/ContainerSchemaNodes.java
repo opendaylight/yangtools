@@ -73,8 +73,8 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public boolean isConfiguration() {
-            return false;
+        public Optional<Boolean> effectiveConfig() {
+            return Optional.empty();
         }
 
         @Override

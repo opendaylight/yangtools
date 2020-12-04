@@ -150,8 +150,8 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final boolean isConfiguration() {
-        return false;
+    public final Optional<Boolean> effectiveConfig() {
+        return Optional.empty();
     }
 
     @Override
