@@ -81,7 +81,7 @@ abstract class AbstractChoiceStatementSupport
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig())
+                .setConfiguration(stmt.effectiveConfig().asLegacy())
                 .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
                 .toFlags();
         try {

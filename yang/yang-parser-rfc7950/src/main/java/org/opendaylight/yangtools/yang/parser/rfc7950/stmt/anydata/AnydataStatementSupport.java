@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -69,22 +68,17 @@ public final class AnydataStatementSupport
     @Override
     protected AnydataEffectiveStatement createEffective(final Current<QName, AnydataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final int flags = computeFlags(stmt.history(), stmt.effectiveConfig(), substatements);
+        final int flags = new FlagsBuilder()
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(stmt.effectiveConfig().asLegacy())
+            .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+            .toFlags();
         final SchemaPath path = stmt.wrapSchemaPath();
 
         return substatements.isEmpty()
             ? new EmptyAnydataEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))
                 : new RegularAnydataEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt), substatements);
-    }
-
-    private static int computeFlags(final CopyHistory history, final boolean isConfig,
-                                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new FlagsBuilder()
-                .setHistory(history)
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(isConfig)
-                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
-                .toFlags();
     }
 
     private static @Nullable AnydataSchemaNode findOriginal(final Current<?, ?> stmt) {

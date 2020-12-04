@@ -61,7 +61,7 @@ abstract class AbstractLeafListStatementSupport
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig())
+                .setConfiguration(stmt.effectiveConfig().asLegacy())
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                     .equals(Ordering.USER))
                 .toFlags();
