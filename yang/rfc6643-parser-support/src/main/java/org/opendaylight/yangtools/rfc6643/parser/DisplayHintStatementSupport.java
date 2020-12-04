@@ -27,7 +27,7 @@ public final class DisplayHintStatementSupport
     private static final DisplayHintStatementSupport INSTANCE = new DisplayHintStatementSupport();
 
     private DisplayHintStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT);
+        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static DisplayHintStatementSupport getInstance() {

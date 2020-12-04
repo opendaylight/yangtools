@@ -39,7 +39,7 @@ abstract class AbstractIncludeStatementSupport
         extends BaseStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
 
     AbstractIncludeStatementSupport() {
-        super(YangStmtMapping.INCLUDE);
+        super(YangStmtMapping.INCLUDE, CopyPolicy.REJECT);
     }
 
     @Override

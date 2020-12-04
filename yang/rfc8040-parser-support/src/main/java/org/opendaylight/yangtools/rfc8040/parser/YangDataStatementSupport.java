@@ -42,7 +42,7 @@ public final class YangDataStatementSupport
     private final SubstatementValidator validator;
 
     private YangDataStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.CONTEXT_INDEPENDENT);
         validator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.CONTAINER)
                 .addOptional(YangStmtMapping.USES)

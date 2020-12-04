@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractLeafListStatementSupport
         extends BaseSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     AbstractLeafListStatementSupport() {
-        super(YangStmtMapping.LEAF_LIST);
+        super(YangStmtMapping.LEAF_LIST, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

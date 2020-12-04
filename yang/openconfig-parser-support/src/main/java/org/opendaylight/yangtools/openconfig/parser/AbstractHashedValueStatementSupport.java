@@ -75,8 +75,8 @@ abstract class AbstractHashedValueStatementSupport
 
     private final SubstatementValidator validator;
 
-    AbstractHashedValueStatementSupport(final StatementDefinition definition) {
-        super(definition);
+    AbstractHashedValueStatementSupport(final StatementDefinition definition, final CopyPolicy copyPolicy) {
+        super(definition, copyPolicy);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 

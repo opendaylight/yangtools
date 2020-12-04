@@ -26,7 +26,7 @@ public final class PositionStatementSupport
     private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
 
     private PositionStatementSupport() {
-        super(YangStmtMapping.POSITION);
+        super(YangStmtMapping.POSITION, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static PositionStatementSupport getInstance() {

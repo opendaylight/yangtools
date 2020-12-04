@@ -29,7 +29,7 @@ final class InstanceIdentifierSpecificationSupport extends BaseStatementSupport<
         .build();
 
     InstanceIdentifierSpecificationSupport() {
-        super(YangStmtMapping.TYPE);
+        super(YangStmtMapping.TYPE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override

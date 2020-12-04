@@ -13,7 +13,7 @@ public final class EncryptedValueStatementSupport extends AbstractHashedValueSta
     private static final EncryptedValueStatementSupport INSTANCE = new EncryptedValueStatementSupport();
 
     private EncryptedValueStatementSupport() {
-        super(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE);
+        super(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static EncryptedValueStatementSupport getInstance() {

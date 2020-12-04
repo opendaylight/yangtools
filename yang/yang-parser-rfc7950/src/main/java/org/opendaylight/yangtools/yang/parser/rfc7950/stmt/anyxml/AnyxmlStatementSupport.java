@@ -43,7 +43,7 @@ public final class AnyxmlStatementSupport
     private static final AnyxmlStatementSupport INSTANCE = new AnyxmlStatementSupport();
 
     private AnyxmlStatementSupport() {
-        super(YangStmtMapping.ANYXML);
+        super(YangStmtMapping.ANYXML, CopyPolicy.DECLARED_COPY);
     }
 
     public static AnyxmlStatementSupport getInstance() {

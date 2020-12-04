@@ -77,7 +77,7 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
     private final SubstatementValidator validator;
 
     GetFilterElementAttributesStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.CONTEXT_INDEPENDENT);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 

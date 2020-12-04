@@ -25,7 +25,7 @@ public final class ConfigStatementSupport
 
     private ConfigStatementSupport() {
         super(YangStmtMapping.CONFIG, new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.FALSE)),
-            new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.TRUE)));
+            new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.TRUE)), CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static ConfigStatementSupport getInstance() {

@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractBitStatementSupport extends BaseStatementSupport<String, BitStatement, BitEffectiveStatement> {
     AbstractBitStatementSupport() {
-        super(YangStmtMapping.BIT);
+        super(YangStmtMapping.BIT, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override
