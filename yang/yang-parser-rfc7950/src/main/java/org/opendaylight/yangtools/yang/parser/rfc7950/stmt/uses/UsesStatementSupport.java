@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -17,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -46,6 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -113,6 +117,7 @@ public final class UsesStatementSupport
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 resolveUsesNode(usesNode, targetNodeStmtCtx);
                 StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
+                usesNode.addToNs(SourceGroupingNamespace.class, Empty.getInstance(), sourceGrpStmtCtx);
             }
 
             @Override
@@ -177,10 +182,10 @@ public final class UsesStatementSupport
         return ImmutableMap.copyOf(refines);
     }
 
-    private static GroupingDefinition getSourceGrouping(final Current<QName, ?> stmt) {
-        // FIXME: YANGTOOLS-1197: we have this lookup in inference action, just store a replica in local namespace
-        //                        during apply and pick it up when we build the statement
-        return (GroupingDefinition) stmt.getFromNamespace(GroupingNamespace.class, stmt.getArgument()).buildEffective();
+    private static GroupingDefinition getSourceGrouping(final NamespaceStmtCtx stmt) {
+        final StmtContext<?, ?, ?> ctx =
+            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.getInstance()));
+        return (GroupingDefinition) ctx.buildEffective();
     }
 
     /**
