@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -53,8 +54,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     private static final Logger LOG = LoggerFactory.getLogger(RootStatementContext.class);
     // These namespaces are well-known and not needed after the root is cleaned up
     private static final Map<Class<?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
-        // FIXME: YANGTOOLS-1197: sweep GroupingNamespace
-        // GroupingNamespace.class, new SweptNamespace(GroupingNamespace.class),
+        GroupingNamespace.class, new SweptNamespace(GroupingNamespace.class),
         // FIXME: YANGTOOLS-1198: sweep TypeNamespace
         // TypeNamespace.class, new SweptNamespace(TypeNamespace.class),
         SchemaTreeNamespace.class, new SweptNamespace(SchemaTreeNamespace.class));

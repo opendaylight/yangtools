@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -18,6 +19,11 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -39,13 +45,30 @@ abstract class AbstractGroupingStatementSupport
             final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        if (stmt != null) {
-            final Mutable<?, ?, ?> parent = stmt.getParentContext();
-            if (parent != null) {
-                // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-                // declarations and parent declarations which have already been declared.
-                checkConflict(parent, stmt);
-                parent.addContext(GroupingNamespace.class, stmt.getArgument(), stmt);
+        final Mutable<?, ?, ?> parent = stmt.getParentContext();
+        if (parent != null) {
+            // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
+            // declarations and parent declarations which have already been declared.
+            checkConflict(parent, stmt);
+            parent.addContext(GroupingNamespace.class, stmt.getArgument(), stmt);
+            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
+            if (grandParent != null) {
+                // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
+                // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
+                // in the text. For that check we need the full declaration of our model.
+                final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+                action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
+                action.apply(new InferenceAction() {
+                    @Override
+                    public void apply(final InferenceContext ctx) {
+                        checkConflict(grandParent, stmt);
+                    }
+
+                    @Override
+                    public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                        // No-op
+                    }
+                });
             }
         }
     }
@@ -53,13 +76,11 @@ abstract class AbstractGroupingStatementSupport
     @Override
     protected final GroupingStatement createDeclared(final StmtContext<QName, GroupingStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        checkDeclaredConflict(ctx);
         return new RegularGroupingStatement(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final GroupingStatement createEmptyDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
-        checkDeclaredConflict(ctx);
         return new EmptyGroupingStatement(ctx.getArgument());
     }
 
@@ -71,18 +92,6 @@ abstract class AbstractGroupingStatementSupport
                 historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
-        }
-    }
-
-    private static void checkDeclaredConflict(final StmtContext<QName, ?, ?> ctx) {
-        // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to ensure
-        // that a grouping in child scope does not shadow a grouping in parent scope which occurs later in the text.
-        final StmtContext<?, ?, ?> parent = ctx.getParentContext();
-        if (parent != null) {
-            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
-            if (grandParent != null) {
-                checkConflict(grandParent, ctx);
-            }
         }
     }
 
