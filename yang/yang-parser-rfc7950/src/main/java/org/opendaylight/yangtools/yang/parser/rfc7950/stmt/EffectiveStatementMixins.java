@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -97,6 +98,7 @@ public final class EffectiveStatementMixins {
     public interface AddedByUsesMixin<A, D extends DeclaredStatement<A>>
             extends EffectiveStatementWithFlags<A, D>, AddedByUsesAware {
         @Override
+        @Deprecated
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
         }
@@ -151,6 +153,7 @@ public final class EffectiveStatementMixins {
      */
     public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends AddedByUsesMixin<A, D>, CopyableNode {
         @Override
+        @Deprecated
         default boolean isAugmenting() {
             return (flags() & FlagsBuilder.AUGMENTING) != 0;
         }
@@ -193,8 +196,18 @@ public final class EffectiveStatementMixins {
     public interface DataSchemaNodeMixin<A, D extends DeclaredStatement<A>>
             extends DataSchemaNode, CopyableMixin<A, D>, SchemaNodeMixin<A, D>, WhenConditionMixin<A, D> {
         @Override
-        default boolean isConfiguration() {
-            return (flags() & FlagsBuilder.CONFIGURATION) != 0;
+        default Optional<Boolean> effectiveConfig() {
+            final int fl = flags() & FlagsBuilder.MASK_CONFIG;
+            switch (fl) {
+                case FlagsBuilder.CONFIG_FALSE:
+                    return Optional.of(Boolean.FALSE);
+                case FlagsBuilder.CONFIG_TRUE:
+                    return Optional.of(Boolean.TRUE);
+                case FlagsBuilder.CONFIG_UNDEF:
+                    return Optional.empty();
+                default:
+                    throw new IllegalStateException("Unhandled effective config flags " + fl);
+            }
         }
     }
 
@@ -381,8 +394,8 @@ public final class EffectiveStatementMixins {
         }
 
         @Override
-        default boolean isConfiguration() {
-            return false;
+        default Optional<Boolean> effectiveConfig() {
+            return Optional.empty();
         }
 
         default String defaultToString() {
@@ -454,14 +467,13 @@ public final class EffectiveStatementMixins {
 
         @NonNullByDefault
         final class FlagsBuilder implements Mutable {
-            // We still have 24 flags remaining
+            // We still have 23 flags remaining
             static final int STATUS_CURRENT       = 0x0001;
             static final int STATUS_DEPRECATED    = 0x0002;
             static final int STATUS_OBSOLETE      = 0x0003;
             static final int MASK_STATUS          = 0x0003;
 
-            static final int CONFIGURATION        = 0x0004;
-            static final int MANDATORY            = 0x0008;
+            static final int MANDATORY            = 0x0004;
 
             static final int AUGMENTING           = 0x0010;
             static final int ADDED_BY_USES        = 0x0020;
@@ -470,14 +482,21 @@ public final class EffectiveStatementMixins {
             static final int USER_ORDERED         = 0x0040;
             static final int PRESENCE             = 0x0080;
 
+            static final int CONFIG_UNDEF         = 0x0100;
+            static final int CONFIG_FALSE         = 0x0200;
+            static final int CONFIG_TRUE          = 0x0300;
+            static final int MASK_CONFIG          = CONFIG_TRUE;
+
             private int flags;
 
-            public FlagsBuilder setConfiguration(final boolean config) {
-                if (config) {
-                    flags |= CONFIGURATION;
+            public FlagsBuilder setConfiguration(final @Nullable Boolean config) {
+                final int fl;
+                if (config != null) {
+                    fl = config ? CONFIG_TRUE : CONFIG_FALSE;
                 } else {
-                    flags &= ~CONFIGURATION;
+                    fl = CONFIG_UNDEF;
                 }
+                flags = flags & ~MASK_CONFIG | fl;
                 return this;
             }
 
