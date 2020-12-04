@@ -339,6 +339,8 @@ abstract class AbstractTypeStatementSupport
             case UINT64:
                 return BuiltinEffectiveStatement.UINT64;
             default:
+                // FIXME: YANGTOOLS-1198: this lookup needs to be done during inference and a replica needs to be
+                //                        stored in a local namespace.
                 final QName qname = StmtContextUtils.parseNodeIdentifier(ctx.caerbannog(), argument);
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef = SourceException.throwIfNull(
                     ctx.getFromNamespace(TypeNamespace.class, qname), ctx, "Type '%s' not found", qname);

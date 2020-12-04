@@ -55,8 +55,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     private static final Map<Class<?>, SweptNamespace> SWEPT_NAMESPACES = ImmutableMap.of(
         // FIXME: YANGTOOLS-1197: sweep GroupingNamespace
         // GroupingNamespace.class, new SweptNamespace(GroupingNamespace.class),
-        // FIXME: somehow these two end up being referenced post-sweep
-        //        this probably means we have a cross-module reference we do not account for
+        // FIXME: YANGTOOLS-1198: sweep TypeNamespace
         // TypeNamespace.class, new SweptNamespace(TypeNamespace.class),
         SchemaTreeNamespace.class, new SweptNamespace(SchemaTreeNamespace.class));
 
