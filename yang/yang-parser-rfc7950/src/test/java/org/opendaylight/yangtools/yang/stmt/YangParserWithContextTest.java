@@ -246,7 +246,7 @@ public class YangParserWithContextTest {
         assertEquals("address", refineLeaf.getQName().getLocalName());
         assertEquals(Optional.of("description of address defined by refine"), refineLeaf.getDescription());
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
-        assertFalse(refineLeaf.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), refineLeaf.effectiveConfig());
         assertTrue(refineLeaf.isMandatory());
         final Collection<? extends MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
@@ -259,14 +259,14 @@ public class YangParserWithContextTest {
         assertTrue(mustConstraints.isEmpty());
         assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
         assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
-        assertFalse(refineContainer.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), refineContainer.effectiveConfig());
         assertTrue(refineContainer.isPresenceContainer());
 
         // list addresses
         assertNotNull(refineList);
         assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
-        assertFalse(refineList.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), refineList.effectiveConfig());
         final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
         assertEquals((Object) 2, constraint.getMinElements());
         assertEquals((Object) 12, constraint.getMaxElements());

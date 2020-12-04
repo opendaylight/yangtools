@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.Collection;
+import com.google.common.collect.Iterables;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -39,13 +38,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
                 .buildEffective();
         assertNotNull(result);
 
-        Collection<? extends Module> modules = result.getModules();
-        assertNotNull(modules);
-        assertEquals(1, modules.size());
-
-        Module module = modules.iterator().next();
-
-        final QNameModule qnameModule = module.getQNameModule();
+        final QNameModule qnameModule = Iterables.getOnlyElement(result.getModules()).getQNameModule();
         final QName rootContainer = QName.create(qnameModule, "root-container");
         final QName grp1 = QName.create(qnameModule, "grp-1");
 
@@ -82,7 +75,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
         assertFalse(containerSchemaNode.getReference().isPresent());
         assertFalse(containerSchemaNode.getDescription().isPresent());
-        assertTrue(containerSchemaNode.isConfiguration());
+        assertEquals(Optional.empty(), containerSchemaNode.effectiveConfig());
         assertFalse(containerSchemaNode.isPresenceContainer());
 
         assertEquals(0, containerSchemaNode.getMustConstraints().size());
@@ -103,7 +96,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
         assertEquals(Optional.of("original reference"), listSchemaNode.getReference());
         assertEquals(Optional.of("original description"), listSchemaNode.getDescription());
-        assertFalse(listSchemaNode.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), listSchemaNode.effectiveConfig());
 
         ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
         assertEquals((Object) 10, listConstraints.getMinElements());
@@ -118,7 +111,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
         assertEquals(Optional.of("new reference"), containerSchemaNode.getReference());
         assertEquals(Optional.of("new description"), containerSchemaNode.getDescription());
-        assertTrue(containerSchemaNode.isConfiguration());
+        assertEquals(Optional.of(Boolean.TRUE), containerSchemaNode.effectiveConfig());
         assertTrue(containerSchemaNode.isPresenceContainer());
         assertEquals(1, containerSchemaNode.getMustConstraints().size());
     }
@@ -138,7 +131,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
         assertEquals(Optional.of("new reference"), listSchemaNode.getReference());
         assertEquals(Optional.of("new description"), listSchemaNode.getDescription());
-        assertTrue(listSchemaNode.isConfiguration());
+        assertEquals(Optional.of(Boolean.TRUE), listSchemaNode.effectiveConfig());
 
         ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
         assertEquals((Object) 5, listConstraints.getMinElements());

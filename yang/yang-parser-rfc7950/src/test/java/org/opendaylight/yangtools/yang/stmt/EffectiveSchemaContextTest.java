@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -73,7 +74,7 @@ public class EffectiveSchemaContextTest {
 
         assertFalse(schemaContext.isAugmenting());
         assertFalse(schemaContext.isAddedByUses());
-        assertFalse(schemaContext.isConfiguration());
+        assertEquals(Optional.empty(), schemaContext.effectiveConfig());
         assertFalse(schemaContext.getWhenCondition().isPresent());
         assertEquals(0, schemaContext.getMustConstraints().size());
         assertFalse(schemaContext.getDescription().isPresent());

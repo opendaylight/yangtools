@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -33,7 +33,7 @@ public class Bug9244Test {
         final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-cont"));
         assertNotNull(barCont);
-        assertFalse(barCont.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), barCont.effectiveConfig());
 
         final LeafListSchemaNode barLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf-list"));

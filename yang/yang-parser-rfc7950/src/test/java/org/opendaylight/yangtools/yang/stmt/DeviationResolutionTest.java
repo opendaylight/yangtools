@@ -86,7 +86,7 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
 
-        assertFalse(myLeafList.isConfiguration());
+        assertEquals(Optional.of(Boolean.FALSE), myLeafList.effectiveConfig());
         assertEquals(3, myLeafList.getDefaults().size());
 
         final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
@@ -151,7 +151,7 @@ public class DeviationResolutionTest {
         final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
         assertEquals((Object) 6, constraint.getMaxElements());
         assertEquals((Object) 3, constraint.getMinElements());
-        assertTrue(myLeafList.isConfiguration());
+        assertEquals(Optional.of(Boolean.TRUE), myLeafList.effectiveConfig());
 
         final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-choice"));
