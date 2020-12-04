@@ -29,7 +29,7 @@ public final class ArgumentStatementSupport
     private static final ArgumentStatementSupport INSTANCE = new ArgumentStatementSupport();
 
     private ArgumentStatementSupport() {
-        super(YangStmtMapping.ARGUMENT);
+        super(YangStmtMapping.ARGUMENT, CopyPolicy.REJECT);
     }
 
     public static ArgumentStatementSupport getInstance() {

@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractCaseStatementSupport
         extends BaseImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
     AbstractCaseStatementSupport() {
-        super(YangStmtMapping.CASE);
+        super(YangStmtMapping.CASE, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

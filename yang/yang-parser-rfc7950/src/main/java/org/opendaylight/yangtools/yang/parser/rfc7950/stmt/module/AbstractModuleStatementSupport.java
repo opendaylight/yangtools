@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractModuleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
     AbstractModuleStatementSupport() {
-        super(YangStmtMapping.MODULE);
+        super(YangStmtMapping.MODULE, CopyPolicy.REJECT);
     }
 
     @Override

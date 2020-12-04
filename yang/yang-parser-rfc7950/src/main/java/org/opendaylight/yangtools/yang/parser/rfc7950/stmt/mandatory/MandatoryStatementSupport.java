@@ -26,7 +26,8 @@ public final class MandatoryStatementSupport extends
     private MandatoryStatementSupport() {
         super(YangStmtMapping.MANDATORY,
             new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.FALSE)),
-            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.TRUE)));
+            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.TRUE)),
+            CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static MandatoryStatementSupport getInstance() {

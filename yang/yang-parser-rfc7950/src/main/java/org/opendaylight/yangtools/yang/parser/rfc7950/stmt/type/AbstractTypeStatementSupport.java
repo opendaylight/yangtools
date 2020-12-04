@@ -154,7 +154,8 @@ abstract class AbstractTypeStatementSupport
             .build();
 
     AbstractTypeStatementSupport() {
-        super(YangStmtMapping.TYPE);
+        // FIXME: can a type statement be copied?
+        super(YangStmtMapping.TYPE, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

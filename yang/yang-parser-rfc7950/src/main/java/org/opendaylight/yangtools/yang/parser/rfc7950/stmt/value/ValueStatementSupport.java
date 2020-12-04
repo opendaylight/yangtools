@@ -26,7 +26,7 @@ public final class ValueStatementSupport
     private static final ValueStatementSupport INSTANCE = new ValueStatementSupport();
 
     private ValueStatementSupport() {
-        super(YangStmtMapping.VALUE);
+        super(YangStmtMapping.VALUE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static ValueStatementSupport getInstance() {

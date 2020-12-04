@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupp
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -81,7 +82,7 @@ public final class GetFilterElementAttributesStatementSupport extends BaseVoidSt
     private final SubstatementValidator validator;
 
     GetFilterElementAttributesStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.REJECT);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 

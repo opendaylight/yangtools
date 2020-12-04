@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractOutputStatementSupport
         extends BaseOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
     AbstractOutputStatementSupport() {
-        super(YangStmtMapping.OUTPUT, YangConstants::operationOutputQName);
+        super(YangStmtMapping.OUTPUT, YangConstants::operationOutputQName, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

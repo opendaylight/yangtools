@@ -38,7 +38,7 @@ abstract class AbstractChoiceStatementSupport
         extends BaseSchemaTreeStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     AbstractChoiceStatementSupport() {
-        super(YangStmtMapping.CHOICE);
+        super(YangStmtMapping.CHOICE, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

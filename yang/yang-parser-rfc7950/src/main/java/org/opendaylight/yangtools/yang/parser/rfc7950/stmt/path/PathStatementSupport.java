@@ -33,7 +33,8 @@ public final class PathStatementSupport
     private final PathExpressionParser parser;
 
     private PathStatementSupport(final PathExpressionParser parser) {
-        super(YangStmtMapping.PATH);
+        // TODO: can 'path' really be copied?
+        super(YangStmtMapping.PATH, CopyPolicy.CONTEXT_INDEPENDENT);
         this.parser = requireNonNull(parser);
     }
 

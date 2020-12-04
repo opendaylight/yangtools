@@ -32,7 +32,7 @@ public final class AnyxmlSchemaLocationStatementSupport
     private final SubstatementValidator validator;
 
     private AnyxmlSchemaLocationStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.DECLARED_COPY);
         validator = SubstatementValidator.builder(definition).build();
     }
 

@@ -25,7 +25,7 @@ public final class DescriptionStatementSupport
     private static final DescriptionStatementSupport INSTANCE = new DescriptionStatementSupport();
 
     private DescriptionStatementSupport() {
-        super(YangStmtMapping.DESCRIPTION);
+        super(YangStmtMapping.DESCRIPTION, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static DescriptionStatementSupport getInstance() {
