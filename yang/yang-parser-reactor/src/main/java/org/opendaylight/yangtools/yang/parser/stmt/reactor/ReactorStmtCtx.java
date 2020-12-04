@@ -119,22 +119,25 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     private boolean isSupportedToBuildEffective = true;
 
     // Flag bit assignments
-    private static final int IS_SUPPORTED_BY_FEATURES    = 0x01;
-    private static final int HAVE_SUPPORTED_BY_FEATURES  = 0x02;
-    private static final int IS_IGNORE_IF_FEATURE        = 0x04;
-    private static final int HAVE_IGNORE_IF_FEATURE      = 0x08;
-    // Note: these four are related
-    private static final int IS_IGNORE_CONFIG            = 0x10;
-    private static final int HAVE_IGNORE_CONFIG          = 0x20;
-    private static final int IS_CONFIGURATION            = 0x40;
-    private static final int HAVE_CONFIGURATION          = 0x80;
-
+    private static final int IS_SUPPORTED_BY_FEATURES   = 0x10;
+    private static final int HAVE_SUPPORTED_BY_FEATURES = 0x20;
+    private static final int IS_IGNORE_IF_FEATURE       = 0x40;
+    private static final int HAVE_IGNORE_IF_FEATURE     = 0x80;
     // Have-and-set flag constants, also used as masks
-    private static final int SET_SUPPORTED_BY_FEATURES = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
-    private static final int SET_CONFIGURATION = HAVE_CONFIGURATION | IS_CONFIGURATION;
-    // Note: implies SET_CONFIGURATION, allowing fewer bit operations to be performed
-    private static final int SET_IGNORE_CONFIG = HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG | SET_CONFIGURATION;
-    private static final int SET_IGNORE_IF_FEATURE = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
+    private static final int SET_SUPPORTED_BY_FEATURES  = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
+    private static final int SET_IGNORE_IF_FEATURE      = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
+
+    // EffectiveConfig mapping
+    private static final int MASK_CONFIG = 0x03;
+    private static final int HAVE_CONFIG = 0x04;
+    private static final EffectiveConfig[] EFFECTIVE_CONFIGS;
+
+    static {
+        final EffectiveConfig[] values = EffectiveConfig.values();
+        final int length = values.length;
+        verify(length == 4, "Unexpected EffectiveConfig cardinality %s", length);
+        EFFECTIVE_CONFIGS = values;
+    }
 
     // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
     // hence improve memory layout.
@@ -385,44 +388,46 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
-     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
+     * every time {@link #effectiveConfig()} is invoked. This is quite expensive because it causes a linear search
      * for the (usually non-existent) config statement.
      *
      * <p>
      * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
-     * result without performing any lookups, solely to support {@link SubstatementContext#isConfiguration()}.
+     * result without performing any lookups, solely to support {@link #effectiveConfig()}.
      *
      * <p>
      * Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
      *       {@link #isIgnoringConfig(StatementContextBase)}.
      */
-    final boolean isConfiguration(final StatementContextBase<?, ?, ?> parent) {
-        final int fl = flags & SET_CONFIGURATION;
-        if (fl != 0) {
-            return fl == SET_CONFIGURATION;
-        }
-        if (isIgnoringConfig(parent)) {
-            // Note: SET_CONFIGURATION has been stored in flags
-            return true;
-        }
+    final @NonNull EffectiveConfig effectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
+        return (flags & HAVE_CONFIG) != 0 ? EFFECTIVE_CONFIGS[flags & MASK_CONFIG] : loadEffectiveConfig(parent);
+    }
 
-        final boolean isConfig;
-        final Optional<Boolean> optConfig = findSubstatementArgument(ConfigEffectiveStatement.class);
-        if (optConfig.isPresent()) {
-            isConfig = optConfig.orElseThrow();
-            if (isConfig) {
-                // Validity check: if parent is config=false this cannot be a config=true
-                InferenceException.throwIf(!parent.effectiveConfig(), this,
-                    "Parent node has config=false, this node must not be specifed as config=true");
+    private @NonNull EffectiveConfig loadEffectiveConfig(final ReactorStmtCtx<?, ?, ?> parent) {
+        final EffectiveConfig parentConfig = parent.effectiveConfig();
+
+        final EffectiveConfig myConfig;
+        if (parentConfig != EffectiveConfig.IGNORED && !definition().support().isIgnoringConfig()) {
+            final Optional<Boolean> optConfig = findSubstatementArgument(ConfigEffectiveStatement.class);
+            if (optConfig.isPresent()) {
+                if (optConfig.orElseThrow()) {
+                    // Validity check: if parent is config=false this cannot be a config=true
+                    InferenceException.throwIf(parentConfig == EffectiveConfig.FALSE, this,
+                        "Parent node has config=false, this node must not be specifed as config=true");
+                    myConfig = EffectiveConfig.TRUE;
+                } else {
+                    myConfig = EffectiveConfig.FALSE;
+                }
+            } else {
+                // If "config" statement is not specified, the default is the same as the parent's "config" value.
+                myConfig = parentConfig;
             }
         } else {
-            // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parent.effectiveConfig();
+            myConfig = EffectiveConfig.IGNORED;
         }
 
-        // Resolved, make sure we cache this return
-        flags |= isConfig ? SET_CONFIGURATION : HAVE_CONFIGURATION;
-        return isConfig;
+        flags = (byte) (flags & ~MASK_CONFIG | HAVE_CONFIG | myConfig.ordinal());
+        return myConfig;
     }
 
     protected abstract boolean isIgnoringConfig();
@@ -434,20 +439,10 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      *
      * <p>
      * Note: use of this method implies that {@link #isConfiguration()} is realized with
-     *       {@link #isConfiguration(StatementContextBase)}.
+     *       {@link #effectiveConfig(StatementContextBase)}.
      */
     final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
-        final int fl = flags & SET_IGNORE_CONFIG;
-        if (fl != 0) {
-            return fl == SET_IGNORE_CONFIG;
-        }
-        if (definition().support().isIgnoringConfig() || parent.isIgnoringConfig()) {
-            flags |= SET_IGNORE_CONFIG;
-            return true;
-        }
-
-        flags |= HAVE_IGNORE_CONFIG;
-        return false;
+        return EffectiveConfig.IGNORED == effectiveConfig(parent);
     }
 
     protected abstract boolean isIgnoringIfFeatures();

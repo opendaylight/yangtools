@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -48,8 +49,60 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
      */
     @Beta
     interface Parent extends EffectiveStmtCtx {
-        // FIXME: 7.0.0: this should be Optional<Boolean>
-        boolean effectiveConfig();
+        /**
+         * Effective {@code config} statement value.
+         */
+        @Beta
+        enum EffectiveConfig {
+            /**
+             * We have an effective {@code config true} statement.
+             */
+            TRUE(Boolean.TRUE),
+            /**
+             * We have an effective {@code config false} statement.
+             */
+            FALSE(Boolean.FALSE),
+            /**
+             * We are in a context where {@code config} statements are ignored.
+             */
+            IGNORED(null),
+            /**
+             * We are in a context where {@code config} is not determined, such as within a {@code grouping}.
+             */
+            UNDETERMINED(null);
+
+            private final Boolean config;
+
+            EffectiveConfig(final @Nullable Boolean config) {
+                this.config = config;
+            }
+
+            /**
+             * Return this value as a legacy boolean for use with {@link DataSchemaNode#isConfiguration()}.
+             *
+             * @return A simple boolean
+             * @deprecated This method is only for transition and should be eliminated once DataSchemaNode is fixed.
+             */
+            @Deprecated
+            public boolean asLegacy() {
+                return config == null || config;
+            }
+
+            public @Nullable Boolean asNullable() {
+                return config;
+            }
+
+            public Optional<Boolean> asOptional() {
+                return Optional.ofNullable(config);
+            }
+        }
+
+        /**
+         * Return the effective {@code config} statement value.
+         *
+         * @return This statement's effective config
+         */
+        @NonNull EffectiveConfig effectiveConfig();
 
         /**
          * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case

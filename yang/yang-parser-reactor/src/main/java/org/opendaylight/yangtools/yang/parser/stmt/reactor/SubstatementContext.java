@@ -88,8 +88,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public boolean effectiveConfig() {
-        return isConfiguration(parent);
+    public EffectiveConfig effectiveConfig() {
+        return effectiveConfig(parent);
     }
 
     @Override
