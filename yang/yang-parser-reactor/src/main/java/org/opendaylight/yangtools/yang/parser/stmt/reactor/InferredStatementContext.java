@@ -458,8 +458,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public boolean effectiveConfig() {
-        return isConfiguration(parent);
+    public EffectiveConfig effectiveConfig() {
+        return effectiveConfig(parent);
     }
 
     @Override

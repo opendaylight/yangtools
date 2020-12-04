@@ -91,7 +91,7 @@ abstract class AbstractCaseStatementSupport
         return new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig() && substatements.stream().anyMatch(
+                .setConfiguration(stmt.effectiveConfig().asLegacy() && substatements.stream().anyMatch(
                     sub -> sub instanceof DataSchemaNode && ((DataSchemaNode) sub).isConfiguration()))
                 .toFlags();
     }

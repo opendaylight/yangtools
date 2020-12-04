@@ -51,7 +51,7 @@ abstract class AbstractContainerStatementSupport
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig())
+                .setConfiguration(stmt.effectiveConfig().asLegacy())
                 .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
                 .toFlags();
 

@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingE
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -98,15 +99,16 @@ abstract class AbstractListStatementSupport extends
             keyDefinition = ImmutableList.of();
         }
 
-        final boolean configuration = stmt.effectiveConfig();
+        final EffectiveConfig configuration = stmt.effectiveConfig();
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(configuration)
+                // FIXME: this wrong: it should be a Optional<Boolean>
+                .setConfiguration(configuration != EffectiveConfig.FALSE)
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                     .equals(Ordering.USER))
                 .toFlags();
-        if (configuration && keyDefinition.isEmpty() && isInstantied(stmt)) {
+        if (configuration == EffectiveConfig.TRUE && keyDefinition.isEmpty() && isInstantied(stmt)) {
             warnConfigList(stmt);
         }
 
