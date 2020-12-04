@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -17,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -113,6 +116,7 @@ public final class UsesStatementSupport
                 copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 resolveUsesNode(usesNode, targetNodeStmtCtx);
                 StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
+                usesNode.addToNs(SourceGroupingNamespace.class, Empty.getInstance(), sourceGrpStmtCtx);
             }
 
             @Override
@@ -143,7 +147,8 @@ public final class UsesStatementSupport
     @Override
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final GroupingDefinition sourceGrouping = getSourceGrouping(stmt);
+        final GroupingDefinition sourceGrouping = (GroupingDefinition)
+            verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.getInstance())).buildEffective();
         final int flags = historyAndStatusFlags(stmt.history(), substatements);
         final QName argument = stmt.getArgument();
         final UsesStatement declared = stmt.declared();
@@ -175,12 +180,6 @@ public final class UsesStatementSupport
         }
 
         return ImmutableMap.copyOf(refines);
-    }
-
-    private static GroupingDefinition getSourceGrouping(final Current<QName, ?> stmt) {
-        // FIXME: YANGTOOLS-1197: we have this lookup in inference action, just store a replica in local namespace
-        //                        during apply and pick it up when we build the statement
-        return (GroupingDefinition) stmt.getFromNamespace(GroupingNamespace.class, stmt.getArgument()).buildEffective();
     }
 
     /**
