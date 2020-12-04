@@ -36,7 +36,7 @@ public final class MustStatementSupport
     private final @NonNull XPathSupport xpathSupport;
 
     private MustStatementSupport(final XPathSupport xpathSupport) {
-        super(YangStmtMapping.MUST);
+        super(YangStmtMapping.MUST, CopyPolicy.CONTEXT_INDEPENDENT);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

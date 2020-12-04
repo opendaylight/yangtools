@@ -27,7 +27,8 @@ public final class RequireInstanceStatementSupport
     private RequireInstanceStatementSupport() {
         super(YangStmtMapping.REQUIRE_INSTANCE,
             new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.FALSE)),
-            new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.TRUE)));
+            new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.TRUE)),
+            CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static RequireInstanceStatementSupport getInstance() {

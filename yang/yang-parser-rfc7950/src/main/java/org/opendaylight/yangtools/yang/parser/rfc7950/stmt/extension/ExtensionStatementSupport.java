@@ -46,7 +46,7 @@ public final class ExtensionStatementSupport
             new ThreadLocal<>();
 
     private ExtensionStatementSupport() {
-        super(YangStmtMapping.EXTENSION);
+        super(YangStmtMapping.EXTENSION, CopyPolicy.DECLARED_COPY);
     }
 
     public static ExtensionStatementSupport getInstance() {

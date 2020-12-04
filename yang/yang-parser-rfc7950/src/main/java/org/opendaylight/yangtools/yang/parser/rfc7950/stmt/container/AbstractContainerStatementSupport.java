@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractContainerStatementSupport
         extends BaseSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
     AbstractContainerStatementSupport() {
-        super(YangStmtMapping.CONTAINER);
+        super(YangStmtMapping.CONTAINER, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

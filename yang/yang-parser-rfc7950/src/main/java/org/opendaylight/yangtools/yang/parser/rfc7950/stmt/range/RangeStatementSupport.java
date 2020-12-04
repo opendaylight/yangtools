@@ -41,7 +41,7 @@ public final class RangeStatementSupport
     private static final RangeStatementSupport INSTANCE = new RangeStatementSupport();
 
     private RangeStatementSupport() {
-        super(YangStmtMapping.RANGE);
+        super(YangStmtMapping.RANGE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static RangeStatementSupport getInstance() {

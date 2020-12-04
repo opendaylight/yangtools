@@ -25,7 +25,7 @@ public final class PresenceStatementSupport
     private static final PresenceStatementSupport INSTANCE = new PresenceStatementSupport();
 
     private PresenceStatementSupport() {
-        super(YangStmtMapping.PRESENCE);
+        super(YangStmtMapping.PRESENCE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static PresenceStatementSupport getInstance() {

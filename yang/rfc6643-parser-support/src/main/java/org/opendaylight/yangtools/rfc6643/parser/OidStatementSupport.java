@@ -29,7 +29,7 @@ public final class OidStatementSupport
     private static final OidStatementSupport INSTANCE = new OidStatementSupport();
 
     private OidStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.OBJECT_ID);
+        super(IetfYangSmiv2ExtensionsMapping.OBJECT_ID, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static OidStatementSupport getInstance() {

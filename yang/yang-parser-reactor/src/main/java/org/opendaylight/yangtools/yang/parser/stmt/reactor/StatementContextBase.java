@@ -599,8 +599,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     // This statement is context-independent and has no substatements -- hence it can be freely shared.
                     return Optional.of(replicaAsChildOf(parent));
                 }
-                // FIXME: YANGTOOLS-694: filter out all context-independent substatements, eliminate fall-through
-                // fall through
+                throw new IllegalStateException(
+                        "Statement " + support.getPublicView() + " should be context independent");
             case DECLARED_COPY:
                 // FIXME: YANGTOOLS-694: this is still to eager, we really want to copy as a lazily-instantiated
                 //                       context, so that we can support building an effective statement without copying

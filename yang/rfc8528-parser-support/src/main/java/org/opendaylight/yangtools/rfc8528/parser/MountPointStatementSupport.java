@@ -73,7 +73,7 @@ public final class MountPointStatementSupport
     private final SubstatementValidator validator;
 
     MountPointStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.DECLARED_COPY);
         this.validator = SubstatementValidator.builder(definition)
                 .addOptional(YangStmtMapping.CONFIG)
                 .addOptional(YangStmtMapping.DESCRIPTION)

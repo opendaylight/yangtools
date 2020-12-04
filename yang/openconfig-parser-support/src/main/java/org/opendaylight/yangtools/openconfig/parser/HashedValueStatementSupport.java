@@ -13,7 +13,7 @@ public final class HashedValueStatementSupport extends AbstractHashedValueStatem
     private static final HashedValueStatementSupport INSTANCE = new HashedValueStatementSupport();
 
     private HashedValueStatementSupport() {
-        super(OpenConfigStatements.OPENCONFIG_HASHED_VALUE);
+        super(OpenConfigStatements.OPENCONFIG_HASHED_VALUE, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static HashedValueStatementSupport getInstance() {

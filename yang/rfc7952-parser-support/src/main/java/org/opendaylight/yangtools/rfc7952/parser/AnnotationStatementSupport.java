@@ -101,7 +101,7 @@ public final class AnnotationStatementSupport
     private final SubstatementValidator validator;
 
     AnnotationStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.CONTEXT_INDEPENDENT);
         this.validator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.TYPE)
                 .addOptional(YangStmtMapping.DESCRIPTION)

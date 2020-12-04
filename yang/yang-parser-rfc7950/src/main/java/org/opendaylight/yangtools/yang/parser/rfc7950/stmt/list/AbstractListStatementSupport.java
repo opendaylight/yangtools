@@ -57,7 +57,7 @@ abstract class AbstractListStatementSupport extends
         YangStmtMapping.GROUPING, YangStmtMapping.NOTIFICATION, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT);
 
     AbstractListStatementSupport() {
-        super(YangStmtMapping.LIST);
+        super(YangStmtMapping.LIST, CopyPolicy.DECLARED_COPY);
     }
 
     @Override
