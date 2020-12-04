@@ -28,7 +28,7 @@ public final class OpenConfigVersionSupport
     private static final OpenConfigVersionSupport INSTANCE = new OpenConfigVersionSupport();
 
     private OpenConfigVersionSupport() {
-        super(OpenConfigStatements.OPENCONFIG_VERSION);
+        super(OpenConfigStatements.OPENCONFIG_VERSION, CopyPolicy.REJECT);
     }
 
     public static OpenConfigVersionSupport getInstance() {

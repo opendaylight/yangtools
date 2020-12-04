@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -104,7 +105,7 @@ public final class AnnotationStatementSupport
     private final SubstatementValidator validator;
 
     AnnotationStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, CopyPolicy.REJECT);
         this.validator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.TYPE)
                 .addOptional(YangStmtMapping.DESCRIPTION)

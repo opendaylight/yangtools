@@ -24,7 +24,7 @@ abstract class AbstractRefineStatementSupport
         extends BaseStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
 
     AbstractRefineStatementSupport() {
-        super(YangStmtMapping.REFINE);
+        super(YangStmtMapping.REFINE, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 final class UnrecognizedStatementSupport
         extends BaseStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition);
+        super(publicDefinition, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

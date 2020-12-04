@@ -32,7 +32,7 @@ final class Decimal64SpecificationSupport extends BaseStatementSupport<String, D
         .build();
 
     Decimal64SpecificationSupport() {
-        super(YangStmtMapping.TYPE);
+        super(YangStmtMapping.TYPE, CopyPolicy.DECLARED_COPY);
     }
 
     @Override

@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 abstract class AbstractEnumStatementSupport
         extends BaseStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
     AbstractEnumStatementSupport() {
-        super(YangStmtMapping.ENUM);
+        super(YangStmtMapping.ENUM, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override

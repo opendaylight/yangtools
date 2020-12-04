@@ -47,8 +47,8 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
                 }
             });
 
-    protected BaseInternedStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition, CopyPolicy.CONTEXT_INDEPENDENT);
+    protected BaseInternedStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        super(publicDefinition, copyPolicy);
     }
 
     @Override
