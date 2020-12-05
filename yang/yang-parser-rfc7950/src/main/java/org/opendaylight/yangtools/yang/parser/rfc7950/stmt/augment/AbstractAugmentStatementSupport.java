@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -116,7 +117,7 @@ abstract class AbstractAugmentStatementSupport
         // Pick up the marker left by onFullDefinitionDeclared() inference action. If it is present we need to pass our
         // children through target's implicit wrapping.
         final StatementContextBase<?, ?, ?> implicitDef = stmt.getFromNamespace(AugmentImplicitHandlingNamespace.class,
-            stmt.caerbannog());
+            Empty.getInstance());
         return implicitDef == null ? substatements : Lists.transform(substatements, subCtx -> {
             verify(subCtx instanceof StatementContextBase);
             return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx);

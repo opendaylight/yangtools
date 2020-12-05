@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -72,7 +73,7 @@ final class AugmentInferenceAction implements InferenceAction {
         // We are targeting a context which is creating implicit nodes. In order to keep things consistent,
         // we will need to circle back when creating effective statements.
         if (augmentTargetCtx.hasImplicitParentSupport()) {
-            augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, augmentNode, augmentTargetCtx);
+            augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, Empty.getInstance(), augmentTargetCtx);
         }
 
         // FIXME: this is a workaround for models which augment a node which is added via an extension
