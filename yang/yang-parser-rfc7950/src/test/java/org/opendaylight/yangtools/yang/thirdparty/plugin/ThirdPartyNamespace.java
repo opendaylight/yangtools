@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * ThirdPartyNamespace.
  */
-public interface ThirdPartyNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, String> {
+public interface ThirdPartyNamespace extends IdentifierNamespace<Empty, String> {
+    @NonNull NamespaceBehaviour<Empty, String, @NonNull ThirdPartyNamespace> BEHAVIOR =
+        NamespaceBehaviour.statementLocal(ThirdPartyNamespace.class);
 
 }

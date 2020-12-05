@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
-
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -16,10 +14,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 public final class CustomInferencePipeline {
     public static final CrossSourceStatementReactor CUSTOM_REACTOR = RFC7950Reactors.defaultReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyExtensionSupport.getInstance())
-            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, sourceLocal(ThirdPartyNamespace.class))
+            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyNamespace.BEHAVIOR)
             .build();
 
     private CustomInferencePipeline() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -28,7 +29,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
         path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
-        valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, stmt.caerbannog());
+        valueFromNamespace = stmt.getFromNamespace(ThirdPartyNamespace.class, Empty.getInstance());
     }
 
     @Override
