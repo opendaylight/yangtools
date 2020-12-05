@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -30,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -169,6 +169,8 @@ abstract class AbstractTypeStatementSupport
 
         // if it is yang built-in type, no prerequisite is needed, so simply return
         if (BUILT_IN_TYPES.containsKey(stmt.argument())) {
+            // FIXME: consider populating BaseTypeNamespace here, which could be done quite efficiently, moving the
+            //        logic from resolveType()
             return;
         }
 
@@ -179,13 +181,13 @@ abstract class AbstractTypeStatementSupport
         typeAction.mutatesEffectiveCtx(stmt.getParentContext());
 
         /*
-         * If the type does not exist, throw new InferenceException.
-         * Otherwise perform no operation.
+         * If the type does not exist, throw an InferenceException.
+         * If the type exists, store a reference to it in BaseTypeNamespace.
          */
         typeAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                // Intentional NOOP
+                stmt.addToNs(BaseTypeNamespace.class, Empty.getInstance(), typePrereq.resolve(ctx));
             }
 
             @Override
@@ -310,6 +312,11 @@ abstract class AbstractTypeStatementSupport
      * @throws SourceException if the target type cannot be found
      */
     private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final Current<String, ?> ctx) {
+        final StmtContext<?, ?, ?> baseType = ctx.namespaceItem(BaseTypeNamespace.class, Empty.getInstance());
+        if (baseType != null) {
+            return ((TypedefEffectiveStatement) baseType.buildEffective()).asTypeEffectiveStatement();
+        }
+
         final String argument = ctx.getArgument();
         switch (argument) {
             case BINARY:
@@ -339,12 +346,7 @@ abstract class AbstractTypeStatementSupport
             case UINT64:
                 return BuiltinEffectiveStatement.UINT64;
             default:
-                // FIXME: YANGTOOLS-1198: this lookup needs to be done during inference and a replica needs to be
-                //                        stored in a local namespace.
-                final QName qname = StmtContextUtils.parseNodeIdentifier(ctx.caerbannog(), argument);
-                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef = SourceException.throwIfNull(
-                    ctx.getFromNamespace(TypeNamespace.class, qname), ctx, "Type '%s' not found", qname);
-                return typedef.buildEffective().asTypeEffectiveStatement();
+                throw new IllegalStateException("Unhandled type argument " + argument);
         }
     }
 
