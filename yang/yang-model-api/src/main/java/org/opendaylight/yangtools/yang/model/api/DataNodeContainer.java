@@ -61,12 +61,29 @@ public interface DataNodeContainer {
      *
      * @param name QName of child
      * @return child node of this DataNodeContainer if child with given name is present, null otherwise
-     * @deprecated Use {@link #findDataChildByName(QName)} instead.
      * @throws NullPointerException if {@code name} is null
      */
-    @Deprecated
-    default @Nullable DataSchemaNode getDataChildByName(final QName name) {
+    default @Nullable DataSchemaNode dataChildByName(final QName name) {
         return findDataChildByName(name).orElse(null);
+    }
+
+    /**
+     * Returns the child node corresponding to the specified name.
+     *
+     * <p>
+     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children. This
+     * is consistent with {@code schema tree}.
+     *
+     * @param name QName of child
+     * @return child node of this DataNodeContainer if child with given name is present, null otherwise
+     * @deprecated Use {@link #dataChildByName(QName)} or {@link #findDataChildByName(QName)} instead. This method will
+     *             be repurposed to assert existence in the next major release.
+     * @throws NullPointerException if {@code name} is null
+     */
+    @Deprecated(forRemoval = true)
+    default @Nullable DataSchemaNode getDataChildByName(final QName name) {
+        return dataChildByName(name);
     }
 
     /**
