@@ -62,12 +62,12 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
+    public final Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
 
     @Override
-    public final Collection<? extends GroupingDefinition> getGroupings() {
+    public final Collection<? extends @NonNull GroupingDefinition> getGroupings() {
         return delegate.getGroupings();
     }
 
@@ -177,7 +177,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final Collection<? extends MustDefinition> getMustConstraints() {
+    public final Collection<? extends @NonNull MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
 
