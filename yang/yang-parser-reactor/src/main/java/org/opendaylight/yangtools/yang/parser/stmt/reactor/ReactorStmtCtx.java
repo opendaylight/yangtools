@@ -239,6 +239,23 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
+    // Non-final due to InferredStatementContext's override
+    public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+            final @NonNull Class<Z> type) {
+        return allSubstatementsStream()
+            .filter(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type))
+            .findAny()
+            .map(ctx -> (X) ctx.getArgument());
+    }
+
+    @Override
+    // Non-final due to InferredStatementContext's override
+    public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return allSubstatementsStream()
+            .anyMatch(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type));
+    }
+
+    @Override
     @Deprecated
     @SuppressWarnings("unchecked")
     public final <Z extends EffectiveStatement<A, D>> StmtContext<A, D, Z> caerbannog() {
