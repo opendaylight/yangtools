@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -64,11 +65,11 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
         /**
          * Indexing support for {@link DataNodeContainer#findDataChildByName(QName)}.
          */
-        protected final Optional<DataSchemaNode> findDataSchemaNode(final QName name) {
+        protected final @Nullable DataSchemaNode dataSchemaNode(final QName name) {
             // Only DataNodeContainer subclasses should be calling this method
             verify(this instanceof DataNodeContainer);
             final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(name));
-            return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
+            return child instanceof DataSchemaNode ? (DataSchemaNode) child : null;
         }
 
         protected abstract Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace();

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -45,8 +44,8 @@ final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, Inp
     }
 
     @Override
-    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return findDataSchemaNode(name);
+    public DataSchemaNode dataChildByName(final QName name) {
+        return dataSchemaNode(name);
     }
 
     @Override
