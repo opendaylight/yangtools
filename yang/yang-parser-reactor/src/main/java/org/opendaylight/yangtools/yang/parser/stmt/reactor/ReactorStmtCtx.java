@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextDefaults;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -236,6 +237,39 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     @Override
     public final EffectiveStatement<?, ?> original() {
         return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+    }
+
+
+    /**
+     * Search of any child statement context of specified type and return its argument. If such a statement exists, it
+     * is assumed to have the right argument. Users should be careful to use this method for statements which have
+     * cardinality {@code 0..1}, otherwise this method can return any one of the statement's argument.
+     *
+     * <p>
+     * The default implementation defers to
+     * {@link StmtContextDefaults#findSubstatementArgument(StmtContext, Class)}, subclasses are expected to provide
+     * optimized implementation if possible.
+     *
+     * @param <X> Substatement argument type
+     * @param <Z> Substatement effective statement representation
+     * @param type Effective statement representation being look up
+     * @return {@link Optional#empty()} if no statement exists, otherwise the argument value
+     */
+    @Override
+    // Non-final due to InferredStatementContext's override
+    public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+            final @NonNull Class<Z> type) {
+        return allSubstatementsStream()
+            .filter(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type))
+            .findAny()
+            .map(ctx -> (X) ctx.getArgument());
+    }
+
+    @Override
+    // Non-final due to InferredStatementContext's override
+    public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return allSubstatementsStream()
+            .anyMatch(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type));
     }
 
     @Override

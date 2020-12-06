@@ -151,7 +151,7 @@ public final class StmtContextUtils {
      * @param <A> statement argument type
      * @param <D> declared statement type
      * @return statement context that was searched for or null if was not found
-     * @deprecated Use {@link StmtContext#findSubstatementArgument(Class)} instead.
+     * @deprecated Use {@link BoundStmtCtx#findSubstatementArgument(Class)} instead.
      */
     @Deprecated(forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> StmtContext<A, ?, ?> findFirstSubstatement(
