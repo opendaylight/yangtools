@@ -11,9 +11,11 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A {@link CommonStmtCtx} which has additionally been bound to a {@link StatementSupport}. It provides
@@ -46,4 +48,24 @@ public interface BoundStmtCtx<A> extends CommonStmtCtx {
      * @return YANG version used to bind this statement
      */
     @NonNull YangVersion yangVersion();
+
+    /**
+     * Search of any child statement context of specified type and return its argument. If such a statement exists, it
+     * is assumed to have the right argument. Users should be careful to use this method for statements which have
+     * cardinality {@code 0..1}, otherwise this method can return any one of the statement's argument.
+     *
+     * @param <X> Substatement argument type
+     * @param <Z> Substatement effective statement representation
+     * @param type Effective statement representation being look up
+     * @return {@link Optional#empty()} if no statement exists, otherwise the argument value
+     */
+    <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(@NonNull Class<Z> type);
+
+    /**
+     * Check if there is any child statement context of specified type.
+     *
+     * @param type Effective statement representation being look up
+     * @return True if such a child statement exists, false otherwise
+     */
+    boolean hasSubstatement(@NonNull Class<? extends EffectiveStatement<?, ?>> type);
 }
