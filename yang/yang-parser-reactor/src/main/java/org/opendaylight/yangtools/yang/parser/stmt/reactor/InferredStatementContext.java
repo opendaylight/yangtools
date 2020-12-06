@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextDefaults;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
@@ -191,7 +190,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
         if (substatements instanceof List) {
-            return StmtContextDefaults.findSubstatementArgument(this, type);
+            return super.findSubstatementArgument(type);
         }
 
         final Optional<X> templateArg = prototype.findSubstatementArgument(type);
@@ -207,7 +206,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        return substatements instanceof List ? StmtContextDefaults.hasSubstatement(prototype, type)
+        return substatements instanceof List ? super.hasSubstatement(type)
             // We do not allow deletion of partially-materialized statements, hence this is accurate
             : prototype.hasSubstatement(type);
     }
