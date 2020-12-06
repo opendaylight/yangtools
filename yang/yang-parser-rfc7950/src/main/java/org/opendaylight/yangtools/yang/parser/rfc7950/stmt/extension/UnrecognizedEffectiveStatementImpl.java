@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
@@ -72,10 +72,8 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
 
         final int colon = value.indexOf(':');
         if (colon == -1) {
-            if (AbstractQName.isValidLocalName(value)) {
-                return QName.unsafeOf(StmtContextUtils.getRootModuleQName(stmt), value).intern();
-            }
-            return null;
+            final UnqualifiedQName qname = UnqualifiedQName.tryCreate(value);
+            return qname == null ? null : qname.bindTo(StmtContextUtils.getRootModuleQName(stmt)).intern();
         }
 
         final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt, value.substring(0, colon));

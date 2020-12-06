@@ -78,7 +78,7 @@ public abstract class AbstractQName implements Identifier, WritableObject {
      * @param str String to check
      * @return True if the string usable as a local name, false otherwise
      */
-    public static final boolean isValidLocalName(final @Nullable String str) {
+    static final boolean isValidLocalName(final @Nullable String str) {
         return str != null && !str.isEmpty() && checkContent(str);
     }
 
