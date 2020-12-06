@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -83,10 +83,8 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
 
         final int colon = value.indexOf(':');
         if (colon == -1) {
-            if (AbstractQName.isValidLocalName(value)) {
-                return QName.unsafeOf(StmtContextUtils.getRootModuleQName(stmt.caerbannog()), value).intern();
-            }
-            return null;
+            final UnqualifiedQName qname = UnqualifiedQName.tryCreate(value);
+            return qname == null ? null : qname.bindTo(StmtContextUtils.getRootModuleQName(stmt.caerbannog())).intern();
         }
 
         final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt.caerbannog(),
