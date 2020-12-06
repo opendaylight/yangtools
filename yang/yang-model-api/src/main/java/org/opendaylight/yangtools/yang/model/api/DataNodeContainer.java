@@ -63,9 +63,7 @@ public interface DataNodeContainer {
      * @return child node of this DataNodeContainer if child with given name is present, null otherwise
      * @throws NullPointerException if {@code name} is null
      */
-    default @Nullable DataSchemaNode dataChildByName(final QName name) {
-        return findDataChildByName(name).orElse(null);
-    }
+    @Nullable DataSchemaNode dataChildByName(QName name);
 
     /**
      * Returns the child node corresponding to the specified name.
@@ -97,7 +95,9 @@ public interface DataNodeContainer {
      * @return child node of this DataNodeContainer if child with given name is present, empty otherwise
      * @throws NullPointerException if {@code name} is null
      */
-    Optional<DataSchemaNode> findDataChildByName(QName name);
+    default Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        return Optional.ofNullable(dataChildByName(name));
+    }
 
     /**
      * Returns the child node corresponding to the specified name.

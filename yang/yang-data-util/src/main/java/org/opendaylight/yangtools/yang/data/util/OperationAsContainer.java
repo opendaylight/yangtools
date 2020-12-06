@@ -98,18 +98,18 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+    public final DataSchemaNode dataChildByName(final QName name) {
         if (!name.getModule().equals(getQName().getModule())) {
-            return Optional.empty();
+            return null;
         }
 
         switch (name.getLocalName()) {
             case "input":
-                return Optional.of(delegate.getInput());
+                return delegate.getInput();
             case "output":
-                return Optional.of(delegate.getOutput());
+                return delegate.getOutput();
             default:
-                return Optional.empty();
+                return null;
         }
     }
 

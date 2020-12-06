@@ -52,8 +52,8 @@ final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, Case
     }
 
     @Override
-    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return findDataSchemaNode(name);
+    public DataSchemaNode dataChildByName(final QName name) {
+        return dataSchemaNode(name);
     }
 
     @Override

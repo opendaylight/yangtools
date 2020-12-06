@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -33,8 +32,8 @@ public final class SingleChildDataNodeContainer implements DataNodeContainer {
     }
 
     @Override
-    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return child.getQName().equals(name) ? Optional.of(child) : Optional.empty();
+    public DataSchemaNode dataChildByName(final QName name) {
+        return child.getQName().equals(name) ? child : null;
     }
 
     @Override
