@@ -188,8 +188,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
 
     @Override
     @SuppressWarnings("checkstyle:hiddenField")
-    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        return findDataSchemaNode(name);
+    public final DataSchemaNode dataChildByName(final QName name) {
+        return dataSchemaNode(name);
     }
 
     @Override

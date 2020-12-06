@@ -155,14 +155,14 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        public DataSchemaNode dataChildByName(final QName name) {
             switch (name.getLocalName()) {
                 case "input":
-                    return Optional.of(rpcDefinition.getInput());
+                    return rpcDefinition.getInput();
                 case "output":
-                    return Optional.of(rpcDefinition.getOutput());
+                    return rpcDefinition.getOutput();
                 default:
-                    return Optional.empty();
+                    return null;
             }
         }
 
@@ -220,8 +220,8 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Optional<DataSchemaNode> findDataChildByName(final QName name) {
-            return Optional.ofNullable(mapNodes.get(requireNonNull(name)));
+        public DataSchemaNode dataChildByName(final QName name) {
+            return mapNodes.get(requireNonNull(name));
         }
 
         @Override
