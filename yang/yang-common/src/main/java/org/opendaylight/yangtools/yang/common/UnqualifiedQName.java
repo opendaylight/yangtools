@@ -45,6 +45,16 @@ public final class UnqualifiedQName extends AbstractQName implements Comparable<
     }
 
     /**
+     * Create a new unqualified QName.
+     *
+     * @param localName The local name of this unqualified QName
+     * @return An UnqualifiedQName instance, or null if localName is not valid
+     */
+    public static @Nullable UnqualifiedQName tryCreate(final String localName) {
+        return isValidLocalName(localName) ? new UnqualifiedQName(localName) : null;
+    }
+
+    /**
      * Read an UnqualifiedQName from a DataInput. The format is expected to match the output format of
      * {@link #writeTo(DataOutput)}.
      *
