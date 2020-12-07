@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -67,5 +69,11 @@ public final class MinElementsStatementSupport
     @Override
     protected MinElementsEffectiveStatement createEmptyEffective(final MinElementsStatement declared) {
         return new EmptyMinElementsEffectiveStatement(declared);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final MinElementsEffectiveStatement original,
+                                          final EffectiveStmtCtx.Current<Integer, MinElementsStatement> stmt) {
+        return true;
     }
 }

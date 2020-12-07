@@ -95,4 +95,10 @@ public final class PatternStatementSupport
         return substatements.isEmpty() ? new EmptyPatternEffectiveStatement(stmt.declared())
             : new RegularPatternEffectiveStatement(stmt.declared(), substatements);
     }
+
+    @Override
+    public @NonNull boolean copyEffective(final PatternEffectiveStatement original,
+                                          final Current<PatternExpression, PatternStatement> stmt) {
+        return true;
+    }
 }
