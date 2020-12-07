@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -77,7 +78,10 @@ public final class UsesStatementSupport
     private static final UsesStatementSupport INSTANCE = new UsesStatementSupport();
 
     private UsesStatementSupport() {
-        super(YangStmtMapping.USES, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.USES, StatementPolicy.copyDeclared((copy, stmt, substatements) ->
+            augmenting(copy.history()) == augmenting(stmt.history())
+            // FIXME: this should devolve to argument check
+            && copy.schemaPath().equals(stmt.schemaPath())));
     }
 
     public static UsesStatementSupport getInstance() {
@@ -365,5 +369,10 @@ public final class UsesStatementSupport
 
         return supportedRefineTargets == null || supportedRefineTargets.isEmpty()
                 || supportedRefineTargets.contains(refineTargetNodeCtx.publicDefinition());
+    }
+
+    private static boolean augmenting(final CopyHistory history) {
+        return history.contains(CopyType.ADDED_BY_AUGMENTATION)
+            || history.contains(CopyType.ADDED_BY_USES_AUGMENTATION);
     }
 }
