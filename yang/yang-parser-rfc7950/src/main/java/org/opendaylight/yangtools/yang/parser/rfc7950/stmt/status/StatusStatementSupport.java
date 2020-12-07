@@ -114,6 +114,13 @@ public final class StatusStatementSupport
             : new RegularStatusEffectiveStatement(stmt.declared(), substatements);
     }
 
+
+    @Override
+    public @NonNull boolean copyEffective(final StatusEffectiveStatement original,
+                                          final Current<Status, StatusStatement> stmt) {
+        return true;
+    }
+
     private static @NonNull StatusEffectiveStatement createEmptyEffective(final StatusStatement declared) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.

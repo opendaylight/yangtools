@@ -115,6 +115,12 @@ public final class RpcStatementSupport extends BaseSchemaTreeStatementSupport<Rp
         }
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final RpcEffectiveStatement original,
+                                          final Current<QName, RpcStatement> stmt) {
+        return ((RpcEffectiveStatementImpl) original).getPath().equals(stmt.wrapSchemaPath());
+    }
+
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))

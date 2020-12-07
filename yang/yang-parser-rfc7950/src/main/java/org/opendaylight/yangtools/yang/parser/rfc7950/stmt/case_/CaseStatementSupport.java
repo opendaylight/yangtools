@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseImplicitStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -137,6 +139,27 @@ public final class CaseStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final CaseEffectiveStatement original,
+                                          final Current<QName, CaseStatement> stmt) {
+        if (!((SchemaNode) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((DataSchemaNode) original).isAddedByUses()
+                != stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((DataSchemaNode) original).isAugmenting()
+                != stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        if (((DataSchemaNode) original).effectiveConfig()
+                .equals(Optional.ofNullable(stmt.effectiveConfig().asNullable()))) {
+            return false;
+        }
+        return true;
     }
 
     private static @Nullable CaseSchemaNode findOriginal(final Current<?, ?> stmt) {

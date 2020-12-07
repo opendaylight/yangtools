@@ -38,4 +38,11 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
     @NonNull E createEffective(EffectiveStmtCtx.@NonNull Current<A, D> stmt,
         Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
         Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements);
+
+
+    // FIXME: YANGTOOLS-1195: make this non-default
+    default @NonNull boolean copyEffective(final @NonNull E original,
+                                           final EffectiveStmtCtx.@NonNull Current<A, D> stmt) {
+        return false;
+    }
 }
