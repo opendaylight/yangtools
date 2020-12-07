@@ -76,7 +76,9 @@ public final class MountPointStatementSupport
     private final SubstatementValidator validator;
 
     MountPointStatementSupport(final StatementDefinition definition) {
-        super(definition, CopyPolicy.DECLARED_COPY);
+        super(definition, StatementPolicy.copyDeclared((copy, stmt, substatements) ->
+            copy.getArgument().equals(stmt.getArgument())
+            && copy.getEffectiveParent().getSchemaPath().equals(stmt.getEffectiveParent().getSchemaPath())));
         this.validator = SubstatementValidator.builder(definition)
                 .addOptional(YangStmtMapping.CONFIG)
                 .addOptional(YangStmtMapping.DESCRIPTION)
