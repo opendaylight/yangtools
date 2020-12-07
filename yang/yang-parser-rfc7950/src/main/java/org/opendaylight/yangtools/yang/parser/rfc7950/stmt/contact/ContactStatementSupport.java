@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -53,5 +54,11 @@ public final class ContactStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyContactEffectiveStatement(stmt.declared())
             : new RegularContactEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final ContactEffectiveStatement original,
+                                          final Current<String, ContactStatement> stmt) {
+        return true;
     }
 }

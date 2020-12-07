@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -134,8 +135,18 @@ abstract class AbstractImportStatementSupport
         return new ImportEffectiveStatementImpl(declared, substatements, revision, semVer);
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final ImportEffectiveStatement original,
+                                          final Current<String, ImportStatement> stmt) {
+        final String prefix = stmt.declared().getPrefix().getValue();
+        final SemVerSourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
+                ImportPrefixToSemVerSourceIdentifier.class, prefix);
+        return importedModuleIdentifier.equals(((ImportEffectiveStatementImpl)original).getSemanticVersion()
+                .orElse(null));
+    }
+
     private static Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx,
-            final String moduleName, final String prefix) {
+                                                final String moduleName, final String prefix) {
         // When 'revision-date' of an import is not specified in yang source, we need to find revision of imported
         // module.
         final QNameModule importedModule = SourceException.throwIfNull(

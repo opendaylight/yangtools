@@ -90,4 +90,10 @@ abstract class AbstractIdentityStatementSupport
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .toFlags(), substatements, ImmutableSet.copyOf(identities));
     }
+
+    @Override
+    public @NonNull boolean copyEffective(final IdentityEffectiveStatement original,
+                                          final Current<QName, IdentityStatement> stmt) {
+        return ((EmptyIdentityEffectiveStatement)original).getPath().equals(stmt.wrapSchemaPath());
+    }
 }
