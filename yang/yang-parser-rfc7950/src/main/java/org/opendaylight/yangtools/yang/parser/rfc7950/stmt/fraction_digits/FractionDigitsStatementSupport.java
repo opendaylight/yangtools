@@ -100,4 +100,10 @@ public final class FractionDigitsStatementSupport
         final EmptyFractionDigitsEffectiveStatement shared = EMPTY_EFF.get(declared);
         return shared != null ? shared :  new EmptyFractionDigitsEffectiveStatement(declared);
     }
+
+    @Override
+    public @NonNull boolean copyEffective(final FractionDigitsEffectiveStatement original,
+                                          final Current<Integer, FractionDigitsStatement> stmt) {
+        return true;
+    }
 }

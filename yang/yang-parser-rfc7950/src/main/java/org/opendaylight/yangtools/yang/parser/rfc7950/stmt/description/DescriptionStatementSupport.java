@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -53,5 +54,11 @@ public final class DescriptionStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyDescriptionEffectiveStatement(stmt.declared())
             : new RegularDescriptionEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public boolean copyEffective(final @NonNull DescriptionEffectiveStatement original,
+                                 final Current<String, DescriptionStatement> stmt) {
+        return true;
     }
 }

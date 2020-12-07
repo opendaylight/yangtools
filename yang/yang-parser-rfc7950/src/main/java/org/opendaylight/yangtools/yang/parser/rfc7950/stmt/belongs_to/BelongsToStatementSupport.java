@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -98,6 +99,12 @@ public final class BelongsToStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyBelongsToEffectiveStatement(stmt.declared())
             : new RegularBelongsToEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final BelongsToEffectiveStatement original,
+                                          final Current<String, BelongsToStatement> stmt) {
+        return true;
     }
 
     private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,
