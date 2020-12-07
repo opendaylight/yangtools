@@ -296,7 +296,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             final DataSchemaNode child) {
         if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
             for (AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
-                DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
+                DataSchemaNode childInAugmentation = augmentation.dataChildByName(child.getQName());
                 if (childInAugmentation != null) {
                     return augmentation;
                 }

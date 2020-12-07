@@ -136,7 +136,7 @@ public final class SchemaTracker {
         SchemaNode schema = null;
         final QName qname = name.getNodeType();
         if (parent instanceof DataNodeContainer) {
-            schema = ((DataNodeContainer)parent).getDataChildByName(qname);
+            schema = ((DataNodeContainer)parent).dataChildByName(qname);
             if (schema == null) {
                 if (parent instanceof GroupingDefinition) {
                     schema = (GroupingDefinition) parent;

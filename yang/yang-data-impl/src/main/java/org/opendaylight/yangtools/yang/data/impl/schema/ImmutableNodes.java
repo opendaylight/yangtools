@@ -239,7 +239,7 @@ public final class ImmutableNodes {
         final Iterator<PathArgument> it = id.getPathArguments().iterator();
         if (it.hasNext()) {
             topLevelElement = it.next();
-            final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
+            final DataSchemaNode dataChildByName = ctx.dataChildByName(topLevelElement.getNodeType());
             checkNotNull(dataChildByName,
                 "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
             instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx, topLevelElement.getNodeType());
