@@ -63,7 +63,7 @@ public final class LeafRefUtils {
         DataNodeContainer currenDataNodeContainer = module;
         while (nodePathIterator.hasNext()) {
             final QName qname = nodePathIterator.next();
-            final DataSchemaNode child = currenDataNodeContainer.getDataChildByName(qname);
+            final DataSchemaNode child = currenDataNodeContainer.dataChildByName(qname);
 
             if (child instanceof DataNodeContainer) {
                 if (!(child instanceof CaseSchemaNode)) {
