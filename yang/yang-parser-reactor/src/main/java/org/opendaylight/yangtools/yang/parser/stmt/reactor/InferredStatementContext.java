@@ -179,6 +179,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    E createEffective() {
+        return (E) this.original();
+    }
+
+    @Override
     boolean hasEmptySubstatements() {
         if (substatements == null) {
             return prototype.hasEmptySubstatements();
