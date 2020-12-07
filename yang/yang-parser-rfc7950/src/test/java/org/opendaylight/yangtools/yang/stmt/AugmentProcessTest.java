@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -33,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class AugmentProcessTest {
-
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
@@ -129,36 +127,22 @@ public class AugmentProcessTest {
         final ContainerSchemaNode augParent1Node = (ContainerSchemaNode) root.getDataChildByName(augParent1);
         final ContainerSchemaNode augParent2Node = (ContainerSchemaNode) augParent1Node.getDataChildByName(augParent2);
         final ContainerSchemaNode targetContNode = (ContainerSchemaNode) augParent2Node.getDataChildByName(contTarget);
-        assertNotNull(targetContNode);
-
-        assertNotNull(targetContNode.getChildNodes());
         assertEquals(3, targetContNode.getChildNodes().size());
 
         final ContainerSchemaNode contAdded1Node = (ContainerSchemaNode) targetContNode.getDataChildByName(contAdded1);
-        assertNotNull(contAdded1Node);
         final ListSchemaNode list1Node = (ListSchemaNode) contAdded1Node.getDataChildByName(list1);
-        assertNotNull(list1Node);
 
         final ContainerSchemaNode contAdded2Node = (ContainerSchemaNode) targetContNode.getDataChildByName(contAdded2);
-        assertNotNull(contAdded2Node);
         final AnyxmlSchemaNode axmlNode = (AnyxmlSchemaNode) contAdded2Node.getDataChildByName(axml);
-        assertNotNull(axmlNode);
 
         final ContainerSchemaNode contGrpNode = (ContainerSchemaNode) targetContNode.getDataChildByName(contGrp);
-        assertNotNull(contGrpNode);
         final AnyxmlSchemaNode axmlGrpNode = (AnyxmlSchemaNode) contGrpNode.getDataChildByName(axmlGrp);
-        assertNotNull(axmlGrpNode);
 
         final ContainerSchemaNode augCont1Node = (ContainerSchemaNode) root.getDataChildByName(augCont1);
         final ContainerSchemaNode augCont2Node = (ContainerSchemaNode) augCont1Node.getDataChildByName(augCont2);
-        assertNotNull(augCont2Node);
-
         final ContainerSchemaNode grpCont2Node = (ContainerSchemaNode) augCont2Node.getDataChildByName(grpCont2);
         final ContainerSchemaNode grpCont22Node = (ContainerSchemaNode) grpCont2Node.getDataChildByName(grpCont22);
-        assertNotNull(grpCont22Node);
-
         final ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node.getDataChildByName(grpAdd);
-        assertNotNull(grpAddNode);
     }
 
     @Test
@@ -187,5 +171,4 @@ public class AugmentProcessTest {
         final DataSchemaNode leafAug = leafAugCase.getDataChildByName(QName.create(nsAug, rev, "leaf-aug-case"));
         assertFalse(leafAug.isAugmenting());
     }
-
 }

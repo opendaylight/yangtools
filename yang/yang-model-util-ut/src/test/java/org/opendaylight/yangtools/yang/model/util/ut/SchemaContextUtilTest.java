@@ -53,8 +53,6 @@ public class SchemaContextUtilTest {
                 QName.create(myModule.getQNameModule(), "my-leaf-in-container"));
         SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
@@ -66,8 +64,6 @@ public class SchemaContextUtilTest {
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         rpc = getRpcByName(myModule, "my-rpc");
@@ -79,8 +75,6 @@ public class SchemaContextUtilTest {
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         final NotificationDefinition notification = myModule.getNotifications().iterator().next();
@@ -91,8 +85,6 @@ public class SchemaContextUtilTest {
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
@@ -106,8 +98,6 @@ public class SchemaContextUtilTest {
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         testNode = ((ChoiceSchemaNode) myModule
@@ -120,8 +110,6 @@ public class SchemaContextUtilTest {
                 QName.create(myModule.getQNameModule(), "my-choice-leaf-one"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         ListSchemaNode listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
@@ -135,8 +123,6 @@ public class SchemaContextUtilTest {
                 QName.create(myModule.getQNameModule(), "my-leaf-in-list"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
@@ -150,10 +136,7 @@ public class SchemaContextUtilTest {
                 QName.create(myModule.getQNameModule(), "my-leaf-list-in-list"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
-        assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
-
     }
 
     @Test
@@ -247,17 +230,14 @@ public class SchemaContextUtilTest {
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"));
         SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         testNode = getRpcByName(myModule, "my-rpc");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -265,17 +245,14 @@ public class SchemaContextUtilTest {
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         testNode = getGroupingByName(myModule, "my-grouping");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -283,8 +260,6 @@ public class SchemaContextUtilTest {
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -294,8 +269,6 @@ public class SchemaContextUtilTest {
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
     }
@@ -322,9 +295,7 @@ public class SchemaContextUtilTest {
         final PathExpression xpath = new PathExpressionImpl("imp:my-imported-container/imp:my-imported-leaf", true);
 
         final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, myModule, xpath);
-
         assertNotNull(foundNode);
-        assertNotNull(testNode);
         assertEquals(testNode, foundNode);
     }
 
@@ -339,9 +310,7 @@ public class SchemaContextUtilTest {
         final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, myModule, xpath);
 
         assertNotNull(foundNode);
-        assertNotNull(testNode);
         assertEquals(testNode, foundNode);
-
     }
 
     @Test
@@ -350,12 +319,12 @@ public class SchemaContextUtilTest {
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"));
         SchemaNode testNode = getGroupingByName(dataContainer, "my-grouping-in-container");
+        assertNotNull(testNode);
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-container"));
         SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -364,8 +333,6 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-container"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -374,13 +341,12 @@ public class SchemaContextUtilTest {
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-list"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-list");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-list"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -389,20 +355,17 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-list"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         // find grouping in grouping
         dataContainer = getGroupingByName(myModule, "my-grouping");
         testNode = getGroupingByName(dataContainer, "my-grouping-in-grouping");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-grouping"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -411,8 +374,6 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-grouping"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -423,12 +384,11 @@ public class SchemaContextUtilTest {
                 testNode = grouping;
             }
         }
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-rpc"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -437,21 +397,18 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-rpc"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         // find grouping in output
         dataContainer = getRpcByName(myModule, "my-rpc").getOutput();
         testNode = getGroupingByName(dataContainer, "my-grouping-in-output");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "output"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-output"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -460,21 +417,18 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-output"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         // find grouping in input
         dataContainer = getRpcByName(myModule, "my-rpc").getInput();
         testNode = getGroupingByName(dataContainer, "my-grouping-in-input");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "input"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-input"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -483,20 +437,17 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-input"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
         // find grouping in notification
         dataContainer = getNotificationByName(myModule, "my-notification");
         testNode = getGroupingByName(dataContainer, "my-grouping-in-notification");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-notification"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -505,8 +456,6 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-notification"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -516,14 +465,13 @@ public class SchemaContextUtilTest {
                 .findCaseNodes("one").iterator().next()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-container-in-case"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case");
+        assertNotNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "one"),
                 QName.create(myModule.getQNameModule(), "my-container-in-case"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-case"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
@@ -532,8 +480,6 @@ public class SchemaContextUtilTest {
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-case"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
     }
@@ -544,12 +490,11 @@ public class SchemaContextUtilTest {
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"));
         SchemaNode testNode = getGroupingByName(dataContainer, "my-grouping-in-container2");
+        assertNull(testNode);
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-container2"));
         SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in list
@@ -557,24 +502,22 @@ public class SchemaContextUtilTest {
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-list"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-list2");
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-list2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in grouping
         dataContainer = getGroupingByName(myModule, "my-grouping");
         testNode = getGroupingByName(dataContainer, "my-grouping-in-grouping2");
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-grouping2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in rpc
@@ -584,47 +527,43 @@ public class SchemaContextUtilTest {
                 testNode = grouping;
             }
         }
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-rpc2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in output
         dataContainer = getRpcByName(myModule, "my-rpc").getOutput();
         testNode = getGroupingByName(dataContainer, "my-grouping-in-output2");
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "output"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-output2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in input
         dataContainer = getRpcByName(myModule, "my-rpc").getInput();
         testNode = getGroupingByName(dataContainer, "my-grouping-in-input2");
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "input"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-input2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in notification
         dataContainer = getNotificationByName(myModule, "my-notification");
         testNode = getGroupingByName(dataContainer, "my-grouping-in-notification2");
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-notification2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         // find grouping in case
@@ -633,14 +572,13 @@ public class SchemaContextUtilTest {
                 .findCaseNodes("one").iterator().next()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-container-in-case"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case2");
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "one"),
                 QName.create(myModule.getQNameModule(), "my-container-in-case"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-case2"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
     }
 
@@ -682,8 +620,6 @@ public class SchemaContextUtilTest {
                 QName.create(myModule.getQNameModule(), "input"), QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "case-two"), QName.create(myModule.getQNameModule(), "two"));
         final SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
     }

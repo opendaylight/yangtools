@@ -34,7 +34,6 @@ public class Bug9241Test {
 
         final ContainerSchemaNode actionCont = (ContainerSchemaNode) fooModule.getDataChildByName(QName.create(
                 fooModule.getQNameModule(), "action-cont"));
-        assertNotNull(actionCont);
 
         final ActionDefinition actionInCont = actionCont.getActions().iterator().next();
 

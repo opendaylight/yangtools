@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -74,14 +76,12 @@ public interface DataNodeContainer {
      * is consistent with {@code schema tree}.
      *
      * @param name QName of child
-     * @return child node of this DataNodeContainer if child with given name is present, null otherwise
-     * @deprecated Use {@link #dataChildByName(QName)} or {@link #findDataChildByName(QName)} instead. This method will
-     *             be repurposed to assert existence in the next major release.
+     * @return child node of this DataNodeContainer
      * @throws NullPointerException if {@code name} is null
+     * @throws VerifyException if the child does not exist
      */
-    @Deprecated(forRemoval = true)
-    default @Nullable DataSchemaNode getDataChildByName(final QName name) {
-        return dataChildByName(name);
+    default @NonNull DataSchemaNode getDataChildByName(final QName name) {
+        return verifyNotNull(dataChildByName(name), "No child matching %s found", name);
     }
 
     /**

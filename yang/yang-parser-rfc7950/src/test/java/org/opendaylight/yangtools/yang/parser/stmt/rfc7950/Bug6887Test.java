@@ -46,7 +46,6 @@ public class Bug6887Test {
         final Module foo = schemaContext.findModule("foo", Revision.of("2017-01-26")).get();
         final LeafSchemaNode myEnumerationLeaf = (LeafSchemaNode) foo.getDataChildByName(
                 QName.create(foo.getQNameModule(), "my-enumeration-leaf"));
-        assertNotNull(myEnumerationLeaf);
 
         EnumTypeDefinition enumerationType = (EnumTypeDefinition) myEnumerationLeaf.getType();
 
@@ -70,7 +69,6 @@ public class Bug6887Test {
 
         final LeafSchemaNode myEnumerationLeaf2 = (LeafSchemaNode) foo.getDataChildByName(
                 QName.create(foo.getQNameModule(), "my-enumeration-leaf-2"));
-        assertNotNull(myEnumerationLeaf2);
 
         enumerationType = (EnumTypeDefinition) myEnumerationLeaf2.getType();
         enums = enumerationType.getValues();
@@ -152,7 +150,6 @@ public class Bug6887Test {
         final Module bar = schemaContext.findModule("bar", Revision.of("2017-02-02")).get();
         final LeafSchemaNode myBitsLeaf = (LeafSchemaNode) bar.getDataChildByName(
                 QName.create(bar.getQNameModule(), "my-bits-leaf"));
-        assertNotNull(myBitsLeaf);
 
         BitsTypeDefinition bitsType = (BitsTypeDefinition) myBitsLeaf.getType();
 
@@ -181,7 +178,6 @@ public class Bug6887Test {
 
         final LeafSchemaNode myBitsLeaf2 = (LeafSchemaNode) bar.getDataChildByName(
                 QName.create(bar.getQNameModule(), "my-bits-leaf-2"));
-        assertNotNull(myBitsLeaf2);
 
         bitsType = (BitsTypeDefinition) myBitsLeaf2.getType();
         bits = bitsType.getBits();
