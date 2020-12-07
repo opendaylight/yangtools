@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import com.google.common.collect.ImmutableList;
+import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -83,5 +86,25 @@ public final class AnydataStatementSupport
 
     private static @Nullable AnydataSchemaNode findOriginal(final Current<?, ?> stmt) {
         return (AnydataSchemaNode) stmt.original();
+    }
+
+    @Override
+    public boolean copyEffective(@NonNull AnydataEffectiveStatement original, Current<QName, AnydataStatement> stmt) {
+        if (((EmptyAnydataEffectiveStatement) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((EmptyAnydataEffectiveStatement) original).isAddedByUses() !=
+                stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((EmptyAnydataEffectiveStatement) original).isAugmenting() !=
+                stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        if (((EmptyAnydataEffectiveStatement) original).effectiveConfig().orElse(null) !=
+                stmt.effectiveConfig().asNullable()) {
+            return false;
+        }
+        return true;
     }
 }
