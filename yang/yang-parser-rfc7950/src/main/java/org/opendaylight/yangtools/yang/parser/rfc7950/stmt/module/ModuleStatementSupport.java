@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
@@ -46,6 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
@@ -58,14 +62,88 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractModuleStatementSupport
+@Beta
+public final class ModuleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
-    AbstractModuleStatementSupport() {
+    private static final @NonNull ModuleStatementSupport RFC6020_INSTANCE = new ModuleStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.MODULE)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONTACT)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(YangStmtMapping.EXTENSION)
+            .addAny(YangStmtMapping.FEATURE)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.IMPORT)
+            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addMandatory(YangStmtMapping.NAMESPACE)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORGANIZATION)
+            .addMandatory(YangStmtMapping.PREFIX)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addAny(YangStmtMapping.REVISION)
+            .addAny(YangStmtMapping.RPC)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.YANG_VERSION)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+            .build());
+    private static final @NonNull ModuleStatementSupport RFC7950_INSTANCE = new ModuleStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.MODULE)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONTACT)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(YangStmtMapping.EXTENSION)
+            .addAny(YangStmtMapping.FEATURE)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.IMPORT)
+            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addMandatory(YangStmtMapping.NAMESPACE)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORGANIZATION)
+            .addMandatory(YangStmtMapping.PREFIX)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addAny(YangStmtMapping.REVISION)
+            .addAny(YangStmtMapping.RPC)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addMandatory(YangStmtMapping.YANG_VERSION)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private ModuleStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.MODULE, CopyPolicy.REJECT);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull ModuleStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull ModuleStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
             return UnqualifiedQName.of(value);
         } catch (IllegalArgumentException e) {
@@ -74,8 +152,7 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    public final void onPreLinkageDeclared(
-            final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final String moduleName = stmt.getRawArgument();
 
         final URI moduleNs = SourceException.throwIfNull(
@@ -98,9 +175,7 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    public final void onLinkageDeclared(
-            final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
-
+    public void onLinkageDeclared(final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final URI moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
@@ -138,7 +213,12 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    protected final ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
             final Current<UnqualifiedQName, ModuleStatement> stmt,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> local =
@@ -165,18 +245,18 @@ abstract class AbstractModuleStatementSupport
     }
 
     @Override
-    protected final ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
+    protected ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ModuleStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final ModuleStatement createEmptyDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx) {
+    protected ModuleStatement createEmptyDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx) {
         throw noNamespace(ctx);
     }
 
     @Override
-    protected final ModuleEffectiveStatement createEffective(final Current<UnqualifiedQName, ModuleStatement> stmt,
+    protected ModuleEffectiveStatement createEffective(final Current<UnqualifiedQName, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noNamespace(stmt);
