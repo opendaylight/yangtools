@@ -79,13 +79,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class AbstractTypeStatementSupport
         extends BaseStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeStatementSupport.class);
-
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.BASE)
@@ -154,8 +150,8 @@ abstract class AbstractTypeStatementSupport
             .build();
 
     AbstractTypeStatementSupport() {
-        // FIXME: can a type statement be copied?
-        super(YangStmtMapping.TYPE, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.TYPE, StatementPolicy.copyDeclared(
+            (copy, stmt, substatements) -> copy.schemaPath().equals(stmt.schemaPath())));
     }
 
     @Override

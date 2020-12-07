@@ -43,7 +43,7 @@ public final class EnumStatementSupport extends BaseStatementSupport<String, Enu
     private final SubstatementValidator validator;
 
     private EnumStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.ENUM, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.ENUM, StatementPolicy.contextIndependent());
         this.validator = requireNonNull(validator);
     }
 

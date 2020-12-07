@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -25,8 +27,53 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
  */
 public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends BaseQNameStatementSupport<D, E> {
-    protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
-        super(publicDefinition, copyPolicy);
+    private static final @NonNull StatementPolicy<QName, ?> INSTANTIATED_POLICY =
+        StatementPolicy.copyDeclared((copy, stmt, substatements) ->
+            copy.effectiveConfig() == copy.effectiveConfig()
+// FIXME: actually this
+//            if (((AbstractLeafListEffectiveStatement) original).isAddedByUses()
+//                    != stmt.history().contains(CopyType.ADDED_BY_USES)) {
+//                return false;
+//            }
+//            if (((AbstractLeafListEffectiveStatement) original).isAugmenting()
+//                    != stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+//                return false;
+//            }
+            && copy.history().equals(stmt.history())
+            // FIXME: should devolve to stmt.getArgument() check
+            && copy.schemaPath().equals(stmt.schemaPath()));
+    private static final @NonNull StatementPolicy<QName, ?> UNINSTANTIATED_POLICY =
+        StatementPolicy.copyDeclared((copy, stmt, substatements) ->
+// FIXME: actually this
+//            if (((AbstractLeafListEffectiveStatement) original).isAddedByUses()
+//                    != stmt.history().contains(CopyType.ADDED_BY_USES)) {
+//                return false;
+//            }
+//            if (((AbstractLeafListEffectiveStatement) original).isAugmenting()
+//                    != stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+//                return false;
+//            }
+            copy.history().equals(stmt.history())
+            // FIXME: should devolve to stmt.getArgument() check
+            && copy.schemaPath().equals(stmt.schemaPath()));
+
+    protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<QName, D> policy) {
+        super(publicDefinition, policy);
+    }
+
+    @Beta
+    @SuppressWarnings("unchecked")
+    protected static final <D extends DeclaredStatement<QName>>
+            @NonNull StatementPolicy<QName, D> instantiatedSchemaTree() {
+        return (StatementPolicy<QName, D>) INSTANTIATED_POLICY;
+    }
+
+    @Beta
+    @SuppressWarnings("unchecked")
+    protected static final <D extends DeclaredStatement<QName>>
+            @NonNull StatementPolicy<QName, D> uninstantiatedSchemaTree() {
+        return (StatementPolicy<QName, D>) UNINSTANTIATED_POLICY;
     }
 
     /**

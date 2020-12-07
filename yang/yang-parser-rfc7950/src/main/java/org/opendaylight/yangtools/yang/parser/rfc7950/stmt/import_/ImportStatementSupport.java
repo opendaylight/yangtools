@@ -63,7 +63,7 @@ public final class ImportStatementSupport
     private final SubstatementValidator validator;
 
     private ImportStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.IMPORT, CopyPolicy.REJECT);
+        super(YangStmtMapping.IMPORT, StatementPolicy.reject());
         this.validator = requireNonNull(validator);
     }
 
