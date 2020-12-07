@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -176,6 +177,20 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
+    }
+
+    @Override
+    E createEffective(final StatementFactory<A, D, E> factory) {
+        // If we have not materialized we do not have a difference in effective substatements, hence we can forward
+        // towards the source of the statement.
+        return substatements == null ? createEffectiveCopy(factory) : super.createEffective(factory);
+    }
+
+    private @NonNull E createEffectiveCopy(final StatementFactory<A, D, E> factory) {
+        // Determine which context to build. If it is us, fall back to superclass so it drives this thing home,
+        // otherwise circle back to buildEffective(), offloading to whoever is responsible
+        final ReactorStmtCtx<A, D, E> effective = prototype.asEffectiveChildOf(parent, childCopyType, targetModule);
+        return effective == this ? super.createEffective(factory) : effective.buildEffective();
     }
 
     @Override
