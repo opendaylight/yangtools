@@ -345,10 +345,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
 
+    // Exposed for InferredStatementContext
+    boolean skipMaterialization() {
+        return false;
+    }
+
     // Exposed for ReplicaStatementContext
     @Override
     E createEffective() {
-        return definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        if (skipMaterialization()) {
+            return (E) this.original();
+        } else {
+            return definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        }
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();

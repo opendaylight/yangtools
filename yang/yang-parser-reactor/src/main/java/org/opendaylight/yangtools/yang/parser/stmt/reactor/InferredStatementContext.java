@@ -178,6 +178,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return new InferredStatementContext<>(this, newParent);
     }
 
+    boolean skipMaterialization() {
+        return substatements == null;
+    }
+
     @Override
     boolean hasEmptySubstatements() {
         if (substatements == null) {
