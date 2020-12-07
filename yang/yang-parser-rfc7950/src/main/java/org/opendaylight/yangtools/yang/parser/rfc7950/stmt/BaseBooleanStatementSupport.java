@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Specialization of {@link BaseStatementSupport} for Boolean statement arguments.
+ * Specialization of {@link BaseStatementSupport} for statements which carry a Boolean argument and are essentially
+ * context-independent.
  *
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
@@ -34,8 +35,8 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
 
     @Deprecated
     protected BaseBooleanStatementSupport(final StatementDefinition publicDefinition,
-            final E emptyEffectiveFalse, final E emptyEffectiveTrue, final CopyPolicy copyPolicy) {
-        super(publicDefinition, copyPolicy);
+            final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy) {
+        super(publicDefinition, policy);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
         emptyDeclaredFalse = requireNonNull(emptyEffectiveFalse.getDeclared());
