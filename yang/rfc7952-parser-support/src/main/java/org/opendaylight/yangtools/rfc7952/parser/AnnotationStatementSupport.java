@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
@@ -37,8 +38,10 @@ public final class AnnotationStatementSupport
         extends BaseStatementSupport<QName, AnnotationStatement, AnnotationEffectiveStatement> {
 
     private static final class Declared extends WithSubstatements implements AnnotationStatement {
-        Declared(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(argument, substatements);
+        Declared(final QName argument,
+                 final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                 final StatementSourceReference sourceReference) {
+            super(argument, substatements, sourceReference);
         }
     }
 
@@ -137,7 +140,7 @@ public final class AnnotationStatementSupport
     @Override
     protected AnnotationStatement createDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.coerceStatementArgument(), substatements);
+        return new Declared(ctx.coerceStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override

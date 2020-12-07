@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
@@ -25,8 +26,10 @@ public final class YinElementStatementSupport
 
     private YinElementStatementSupport() {
         super(YangStmtMapping.YIN_ELEMENT,
-            new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.FALSE)),
-            new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.TRUE)));
+            new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.FALSE,
+                () -> StatementSource.DECLARATION)),
+            new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.TRUE,
+                () -> StatementSource.DECLARATION)));
     }
 
     public static YinElementStatementSupport getInstance() {
@@ -41,7 +44,8 @@ public final class YinElementStatementSupport
     @Override
     protected YinElementStatement createDeclared(final StmtContext<Boolean, YinElementStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularYinElementStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularYinElementStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

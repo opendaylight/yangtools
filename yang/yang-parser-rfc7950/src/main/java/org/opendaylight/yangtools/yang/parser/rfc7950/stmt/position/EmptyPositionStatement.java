@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position;
 
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyPositionStatement extends ArgumentToString<Uint32> implements PositionStatement {
-    EmptyPositionStatement(final Uint32 argument) {
-        super(argument);
+    EmptyPositionStatement(final Uint32 argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

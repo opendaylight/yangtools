@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class ActionStatementSupport extends
@@ -78,12 +78,13 @@ public final class ActionStatementSupport extends
     @Override
     protected ActionStatement createDeclared(final StmtContext<QName, ActionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularActionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularActionStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected ActionStatement createEmptyDeclared(final StmtContext<QName, ActionStatement, ?> ctx) {
-        return new EmptyActionStatement(ctx.coerceStatementArgument());
+        return new EmptyActionStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

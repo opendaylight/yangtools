@@ -11,13 +11,15 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
 
 abstract class AbstractStatusStatement extends AbstractDeclaredStatement<Status> implements StatusStatement {
     private final @NonNull Status argument;
 
-    AbstractStatusStatement(final Status argument) {
+    AbstractStatusStatement(final Status argument, final StatementSourceReference sourceReference) {
+        super(sourceReference);
         this.argument = requireNonNull(argument);
     }
 

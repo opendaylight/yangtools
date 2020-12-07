@@ -64,12 +64,12 @@ abstract class AbstractRpcStatementSupport extends BaseSchemaTreeStatementSuppor
     @Override
     protected final RpcStatement createDeclared(final StmtContext<QName, RpcStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRpcStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularRpcStatement(ctx.coerceStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override
     protected final RpcStatement createEmptyDeclared(final StmtContext<QName, RpcStatement, ?> ctx) {
-        return new EmptyRpcStatement(ctx.coerceStatementArgument());
+        return new EmptyRpcStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

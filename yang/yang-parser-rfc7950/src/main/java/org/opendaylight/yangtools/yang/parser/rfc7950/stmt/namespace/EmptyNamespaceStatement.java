@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
 import java.net.URI;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyNamespaceStatement extends ArgumentToString<URI> implements NamespaceStatement {
-    EmptyNamespaceStatement(final URI argument) {
-        super(argument);
+    EmptyNamespaceStatement(final URI argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

@@ -32,12 +32,13 @@ abstract class AbstractContainerStatementSupport
     @Override
     protected final ContainerStatement createDeclared(final StmtContext<QName, ContainerStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularContainerStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularContainerStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected final ContainerStatement createEmptyDeclared(final StmtContext<QName, ContainerStatement, ?> ctx) {
-        return new EmptyContainerStatement(ctx.coerceStatementArgument());
+        return new EmptyContainerStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

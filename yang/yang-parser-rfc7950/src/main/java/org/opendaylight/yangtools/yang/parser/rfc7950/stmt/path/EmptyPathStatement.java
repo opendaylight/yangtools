@@ -11,13 +11,15 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
 
 class EmptyPathStatement extends AbstractDeclaredStatement<PathExpression> implements PathStatement {
     private final @NonNull PathExpression argument;
 
-    EmptyPathStatement(final PathExpression argument) {
+    EmptyPathStatement(final PathExpression argument, final StatementSourceReference sourceReference) {
+        super(sourceReference);
         this.argument = requireNonNull(argument);
     }
 

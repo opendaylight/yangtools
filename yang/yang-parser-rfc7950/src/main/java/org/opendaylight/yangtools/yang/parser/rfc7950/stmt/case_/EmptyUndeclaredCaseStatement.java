@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class EmptyUndeclaredCaseStatement extends EmptyCaseStatement {
-    EmptyUndeclaredCaseStatement(final QName argument) {
-        super(argument);
+    EmptyUndeclaredCaseStatement(final QName argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 
     @Override

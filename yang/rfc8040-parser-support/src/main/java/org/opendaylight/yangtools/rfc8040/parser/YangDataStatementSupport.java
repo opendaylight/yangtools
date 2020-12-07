@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -31,8 +32,10 @@ public final class YangDataStatementSupport
      * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
      */
     private static final class Declared extends WithSubstatements implements YangDataStatement {
-        Declared(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(rawArgument, substatements);
+        Declared(final String rawArgument,
+                 final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                 final StatementSourceReference sourceReference) {
+            super(rawArgument, substatements, sourceReference);
         }
     }
 
@@ -79,7 +82,7 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataStatement createDeclared(@NonNull final StmtContext<String, YangDataStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.coerceRawStatementArgument(), substatements);
+        return new Declared(ctx.coerceRawStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override

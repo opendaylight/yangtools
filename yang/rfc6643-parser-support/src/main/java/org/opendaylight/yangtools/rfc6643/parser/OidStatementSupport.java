@@ -52,7 +52,7 @@ public final class OidStatementSupport
     @Override
     protected OidStatement createDeclared(final StmtContext<ObjectIdentifier, OidStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new OidIdStatementImpl(ctx.coerceStatementArgument(), substatements);
+        return new OidIdStatementImpl(ctx.coerceStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override

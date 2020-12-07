@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyPresenceStatement extends WithRawStringArgument implements PresenceStatement {
-    EmptyPresenceStatement(final @NonNull String rawArgument) {
-        super(rawArgument);
+    EmptyPresenceStatement(final @NonNull String rawArgument, final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
     }
 }

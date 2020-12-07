@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
@@ -27,10 +29,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class DefaultDenyAllStatementSupport
         extends BaseVoidStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
     private static final class Declared extends WithSubstatements implements DefaultDenyAllStatement {
-        static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
+        static final @NonNull Declared EMPTY = new Declared(ImmutableList.of(), () -> StatementSource.DECLARATION);
 
-        Declared(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(substatements);
+        Declared(final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                 final StatementSourceReference sourceReference) {
+            super(substatements, sourceReference);
         }
     }
 
@@ -85,7 +88,7 @@ public final class DefaultDenyAllStatementSupport
     @Override
     protected DefaultDenyAllStatement createDeclared(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(substatements);
+        return new Declared(substatements, ctx.getStatementSourceReference());
     }
 
     @Override

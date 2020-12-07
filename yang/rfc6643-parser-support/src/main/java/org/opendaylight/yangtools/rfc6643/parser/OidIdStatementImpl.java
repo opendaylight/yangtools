@@ -11,11 +11,13 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class OidIdStatementImpl extends WithSubstatements<ObjectIdentifier> implements OidStatement {
     OidIdStatementImpl(final ObjectIdentifier argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+                       final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                       final StatementSourceReference sourceReference) {
+        super(argument, substatements, sourceReference);
     }
 }

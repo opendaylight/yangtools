@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.fraction_digits;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularFractionDigitsStatement extends WithSubstatements<Integer> implements FractionDigitsStatement {
     RegularFractionDigitsStatement(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+                                   final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                   final StatementSourceReference sourceReference) {
+        super(argument, substatements, sourceReference);
     }
 }

@@ -88,12 +88,14 @@ public final class KeyStatementSupport
     @Override
     protected KeyStatement createDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularKeyStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements);
+        return new RegularKeyStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected KeyStatement createEmptyDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx) {
-        return new EmptyKeyStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
+        return new EmptyKeyStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                ctx.getStatementSourceReference());
     }
 
     @Override

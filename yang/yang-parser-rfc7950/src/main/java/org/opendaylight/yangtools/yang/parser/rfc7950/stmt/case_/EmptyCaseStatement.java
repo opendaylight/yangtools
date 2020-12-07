@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
 class EmptyCaseStatement extends WithQNameArgument implements CaseStatement {
-    EmptyCaseStatement(final QName argument) {
-        super(argument);
+    EmptyCaseStatement(final QName argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

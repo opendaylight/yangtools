@@ -103,12 +103,13 @@ public final class IfFeatureStatementSupport
     protected IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularIfFeatureStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
-            substatements);
+            substatements, ctx.getStatementSourceReference());
     }
 
     @Override
     protected IfFeatureStatement createEmptyDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
-        return new EmptyIfFeatureStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument());
+        return new EmptyIfFeatureStatement(ctx.coerceRawStatementArgument(), ctx.coerceStatementArgument(),
+                ctx.getStatementSourceReference());
     }
 
     @Override

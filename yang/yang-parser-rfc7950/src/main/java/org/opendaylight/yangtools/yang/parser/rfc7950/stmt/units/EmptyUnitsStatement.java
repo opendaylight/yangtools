@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyUnitsStatement extends WithRawStringArgument implements UnitsStatement {
-    EmptyUnitsStatement(final @NonNull String rawArgument) {
-        super(rawArgument);
+    EmptyUnitsStatement(final @NonNull String rawArgument, final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
     }
 }

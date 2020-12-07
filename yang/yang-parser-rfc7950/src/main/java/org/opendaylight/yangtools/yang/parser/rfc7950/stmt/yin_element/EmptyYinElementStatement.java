@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyYinElementStatement extends ArgumentToString<Boolean> implements YinElementStatement {
-    EmptyYinElementStatement(final Boolean argument) {
-        super(argument);
+    EmptyYinElementStatement(final Boolean argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
 
 final class EmptyIfFeatureStatement extends WithArgument<IfFeatureExpr> implements IfFeatureStatement {
-    EmptyIfFeatureStatement(final @NonNull String rawArgument, final @NonNull IfFeatureExpr argument) {
-        super(rawArgument, argument);
+    EmptyIfFeatureStatement(final @NonNull String rawArgument,
+                            final @NonNull IfFeatureExpr argument,
+                            final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, argument, sourceReference);
     }
 }

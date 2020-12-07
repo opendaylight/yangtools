@@ -78,13 +78,14 @@ public final class TypedefStatementSupport extends
     protected TypedefStatement createDeclared(final StmtContext<QName, TypedefStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         checkDeclared(ctx);
-        return new RegularTypedefStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularTypedefStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected TypedefStatement createEmptyDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {
         checkDeclared(ctx);
-        return new EmptyTypedefStatement(ctx.coerceStatementArgument());
+        return new EmptyTypedefStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

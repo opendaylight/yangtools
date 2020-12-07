@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyBitStatement extends WithRawStringArgument implements BitStatement {
-    EmptyBitStatement(final @NonNull String argument) {
-        super(argument);
+    EmptyBitStatement(final @NonNull String argument, final @NonNull StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
@@ -32,11 +33,11 @@ public final class StatusStatementSupport
      * substatements (which is the usual case). Yeah, we could consider an EnumMap, but this is not too bad, either.
      */
     private static final @NonNull EmptyStatusStatement EMPTY_CURRENT_DECL =
-            new EmptyStatusStatement(Status.CURRENT);
+            new EmptyStatusStatement(Status.CURRENT, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyStatusStatement EMPTY_DEPRECATED_DECL =
-            new EmptyStatusStatement(Status.DEPRECATED);
+            new EmptyStatusStatement(Status.DEPRECATED, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyStatusStatement EMPTY_OBSOLETE_DECL =
-            new EmptyStatusStatement(Status.OBSOLETE);
+            new EmptyStatusStatement(Status.OBSOLETE, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyStatusEffectiveStatement EMPTY_CURRENT_EFF =
             new EmptyStatusEffectiveStatement(EMPTY_CURRENT_DECL);
     private static final @NonNull EmptyStatusEffectiveStatement EMPTY_DEPRECATED_EFF =
@@ -88,7 +89,8 @@ public final class StatusStatementSupport
     @Override
     protected StatusStatement createDeclared(final StmtContext<Status, StatusStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularStatusStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularStatusStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

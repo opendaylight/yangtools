@@ -40,12 +40,13 @@ public final class OrganizationStatementSupport
     @Override
     protected OrganizationStatement createDeclared(final StmtContext<String, OrganizationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularOrganizationStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularOrganizationStatement(ctx.coerceRawStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected OrganizationStatement createEmptyDeclared(final StmtContext<String, OrganizationStatement, ?> ctx) {
-        return new EmptyOrganizationStatement(ctx.coerceRawStatementArgument());
+        return new EmptyOrganizationStatement(ctx.coerceRawStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.fraction_digits;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyFractionDigitsStatement extends ArgumentToString<Integer> implements FractionDigitsStatement {
-    EmptyFractionDigitsStatement(final Integer argument) {
-        super(argument);
+    EmptyFractionDigitsStatement(final Integer argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

@@ -55,12 +55,13 @@ public final class AnyxmlStatementSupport
     @Override
     protected AnyxmlStatement createDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularAnyxmlStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularAnyxmlStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected AnyxmlStatement createEmptyDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx) {
-        return new EmptyAnyxmlStatement(ctx.coerceStatementArgument());
+        return new EmptyAnyxmlStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

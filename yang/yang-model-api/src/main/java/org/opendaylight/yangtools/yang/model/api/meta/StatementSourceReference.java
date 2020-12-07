@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.source;
+package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
 /**
  * Reference of statement source. Statement source reference serves to provide information, why a statement was defined
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  *
  * <p>
  * Reasons for introduction of statement could be various, but most obvious one is explicit declaration in model source
- * text such as {@link DeclarationInTextSource}.
+ * text such as DeclarationInTextSource.
  */
 public interface StatementSourceReference {
     /**

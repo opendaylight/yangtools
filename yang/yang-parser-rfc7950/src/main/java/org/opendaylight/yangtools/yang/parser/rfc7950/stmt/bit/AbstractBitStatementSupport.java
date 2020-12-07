@@ -31,12 +31,12 @@ abstract class AbstractBitStatementSupport extends BaseStatementSupport<String, 
     @Override
     protected final BitStatement createDeclared(final StmtContext<String, BitStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularBitStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularBitStatement(ctx.coerceStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override
     protected final BitStatement createEmptyDeclared(final StmtContext<String, BitStatement, ?> ctx) {
-        return new EmptyBitStatement(ctx.coerceStatementArgument());
+        return new EmptyBitStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

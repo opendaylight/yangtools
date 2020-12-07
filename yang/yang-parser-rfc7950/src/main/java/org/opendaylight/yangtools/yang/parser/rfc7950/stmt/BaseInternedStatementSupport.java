@@ -17,6 +17,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -35,7 +37,7 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
             .build(new CacheLoader<A, D>() {
                 @Override
                 public D load(final A key) {
-                    return createEmptyDeclared(key);
+                    return createEmptyDeclared(key, () -> StatementSource.DECLARATION);
                 }
             });
     private final LoadingCache<D, E> effectiveCache = CacheBuilder.newBuilder().weakValues()
@@ -55,7 +57,8 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
         return declaredCache.getUnchecked(ctx.coerceStatementArgument());
     }
 
-    protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
+    protected abstract @NonNull D createEmptyDeclared(@NonNull A argument,
+                                                      @NonNull StatementSourceReference sourceReference);
 
     @Override
     protected final E createEmptyEffective(final StmtContext<A, D, E> ctx, final D declared) {
@@ -67,9 +70,10 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
     @Override
     protected final D createDeclared(final StmtContext<A, D, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return createDeclared(ctx.coerceStatementArgument(), substatements);
+        return createDeclared(ctx.coerceStatementArgument(), substatements,ctx.getStatementSourceReference());
     }
 
     protected abstract @NonNull D createDeclared(@NonNull A argument,
-            ImmutableList<? extends DeclaredStatement<?>> substatements);
+                                                 @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                                 @NonNull StatementSourceReference sourceReference);
 }

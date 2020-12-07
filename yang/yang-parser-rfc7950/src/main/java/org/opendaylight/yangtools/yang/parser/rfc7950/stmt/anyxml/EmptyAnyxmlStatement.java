@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
 final class EmptyAnyxmlStatement extends WithQNameArgument implements AnyxmlStatement {
-    EmptyAnyxmlStatement(final QName argument) {
-        super(argument);
+    EmptyAnyxmlStatement(final QName argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

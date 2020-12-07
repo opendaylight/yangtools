@@ -85,12 +85,13 @@ public final class BelongsToStatementSupport
     @Override
     protected BelongsToStatement createDeclared(final StmtContext<String, BelongsToStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularBelongsToStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularBelongsToStatement(ctx.coerceRawStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected BelongsToStatement createEmptyDeclared(final StmtContext<String, BelongsToStatement, ?> ctx) {
-        return new EmptyBelongsToStatement(ctx.coerceRawStatementArgument());
+        return new EmptyBelongsToStatement(ctx.coerceRawStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

@@ -56,12 +56,13 @@ abstract class AbstractListStatementSupport extends
     @Override
     protected final ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularListStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularListStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected final ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
-        return new EmptyListStatement(ctx.coerceStatementArgument());
+        return new EmptyListStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

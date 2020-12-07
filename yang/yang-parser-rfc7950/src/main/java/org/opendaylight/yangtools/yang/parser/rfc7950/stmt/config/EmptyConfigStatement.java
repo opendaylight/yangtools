@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyConfigStatement extends ArgumentToString<Boolean> implements ConfigStatement {
-    EmptyConfigStatement(final Boolean argument) {
-        super(argument);
+    EmptyConfigStatement(final Boolean argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

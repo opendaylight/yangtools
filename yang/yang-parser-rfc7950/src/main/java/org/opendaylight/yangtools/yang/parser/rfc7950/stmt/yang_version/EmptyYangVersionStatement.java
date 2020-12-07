@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
 
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyYangVersionStatement extends ArgumentToString<YangVersion> implements YangVersionStatement {
-    EmptyYangVersionStatement(final YangVersion argument) {
-        super(argument);
+    EmptyYangVersionStatement(final YangVersion argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

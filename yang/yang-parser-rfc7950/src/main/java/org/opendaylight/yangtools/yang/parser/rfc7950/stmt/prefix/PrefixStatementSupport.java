@@ -39,12 +39,13 @@ public final class PrefixStatementSupport
     @Override
     protected PrefixStatement createDeclared(final StmtContext<String, PrefixStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPrefixStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularPrefixStatement(ctx.coerceRawStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected PrefixStatement createEmptyDeclared(final StmtContext<String, PrefixStatement, ?> ctx) {
-        return new EmptyPrefixStatement(ctx.coerceRawStatementArgument());
+        return new EmptyPrefixStatement(ctx.coerceRawStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

@@ -48,12 +48,13 @@ public final class ArgumentStatementSupport
     @Override
     protected ArgumentStatement createDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularArgumentStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularArgumentStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected ArgumentStatement createEmptyDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx) {
-        return new EmptyArgumentStatement(ctx.coerceStatementArgument());
+        return new EmptyArgumentStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

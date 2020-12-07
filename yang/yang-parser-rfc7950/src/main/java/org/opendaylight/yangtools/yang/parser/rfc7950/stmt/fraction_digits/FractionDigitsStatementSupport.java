@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
@@ -38,7 +39,8 @@ public final class FractionDigitsStatementSupport
 
         for (int i = 1; i <= 18; ++i) {
             final Integer argument = i;
-            final EmptyFractionDigitsStatement decl = new EmptyFractionDigitsStatement(argument);
+            final EmptyFractionDigitsStatement decl = new EmptyFractionDigitsStatement(argument,
+                () -> StatementSource.DECLARATION);
             declBuilder.put(argument, decl);
             effBuilder.put(decl, new EmptyFractionDigitsEffectiveStatement(decl));
         }
@@ -79,7 +81,8 @@ public final class FractionDigitsStatementSupport
     @Override
     protected FractionDigitsStatement createDeclared(final StmtContext<Integer, FractionDigitsStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularFractionDigitsStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularFractionDigitsStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

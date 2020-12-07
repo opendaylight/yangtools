@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
@@ -31,9 +32,9 @@ public final class OrderedByStatementSupport
      * substatements (which is the usual case).
      */
     private static final @NonNull EmptyOrderedByStatement EMPTY_SYSTEM_DECL =
-            new EmptyOrderedByStatement(Ordering.SYSTEM);
+            new EmptyOrderedByStatement(Ordering.SYSTEM, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyOrderedByStatement EMPTY_USER_DECL =
-            new EmptyOrderedByStatement(Ordering.USER);
+            new EmptyOrderedByStatement(Ordering.USER, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_SYSTEM_EFF =
             new EmptyOrderedByEffectiveStatement(EMPTY_SYSTEM_DECL);
     private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_USER_EFF =
@@ -75,7 +76,8 @@ public final class OrderedByStatementSupport
     @Override
     protected OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularOrderedByStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularOrderedByStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

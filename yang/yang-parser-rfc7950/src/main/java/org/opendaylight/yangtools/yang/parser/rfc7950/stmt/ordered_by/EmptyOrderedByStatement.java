@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+
 final class EmptyOrderedByStatement extends AbstractOrderedByStatement {
-    EmptyOrderedByStatement(final Ordering argument) {
-        super(argument);
+    EmptyOrderedByStatement(final Ordering argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

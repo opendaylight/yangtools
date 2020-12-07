@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
@@ -31,8 +32,9 @@ abstract class AbstractHashedValueStatementSupport
         private final @NonNull StatementDefinition definition;
 
         Declared(final StatementDefinition definition,
-                final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(substatements);
+                 final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                 final StatementSourceReference sourceReference) {
+            super(substatements, sourceReference);
             this.definition = requireNonNull(definition);
         }
 
@@ -90,7 +92,7 @@ abstract class AbstractHashedValueStatementSupport
     protected final OpenConfigHashedValueStatement createDeclared(
             final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(getPublicView(), substatements);
+        return new Declared(getPublicView(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override

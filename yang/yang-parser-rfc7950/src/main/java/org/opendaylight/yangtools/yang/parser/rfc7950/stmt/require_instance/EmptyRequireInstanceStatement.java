@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyRequireInstanceStatement extends ArgumentToString<Boolean> implements RequireInstanceStatement {
-    EmptyRequireInstanceStatement(final Boolean argument) {
-        super(argument);
+    EmptyRequireInstanceStatement(final Boolean argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

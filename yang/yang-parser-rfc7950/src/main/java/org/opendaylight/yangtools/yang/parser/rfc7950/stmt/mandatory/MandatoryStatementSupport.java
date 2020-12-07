@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
@@ -25,8 +26,10 @@ public final class MandatoryStatementSupport extends
 
     private MandatoryStatementSupport() {
         super(YangStmtMapping.MANDATORY,
-            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.FALSE)),
-            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.TRUE)));
+            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.FALSE,
+                () -> StatementSource.DECLARATION)),
+            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.TRUE,
+                () -> StatementSource.DECLARATION)));
     }
 
     public static MandatoryStatementSupport getInstance() {
@@ -41,7 +44,8 @@ public final class MandatoryStatementSupport extends
     @Override
     protected MandatoryStatement createDeclared(final StmtContext<Boolean, MandatoryStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMandatoryStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularMandatoryStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

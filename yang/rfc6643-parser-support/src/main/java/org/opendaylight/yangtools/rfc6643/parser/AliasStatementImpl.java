@@ -10,10 +10,13 @@ package org.opendaylight.yangtools.rfc6643.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 final class AliasStatementImpl extends WithSubstatements implements AliasStatement {
-    AliasStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+    AliasStatementImpl(final String rawArgument,
+                       final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                       final StatementSourceReference sourceReference) {
+        super(rawArgument, substatements, sourceReference);
     }
 }

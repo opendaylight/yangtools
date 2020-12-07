@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 public class ImplicitStatementTest {
     @Test

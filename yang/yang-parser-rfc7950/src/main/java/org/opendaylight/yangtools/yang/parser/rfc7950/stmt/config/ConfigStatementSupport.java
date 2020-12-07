@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
@@ -24,8 +25,10 @@ public final class ConfigStatementSupport
     private static final ConfigStatementSupport INSTANCE = new ConfigStatementSupport();
 
     private ConfigStatementSupport() {
-        super(YangStmtMapping.CONFIG, new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.FALSE)),
-            new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.TRUE)));
+        super(YangStmtMapping.CONFIG, new EmptyConfigEffectiveStatement(
+                new EmptyConfigStatement(Boolean.FALSE, () -> StatementSource.DECLARATION)),
+            new EmptyConfigEffectiveStatement(
+                    new EmptyConfigStatement(Boolean.TRUE, () -> StatementSource.DECLARATION)));
     }
 
     public static ConfigStatementSupport getInstance() {
@@ -40,7 +43,8 @@ public final class ConfigStatementSupport
     @Override
     protected ConfigStatement createDeclared(final StmtContext<Boolean, ConfigStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularConfigStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularConfigStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

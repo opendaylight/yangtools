@@ -8,9 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.status;
 
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class EmptyStatusStatement extends AbstractStatusStatement {
-    EmptyStatusStatement(final Status argument) {
-        super(argument);
+    EmptyStatusStatement(final Status argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

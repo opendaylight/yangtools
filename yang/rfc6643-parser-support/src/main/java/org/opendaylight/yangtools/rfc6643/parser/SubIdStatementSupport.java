@@ -47,7 +47,7 @@ public final class SubIdStatementSupport
     @Override
     protected SubIdStatement createDeclared(final StmtContext<Uint32, SubIdStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new SubIdStatementImpl(ctx.coerceStatementArgument(), substatements);
+        return new SubIdStatementImpl(ctx.coerceStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override

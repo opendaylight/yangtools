@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 final class RegularPrefixStatement extends WithSubstatements implements PrefixStatement {
     RegularPrefixStatement(final @NonNull String rawArgument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+                           final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                           final StatementSourceReference sourceReference) {
+        super(rawArgument, substatements, sourceReference);
     }
 }

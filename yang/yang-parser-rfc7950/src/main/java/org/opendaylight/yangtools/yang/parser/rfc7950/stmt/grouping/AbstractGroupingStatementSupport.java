@@ -52,13 +52,14 @@ abstract class AbstractGroupingStatementSupport
     protected final GroupingStatement createDeclared(final StmtContext<QName, GroupingStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         checkDeclaredConflict(ctx);
-        return new RegularGroupingStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularGroupingStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected final GroupingStatement createEmptyDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
         checkDeclaredConflict(ctx);
-        return new EmptyGroupingStatement(ctx.coerceStatementArgument());
+        return new EmptyGroupingStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

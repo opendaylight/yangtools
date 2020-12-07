@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyErrorAppTagStatement extends WithRawStringArgument implements ErrorAppTagStatement {
-    EmptyErrorAppTagStatement(final @NonNull String rawArgument) {
-        super(rawArgument);
+    EmptyErrorAppTagStatement(final @NonNull String rawArgument,
+                              final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
     }
 }

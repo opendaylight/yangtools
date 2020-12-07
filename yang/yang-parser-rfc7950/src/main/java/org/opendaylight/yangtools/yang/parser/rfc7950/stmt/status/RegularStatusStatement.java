@@ -12,12 +12,15 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class RegularStatusStatement extends AbstractStatusStatement {
     private final @NonNull Object substatements;
 
-    RegularStatusStatement(final Status argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument);
+    RegularStatusStatement(final Status argument,
+                           final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                           final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
         this.substatements = maskList(substatements);
     }
 

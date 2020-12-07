@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class EmptyUndeclaredInputStatement extends EmptyInputStatement {
-    EmptyUndeclaredInputStatement(final QName argument) {
-        super(argument);
+    EmptyUndeclaredInputStatement(final QName argument, StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 
     @Override

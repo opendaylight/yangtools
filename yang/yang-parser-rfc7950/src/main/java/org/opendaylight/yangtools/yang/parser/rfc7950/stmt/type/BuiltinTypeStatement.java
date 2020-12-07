@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -42,7 +43,7 @@ final class BuiltinTypeStatement extends WithRawStringArgument implements TypeSt
     }
 
     private BuiltinTypeStatement(final String rawArgument) {
-        super(requireNonNull(rawArgument));
+        super(requireNonNull(rawArgument), () -> StatementSource.DECLARATION);
     }
 
     static @Nullable TypeStatement lookup(final StmtContext<String, TypeStatement, ?> ctx) {

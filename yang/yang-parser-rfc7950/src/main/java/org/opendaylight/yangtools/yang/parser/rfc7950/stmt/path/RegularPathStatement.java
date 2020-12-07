@@ -12,13 +12,15 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class RegularPathStatement extends EmptyPathStatement {
     private final @NonNull Object substatements;
 
     RegularPathStatement(final PathExpression argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument);
+                         final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                         final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
         this.substatements = maskList(substatements);
     }
 

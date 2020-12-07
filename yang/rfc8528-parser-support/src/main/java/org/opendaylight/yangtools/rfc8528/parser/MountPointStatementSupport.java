@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
@@ -33,8 +34,10 @@ public final class MountPointStatementSupport
         extends BaseQNameStatementSupport<MountPointStatement, MountPointEffectiveStatement> {
 
     private static final class Declared extends WithSubstatements implements MountPointStatement {
-        Declared(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(argument, substatements);
+        Declared(final QName argument,
+                 final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                 final StatementSourceReference sourceReference) {
+            super(argument, substatements, sourceReference);
         }
     }
 
@@ -112,7 +115,7 @@ public final class MountPointStatementSupport
     @Override
     protected MountPointStatement createDeclared(@NonNull final StmtContext<QName, MountPointStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.coerceStatementArgument(), substatements);
+        return new Declared(ctx.coerceStatementArgument(), substatements, ctx.getStatementSourceReference());
     }
 
     @Override

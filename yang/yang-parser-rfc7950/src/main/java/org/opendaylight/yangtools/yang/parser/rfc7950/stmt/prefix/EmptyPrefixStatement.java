@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyPrefixStatement extends WithRawStringArgument implements PrefixStatement {
-    EmptyPrefixStatement(final @NonNull String rawArgument) {
-        super(rawArgument);
+    EmptyPrefixStatement(final @NonNull String rawArgument, final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
     }
 }

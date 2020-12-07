@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
@@ -49,13 +50,15 @@ public final class MinElementsStatementSupport
 
     @Override
     protected MinElementsStatement createDeclared(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMinElementsStatement(argument, substatements);
+                                                  final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                                  final StatementSourceReference sourceReference) {
+        return new RegularMinElementsStatement(argument, substatements, sourceReference);
     }
 
     @Override
-    protected MinElementsStatement createEmptyDeclared(final Integer argument) {
-        return new EmptyMinElementsStatement(argument);
+    protected MinElementsStatement createEmptyDeclared(final Integer argument,
+                                                       final StatementSourceReference sourceReference) {
+        return new EmptyMinElementsStatement(argument, sourceReference);
     }
 
     @Override

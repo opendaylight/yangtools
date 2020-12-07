@@ -10,14 +10,17 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawArgument;
 
 abstract class AbstractKeyStatement extends WithRawArgument<Set<QName>> implements KeyStatement {
     final @NonNull Object argument;
 
-    AbstractKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument) {
-        super(rawArgument);
+    AbstractKeyStatement(final @NonNull String rawArgument,
+                         final @NonNull Set<QName> argument,
+                         final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
         this.argument = KeyStatementSupport.maskSet(argument);
     }
 

@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
 class RegularCaseStatement extends WithSubstatements implements CaseStatement {
-    RegularCaseStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+    RegularCaseStatement(final QName argument,
+                         final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                         final StatementSourceReference sourceReference) {
+        super(argument, substatements, sourceReference);
     }
 }

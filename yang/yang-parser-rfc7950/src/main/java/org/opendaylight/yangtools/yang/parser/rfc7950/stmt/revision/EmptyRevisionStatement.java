@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
 
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyRevisionStatement extends ArgumentToString<Revision> implements RevisionStatement {
-    EmptyRevisionStatement(final Revision argument) {
-        super(argument);
+    EmptyRevisionStatement(final Revision argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

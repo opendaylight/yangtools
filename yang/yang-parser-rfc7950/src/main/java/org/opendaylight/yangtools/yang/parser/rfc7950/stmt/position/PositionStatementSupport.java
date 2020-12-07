@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
@@ -50,13 +51,14 @@ public final class PositionStatementSupport
 
     @Override
     protected PositionStatement createDeclared(final Uint32 argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPositionStatement(argument, substatements);
+                                               final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                               final StatementSourceReference sourceReference) {
+        return new RegularPositionStatement(argument, substatements, sourceReference);
     }
 
     @Override
-    protected PositionStatement createEmptyDeclared(final Uint32 argument) {
-        return new EmptyPositionStatement(argument);
+    protected PositionStatement createEmptyDeclared(final Uint32 argument, StatementSourceReference sourceReference) {
+        return new EmptyPositionStatement(argument, sourceReference);
     }
 
     @Override

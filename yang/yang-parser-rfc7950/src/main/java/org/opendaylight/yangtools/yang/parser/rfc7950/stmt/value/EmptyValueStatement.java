@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyValueStatement extends ArgumentToString<Integer> implements ValueStatement {
-    EmptyValueStatement(final Integer argument) {
-        super(argument);
+    EmptyValueStatement(final Integer argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

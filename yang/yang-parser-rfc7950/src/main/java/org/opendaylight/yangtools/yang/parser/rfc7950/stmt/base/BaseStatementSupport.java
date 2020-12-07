@@ -82,12 +82,13 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
     @Override
     protected BaseStatement createDeclared(final StmtContext<QName, BaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularBaseStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularBaseStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected BaseStatement createEmptyDeclared(final StmtContext<QName, BaseStatement, ?> ctx) {
-        return new EmptyBaseStatement(ctx.coerceStatementArgument());
+        return new EmptyBaseStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

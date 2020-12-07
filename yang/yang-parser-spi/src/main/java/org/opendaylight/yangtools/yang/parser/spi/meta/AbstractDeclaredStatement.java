@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 /**
  * Utility abstract base class for implementing declared statements.
@@ -25,6 +26,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     private final @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements;
     private final @NonNull StatementDefinition definition;
     private final @NonNull StatementSource source;
+    private final @NonNull StatementSourceReference sourceReference;
 
     private final A argument;
     private final String rawArgument;
@@ -33,6 +35,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
         rawArgument = context.rawStatementArgument();
         argument = context.getStatementArgument();
         source = context.getStatementSource();
+        sourceReference = context.getStatementSourceReference();
         definition = context.getPublicDefinition();
         /*
          * Perform an explicit copy, because Collections2.transform() is lazily transformed and retains pointer to
@@ -65,5 +68,10 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     @Override
     public StatementSource getStatementSource() {
         return source;
+    }
+
+    @Override
+    public StatementSourceReference getStatementSourceReference() {
+        return sourceReference;
     }
 }

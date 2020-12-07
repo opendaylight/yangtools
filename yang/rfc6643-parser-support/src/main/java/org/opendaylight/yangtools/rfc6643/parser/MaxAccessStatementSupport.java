@@ -58,7 +58,8 @@ public final class MaxAccessStatementSupport
     @Override
     protected MaxAccessStatement createDeclared(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new MaxAccessStatementImpl(ctx.coerceStatementArgument(), substatements);
+        return new MaxAccessStatementImpl(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

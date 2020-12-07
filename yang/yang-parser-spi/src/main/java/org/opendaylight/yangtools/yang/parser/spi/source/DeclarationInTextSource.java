@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 /**
  * Reference of statement source present in textual source format. Utility implementation

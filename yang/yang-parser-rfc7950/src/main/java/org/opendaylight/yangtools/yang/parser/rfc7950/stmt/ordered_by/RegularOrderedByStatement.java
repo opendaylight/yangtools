@@ -11,13 +11,15 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class RegularOrderedByStatement extends AbstractOrderedByStatement {
     private final @NonNull Object substatements;
 
     RegularOrderedByStatement(final Ordering argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument);
+                              final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                              final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
         this.substatements = maskList(substatements);
     }
 

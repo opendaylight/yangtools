@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
 
@@ -17,7 +18,8 @@ abstract class AbstractOrderedByStatement extends AbstractDeclaredStatement<Orde
         implements OrderedByStatement {
     private final @NonNull Ordering argument;
 
-    AbstractOrderedByStatement(final Ordering argument) {
+    AbstractOrderedByStatement(final Ordering argument,final StatementSourceReference sourceReference) {
+        super(sourceReference);
         this.argument = requireNonNull(argument);
     }
 

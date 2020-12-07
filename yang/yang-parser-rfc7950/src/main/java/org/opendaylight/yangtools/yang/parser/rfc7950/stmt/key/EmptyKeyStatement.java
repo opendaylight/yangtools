@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 final class EmptyKeyStatement extends AbstractKeyStatement {
-    EmptyKeyStatement(final @NonNull String rawArgument, final @NonNull Set<QName> argument) {
-        super(rawArgument, argument);
+    EmptyKeyStatement(final @NonNull String rawArgument,
+                      final @NonNull Set<QName> argument,
+                      final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, argument, sourceReference);
     }
 }

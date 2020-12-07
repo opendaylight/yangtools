@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularRevisionDateStatement extends WithSubstatements<Revision> implements RevisionDateStatement {
     RegularRevisionDateStatement(final Revision argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+                                 final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                 final StatementSourceReference sourceReference) {
+        super(argument, substatements, sourceReference);
     }
 }

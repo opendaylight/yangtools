@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
@@ -26,8 +27,10 @@ public final class RequireInstanceStatementSupport
 
     private RequireInstanceStatementSupport() {
         super(YangStmtMapping.REQUIRE_INSTANCE,
-            new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.FALSE)),
-            new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.TRUE)));
+            new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.FALSE,
+                () -> StatementSource.DECLARATION)),
+            new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.TRUE,
+                () -> StatementSource.DECLARATION)));
     }
 
     public static RequireInstanceStatementSupport getInstance() {
@@ -42,7 +45,8 @@ public final class RequireInstanceStatementSupport
     @Override
     protected RequireInstanceStatement createDeclared(final StmtContext<Boolean, RequireInstanceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRequireInstanceStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularRequireInstanceStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyMinElementsStatement extends ArgumentToString<Integer> implements MinElementsStatement {
-    EmptyMinElementsStatement(final Integer argument) {
-        super(argument);
+    EmptyMinElementsStatement(final Integer argument, final StatementSourceReference sourceReference) {
+        super(argument, sourceReference);
     }
 }

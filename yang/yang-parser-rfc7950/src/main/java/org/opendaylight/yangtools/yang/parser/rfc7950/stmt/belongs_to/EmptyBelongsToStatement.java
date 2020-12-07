@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyBelongsToStatement extends WithRawStringArgument implements BelongsToStatement {
-    EmptyBelongsToStatement(final String rawArgument) {
-        super(rawArgument);
+    EmptyBelongsToStatement(final String rawArgument, final StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
     }
 }

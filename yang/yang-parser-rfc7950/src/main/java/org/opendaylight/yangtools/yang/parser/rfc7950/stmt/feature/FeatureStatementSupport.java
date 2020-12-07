@@ -64,12 +64,13 @@ public final class FeatureStatementSupport
     @Override
     protected FeatureStatement createDeclared(final StmtContext<QName, FeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularFeatureStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularFeatureStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected FeatureStatement createEmptyDeclared(@NonNull final StmtContext<QName, FeatureStatement, ?> ctx) {
-        return new EmptyFeatureStatement(ctx.coerceStatementArgument());
+        return new EmptyFeatureStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

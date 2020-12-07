@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
@@ -26,12 +27,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 // FIXME: 7.0.0: we should be able to promote this to model.spi.meta package.
 public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
-    protected AbstractDeclaredStatement() {
+    private final StatementSourceReference sourceReference;
+
+    protected AbstractDeclaredStatement(StatementSourceReference sourceReference) {
+        this.sourceReference = sourceReference;
     }
 
     @Override
     public StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
+    }
+
+    @Override
+    public @NonNull StatementSourceReference getStatementSourceReference() {
+        return sourceReference;
     }
 
     @Override
@@ -59,11 +68,12 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         @Deprecated
         protected WithRawArgument(final StmtContext<A, ?, ?> context) {
-            this(context.rawStatementArgument());
+            this(context.rawStatementArgument(), context.getStatementSourceReference());
         }
 
-        protected WithRawArgument(final String rawArgument) {
+        protected WithRawArgument(final String rawArgument, StatementSourceReference sourceReference) {
             // FIXME: 7.0.0: requireNonNull
+            super(sourceReference);
             this.rawArgument = rawArgument;
         }
 
@@ -79,8 +89,9 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final QName argument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-                super(argument);
+                                        final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                        final StatementSourceReference sourceReference) {
+                super(argument, sourceReference);
                 this.substatements = maskList(substatements);
             }
 
@@ -92,7 +103,8 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         private final @NonNull QName argument;
 
-        protected WithQNameArgument(final QName argument) {
+        protected WithQNameArgument(final QName argument, StatementSourceReference sourceReference) {
+            super(sourceReference);
             this.argument = requireNonNull(argument);
         }
 
@@ -113,14 +125,15 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
             @Deprecated
             protected WithSubstatements(final StmtContext<String, ?, ?> context,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                                        final ImmutableList<? extends DeclaredStatement<?>> substatements) {
                 super(context);
                 this.substatements = maskList(substatements);
             }
 
             protected WithSubstatements(final String rawArgument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-                super(rawArgument);
+                                        final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                        final StatementSourceReference sourceReference) {
+                super(rawArgument, sourceReference);
                 this.substatements = maskList(substatements);
             }
 
@@ -135,8 +148,8 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             super(context);
         }
 
-        protected WithRawStringArgument(final String rawArgument) {
-            super(rawArgument);
+        protected WithRawStringArgument(final String rawArgument, final StatementSourceReference sourceReference) {
+            super(rawArgument, sourceReference);
         }
 
         @Override
@@ -151,14 +164,15 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
             @Deprecated
             protected WithSubstatements(final StmtContext<A, ?, ?> context,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                                        final ImmutableList<? extends DeclaredStatement<?>> substatements) {
                 super(context);
                 this.substatements = maskList(substatements);
             }
 
             protected WithSubstatements(final String rawArgument, final A argument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-                super(rawArgument, argument);
+                                        final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                        final StatementSourceReference sourceReference) {
+                super(rawArgument, argument, sourceReference);
                 this.substatements = maskList(substatements);
             }
 
@@ -176,8 +190,10 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             argument = context.getStatementArgument();
         }
 
-        protected WithArgument(final String rawArgument, A argument) {
-            super(rawArgument);
+        protected WithArgument(final String rawArgument,
+                               final A argument,
+                               final StatementSourceReference sourceReference) {
+            super(rawArgument, sourceReference);
             this.argument = argument;
         }
 
@@ -192,8 +208,9 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final A argument,
-                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-                super(argument);
+                                        final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                        final StatementSourceReference sourceReference) {
+                super(argument, sourceReference);
                 this.substatements = maskList(substatements);
             }
 
@@ -205,7 +222,8 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         private final @NonNull A argument;
 
-        protected ArgumentToString(final A argument) {
+        protected ArgumentToString(final A argument, final StatementSourceReference sourceReference) {
+            super(sourceReference);
             this.argument = requireNonNull(argument);
         }
 
@@ -221,10 +239,16 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     }
 
     public abstract static class WithoutArgument extends AbstractDeclaredStatement<Void> {
+        public WithoutArgument(StatementSourceReference sourceReference) {
+            super(sourceReference);
+        }
+
         public abstract static class WithSubstatements extends WithoutArgument {
             private final @NonNull Object substatements;
 
-            protected WithSubstatements(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+            protected WithSubstatements(final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                        final StatementSourceReference sourceReference) {
+                super(sourceReference);
                 this.substatements = maskList(substatements);
             }
 

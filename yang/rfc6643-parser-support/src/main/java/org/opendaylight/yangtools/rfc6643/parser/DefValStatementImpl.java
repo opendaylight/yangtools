@@ -10,10 +10,13 @@ package org.opendaylight.yangtools.rfc6643.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 final class DefValStatementImpl extends WithSubstatements implements DefValStatement {
-    DefValStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+    DefValStatementImpl(final String rawArgument,
+                        final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                        final StatementSourceReference sourceReference) {
+        super(rawArgument, substatements, sourceReference);
     }
 }

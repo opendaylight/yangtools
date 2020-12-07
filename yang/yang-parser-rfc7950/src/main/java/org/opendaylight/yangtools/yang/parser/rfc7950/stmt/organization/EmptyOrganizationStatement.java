@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyOrganizationStatement extends WithRawStringArgument implements OrganizationStatement {
-    EmptyOrganizationStatement(final @NonNull String rawArgument) {
-        super(rawArgument);
+    EmptyOrganizationStatement(final @NonNull String rawArgument,
+                               final @NonNull StatementSourceReference sourceReference) {
+        super(rawArgument, sourceReference);
     }
 }

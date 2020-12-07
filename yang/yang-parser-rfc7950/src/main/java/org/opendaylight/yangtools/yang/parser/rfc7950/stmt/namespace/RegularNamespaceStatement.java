@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularNamespaceStatement extends WithSubstatements<URI> implements NamespaceStatement {
     RegularNamespaceStatement(final URI argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+                              final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                              final StatementSourceReference sourceReference) {
+        super(argument, substatements, sourceReference);
     }
 }

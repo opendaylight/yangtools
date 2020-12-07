@@ -40,12 +40,13 @@ public final class ReferenceStatementSupport
     @Override
     protected ReferenceStatement createDeclared(final StmtContext<String, ReferenceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularReferenceStatement(ctx.coerceRawStatementArgument(), substatements);
+        return new RegularReferenceStatement(ctx.coerceRawStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected ReferenceStatement createEmptyDeclared(final StmtContext<String, ReferenceStatement, ?> ctx) {
-        return new EmptyReferenceStatement(ctx.coerceRawStatementArgument());
+        return new EmptyReferenceStatement(ctx.coerceRawStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

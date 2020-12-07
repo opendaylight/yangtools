@@ -35,9 +35,11 @@ abstract class AbstractCaseStatementSupport
         final StatementSource source = ctx.getStatementSource();
         switch (ctx.getStatementSource()) {
             case CONTEXT:
-                return new RegularUndeclaredCaseStatement(ctx.coerceStatementArgument(), substatements);
+                return new RegularUndeclaredCaseStatement(ctx.coerceStatementArgument(), substatements,
+                        ctx.getStatementSourceReference());
             case DECLARATION:
-                return new RegularCaseStatement(ctx.coerceStatementArgument(), substatements);
+                return new RegularCaseStatement(ctx.coerceStatementArgument(), substatements,
+                        ctx.getStatementSourceReference());
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }
@@ -48,9 +50,10 @@ abstract class AbstractCaseStatementSupport
         final StatementSource source = ctx.getStatementSource();
         switch (ctx.getStatementSource()) {
             case CONTEXT:
-                return new EmptyUndeclaredCaseStatement(ctx.coerceStatementArgument());
+                return new EmptyUndeclaredCaseStatement(ctx.coerceStatementArgument(),
+                        ctx.getStatementSourceReference());
             case DECLARATION:
-                return new EmptyCaseStatement(ctx.coerceStatementArgument());
+                return new EmptyCaseStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }

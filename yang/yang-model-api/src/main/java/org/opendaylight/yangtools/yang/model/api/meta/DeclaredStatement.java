@@ -24,6 +24,13 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 public interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
+     * Returns a reference to statement source.
+     *
+     * @return reference of statement source
+     */
+    @NonNull StatementSourceReference getStatementSourceReference();
+
+    /**
      * Returns statement argument as was present in original source.
      *
      * @return statement argument as was present in original source or null, if statement does not take argument.

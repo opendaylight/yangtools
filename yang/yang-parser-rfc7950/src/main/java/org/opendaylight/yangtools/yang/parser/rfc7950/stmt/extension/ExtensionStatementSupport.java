@@ -88,12 +88,13 @@ public final class ExtensionStatementSupport
     @Override
     protected ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularExtensionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularExtensionStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected ExtensionStatement createEmptyDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx) {
-        return new EmptyExtensionStatement(ctx.coerceStatementArgument());
+        return new EmptyExtensionStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

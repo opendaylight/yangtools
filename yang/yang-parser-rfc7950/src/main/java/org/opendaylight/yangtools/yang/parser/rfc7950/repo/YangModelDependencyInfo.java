@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -37,7 +38,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Helper transfer object which holds basic and dependency information for YANG

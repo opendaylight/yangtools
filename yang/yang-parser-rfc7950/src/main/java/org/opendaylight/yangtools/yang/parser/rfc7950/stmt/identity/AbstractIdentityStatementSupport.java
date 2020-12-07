@@ -58,12 +58,13 @@ abstract class AbstractIdentityStatementSupport
     @Override
     protected final IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularIdentityStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularIdentityStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected final IdentityStatement createEmptyDeclared(@NonNull final StmtContext<QName, IdentityStatement, ?> ctx) {
-        return new EmptyIdentityStatement(ctx.coerceStatementArgument());
+        return new EmptyIdentityStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

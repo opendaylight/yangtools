@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularYangVersionStatement extends WithSubstatements<YangVersion> implements YangVersionStatement {
     RegularYangVersionStatement(final YangVersion argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+                                final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                final StatementSourceReference sourceReference) {
+        super(argument, substatements, sourceReference);
     }
 }

@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
@@ -29,9 +30,9 @@ public final class YangVersionStatementSupport
     private static final YangVersionStatementSupport INSTANCE = new YangVersionStatementSupport();
 
     private static final @NonNull EmptyYangVersionStatement EMPTY_VER1_DECL =
-            new EmptyYangVersionStatement(YangVersion.VERSION_1);
+            new EmptyYangVersionStatement(YangVersion.VERSION_1, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyYangVersionStatement EMPTY_VER1_1_DECL =
-            new EmptyYangVersionStatement(YangVersion.VERSION_1_1);
+            new EmptyYangVersionStatement(YangVersion.VERSION_1_1, () -> StatementSource.DECLARATION);
     private static final @NonNull EmptyYangVersionEffectiveStatement EMPTY_VER1_EFF =
             new EmptyYangVersionEffectiveStatement(EMPTY_VER1_DECL);
     private static final @NonNull EmptyYangVersionEffectiveStatement EMPTY_VER1_1_EFF =
@@ -65,7 +66,8 @@ public final class YangVersionStatementSupport
     @Override
     protected YangVersionStatement createDeclared(final StmtContext<YangVersion, YangVersionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularYangVersionStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularYangVersionStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override

@@ -53,12 +53,13 @@ public final class NamespaceStatementSupport
     @Override
     protected NamespaceStatement createDeclared(@NonNull final StmtContext<URI, NamespaceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularNamespaceStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularNamespaceStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected NamespaceStatement createEmptyDeclared(final StmtContext<URI, NamespaceStatement, ?> ctx) {
-        return new EmptyNamespaceStatement(ctx.coerceStatementArgument());
+        return new EmptyNamespaceStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

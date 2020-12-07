@@ -48,12 +48,13 @@ abstract class AbstractChoiceStatementSupport
     @Override
     protected final ChoiceStatement createDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularChoiceStatement(ctx.coerceStatementArgument(), substatements);
+        return new RegularChoiceStatement(ctx.coerceStatementArgument(), substatements,
+                ctx.getStatementSourceReference());
     }
 
     @Override
     protected final ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
-        return new EmptyChoiceStatement(ctx.coerceStatementArgument());
+        return new EmptyChoiceStatement(ctx.coerceStatementArgument(), ctx.getStatementSourceReference());
     }
 
     @Override

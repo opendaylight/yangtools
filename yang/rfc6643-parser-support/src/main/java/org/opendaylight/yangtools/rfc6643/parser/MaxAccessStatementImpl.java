@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccess;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
 
 final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> implements MaxAccessStatement {
@@ -22,7 +23,9 @@ final class MaxAccessStatementImpl extends AbstractDeclaredStatement<MaxAccess> 
     private final MaxAccess argument;
 
     MaxAccessStatementImpl(final MaxAccess argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                           final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                           final StatementSourceReference sourceReference) {
+        super(sourceReference);
         this.argument = requireNonNull(argument);
         this.substatements = maskList(substatements);
     }

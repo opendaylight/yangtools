@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
@@ -50,13 +51,15 @@ public final class ValueStatementSupport
 
     @Override
     protected ValueStatement createDeclared(final Integer argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularValueStatement(argument, substatements);
+                                            final ImmutableList<? extends DeclaredStatement<?>> substatements,
+                                            final StatementSourceReference sourceReference) {
+        return new RegularValueStatement(argument, substatements, sourceReference);
     }
 
     @Override
-    protected ValueStatement createEmptyDeclared(@NonNull final Integer argument) {
-        return new EmptyValueStatement(argument);
+    protected ValueStatement createEmptyDeclared(@NonNull final Integer argument,
+                                                 @NonNull final StatementSourceReference sourceReference) {
+        return new EmptyValueStatement(argument, sourceReference);
     }
 
     @Override
