@@ -100,7 +100,7 @@ public final class SubmoduleStatementSupport
     private final SubstatementValidator validator;
 
     private SubmoduleStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.SUBMODULE, CopyPolicy.REJECT);
+        super(YangStmtMapping.SUBMODULE, StatementPolicy.reject());
         this.validator = requireNonNull(validator);
     }
 

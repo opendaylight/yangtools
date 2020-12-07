@@ -53,7 +53,7 @@ public final class ActionStatementSupport extends
     private static final ActionStatementSupport INSTANCE = new ActionStatementSupport();
 
     private ActionStatementSupport() {
-        super(YangStmtMapping.ACTION, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.ACTION, uninstantiatedSchemaTree());
     }
 
     public static ActionStatementSupport getInstance() {

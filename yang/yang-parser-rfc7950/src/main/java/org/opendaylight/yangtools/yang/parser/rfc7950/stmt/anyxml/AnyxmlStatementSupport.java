@@ -42,7 +42,7 @@ public final class AnyxmlStatementSupport
     private static final AnyxmlStatementSupport INSTANCE = new AnyxmlStatementSupport();
 
     private AnyxmlStatementSupport() {
-        super(YangStmtMapping.ANYXML, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.ANYXML, instantiatedSchemaTree());
     }
 
     public static AnyxmlStatementSupport getInstance() {
