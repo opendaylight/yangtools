@@ -12,7 +12,10 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -114,5 +117,22 @@ public final class ActionStatementSupport extends
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public boolean copyEffective(final ActionEffectiveStatement original,
+                                 final Current<QName, ActionStatement> stmt) {
+        if (((ActionEffectiveStatementImpl) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((ActionEffectiveStatementImpl) original).isAddedByUses() !=
+                stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((ActionEffectiveStatementImpl) original).isAugmenting() !=
+                stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        return true;
     }
 }

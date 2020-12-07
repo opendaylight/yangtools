@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -204,6 +205,12 @@ abstract class AbstractDeviateStatementSupport
     protected DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new DeviateEffectiveStatementImpl(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final DeviateEffectiveStatement original,
+                                          final Current<DeviateKind, DeviateStatement> stmt) {
+        return true;
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
