@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -63,6 +64,12 @@ abstract class AbstractLeafrefSpecificationSupport
         }
 
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final EffectiveStatement<String, LeafrefSpecification> original,
+                                          final Current<String, LeafrefSpecification> stmt) {
+        return true;
     }
 
     private static SourceException noPath(final CommonStmtCtx stmt) {

@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,7 +25,9 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -117,5 +120,12 @@ public final class ActionStatementSupport extends
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    protected boolean effectivelyEqual(final Current<QName, ActionStatement> stmt, final Parent parent,
+            final CopyType copyType, final QNameModule targetModule) {
+        return isSameHistory(stmt.history(), copyType) && isSameModule(stmt.getArgument().getModule(), targetModule)
+            && parent.getSchemaPath().equals(stmt.getEffectiveParent().getSchemaPath());
     }
 }

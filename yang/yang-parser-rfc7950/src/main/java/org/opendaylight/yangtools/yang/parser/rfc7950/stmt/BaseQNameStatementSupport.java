@@ -29,8 +29,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends BaseStatementSupport<QName, D, E> {
+    @Deprecated
     protected BaseQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
+    }
+
+    protected BaseQNameStatementSupport(final StatementDefinition publicDefinition,
+            final EffectiveComparator<QName, D> comparator) {
+        super(publicDefinition, comparator);
     }
 
     @Override
