@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -47,6 +49,12 @@ public final class ConfigStatementSupport
     protected ConfigEffectiveStatement createEffective(final ConfigStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularConfigEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final ConfigEffectiveStatement original,
+                                          final EffectiveStmtCtx.Current<Boolean, ConfigStatement> stmt) {
+        return true;
     }
 
     @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -95,5 +96,11 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyBaseEffectiveStatement(stmt.declared())
             : new RegularBaseEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final BaseEffectiveStatement original,
+                                          final Current<QName, BaseStatement> stmt) {
+        return true;
     }
 }
