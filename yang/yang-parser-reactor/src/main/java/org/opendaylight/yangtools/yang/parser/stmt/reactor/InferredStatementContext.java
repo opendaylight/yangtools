@@ -36,6 +36,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -176,6 +178,53 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
+    }
+
+    @Override
+    E createEffective(final StatementFactory<A, D, E> factory) {
+        // If we have not materialized we do not have a difference in effective substatements, hence we can forward
+        // towards the source of the statement.
+        return substatements == null && prototype instanceof InferredStatementContext
+                // FIXME: reuse 'factory'
+                ? ((InferredStatementContext<A, D, E>) prototype).createEffectiveCopyWith(this)
+                : super.createEffective(factory);
+    }
+
+    private @NonNull E createEffectiveCopyWith(final InferredStatementContext<A, D, E> stmt) {
+        // 'this' is acting as a prototype for stmt
+        // we therefore have access our effective statement view, which forces materialization
+        final E original = buildEffective();
+        final StatementFactory<A, D, E> support = definition().getFactory();
+        verify(substatements instanceof List);
+        final List<ReactorStmtCtx<?, ?, ?>> materialized = castEffective(substatements);
+        if (canReuseSubstatements(stmt, materialized)) {
+            // Substatements can be reused as they are
+            return support.createEffective(stmt, Stream.empty(), materialized.stream());
+        }
+        // Ask statement support to create a copy, if it is so inclined. If not, we'll just fall back to
+        // materialization.
+        return support.copyEffective(original, stmt) ? original : createEffective(support, stmt);
+    }
+
+    // Check target policy when we'd be performing a copy from any of the substatements as a child of 'stmt'.
+    private static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        boolean canReuseSubstatements(final InferredStatementContext<A, D, E> stmt,
+                                      final List<ReactorStmtCtx<?, ?, ?>> substatements) {
+        for (ReactorStmtCtx<?, ?, ?> sub : substatements) {
+            final CopyPolicy policy = sub.definition().support().applyCopyPolicy(sub, stmt.parent, stmt.childCopyType,
+                    stmt.targetModule);
+            switch (policy) {
+                case CONTEXT_INDEPENDENT:
+                case IGNORE:
+                    // CONTEXT_INDEPENDENT is not affected and IGNORE does not affect anything
+                    break;
+                default:
+                    // Everything else requires closer examination
+                    return false;
+            }
+        }
+        // No statement is impacted
+        return false;
     }
 
     @Override
