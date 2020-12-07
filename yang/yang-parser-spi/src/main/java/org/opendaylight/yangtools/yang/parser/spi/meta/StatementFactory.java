@@ -38,4 +38,12 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
     @NonNull E createEffective(EffectiveStmtCtx.@NonNull Current<A, D> stmt,
         Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
         Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements);
+
+    /**
+     * Create a {@link EffectiveStatement} for specified context with no substatements.
+     *
+     * @param stmt Effective capture of this statement's significant state
+     * @return An effective statement instance
+     */
+    @NonNull E createEffective(EffectiveStmtCtx.@NonNull Current<A, D> stmt);
 }

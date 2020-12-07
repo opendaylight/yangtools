@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * backed by a declaration (and declared statements). It is backed by a prototype StatementContextBase and has only
  * effective substatements, which are either transformed from that prototype or added by inference.
  */
-final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
 
@@ -176,6 +176,15 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     InferredStatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
         return new InferredStatementContext<>(this, newParent);
+    }
+
+    @Override
+    E createEffective() {
+        if (prototype instanceof InferredStatementContext) {
+            return prototype.definition().getFactory().createEffective(this);
+        } else {
+            return super.createEffective();
+        }
     }
 
     @Override

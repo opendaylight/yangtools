@@ -65,6 +65,11 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         return createEffective(stmt, substatements);
     }
 
+    @Override
+    public E createEffective(final Current<A, D> stmt) {
+        return createEffective(stmt, ImmutableList.of());
+    }
+
     protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
