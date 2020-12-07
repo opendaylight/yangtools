@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -117,5 +118,22 @@ public final class ActionStatementSupport extends
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public boolean copyEffective(final ActionEffectiveStatement original,
+                                 final Current<QName, ActionStatement> stmt) {
+        if (!((ActionEffectiveStatementImpl) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((ActionEffectiveStatementImpl) original).isAddedByUses()
+                != stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((ActionEffectiveStatementImpl) original).isAugmenting()
+                != stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        return true;
     }
 }
