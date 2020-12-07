@@ -15,12 +15,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
@@ -90,6 +92,12 @@ public final class InputStatementSupport
             default:
                 throw new IllegalStateException("Unhandled statement origin " + origin);
         }
+    }
+
+    @Override
+    protected InputStatement attachDeclarationReference(final InputStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateInput(stmt, reference);
     }
 
     @Override

@@ -11,12 +11,14 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -81,6 +83,11 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     protected BaseStatement createDeclared(final StmtContext<QName, BaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createBase(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected BaseStatement attachDeclarationReference(final BaseStatement stmt, final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateBase(stmt, reference);
     }
 
     @Override

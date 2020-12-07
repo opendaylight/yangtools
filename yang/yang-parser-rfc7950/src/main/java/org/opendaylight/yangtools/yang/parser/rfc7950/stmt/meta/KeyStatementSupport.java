@@ -16,11 +16,13 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
@@ -106,6 +108,11 @@ public final class KeyStatementSupport
     protected KeyStatement createDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected KeyStatement attachDeclarationReference(final KeyStatement stmt, final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateKey(stmt, reference);
     }
 
     @Override

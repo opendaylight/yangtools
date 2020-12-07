@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
@@ -50,6 +52,12 @@ public final class ValueStatementSupport
     protected ValueStatement createDeclared(final Integer argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createValue(argument, substatements);
+    }
+
+    @Override
+    protected ValueStatement attachDeclarationReference(final ValueStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateValue(stmt, reference);
     }
 
     @Override

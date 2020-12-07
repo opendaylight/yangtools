@@ -12,11 +12,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -55,6 +57,11 @@ public final class WhenStatementSupport
     protected WhenStatement createDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createWhen(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected WhenStatement attachDeclarationReference(final WhenStatement stmt, final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateWhen(stmt, reference);
     }
 
     @Override

@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -47,6 +49,12 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
             throw noFracDigits(ctx);
         }
         return new Decimal64SpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected Decimal64Specification attachDeclarationReference(final Decimal64Specification stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateBits(stmt, reference);
     }
 
     @Override

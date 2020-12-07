@@ -12,12 +12,14 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -46,6 +48,12 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
             throw noBits(ctx);
         }
         return new BitsSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected BitsSpecification attachDeclarationReference(final BitsSpecification stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateBits(stmt, reference);
     }
 
     @Override

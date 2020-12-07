@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
@@ -100,6 +102,12 @@ public final class ActionStatementSupport extends
     protected ActionStatement createDeclared(final StmtContext<QName, ActionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createAction(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected ActionStatement attachDeclarationReference(final ActionStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateAction(stmt, reference);
     }
 
     @Override

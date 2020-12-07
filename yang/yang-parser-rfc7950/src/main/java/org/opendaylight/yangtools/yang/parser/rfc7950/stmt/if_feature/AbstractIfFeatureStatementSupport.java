@@ -17,12 +17,14 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
@@ -91,6 +93,12 @@ abstract class AbstractIfFeatureStatementSupport
     protected final IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createIfFeature(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected final IfFeatureStatement attachDeclarationReference(final IfFeatureStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateIfFeature(stmt, reference);
     }
 
     @Override
