@@ -48,7 +48,7 @@ abstract class AbstractAugmentStatementSupport
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
     AbstractAugmentStatementSupport() {
-        super(YangStmtMapping.AUGMENT, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.AUGMENT, StatementPolicy.contextIndependent());
     }
 
     @Override

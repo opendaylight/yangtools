@@ -31,17 +31,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class RangeStatementSupport
         extends BaseStatementSupport<List<ValueRange>, RangeStatement, RangeEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .RANGE)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.ERROR_APP_TAG)
-        .addOptional(YangStmtMapping.ERROR_MESSAGE)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.RANGE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build();
     private static final RangeStatementSupport INSTANCE = new RangeStatementSupport();
 
     private RangeStatementSupport() {
-        super(YangStmtMapping.RANGE, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.RANGE, StatementPolicy.contextIndependent());
     }
 
     public static RangeStatementSupport getInstance() {

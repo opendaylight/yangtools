@@ -60,7 +60,7 @@ public final class OutputStatementSupport
     private final SubstatementValidator validator;
 
     private OutputStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.OUTPUT, YangConstants::operationOutputQName, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.OUTPUT, YangConstants::operationOutputQName);
         this.validator = requireNonNull(validator);
     }
 

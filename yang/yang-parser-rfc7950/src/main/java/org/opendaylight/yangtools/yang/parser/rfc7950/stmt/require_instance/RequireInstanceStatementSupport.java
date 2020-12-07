@@ -23,12 +23,11 @@ public final class RequireInstanceStatementSupport
         YangStmtMapping.REQUIRE_INSTANCE).build();
     private static final RequireInstanceStatementSupport INSTANCE = new RequireInstanceStatementSupport();
 
-
     private RequireInstanceStatementSupport() {
         super(YangStmtMapping.REQUIRE_INSTANCE,
             new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.FALSE)),
             new EmptyRequireInstanceEffectiveStatement(new EmptyRequireInstanceStatement(Boolean.TRUE)),
-            CopyPolicy.CONTEXT_INDEPENDENT);
+            StatementPolicy.contextIndependent());
     }
 
     public static RequireInstanceStatementSupport getInstance() {
