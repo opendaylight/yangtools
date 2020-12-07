@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -90,6 +91,12 @@ abstract class AbstractIdentityRefSpecificationSupport
         }
 
         return new TypeEffectiveStatementImpl<>(stmt.declared(), substatements, builder);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final EffectiveStatement<String, IdentityRefSpecification> original,
+                                          final Current<String, IdentityRefSpecification> stmt) {
+        return true;
     }
 
     private static SourceException noBase(final CommonStmtCtx stmt) {

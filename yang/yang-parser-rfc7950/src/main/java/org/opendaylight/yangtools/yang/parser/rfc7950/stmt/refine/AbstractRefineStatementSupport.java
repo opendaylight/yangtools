@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -50,5 +51,11 @@ abstract class AbstractRefineStatementSupport
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
         return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.wrapSchemaPath(),
                 (SchemaNode) stmt.caerbannog().getEffectOfStatement().iterator().next().buildEffective());
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final RefineEffectiveStatement original,
+                                          final Current<Descendant, RefineStatement> stmt) {
+        return ((RefineEffectiveStatementImpl) original).getPath().equals(stmt.wrapSchemaPath());
     }
 }

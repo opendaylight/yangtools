@@ -110,6 +110,12 @@ public final class KeyStatementSupport
                 : new RegularForeignKeyEffectiveStatement(declared, arg, substatements);
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final KeyEffectiveStatement original,
+                                          final Current<Set<QName>, KeyStatement> stmt) {
+        return true;
+    }
+
     static @NonNull Object maskSet(final @NonNull Set<QName> set) {
         return set.size() == 1 ? set.iterator().next() : set;
     }

@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -100,5 +101,11 @@ abstract class AbstractIncludeStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(stmt.declared())
             : new RegularIncludeEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final IncludeEffectiveStatement original,
+                                          final Current<String, IncludeStatement> stmt) {
+        return true;
     }
 }

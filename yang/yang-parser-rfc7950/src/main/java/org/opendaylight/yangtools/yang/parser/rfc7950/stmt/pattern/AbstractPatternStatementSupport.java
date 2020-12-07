@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -56,5 +57,11 @@ abstract class AbstractPatternStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyPatternEffectiveStatement(stmt.declared())
             : new RegularPatternEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final PatternEffectiveStatement original,
+                                          final Current<PatternExpression, PatternStatement> stmt) {
+        return true;
     }
 }

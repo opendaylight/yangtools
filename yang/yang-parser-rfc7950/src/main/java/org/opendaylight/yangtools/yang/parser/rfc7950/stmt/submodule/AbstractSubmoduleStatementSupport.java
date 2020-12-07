@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -101,6 +102,12 @@ abstract class AbstractSubmoduleStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final SubmoduleEffectiveStatement original,
+                                          final Current<UnqualifiedQName, SubmoduleStatement> stmt) {
+        return false;
     }
 
     private static SourceException noBelongsTo(final CommonStmtCtx stmt) {

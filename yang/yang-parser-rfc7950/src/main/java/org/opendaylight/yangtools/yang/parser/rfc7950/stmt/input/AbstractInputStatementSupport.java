@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -71,5 +73,11 @@ abstract class AbstractInputStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final InputEffectiveStatement original,
+                                          final Current<QName, InputStatement> stmt) {
+        return ((SchemaNode) original).getPath().equals(stmt.wrapSchemaPath());
     }
 }

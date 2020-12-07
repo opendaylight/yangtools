@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -23,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -65,5 +68,26 @@ abstract class AbstractContainerStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final ContainerEffectiveStatement original,
+                                          final Current<QName, ContainerStatement> stmt) {
+        if (((ContainerEffectiveStatementImpl) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((ContainerEffectiveStatementImpl) original).isAddedByUses() !=
+                stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((ContainerEffectiveStatementImpl) original).isAugmenting() !=
+                stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        if (((ContainerEffectiveStatementImpl) original).effectiveConfig()
+                .equals(Optional.ofNullable(stmt.effectiveConfig().asNullable()))) {
+            return false;
+        }
+        return true;
     }
 }

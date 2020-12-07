@@ -196,6 +196,12 @@ abstract class AbstractModuleStatementSupport
         }
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final ModuleEffectiveStatement original,
+                                          final Current<UnqualifiedQName, ModuleStatement> stmt) {
+        return true;
+    }
+
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
         final Map<String, StmtContext<?, ?, ?>> submodules = stmt.getAllFromCurrentStmtCtxNamespace(
             IncludedSubmoduleNameToModuleCtx.class);
