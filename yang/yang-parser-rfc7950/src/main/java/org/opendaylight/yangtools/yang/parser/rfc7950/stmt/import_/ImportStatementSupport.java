@@ -145,4 +145,9 @@ public final class ImportStatementSupport
         return new ImportEffectiveStatementImpl(stmt.declared(), substatements,
             verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.class, Empty.getInstance())));
     }
+
+    @Override
+    public boolean copyEffective(final ImportEffectiveStatement original, final Current<String, ImportStatement> stmt) {
+        throw new UnsupportedOperationException("Should have been rejected");
+    }
 }

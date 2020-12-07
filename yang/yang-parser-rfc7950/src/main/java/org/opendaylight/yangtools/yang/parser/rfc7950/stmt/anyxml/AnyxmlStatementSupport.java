@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -83,5 +85,26 @@ public final class AnyxmlStatementSupport
 
     private static @Nullable AnyxmlSchemaNode findOriginal(final Current<?, ?> stmt) {
         return (AnyxmlSchemaNode) stmt.original();
+    }
+
+    @Override
+    public boolean copyEffective(final AnyxmlEffectiveStatement original,
+                                 final Current<QName, AnyxmlStatement> stmt) {
+        if (!((EmptyAnyxmlEffectiveStatement) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((EmptyAnyxmlEffectiveStatement) original).isAddedByUses()
+                != stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((EmptyAnyxmlEffectiveStatement) original).isAugmenting()
+                != stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        if (((EmptyAnyxmlEffectiveStatement) original).effectiveConfig()
+                .equals(Optional.ofNullable(stmt.effectiveConfig().asNullable()))) {
+            return false;
+        }
+        return true;
     }
 }

@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 
 /**
  * Class providing necessary support for processing a YANG statement. This class is intended to be subclassed
@@ -52,19 +53,46 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final StmtContext<?, ?, ?> effectiveCopyOf(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
-            final CopyType copyType, final QNameModule targetModule) {
+    public final Current<A, D> effectiveCopyOf(final Current<A, D> stmt, final Parent parent, final CopyType copyType,
+            final QNameModule targetModule) {
         switch (copyPolicy) {
             case CONTEXT_INDEPENDENT:
                 return stmt;
             case DECLARED_COPY:
-                // FIXME: YANGTOOLS-1195: this is too harsh, we need to make a callout to subclass methods so they
-                //                        actually examine the differences.
-                return parent.childCopyOf(stmt, copyType, targetModule);
+                return effectivelyEqual(stmt, parent, copyType, targetModule)
+                    // FIXME: YANGTOOLS-1195: we want a separate entrypoint for this operation
+                    ? stmt : parent.childCopyOf(stmt, copyType, targetModule);
             default:
                 throw new VerifyException("Attempted to apply " + copyPolicy);
         }
     }
+
+    protected boolean effectivelyEqual(final Current<A, D> stmt, final Parent parent, final CopyType copyType,
+            final QNameModule targetModule) {
+        return false;
+    }
+
+    //
+    // FIXME: Are these useful?
+    //
+    protected static final boolean isSameHistory(final CopyHistory copyHistory, final CopyType copyType) {
+        // FIXME: compare these ... how exactly? see what childCopyOf() does
+        return false;
+    }
+
+    protected static final boolean isSameModule(final StmtContext<?, ?, ?> stmt, final QNameModule targetModule) {
+        // FIXME: targetModule == null
+        // FIXME: extract something from stmt (if we can?), for example QNameStatementSupport
+        return false;
+    }
+
+    // Semantic comparison of parent
+    protected static final boolean isSameParent(final StmtContext<?, ?, ?> parent, final StmtContext<?, ?, ?> newParent) {
+        // TODO: This should never happen, I think. Perhaps an assertion is in order?
+        return newParent.equals(newParent);
+    }
+
+    // FIXME: see ^^^
 
     @Override
     public void onStatementAdded(final StmtContext.Mutable<A, D, E> stmt) {
