@@ -67,7 +67,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     @Override
     public SchemaOrderedNormalizedNodeWriter write(final NormalizedNode node) throws IOException {
         if (Objects.equals(root, schemaContext)) {
-            currentSchemaNode = schemaContext.getDataChildByName(node.getNodeType());
+            currentSchemaNode = schemaContext.dataChildByName(node.getNodeType());
         } else {
             currentSchemaNode = root;
         }

@@ -388,7 +388,7 @@ public final class SchemaContextUtil {
         SchemaNode foundNode = null;
         final Iterable<QName> nextPath = nextLevel(path);
 
-        foundNode = module.getDataChildByName(current);
+        foundNode = module.dataChildByName(current);
         if (foundNode != null && nextPath.iterator().hasNext()) {
             foundNode = findNodeIn(foundNode, nextPath);
         }
@@ -436,7 +436,7 @@ public final class SchemaContextUtil {
         if (parent instanceof DataNodeContainer) {
             final DataNodeContainer parentDataNodeContainer = (DataNodeContainer) parent;
 
-            foundNode = parentDataNodeContainer.getDataChildByName(current);
+            foundNode = parentDataNodeContainer.dataChildByName(current);
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
             }
@@ -500,7 +500,7 @@ public final class SchemaContextUtil {
             if (foundNode == null) {
                 // fallback that tries to map into one of the child cases
                 for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) parent).getCases()) {
-                    final DataSchemaNode maybeChild = caseNode.getDataChildByName(current);
+                    final DataSchemaNode maybeChild = caseNode.dataChildByName(current);
                     if (maybeChild != null) {
                         foundNode = findNodeIn(maybeChild, nextPath);
                         break;
@@ -611,7 +611,7 @@ public final class SchemaContextUtil {
             return QName.create(module.getQNameModule(), prefixedName.next());
         }
 
-        return QName.create(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
+        return QName.create(parentModule.getQNameModule(), prefixedPathPart);
     }
 
     /**

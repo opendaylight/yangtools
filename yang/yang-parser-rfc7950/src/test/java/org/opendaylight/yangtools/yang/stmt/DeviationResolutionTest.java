@@ -61,7 +61,7 @@ public class DeviationResolutionTest {
         assertEquals(1, myContA.getChildNodes().size());
         assertNotNull(myContA.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-a3")));
 
-        final ContainerSchemaNode myContB = (ContainerSchemaNode) importedModule.getDataChildByName(
+        final ContainerSchemaNode myContB = (ContainerSchemaNode) importedModule.dataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-b"));
         assertNull(myContB);
 
