@@ -17,8 +17,8 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Utility class for converting ANTLRErrorListener errors to SourceExceptions. This class is NOT thread-safe.

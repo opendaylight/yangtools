@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SourceExceptionTest {
