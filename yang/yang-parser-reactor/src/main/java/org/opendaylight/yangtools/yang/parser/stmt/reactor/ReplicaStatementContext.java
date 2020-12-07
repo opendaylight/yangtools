@@ -113,6 +113,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
+        return source.getEffectOfStatement();
+    }
+
+    @Override
     ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> newParent, final CopyType type,
             final QNameModule targetModule) {
         return source.asEffectiveChildOf(newParent, type, targetModule);
@@ -159,17 +164,13 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
         throw new UnsupportedOperationException();
     }
 
-    @Override boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
+    @Override
+    boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
         throw new UnsupportedOperationException();
     }
 

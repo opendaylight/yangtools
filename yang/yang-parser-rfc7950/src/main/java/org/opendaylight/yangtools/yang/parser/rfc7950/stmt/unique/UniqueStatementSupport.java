@@ -45,7 +45,8 @@ public final class UniqueStatementSupport
     private static final UniqueStatementSupport INSTANCE = new UniqueStatementSupport();
 
     private UniqueStatementSupport() {
-        super(YangStmtMapping.UNIQUE, CopyPolicy.DECLARED_COPY);
+        // FIXME: Argument contains QNames, hence ... how does this play out? we should have an adaptArgumentValue()...
+        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent());
     }
 
     public static UniqueStatementSupport getInstance() {

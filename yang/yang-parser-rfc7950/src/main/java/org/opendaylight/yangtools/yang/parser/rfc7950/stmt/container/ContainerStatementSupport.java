@@ -83,7 +83,7 @@ public final class ContainerStatementSupport
     private final SubstatementValidator validator;
 
     private ContainerStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.CONTAINER, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.CONTAINER, instantiatedSchemaTree());
         this.validator = requireNonNull(validator);
     }
 

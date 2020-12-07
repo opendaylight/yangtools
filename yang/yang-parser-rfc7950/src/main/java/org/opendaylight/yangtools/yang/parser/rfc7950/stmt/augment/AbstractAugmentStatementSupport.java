@@ -48,6 +48,7 @@ abstract class AbstractAugmentStatementSupport
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
     AbstractAugmentStatementSupport() {
+        // FIXME: this an copy-always situation, as we need to capture causality chain (i.e. original())
         super(YangStmtMapping.AUGMENT, CopyPolicy.DECLARED_COPY);
     }
 
