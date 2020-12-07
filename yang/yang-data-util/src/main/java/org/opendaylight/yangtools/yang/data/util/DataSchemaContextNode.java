@@ -102,7 +102,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
     }
 
     static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
-        final DataSchemaNode potential = parent.getDataChildByName(child);
+        final DataSchemaNode potential = parent.dataChildByName(child);
         return potential == null ? findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child)
                 : potential;
     }
