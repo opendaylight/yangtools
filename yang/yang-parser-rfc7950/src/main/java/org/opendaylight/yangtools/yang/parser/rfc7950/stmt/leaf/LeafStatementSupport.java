@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
 import com.google.common.collect.ImmutableList;
+import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -101,5 +103,10 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
         final SchemaPath path = stmt.wrapSchemaPath();
         return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
                 : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
+    }
+
+    @Override
+    public boolean copyEffective(@NonNull LeafEffectiveStatement original, Current<QName, LeafStatement> stmt) {
+        return false;
     }
 }
