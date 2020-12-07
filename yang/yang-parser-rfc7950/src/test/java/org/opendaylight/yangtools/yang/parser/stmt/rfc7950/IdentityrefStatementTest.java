@@ -40,8 +40,6 @@ public class IdentityrefStatementTest {
 
         final LeafSchemaNode idrefLeaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "idref-leaf"));
-        assertNotNull(idrefLeaf);
-
         final IdentityrefTypeDefinition idrefType = (IdentityrefTypeDefinition) idrefLeaf.getType();
         final Set<? extends IdentitySchemaNode> referencedIdentities = idrefType.getIdentities();
         assertEquals(3, referencedIdentities.size());

@@ -41,17 +41,14 @@ public class LeafrefStatementTest {
 
         final LeafSchemaNode leafrefA = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "leafref-a"));
-        assertNotNull(leafrefA);
         assertRequireInstanceInLeafref(leafrefA, true);
 
         final LeafSchemaNode leafrefB = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "leafref-b"));
-        assertNotNull(leafrefB);
         assertRequireInstanceInLeafref(leafrefB, true);
 
         final LeafSchemaNode leafrefC = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "leafref-c"));
-        assertNotNull(leafrefC);
         assertRequireInstanceInLeafref(leafrefC, true);
     }
 
