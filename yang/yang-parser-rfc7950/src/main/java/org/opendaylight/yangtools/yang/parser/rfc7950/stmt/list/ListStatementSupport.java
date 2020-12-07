@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
@@ -196,6 +197,27 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final ListEffectiveStatement original,
+                                          final Current<QName, ListStatement> stmt) {
+        if (!((AbstractListEffectiveStatement) original).getPath().equals(stmt.wrapSchemaPath())) {
+            return false;
+        }
+        if (((AbstractListEffectiveStatement) original).isAddedByUses()
+                != stmt.history().contains(CopyType.ADDED_BY_USES)) {
+            return false;
+        }
+        if (((AbstractListEffectiveStatement) original).isAugmenting()
+                != stmt.history().contains(CopyType.ADDED_BY_AUGMENTATION)) {
+            return false;
+        }
+        if (((AbstractListEffectiveStatement) original).effectiveConfig()
+                .equals(Optional.ofNullable(stmt.effectiveConfig().asNullable()))) {
+            return false;
+        }
+        return true;
     }
 
     private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {
