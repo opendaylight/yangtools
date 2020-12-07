@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date;
 
 import com.google.common.collect.ImmutableList;
 import java.time.format.DateTimeParseException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -65,5 +66,11 @@ public final class RevisionDateStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyRevisionDateEffectiveStatement(stmt.declared())
             : new RegularRevisionDateEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final RevisionDateEffectiveStatement original,
+                                          final Current<Revision, RevisionDateStatement> stmt) {
+        return true;
     }
 }
