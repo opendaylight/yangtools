@@ -343,10 +343,8 @@ public final class SchemaUtils {
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema,
             final DataContainerChild<?, ?> child) {
         for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
-            if (child instanceof AugmentationNode
-                    && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())) {
-                return Optional.of(choiceCaseNode);
-            } else if (choiceCaseNode.findDataChildByName(child.getNodeType()).isPresent()) {
+            if ((child instanceof AugmentationNode
+                    && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())) || choiceCaseNode.findDataChildByName(child.getNodeType()).isPresent()) {
                 return Optional.of(choiceCaseNode);
             }
         }
@@ -429,7 +427,7 @@ public final class SchemaUtils {
      */
     public static @Nullable SchemaNode findDataChildSchemaByQName(final SchemaNode node, final QName qname) {
         if (node instanceof DataNodeContainer) {
-            SchemaNode child = ((DataNodeContainer) node).getDataChildByName(qname);
+            SchemaNode child = ((DataNodeContainer) node).dataChildByName(qname);
             if (child == null && node instanceof SchemaContext) {
                 child = tryFind(((SchemaContext) node).getOperations(), qname).orElse(null);
             }
