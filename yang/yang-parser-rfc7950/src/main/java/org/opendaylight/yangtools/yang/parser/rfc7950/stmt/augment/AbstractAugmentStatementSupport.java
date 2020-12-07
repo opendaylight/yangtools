@@ -48,6 +48,7 @@ abstract class AbstractAugmentStatementSupport
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
     AbstractAugmentStatementSupport() {
+        // FIXME: why do we need to do declared copies here?
         super(YangStmtMapping.AUGMENT, CopyPolicy.DECLARED_COPY);
     }
 

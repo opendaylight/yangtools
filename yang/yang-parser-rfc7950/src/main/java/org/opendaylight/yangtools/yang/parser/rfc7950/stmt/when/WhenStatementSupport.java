@@ -34,8 +34,8 @@ public final class WhenStatementSupport
     private final @NonNull XPathSupport xpathSupport;
 
     private WhenStatementSupport(final XPathSupport xpathSupport) {
-        // Note: declared copy to future-proof when we bind expressions
-        super(YangStmtMapping.WHEN, CopyPolicy.DECLARED_COPY);
+        // Note: if we end up binding expressions, this needs to become declaredCopy()
+        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent());
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 

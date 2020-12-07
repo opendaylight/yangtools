@@ -46,7 +46,7 @@ public final class StatusStatementSupport
             new EmptyStatusEffectiveStatement(EMPTY_OBSOLETE_DECL);
 
     private StatusStatementSupport() {
-        super(YangStmtMapping.STATUS, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent());
     }
 
     public static StatusStatementSupport getInstance() {

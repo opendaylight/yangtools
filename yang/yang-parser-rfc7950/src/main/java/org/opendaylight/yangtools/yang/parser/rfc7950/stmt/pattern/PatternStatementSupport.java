@@ -49,7 +49,7 @@ public final class PatternStatementSupport
     private final SubstatementValidator validator;
 
     private PatternStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.PATTERN, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.PATTERN, StatementPolicy.contextIndependent());
         this.validator = requireNonNull(validator);
     }
 

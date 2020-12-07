@@ -27,7 +27,7 @@ public final class ImpliedStatementSupport
     private static final ImpliedStatementSupport INSTANCE = new ImpliedStatementSupport();
 
     private ImpliedStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.IMPLIED, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(IetfYangSmiv2ExtensionsMapping.IMPLIED, StatementPolicy.contextIndependent());
     }
 
     public static ImpliedStatementSupport getInstance() {

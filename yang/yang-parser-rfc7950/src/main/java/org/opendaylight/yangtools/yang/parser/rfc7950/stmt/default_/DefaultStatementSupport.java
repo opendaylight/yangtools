@@ -25,8 +25,8 @@ public final class DefaultStatementSupport
     private static final DefaultStatementSupport INSTANCE = new DefaultStatementSupport();
 
     private DefaultStatementSupport() {
-        // Note: if we start interpreting the string we'll need to use CopyPolicy.DECLARED_COPY
-        super(YangStmtMapping.DEFAULT, CopyPolicy.CONTEXT_INDEPENDENT);
+        // Note: if we start interpreting the string we'll need to use StatementPolicy.declaredCopy()
+        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent());
     }
 
     public static DefaultStatementSupport getInstance() {

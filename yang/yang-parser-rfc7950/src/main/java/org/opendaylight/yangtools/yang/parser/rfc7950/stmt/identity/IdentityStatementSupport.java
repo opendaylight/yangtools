@@ -59,7 +59,7 @@ public final class IdentityStatementSupport
     private final SubstatementValidator validator;
 
     private IdentityStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.IDENTITY, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.IDENTITY, StatementPolicy.reject());
         this.validator = requireNonNull(validator);
     }
 

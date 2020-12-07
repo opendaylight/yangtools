@@ -54,7 +54,7 @@ public final class IncludeStatementSupport
     private final SubstatementValidator validator;
 
     IncludeStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.INCLUDE, CopyPolicy.REJECT);
+        super(YangStmtMapping.INCLUDE, StatementPolicy.reject());
         this.validator = requireNonNull(validator);
     }
 
