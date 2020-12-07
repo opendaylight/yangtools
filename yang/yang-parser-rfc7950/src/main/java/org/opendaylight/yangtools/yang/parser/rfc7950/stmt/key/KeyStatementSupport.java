@@ -139,6 +139,13 @@ public final class KeyStatementSupport
                 : new RegularForeignKeyEffectiveStatement(declared, arg, substatements);
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final KeyEffectiveStatement original,
+                                          final Current<Set<QName>, KeyStatement> stmt) {
+        // TODO this needs to be evaluated further and return true in some cases where original is same as current stmt
+        return false;
+    }
+
     static @NonNull Object maskSet(final @NonNull Set<QName> set) {
         return set.size() == 1 ? set.iterator().next() : set;
     }

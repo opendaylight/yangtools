@@ -72,4 +72,10 @@ public final class MustStatementSupport
         return substatements.isEmpty() ? new EmptyMustEffectiveStatement(stmt.declared())
             : new RegularMustEffectiveStatement(stmt.declared(), substatements);
     }
+
+    @Override
+    public @NonNull boolean copyEffective(final MustEffectiveStatement original,
+                                          final Current<QualifiedBound, MustStatement> stmt) {
+        return true;
+    }
 }
