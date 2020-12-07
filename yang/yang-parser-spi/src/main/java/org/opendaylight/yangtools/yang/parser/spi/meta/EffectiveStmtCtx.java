@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -141,5 +142,13 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         // FIXME: YANGTOOLS-1186: lob the Holy Hand Grenade of Antioch
         @Deprecated
         <E extends EffectiveStatement<A, D>> @NonNull StmtContext<A, D, E> caerbannog();
+
+        /**
+         * @param parent
+         * @param copyType
+         * @param targetModule
+         * @return
+         */
+        Current<A, D> withParent(Parent parent, CopyType copyType, @Nullable QNameModule targetModule);
     }
 }

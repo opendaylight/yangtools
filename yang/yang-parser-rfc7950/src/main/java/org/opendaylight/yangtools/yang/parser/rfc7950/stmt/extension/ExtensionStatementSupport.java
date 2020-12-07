@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -135,5 +136,11 @@ public final class ExtensionStatementSupport
             "Statement build state not initialized").get(stmt), "No build state found for %s", stmt);
         ret.setSubstatements(substatements);
         return ret;
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final ExtensionEffectiveStatement original,
+                                          final Current<QName, ExtensionStatement> stmt) {
+        return ((ExtensionEffectiveStatementImpl) original).getPath().equals(stmt.wrapSchemaPath());
     }
 }

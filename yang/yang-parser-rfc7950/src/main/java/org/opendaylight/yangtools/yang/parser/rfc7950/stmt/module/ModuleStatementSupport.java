@@ -281,6 +281,12 @@ public final class ModuleStatementSupport
         }
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final ModuleEffectiveStatement original,
+                                          final Current<UnqualifiedQName, ModuleStatement> stmt) {
+        return true;
+    }
+
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
         final Map<String, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
             IncludedSubmoduleNameToModuleCtx.class);
