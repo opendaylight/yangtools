@@ -45,12 +45,12 @@ public class ControllerStmtParserTest {
 
         boolean checked = false;
         for (final AugmentationSchemaNode augmentationSchema : module.getAugmentations()) {
-            final DataSchemaNode dataNode = augmentationSchema
-                    .getDataChildByName(QName.create(module.getQNameModule(), "dom-broker-impl"));
+            final DataSchemaNode dataNode = augmentationSchema.dataChildByName(
+                QName.create(module.getQNameModule(), "dom-broker-impl"));
             if (dataNode instanceof CaseSchemaNode) {
                 final CaseSchemaNode caseNode = (CaseSchemaNode) dataNode;
-                final DataSchemaNode dataNode2 = caseNode
-                        .getDataChildByName(QName.create(module.getQNameModule(), "async-data-broker"));
+                final DataSchemaNode dataNode2 = caseNode.dataChildByName(
+                    QName.create(module.getQNameModule(), "async-data-broker"));
                 if (dataNode2 instanceof ContainerSchemaNode) {
                     final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
                     final DataSchemaNode leaf = containerNode

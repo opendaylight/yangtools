@@ -55,9 +55,7 @@ public class SchemaContextUtilTest {
 
         doReturn("test").when(mockModule).getName();
         doReturn("test").when(mockModule).getPrefix();
-        doReturn(NAMESPACE).when(mockModule).getNamespace();
         doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();
-        doReturn(Optional.empty()).when(mockModule).getRevision();
     }
 
     @Test

@@ -429,7 +429,7 @@ public final class SchemaUtils {
      */
     public static @Nullable SchemaNode findDataChildSchemaByQName(final SchemaNode node, final QName qname) {
         if (node instanceof DataNodeContainer) {
-            SchemaNode child = ((DataNodeContainer) node).getDataChildByName(qname);
+            SchemaNode child = ((DataNodeContainer) node).dataChildByName(qname);
             if (child == null && node instanceof SchemaContext) {
                 child = tryFind(((SchemaContext) node).getOperations(), qname).orElse(null);
             }

@@ -159,94 +159,86 @@ public class SchemaContextUtilTest {
     @Test
     public void findNodeInSchemaContextTest2() {
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
-                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                myModule.getQNameModule(), "my-container"))).dataChildByName(QName.create(myModule.getQNameModule(),
                 "my-leaf-not-in-container"));
+        assertNull(testNode);
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-leaf-not-in-container"));
         SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         final RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
-        testNode = rpc.getInput().getDataChildByName(QName.create(myModule.getQNameModule(), "no-input-leaf"));
+        testNode = rpc.getInput().dataChildByName(QName.create(myModule.getQNameModule(), "no-input-leaf"));
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "input"),
                 QName.create(myModule.getQNameModule(), "no-input-leaf"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         final NotificationDefinition notification = myModule.getNotifications().iterator().next();
-        testNode = notification.getDataChildByName(QName.create(myModule.getQNameModule(), "no-notification-leaf"));
+        testNode = notification.dataChildByName(QName.create(myModule.getQNameModule(), "no-notification-leaf"));
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
                 QName.create(myModule.getQNameModule(), "no-notification-leaf"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
         testNode = ((ContainerSchemaNode) grouping.getDataChildByName(QName.create(myModule.getQNameModule(),
-                "my-container-in-grouping"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-container-in-grouping"))).dataChildByName(QName.create(myModule.getQNameModule(),
                 "no-leaf-in-grouping"));
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
                 QName.create(myModule.getQNameModule(), "my-container-in-grouping"),
                 QName.create(myModule.getQNameModule(), "no-leaf-in-grouping"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         testNode = ((ChoiceSchemaNode) myModule
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice")))
                 .findCaseNodes("one").iterator().next()
-                .getDataChildByName(QName.create(myModule.getQNameModule(), "no-choice-leaf"));
+                .dataChildByName(QName.create(myModule.getQNameModule(), "no-choice-leaf"));
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "one"),
                 QName.create(myModule.getQNameModule(), "no-choice-leaf"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         ListSchemaNode listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-list"));
 
-        testNode = listNode.getDataChildByName(QName.create(myModule.getQNameModule(), "no-leaf-in-list"));
+        testNode = listNode.dataChildByName(QName.create(myModule.getQNameModule(), "no-leaf-in-list"));
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
                 QName.create(myModule.getQNameModule(), "no-leaf-in-list"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
 
         listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-list"));
 
-        testNode = listNode.getDataChildByName(QName.create(myModule.getQNameModule(), "no-leaf-list-in-list"));
+        testNode = listNode.dataChildByName(QName.create(myModule.getQNameModule(), "no-leaf-list-in-list"));
+        assertNull(testNode);
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
                 QName.create(myModule.getQNameModule(), "no-leaf-list-in-list"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
-
-        assertNull(testNode);
         assertNull(foundNode);
-
     }
 
     @Test

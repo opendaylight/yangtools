@@ -60,7 +60,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
                 QName.create(module.getQNameModule(), "test-leaf-a"));
         assertNotNull(testLeafA);
 
-        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.dataChildByName(
                 QName.create(module.getQNameModule(), "test-container-b"));
         assertNull(testContainerB);
 
