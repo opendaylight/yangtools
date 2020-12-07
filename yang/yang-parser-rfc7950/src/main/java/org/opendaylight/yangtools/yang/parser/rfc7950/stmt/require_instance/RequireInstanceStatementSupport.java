@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -55,5 +57,11 @@ public final class RequireInstanceStatementSupport
     @Override
     protected EmptyRequireInstanceEffectiveStatement createEmptyEffective(final RequireInstanceStatement declared) {
         return new EmptyRequireInstanceEffectiveStatement(declared);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final RequireInstanceEffectiveStatement original,
+                                          final Current<Boolean, RequireInstanceStatement> stmt) {
+        return true;
     }
 }
