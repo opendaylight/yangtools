@@ -75,12 +75,12 @@ public class IetfYangSmiv2ExtensionPluginTest {
         final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
-        assertTrue(root.getUnknownSchemaNodes().size() == 1);
+        assertEquals(1, root.getUnknownSchemaNodes().size());
         OidSchemaNode oid = (OidSchemaNode) root.getUnknownSchemaNodes().iterator().next();
         assertEquals(oid.getArgument().toString(), "1");
 
         ListSchemaNode ifStackEntry = (ListSchemaNode) root.getDataChildByName(QName.create(NS, REV, "ifStackEntry"));
-        assertTrue(ifStackEntry.getUnknownSchemaNodes().size() == 2);
+        assertEquals(2, ifStackEntry.getUnknownSchemaNodes().size());
         ifStackEntry.getUnknownSchemaNodes().forEach(unknownSchemaNode -> {
             if (unknownSchemaNode instanceof OidSchemaNode) {
                 assertEquals(((OidSchemaNode) unknownSchemaNode).getArgument().toString(),
@@ -102,7 +102,7 @@ public class IetfYangSmiv2ExtensionPluginTest {
 
         LeafSchemaNode testNumberLeaf = (LeafSchemaNode)
                 ifStackEntry.getDataChildByName(QName.create(NS, REV, "test-number"));
-        assertTrue(testNumberLeaf.getUnknownSchemaNodes().size() == 3);
+        assertEquals(3, testNumberLeaf.getUnknownSchemaNodes().size());
         testNumberLeaf.getUnknownSchemaNodes().forEach(unknownSchemaNode -> {
             if (unknownSchemaNode instanceof SubIdSchemaNode) {
                 assertEquals(Uint32.TWO, ((SubIdSchemaNode) unknownSchemaNode).getArgument());

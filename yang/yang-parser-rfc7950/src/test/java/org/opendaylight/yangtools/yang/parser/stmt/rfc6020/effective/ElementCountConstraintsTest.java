@@ -33,12 +33,10 @@ public class ElementCountConstraintsTest {
         final Module testModule = schemaContext.findModule("foo", Revision.of("2016-09-20")).get();
         final LeafListSchemaNode constrainedLeafList1 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-1"));
-        assertNotNull(constrainedLeafList1);
         ElementCountConstraint constraints1 = constrainedLeafList1.getElementCountConstraint().get();
 
         final LeafListSchemaNode constrainedLeafList2 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-2"));
-        assertNotNull(constrainedLeafList2);
         ElementCountConstraint constraints2 = constrainedLeafList2.getElementCountConstraint().get();
 
         assertEquals(constraints1.hashCode(), constraints2.hashCode());
@@ -46,7 +44,6 @@ public class ElementCountConstraintsTest {
 
         final LeafListSchemaNode constrainedLeafList3 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-3"));
-        assertNotNull(constrainedLeafList3);
         ElementCountConstraint constraints3 = constrainedLeafList3.getElementCountConstraint().get();
 
         assertNotEquals(constraints2.hashCode(), constraints3.hashCode());
@@ -54,7 +51,6 @@ public class ElementCountConstraintsTest {
 
         final LeafListSchemaNode constrainedLeafList4 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-4"));
-        assertNotNull(constrainedLeafList4);
         ElementCountConstraint constraints4 = constrainedLeafList4.getElementCountConstraint().get();
 
         assertNotEquals(constraints3.hashCode(), constraints4.hashCode());
