@@ -99,6 +99,12 @@ public final class OrderedByStatementSupport
             : new RegularOrderedByEffectiveStatement(stmt.declared(), substatements);
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final OrderedByEffectiveStatement original,
+                                          final Current<Ordering, OrderedByStatement> stmt) {
+        return true;
+    }
+
     private static @NonNull OrderedByEffectiveStatement createEmptyEffective(final OrderedByStatement declared) {
         // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
         // is the case unless there is a weird extension in use.
