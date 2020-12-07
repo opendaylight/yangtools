@@ -82,6 +82,12 @@ public final class FeatureStatementSupport
                     computeFlags(substatements), substatements);
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final FeatureEffectiveStatement original,
+                                          final Current<QName, FeatureStatement> stmt) {
+        return ((EmptyFeatureEffectiveStatement) original).getPath().equals(stmt.wrapSchemaPath());
+    }
+
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
