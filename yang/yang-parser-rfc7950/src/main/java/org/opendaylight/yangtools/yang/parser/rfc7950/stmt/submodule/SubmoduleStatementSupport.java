@@ -182,6 +182,12 @@ public final class SubmoduleStatementSupport
         }
     }
 
+    @Override
+    public @NonNull boolean copyEffective(final SubmoduleEffectiveStatement original,
+                                          final Current<UnqualifiedQName, SubmoduleStatement> stmt) {
+        return true;
+    }
+
     private static SourceException noBelongsTo(final CommonStmtCtx stmt) {
         return new SourceException("No belongs-to declared in submodule", stmt);
     }

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -101,5 +102,11 @@ abstract class AbstractIfFeatureStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyIfFeatureEffectiveStatement(stmt.declared())
             : new RegularIfFeatureEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final IfFeatureEffectiveStatement original,
+                                          final Current<IfFeatureExpr, IfFeatureStatement> stmt) {
+        return true;
     }
 }
