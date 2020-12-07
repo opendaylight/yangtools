@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
@@ -85,6 +87,12 @@ public final class ExtensionStatementSupport
     protected ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createExtension(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected ExtensionStatement attachDeclarationReference(final ExtensionStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateExtesion(stmt, reference);
     }
 
     @Override

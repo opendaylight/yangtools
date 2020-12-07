@@ -11,12 +11,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -67,6 +69,12 @@ public final class DeviationStatementSupport
     protected DeviationStatement createDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createDeviation(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected DeviationStatement attachDeclarationReference(final DeviationStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateDeviation(stmt, reference);
     }
 
     @Override

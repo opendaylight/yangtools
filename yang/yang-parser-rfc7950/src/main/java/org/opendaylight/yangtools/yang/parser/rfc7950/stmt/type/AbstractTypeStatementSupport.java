@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
@@ -54,6 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
@@ -189,6 +191,12 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             }
         }
         return DeclaredStatements.createType(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected final TypeStatement attachDeclarationReference(final TypeStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateType(stmt, reference);
     }
 
     @Override

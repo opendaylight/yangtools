@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
@@ -166,6 +168,12 @@ public final class SubmoduleStatementSupport
             throw noBelongsTo(ctx);
         }
         return DeclaredStatements.createSubmodule(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected SubmoduleStatement attachDeclarationReference(final SubmoduleStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateSubmodule(stmt, reference);
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
@@ -51,6 +52,12 @@ public final class OpenConfigVersionSupport
     protected OpenConfigVersionStatement createDeclared(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new OpenConfigVersionStatementImpl(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected OpenConfigVersionStatement attachDeclarationReference(final OpenConfigVersionStatement stmt,
+            final DeclarationReference reference) {
+        return new RefOpenConfigVersionStatement(stmt, reference);
     }
 
     @Override

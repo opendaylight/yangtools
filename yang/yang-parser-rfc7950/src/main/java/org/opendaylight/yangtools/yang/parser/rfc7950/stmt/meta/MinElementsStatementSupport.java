@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
@@ -48,6 +50,12 @@ public final class MinElementsStatementSupport
     protected MinElementsStatement createDeclared(final Integer argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createMinElements(argument, substatements);
+    }
+
+    @Override
+    protected MinElementsStatement attachDeclarationReference(final MinElementsStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateMinElements(stmt, reference);
     }
 
     @Override

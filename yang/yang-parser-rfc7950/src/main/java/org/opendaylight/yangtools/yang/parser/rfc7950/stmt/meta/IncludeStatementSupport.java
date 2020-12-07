@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
@@ -122,6 +124,12 @@ public final class IncludeStatementSupport
     protected IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createInclude(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected IncludeStatement attachDeclarationReference(final IncludeStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateInclude(stmt, reference);
     }
 
     @Override

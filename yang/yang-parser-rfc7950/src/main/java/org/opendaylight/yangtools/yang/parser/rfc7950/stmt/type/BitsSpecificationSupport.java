@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
@@ -46,6 +47,12 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
             throw noBits(ctx);
         }
         return new BitsSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected BitsSpecification attachDeclarationReference(final BitsSpecification stmt,
+            final DeclarationReference reference) {
+        return new RefBitsSpecification(stmt, reference);
     }
 
     @Override

@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStringStatementSupport;
@@ -37,6 +39,12 @@ public final class ContactStatementSupport
     protected ContactStatement createDeclared(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createContact(argument, substatements);
+    }
+
+    @Override
+    protected ContactStatement attachDeclarationReference(final ContactStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateContact(stmt, reference);
     }
 
     @Override

@@ -15,12 +15,14 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -83,6 +85,12 @@ public final class PatternStatementSupport
     protected PatternStatement createDeclared(final StmtContext<PatternExpression, PatternStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createPattern(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected PatternStatement attachDeclarationReference(final PatternStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decoratePattern(stmt, reference);
     }
 
     @Override

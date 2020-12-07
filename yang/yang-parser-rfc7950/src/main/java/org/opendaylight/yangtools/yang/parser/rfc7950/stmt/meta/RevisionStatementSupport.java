@@ -11,11 +11,13 @@ import com.google.common.collect.ImmutableList;
 import java.time.format.DateTimeParseException;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -54,6 +56,12 @@ public final class RevisionStatementSupport
     protected RevisionStatement createDeclared(final StmtContext<Revision, RevisionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createRevision(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected RevisionStatement attachDeclarationReference(final RevisionStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateRevision(stmt, reference);
     }
 
     @Override

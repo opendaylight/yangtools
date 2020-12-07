@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -46,6 +48,12 @@ public final class ArgumentStatementSupport
     protected ArgumentStatement createDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return DeclaredStatements.createArgument(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected ArgumentStatement attachDeclarationReference(final ArgumentStatement stmt,
+            final DeclarationReference reference) {
+        return DeclaredStatementDecorators.decorateArgument(stmt, reference);
     }
 
     @Override
