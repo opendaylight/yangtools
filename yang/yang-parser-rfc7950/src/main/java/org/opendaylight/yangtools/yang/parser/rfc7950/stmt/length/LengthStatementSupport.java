@@ -13,6 +13,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -99,6 +100,12 @@ public final class LengthStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyLengthEffectiveStatement(stmt.declared())
             : new RegularLengthEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final LengthEffectiveStatement original,
+                                          final Current<List<ValueRange>, LengthStatement> stmt) {
+        return true;
     }
 
     private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {

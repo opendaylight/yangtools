@@ -68,4 +68,10 @@ public final class NamespaceStatementSupport
         return substatements.isEmpty() ? new EmptyNamespaceEffectiveStatement(stmt.declared())
             : new RegularNamespaceEffectiveStatement(stmt.declared(), substatements);
     }
+
+    @Override
+    public @NonNull boolean copyEffective(final NamespaceEffectiveStatement original,
+                                          final Current<URI, NamespaceStatement> stmt) {
+        return true;
+    }
 }
