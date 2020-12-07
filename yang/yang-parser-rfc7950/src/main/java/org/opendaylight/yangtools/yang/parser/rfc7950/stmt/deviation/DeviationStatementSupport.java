@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -80,5 +81,11 @@ public final class DeviationStatementSupport
     protected DeviationEffectiveStatement createEffective(final Current<Absolute, DeviationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new DeviationEffectiveStatementImpl(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final DeviationEffectiveStatement original,
+                                          final Current<Absolute, DeviationStatement> stmt) {
+        return true;
     }
 }

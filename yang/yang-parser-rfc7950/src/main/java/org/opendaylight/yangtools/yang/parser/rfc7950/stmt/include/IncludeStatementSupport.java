@@ -130,4 +130,10 @@ public final class IncludeStatementSupport
         return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(stmt.declared())
             : new RegularIncludeEffectiveStatement(stmt.declared(), substatements);
     }
+
+    @Override
+    public @NonNull boolean copyEffective(final IncludeEffectiveStatement original,
+                                          final Current<String, IncludeStatement> stmt) {
+        return true;
+    }
 }
