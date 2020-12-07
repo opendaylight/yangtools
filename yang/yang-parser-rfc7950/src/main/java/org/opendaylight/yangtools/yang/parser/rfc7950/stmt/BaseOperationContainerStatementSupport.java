@@ -35,9 +35,16 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
         E extends SchemaTreeEffectiveStatement<D>> extends BaseImplicitStatementSupport<D, E> {
     private final Function<QNameModule, QName> createArgument;
 
+    @Deprecated
     protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition,
             final Function<QNameModule, QName> createArgument, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
+        this.createArgument = requireNonNull(createArgument);
+    }
+
+    protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition,
+            final Function<QNameModule, QName> createArgument, final StatementPolicy<QName, D> policy) {
+        super(publicDefinition, policy);
         this.createArgument = requireNonNull(createArgument);
     }
 
