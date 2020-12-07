@@ -76,7 +76,7 @@ public final class LeafListStatementSupport
     private final SubstatementValidator validator;
 
     private LeafListStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.LEAF_LIST, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.LEAF_LIST, instantiatedSchemaTree());
         this.validator = requireNonNull(validator);
     }
 

@@ -73,7 +73,7 @@ public final class CaseStatementSupport
     private final SubstatementValidator validator;
 
     private CaseStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.CASE, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.CASE, instantiatedSchemaTree());
         this.validator = requireNonNull(validator);
     }
 
