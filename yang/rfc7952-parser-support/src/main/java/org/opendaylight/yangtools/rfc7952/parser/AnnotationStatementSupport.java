@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -64,8 +63,7 @@ public final class AnnotationStatementSupport
 
             final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
                 path);
-            final StmtContext<String, ?, ?> unitsStmt = StmtContextUtils.findFirstEffectiveSubstatement(
-                    stmt.caerbannog(), UnitsStatement.class);
+            final UnitsEffectiveStatement unitsStmt = firstSubstatementOfType(UnitsEffectiveStatement.class);
             if (unitsStmt != null) {
                 builder.setUnits(unitsStmt.argument());
             }
