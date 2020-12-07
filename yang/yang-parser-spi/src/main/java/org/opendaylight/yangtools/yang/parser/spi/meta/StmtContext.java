@@ -237,7 +237,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
-        Mutable<?, ?, ?> childCopyOf(StmtContext<?, ?, ?> stmt, CopyType type, @Nullable QNameModule targetModule);
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull Mutable<X, Y, Z> childCopyOf(StmtContext<X, Y, Z> stmt, CopyType type,
+                @Nullable QNameModule targetModule);
 
         /**
          * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
@@ -251,7 +253,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
-        default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type) {
+        default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+                @NonNull Mutable<X, Y, Z> childCopyOf(final StmtContext<X, Y, Z> stmt, final CopyType type) {
             return childCopyOf(stmt, type, null);
         }
 
@@ -267,7 +270,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @NonNull Mutable<A, D, E> replicaAsChildOf(Mutable<?, ?, ?> parent);
 
         @Beta
-        @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
+        @NonNull Optional<? extends Mutable<A, D, E>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
                 @Nullable QNameModule targetModule);
 
         @Override
