@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -138,6 +139,12 @@ abstract class AbstractAugmentStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final AugmentEffectiveStatement original,
+                                          final Current<SchemaNodeIdentifier, AugmentStatement> stmt) {
+        return stmt.argument().equals(original.argument());
     }
 
     abstract boolean allowsMandatory(StmtContext<?, ?, ?> ctx);

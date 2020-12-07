@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -66,5 +67,11 @@ public final class ModifierStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyModifierEffectiveStatement(stmt.declared())
             : new RegularModifierEffectiveStatement(stmt.declared(), substatements);
+    }
+
+    @Override
+    public @NonNull boolean copyEffective(final ModifierEffectiveStatement original,
+                                          final Current<ModifierKind, ModifierStatement> stmt) {
+        return true;
     }
 }
