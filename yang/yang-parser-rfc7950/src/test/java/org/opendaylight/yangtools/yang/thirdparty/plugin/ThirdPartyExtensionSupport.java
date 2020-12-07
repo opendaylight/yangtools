@@ -23,7 +23,7 @@ public final class ThirdPartyExtensionSupport
     private static final ThirdPartyExtensionSupport INSTANCE = new ThirdPartyExtensionSupport();
 
     private ThirdPartyExtensionSupport() {
-        super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION, StatementPolicy.contextIndependent());
     }
 
     public static ThirdPartyExtensionSupport getInstance() {

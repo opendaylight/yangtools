@@ -26,7 +26,7 @@ public final class UnitsStatementSupport
     private static final UnitsStatementSupport INSTANCE = new UnitsStatementSupport();
 
     private UnitsStatementSupport() {
-        super(YangStmtMapping.UNITS, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent());
     }
 
     public static UnitsStatementSupport getInstance() {

@@ -36,8 +36,8 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     private final Function<QNameModule, QName> createArgument;
 
     protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition,
-            final Function<QNameModule, QName> createArgument, final CopyPolicy copyPolicy) {
-        super(publicDefinition, copyPolicy);
+            final Function<QNameModule, QName> createArgument) {
+        super(publicDefinition, uninstantiatedSchemaTree());
         this.createArgument = requireNonNull(createArgument);
     }
 

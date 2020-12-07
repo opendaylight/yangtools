@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -74,7 +76,10 @@ public final class GroupingStatementSupport
     private final SubstatementValidator validator;
 
     GroupingStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.GROUPING, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared((copy, stmt, substatements) ->
+            addedByUses(copy.history()) == addedByUses(stmt.history())
+            // FIXME: this should devolve to an stmt.getArgument() check
+            && copy.schemaPath().equals(stmt.schemaPath())));
         this.validator = requireNonNull(validator);
     }
 
@@ -156,5 +161,9 @@ public final class GroupingStatementSupport
         final QName arg = stmt.getArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
         SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
+    }
+
+    private static boolean addedByUses(final CopyHistory history) {
+        return history.contains(CopyType.ADDED_BY_USES) || history.contains(CopyType.ADDED_BY_USES_AUGMENTATION);
     }
 }

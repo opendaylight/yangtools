@@ -28,7 +28,7 @@ public final class RevisionDateStatementSupport
     private static final RevisionDateStatementSupport INSTANCE = new RevisionDateStatementSupport();
 
     private RevisionDateStatementSupport() {
-        super(YangStmtMapping.REVISION_DATE, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.REVISION_DATE, StatementPolicy.contextIndependent());
     }
 
     public static RevisionDateStatementSupport getInstance() {
