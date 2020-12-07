@@ -55,10 +55,8 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
         final ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-a"));
-        assertNotNull(testContainerA);
         final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-a"));
-        assertNotNull(testLeafA);
 
         final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.dataChildByName(
                 QName.create(module.getQNameModule(), "test-container-b"));
@@ -66,10 +64,8 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
         final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-c"));
-        assertNotNull(testContainerC);
         final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-c"));
-        assertNotNull(testLeafC);
     }
 
     @Test
@@ -94,24 +90,18 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
         final ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-a"));
-        assertNotNull(testContainerA);
         final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-a"));
-        assertNotNull(testLeafA);
 
         final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-b"));
-        assertNotNull(testContainerB);
         final LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-b"));
-        assertNotNull(testLeafB);
 
         final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-c"));
-        assertNotNull(testContainerC);
         final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-c"));
-        assertNotNull(testLeafC);
     }
 
     @Test
@@ -137,10 +127,8 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
         final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-c"));
-        assertNotNull(testContainerC);
         final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-c"));
-        assertNotNull(testLeafC);
     }
 
     private static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(
