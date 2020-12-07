@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -73,6 +74,12 @@ final class UnrecognizedStatementSupport
     protected UnrecognizedStatement createDeclared(final StmtContext<Object, UnrecognizedStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new UnrecognizedStatementImpl(ctx.rawArgument(), ctx.publicDefinition(), substatements);
+    }
+
+    @Override
+    protected UnrecognizedStatement attachDeclarationReference(final UnrecognizedStatement stmt,
+            final DeclarationReference reference) {
+        return new RefUnrecognizedStatement(stmt, reference);
     }
 
     // createEffective() should never be called, ensure that for each declared statement

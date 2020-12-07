@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -61,6 +62,12 @@ abstract class AbstractIdentityRefSpecificationSupport
             throw noBase(ctx);
         }
         return new IdentityRefSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected IdentityRefSpecification attachDeclarationReference(final IdentityRefSpecification stmt,
+            final DeclarationReference reference) {
+        return new RefIdentityRefSpecification(stmt, reference);
     }
 
     @Override

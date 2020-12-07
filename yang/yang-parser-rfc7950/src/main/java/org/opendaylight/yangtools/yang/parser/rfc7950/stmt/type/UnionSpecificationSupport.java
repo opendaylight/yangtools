@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -44,6 +45,12 @@ final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecifica
             throw noType(ctx);
         }
         return new UnionSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected UnionSpecification attachDeclarationReference(final UnionSpecification stmt,
+            final DeclarationReference reference) {
+        return new RefUnionSpecification(stmt, reference);
     }
 
     @Override

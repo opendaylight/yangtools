@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
@@ -41,6 +42,12 @@ public final class ThirdPartyExtensionSupport
             final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ThirdPartyExtensionStatementImpl(ctx.getRawArgument(), substatements);
+    }
+
+    @Override
+    protected ThirdPartyExtensionStatement attachDeclarationReference(final ThirdPartyExtensionStatement stmt,
+            final DeclarationReference reference) {
+        return new RefThirdPartyExtensionStatement(stmt, reference);
     }
 
     @Override
