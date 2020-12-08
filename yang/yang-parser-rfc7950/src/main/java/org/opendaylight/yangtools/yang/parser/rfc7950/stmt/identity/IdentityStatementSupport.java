@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -32,22 +34,50 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractIdentityStatementSupport
+@Beta
+public final class IdentityStatementSupport
         extends BaseQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
+    private static final @NonNull IdentityStatementSupport RFC6020_INSTANCE = new IdentityStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.IDENTITY)
+            .addOptional(YangStmtMapping.BASE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .build());
+    private static final @NonNull IdentityStatementSupport RFC7950_INSTANCE = new IdentityStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.BASE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .build());
 
-    AbstractIdentityStatementSupport() {
+    private final SubstatementValidator validator;
+
+    private IdentityStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.IDENTITY, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull IdentityStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull IdentityStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
-    public final void onStatementDefinitionDeclared(
+    public void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         final QName qname = stmt.getArgument();
         final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(IdentityNamespace.class, qname);
@@ -56,18 +86,23 @@ abstract class AbstractIdentityStatementSupport
     }
 
     @Override
-    protected final IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularIdentityStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final IdentityStatement createEmptyDeclared(@NonNull final StmtContext<QName, IdentityStatement, ?> ctx) {
+    protected IdentityStatement createEmptyDeclared(final StmtContext<QName, IdentityStatement, ?> ctx) {
         return new EmptyIdentityStatement(ctx.getArgument());
     }
 
     @Override
-    protected final IdentityEffectiveStatement createEffective(final Current<QName, IdentityStatement> stmt,
+    protected IdentityEffectiveStatement createEffective(final Current<QName, IdentityStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             return new EmptyIdentityEffectiveStatement(stmt.declared(), stmt.wrapSchemaPath());

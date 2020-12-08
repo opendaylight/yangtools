@@ -53,8 +53,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature.FeatureStatem
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.fraction_digits.FractionDigitsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping.GroupingStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping.GroupingStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity.IdentityStatementRFC6020Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity.IdentityStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity.IdentityStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementRFC6020Support;
@@ -223,8 +222,8 @@ public final class RFC7950Reactors {
             .addSupport(ExtensionNamespace.BEHAVIOUR)
             .addSupport(TypedefStatementSupport.getInstance())
             .addSupport(TypeNamespace.BEHAVIOUR)
-            .addVersionSpecificSupport(VERSION_1, IdentityStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, IdentityStatementRFC7950Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1, IdentityStatementSupport.rfc6020Instance())
+            .addVersionSpecificSupport(VERSION_1_1, IdentityStatementSupport.rfc7950Instance())
             .addSupport(IdentityNamespace.BEHAVIOUR)
             .addSupport(DefaultStatementSupport.getInstance())
             .addSupport(StatusStatementSupport.getInstance())
