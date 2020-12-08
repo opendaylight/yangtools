@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -32,18 +35,39 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 
-abstract class AbstractIncludeStatementSupport
+@Beta
+public final class IncludeStatementSupport
         extends BaseStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
+    private static final @NonNull IncludeStatementSupport RFC6020_INSTANCE = new IncludeStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.INCLUDE).addOptional(YangStmtMapping.REVISION_DATE).build());
+    private static final @NonNull IncludeStatementSupport RFC7950_INSTANCE = new IncludeStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.INCLUDE)
+            .addOptional(YangStmtMapping.REVISION_DATE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build());
 
-    AbstractIncludeStatementSupport() {
+    private final SubstatementValidator validator;
+
+    IncludeStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.INCLUDE, CopyPolicy.REJECT);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull IncludeStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull IncludeStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final void onPreLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
         stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.argument())
@@ -51,7 +75,7 @@ abstract class AbstractIncludeStatementSupport
     }
 
     @Override
-    public final void onLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
+    public void onLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final String submoduleName = stmt.getArgument();
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
 
@@ -85,18 +109,23 @@ abstract class AbstractIncludeStatementSupport
     }
 
     @Override
-    protected final IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularIncludeStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final IncludeStatement createEmptyDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
+    protected IncludeStatement createEmptyDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
         return new EmptyIncludeStatement(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override
-    protected final IncludeEffectiveStatement createEffective(final Current<String, IncludeStatement> stmt,
+    protected IncludeEffectiveStatement createEffective(final Current<String, IncludeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(stmt.declared())
             : new RegularIncludeEffectiveStatement(stmt.declared(), substatements);
