@@ -47,6 +47,7 @@ PLUS : '+' -> type(PLUS);
 LINE_COMMENT : '//' .*? '\r'? ('\n' | EOF) -> skip;
 BLOCK_COMMENT : '/*' .*? '*/' -> skip;
 
+// Note: if this changes, also update KeyStatementSupport's Splitter
 SEP: [ \n\r\t]+ -> type(SEP);
 
 // Special-cased identifier string
