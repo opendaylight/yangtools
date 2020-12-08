@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -20,16 +24,45 @@ import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractPatternStatementSupport
+@Beta
+public final class PatternStatementSupport
         extends BaseStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
-    AbstractPatternStatementSupport() {
+    private static final @NonNull PatternStatementSupport RFC6020_INSTANCE = new PatternStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.PATTERN)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build());
+    private static final @NonNull PatternStatementSupport RFC7950_INSTANCE = new PatternStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.PATTERN)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(YangStmtMapping.MODIFIER)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private PatternStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.PATTERN, CopyPolicy.CONTEXT_INDEPENDENT);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull PatternStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull PatternStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final PatternExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public PatternExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final String pattern = RegexUtils.getJavaRegexFromXSD(value);
         try {
             Pattern.compile(pattern);
@@ -40,19 +73,24 @@ abstract class AbstractPatternStatementSupport
     }
 
     @Override
-    protected final PatternStatement createDeclared(final StmtContext<PatternExpression, PatternStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected PatternStatement createDeclared(final StmtContext<PatternExpression, PatternStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularPatternStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final PatternStatement createEmptyDeclared(
+    protected PatternStatement createEmptyDeclared(
             final StmtContext<PatternExpression, PatternStatement, ?> ctx) {
         return new EmptyPatternStatement(ctx.getArgument());
     }
 
     @Override
-    protected final PatternEffectiveStatement createEffective(final Current<PatternExpression, PatternStatement> stmt,
+    protected PatternEffectiveStatement createEffective(final Current<PatternExpression, PatternStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyPatternEffectiveStatement(stmt.declared())
             : new RegularPatternEffectiveStatement(stmt.declared(), substatements);
