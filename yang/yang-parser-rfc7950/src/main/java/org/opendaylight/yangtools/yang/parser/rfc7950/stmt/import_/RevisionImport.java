@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -75,7 +74,6 @@ final class RevisionImport {
                     NamespaceStatement.class);
                 stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
                 stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
-                stmt.addToNs(URIStringToImportPrefix.class, modNs.toString(), impPrefix);
             }
 
             @Override
