@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -32,7 +34,27 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class KeyStatementSupport
         extends BaseStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> {
-    private static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
+    /**
+     * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
+     * part of:
+     *
+     * <p>
+     * {@code SEP: [ \n\r\t]+ -> type(SEP);}.
+     */
+    private static final CharMatcher SEP = CharMatcher.anyOf(" \n\r\t").precomputed();
+
+    /**
+     * Splitter corresponding to {@code key-arg} ABNF as defined
+     * in <a href="https://tools.ietf.org/html/rfc6020#section-12">RFC6020, section 12</a>:
+     *
+     * <p>
+     * {@code key-arg             = node-identifier *(sep node-identifier)}
+     *
+     * <p>
+     * We also account for {@link #SEP} not handling repetition by ignoring empty strings.
+     */
+    private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
+
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.KEY)
         .build();
@@ -50,7 +72,7 @@ public final class KeyStatementSupport
     public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         int tokens = 0;
-        for (String keyToken : LIST_KEY_SPLITTER.split(value)) {
+        for (String keyToken : KEY_ARG_SPLITTER.split(value)) {
             builder.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.parseNodeIdentifier(ctx, keyToken)));
             tokens++;
         }

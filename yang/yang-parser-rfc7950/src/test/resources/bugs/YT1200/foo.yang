@@ -1,0 +1,20 @@
+module foo {
+  namespace urn:foo;
+  prefix foo;
+
+  list foo {
+    key "foo \t\nbar
+         baz";
+    leaf foo {
+      type string;
+    }
+
+    leaf bar {
+      type string;
+    }
+
+    leaf baz {
+      type string;
+    }
+  }
+}
