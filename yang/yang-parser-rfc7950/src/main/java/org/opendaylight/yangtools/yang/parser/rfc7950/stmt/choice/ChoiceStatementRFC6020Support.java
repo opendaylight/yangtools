@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -42,7 +42,7 @@ public final class ChoiceStatementRFC6020Support extends AbstractChoiceStatement
 
     @Override
     StatementSupport<?, ?, ?> implictCase() {
-        return CaseStatementRFC6020Support.getInstance();
+        return CaseStatementSupport.rfc6020Instance();
     }
 
     @Override
