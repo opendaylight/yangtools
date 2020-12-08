@@ -8,15 +8,20 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.Verify;
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -38,19 +43,47 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractImportStatementSupport
+@Beta
+public final class ImportStatementSupport
         extends BaseStringStatementSupport<ImportStatement, ImportEffectiveStatement> {
-    AbstractImportStatementSupport() {
+    private static final @NonNull ImportStatementSupport RFC6020_INSTANCE = new ImportStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.IMPORT)
+            .addMandatory(YangStmtMapping.PREFIX)
+            .addOptional(YangStmtMapping.REVISION_DATE)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+            .build());
+    private static final @NonNull ImportStatementSupport RFC7950_INSTANCE = new ImportStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.IMPORT)
+            .addMandatory(YangStmtMapping.PREFIX)
+            .addOptional(YangStmtMapping.REVISION_DATE)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private ImportStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.IMPORT, CopyPolicy.REJECT);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull ImportStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull ImportStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final void onPreLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         /*
          * Add ModuleIdentifier of a module which is required by this module.
          * Based on this information, required modules are searched from library
@@ -68,10 +101,9 @@ abstract class AbstractImportStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
-                Verify.verify(moduleName.equals(importedModuleContext.getRawArgument()));
-                final URI importedModuleNamespace = importedModuleContext.getFromNamespace(ModuleNameToNamespace.class,
-                        moduleName);
-                Verify.verifyNotNull(importedModuleNamespace);
+                verify(moduleName.equals(importedModuleContext.getRawArgument()));
+                final URI importedModuleNamespace = verifyNotNull(
+                    importedModuleContext.getFromNamespace(ModuleNameToNamespace.class, moduleName));
                 final String impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
@@ -88,7 +120,7 @@ abstract class AbstractImportStatementSupport
     }
 
     @Override
-    public final void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
+    public void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         if (stmt.isEnabledSemanticVersioning()) {
             SemanticVersionImport.onLinkageDeclared(stmt);
         } else {
@@ -97,18 +129,23 @@ abstract class AbstractImportStatementSupport
     }
 
     @Override
-    protected final ImportStatement createDeclared(final StmtContext<String, ImportStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected ImportStatement createDeclared(final StmtContext<String, ImportStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ImportStatementImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
-    protected final ImportStatement createEmptyDeclared(final StmtContext<String, ImportStatement, ?> ctx) {
+    protected ImportStatement createEmptyDeclared(final StmtContext<String, ImportStatement, ?> ctx) {
         throw new IllegalStateException("Unexpected empty declared import statement");
     }
 
     @Override
-    protected final ImportEffectiveStatement createEffective(final Current<String, ImportStatement> stmt,
+    protected ImportEffectiveStatement createEffective(final Current<String, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         checkState(!substatements.isEmpty(), "Unexpected empty effective import statement");
 
