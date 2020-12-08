@@ -52,8 +52,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include.IncludeStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC6020Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key.KeyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf.LeafStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list.LeafListStatementRFC6020Support;
@@ -73,8 +72,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.Notifica
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by.OrderedByStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization.OrganizationStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC6020Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path.PathStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern.PatternStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern.PatternStatementRFC7950Support;
@@ -245,10 +243,10 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, ActionStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1, RpcStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, RpcStatementRFC7950Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1, InputStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, InputStatementRFC7950Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1, OutputStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, OutputStatementRFC7950Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1, InputStatementSupport.rfc6020Instance())
+            .addVersionSpecificSupport(VERSION_1_1, InputStatementSupport.rfc7950Instance())
+            .addVersionSpecificSupport(VERSION_1, OutputStatementSupport.rfc6020Instance())
+            .addVersionSpecificSupport(VERSION_1_1, OutputStatementSupport.rfc7950Instance())
             .addVersionSpecificSupport(VERSION_1, NotificationStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, NotificationStatementRFC7950Support.getInstance())
             .addSupport(FractionDigitsStatementSupport.getInstance())

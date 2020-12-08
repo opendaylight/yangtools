@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 /**
@@ -31,11 +31,11 @@ public final class RpcStatementRFC7950Support extends AbstractRpcStatementSuppor
 
     @Override
     StatementSupport<?, ?, ?> implictInput() {
-        return InputStatementRFC7950Support.getInstance();
+        return InputStatementSupport.rfc7950Instance();
     }
 
     @Override
     StatementSupport<?, ?, ?> implictOutput() {
-        return OutputStatementRFC7950Support.getInstance();
+        return OutputStatementSupport.rfc7950Instance();
     }
 }
