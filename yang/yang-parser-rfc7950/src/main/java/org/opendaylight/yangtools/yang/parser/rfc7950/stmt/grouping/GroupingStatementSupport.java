@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -27,21 +31,68 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractGroupingStatementSupport
+@Beta
+public final class GroupingStatementSupport
         extends BaseQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
-    AbstractGroupingStatementSupport() {
+    private static final @NonNull GroupingStatementSupport RFC6020_INSTANCE = new GroupingStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build());
+    private static final @NonNull GroupingStatementSupport RFC7950_INSTANCE = new GroupingStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.ACTION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    GroupingStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.GROUPING, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull GroupingStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull GroupingStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
+    public void onFullDefinitionDeclared(
             final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
@@ -75,13 +126,18 @@ abstract class AbstractGroupingStatementSupport
     }
 
     @Override
-    protected final GroupingStatement createDeclared(final StmtContext<QName, GroupingStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected GroupingStatement createDeclared(final StmtContext<QName, GroupingStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularGroupingStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final GroupingStatement createEmptyDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
+    protected GroupingStatement createEmptyDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
         return new EmptyGroupingStatement(ctx.getArgument());
     }
 
