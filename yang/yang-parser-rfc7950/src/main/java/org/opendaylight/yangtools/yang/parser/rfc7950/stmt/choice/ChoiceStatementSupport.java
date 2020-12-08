@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -27,34 +30,95 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBund
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractChoiceStatementSupport
+@Beta
+public final class ChoiceStatementSupport
         extends BaseSchemaTreeStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
-    AbstractChoiceStatementSupport() {
+    private static final @NonNull ChoiceStatementSupport RFC6020_INSTANCE = new ChoiceStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build(),
+        CaseStatementSupport.rfc6020Instance());
+
+    private static final @NonNull ChoiceStatementSupport RFC7950_INSTANCE = new ChoiceStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build(),
+        CaseStatementSupport.rfc7950Instance());
+
+    private final SubstatementValidator validator;
+    private final CaseStatementSupport implicitCase;
+
+    private ChoiceStatementSupport(final SubstatementValidator validator,
+            final CaseStatementSupport implicitCase) {
         super(YangStmtMapping.CHOICE, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+        this.implicitCase = requireNonNull(implicitCase);
+    }
+
+    public static @NonNull ChoiceStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull ChoiceStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implictCase())
-                : Optional.empty();
+    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+        return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implicitCase)
+            : Optional.empty();
     }
 
     @Override
-    protected final ChoiceStatement createDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected ChoiceStatement createDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularChoiceStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
+    protected ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
         return new EmptyChoiceStatement(ctx.getArgument());
     }
 
@@ -91,8 +155,6 @@ abstract class AbstractChoiceStatementSupport
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
-
-    abstract StatementSupport<?, ?, ?> implictCase();
 
     private static CaseSchemaNode findCase(final QName qname,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
