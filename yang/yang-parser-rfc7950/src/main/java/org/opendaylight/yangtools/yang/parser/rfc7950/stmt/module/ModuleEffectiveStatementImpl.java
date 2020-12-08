@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -27,21 +28,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatementNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatementNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatementNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
@@ -85,27 +80,27 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
-        final Map<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>> extensions =
-                stmt.localNamespacePortion(ExtensionNamespace.class);
-        qnameToExtension = extensions == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(extensions, StmtContext::buildEffective));
-        final Map<QName, StmtContext<?, FeatureStatement, FeatureEffectiveStatement>> features =
-                stmt.localNamespacePortion(FeatureNamespace.class);
-        qnameToFeature = features == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(features, StmtContext::buildEffective));
-        final Map<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> identities =
-                stmt.localNamespacePortion(IdentityNamespace.class);
-        qnameToIdentity = identities == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
+        qnameToExtension = substatements.stream()
+            .filter(ExtensionEffectiveStatement.class::isInstance)
+            .map(ExtensionEffectiveStatement.class::cast)
+            .collect(ImmutableMap.toImmutableMap(ExtensionEffectiveStatement::argument, Function.identity()));
+        qnameToFeature = substatements.stream()
+            .filter(FeatureEffectiveStatement.class::isInstance)
+            .map(FeatureEffectiveStatement.class::cast)
+            .collect(ImmutableMap.toImmutableMap(FeatureEffectiveStatement::argument, Function.identity()));
+        qnameToIdentity = substatements.stream()
+            .filter(IdentityEffectiveStatement.class::isInstance)
+            .map(IdentityEffectiveStatement.class::cast)
+            .collect(ImmutableMap.toImmutableMap(IdentityEffectiveStatement::argument, Function.identity()));
     }
 
     @Override
-    public @NonNull QNameModule localQNameModule() {
+    public QNameModule localQNameModule() {
         return qnameModule;
     }
 
     @Override
-    public @NonNull QNameModule getQNameModule() {
+    public QNameModule getQNameModule() {
         return qnameModule;
     }
 
