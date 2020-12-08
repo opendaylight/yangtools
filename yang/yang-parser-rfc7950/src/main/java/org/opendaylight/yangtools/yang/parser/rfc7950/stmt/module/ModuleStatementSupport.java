@@ -277,7 +277,7 @@ public final class ModuleStatementSupport
     }
 
     private static Collection<StmtContext<?, ?, ?>> submoduleContexts(final Current<?, ?> stmt) {
-        final Map<String, StmtContext<?, ?, ?>> submodules = stmt.getAllFromCurrentStmtCtxNamespace(
+        final Map<String, StmtContext<?, ?, ?>> submodules = stmt.localNamespacePortion(
             IncludedSubmoduleNameToModuleCtx.class);
         return submodules == null ? List.of() : submodules.values();
     }
