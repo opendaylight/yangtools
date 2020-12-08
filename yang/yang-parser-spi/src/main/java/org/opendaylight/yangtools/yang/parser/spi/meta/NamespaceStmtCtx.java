@@ -43,13 +43,21 @@ public interface NamespaceStmtCtx extends CommonStmtCtx {
      */
     <K, V, T extends K, N extends IdentifierNamespace<K, V>> @Nullable V namespaceItem(Class<@NonNull N> nsType, T key);
 
-    <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> localNamespace(Class<@NonNull N> nsType);
-
-    // TODO: migrate users away
-    default <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(
-            final Class<@NonNull N> nsType) {
-        return localNamespace(nsType);
-    }
+    /**
+     * Return the portion of specified namespace stored in this node. Depending on namespace behaviour this may or may
+     * not represent the complete contents of the namespace as available via {@link #namespace(Class)}.
+     *
+     * <p>
+     * This partial view is useful when the need is not to perform a proper namespace lookup, but rather act on current
+     * statement's contribution to the namespace.
+     *
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param <N> namespace type
+     * @param nsType namespace type class
+     * @return Namespace portion stored in this node, if available
+     */
+    <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> localNamespacePortion(Class<@NonNull N> nsType);
 
     /**
      * Return the selected namespace.

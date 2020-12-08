@@ -80,21 +80,21 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
 
         final Map<String, StmtContext<?, ?, ?>> includedSubmodules =
-                stmt.getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
+                stmt.localNamespacePortion(IncludedSubmoduleNameToModuleCtx.class);
         nameToSubmodule = includedSubmodules == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(includedSubmodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
         final Map<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>> extensions =
-                stmt.getAllFromCurrentStmtCtxNamespace(ExtensionNamespace.class);
+                stmt.localNamespacePortion(ExtensionNamespace.class);
         qnameToExtension = extensions == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(extensions, StmtContext::buildEffective));
         final Map<QName, StmtContext<?, FeatureStatement, FeatureEffectiveStatement>> features =
-                stmt.getAllFromCurrentStmtCtxNamespace(FeatureNamespace.class);
+                stmt.localNamespacePortion(FeatureNamespace.class);
         qnameToFeature = features == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(features, StmtContext::buildEffective));
         final Map<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> identities =
-                stmt.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
+                stmt.localNamespacePortion(IdentityNamespace.class);
         qnameToIdentity = identities == null ? ImmutableMap.of()
                 : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
     }

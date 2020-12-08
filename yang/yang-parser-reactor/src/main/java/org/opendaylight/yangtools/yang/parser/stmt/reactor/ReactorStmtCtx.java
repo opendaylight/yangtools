@@ -296,7 +296,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> localNamespace(final Class<@NonNull N> type) {
+    public final <K, V, N extends IdentifierNamespace<K, V>>
+            Map<K, V> localNamespacePortion(final Class<@NonNull N> type) {
         return getLocalNamespace(type);
     }
 

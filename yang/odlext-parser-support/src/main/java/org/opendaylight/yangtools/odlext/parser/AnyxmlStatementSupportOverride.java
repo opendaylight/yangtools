@@ -59,7 +59,7 @@ public final class AnyxmlStatementSupportOverride
 
         final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
                 AnyxmlSchemaLocationEffectiveStatement>> schemaLocations =
-                stmt.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
+                stmt.localNamespacePortion(AnyxmlSchemaLocationNamespace.class);
         if (schemaLocations != null && !schemaLocations.isEmpty()) {
             final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
                     .argument();
