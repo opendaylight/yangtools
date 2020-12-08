@@ -138,7 +138,7 @@ final class AugmentInferenceAction implements InferenceAction {
             final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
         // We always copy statements, but if either the source statement or the augmentation which causes it are not
         // supported to build we also mark the target as such.
-        if (needToCopyByAugment(original)) {
+        if (!NOCOPY_DEF_SET.contains(original.publicDefinition())) {
             validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
             final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
@@ -257,10 +257,6 @@ final class AugmentInferenceAction implements InferenceAction {
             parent = verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
         }
         return parent;
-    }
-
-    private static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
-        return !NOCOPY_DEF_SET.contains(stmtContext.publicDefinition());
     }
 
     private static boolean isSupportedAugmentTarget(final StmtContext<?, ?, ?> substatementCtx) {
