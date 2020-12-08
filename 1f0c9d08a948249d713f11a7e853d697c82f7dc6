@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "230c180d_8b332b88",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-12-08T14:28:10Z",
+      "side": 1,
+      "message": "we actually want to do ((InferredStatementContext) prototype).createEffective(this) or something similar, so that it is allowed to cascade",
+      "range": {
+        "startLine": 184,
+        "startChar": 19,
+        "endLine": 184,
+        "endChar": 44
+      },
+      "revId": "1f0c9d08a948249d713f11a7e853d697c82f7dc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6614fc5d_58d79e88",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2020-12-08T14:28:10Z",
+      "side": 1,
+      "message": "we really want to bypass these",
+      "range": {
+        "startLine": 186,
+        "startChar": 64,
+        "endLine": 186,
+        "endChar": 100
+      },
+      "revId": "1f0c9d08a948249d713f11a7e853d697c82f7dc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
