@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -20,16 +24,61 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContaine
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractInputStatementSupport
+@Beta
+public final class InputStatementSupport
         extends BaseOperationContainerStatementSupport<InputStatement, InputEffectiveStatement> {
-    AbstractInputStatementSupport() {
+    private static final @NonNull InputStatementSupport RFC6020_INSTANCE = new InputStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.INPUT)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build());
+    private static final @NonNull InputStatementSupport RFC7950_INSTANCE = new InputStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.INPUT)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private InputStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.INPUT, YangConstants::operationInputQName, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull InputStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull InputStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    protected final InputStatement createDeclared(final StmtContext<QName, InputStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected InputStatement createDeclared(final StmtContext<QName, InputStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         final StatementSource source = ctx.source();
         switch (source) {
@@ -43,7 +92,7 @@ abstract class AbstractInputStatementSupport
     }
 
     @Override
-    protected final InputStatement createEmptyDeclared(final StmtContext<QName, InputStatement, ?> ctx) {
+    protected InputStatement createEmptyDeclared(final StmtContext<QName, InputStatement, ?> ctx) {
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
@@ -56,14 +105,14 @@ abstract class AbstractInputStatementSupport
     }
 
     @Override
-    protected final InputEffectiveStatement createDeclaredEffective(final int flags,
+    protected InputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new DeclaredInputEffectiveStatement(flags, stmt.declared(), substatements, stmt.wrapSchemaPath());
     }
 
     @Override
-    protected final InputEffectiveStatement createUndeclaredEffective(final int flags,
+    protected InputEffectiveStatement createUndeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {

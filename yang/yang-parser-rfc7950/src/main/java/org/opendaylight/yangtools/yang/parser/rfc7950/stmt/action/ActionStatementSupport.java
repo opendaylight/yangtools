@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -68,11 +68,11 @@ public final class ActionStatementSupport extends
         verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
             ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
-                InputStatementRFC7950Support.getInstance(), null);
+                InputStatementSupport.rfc7950Instance(), null);
         }
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
             ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
-                OutputStatementRFC7950Support.getInstance(), null);
+                OutputStatementSupport.rfc7950Instance(), null);
         }
     }
 
