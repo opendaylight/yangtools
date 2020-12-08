@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -44,30 +46,98 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.E
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractListStatementSupport extends
-        BaseSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractListStatementSupport.class);
+@Beta
+public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<ListStatement, ListEffectiveStatement> {
+    private static final Logger LOG = LoggerFactory.getLogger(ListStatementSupport.class);
     private static final ImmutableSet<YangStmtMapping> UNINSTANTIATED_DATATREE_STATEMENTS = ImmutableSet.of(
         YangStmtMapping.GROUPING, YangStmtMapping.NOTIFICATION, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT);
 
-    AbstractListStatementSupport() {
+    private static final @NonNull ListStatementSupport RFC6020_INSTANCE = new ListStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.KEY)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
+            .build());
+    private static final @NonNull ListStatementSupport RFC7950_INSTANCE = new ListStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.ACTION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.KEY)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    ListStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.LIST, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull ListStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull ListStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    protected final ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularListStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
+    protected ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
         return new EmptyListStatement(ctx.getArgument());
     }
 
