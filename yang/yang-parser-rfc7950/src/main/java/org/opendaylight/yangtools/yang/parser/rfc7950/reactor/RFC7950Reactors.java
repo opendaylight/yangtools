@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionStatementSupport;
@@ -201,7 +200,6 @@ public final class RFC7950Reactors {
             .addSupport(ImportPrefixToModuleCtx.BEHAVIOUR)
             .addSupport(BelongsToPrefixToModuleCtx.BEHAVIOUR)
             .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
-            .addSupport(URIStringToImportPrefix.BEHAVIOUR)
             .addSupport(BelongsToModuleContext.BEHAVIOUR)
             .addSupport(QNameToStatementDefinition.BEHAVIOUR)
             .addSupport(BelongsToPrefixToModuleName.BEHAVIOUR)

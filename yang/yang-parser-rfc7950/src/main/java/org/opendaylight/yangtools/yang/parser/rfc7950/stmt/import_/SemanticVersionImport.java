@@ -13,19 +13,16 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -152,10 +149,7 @@ final class SemanticVersionImport {
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
                     ModuleCtxToModuleQName.class, importedModule), stmt, "Failed to find module of %s", importedModule);
 
-                final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
-                    NamespaceStatement.class);
                 stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
-                stmt.addToNs(URIStringToImportPrefix.class, modNs.toString(), impPrefix);
             }
 
             @Override
