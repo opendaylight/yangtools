@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -30,22 +34,73 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractLeafListStatementSupport
+@Beta
+public final class LeafListStatementSupport
         extends BaseSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
-    AbstractLeafListStatementSupport() {
+    private static final @NonNull LeafListStatementSupport RFC6020_INSTANCE = new LeafListStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build());
+    private static final @NonNull LeafListStatementSupport RFC7950_INSTANCE = new LeafListStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping
+            .LEAF_LIST)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private LeafListStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.LEAF_LIST, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull LeafListStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull LeafListStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    protected final LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularLeafListStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final LeafListStatement createEmptyDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
+    protected LeafListStatement createEmptyDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
         return new EmptyLeafListStatement(ctx.getArgument());
     }
 
