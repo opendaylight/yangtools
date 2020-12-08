@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -29,17 +32,88 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractSubmoduleStatementSupport
+@Beta
+public final class SubmoduleStatementSupport
         extends BaseStatementSupport<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> {
-    AbstractSubmoduleStatementSupport() {
+    private static final @NonNull SubmoduleStatementSupport RFC6020_INSTANCE = new SubmoduleStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addMandatory(YangStmtMapping.BELONGS_TO)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONTACT)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(YangStmtMapping.EXTENSION)
+            .addAny(YangStmtMapping.FEATURE)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.IMPORT)
+            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORGANIZATION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addAny(YangStmtMapping.REVISION)
+            .addAny(YangStmtMapping.RPC)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.YANG_VERSION)
+            .build());
+    private static final @NonNull SubmoduleStatementSupport RFC7950_INSTANCE = new SubmoduleStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addMandatory(YangStmtMapping.BELONGS_TO)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONTACT)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(YangStmtMapping.EXTENSION)
+            .addAny(YangStmtMapping.FEATURE)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.IMPORT)
+            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORGANIZATION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addAny(YangStmtMapping.REVISION)
+            .addAny(YangStmtMapping.RPC)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.YANG_VERSION)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private SubmoduleStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.SUBMODULE, CopyPolicy.REJECT);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull SubmoduleStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull SubmoduleStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    public final UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
             return UnqualifiedQName.of(value);
         } catch (IllegalArgumentException e) {
@@ -48,14 +122,14 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     @Override
-    public final void onPreLinkageDeclared(
+    public void onPreLinkageDeclared(
             final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getRawArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
     }
 
     @Override
-    public final void onLinkageDeclared(
+    public void onLinkageDeclared(
             final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.getRawArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
@@ -79,13 +153,18 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     @Override
-    protected final SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new SubmoduleStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final SubmoduleStatement createEmptyDeclared(
+    protected SubmoduleStatement createEmptyDeclared(
             final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx) {
         throw noBelongsTo(ctx);
     }
