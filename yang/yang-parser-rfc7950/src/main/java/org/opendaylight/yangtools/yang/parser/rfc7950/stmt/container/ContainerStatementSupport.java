@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -25,22 +29,85 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractContainerStatementSupport
+@Beta
+public final class ContainerStatementSupport
         extends BaseSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
-    AbstractContainerStatementSupport() {
+    private static final @NonNull ContainerStatementSupport RFC6020_INSTANCE = new ContainerStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.PRESENCE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
+            .build());
+
+    private static final @NonNull ContainerStatementSupport RFC7950_INSTANCE = new ContainerStatementSupport(
+        SubstatementValidator.builder(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.ACTION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.PRESENCE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
+            .build());
+
+    private final SubstatementValidator validator;
+
+    private ContainerStatementSupport(final SubstatementValidator validator) {
         super(YangStmtMapping.CONTAINER, CopyPolicy.DECLARED_COPY);
+        this.validator = requireNonNull(validator);
+    }
+
+    public static @NonNull ContainerStatementSupport rfc6020Instance() {
+        return RFC6020_INSTANCE;
+    }
+
+    public static @NonNull ContainerStatementSupport rfc7950Instance() {
+        return RFC7950_INSTANCE;
     }
 
     @Override
-    protected final ContainerStatement createDeclared(final StmtContext<QName, ContainerStatement, ?> ctx,
+    protected SubstatementValidator getSubstatementValidator() {
+        return validator;
+    }
+
+    @Override
+    protected ContainerStatement createDeclared(final StmtContext<QName, ContainerStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularContainerStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final ContainerStatement createEmptyDeclared(final StmtContext<QName, ContainerStatement, ?> ctx) {
+    protected ContainerStatement createEmptyDeclared(final StmtContext<QName, ContainerStatement, ?> ctx) {
         return new EmptyContainerStatement(ctx.getArgument());
     }
 
