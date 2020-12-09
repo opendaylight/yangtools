@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -38,4 +39,11 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
     @NonNull E createEffective(EffectiveStmtCtx.@NonNull Current<A, D> stmt,
         Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
         Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements);
+
+    // FIXME: YANGTOOLS-1195: make this non-default
+    default @Nullable E copyEffective(final @NonNull E original, final EffectiveStmtCtx.@NonNull Current<A, D> stmt,
+            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
+            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        return createEffective(stmt, declaredSubstatements, effectiveSubstatements);
+    }
 }

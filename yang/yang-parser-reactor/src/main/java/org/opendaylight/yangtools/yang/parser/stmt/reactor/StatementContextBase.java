@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -345,10 +346,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
 
-    // Exposed for ReplicaStatementContext
     @Override
     E createEffective() {
-        return definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        return createEffective(definition.getFactory(), this);
+    }
+
+    // Creates EffectiveStatement through full materialization
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
+            final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
+        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
