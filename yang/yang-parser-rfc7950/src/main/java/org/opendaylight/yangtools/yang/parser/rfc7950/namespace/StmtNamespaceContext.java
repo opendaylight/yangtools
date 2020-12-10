@@ -39,9 +39,9 @@ final class StmtNamespaceContext implements YangNamespaceContext {
         this.moduleToPrefix = qnameToPrefix == null ? ImmutableBiMap.of() : ImmutableBiMap.copyOf(qnameToPrefix);
 
         // Additional mappings
+        final Map<String, QNameModule> additional = new HashMap<>();
         final Map<String, StmtContext<?, ?, ?>> imports = ctx.getAllFromNamespace(ImportPrefixToModuleCtx.class);
         if (imports != null) {
-            final Map<String, QNameModule> additional = new HashMap<>();
             for (Entry<String, StmtContext<?, ?, ?>> entry : imports.entrySet()) {
                 if (!moduleToPrefix.containsValue(entry.getKey())) {
                     QNameModule qnameModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, entry.getValue());
@@ -56,10 +56,20 @@ final class StmtNamespaceContext implements YangNamespaceContext {
                     }
                 }
             }
-            this.prefixToModule = ImmutableMap.copyOf(additional);
-        } else {
-            this.prefixToModule = ImmutableMap.of();
         }
+        if (ctx.producesDeclared(SubmoduleStatement.class)) {
+            final Map<String, String> belongsTo = ctx.getAllFromNamespace(BelongsToPrefixToModuleName.class);
+            if (belongsTo != null) {
+                for (Entry<String, String> entry : belongsTo.entrySet()) {
+                    final QNameModule module = ctx.getFromNamespace(ModuleNameToModuleQName.class, entry.getValue());
+                    if (module != null && !additional.containsKey(entry.getKey())) {
+                        additional.put(entry.getKey(), module);
+                    }
+                }
+            }
+        }
+
+        this.prefixToModule = ImmutableMap.copyOf(additional);
     }
 
     @Override
