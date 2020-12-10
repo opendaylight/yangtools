@@ -1,0 +1,11 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  include bar;
+
+  leaf foo {
+    type string;
+  }
+}
+
