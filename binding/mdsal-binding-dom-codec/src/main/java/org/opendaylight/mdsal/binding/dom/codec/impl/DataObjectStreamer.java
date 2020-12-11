@@ -182,7 +182,8 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
 
     @SuppressWarnings("unchecked")
     private static <T extends DataObject> boolean tryCache(final BindingStreamEventWriter writer, final T value) {
-        return writer instanceof BindingSerializer ? ((BindingSerializer<?, T>) writer).serialize(value) == null : true;
+        // Force serialization if writer is not a BindingSerializer, otherwise defer to it for a decision
+        return !(writer instanceof BindingSerializer) || ((BindingSerializer<?, T>) writer).serialize(value) == null;
     }
 
     private static int nullSize(final List<?> list) {
