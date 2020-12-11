@@ -59,8 +59,13 @@
             <artifactId>metainf-services</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.guicedee.services</groupId>
+            <artifactId>javax.inject</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>org.osgi.service.component.annotations</artifactId>
         </dependency>
 
         <dependency>
@@ -84,7 +89,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.data.jaxen</Automatic-Module-Name>
-                        <Bundle-Activator>org.opendaylight.yangtools.yang.data.jaxen.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
