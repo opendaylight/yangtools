@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.bug._5524.module1.rev160101.grouping.module1.ListModule11Builder;
@@ -33,29 +33,41 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 public class Bug5524augmentUses extends AbstractBindingCodecTest {
     @Test
     public void testBug5224() throws Exception {
-        final Module4Main module4Main = new Module4MainBuilder().setContainerModule4(
-                new ContainerModule4Builder().setListModule11(Collections.singletonList(
-                        new ListModule11Builder().setListModule12(Collections.singletonList(
-                                new ListModule12Builder().setContainerModule1(new ContainerModule1Builder()
-                                    .addAugmentation(new ContainerModule11Builder().build()).build())
-                                .build())).build())).build()).build();
+        final Module4Main module4Main = new Module4MainBuilder()
+            .setContainerModule4(new ContainerModule4Builder()
+                .setListModule11(List.of(new ListModule11Builder()
+                    .setListModule12(List.of(new ListModule12Builder()
+                        .setContainerModule1(new ContainerModule1Builder()
+                            .addAugmentation(new ContainerModule11Builder().build())
+                            .build())
+                        .build()))
+                    .build()))
+                .build())
+            .build();
 
-        final Module4Main manualModule4Main = new Module4MainBuilder().setContainerModule4(
-                new ContainerModule4Builder().setManualListModule11(Collections.singletonList(
-                        new ManualListModule11Builder().setManualListModule12(Collections.singletonList(
-                                new ManualListModule12Builder().setManualContainerModule1(
-                                        new ManualContainerModule1Builder().addAugmentation(
-                                            new ManualContainerModule11Builder().build())
-                                        .build()).build())).build())).build()).build();
+        final Module4Main manualModule4Main = new Module4MainBuilder()
+            .setContainerModule4(new ContainerModule4Builder()
+                .setManualListModule11(List.of(new ManualListModule11Builder()
+                    .setManualListModule12(List.of(new ManualListModule12Builder()
+                        .setManualContainerModule1(new ManualContainerModule1Builder()
+                            .addAugmentation(new ManualContainerModule11Builder().build())
+                            .build())
+                        .build()))
+                    .build()))
+                .build())
+            .build();
 
-        final Module4Main contManualModule4Main = new Module4MainBuilder().setContainerModule4(
-                new ContainerModule4Builder().setContainerManualListModule11(Collections.singletonList(
-                        new ContainerManualListModule11Builder().setContainerManualListModule12(
-                                Collections.singletonList(
-                                new ContainerManualListModule12Builder().setContainerManualContainerModule1(
-                                        new ContainerManualContainerModule1Builder().setContainerManualContainerModule2(
-                                                new ContainerManualContainerModule2Builder().build()).build())
-                                        .build())).build())).build()).build();
+        final Module4Main contManualModule4Main = new Module4MainBuilder()
+            .setContainerModule4(new ContainerModule4Builder()
+                .setContainerManualListModule11(List.of(new ContainerManualListModule11Builder()
+                    .setContainerManualListModule12(List.of(new ContainerManualListModule12Builder()
+                        .setContainerManualContainerModule1(new ContainerManualContainerModule1Builder()
+                            .setContainerManualContainerModule2(new ContainerManualContainerModule2Builder().build())
+                            .build())
+                        .build()))
+                    .build()))
+                .build())
+            .build();
 
         final BindingDataObjectCodecTreeNode<Module4Main> subtreeCodec = codecContext.getSubtreeCodec(
                 InstanceIdentifier.create(Module4Main.class));
