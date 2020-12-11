@@ -279,16 +279,15 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         try {
             sameName = getSchema().getDataChildByName(origDef.getQName());
         } catch (final IllegalArgumentException e) {
+            LOG.trace("Failed to find schema for {}", origDef, e);
             sameName = null;
         }
         final DataSchemaNode childSchema;
         if (sameName != null) {
-            // Exactly same schema node
-            if (origDef.equals(sameName)) {
-                childSchema = sameName;
-                // We check if instantiated node was added via uses
-                // statement and is instantiation of same grouping
-            } else if (origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(sameName))) {
+            // Check if it is:
+            // - exactly same schema node, or
+            // - instantiated node was added via uses statement and is instantiation of same grouping
+            if (origDef.equals(sameName) || origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(sameName))) {
                 childSchema = sameName;
             } else {
                 // Node has same name, but clearly is different
@@ -298,8 +297,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             // We are looking for instantiation via uses in other module
             final QName instantiedName = origDef.getQName().bindTo(namespace());
             final DataSchemaNode potential = getSchema().getDataChildByName(instantiedName);
-            // We check if it is really instantiated from same
-            // definition as class was derived
+            // We check if it is really instantiated from same definition as class was derived
             if (potential != null && origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(potential))) {
                 childSchema = potential;
             } else {
@@ -386,7 +384,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         try {
             loaded = ctx.loadClass(DefaultType.of(cls));
         } catch (ClassNotFoundException e) {
-            LOG.debug("Proposed {} cannot be loaded in {}", cls, ctx);
+            LOG.debug("Proposed {} cannot be loaded in {}", cls, ctx, e);
             return false;
         }
         return cls.equals(loaded);
