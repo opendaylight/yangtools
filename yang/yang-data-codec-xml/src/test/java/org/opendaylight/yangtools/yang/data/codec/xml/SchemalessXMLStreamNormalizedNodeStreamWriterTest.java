@@ -224,8 +224,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
                 new NodeIdentifier(myUnkeyedList))
                 .withValue(unkeyedListEntries).build();
 
-        LeafNode<?> myLeaf1Node = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeaf1))
-                .withValue("value1").build();
+        LeafNode<?> myLeaf1Node = ImmutableNodes.leafNode(myLeaf1, "value1");
 
         SystemLeafSetNode<?> myLeafListNode = Builders.leafSetBuilder()
                 .withNodeIdentifier(new NodeIdentifier(myLeafList))
@@ -235,8 +234,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
                         new NodeWithValue<>(myLeafList, "lflvalue2")).withValue("lflvalue2").build()).build();
 
         UserLeafSetNode<?> myOrderedLeafListNode = Builders.orderedLeafSetBuilder()
-                .withNodeIdentifier(
-                new NodeIdentifier(myOrderedLeafList))
+                .withNodeIdentifier(new NodeIdentifier(myOrderedLeafList))
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
                         new NodeWithValue<>(myOrderedLeafList, "olflvalue1")).withValue("olflvalue1").build())
                 .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
