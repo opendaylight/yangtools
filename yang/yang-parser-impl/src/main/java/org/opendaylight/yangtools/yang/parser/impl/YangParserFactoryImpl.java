@@ -21,6 +21,9 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Reference {@link YangParserFactory} implementation.
@@ -30,6 +33,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 @Beta
 @MetaInfServices
 @Singleton
+@Component(immediate = true)
 public final class YangParserFactoryImpl implements YangParserFactory {
     private static final ImmutableList<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(
         StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
@@ -44,7 +48,8 @@ public final class YangParserFactoryImpl implements YangParserFactory {
     }
 
     @Inject
-    public YangParserFactoryImpl(final YangXPathParserFactory xpathFactory) {
+    @Activate
+    public YangParserFactoryImpl(final @Reference YangXPathParserFactory xpathFactory) {
         this(DefaultReactors.defaultReactorBuilder(xpathFactory).build());
     }
 
