@@ -21,10 +21,22 @@ final class ServiceLoaderState {
     static final class Generator {
         static final BindingRuntimeGenerator INSTANCE = ServiceLoader.load(BindingRuntimeGenerator.class).findFirst()
                 .orElseThrow(() -> new ExceptionInInitializerError("No BindingRuntimeGenerator found"));
+
+        private Generator() {
+            // Hidden on purpose
+        }
     }
 
     static final class ParserFactory {
         static final YangParserFactory INSTANCE = ServiceLoader.load(YangParserFactory.class).findFirst()
                 .orElseThrow(() -> new ExceptionInInitializerError("No YangParserFactory found"));
+
+        private ParserFactory() {
+            // Hodden on purpose
+        }
+    }
+
+    private ServiceLoaderState() {
+        // Hidden on purpose
     }
 }
