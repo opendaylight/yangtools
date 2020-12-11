@@ -45,67 +45,69 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is a bit tricky. DataObject addressing does not take into account choice/case statements, and hence given:
+ *
+ * <pre>
+ *   <code>
+ *     container foo {
+ *       choice bar {
+ *         leaf baz;
+ *       }
+ *     }
+ *   </code>
+ * </pre>
+ * we will see {@code Baz extends ChildOf<Foo>}, which is how the users would address it in InstanceIdentifier terms.
+ * The implicit assumption being made is that {@code Baz} identifies a particular instantiation and hence provides
+ * unambiguous reference to an effective schema statement.
+ *
+ * <p>
+ * Unfortunately this does not quite work with groupings, as their generation has changed: we do not have interfaces
+ * that would capture grouping instantiations, hence we do not have a proper addressing point and users need to specify
+ * the interfaces generated in the grouping's definition. These can be very much ambiguous, as a {@code grouping} can be
+ * used in multiple modules independently within an {@code augment} targeting {@code choice}, as each instantiation is
+ * guaranteed to have a unique namespace -- but we do not have the appropriate instantiations of those nodes.
+ *
+ * <p>
+ * To address this issue we have a two-class lookup mechanism, which relies on the interface generated for the
+ * {@code case} statement to act as the namespace anchor bridging the nodes inside the grouping to the namespace in
+ * which they are instantiated.
+ *
+ * <p>
+ * Furthermore downstream code relies on historical mechanics, which would guess what the instantiation is, silently
+ * assuming the ambiguity is theoretical and does not occur in practice.
+ *
+ * <p>
+ * This leads to three classes of addressing, in order descending performance requirements.
+ * <ul>
+ *   <li>Direct DataObject, where we name an exact child</li>
+ *   <li>Case DataObject + Grouping DataObject</li>
+ *   <li>Grouping DataObject, which is ambiguous</li>
+ * </ul>
+ *
+ * {@link #byCaseChildClass} supports direct DataObject mapping and contains only unambiguous children, while
+ * {@link #byClass} supports indirect mapping and contains {@code case} sub-statements.
+ *
+ * {@link #ambiguousByCaseChildClass} contains ambiguous mappings, for which we end up issuing warnings. We track each
+ * ambiguous reference and issue warn once when they are encountered -- tracking warning information in
+ * {@link #ambiguousByCaseChildWarnings}.
+ */
 final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceSchemaNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
-    private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
 
-    /*
-     * This is a bit tricky. DataObject addressing does not take into account choice/case statements, and hence
-     * given:
-     *
-     * container foo {
-     *     choice bar {
-     *         leaf baz;
-     *     }
-     * }
-     *
-     * we will see {@code Baz extends ChildOf<Foo>}, which is how the users would address it in InstanceIdentifier
-     * terms. The implicit assumption being made is that {@code Baz} identifies a particular instantiation and hence
-     * provides unambiguous reference to an effective schema statement.
-     *
-     * <p>
-     * Unfortunately this does not quite work with groupings, as their generation has changed: we do not have
-     * interfaces that would capture grouping instantiations, hence we do not have a proper addressing point and
-     * users need to specify the interfaces generated in the grouping's definition. These can be very much
-     * ambiguous, as a {@code grouping} can be used in multiple modules independently within an {@code augment}
-     * targeting {@code choice}, as each instantiation is guaranteed to have a unique namespace -- but we do not
-     * have the appropriate instantiations of those nodes.
-     *
-     * <p>
-     * To address this issue we have a two-class lookup mechanism, which relies on the interface generated for
-     * the {@code case} statement to act as the namespace anchor bridging the nodes inside the grouping to the
-     * namespace in which they are instantiated.
-     *
-     * <p>
-     * Furthermore downstream code relies on historical mechanics, which would guess what the instantiation is,
-     * silently assuming the ambiguity is theoretical and does not occur in practice.
-     *
-     * <p>
-     * This leads to three classes of addressing, in order descending performance requirements.
-     * <ul>
-     *   <li>Direct DataObject, where we name an exact child</li>
-     *   <li>Case DataObject + Grouping DataObject</li>
-     *   <li>Grouping DataObject, which is ambiguous</li>
-     * </ul>
-     *
-     * {@code byCaseChildClass} supports direct DataObject mapping and contains only unambiguous children, while
-     * {@code byClass} supports indirect mapping and contains {@code case} sub-statements.
-     *
-     * ambiguousByCaseChildClass contains ambiguous mappings, for which we end up issuing warnings. We track each
-     * ambiguous reference and issue warnings when they are encountered.
-     */
-    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
-    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClass;
+    private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
     private final ImmutableListMultimap<Class<?>, DataContainerCodecPrototype<?>> ambiguousByCaseChildClass;
+    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClass;
+    private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
     private final Set<Class<?>> ambiguousByCaseChildWarnings;
 
     ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceSchemaNode> prototype) {
         super(prototype);
         final Map<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChildBuilder =
-                new HashMap<>();
+            new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byClassBuilder = new HashMap<>();
-        final SetMultimap<Class<?>, DataContainerCodecPrototype<?>> childToCase = SetMultimapBuilder.hashKeys()
-                .hashSetValues().build();
+        final SetMultimap<Class<?>, DataContainerCodecPrototype<?>> childToCase =
+            SetMultimapBuilder.hashKeys().hashSetValues().build();
         final Set<Class<?>> potentialSubstitutions = new HashSet<>();
         // Walks all cases for supplied choice in current runtime context
         for (final Class<?> caze : factory().getRuntimeContext().getCases(getBindingClass())) {
