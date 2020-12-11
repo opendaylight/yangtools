@@ -56,22 +56,11 @@ final class ImpliedEffectiveStatementImpl extends UnknownEffectiveStatementBase<
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ImpliedEffectiveStatementImpl)) {
             return false;
         }
         final ImpliedEffectiveStatementImpl other = (ImpliedEffectiveStatementImpl) obj;
-        if (!Objects.equals(path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(getNodeType(), other.getNodeType())) {
-            return false;
-        }
-        if (!Objects.equals(getNodeParameter(), other.getNodeParameter())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(getNodeType(), other.getNodeType())
+            && Objects.equals(getNodeParameter(), other.getNodeParameter()) && Objects.equals(path, other.path);
     }
 }
