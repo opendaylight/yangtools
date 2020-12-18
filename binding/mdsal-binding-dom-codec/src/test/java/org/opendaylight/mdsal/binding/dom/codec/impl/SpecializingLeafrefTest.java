@@ -39,7 +39,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         final BooleanCont booleanContBinding = (BooleanCont)codecContext
                 .fromNormalizedNode(res.getKey(), res.getValue()).getValue();
 
-        assertTrue(booleanContBinding.isIsFoo());
+        assertTrue(booleanContBinding.getIsFoo());
     }
 
     @Test

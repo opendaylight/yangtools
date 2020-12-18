@@ -16,9 +16,7 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BOOLEAN_GETTER_PREFIX
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.GETTER_PREFIX
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects
@@ -207,8 +205,6 @@ class InterfaceTemplate extends BaseTemplate {
                 default :
                     if (VOID == method.returnType.identifier) {
                         generateNoopVoidInterfaceMethod(method)
-                    } else if (method.name.startsWith(BOOLEAN_GETTER_PREFIX)) {
-                        generateIsAccessorMethod(method)
                     }
             }
         }
@@ -233,13 +229,6 @@ class InterfaceTemplate extends BaseTemplate {
         «method.annotations.generateAnnotations»
         default «VOID.importedName» «method.name»(«method.parameters.generateParameters») {
             // No-op
-        }
-    '''
-
-    def private generateIsAccessorMethod(MethodSignature method) '''
-        @«DEPRECATED.importedName»(forRemoval = true)
-        default «method.returnType.importedName» «method.name»(«method.parameters.generateParameters») {
-            return «GETTER_PREFIX»«method.name.substring(BOOLEAN_GETTER_PREFIX.length)»();
         }
     '''
 

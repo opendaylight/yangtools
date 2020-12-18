@@ -106,13 +106,6 @@ abstract class BaseTemplate extends JavaFileTemplate {
             return «fieldName»;
             «ENDIF»
         }
-        «IF field.returnType == Types.BOOLEAN»
-
-        @«DEPRECATED.importedName»(forRemoval = true)
-        public final «field.returnType.importedName» «BindingMapping.BOOLEAN_GETTER_PREFIX»«field.name.toFirstUpper»() {
-            return «methodName»();
-        }
-        «ENDIF»
     '''
 
     final protected def getterMethodName(GeneratedProperty field) {

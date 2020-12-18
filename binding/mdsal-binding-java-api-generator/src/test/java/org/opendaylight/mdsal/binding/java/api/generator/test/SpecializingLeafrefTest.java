@@ -52,7 +52,6 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private static final String GET_LEAF1_NAME = "getLeaf1";
     private static final String GET_LEAFLIST1_NAME = "getLeafList1";
-    private static final String IS_LEAF1_NAME = "isLeaf1";
 
     private static final String GET_LEAF1_TYPE_OBJECT = "    Object getLeaf1();";
     private static final String GET_LEAF1_TYPE_STRING = "    String getLeaf1();";
@@ -60,7 +59,6 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final String GET_LEAFLIST1_STRING = "    @Nullable List<String> getLeafList1();";
     private static final String GET_LEAFLIST1_DECLARATION = " getLeafList1();";
     private static final String GET_LEAF1_DECLARATION = " getLeaf1();";
-    private static final String IS_LEAF1_BOOLEAN = "    Boolean isLeaf1();";
 
     private static final char CLOSING_METHOD_BRACE = '}';
     private static final String TAB_CLOSING_METHOD_BRACE = TAB + CLOSING_METHOD_BRACE;
@@ -161,7 +159,6 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     public void testLeafrefWhichPointsBoolean() throws IOException {
         verifyReturnType(UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
         verifyReturnType(BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
-        verifyReturnType(BOOLEAN_CONT, IS_LEAF1_NAME, Types.BOOLEAN);
 
         final String unresolvedGrouping = getFileContent(UNRESOLVED_GROUPING);
         final String booleanCont = getFileContent(BOOLEAN_CONT);

@@ -103,7 +103,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         Method defInst = CompilationTestUtils.assertContainsMethod(bitsExtClass, bitsExtClass, "getDefaultInstance",
             String.class);
         CompilationTestUtils.assertContainsDefaultMethods(bitsExtClass);
-        assertEquals(19, bitsExtClass.getDeclaredMethods().length);
+        assertEquals(12, bitsExtClass.getDeclaredMethods().length);
 
         Constructor<?> expectedConstructor = CompilationTestUtils.assertContainsConstructor(bitsExtClass, Boolean.class,
             Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class);
