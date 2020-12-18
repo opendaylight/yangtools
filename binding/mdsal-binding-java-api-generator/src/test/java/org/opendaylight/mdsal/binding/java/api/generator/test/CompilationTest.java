@@ -392,6 +392,7 @@ public class CompilationTest extends BaseCompilationTest {
         final byte[] b = new byte[] {};
         CompilationTestUtils.assertContainsMethod(nodesClass, b.getClass(), "getIdBinary");
         CompilationTestUtils.assertContainsMethod(nodesClass, pkg + ".Nodes$IdBits", "getIdBits", loader);
+        CompilationTestUtils.assertContainsMethod(nodesClass, Boolean.class, "getIdBoolean");
         CompilationTestUtils.assertContainsMethod(nodesClass, Boolean.class, "isIdBoolean");
         CompilationTestUtils.assertContainsMethod(nodesClass, BigDecimal.class, "getIdDecimal64");
         CompilationTestUtils.assertContainsMethod(nodesClass, Empty.class, "getIdEmpty");

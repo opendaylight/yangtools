@@ -10,9 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.spi;
 import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 @Beta
 public final class BindingSchemaMapping {
@@ -21,16 +18,6 @@ public final class BindingSchemaMapping {
     }
 
     public static String getGetterMethodName(final DataSchemaNode node) {
-        return node instanceof TypedDataSchemaNode ? getGetterMethodName((TypedDataSchemaNode) node)
-                : BindingMapping.getGetterMethodName(node.getQName(), false);
-    }
-
-    public static String getGetterMethodName(final TypedDataSchemaNode node) {
-        // Bug 8903: If it is a derived type of boolean, not an inner type, then the return type
-        // of method would be the generated type of typedef not build-in types, so here it should be 'get'.
-        final TypeDefinition<?> type = node.getType();
-        return BindingMapping.getGetterMethodName(node.getQName(),
-            type instanceof BooleanTypeDefinition
-            && (type.getPath().equals(node.getPath()) || type.getBaseType() == null));
+        return BindingMapping.getGetterMethodName(node.getQName());
     }
 }

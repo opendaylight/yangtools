@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME;
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.GETTER_PREFIX;
 
 import com.google.common.collect.ImmutableSortedSet;
 import java.lang.reflect.Method;
@@ -44,7 +45,6 @@ import org.opendaylight.mdsal.binding.model.util.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
-
 
 /**
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
@@ -337,12 +337,11 @@ class JavaFileTemplate {
         if (method.isDefault()) {
             return null;
         }
-        final String prefix = BindingMapping.getGetterPrefix(Types.BOOLEAN.equals(method.getReturnType()));
-        if (!method.getName().startsWith(prefix)) {
+        if (!BindingMapping.isGetterMethodName(method.getName())) {
             return null;
         }
 
-        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(prefix.length()));
+        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(GETTER_PREFIX.length()));
         return new BuilderGeneratedProperty(fieldName, method);
     }
 }
