@@ -43,9 +43,9 @@ public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
 
         final BindingDataObjectCodecTreeNode<BooleanContainer> subtreeCodec = codecContext.getSubtreeCodec(
                 InstanceIdentifier.create(BooleanContainer.class));
-        final NormalizedNode<?, ?> serializedInt = subtreeCodec.serialize(booleanContainerInt);
+        final NormalizedNode serializedInt = subtreeCodec.serialize(booleanContainerInt);
         assertNotNull(serializedInt);
-        final NormalizedNode<?, ?> serialized = subtreeCodec.serialize(booleanContainer);
+        final NormalizedNode serialized = subtreeCodec.serialize(booleanContainer);
         assertNotNull(serialized);
     }
 }

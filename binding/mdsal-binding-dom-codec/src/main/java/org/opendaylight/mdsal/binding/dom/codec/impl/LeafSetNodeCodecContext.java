@@ -24,14 +24,14 @@ final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
         if (normalizedNode instanceof LeafSetNode<?>) {
             @SuppressWarnings("unchecked")
-            final Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
+            final Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).body();
             final IllegalArgumentCodec<Object, Object> codec = getValueCodec();
             final Builder<Object> builder = ImmutableList.builderWithExpectedSize(domValues.size());
             for (final LeafSetEntryNode<Object> valueNode : domValues) {
-                builder.add(codec.deserialize(valueNode.getValue()));
+                builder.add(codec.deserialize(valueNode.body()));
             }
             return builder.build();
         }

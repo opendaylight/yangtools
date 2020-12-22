@@ -288,7 +288,7 @@ public final class BindingMapping {
      * @param str the string that should get an upper case first character.
      * @return the {@link String} {@code str} with an upper case first character.
      */
-    private static @NonNull String toFirstUpper(final @NonNull String str) {
+    public static @NonNull String toFirstUpper(final @NonNull String str) {
         if (str.isEmpty()) {
             return str;
         }

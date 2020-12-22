@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
  * A base class for {@link DataObject}s which are also {@link Augmentable}, backed by {@link DataObjectCodecContext}.
@@ -45,7 +45,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
 
     protected AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
-            final NormalizedNodeContainer<?, ?, ?> data) {
+            final DistinctNodeContainer<?, ?> data) {
         super(context, data);
     }
 
@@ -70,9 +70,9 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
             // the augmentation the user is requesting -- otherwise a strict receiver would end up with a cryptic
             // ClassCastException.
             if (augmentationType.isAssignableFrom(augCtx.getBindingClass())) {
-                final Optional<NormalizedNode<?, ?>> augData = codecData().getChild(augCtx.getDomPathArgument());
-                if (augData.isPresent()) {
-                    return (A) augCtx.deserialize(augData.get());
+                final NormalizedNode augData = codecData().childByArg(augCtx.getDomPathArgument());
+                if (augData != null) {
+                    return (A) augCtx.deserialize(augData);
                 }
             }
         }

@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
@@ -43,11 +44,11 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
-import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -289,7 +290,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     private static <T extends SchemaNode> T getOriginalSchema(final T choice) {
         @SuppressWarnings("unchecked")
-        final T original = (T) SchemaNodeUtils.getRootOriginalIfPossible(choice);
+        final T original = (T) originalNodeOf(choice);
         if (original != null) {
             return original;
         }
@@ -303,7 +304,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
             return Optional.of(potential);
         }
         if (potential != null) {
-            SchemaNode potentialRoot = SchemaNodeUtils.getRootOriginalIfPossible(potential);
+            SchemaNode potentialRoot = originalNodeOf(potential);
             if (originalDefinition.equals(potentialRoot)) {
                 return Optional.of(potential);
             }
@@ -319,10 +320,14 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         // sufficient to uniquelly determine equality of cases
         //
         for (CaseSchemaNode caze : instantiatedChoice.findCaseNodes(originalDefinition.getQName().getLocalName())) {
-            if (originalDefinition.equals(SchemaNodeUtils.getRootOriginalIfPossible(caze))) {
+            if (originalDefinition.equals(originalNodeOf(caze))) {
                 return Optional.of(caze);
             }
         }
         return Optional.empty();
+    }
+
+    private static @Nullable SchemaNode originalNodeOf(final SchemaNode node) {
+        return node instanceof DerivableSchemaNode ? ((DerivableSchemaNode) node).getOriginal().orElse(null) : null;
     }
 }

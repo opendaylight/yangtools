@@ -44,13 +44,14 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,9 +63,9 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         extends DataContainerCodecContext<D, T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
-        DataObjectCodecContext.class, NormalizedNodeContainer.class);
+        DataObjectCodecContext.class, DistinctNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
-        DataObjectCodecContext.class, NormalizedNodeContainer.class);
+        DataObjectCodecContext.class, DistinctNodeContainer.class);
     private static final VarHandle MISMATCHED_AUGMENTED;
 
     static {
@@ -287,7 +288,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             // Check if it is:
             // - exactly same schema node, or
             // - instantiated node was added via uses statement and is instantiation of same grouping
-            if (origDef.equals(sameName) || origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(sameName))) {
+            if (origDef.equals(sameName) || origDef.equals(getRootOriginalIfPossible(sameName))) {
                 childSchema = sameName;
             } else {
                 // Node has same name, but clearly is different
@@ -298,7 +299,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             final QName instantiedName = origDef.getQName().bindTo(namespace());
             final DataSchemaNode potential = getSchema().dataChildByName(instantiedName);
             // We check if it is really instantiated from same definition as class was derived
-            if (potential != null && origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(potential))) {
+            if (potential != null && origDef.equals(getRootOriginalIfPossible(potential))) {
                 childSchema = potential;
             } else {
                 childSchema = null;
@@ -307,6 +308,25 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         final DataSchemaNode nonNullChild =
                 childNonNull(childSchema, childClass, "Node %s does not have child named %s", getSchema(), childClass);
         return DataContainerCodecPrototype.from(createBindingArg(childClass, nonNullChild), nonNullChild, factory());
+    }
+
+    private static SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
+        Optional<SchemaNode> previous = Optional.empty();
+        Optional<SchemaNode> next = getOriginalIfPossible(data);
+        while (next.isPresent()) {
+            previous = next;
+            next = getOriginalIfPossible(next.get());
+        }
+        return previous.orElse(null);
+    }
+
+    private static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
+        if (node instanceof DerivableSchemaNode) {
+            @SuppressWarnings("unchecked")
+            final Optional<SchemaNode> ret  = (Optional<SchemaNode>) ((DerivableSchemaNode) node).getOriginal();
+            return ret;
+        }
+        return Optional.empty();
     }
 
     @SuppressWarnings("unchecked")
@@ -406,7 +426,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    protected final @NonNull D createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
+    protected final @NonNull D createBindingProxy(final DistinctNodeContainer<?, ?> node) {
         try {
             return (D) proxyConstructor.invokeExact(this, node);
         } catch (final Throwable e) {
@@ -417,12 +437,12 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
 
     @SuppressWarnings("unchecked")
     Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
+            final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
 
         @SuppressWarnings("rawtypes")
         final Map map = new HashMap<>();
 
-        for (final NormalizedNode<?, ?> childValue : data.getValue()) {
+        for (final NormalizedNode childValue : data.body()) {
             if (childValue instanceof AugmentationNode) {
                 final AugmentationNode augDomNode = (AugmentationNode) childValue;
                 final DataContainerCodecPrototype<?> codecProto = augmentationByYang.get(augDomNode.getIdentifier());
@@ -433,9 +453,9 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             }
         }
         for (final DataContainerCodecPrototype<?> value : augmentationByStream.values()) {
-            final Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
-            if (augData.isPresent()) {
-                map.put(value.getBindingClass(), value.get().deserializeObject(augData.get()));
+            final NormalizedNode augData = data.childByArg(value.getYangArg());
+            if (augData != null) {
+                map.put(value.getBindingClass(), value.get().deserializeObject(augData));
             }
         }
         return map;

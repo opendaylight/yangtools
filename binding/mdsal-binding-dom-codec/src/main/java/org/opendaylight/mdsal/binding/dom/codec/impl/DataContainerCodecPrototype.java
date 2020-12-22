@@ -31,9 +31,9 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,8 +159,8 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         return ChildAddressabilitySummary.UNADDRESSABLE;
     }
 
-    static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
-        final SchemaContext schema = factory.getRuntimeContext().getEffectiveModelContext();
+    static DataContainerCodecPrototype<EffectiveModelContext> rootPrototype(final CodecContextFactory factory) {
+        final EffectiveModelContext schema = factory.getRuntimeContext().getEffectiveModelContext();
         final NodeIdentifier arg = NodeIdentifier.create(schema.getQName());
         return new DataContainerCodecPrototype<>(DataRoot.class, arg, schema, factory);
     }

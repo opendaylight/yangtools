@@ -37,13 +37,13 @@ public class KeyInheritenceTest extends AbstractBindingCodecTest {
 
     @Test
     public void testFromBinding() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domDef = codecContext.toNormalizedNode(DEF_IID, DEF);
+        final Entry<YangInstanceIdentifier, NormalizedNode> domDef = codecContext.toNormalizedNode(DEF_IID, DEF);
         Entry<InstanceIdentifier<?>, DataObject> entry = codecContext.fromNormalizedNode(domDef.getKey(),
             domDef.getValue());
         assertEquals(DEF_IID, entry.getKey());
         final Def codecDef = (Def) entry.getValue();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domUse = codecContext.toNormalizedNode(USE_IID, USE);
+        final Entry<YangInstanceIdentifier, NormalizedNode> domUse = codecContext.toNormalizedNode(USE_IID, USE);
         entry = codecContext.fromNormalizedNode(domUse.getKey(), domUse.getValue());
         assertEquals(USE_IID, entry.getKey());
         final Use codecUse = (Use) entry.getValue();

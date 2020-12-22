@@ -38,8 +38,8 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
             .withKey(TOP_FOO_KEY)
             .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
-        final NormalizedNode<?, ?> domTreeEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
-        final NormalizedNode<?, ?> domRpcEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
+        final NormalizedNode domTreeEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
+        final NormalizedNode domRpcEntry = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 
@@ -50,7 +50,7 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
             .addAugmentation(new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             BA_TOP_LEVEL_LIST, manuallyConstructed);
         final TopLevelList deserialized = (TopLevelList) codecContext.fromNormalizedNode(entry.getKey(),
             entry.getValue()).getValue();

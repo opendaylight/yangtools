@@ -50,7 +50,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
         return delegate;
     }
 
-    NormalizedNode<?, ?> build() {
+    NormalizedNode build() {
         return domResult.getResult();
     }
 
@@ -96,11 +96,11 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      * streaming of data when non-null result is returned.
      */
     @Override
-    public NormalizedNode<?, ?> serialize(final DataObject input) {
+    public NormalizedNode serialize(final DataObject input) {
         final AbstractBindingNormalizedNodeCache<DataObject, ?> cachingSerializer = getCacheSerializer(
             input.implementedInterface());
         if (cachingSerializer != null) {
-            final NormalizedNode<?, ?> domData = cachingSerializer.get(input);
+            final NormalizedNode domData = cachingSerializer.get(input);
             domWriter.addChild(domData);
             return domData;
         }
@@ -127,7 +127,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      * @param data Data to be serialized
      * @return Normalized Node representation of data.
      */
-    static NormalizedNode<?, ?> serializeUsingStreamWriter(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
+    static NormalizedNode serializeUsingStreamWriter(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
             final DataContainerCodecContext<?, ?> subtreeRoot, final DataObject data) {
         final CachingNormalizedNodeSerializer writer = new CachingNormalizedNodeSerializer(cacheHolder, subtreeRoot);
         try {

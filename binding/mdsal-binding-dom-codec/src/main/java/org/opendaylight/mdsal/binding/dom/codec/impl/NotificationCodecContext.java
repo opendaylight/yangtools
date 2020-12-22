@@ -39,8 +39,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.EventInstantAware;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
 final class NotificationCodecContext<D extends DataObject & Notification>
@@ -57,11 +57,11 @@ final class NotificationCodecContext<D extends DataObject & Notification>
     }
 
     private static final Generic BB_DOCC = TypeDefinition.Sort.describe(DataObjectCodecContext.class);
-    private static final Generic BB_NNC = TypeDefinition.Sort.describe(NormalizedNodeContainer.class);
+    private static final Generic BB_DNC = TypeDefinition.Sort.describe(DistinctNodeContainer.class);
     private static final Generic BB_I = TypeDefinition.Sort.describe(Instant.class);
 
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, DataObjectCodecContext.class,
-        NormalizedNodeContainer.class, Instant.class);
+        DistinctNodeContainer.class, Instant.class);
     private static final MethodType NOTIFICATION_TYPE = MethodType.methodType(Notification.class,
         NotificationCodecContext.class, ContainerNode.class, Instant.class);
     private static final String INSTANT_FIELD = "instant";
@@ -83,7 +83,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
                     .name(fqcn)
                     .defineField(INSTANT_FIELD, BB_I, Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
                     .defineConstructor(Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
-                        .withParameters(BB_DOCC, BB_NNC, BB_I)
+                        .withParameters(BB_DOCC, BB_DNC, BB_I)
                         .intercept(ConstructorImplementation.INSTANCE)
                     .defineMethod(EVENT_INSTANT_NAME, EVENT_INSTANT_RETTYPE, Opcodes.ACC_PUBLIC | Opcodes.ACC_SYNTHETIC)
                         .intercept(EventInstantImplementation.INSTANCE)
@@ -100,7 +100,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode data) {
         checkState(data instanceof ContainerNode, "Unexpected data %s", data);
         return createBindingProxy((ContainerNode) data);
     }
@@ -116,7 +116,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
         return deserialize(normalizedNode);
     }
 
@@ -130,7 +130,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
             try {
                 LOAD_CTOR_ARGS = MethodVariableAccess.allArgumentsOf(new MethodDescription.ForLoadedConstructor(
                     AugmentableCodecDataObject.class.getDeclaredConstructor(DataObjectCodecContext.class,
-                        NormalizedNodeContainer.class)));
+                        DistinctNodeContainer.class)));
             } catch (NoSuchMethodException e) {
                 throw new ExceptionInInitializerError(e);
             }

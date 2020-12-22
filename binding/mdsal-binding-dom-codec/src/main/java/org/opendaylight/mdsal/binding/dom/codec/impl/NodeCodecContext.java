@@ -110,5 +110,5 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
         return null;
     }
 
-    protected abstract Object deserializeObject(NormalizedNode<?, ?> normalizedNode);
+    protected abstract Object deserializeObject(NormalizedNode normalizedNode);
 }

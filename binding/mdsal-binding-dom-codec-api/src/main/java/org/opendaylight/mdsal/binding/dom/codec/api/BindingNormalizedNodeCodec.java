@@ -25,7 +25,7 @@ public interface BindingNormalizedNodeCodec<T extends BindingObject> {
      * @param data Normalized Node representation of data
      * @return Binding representation of data
      */
-    @NonNull T deserialize(@NonNull NormalizedNode<?, ?> data);
+    @NonNull T deserialize(@NonNull NormalizedNode data);
 
     /**
      * Converts from  Binding to Normalized Node representation of data.
@@ -33,5 +33,5 @@ public interface BindingNormalizedNodeCodec<T extends BindingObject> {
      * @param data Binding representation of data
      * @return Normalized Node representation of data
      */
-    @NonNull NormalizedNode<?, ?> serialize(@NonNull T data);
+    @NonNull NormalizedNode serialize(@NonNull T data);
 }

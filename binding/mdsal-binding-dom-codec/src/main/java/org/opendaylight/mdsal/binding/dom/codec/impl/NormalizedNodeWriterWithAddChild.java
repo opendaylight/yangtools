@@ -17,7 +17,7 @@ final class NormalizedNodeWriterWithAddChild extends ImmutableNormalizedNodeStre
         super(result);
     }
 
-    void addChild(final NormalizedNode<?, ?> child) {
+    void addChild(final NormalizedNode child) {
         this.writeChild(child);
     }
 }

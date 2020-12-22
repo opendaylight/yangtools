@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
 import com.google.common.base.Verify;
@@ -17,11 +18,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -44,15 +48,14 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D,SchemaContext> {
+final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D, EffectiveModelContext> {
 
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
@@ -105,7 +108,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public RpcInputCodec<?> load(final Absolute key) {
-                final ContainerLike schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key.asSchemaPath());
+                final ContainerLike schema = getRpcDataSchema(getSchema(), key);
                 @SuppressWarnings("unchecked")
                 final Class<? extends DataContainer> cls = (Class<? extends DataContainer>)
                     factory().getRuntimeContext().getClassForSchema(schema);
@@ -117,17 +120,18 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public NotificationCodecContext<?> load(final Absolute key) {
-                final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(),
-                    // FIXME: do not convert here!
-                    key.asSchemaPath());
+                final SchemaTreeEffectiveStatement<?> stmt = getSchema().findSchemaTreeNode(key)
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find statement at " + key));
+                checkArgument(stmt instanceof NotificationDefinition, "Statement %s is not a notification", stmt);
+
                 @SuppressWarnings("unchecked")
                 final Class<? extends Notification> clz = (Class<? extends Notification>)
-                    factory().getRuntimeContext().getClassForSchema(schema);
+                    factory().getRuntimeContext().getClassForSchema((NotificationDefinition) stmt);
                 return getNotification(clz);
             }
         });
 
-    private SchemaRootCodecContext(final DataContainerCodecPrototype<SchemaContext> dataPrototype) {
+    private SchemaRootCodecContext(final DataContainerCodecPrototype<EffectiveModelContext> dataPrototype) {
         super(dataPrototype);
     }
 
@@ -139,10 +143,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
      * @return A new root node
      */
     static SchemaRootCodecContext<?> create(final CodecContextFactory factory) {
-        final DataContainerCodecPrototype<SchemaContext> prototype = DataContainerCodecPrototype.rootPrototype(factory);
-        return new SchemaRootCodecContext<>(prototype);
+        return new SchemaRootCodecContext<>(DataContainerCodecPrototype.rootPrototype(factory));
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -162,7 +164,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
+    public D deserialize(final NormalizedNode normalizedNode) {
         throw new UnsupportedOperationException("Could not create Binding data representation for root");
     }
 
@@ -240,13 +242,60 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
              * FIXME: Rework this to have more precise logic regarding Binding Specification.
              */
             if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
-                final ContainerLike schema = SchemaNodeUtils.getRpcDataSchema(potential, qname);
+                final ContainerLike schema = getRpcDataSchema(potential, qname);
                 checkArgument(schema != null, "Schema for %s does not define input / output.", potential.getQName());
                 return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
             }
         }
 
         throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
+    }
+
+    /**
+     * Returns RPC input or output schema based on supplied QName.
+     *
+     * @param rpc RPC Definition
+     * @param qname input or output QName with namespace same as RPC
+     * @return input or output schema. Returns null if RPC does not have input/output specified.
+     */
+    private static @Nullable ContainerLike getRpcDataSchema(final @NonNull RpcDefinition rpc,
+            final @NonNull QName qname) {
+        requireNonNull(rpc, "Rpc Schema must not be null");
+        switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
+            case "input":
+                return rpc.getInput();
+            case "output":
+                return rpc.getOutput();
+            default:
+                throw new IllegalArgumentException("Supplied qname " + qname
+                        + " does not represent rpc input or output.");
+        }
+    }
+
+    /**
+     * Returns RPC Input or Output Data container from RPC definition.
+     *
+     * @param schema SchemaContext in which lookup should be performed.
+     * @param path Schema path of RPC input/output data container
+     * @return Notification schema or null, if notification is not present in schema context.
+     */
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+        justification = "https://github.com/spotbugs/spotbugs/issues/811")
+    private static @Nullable ContainerLike getRpcDataSchema(final @NonNull EffectiveModelContext schema,
+            final @NonNull Absolute path) {
+        requireNonNull(schema, "Schema context must not be null.");
+        requireNonNull(path, "Schema path must not be null.");
+        final Iterator<QName> it = path.getNodeIdentifiers().iterator();
+        checkArgument(it.hasNext(), "Rpc must have QName.");
+        final QName rpcName = it.next();
+        checkArgument(it.hasNext(), "input or output must be part of path.");
+        final QName inOrOut = it.next();
+        for (final RpcDefinition potential : schema.getOperations()) {
+            if (rpcName.equals(potential.getQName())) {
+                return getRpcDataSchema(potential, inOrOut);
+            }
+        }
+        return null;
     }
 
     NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
@@ -271,7 +320,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
         throw new UnsupportedOperationException("Unable to deserialize root");
     }
 

@@ -36,10 +36,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugmentBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.AugmentChoice1;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.augment.choice1.Case1Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.augment.choice1.case1.augment.choice2.Case11Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.augment.choice1.case1.augment.choice2.case11.Case11ChoiceCaseContainerBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.choice.augment1.AugmentChoice1;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.choice.augment1.augment.choice1.Case1Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.choice.augment2.augment.choice2.Case11Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.choice.augment2.augment.choice2.case11.Case11ChoiceCaseContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.ChoiceContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.ChoiceContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -70,8 +70,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -79,8 +79,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 
 public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
 
@@ -119,7 +119,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void containerToNormalized() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top());
         final ContainerNode topNormalized = getEmptyTop();
         assertEquals(topNormalized, entry.getValue());
@@ -235,7 +235,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void listWithKeysToNormalized() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             BA_TOP_LEVEL_LIST, topLevelList(TOP_LEVEL_LIST_FOO_KEY));
         final MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
                 .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
@@ -259,7 +259,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void leafOnlyAugmentationToNormalized() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             BA_TREE_LEAF_ONLY, new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build());
         final Set<QName> augmentationChildren = new HashSet<>();
         augmentationChildren.add(SIMPLE_VALUE_QNAME);
@@ -290,11 +290,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         topLevelLeafList.add("foo");
         Top top = new TopBuilder().setTopLevelOrderedLeafList(topLevelLeafList).build();
 
-        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
         ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-                .withChild(ImmutableOrderedLeafSetNodeBuilder.create()
+                .withChild(ImmutableUserLeafSetNodeBuilder.create()
                         .withNodeIdentifier(new NodeIdentifier(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME))
                         .withChild(
                                 ImmutableLeafSetEntryNodeBuilder.create()
@@ -313,7 +313,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         topLevelLeafList.add("foo");
         final Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
         final ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
@@ -351,7 +351,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public void orderedLeafListFromNormalized() {
         ContainerNode topWithLeafList = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-                .withChild(ImmutableOrderedLeafSetNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(
+                .withChild(ImmutableUserLeafSetNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(
                     TOP_LEVEL_ORDERED_LEAF_LIST_QNAME))
                     .withChild(ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
                         new NodeWithValue<>(TOP_LEVEL_ORDERED_LEAF_LIST_QNAME, "foo")).withValue("foo").build())
@@ -368,7 +368,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public void choiceToNormalized() {
         final ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder()
             .setExtendedId(new ExtendedIdBuilder().setId("identifier_value").build()).build()).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(ChoiceContainer.class), choiceContainerBA);
         final ContainerNode choiceContainer = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(CHOICE_CONTAINER_QNAME))
@@ -485,12 +485,12 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
         final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
             nestedLists).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(ii,
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(ii,
             topLevelList);
         final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-                .withChild(ImmutableOrderedMapNodeBuilder.create()
+                .withChild(ImmutableUserMapNodeBuilder.create()
                     .withNodeIdentifier(new NodeIdentifier(NESTED_LIST_QNAME))
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar")).build()).build();
@@ -502,7 +502,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
-                .withChild(ImmutableOrderedMapNodeBuilder.create()
+                .withChild(ImmutableUserMapNodeBuilder.create()
                     .withNodeIdentifier(new NodeIdentifier(NESTED_LIST_QNAME))
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
                     .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar")).build()).build();
@@ -543,11 +543,11 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         tBuilder.addAugmentation(tca1Builder.build());
         final Top top = tBuilder.build();
 
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> biResult = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> biResult = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Top.class), top);
 
-        final NormalizedNode<?, ?> topNormalized =
-                containerBuilder().withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
+        final NormalizedNode topNormalized = containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
                 .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
                         .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
                                 .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)

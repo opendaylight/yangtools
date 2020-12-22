@@ -39,7 +39,7 @@ public class LeafReferenceTest extends AbstractBindingCodecTest {
             .setSchemaUnawareUnion(new Int32StringUnion("foo"))
             .setSchemaUnawareUnionRef(new Int32StringUnion(10))
             .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
+        final Entry<YangInstanceIdentifier, NormalizedNode> dom = codecContext.toNormalizedNode(BA_TOP_LEVEL_LIST,
             binding);
         final Entry<InstanceIdentifier<?>, DataObject> readed = codecContext.fromNormalizedNode(dom.getKey(),
             dom.getValue());

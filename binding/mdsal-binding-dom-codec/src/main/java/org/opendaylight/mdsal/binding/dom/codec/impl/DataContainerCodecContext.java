@@ -243,7 +243,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(final D data) {
+    public NormalizedNode serialize(final D data) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
         final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);

@@ -195,7 +195,7 @@ final class LazyBindingMapIterState<K extends Identifier<V>, V extends DataObjec
 
         Values(final LazyBindingMap<K, V> map) {
             this.map = requireNonNull(map);
-            objects = map.mapNode().getValue().toArray();
+            objects = map.mapNode().body().toArray();
         }
 
         @Override

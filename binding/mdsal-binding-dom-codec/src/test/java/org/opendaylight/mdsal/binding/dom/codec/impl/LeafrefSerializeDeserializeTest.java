@@ -35,7 +35,7 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         final InstanceIdentifier<Cont> BA_II_CONT = InstanceIdentifier.builder(Cont.class).build();
         final Ref refVal = new Ref("myvalue");
         final Cont data = new ContBuilder().setRef(refVal).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> normalizedNode =
+        final Entry<YangInstanceIdentifier, NormalizedNode> normalizedNode =
                 this.codecContext.toNormalizedNode(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 
@@ -55,7 +55,7 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         final InstanceIdentifier<ContInt32> BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
         final RefUnionInt32 refVal = new RefUnionInt32(Uint32.valueOf(5));
         final ContInt32 data = new ContInt32Builder().setRefUnionInt32(refVal).build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> normalizedNode =
+        final Entry<YangInstanceIdentifier, NormalizedNode> normalizedNode =
                 this.codecContext.toNormalizedNode(BA_II_CONT, data);
         assertNotNull(normalizedNode);
 

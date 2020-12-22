@@ -38,7 +38,7 @@ public abstract class AbstractBindingCodecTest extends AbstractBindingRuntimeTes
 
     @SuppressWarnings("unchecked")
     protected <T extends DataObject> T thereAndBackAgain(final InstanceIdentifier<T> path, final T data) {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> there = codecContext.toNormalizedNode(path, data);
+        final Entry<YangInstanceIdentifier, NormalizedNode> there = codecContext.toNormalizedNode(path, data);
         final Entry<InstanceIdentifier<?>, DataObject> backAgain = codecContext.fromNormalizedNode(there.getKey(),
             there.getValue());
         assertEquals(path, backAgain.getKey());

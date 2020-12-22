@@ -12,13 +12,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.util.Collection;
-import java.util.Optional;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
+import org.opendaylight.yangtools.concepts.PrettyTree;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -60,23 +59,29 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     }
 
     @Override
-    public final QName getNodeType() {
-        return identifier.getNodeType();
-    }
-
-    @Override
     public final ContainerNode getDelegate() {
         return delegate();
     }
 
     @Override
-    public Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
-        return delegate().getValue();
+    public Collection<DataContainerChild> body() {
+        return delegate().body();
     }
 
     @Override
-    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return delegate().getChild(child);
+    public DataContainerChild childByArg(final PathArgument child) {
+        return delegate().childByArg(child);
+    }
+
+    @Override
+    public PrettyTree prettyTree() {
+        // Do not touch delegate() until we really need to
+        return new PrettyTree() {
+            @Override
+            public void appendTo(final StringBuilder sb, final int depth) {
+                delegate().prettyTree().appendTo(sb, depth);
+            }
+        };
     }
 
     @Override

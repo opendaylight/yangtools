@@ -7,99 +7,55 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Callable;
-import org.opendaylight.mdsal.binding.generator.util.BaseYangTypesProvider;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 final class UnionTypeCodec extends ReflectionBasedCodec {
     private final ImmutableSet<UnionValueOptionContext> typeCodecs;
 
-    private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs) {
+    private UnionTypeCodec(final Class<?> unionCls,final List<UnionValueOptionContext> codecs) {
         super(unionCls);
         typeCodecs = ImmutableSet.copyOf(codecs);
     }
 
     static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
-                                           final BindingCodecContext bindingCodecContext) {
+            final BindingCodecContext bindingCodecContext) {
         return () -> {
-            final Set<UnionValueOptionContext> values = new LinkedHashSet<>();
-            for (final TypeDefinition<?> subtype : unionType.getTypes()) {
-                if (subtype instanceof LeafrefTypeDefinition) {
-                    addLeafrefValueCodec(unionCls, unionType, bindingCodecContext, values, subtype);
-                } else {
-                    final Method valueGetter = unionCls.getMethod(BindingMapping.GETTER_PREFIX
-                        + BindingMapping.getClassName(subtype.getQName()));
-                    final Class<?> valueType = valueGetter.getReturnType();
-                    final IllegalArgumentCodec<Object, Object> valueCodec =
-                            bindingCodecContext.getCodec(valueType, subtype);
+            final GeneratedType contextType = bindingCodecContext.getRuntimeContext().getTypeWithSchema(unionCls)
+                .getKey();
+            verify(contextType instanceof RuntimeGeneratedUnion, "Unexpected runtime type %s", contextType);
+            final RuntimeGeneratedUnion contextUnion = (RuntimeGeneratedUnion) contextType;
 
-                    values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, valueCodec));
-                }
+            final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
+            final List<String> unionProperties = contextUnion.typePropertyNames();
+            verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
+                unionTypes, unionProperties);
+
+            final List<UnionValueOptionContext> values = new ArrayList<>(unionTypes.size());
+            final Iterator<String> it = unionProperties.iterator();
+            for (final TypeDefinition<?> subtype : unionType.getTypes()) {
+                final String getterName = BindingMapping.GETTER_PREFIX + BindingMapping.toFirstUpper(it.next());
+                final Method valueGetter = unionCls.getMethod(getterName);
+                final Class<?> valueType = valueGetter.getReturnType();
+                final IllegalArgumentCodec<Object, Object> codec = bindingCodecContext.getCodec(valueType, subtype);
+
+                values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, codec));
             }
 
             return new UnionTypeCodec(unionCls, values);
         };
-    }
-
-    /**
-     * Prepare codec for type from leaf's return type of leafref.
-     *
-     * @param unionCls
-     *            - union class
-     * @param unionType
-     *            - union type
-     * @param bindingCodecContext
-     *            - binding codec context
-     * @param values
-     *            - union values
-     * @param subtype
-     *            - subtype of union
-     * @throws NoSuchMethodException when the getter method is not found
-     */
-    private static void addLeafrefValueCodec(final Class<?> unionCls, final UnionTypeDefinition unionType,
-            final BindingCodecContext bindingCodecContext, final Set<UnionValueOptionContext> values,
-            final TypeDefinition<?> subtype) throws NoSuchMethodException {
-        final EffectiveModelContext schemaContext = bindingCodecContext.getRuntimeContext().getEffectiveModelContext();
-        final Module module = schemaContext.findModule(subtype.getQName().getModule()).get();
-        final PathExpression xpath = ((LeafrefTypeDefinition) subtype).getPathStatement();
-        // find schema node in schema context by xpath of leafref
-        final SchemaNode dataNode;
-        if (xpath.isAbsolute()) {
-            dataNode = SchemaContextUtil.findDataSchemaNode(schemaContext, module, xpath);
-        } else {
-            dataNode = SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, module, unionType, xpath);
-        }
-        final String className = BindingMapping.getClassName(unionCls.getSimpleName());
-        final LeafSchemaNode typeNode = (LeafSchemaNode) dataNode;
-
-        // prepare name of type form return type of referenced leaf
-        final String typeName = BindingMapping.getClassName(BaseYangTypesProvider.INSTANCE
-                .javaTypeForSchemaDefinitionType(typeNode.getType(), typeNode).getName());
-
-        // get method via reflection from generated code according to
-        // get_TypeName_Value method
-        final Method valueGetterParent = unionCls.getMethod(
-            BindingMapping.GETTER_PREFIX + BindingMapping.getUnionLeafrefMemberName(className, typeName));
-        final Class<?> returnType = valueGetterParent.getReturnType();
-
-        // prepare codec of union subtype according to return type of referenced
-        // leaf
-        final IllegalArgumentCodec<Object, Object> valueCodec = bindingCodecContext.getCodec(returnType, subtype);
-        values.add(new UnionValueOptionContext(unionCls, returnType, valueGetterParent, valueCodec));
     }
 
     @Override

@@ -26,7 +26,7 @@ final class DataObjectNormalizedNodeCache
     }
 
     @Override
-    public NormalizedNode<?, ?> load(final DataObject key) {
+    public NormalizedNode load(final DataObject key) {
         return CachingNormalizedNodeSerializer.serializeUsingStreamWriter(cacheHolder, rootContext(), key);
     }
 }

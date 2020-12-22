@@ -12,13 +12,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
  * A base class for {@link DataObject}s backed by {@link DataObjectCodecContext}. While this class is public, it not
@@ -44,14 +43,14 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     private final @NonNull DataObjectCodecContext<T, ?> context;
     @SuppressWarnings("rawtypes")
-    private final @NonNull NormalizedNodeContainer data;
+    private final @NonNull DistinctNodeContainer data;
 
     // Accessed via a VarHandle
     @SuppressWarnings("unused")
     // FIXME: consider using a primitive int-based cache (with 0 being uninit)
     private volatile Integer cachedHashcode;
 
-    protected CodecDataObject(final DataObjectCodecContext<T, ?> context, final NormalizedNodeContainer<?, ?, ?> data) {
+    protected CodecDataObject(final DataObjectCodecContext<T, ?> context, final DistinctNodeContainer<?, ?> data) {
         this.data = requireNonNull(data, "Data must not be null");
         this.context = requireNonNull(context, "Context must not be null");
     }
@@ -100,18 +99,18 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     @SuppressWarnings("rawtypes")
-    final @NonNull NormalizedNodeContainer codecData() {
+    final @NonNull DistinctNodeContainer codecData() {
         return data;
     }
 
     // Helper split out of codecMember to aid its inlining
     private Object loadMember(final VarHandle handle, final NodeCodecContext childCtx) {
         @SuppressWarnings("unchecked")
-        final Optional<NormalizedNode<?, ?>> child = data.getChild(childCtx.getDomPathArgument());
+        final NormalizedNode child = data.childByArg(childCtx.getDomPathArgument());
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
         // normal value because defaultObject() may end up throwing an exception intentionally.
-        final Object obj = child.isPresent() ? childCtx.deserializeObject(child.get()) : childCtx.defaultObject();
+        final Object obj = child != null ? childCtx.deserializeObject(child) : childCtx.defaultObject();
         final Object witness = handle.compareAndExchangeRelease(this, null, maskNull(obj));
         return witness == null ? obj : unmaskNull(witness);
     }
@@ -130,7 +129,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     // Helper split out of hashCode() to aid its inlining
     private int loadHashCode() {
         final int result = codecHashCode();
-        final Object witness = CACHED_HASH_CODE.compareAndExchangeRelease(this, null, Integer.valueOf(result));
+        final Object witness = CACHED_HASH_CODE.compareAndExchangeRelease(this, null, result);
         return witness == null ? result : (Integer) witness;
     }
 

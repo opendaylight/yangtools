@@ -19,23 +19,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
  * @param <T> Object model type
  */
 final class ForeignOpaqueData<T> extends AbstractOpaqueData<T> {
-    private final ForeignDataNode<?, T> domData;
+    private final ForeignDataNode<T> domData;
 
-    ForeignOpaqueData(final ForeignDataNode<?, T> domData) {
+    ForeignOpaqueData(final ForeignDataNode<T> domData) {
         this.domData = requireNonNull(domData);
     }
 
     @Override
     public Class<T> getObjectModel() {
-        return domData.getValueObjectModel();
+        return domData.bodyObjectModel();
     }
 
     @Override
     public T getData() {
-        return domData.getValue();
+        return domData.body();
     }
 
-    ForeignDataNode<?, T> domData() {
+    ForeignDataNode<T> domData() {
         return domData;
     }
 }

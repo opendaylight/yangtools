@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * @param <C> Root codec context type
  */
 abstract class AbstractBindingNormalizedNodeCache<T extends BindingObject, C extends NodeCodecContext>
-        extends CacheLoader<T, NormalizedNode<?, ?>> {
-    private final LoadingCache<T, NormalizedNode<?, ?>> cache = CacheBuilder.newBuilder().weakValues().build(this);
+        extends CacheLoader<T, NormalizedNode> {
+    private final LoadingCache<T, NormalizedNode> cache = CacheBuilder.newBuilder().weakValues().build(this);
 
     private final @NonNull C rootContext;
 
@@ -50,7 +50,7 @@ abstract class AbstractBindingNormalizedNodeCache<T extends BindingObject, C ext
      * @param obj Binding object to be deserialized
      * @return NormalizedNode representation of binding object.
      */
-    final NormalizedNode<?, ?> get(final @NonNull T obj) {
+    final NormalizedNode get(final @NonNull T obj) {
         return cache.getUnchecked(obj);
     }
 }

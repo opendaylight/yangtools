@@ -61,7 +61,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?,?>> toNormalizedNode(
+    public <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode> toNormalizedNode(
             final InstanceIdentifier<T> path, final T data) {
         return delegate().toNormalizedNode(path, data);
     }
@@ -90,7 +90,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
 
     @Override
     public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
-            final NormalizedNode<?, ?> data) {
+            final NormalizedNode data) {
         return delegate().fromNormalizedNode(path, data);
     }
 

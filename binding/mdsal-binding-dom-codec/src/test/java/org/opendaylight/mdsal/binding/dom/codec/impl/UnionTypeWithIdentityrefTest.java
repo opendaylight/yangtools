@@ -34,12 +34,12 @@ public class UnionTypeWithIdentityrefTest extends AbstractBindingCodecTest {
     private DataObject createValueNode(final String valueString) {
         UnionType unionType = UnionTypeBuilder.getDefaultInstance(valueString);
         UnionNode unionNode = new UnionNodeBuilder().setValue(unionType).build();
-        NormalizedNode<?, ?> normalizedUnionNode = codecContext
+        NormalizedNode normalizedUnionNode = codecContext
             .toNormalizedNode(InstanceIdentifier.builder(UnionNode.class).build(), unionNode)
             .getValue();
 
         Entry<InstanceIdentifier<?>, DataObject> unionNodeEntry = codecContext.fromNormalizedNode(
-                YangInstanceIdentifier.of(normalizedUnionNode.getNodeType()), normalizedUnionNode);
+                YangInstanceIdentifier.of(normalizedUnionNode.getIdentifier().getNodeType()), normalizedUnionNode);
         DataObject unionNodeObj = unionNodeEntry.getValue();
         assertTrue(unionNodeObj instanceof UnionNode);
         return unionNodeObj;

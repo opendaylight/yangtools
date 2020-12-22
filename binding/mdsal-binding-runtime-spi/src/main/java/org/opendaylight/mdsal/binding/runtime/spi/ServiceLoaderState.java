@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.runtime.spi;
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 
 /**
  * State derived from ServiceLoader. We statically bind to this state. If you need more dynamics, you should not be

@@ -37,10 +37,10 @@ import org.slf4j.LoggerFactory;
 @Beta
 @Component(immediate = true,
            service = {
-                    BindingDOMCodecServices.class,
-                    BindingNormalizedNodeWriterFactory.class,
-                    BindingNormalizedNodeSerializer.class,
-                    BindingCodecTree.class
+               BindingDOMCodecServices.class,
+               BindingNormalizedNodeWriterFactory.class,
+               BindingNormalizedNodeSerializer.class,
+               BindingCodecTree.class
            })
 public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCodecServices {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalBindingDOMCodecServices.class);

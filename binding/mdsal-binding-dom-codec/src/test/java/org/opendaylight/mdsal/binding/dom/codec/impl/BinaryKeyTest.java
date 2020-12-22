@@ -46,7 +46,7 @@ public class BinaryKeyTest extends AbstractBindingCodecTest {
     }
 
     private BinaryList process(final BinaryList binaryList) {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             instanceIdentifier, binaryList);
         return (BinaryList) codecContext.fromNormalizedNode(entry.getKey(), entry.getValue()).getValue();
     }

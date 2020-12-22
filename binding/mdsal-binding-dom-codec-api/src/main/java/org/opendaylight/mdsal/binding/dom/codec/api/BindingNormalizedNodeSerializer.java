@@ -60,7 +60,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <T extends DataObject> @NonNull Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> toNormalizedNode(
+    <T extends DataObject> @NonNull Entry<YangInstanceIdentifier, NormalizedNode> toNormalizedNode(
             InstanceIdentifier<T> path, T data);
 
     /**
@@ -71,7 +71,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return DOM Instance Identifier
      */
     @Nullable Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(@NonNull YangInstanceIdentifier path,
-            NormalizedNode<?, ?> data);
+            NormalizedNode data);
 
     /**
      * Translates supplied NormalizedNode Notification into Binding data.

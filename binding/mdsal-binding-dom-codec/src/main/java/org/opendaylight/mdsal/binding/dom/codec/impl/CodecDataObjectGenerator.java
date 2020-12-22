@@ -83,7 +83,7 @@ import org.slf4j.LoggerFactory;
  *         private static final VarHandle getBar$$$V;
  *         private volatile Object getBar;
  *
- *         public Foo$$$codecImpl(NormalizedNodeContainer data) {
+ *         public Foo$$$codecImpl(DistinctNodeContainer data) {
  *             super(data);
  *         }
  *

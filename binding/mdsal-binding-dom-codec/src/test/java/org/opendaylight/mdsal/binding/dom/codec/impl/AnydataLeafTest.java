@@ -96,7 +96,7 @@ public class AnydataLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnydataFromBinding() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Cont.class), new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.create(CONT_NODE_ID), entry.getKey());
         assertEquals(cont, entry.getValue());

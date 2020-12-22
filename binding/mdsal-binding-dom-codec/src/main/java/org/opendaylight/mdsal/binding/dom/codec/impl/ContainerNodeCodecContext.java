@@ -22,13 +22,13 @@ final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCo
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode data) {
         checkState(data instanceof ContainerNode, "Unexpected data %s", data);
         return createBindingProxy((ContainerNode) data);
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
         return deserialize(normalizedNode);
     }
 }

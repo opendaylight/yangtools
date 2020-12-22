@@ -84,7 +84,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
             final Unordered<K, V> codec, final MapNode mapNode, final int size) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
-            final V entry = codec.createBindingProxy(mapNode.getValue().iterator().next());
+            final V entry = codec.createBindingProxy(mapNode.body().iterator().next());
             return Map.of(entry.key(), entry);
         }
         return size > LAZY_CUTOFF ? new LazyBindingMap<>(codec, mapNode) : eagerMap(codec, mapNode, size);
@@ -93,7 +93,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
     private static <K extends Identifier<V>, V extends DataObject & Identifiable<K>> @NonNull Map<K, V> eagerMap(
             final Unordered<K, V> codec, final MapNode mapNode, final int size) {
         final Builder<K, V> builder = ImmutableMap.builderWithExpectedSize(size);
-        for (MapEntryNode node : mapNode.getValue()) {
+        for (MapEntryNode node : mapNode.body()) {
             final V entry = codec.createBindingProxy(node);
             builder.put(entry.key(), entry);
         }
@@ -170,7 +170,7 @@ final class LazyBindingMap<K extends Identifier<V>, V extends DataObject & Ident
 
     Optional<V> lookupValue(final @NonNull Object key) {
         final NodeIdentifierWithPredicates childId = codec.serialize((Identifier<?>) key);
-        return mapNode.getChild(childId).map(codec::createBindingProxy);
+        return mapNode.findChildByArg(childId).map(codec::createBindingProxy);
     }
 
     @NonNull MapNode mapNode() {

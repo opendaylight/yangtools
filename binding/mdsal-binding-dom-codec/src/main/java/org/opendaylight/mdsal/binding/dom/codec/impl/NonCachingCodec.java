@@ -21,12 +21,12 @@ class NonCachingCodec<D extends DataObject> implements BindingNormalizedNodeCach
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode data) {
         return delegate.deserialize(data);
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(final D data) {
+    public NormalizedNode serialize(final D data) {
         return delegate.serialize(data);
     }
 

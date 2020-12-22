@@ -24,7 +24,7 @@ public class NonCachingCodecTest {
     @Mock
     private BindingNormalizedNodeCodec<DataObject> codec;
     @Mock
-    private NormalizedNode<?, ?> node;
+    private NormalizedNode node;
     @Mock
     private DataObject object;
 

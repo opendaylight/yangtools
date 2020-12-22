@@ -22,13 +22,13 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
+    public D deserialize(final NormalizedNode normalizedNode) {
         Preconditions.checkArgument(normalizedNode instanceof AugmentationNode);
         return createBindingProxy((AugmentationNode)normalizedNode);
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
         return deserialize(normalizedNode);
     }
 }

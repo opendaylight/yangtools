@@ -33,7 +33,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
     public void specifiedBooleanLeafTest() {
         final BooleanCont booleanCont  = new BooleanContBuilder().setIsFoo(true).build();
 
-        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> res = codecContext
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode> res = codecContext
                 .toNormalizedNode(BOOLEAN_CONT_II, booleanCont);
 
         final BooleanCont booleanContBinding = (BooleanCont)codecContext
@@ -46,7 +46,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
     public void specifiedCommonLeafTest() {
         final BarCont barCont  = new BarContBuilder().setLeaf2("foo").build();
 
-        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> res = codecContext
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode> res = codecContext
                 .toNormalizedNode(BAR_CONT_II, barCont);
 
         final BarCont booleanContBinding = (BarCont)codecContext
@@ -60,7 +60,7 @@ public class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         final List<String> testList = ImmutableList.of("test");
         final BarCont barCont  = new BarContBuilder().setLeafList1(testList).build();
 
-        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> res = codecContext
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode> res = codecContext
                 .toNormalizedNode(BAR_CONT_II, barCont);
 
         final BarCont barContAfterConverting = (BarCont)codecContext

@@ -46,7 +46,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         }
 
         @Override
-        ForeignDataNode<?, ?> serializedData(final OpaqueData<?> opaqueData) {
+        ForeignDataNode<?> serializedData(final OpaqueData<?> opaqueData) {
             final Class<?> model = opaqueData.getObjectModel();
             verify(DOMSource.class.isAssignableFrom(model), "Cannot just yet support object model %s", model);
             return Builders.anyXmlBuilder().withNodeIdentifier(getDomPathArgument())
@@ -54,7 +54,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         }
 
         @Override
-        T deserialize(final ForeignDataNode<?, ?> foreignData) {
+        T deserialize(final ForeignDataNode<?> foreignData) {
             // Streaming cannot support anything but DOMSource-based AnyxmlNodes.
             verify(foreignData instanceof DOMSourceAnyxmlNode, "Variable node %s not supported yet", foreignData);
             return super.deserialize(foreignData);
@@ -98,7 +98,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         @Override
         protected Object deserializeImpl(final Object input) {
             checkArgument(input instanceof NormalizedNode, "Unexpected input %s", input);
-            return OpaqueNodeCodecContext.this.deserializeObject((NormalizedNode<?, ?>) input);
+            return OpaqueNodeCodecContext.this.deserializeObject((NormalizedNode) input);
         }
     };
 
@@ -118,24 +118,24 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     }
 
     @Override
-    public final T deserialize(final NormalizedNode<?, ?> data) {
+    public final T deserialize(final NormalizedNode data) {
         checkArgument(data instanceof ForeignDataNode, "Unexpected value %s", data);
-        return deserialize((ForeignDataNode<?, ?>) data);
+        return deserialize((ForeignDataNode<?>) data);
     }
 
-    T deserialize(final ForeignDataNode<?, ?> foreignData) {
+    T deserialize(final ForeignDataNode<?> foreignData) {
         return bindingClass.cast(createBindingProxy(new ForeignOpaqueData<>(foreignData)));
     }
 
     @Override
-    public final ForeignDataNode<?, ?> serialize(final T data) {
+    public final ForeignDataNode<?> serialize(final T data) {
         final OpaqueData<?> opaqueData = data.getValue();
         return opaqueData instanceof ForeignOpaqueData ? ((ForeignOpaqueData<?>) opaqueData).domData()
                 : serializedData(opaqueData);
     }
 
     @Override
-    protected final @NonNull Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected final @NonNull Object deserializeObject(final NormalizedNode normalizedNode) {
         return deserialize(normalizedNode);
     }
 
@@ -144,7 +144,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         return valueCodec;
     }
 
-    abstract @NonNull ForeignDataNode<?, ?> serializedData(OpaqueData<?> opaqueData);
+    abstract @NonNull ForeignDataNode<?> serializedData(OpaqueData<?> opaqueData);
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private OpaqueObject<?> createBindingProxy(final OpaqueData<?> data) {

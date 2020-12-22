@@ -96,7 +96,7 @@ public class AnyxmlLeafTest extends AbstractBindingCodecTest {
 
     @Test
     public void testAnyxmlFromBinding() {
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = codecContext.toNormalizedNode(
+        final Entry<YangInstanceIdentifier, NormalizedNode> entry = codecContext.toNormalizedNode(
             InstanceIdentifier.create(Cont.class), new ContBuilder().setContAny(new FakeCont()).build());
         assertEquals(YangInstanceIdentifier.create(CONT_NODE_ID), entry.getKey());
         assertEquals(cont, entry.getValue());

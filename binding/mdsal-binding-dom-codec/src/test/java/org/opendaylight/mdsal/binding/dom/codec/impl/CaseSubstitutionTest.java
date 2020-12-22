@@ -53,8 +53,8 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
             .withKey(CHOICE_FOO_KEY)
             .setChoiceInChoiceList(new ComplexViaUsesBuilder(createComplexData()).build())
             .build();
-        final NormalizedNode<?, ?> domTreeEntry = codecContext.toNormalizedNode(BA_CHOICE_LIST, baTree).getValue();
-        final NormalizedNode<?, ?> domRpcEntry = codecContext.toNormalizedNode(BA_CHOICE_LIST, baRpc).getValue();
+        final NormalizedNode domTreeEntry = codecContext.toNormalizedNode(BA_CHOICE_LIST, baTree).getValue();
+        final NormalizedNode domRpcEntry = codecContext.toNormalizedNode(BA_CHOICE_LIST, baRpc).getValue();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 

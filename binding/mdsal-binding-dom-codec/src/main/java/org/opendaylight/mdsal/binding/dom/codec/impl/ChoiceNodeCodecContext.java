@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.util.NormalizedNodeSchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -127,8 +127,8 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                 // Updates collection of YANG instance identifier to case
                 for (final DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
                     if (cazeChild.isAugmenting()) {
-                        final AugmentationSchemaNode augment = SchemaUtils.findCorrespondingAugment(cazeDef.getSchema(),
-                            cazeChild);
+                        final AugmentationSchemaNode augment =
+                            NormalizedNodeSchemaUtils.findCorrespondingAugment(cazeDef.getSchema(), cazeChild);
                         if (augment != null) {
                             byYangCaseChildBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment),
                                 cazeDef);
@@ -238,10 +238,10 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     @SuppressWarnings("unchecked")
     @Override
-    public D deserialize(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode data) {
         checkArgument(data instanceof ChoiceNode);
         final ChoiceNode casted = (ChoiceNode) data;
-        final NormalizedNode<?, ?> first = Iterables.getFirst(casted.getValue(), null);
+        final NormalizedNode first = Iterables.getFirst(casted.body(), null);
 
         if (first == null) {
             // FIXME: this needs to be sorted out
@@ -252,7 +252,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
         return deserialize(normalizedNode);
     }
 

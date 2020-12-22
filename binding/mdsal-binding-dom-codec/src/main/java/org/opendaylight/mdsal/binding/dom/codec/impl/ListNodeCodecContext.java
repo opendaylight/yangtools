@@ -29,7 +29,7 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> node) {
+    public D deserialize(final NormalizedNode node) {
         if (node instanceof MapEntryNode) {
             return createBindingProxy((MapEntryNode) node);
         } else if (node instanceof UnkeyedListEntryNode) {
@@ -40,7 +40,7 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> node) {
+    protected Object deserializeObject(final NormalizedNode node) {
         if (node instanceof MapNode) {
             return fromMap((MapNode) node);
         } else if (node instanceof MapEntryNode) {
@@ -55,7 +55,7 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     @NonNull Object fromMap(final MapNode map, final int size) {
-        return LazyBindingList.create(this, size, map.getValue());
+        return LazyBindingList.create(this, size, map.body());
     }
 
     private Object fromMap(final MapNode map) {
@@ -67,6 +67,6 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     private List<D> fromUnkeyedList(final UnkeyedListNode node) {
         final int size;
         // This should never happen, but we do need to ensure users never see an empty List
-        return (size = node.getSize()) == 0 ? null : LazyBindingList.create(this, size, node.getValue());
+        return (size = node.size()) == 0 ? null : LazyBindingList.create(this, size, node.body());
     }
 }

@@ -43,12 +43,12 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         }
 
         @Override
-        public T deserialize(final NormalizedNode<?, ?> data) {
+        public T deserialize(final NormalizedNode data) {
             return bindingClass.cast(deserializeObject(data));
         }
 
         @Override
-        public NormalizedNode<?, ?> serialize(final T data) {
+        public NormalizedNode serialize(final T data) {
             return ImmutableNodes.leafNode(getDomPathArgument(), getValueCodec().serialize(data));
         }
     }
@@ -66,8 +66,8 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     }
 
     @Override
-    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
-        return normalizedNode != null ? getValueCodec().deserialize(normalizedNode.getValue()) : null;
+    protected Object deserializeObject(final NormalizedNode normalizedNode) {
+        return normalizedNode != null ? getValueCodec().deserialize(normalizedNode.body()) : null;
     }
 
     private static Object createDefaultObject(final LeafSchemaNode schema,

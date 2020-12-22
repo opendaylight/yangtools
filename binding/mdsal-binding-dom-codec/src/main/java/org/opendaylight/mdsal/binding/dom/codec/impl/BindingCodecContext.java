@@ -491,7 +491,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?,?>> toNormalizedNode(
+    public <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode> toNormalizedNode(
             final InstanceIdentifier<T> path, final T data) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
@@ -513,7 +513,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
-            final NormalizedNode<?, ?> data) {
+            final NormalizedNode data) {
         if (notBindingRepresentable(data)) {
             return null;
         }
@@ -608,7 +608,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
 
-    private static boolean notBindingRepresentable(final NormalizedNode<?, ?> data) {
+    private static boolean notBindingRepresentable(final NormalizedNode data) {
         // ValueNode covers LeafNode and LeafSetEntryNode
         return data instanceof ValueNode
                 || data instanceof MapNode || data instanceof UnkeyedListNode

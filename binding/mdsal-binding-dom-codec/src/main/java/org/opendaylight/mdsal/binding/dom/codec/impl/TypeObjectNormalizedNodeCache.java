@@ -21,7 +21,7 @@ final class TypeObjectNormalizedNodeCache<C extends NodeCodecContext & BindingTy
     }
 
     @Override
-    public NormalizedNode<?, ?> load(final TypeObject key) {
+    public NormalizedNode load(final TypeObject key) {
         return rootContext().serialize(key);
     }
 }

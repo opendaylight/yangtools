@@ -211,7 +211,7 @@ final class LazyBindingMapLookupState<K extends Identifier<V>, V extends DataObj
 
         Values(final LazyBindingMapLookupState<K, V> state) {
             this.state = requireNonNull(state);
-            objects = map().mapNode().getValue().toArray();
+            objects = map().mapNode().body().toArray();
         }
 
         @Override
@@ -244,7 +244,7 @@ final class LazyBindingMapLookupState<K extends Identifier<V>, V extends DataObj
             final Object[] local = objects;
             // When we have null objects it means we have everyone in state.objects
             return local == null ? Iterators.unmodifiableIterator(state.objects.keySet().iterator())
-                    : Iterators.transform(new ValuesIter<>(this, local), value -> value.key());
+                    : Iterators.transform(new ValuesIter<>(this, local),  value -> value.key());
         }
 
         LazyBindingMap<K, V> map() {

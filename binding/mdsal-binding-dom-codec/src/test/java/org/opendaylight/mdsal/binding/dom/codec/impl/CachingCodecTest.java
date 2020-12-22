@@ -88,14 +88,14 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     @Test
     public void testListCache() {
         final BindingNormalizedNodeCachingCodec<Top> cachingCodec = createCachingCodec(TopLevelList.class);
-        final NormalizedNode<?, ?> first = cachingCodec.serialize(TOP_TWO_LIST_DATA);
-        final NormalizedNode<?, ?> second = cachingCodec.serialize(TOP_TWO_LIST_DATA);
+        final NormalizedNode first = cachingCodec.serialize(TOP_TWO_LIST_DATA);
+        final NormalizedNode second = cachingCodec.serialize(TOP_TWO_LIST_DATA);
 
         assertNotSame(first, second);
         assertEquals(first, second);
         verifyListItemSame(first, second);
 
-        final NormalizedNode<?, ?> third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
+        final NormalizedNode third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
         verifyListItemSame(first, third);
         verifyListItemSame(second, third);
     }
@@ -103,13 +103,13 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     @Test
     public void testTopAndListCache() {
         final BindingNormalizedNodeCachingCodec<Top> cachingCodec = createCachingCodec(Top.class, TopLevelList.class);
-        final NormalizedNode<?, ?> first = cachingCodec.serialize(TOP_TWO_LIST_DATA);
-        final NormalizedNode<?, ?> second = cachingCodec.serialize(TOP_TWO_LIST_DATA);
+        final NormalizedNode first = cachingCodec.serialize(TOP_TWO_LIST_DATA);
+        final NormalizedNode second = cachingCodec.serialize(TOP_TWO_LIST_DATA);
 
         assertEquals(first, second);
         assertSame(first, second);
 
-        final NormalizedNode<?, ?> third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
+        final NormalizedNode third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
         verifyListItemSame(first, third);
     }
 
@@ -119,8 +119,8 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         assertNotSame(CONT_DATA.getCaching().getValue(), CONT2_DATA.getCaching().getValue());
 
         final BindingNormalizedNodeCachingCodec<Cont> cachingCodec = createContCachingCodec(Cont.class, MyType.class);
-        final NormalizedNode<?, ?> first = cachingCodec.serialize(CONT_DATA);
-        final NormalizedNode<?, ?> second = cachingCodec.serialize(CONT2_DATA);
+        final NormalizedNode first = cachingCodec.serialize(CONT_DATA);
+        final NormalizedNode second = cachingCodec.serialize(CONT2_DATA);
 
         assertNotEquals(first, second);
         verifyLeafItemSame(first, second);
@@ -134,7 +134,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         assertNull(input.getTopLevelList());
         assertEquals(ImmutableMap.of(), input.nonnullTopLevelList());
 
-        final NormalizedNode<?, ?> dom = cachingCodec.serialize(input);
+        final NormalizedNode dom = cachingCodec.serialize(input);
         final Top output = cachingCodec.deserialize(dom);
         assertTrue(input.equals(output));
         assertTrue(output.equals(input));
@@ -155,31 +155,30 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         return contNode.createCachingCodec(ImmutableSet.copyOf(classes));
     }
 
-    private static void verifyListItemSame(final NormalizedNode<?, ?> firstTop, final NormalizedNode<?, ?> secondTop) {
-        final Collection<MapEntryNode> initialNodes = getListItems(firstTop).getValue();
+    private static void verifyListItemSame(final NormalizedNode firstTop, final NormalizedNode secondTop) {
+        final Collection<MapEntryNode> initialNodes = getListItems(firstTop).body();
         final MapNode secondMap = getListItems(secondTop);
 
         for (final MapEntryNode initial : initialNodes) {
-            final MapEntryNode second = secondMap.getChild(initial.getIdentifier()).get();
+            final MapEntryNode second = secondMap.childByArg(initial.getIdentifier());
             assertEquals(initial, second);
             assertSame(initial, second);
         }
     }
 
-    private static MapNode getListItems(final NormalizedNode<?, ?> top) {
-        return (MapNode) ((DataContainerNode<?>) top).getChild(TOP_LEVEL_LIST_ARG).get();
+    private static MapNode getListItems(final NormalizedNode top) {
+        return (MapNode) ((DataContainerNode) top).findChildByArg(TOP_LEVEL_LIST_ARG).get();
     }
 
-    private static void verifyLeafItemSame(final NormalizedNode<?, ?> firstCont,
-            final NormalizedNode<?, ?> secondCont) {
-        final DataContainerChild<?, ?> first = ((DataContainerNode<?>) firstCont).getChild(LEAF_ARG).get();
+    private static void verifyLeafItemSame(final NormalizedNode firstCont, final NormalizedNode secondCont) {
+        final DataContainerChild first = ((DataContainerNode) firstCont).childByArg(LEAF_ARG);
         assertTrue(first instanceof LeafNode);
 
-        final DataContainerChild<?, ?> second = ((DataContainerNode<?>) secondCont).getChild(LEAF_ARG).get();
+        final DataContainerChild second = ((DataContainerNode) secondCont).childByArg(LEAF_ARG);
         assertTrue(second instanceof LeafNode);
 
         // The leaf nodes are transient, but the values should be the same
         assertEquals(first, second);
-        assertSame(first.getValue(), second.getValue());
+        assertSame(first.body(), second.body());
     }
 }

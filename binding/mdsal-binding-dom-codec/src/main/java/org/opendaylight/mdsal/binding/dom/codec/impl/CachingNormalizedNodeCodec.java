@@ -26,12 +26,12 @@ class CachingNormalizedNodeCodec<D extends DataObject> extends AbstractBindingNo
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode data) {
         return context.deserialize(data);
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(final D data) {
+    public NormalizedNode serialize(final D data) {
         // Serialize data using stream writer with child cache enable or using the cache if it is available
         final AbstractBindingNormalizedNodeCache<D, ?> cache = getCachingSerializer(context);
         return cache == null ? CachingNormalizedNodeSerializer.serializeUsingStreamWriter(this, context, data)

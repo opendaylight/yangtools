@@ -38,7 +38,7 @@ public class TypedefTest extends AbstractBindingCodecTest {
                 .setAction2(new PolicyLoggingFlag(false))
                 .setAction3(true)
                 .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom =
+        final Entry<YangInstanceIdentifier, NormalizedNode> dom =
                 codecContext.toNormalizedNode(BA_DEFAULT_POLICY, binding);
         final Entry<InstanceIdentifier<?>, DataObject> readed =
                 codecContext.fromNormalizedNode(dom.getKey(),dom.getValue());
@@ -54,7 +54,7 @@ public class TypedefTest extends AbstractBindingCodecTest {
                 .setEmptyLeaf2(new TypedefEmpty(Empty.getInstance()))
                 .setEmptyLeaf3(Empty.getInstance())
                 .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom =
+        final Entry<YangInstanceIdentifier, NormalizedNode> dom =
                 codecContext.toNormalizedNode(BA_TEST_CONT, binding);
         final Entry<InstanceIdentifier<?>, DataObject> readed =
                 codecContext.fromNormalizedNode(dom.getKey(),dom.getValue());

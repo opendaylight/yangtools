@@ -11,7 +11,6 @@ import static com.google.common.collect.ImmutableList.of;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +18,13 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 public class BindingMappingTest {
 
     @Test
     public void basicTest() {
-        assertTrue(BindingMapping.getRootPackageName(QName.create(QNameModule.create(URI.create("test:URI"),
+        assertTrue(BindingMapping.getRootPackageName(QName.create(QNameModule.create(XMLNamespace.of("test:URI"),
                 Revision.of("2017-10-26")), "test")).contains("test.uri"));
         assertTrue(BindingMapping.normalizePackageName("1testpublic").contains("_1testpublic"));
         assertTrue(BindingMapping.getMethodName(QName.create("testNS", "testLocalName")).equals("testLocalName"));
