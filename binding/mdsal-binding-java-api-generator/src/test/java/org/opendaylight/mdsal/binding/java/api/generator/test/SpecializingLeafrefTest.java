@@ -63,11 +63,11 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final String TAB_CLOSING_METHOD_BRACE = TAB + CLOSING_METHOD_BRACE;
     private static final String DTAB_CLOSING_METHOD_BRACE = DOUBLE_TAB + CLOSING_METHOD_BRACE;
 
-    private static final String FOO_GRP_REF = "org.opendaylight.yang.gen.v1.mdsal426.norev.FooGrp";
-    private static final String RESOLVED_LEAF_GRP_REF = "org.opendaylight.yang.gen.v1.mdsal426.norev.ResolvedLeafGrp";
+    private static final String FOO_GRP_REF = "FooGrp";
+    private static final String RESOLVED_LEAF_GRP_REF = "ResolvedLeafGrp";
 
     private static final String UNRESOLVED_GROUPING_REF =
-            "org.opendaylight.yang.gen.v1.mdsal426.norev.UnresolvedGrouping";
+            "UnresolvedGrouping";
 
     private static final String ARG_AS_FOO_GRP = "((" + FOO_GRP_REF + ")arg)";
 
@@ -217,9 +217,9 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
                 TAB_FIELDS_FROM_SIGNATURE,
                 DTAB_INIT_IS_VALID_ARG_FALSE,
                 doubleTab("if (arg instanceof " + FOO_GRP_REF + ") {"),
-                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(java.lang.String.class, \"leaf1\", "
+                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
                     + ARG_AS_FOO_GRP + ".getLeaf1());"),
-                tripleTab("this._leafList1 = CodeHelpers.checkListFieldCast(java.lang.String.class, \"leafList1\", "
+                tripleTab("this._leafList1 = CodeHelpers.checkListFieldCast(String.class, \"leafList1\", "
                     + ARG_AS_FOO_GRP + ".getLeafList1());"),
                 tripleTab("this._leaf2 = " + ARG_AS_FOO_GRP + ".getLeaf2();"),
                 TTAB_SET_IS_VALID_ARG_TRUE,
@@ -236,9 +236,9 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static void barContBuilderConstructorFooGrpTest(final File file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 tab("public BarContBuilder(" + FOO_GRP_REF + " arg) {"),
-                doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(java.lang.String.class, \"leaf1\", "
+                doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(String.class, \"leaf1\", "
                     + "arg.getLeaf1());"),
-                doubleTab("this._leafList1 = CodeHelpers.checkListFieldCast(java.lang.String.class, \"leafList1\", "
+                doubleTab("this._leafList1 = CodeHelpers.checkListFieldCast(String.class, \"leafList1\", "
                     + "arg.getLeafList1());"),
                 doubleTab(LEAF2_ASSIGNMENT),
                 TAB_CLOSING_METHOD_BRACE);
@@ -258,7 +258,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
                 TAB_FIELDS_FROM_SIGNATURE,
                 DTAB_INIT_IS_VALID_ARG_FALSE,
                 doubleTab("if (arg instanceof " + UNRESOLVED_GROUPING_REF + ") {"),
-                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(java.lang.Boolean.class, \"leaf1\", (("
+                tripleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", (("
                     + UNRESOLVED_GROUPING_REF + ")arg).getLeaf1());"),
                 TTAB_SET_IS_VALID_ARG_TRUE,
                 DTAB_CLOSING_METHOD_BRACE,
@@ -269,7 +269,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static void booleanContBuilderConstructorTest(final File file, final String content) {
         FileSearchUtil.assertFileContainsConsecutiveLines(file, content,
                 tab("public BooleanContBuilder(" + UNRESOLVED_GROUPING_REF + " arg) {"),
-                doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(java.lang.Boolean.class, \"leaf1\", "
+                doubleTab("this._leaf1 = CodeHelpers.checkFieldCast(Boolean.class, \"leaf1\", "
                     + "arg.getLeaf1());"),
                 TAB_CLOSING_METHOD_BRACE);
     }

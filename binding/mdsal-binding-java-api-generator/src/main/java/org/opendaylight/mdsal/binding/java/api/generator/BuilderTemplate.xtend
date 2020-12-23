@@ -132,7 +132,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private Object generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType)»
             «IF impl.hasNonDefaultMethods»
-                public «type.name»(«impl.fullyQualifiedName» arg) {
+                public «type.name»(«impl.importedName» arg) {
                     «printConstructorPropertySetter(impl)»
                 }
             «ENDIF»
@@ -206,7 +206,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
          * Set fields from given grouping argument. Valid argument is instance of one of following types:
          * <ul>
          «FOR impl : type.getAllIfcs»
-         * <li>«impl.fullyQualifiedName»</li>
+         * <li>«impl.importedName»</li>
          «ENDFOR»
          * </ul>
          *
@@ -231,7 +231,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateIfCheck(Type impl, List<Type> done) '''
         «IF (impl instanceof GeneratedType && (impl as GeneratedType).hasNonDefaultMethods)»
             «val implType = impl as GeneratedType»
-            if (arg instanceof «implType.fullyQualifiedName») {
+            if (arg instanceof «implType.importedName») {
                 «printPropertySetter(implType)»
                 isValidArg = true;
             }
@@ -243,7 +243,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         «val ifc = implementedIfc as GeneratedType»
         «FOR getter : ifc.nonDefaultMethods»
             «IF BindingMapping.isGetterMethodName(getter.name) && !hasOverrideAnnotation(getter)»
-                «printPropertySetter(getter, '''((«ifc.fullyQualifiedName»)arg).«getter.name»()''', getter.propertyNameFromGetter)»;
+                «printPropertySetter(getter, '''((«ifc.importedName»)arg).«getter.name»()''', getter.propertyNameFromGetter)»;
             «ENDIF»
         «ENDFOR»
         «ENDIF»
@@ -258,10 +258,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         if (Types.isListType(ownGetterType)) {
             val itemType = (ownGetterType as ParameterizedType).actualTypeArguments.get(0)
             return '''
-                this._«propertyName» = «CODEHELPERS.importedName».checkListFieldCast(«itemType.fullyQualifiedName».class, "«propertyName»", «retrieveProperty»)'''
+                this._«propertyName» = «CODEHELPERS.importedName».checkListFieldCast(«itemType.importedName».class, "«propertyName»", «retrieveProperty»)'''
         }
         return '''
-            this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetter.returnType.fullyQualifiedName».class, "«propertyName»", «retrieveProperty»)'''
+            this._«propertyName» = «CODEHELPERS.importedName».checkFieldCast(«ownGetter.returnType.importedName».class, "«propertyName»", «retrieveProperty»)'''
     }
 
     private def List<Type> getBaseIfcs(GeneratedType type) {
@@ -291,7 +291,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     private def List<String> toListOfNames(Collection<Type> types) {
         val List<String> names = new ArrayList
         for (type : types) {
-            names.add(type.fullyQualifiedName)
+            names.add(type.importedName)
         }
         return names
     }

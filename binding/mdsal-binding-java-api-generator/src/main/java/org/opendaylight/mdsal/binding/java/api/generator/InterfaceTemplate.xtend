@@ -232,7 +232,7 @@ class InterfaceTemplate extends BaseTemplate {
         }
     '''
 
-    def private static accessorJavadoc(MethodSignature method, String orString) {
+    def private accessorJavadoc(MethodSignature method, String orString) {
         val reference = method.comment?.referenceDescription
         val propReturn = method.propertyNameFromGetter + ", or " + orString + " if it is not present."
 
@@ -240,7 +240,7 @@ class InterfaceTemplate extends BaseTemplate {
             Return «propReturn»
 
             «reference.formatReference»
-            @return {@code «method.returnType.fullyQualifiedName»} «propReturn»
+            @return {@code «method.returnType.importedName»} «propReturn»
         ''')
     }
 
