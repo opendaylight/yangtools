@@ -277,7 +277,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         // was defined.
         DataSchemaNode sameName;
         try {
-            sameName = getSchema().getDataChildByName(origDef.getQName());
+            sameName = getSchema().dataChildByName(origDef.getQName());
         } catch (final IllegalArgumentException e) {
             LOG.trace("Failed to find schema for {}", origDef, e);
             sameName = null;
@@ -296,7 +296,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         } else {
             // We are looking for instantiation via uses in other module
             final QName instantiedName = origDef.getQName().bindTo(namespace());
-            final DataSchemaNode potential = getSchema().getDataChildByName(instantiedName);
+            final DataSchemaNode potential = getSchema().dataChildByName(instantiedName);
             // We check if it is really instantiated from same definition as class was derived
             if (potential != null && origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(potential))) {
                 childSchema = potential;

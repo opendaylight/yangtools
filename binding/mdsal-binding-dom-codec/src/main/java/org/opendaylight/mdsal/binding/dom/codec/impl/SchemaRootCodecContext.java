@@ -88,7 +88,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public DataContainerCodecContext<?, ?> load(final QName qname) {
-                final DataSchemaNode childSchema = getSchema().getDataChildByName(qname);
+                final DataSchemaNode childSchema = getSchema().dataChildByName(qname);
                 childNonNull(childSchema, qname, "Argument %s is not valid child of %s", qname, getSchema());
                 if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
                     @SuppressWarnings("unchecked")
@@ -188,7 +188,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
         final QName qname = BindingReflections.findQName(key);
-        final DataSchemaNode childSchema = childNonNull(getSchema().getDataChildByName(qname), key,
+        final DataSchemaNode childSchema = childNonNull(getSchema().dataChildByName(qname), key,
             "%s is not top-level item.", key);
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }

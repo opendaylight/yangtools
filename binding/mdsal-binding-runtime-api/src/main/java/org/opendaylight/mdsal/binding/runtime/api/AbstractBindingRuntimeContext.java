@@ -120,7 +120,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         final Set<QName> childNames = new HashSet<>();
         final Set<DataSchemaNode> realChilds = new HashSet<>();
         for (final DataSchemaNode child : origSchema.getChildNodes()) {
-            final DataSchemaNode dataChildQNname = target.getDataChildByName(child.getQName());
+            final DataSchemaNode dataChildQNname = target.dataChildByName(child.getQName());
             final String childLocalName = child.getQName().getLocalName();
             if (dataChildQNname == null) {
                 for (DataSchemaNode dataSchemaNode : target.getChildNodes()) {
