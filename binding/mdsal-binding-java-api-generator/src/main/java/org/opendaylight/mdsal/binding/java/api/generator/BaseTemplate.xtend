@@ -269,7 +269,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                 val node = def.node
                 sb.append("<p>\n")
                 .append("This class represents the following YANG schema fragment defined in module <b>")
-                .append(def.module.argument).append("</b>\n")
+                .append(def.module.argument.localName).append("</b>\n")
                 .append("<pre>\n")
                 appendYangSnippet(sb, def.module, (node as EffectiveStatement<?, ?>).declared)
                 sb.append("</pre>")
