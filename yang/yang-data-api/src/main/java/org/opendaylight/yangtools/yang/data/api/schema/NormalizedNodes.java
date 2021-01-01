@@ -137,34 +137,33 @@ public final class NormalizedNodes {
      * @return String containing a human-readable form of the subtree.
      */
     public static String toStringTree(final NormalizedNode node) {
-        final StringBuilder builder = new StringBuilder();
-        toStringTree(builder, node, 0);
-        return builder.toString();
+        final StringBuilder sb = new StringBuilder();
+        toStringTree(sb, node, 0);
+        return sb.toString();
     }
 
-    private static void toStringTree(final StringBuilder builder, final NormalizedNode node, final int offset) {
+    private static void toStringTree(final StringBuilder sb, final NormalizedNode node, final int offset) {
         final String prefix = " ".repeat(offset);
-
-        builder.append(prefix).append(toStringTree(node.getIdentifier()));
+        appendPathArgument(sb.append(prefix), node.getIdentifier());
         if (node instanceof NormalizedNodeContainer) {
-            builder.append(" {\n");
+            sb.append(" {\n");
             for (NormalizedNode child : ((NormalizedNodeContainer<?, ?>) node).body()) {
-                toStringTree(builder, child, offset + STRINGTREE_INDENT);
+                toStringTree(sb, child, offset + STRINGTREE_INDENT);
             }
-            builder.append(prefix).append('}');
+            sb.append(prefix).append('}');
         } else {
-            builder.append(' ').append(node.body());
+            sb.append(' ').append(node.body());
         }
-        builder.append('\n');
+        sb.append('\n');
     }
 
-    private static String toStringTree(final PathArgument identifier) {
-        if (identifier instanceof NodeIdentifierWithPredicates) {
-            return identifier.getNodeType().getLocalName() + ((NodeIdentifierWithPredicates) identifier).values();
-        } else if (identifier instanceof AugmentationIdentifier) {
-            return "augmentation";
+    private static void appendPathArgument(final StringBuilder sb, final PathArgument arg) {
+        if (arg instanceof NodeIdentifierWithPredicates) {
+            sb.append(arg.getNodeType().getLocalName()).append(((NodeIdentifierWithPredicates) arg).values());
+        } else if (arg instanceof AugmentationIdentifier) {
+            sb.append("augmentation");
         } else {
-            return identifier.getNodeType().getLocalName();
+            sb.append(arg.getNodeType().getLocalName());
         }
     }
 }
