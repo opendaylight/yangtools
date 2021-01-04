@@ -94,7 +94,7 @@ public final class ByteBufUtils {
      * @param value A {@link Uint8}
      * @throws NullPointerException if any argument is null
      */
-    public static void write(final ByteBuf buf, final Uint8 value) {
+    public static void writeUint8(final ByteBuf buf, final Uint8 value) {
         buf.writeByte(value.byteValue());
     }
 
@@ -105,18 +105,18 @@ public final class ByteBufUtils {
      * @param value A {@link Uint16}
      * @throws NullPointerException if any argument is null
      */
-    public static void write(final ByteBuf buf, final Uint16 value) {
+    public static void writeUint16(final ByteBuf buf, final Uint16 value) {
         buf.writeShort(value.shortValue());
     }
 
     /**
-     * Write a {@link Uint32} from specified buffer.
+     * Write a {@link Uint32} to specified buffer.
      *
      * @param buf buffer
      * @param value A {@link Uint32}
      * @throws NullPointerException if any argument is null
      */
-    public static void write(final ByteBuf buf, final Uint32 value) {
+    public static void writeUint32(final ByteBuf buf, final Uint32 value) {
         buf.writeInt(value.intValue());
     }
 
@@ -127,8 +127,56 @@ public final class ByteBufUtils {
      * @param value A {@link Uint64}
      * @throws NullPointerException if any argument is null
      */
-    public static void write(final ByteBuf buf, final Uint64 value) {
+    public static void writeUint64(final ByteBuf buf, final Uint64 value) {
         buf.writeLong(value.longValue());
+    }
+
+    /**
+     * Write a {@link Uint8} to specified buffer. This method is provided for convenience, you may want to use
+     * {@link #writeUint8(ByteBuf, Uint8)} as it is more explicit.
+     *
+     * @param buf buffer
+     * @param value A {@link Uint8}
+     * @throws NullPointerException if any argument is null
+     */
+    public static void write(final ByteBuf buf, final Uint8 value) {
+        writeUint8(buf, value);
+    }
+
+    /**
+     * Write a {@link Uint16} to specified buffer. This method is provided for convenience, you may want to use
+     * {@link #writeUint16(ByteBuf, Uint16)} as it is more explicit.
+     *
+     * @param buf buffer
+     * @param value A {@link Uint16}
+     * @throws NullPointerException if any argument is null
+     */
+    public static void write(final ByteBuf buf, final Uint16 value) {
+        writeUint16(buf, value);
+    }
+
+    /**
+     * Write a {@link Uint32} to specified buffer. This method is provided for convenience, you may want to use
+     * {@link #writeUint32(ByteBuf, Uint32)} as it is more explicit.
+     *
+     * @param buf buffer
+     * @param value A {@link Uint32}
+     * @throws NullPointerException if any argument is null
+     */
+    public static void write(final ByteBuf buf, final Uint32 value) {
+        writeUint32(buf, value);
+    }
+
+    /**
+     * Write a {@link Uint64} to specified buffer. This method is provided for convenience, you may want to use
+     * {@link #writeUint64(ByteBuf, Uint64)} as it is more explicit.
+     *
+     * @param buf buffer
+     * @param value A {@link Uint64}
+     * @throws NullPointerException if any argument is null
+     */
+    public static void write(final ByteBuf buf, final Uint64 value) {
+        writeUint64(buf, value);
     }
 
     /**
@@ -170,7 +218,7 @@ public final class ByteBufUtils {
      * @throws IllegalArgumentException if {@code value} is null
      */
     public static void writeMandatory(final ByteBuf buf, final Integer value, final String name) {
-        buf.writeInt(nonNullArgument(value, name).intValue());
+        buf.writeInt(nonNullArgument(value, name));
     }
 
     /**
@@ -184,7 +232,7 @@ public final class ByteBufUtils {
      * @throws IllegalArgumentException if {@code value} is null
      */
     public static void writeMandatory(final ByteBuf buf, final Long value, final String name) {
-        buf.writeLong(nonNullArgument(value, name).longValue());
+        buf.writeLong(nonNullArgument(value, name));
     }
 
     /**
@@ -278,7 +326,7 @@ public final class ByteBufUtils {
      */
     public static void writeOptional(final ByteBuf buf, final @Nullable Integer value) {
         if (value != null) {
-            buf.writeInt(value.intValue());
+            buf.writeInt(value);
         }
     }
 
@@ -291,7 +339,7 @@ public final class ByteBufUtils {
      */
     public static void writeOptional(final ByteBuf buf, final @Nullable Long value) {
         if (value != null) {
-            buf.writeLong(value.longValue());
+            buf.writeLong(value);
         }
     }
 
@@ -377,7 +425,7 @@ public final class ByteBufUtils {
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Integer value) {
-        buf.writeInt(value != null ? value.intValue() : 0);
+        buf.writeInt(value != null ? value : 0);
     }
 
     /**
@@ -388,7 +436,7 @@ public final class ByteBufUtils {
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Long value) {
-        buf.writeLong(value != null ? value.longValue() : 0L);
+        buf.writeLong(value != null ? value : 0L);
     }
 
     /**
