@@ -20,7 +20,9 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
@@ -28,6 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -35,7 +39,7 @@ public class RpcStmtTest {
 
     @Test
     public void rpcTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+        final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/model/baz.yang"))
                 .addSource(sourceForResource("/model/bar.yang"))
                 .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))
@@ -97,6 +101,14 @@ public class RpcStmtTest {
         assertFalse(fooRpc1.getOutput().equals(null));
         assertFalse(fooRpc1.getOutput().equals("str"));
         assertFalse(fooRpc1.getOutput().equals(fooRpc2.getOutput()));
+
+        final SchemaInferenceStack stack = new SchemaInferenceStack(result);
+        stack.enterSchemaTree(QName.create(testModule.getQNameModule(), "get-config"),
+                QName.create(testModule.getQNameModule(), "input"));
+        final ContainerLike rpcDataSchema = SchemaContextUtil.getRpcDataSchema(result, stack);
+        final Collection<? extends RpcDefinition> operations = testModule.getRpcs();
+        assertEquals(operations.iterator().next().getInput(), rpcDataSchema);
+
     }
 
     @Test
