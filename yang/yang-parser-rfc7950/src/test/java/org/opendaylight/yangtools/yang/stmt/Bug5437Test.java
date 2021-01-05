@@ -13,15 +13,15 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug5437Test {
     private static final String NS = "foo";
@@ -29,7 +29,7 @@ public class Bug5437Test {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5437");
+        EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5437");
         assertNotNull(context);
 
         QName root = QName.create(NS, REV, "root");
@@ -37,10 +37,15 @@ public class Bug5437Test {
         QName conGrp = QName.create(NS, REV, "con-grp");
         QName leafRef = QName.create(NS, REV, "leaf-ref");
 
-        SchemaPath leafRefPath = SchemaPath.create(true, root, conGrp, leafRef);
-        SchemaPath leafRef2Path = SchemaPath.create(true, root, leafRef2);
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, leafRefPath);
-        SchemaNode findDataSchemaNode2 = SchemaContextUtil.findDataSchemaNode(context, leafRef2Path);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(root);
+        stack.enterSchemaTree(conGrp);
+        stack.enterSchemaTree(leafRef);
+        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+        stack.clear();
+        stack.enterSchemaTree(root);
+        stack.enterSchemaTree(leafRef2);
+        SchemaNode findDataSchemaNode2 = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertThat(findDataSchemaNode, isA(LeafSchemaNode.class));
         assertThat(findDataSchemaNode2, isA(LeafSchemaNode.class));
 

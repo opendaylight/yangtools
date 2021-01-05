@@ -15,10 +15,14 @@ import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -49,5 +53,28 @@ public class NotificationStmtTest {
         final AnyxmlSchemaNode anyXml = (AnyxmlSchemaNode) notification.getDataChildByName(QName.create(
             testModule.getQNameModule(), "reporting-entity"));
         assertNotNull(anyXml);
+    }
+
+    @Test
+    public void notificationUtilsTest() throws ReactorException {
+        final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+                .addSources(sourceForResource("/model/notification.yang"))
+                .buildEffective();
+        assertNotNull(result);
+
+        final SchemaInferenceStack stack = new SchemaInferenceStack(result);
+
+        final Module notMod = result.findModules("notification").iterator().next();
+        stack.enterSchemaTree(QName.create(notMod.getQNameModule(), "foo"));
+        NotificationDefinition notificationSchema = SchemaContextUtil.getNotificationSchema(result, stack);
+        stack.exit();
+        assertEquals(notMod.getNotifications().iterator().next(), notificationSchema);
+
+        stack.enterSchemaTree(QName.create(notMod.getQNameModule(), "bar"));
+        stack.enterSchemaTree(QName.create(notMod.getQNameModule(), "bar"));
+        notificationSchema = SchemaContextUtil.getNotificationSchema(result, stack);
+        final NotificationDefinition expected = ((NotificationNodeContainer) notMod.getChildNodes().iterator().next())
+                .getNotifications().iterator().next();
+        assertEquals(expected, notificationSchema);
     }
 }

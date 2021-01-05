@@ -19,15 +19,15 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -36,15 +36,15 @@ public class Bug6870Test {
 
     @Test
     public void valid11Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6870/foo.yang");
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6870/foo.yang");
         assertNotNull(schemaContext);
 
         assertModifier(schemaContext, ModifierKind.INVERT_MATCH, ImmutableList.of("root", "my-leaf"));
         assertModifier(schemaContext, null, ImmutableList.of("root", "my-leaf-2"));
     }
 
-    private static void assertModifier(final SchemaContext schemaContext, final ModifierKind expectedModifierKind,
-            final List<String> localNamePath) {
+    private static void assertModifier(final EffectiveModelContext schemaContext,
+            final ModifierKind expectedModifierKind, final List<String> localNamePath) {
         final SchemaNode findNode = findNode(schemaContext, localNamePath);
         assertTrue(findNode instanceof LeafSchemaNode);
         final LeafSchemaNode myLeaf = (LeafSchemaNode) findNode;
@@ -60,10 +60,12 @@ public class Bug6870Test {
         assertEquals(Optional.ofNullable(expectedModifierKind), patternConstraint.getModifier());
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
+    private static SchemaNode findNode(final EffectiveModelContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
             localName -> QName.create(FOO_NS, localName));
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        qNames.forEach(stack::enterSchemaTree);
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     @Test
