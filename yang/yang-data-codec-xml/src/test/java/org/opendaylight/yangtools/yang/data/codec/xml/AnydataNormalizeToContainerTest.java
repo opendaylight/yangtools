@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.xml.sax.SAXException;
 
 public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
@@ -36,13 +36,16 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
     public void testAnydataNormalizeToContainer()
             throws XMLStreamException, SAXException, IOException, URISyntaxException, AnydataNormalizationException {
         //Create Data Scheme from yang file
-        SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
-        final SchemaNode fooSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(FOO_QNAME);
+        final SchemaNode fooSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
+        stack.exit();
         assertTrue(fooSchemaNode instanceof AnydataSchemaNode);
         final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) fooSchemaNode;
 
-        SchemaPath containerPath = SchemaPath.create(true, CONT_QNAME);
-        final SchemaNode barSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, containerPath);
+        stack.enterSchemaTree(CONT_QNAME);
+        final SchemaNode barSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
+        stack.clear();
         assertTrue(barSchemaNode instanceof ContainerSchemaNode);
         final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) barSchemaNode;
 
@@ -62,11 +65,11 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertTrue(transformedInput instanceof AnydataNode);
-        AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
+        final AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
 
         //Normalize anydata content to specific container element
-        DOMSourceAnydata domSourceAnydata = (DOMSourceAnydata) anydataNode.body();
-        NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(SCHEMA_CONTEXT, containerSchemaNode);
+        final DOMSourceAnydata domSourceAnydata = (DOMSourceAnydata) anydataNode.body();
+        final NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(SCHEMA_CONTEXT, containerSchemaNode);
         assertNotNull(normalizedAnydata);
     }
 }

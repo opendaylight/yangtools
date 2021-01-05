@@ -37,8 +37,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -72,8 +72,11 @@ public class Bug8745Test {
     @Test
     public void testParsingAttributes() throws Exception {
         final QName contWithAttributes = QName.create("foo", "cont-with-attributes");
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(contWithAttributes);
         final ContainerSchemaNode contWithAttr = (ContainerSchemaNode) SchemaContextUtil.findDataSchemaNode(
-            SCHEMA_CONTEXT, SchemaPath.create(true, contWithAttributes));
+            SCHEMA_CONTEXT, stack);
+        stack.clear();
 
         final Document doc = loadDocument("/bug8745/foo.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());

@@ -162,6 +162,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return requireNonNull(stmt);
     }
 
+
     /**
      * Pop the current statement from the stack.
      *
