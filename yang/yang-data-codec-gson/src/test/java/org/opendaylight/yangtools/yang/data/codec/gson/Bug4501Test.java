@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4501Test {
@@ -52,7 +53,8 @@ public class Bug4501Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertTrue(transformedInput instanceof UnkeyedListNode);
 
@@ -72,8 +74,9 @@ public class Bug4501Test {
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
 
         final JsonReader reader = new JsonReader(new StringReader(inputJson));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
         final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> jsonParser.parse(reader));
+            () -> jsonParser.parse(reader, stack));
         assertEquals("Node '(foo)lrs-bits' has already set its value to '[lookup]'", ex.getMessage());
     }
 }

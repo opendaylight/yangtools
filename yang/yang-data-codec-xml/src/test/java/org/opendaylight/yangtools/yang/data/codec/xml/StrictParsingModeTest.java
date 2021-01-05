@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class StrictParsingModeTest {
@@ -46,8 +47,11 @@ public class StrictParsingModeTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, false);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, false);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(QName.create(fooModule.getQNameModule(), "top-level-container"));
+        xmlParser.parse(reader, stack);
+        stack.clear();
 
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -60,8 +64,6 @@ public class StrictParsingModeTest {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
 
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
@@ -71,9 +73,12 @@ public class StrictParsingModeTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, true);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, true);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(QName.create(fooModule.getQNameModule(), "top-level-container"));
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of an unknown child node.");
         } catch (XMLStreamException ex) {
             assertEquals("Schema for node with name unknown-container-a and namespace foo does not exist at "

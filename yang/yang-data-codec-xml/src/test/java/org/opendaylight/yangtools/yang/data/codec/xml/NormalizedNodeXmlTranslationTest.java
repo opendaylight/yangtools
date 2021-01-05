@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
@@ -67,14 +66,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -243,12 +236,10 @@ public class NormalizedNodeXmlTranslationTest {
             final ContainerNode expectedNode) {
         this.schema = YangParserTestUtils.parseYangResource(yangPath);
         this.xmlPath = xmlPath;
-        this.containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
         this.expectedNode = expectedNode;
     }
 
     private final ContainerNode expectedNode;
-    private final ContainerSchemaNode containerNode;
     private final String xmlPath;
 
     @Test
@@ -269,8 +260,12 @@ public class NormalizedNodeXmlTranslationTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, containerNode);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schema);
+        stack.enterSchemaTree(QName.create(XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:test"),
+                Revision.of("2014-03-13"), "container"));
+        xmlParser.parse(reader, stack);
+        stack.clear();
 
         final NormalizedNode built = result.getResult();
         assertNotNull(built);
@@ -340,41 +335,6 @@ public class NormalizedNodeXmlTranslationTest {
         } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
             throw new RuntimeException("Unable to serialize xml element " + xml, e);
         }
-    }
-
-    private static DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName,
-                                               final String childNodeName) {
-        for (Module module : context.getModules()) {
-            if (module.getName().equals(moduleName)) {
-                DataSchemaNode found = findChildNode(module, childNodeName);
-                checkState(found != null, "Unable to find %s", childNodeName);
-                return found;
-            }
-        }
-        throw new IllegalStateException("Unable to find child node " + childNodeName);
-    }
-
-    // FIXME: duplicate of NormalizedDataBuilderTest.findChildNode()
-    private static DataSchemaNode findChildNode(final DataNodeContainer container, final String name) {
-        for (DataSchemaNode dataSchemaNode : container.getChildNodes()) {
-            if (dataSchemaNode.getQName().getLocalName().equals(name)) {
-                return dataSchemaNode;
-            }
-            if (dataSchemaNode instanceof DataNodeContainer) {
-                DataSchemaNode retVal = findChildNode((DataNodeContainer) dataSchemaNode, name);
-                if (retVal != null) {
-                    return retVal;
-                }
-            } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
-                for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases()) {
-                    DataSchemaNode retVal = findChildNode(caseNode, name);
-                    if (retVal != null) {
-                        return retVal;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
 }
