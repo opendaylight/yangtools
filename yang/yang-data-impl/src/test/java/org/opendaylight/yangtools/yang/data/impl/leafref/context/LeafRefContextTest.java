@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafRefContextTest {
@@ -62,28 +62,35 @@ public class LeafRefContextTest {
         final QName q5 = QName.create(root, "list1");
         final QName q6 = QName.create(root, "name");
 
-        final DataSchemaNode leafRefNode = rootMod.findDataChildByName(q1).get();
-        final DataSchemaNode targetNode = rootMod.findDataChildByName(q2).get();
-        final DataSchemaNode cont1Node = rootMod.findDataChildByName(q3).get();
-        final DataSchemaNode cont2Node = rootMod.findDataChildByName(q4).get();
-        final DataSchemaNode name1Node = rootMod.findDataChildByName(q3, q5, q6).get();
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(q1);
+        assertTrue(LeafRefContextUtils.isLeafRef(stack, rootLeafRefContext));
+        assertFalse(LeafRefContextUtils.hasLeafRefChild(stack, rootLeafRefContext));
+        assertFalse(LeafRefContextUtils.hasChildReferencedByLeafRef(stack, rootLeafRefContext));
 
-        assertTrue(LeafRefContextUtils.isLeafRef(leafRefNode, rootLeafRefContext));
-        assertFalse(LeafRefContextUtils.isLeafRef(targetNode, rootLeafRefContext));
+        stack.exit();
+        stack.enterSchemaTree(q2);
+        assertFalse(LeafRefContextUtils.isLeafRef(stack, rootLeafRefContext));
+        assertTrue(LeafRefContextUtils.isReferencedByLeafRef(stack, rootLeafRefContext));
 
-        assertTrue(LeafRefContextUtils.hasLeafRefChild(cont1Node, rootLeafRefContext));
-        assertFalse(LeafRefContextUtils.hasLeafRefChild(leafRefNode, rootLeafRefContext));
+        stack.exit();
+        stack.enterSchemaTree(q3);
+        assertTrue(LeafRefContextUtils.hasLeafRefChild(stack, rootLeafRefContext));
+        assertFalse(LeafRefContextUtils.isReferencedByLeafRef(stack, rootLeafRefContext));
 
-        assertTrue(LeafRefContextUtils.isReferencedByLeafRef(targetNode, rootLeafRefContext));
-        assertFalse(LeafRefContextUtils.isReferencedByLeafRef(leafRefNode, rootLeafRefContext));
+        stack.exit();
+        stack.enterSchemaTree(q4);
+        assertTrue(LeafRefContextUtils.hasChildReferencedByLeafRef(stack, rootLeafRefContext));
 
-        assertTrue(LeafRefContextUtils.hasChildReferencedByLeafRef(cont2Node, rootLeafRefContext));
-        assertFalse(LeafRefContextUtils.hasChildReferencedByLeafRef(leafRefNode, rootLeafRefContext));
-
-        Map<QName, LeafRefContext> leafRefs = LeafRefContextUtils.getAllLeafRefsReferencingThisNode(name1Node,
+        stack.exit();
+        stack.enterSchemaTree(q3, q5, q6);
+        Map<QName, LeafRefContext> leafRefs = LeafRefContextUtils.getAllLeafRefsReferencingThisNode(stack,
                 rootLeafRefContext);
+        stack.clear();
         assertEquals(4, leafRefs.size());
-        leafRefs = LeafRefContextUtils.getAllLeafRefsReferencingThisNode(leafRefNode, rootLeafRefContext);
+        stack.enterSchemaTree(q1);
+        leafRefs = LeafRefContextUtils.getAllLeafRefsReferencingThisNode(stack, rootLeafRefContext);
+        stack.clear();
         assertTrue(leafRefs.isEmpty());
     }
 }

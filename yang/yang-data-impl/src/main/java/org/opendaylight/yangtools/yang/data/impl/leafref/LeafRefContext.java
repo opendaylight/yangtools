@@ -12,13 +12,13 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public final class LeafRefContext extends AbstractEffectiveModelContextProvider {
 
     private final QName currentNodeQName;
-    private final SchemaPath currentNodePath;
+    private final SchemaInferenceStack stack;
     private final Module module;
 
     private final LeafRefPath leafRefTargetPath;
@@ -40,7 +40,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
     LeafRefContext(final LeafRefContextBuilder leafRefContextBuilder) {
         super(leafRefContextBuilder.getSchemaContext());
         this.currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
-        this.currentNodePath = leafRefContextBuilder.getCurrentNodePath();
+        this.stack = leafRefContextBuilder.getCurrentSchemaInferenceStackState();
         this.leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
         this.absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
         this.leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
@@ -96,8 +96,8 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
         return referencedByChilds;
     }
 
-    public SchemaPath getCurrentNodePath() {
-        return currentNodePath;
+    public SchemaInferenceStack getCurrentSchemaInferenceStackState() {
+        return stack;
     }
 
     public LeafRefPath getLeafRefTargetPath() {
@@ -134,7 +134,7 @@ public final class LeafRefContext extends AbstractEffectiveModelContextProvider 
             synchronized (this) {
                 ret = leafRefNodePath;
                 if (ret == null) {
-                    ret = leafRefNodePath = LeafRefUtils.schemaPathToLeafRefPath(currentNodePath, module);
+                    ret = leafRefNodePath = LeafRefUtils.schemaPathToLeafRefPath(stack, module);
                 }
             }
         }
