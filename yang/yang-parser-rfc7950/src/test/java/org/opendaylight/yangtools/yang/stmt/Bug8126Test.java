@@ -10,16 +10,17 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -29,15 +30,29 @@ public class Bug8126Test {
 
     @Test
     public void testValidAugments() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8126/valid");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug8126/valid");
         assertThat(findNode(context, foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"),
             bar("mandatory-leaf")), instanceOf(LeafSchemaNode.class));
         assertThat(findNode(context, foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2")),
             instanceOf(LeafSchemaNode.class));
 
-        assertNull(findNode(context, foo("root"), bar("mandatory-list")));
-        assertNull(findNode(context, foo("root"), bar("mandatory-container"), bar("mandatory-choice")));
-        assertNull(findNode(context, foo("root"), bar("mandatory-container-2"), bar("one"), bar("mandatory-leaf-3")));
+        try {
+            assertNull(findNode(context, foo("root"), bar("mandatory-list")));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", bar("mandatory-list")), e.getMessage());
+        }
+        try {
+            assertNull(findNode(context, foo("root"), bar("mandatory-container"), bar("mandatory-choice")));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", bar("mandatory-container")), e.getMessage());
+        }
+        try {
+            assertNull(findNode(context, foo("root"), bar("mandatory-container-2"), bar("one"),
+                    bar("mandatory-leaf-3")));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", bar("mandatory-container-2")),
+                    e.getMessage());
+        }
     }
 
     @Test
@@ -71,8 +86,12 @@ public class Bug8126Test {
     }
 
 
-    private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));
+    private static SchemaNode findNode(final EffectiveModelContext context, final QName... qnames) {
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        for (final QName qname : qnames) {
+            stack.enterSchemaTree(qname);
+        }
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     private static QName foo(final String localName) {

@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
@@ -30,8 +30,6 @@ public class Bug8083Test {
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
         final Module bazModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topCont = (ContainerSchemaNode) bazModule.findDataChildByName(
-                QName.create(bazModule.getQNameModule(), "top-cont")).get();
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/baz.xml");
 
@@ -40,8 +38,11 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topCont);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(QName.create(bazModule.getQNameModule(), "top-cont"));
+        xmlParser.parse(reader, stack);
+        stack.clear();
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -50,8 +51,6 @@ public class Bug8083Test {
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
         final Module zabModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topCont = (ContainerSchemaNode) zabModule.findDataChildByName(
-                QName.create(zabModule.getQNameModule(), "top-cont")).get();
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
 
@@ -60,8 +59,11 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topCont);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(QName.create(zabModule.getQNameModule(), "top-cont"));
+        xmlParser.parse(reader, stack);
+        stack.clear();
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -70,8 +72,6 @@ public class Bug8083Test {
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
         final Module foobarModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topCont = (ContainerSchemaNode) foobarModule.findDataChildByName(
-                QName.create(foobarModule.getQNameModule(), "top-cont")).get();
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
 
@@ -80,8 +80,11 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topCont);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(QName.create(foobarModule.getQNameModule(), "top-cont"));
+        xmlParser.parse(reader, stack);
+        stack.clear();
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }

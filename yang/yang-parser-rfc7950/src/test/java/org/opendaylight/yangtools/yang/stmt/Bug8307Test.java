@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -20,9 +21,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -63,46 +64,111 @@ public class Bug8307Test {
                 .put(BAR, BAZ)
                 .build();
 
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+        final EffectiveModelContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
                 .setModulesWithSupportedDeviations(modulesWithSupportedDeviations)
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        try {
+            stack.enterSchemaTree(MY_FOO_CONT_A);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_FOO_CONT_A));
+        }
+        stack.clear();
+        try {
+            stack.enterSchemaTree(MY_FOO_CONT_B);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_FOO_CONT_B));
+        }
+        stack.clear();
+        stack.enterSchemaTree(MY_FOO_CONT_C);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.exit();
+        try {
+            stack.enterSchemaTree(MY_BAR_CONT_A);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_BAR_CONT_A));
+        }
+        stack.clear();
+        stack.enterSchemaTree(MY_BAR_CONT_B);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.clear();
     }
 
     @Test
     public void testDeviationsSupportedInAllModules() throws Exception {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+        final EffectiveModelContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        try {
+            stack.enterSchemaTree(MY_FOO_CONT_A);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_FOO_CONT_A));
+        }
+        stack.clear();
+        try {
+            stack.enterSchemaTree(MY_FOO_CONT_B);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_FOO_CONT_B));
+        }
+        stack.clear();
+        try {
+            stack.enterSchemaTree(MY_FOO_CONT_C);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_FOO_CONT_C));
+        }
+        stack.clear();
+        try {
+            stack.enterSchemaTree(MY_BAR_CONT_A);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_BAR_CONT_A));
+        }
+        stack.clear();
+        try {
+            stack.enterSchemaTree(MY_BAR_CONT_B);
+            assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", MY_BAR_CONT_B));
+        }
+        stack.clear();
     }
 
     @Test
     public void testDeviationsSupportedInNoModule() throws Exception {
-        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
+        final EffectiveModelContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
                 .setModulesWithSupportedDeviations(ImmutableSetMultimap.of())
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(MY_FOO_CONT_A);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.exit();
+        stack.enterSchemaTree(MY_FOO_CONT_B);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.exit();
+        stack.enterSchemaTree(MY_FOO_CONT_C);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.exit();
+        stack.enterSchemaTree(MY_BAR_CONT_A);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.exit();
+        stack.enterSchemaTree(MY_BAR_CONT_B);
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, stack));
+        stack.clear();
     }
 
     @Test

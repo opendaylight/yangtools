@@ -17,10 +17,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.AfterClass;
@@ -48,8 +46,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.xml.sax.SAXException;
 
 public class XmlToNormalizedNodesTest {
 
@@ -101,8 +99,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void testComplexXmlParsing() throws IOException, SAXException, URISyntaxException, XMLStreamException,
-            ParserConfigurationException {
+    public void testComplexXmlParsing() throws IOException, XMLStreamException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/baz.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -110,8 +107,10 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(OUTER_CONTAINER);
+        xmlParser.parse(reader, stack);
 
         xmlParser.flush();
         xmlParser.close();
@@ -126,8 +125,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void testSimpleXmlParsing() throws IOException, URISyntaxException, XMLStreamException,
-            ParserConfigurationException, SAXException {
+    public void testSimpleXmlParsing() throws IOException, XMLStreamException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/foo.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -135,16 +133,18 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(PARENT_CONTAINER);
+        xmlParser.parse(reader, stack);
+        stack.clear();
 
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
 
     @Test
-    public void shouldFailOnDuplicateLeaf() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnDuplicateLeaf() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -152,9 +152,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(PARENT_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of duplicate leaf.");
         } catch (XMLStreamException ex) {
             assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace"
@@ -163,8 +166,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnDuplicateAnyXml() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnDuplicateAnyXml() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-2.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -172,9 +174,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(PARENT_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of duplicate anyxml");
         } catch (XMLStreamException ex) {
             assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace"
@@ -183,8 +188,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnDuplicateContainer() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnDuplicateContainer() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-3.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -192,9 +196,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(PARENT_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of duplicate container");
         } catch (XMLStreamException ex) {
             assertThat(ex.getMessage(), containsString("Duplicate element \"leaf-container\" in namespace"
@@ -203,8 +210,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnterminatedLeafElement() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnUnterminatedLeafElement() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -212,9 +218,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(OUTER_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
         } catch (XMLStreamException ex) {
             assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
@@ -222,8 +231,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnterminatedLeafElement2() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnUnterminatedLeafElement2() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-2.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -231,9 +239,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(OUTER_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
         } catch (XMLStreamException ex) {
             assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
@@ -241,8 +252,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnterminatedContainerElement() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnUnterminatedContainerElement() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-4.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -250,9 +260,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(OUTER_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of unterminated container element.");
         } catch (XMLStreamException ex) {
             assertThat(ex.getMessage(), containsString("</my-container-1>"));
@@ -260,8 +273,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnknownChildNode() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnUnknownChildNode() throws XMLStreamException, IOException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -269,9 +281,12 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         try {
-            xmlParser.parse(reader);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+            stack.enterSchemaTree(OUTER_CONTAINER);
+            xmlParser.parse(reader, stack);
+            stack.clear();
             fail("XMLStreamException should have been thrown because of an unknown child node.");
         } catch (XMLStreamException ex) {
             assertEquals("Schema for node with name my-container-1 and namespace baz-namespace does not exist at "

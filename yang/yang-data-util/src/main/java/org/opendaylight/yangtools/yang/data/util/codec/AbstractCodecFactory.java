@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         this.cache = requireNonNull(cache);
     }
 
-    public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema) {
+    public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema,
+            final SchemaInferenceStack stack) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -96,7 +98,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         }
 
         // ... and complex types afterwards
-        ret = createComplexCodecFor(schema, type);
+        ret = createComplexCodecFor(schema, type, stack);
         LOG.trace("Type {} miss complex {}", type, ret);
         return cache.getComplex(schema, ret);
     }
@@ -208,16 +210,17 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         return true;
     }
 
-    private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type) {
+    private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type,
+            final SchemaInferenceStack stack) {
         if (type instanceof UnionTypeDefinition) {
-            return createComplexUnion(schema, (UnionTypeDefinition) type);
+            return createComplexUnion(schema, (UnionTypeDefinition) type, stack);
         } else if (type instanceof LeafrefTypeDefinition) {
             final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
-                getEffectiveModelContext(), schema);
+                getEffectiveModelContext(), schema, stack);
             verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema, target);
 
             final T ret = getSimpleCodecFor(target);
-            return ret != null ? ret : createComplexCodecFor(schema, target);
+            return ret != null ? ret : createComplexCodecFor(schema, target, stack);
         } else if (type instanceof IdentityrefTypeDefinition) {
             return identityRefCodec((IdentityrefTypeDefinition) type, schema.getQName().getModule());
         } else {
@@ -241,7 +244,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         return unionCodec(union, codecs);
     }
 
-    private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union) {
+    private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union,
+            final SchemaInferenceStack stack) {
         final List<TypeDefinition<?>> types = union.getTypes();
         final List<T> codecs = new ArrayList<>(types.size());
 
@@ -250,7 +254,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
             if (codec == null) {
                 codec = getSimpleCodecFor(type);
                 if (codec == null) {
-                    codec = createComplexCodecFor(schema, type);
+                    codec = createComplexCodecFor(schema, type, stack);
                 }
             }
 

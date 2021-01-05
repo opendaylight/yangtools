@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1100Test {
@@ -40,8 +41,14 @@ public class YT1100Test {
         final TypeDefinition<?> type = ((LeafSchemaNode) leaf).getType();
         assertThat(type, instanceOf(LeafrefTypeDefinition.class));
         final PathExpression leafref = ((LeafrefTypeDefinition) type).getPathStatement();
-
-        final SchemaNode ref = SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, leaf, leafref);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(QName.create(qnm, "foo"));
+        stack.enterSchemaTree(QName.create(qnm, "scheduler-node"));
+        stack.enterSchemaTree(QName.create(qnm, "children-type"));
+        stack.enterSchemaTree(QName.create(qnm, "scheduler-node"));
+        stack.enterSchemaTree(QName.create(qnm, "child-scheduler-nodes"));
+        stack.enterSchemaTree(QName.create(qnm, "name"));
+        final SchemaNode ref = SchemaContextUtil.findDataSchemaNodeForRelativeXPath(module, leafref, stack);
         assertThat(ref, instanceOf(LeafSchemaNode.class));
         final LeafSchemaNode targetLeaf = (LeafSchemaNode) ref;
         assertEquals(QName.create(qnm, "name"), targetLeaf.getQName());

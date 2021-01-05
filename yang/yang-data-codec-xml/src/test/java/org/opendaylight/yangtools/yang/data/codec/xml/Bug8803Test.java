@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @RunWith(Parameterized.class)
@@ -63,10 +63,10 @@ public class Bug8803Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaPath topContPath = SchemaPath.create(true, QName.create("foo-ns", "top-cont"));
-        final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, topContPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(QName.create("foo-ns", "top-cont"));
+        final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
         assertTrue(dataSchemaNode instanceof ContainerSchemaNode);
-        final ContainerSchemaNode topContSchema = (ContainerSchemaNode) dataSchemaNode;
 
         final InputStream resourceAsStream = Bug8803Test.class.getResourceAsStream("/bug8803/foo.xml");
 
@@ -75,8 +75,9 @@ public class Bug8803Test {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, topContSchema);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT);
+        xmlParser.parse(reader, stack);
+        stack.clear();
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 

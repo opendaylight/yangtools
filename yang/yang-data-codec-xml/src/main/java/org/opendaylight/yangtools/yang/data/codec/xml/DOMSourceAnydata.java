@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractNormalizableAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.xml.sax.SAXException;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Internal parser representation of a parsed-out chunk of XML. This format is completely internal to the parser
@@ -53,7 +52,7 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
             final DataSchemaNode contextNode) throws IOException {
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(streamWriter, schemaContext, contextNode);
+            xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }
@@ -62,8 +61,10 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
             final XMLStreamReader reader = toStreamReader();
             reader.nextTag();
 
-            xmlParser.parse(reader).flush();
-        } catch (XMLStreamException | URISyntaxException | SAXException e) {
+            final SchemaInferenceStack node = new SchemaInferenceStack(schemaContext);
+            node.enterSchemaTree(contextNode.getQName());
+            xmlParser.parse(reader, node).flush();
+        } catch (XMLStreamException e) {
             throw new IOException("Failed to parse payload", e);
         }
     }

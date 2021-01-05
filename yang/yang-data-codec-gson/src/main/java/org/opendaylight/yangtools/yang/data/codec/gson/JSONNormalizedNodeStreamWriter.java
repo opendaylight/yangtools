@@ -16,13 +16,17 @@ import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -40,7 +44,9 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,8 +62,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         StreamWriterMountPointExtension {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
         Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
-                final JSONStreamWriterRootContext rootContext) {
-            super(codecFactory, tracker, writer, rootContext);
+                final JSONStreamWriterRootContext rootContext, final SchemaInferenceStack node) {
+            super(codecFactory, tracker, writer, rootContext, node);
         }
 
         @Override
@@ -69,8 +75,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     private static final class Nested extends JSONNormalizedNodeStreamWriter {
         Nested(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
-                final JSONStreamWriterRootContext rootContext) {
-            super(codecFactory, tracker, writer, rootContext);
+                final JSONStreamWriterRootContext rootContext, final SchemaInferenceStack node) {
+            super(codecFactory, tracker, writer, rootContext, node);
         }
 
         @Override
@@ -97,14 +103,16 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private final SchemaTracker tracker;
     private final JSONCodecFactory codecs;
     private final JsonWriter writer;
+    private final SchemaInferenceStack node;
     private JSONStreamWriterContext context;
 
     JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaTracker tracker,
-            final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+            final JsonWriter writer, final JSONStreamWriterRootContext rootContext, final SchemaInferenceStack node) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecFactory);
         this.tracker = requireNonNull(tracker);
         this.context = requireNonNull(rootContext);
+        this.node = requireNonNull(node);
     }
 
     /**
@@ -130,8 +138,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+        final SchemaInferenceStack node = new SchemaInferenceStack(codecFactory.getEffectiveModelContext());
+        for (final QName qname : path.getPathFromRoot()) {
+            node.enterSchemaTree(qname);
+        }
         return new Exclusive(codecFactory, SchemaTracker.create(codecFactory.getEffectiveModelContext(), path),
-            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs), node);
     }
 
     /**
@@ -157,8 +169,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+        final SchemaInferenceStack node = new SchemaInferenceStack(codecFactory.getEffectiveModelContext());
+        for (final QName qname: path.getNodeIdentifiers()) {
+            node.enterSchemaTree(qname);
+        }
         return new Exclusive(codecFactory, SchemaTracker.create(codecFactory.getEffectiveModelContext(), path),
-            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs), node);
     }
 
     /**
@@ -185,7 +201,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final DataNodeContainer rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
         return new Exclusive(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
-            new JSONStreamWriterExclusiveRootContext(initialNs));
+            new JSONStreamWriterExclusiveRootContext(initialNs), new SchemaInferenceStack(
+                    codecFactory.getEffectiveModelContext()));
     }
 
     /**
@@ -209,8 +226,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+        final SchemaInferenceStack node = new SchemaInferenceStack(codecFactory.getEffectiveModelContext());
+        for (final QName qname: path.getPathFromRoot()) {
+            node.enterSchemaTree(qname);
+        }
         return new Nested(codecFactory, SchemaTracker.create(codecFactory.getEffectiveModelContext(), path), jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+            new JSONStreamWriterSharedRootContext(initialNs), node);
     }
 
     /**
@@ -234,8 +255,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+        final SchemaInferenceStack node = new SchemaInferenceStack(codecFactory.getEffectiveModelContext());
+        for (final QName qname: path.getNodeIdentifiers()) {
+            node.enterSchemaTree(qname);
+        }
         return new Nested(codecFactory, SchemaTracker.create(codecFactory.getEffectiveModelContext(), path), jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+            new JSONStreamWriterSharedRootContext(initialNs), node);
     }
 
     /**
@@ -260,7 +285,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final DataNodeContainer rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
         return new Nested(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+            new JSONStreamWriterSharedRootContext(initialNs), new SchemaInferenceStack(
+                    codecFactory.getEffectiveModelContext()));
     }
 
     @Override
@@ -270,9 +296,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public void startLeafNode(final NodeIdentifier name) throws IOException {
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
         tracker.startLeafNode(name);
+        node.enterSchemaTree(nodeType);
         context.emittingChild(codecs.getEffectiveModelContext(), writer);
-        context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, name.getNodeType());
+        context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, nodeType);
     }
 
     @Override
@@ -284,12 +313,18 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) throws IOException {
         tracker.startLeafSetEntryNode(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         context.emittingChild(codecs.getEffectiveModelContext(), writer);
     }
 
     @Override
     public final void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startLeafSet(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         context = new JSONStreamWriterListContext(context, name);
     }
 
@@ -300,6 +335,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         final SchemaNode schema = tracker.startContainerNode(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         final boolean isPresence = schema instanceof ContainerSchemaNode
             ? ((ContainerSchemaNode) schema).isPresenceContainer() : DEFAULT_EMIT_EMPTY_CONTAINERS;
         context = new JSONStreamWriterNamedObjectContext(context, name, isPresence);
@@ -314,6 +352,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startListItem(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         context = new JSONStreamWriterObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS);
     }
 
@@ -327,6 +368,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
             throws IOException {
         tracker.startListItem(identifier);
+        final QName nodeType = identifier.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         context = new JSONStreamWriterObjectContext(context, identifier, DEFAULT_EMIT_EMPTY_CONTAINERS);
     }
 
@@ -339,6 +383,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public final void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         tracker.startChoiceNode(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         context = new JSONStreamWriterInvisibleContext(context);
     }
 
@@ -352,6 +399,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (NormalizedAnydata.class.isAssignableFrom(objectModel)) {
             tracker.startAnydataNode(name);
+            final QName nodeType = name.getNodeType();
+            findChildInCases(nodeType);
+            node.enterSchemaTree(nodeType);
             context.emittingChild(codecs.getEffectiveModelContext(), writer);
             context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, name.getNodeType());
             return true;
@@ -365,13 +415,17 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
             final MountPointContext mountCtx) throws IOException {
         final EffectiveModelContext ctx = mountCtx.getEffectiveModelContext();
         return new Nested(codecs.rebaseTo(ctx), SchemaTracker.create(ctx), writer,
-            new JSONStreamWriterSharedRootContext(context.getNamespace()));
+            new JSONStreamWriterSharedRootContext(context.getNamespace()), new SchemaInferenceStack(
+                    codecs.getEffectiveModelContext()));
     }
 
     @Override
     public final boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             tracker.startAnyxmlNode(name);
+            final QName nodeType = name.getNodeType();
+            findChildInCases(nodeType);
+            node.enterSchemaTree(nodeType);
             context.emittingChild(codecs.getEffectiveModelContext(), writer);
             context.writeChildJsonIdentifier(codecs.getEffectiveModelContext(), writer, name.getNodeType());
             return true;
@@ -381,7 +435,15 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public final void endNode() throws IOException {
-        tracker.endNode();
+        final Object schema = tracker.endNode();
+        if (schema.getClass().equals(node.currentStatement().getClass())) {
+            node.exit();
+        }
+
+        if (!node.isEmpty() && node.currentStatement() instanceof CaseEffectiveStatement) {
+            node.exit();
+        }
+
         context = context.endNode(codecs.getEffectiveModelContext(), writer);
     }
 
@@ -403,7 +465,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
+            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current, node));
         } else if (current instanceof AnydataSchemaNode) {
             writeAnydataValue(value);
         } else {
@@ -442,22 +504,22 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         writeXmlNode(anyXmlValue.getNode());
     }
 
-    private void writeXmlNode(final Node node) throws IOException {
-        if (isArrayElement(node)) {
-            writeArrayContent(node);
+    private void writeXmlNode(final Node xmlNode) throws IOException {
+        if (isArrayElement(xmlNode)) {
+            writeArrayContent(xmlNode);
             return;
         }
-        final Element firstChildElement = getFirstChildElement(node);
+        final Element firstChildElement = getFirstChildElement(xmlNode);
         if (firstChildElement == null) {
-            writeXmlValue(node);
+            writeXmlValue(xmlNode);
         } else {
             writeObjectContent(firstChildElement);
         }
     }
 
-    private void writeArrayContent(final Node node) throws IOException {
+    private void writeArrayContent(final Node xmlNode) throws IOException {
         writer.beginArray();
-        handleArray(node);
+        handleArray(xmlNode);
         writer.endArray();
     }
 
@@ -479,9 +541,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         return false;
     }
 
-    private void handleArray(final Node node) throws IOException {
-        final Element parentNode = (Element)node.getParentNode();
-        final NodeList elementsList = parentNode.getElementsByTagName(node.getNodeName());
+    private void handleArray(final Node xmlNode) throws IOException {
+        final Element parentNode = (Element)xmlNode.getParentNode();
+        final NodeList elementsList = parentNode.getElementsByTagName(xmlNode.getNodeName());
         for (int i = 0, length = elementsList.getLength(); i < length; i++) {
             final Node arrayElement = elementsList.item(i);
             final Element parent = (Element)arrayElement.getParentNode();
@@ -497,22 +559,22 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         }
     }
 
-    private void writeObject(Node node) throws IOException {
+    private void writeObject(Node xmlNode) throws IOException {
         String previousNodeName = "";
-        while (node != null) {
-            if (ELEMENT_NODE == node.getNodeType()) {
-                if (!node.getNodeName().equals(previousNodeName)) {
-                    previousNodeName = node.getNodeName();
-                    writer.name(node.getNodeName());
-                    writeXmlNode(node);
+        while (xmlNode != null) {
+            if (ELEMENT_NODE == xmlNode.getNodeType()) {
+                if (!xmlNode.getNodeName().equals(previousNodeName)) {
+                    previousNodeName = xmlNode.getNodeName();
+                    writer.name(xmlNode.getNodeName());
+                    writeXmlNode(xmlNode);
                 }
             }
-            node = node.getNextSibling();
+            xmlNode = xmlNode.getNextSibling();
         }
     }
 
-    private void writeXmlValue(final Node node) throws IOException {
-        Text firstChild = getFirstChildText(node);
+    private void writeXmlValue(final Node xmlNode) throws IOException {
+        Text firstChild = getFirstChildText(xmlNode);
         String childNodeText = firstChild != null ? firstChild.getWholeText() : "";
         childNodeText = childNodeText != null ? childNodeText.trim() : "";
 
@@ -564,5 +626,18 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         }
 
         return Double.valueOf(numberText);
+    }
+
+    private void findChildInCases(final QName qname) {
+        if (!node.isEmpty()) {
+            final List<CaseEffectiveStatement> collect = node.currentStatement()
+                    .streamEffectiveSubstatements(CaseEffectiveStatement.class).collect(Collectors.toList());
+            for (final CaseEffectiveStatement caze : collect) {
+                final Optional<?> potential = caze.findSchemaTreeNode(qname);
+                if (potential.isPresent()) {
+                    node.enterSchemaTree(caze.argument());
+                }
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.xml.sax.SAXException;
 
 public class AnydataParseTest extends AbstractAnydataTest {
@@ -31,9 +32,12 @@ public class AnydataParseTest extends AbstractAnydataTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT,
-            SCHEMA_CONTEXT.findDataChildByName(FOO_QNAME).get(), true);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, true);
+
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(FOO_QNAME);
+        xmlParser.parse(reader, stack);
+        stack.clear();
 
         final NormalizedNode parsed = result.getResult();
         assertTrue(parsed instanceof AnydataNode);

@@ -13,7 +13,9 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
@@ -26,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
@@ -34,24 +37,30 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
     private final SchemaTracker tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
+    private final SchemaInferenceStack node;
+
 
     SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final EffectiveModelContext context,
             final SchemaTracker tracker) {
         super(writer);
         this.tracker = requireNonNull(tracker);
         this.streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
+        this.node = new SchemaInferenceStack(streamUtils.getEffectiveModelContext());
     }
 
     @Override
-    String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode)
+    String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode,
+            final SchemaInferenceStack stackNode)
             throws XMLStreamException {
         return streamUtils.encodeValue(xmlWriter, schemaNode, schemaNode.getType(), value,
-            schemaNode.getQName().getModule());
+            schemaNode.getQName().getModule(), stackNode);
     }
 
     @Override
@@ -61,7 +70,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
         if (optAnnotation.isPresent()) {
             final AnnotationSchemaNode schema = optAnnotation.get();
-            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule());
+            final SchemaInferenceStack emptyStack = new SchemaInferenceStack(streamUtils.getEffectiveModelContext());
+            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule(), emptyStack);
         }
 
         checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
@@ -71,6 +81,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
 
     @Override
     void startList(final NodeIdentifier name) {
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         tracker.startList(name);
     }
 
@@ -83,22 +96,37 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void endNode() throws IOException {
         final Object schema = tracker.endNode();
+
         if (schema instanceof ListSchemaNode || schema instanceof LeafListSchemaNode) {
             // For lists, we only emit end element on the inner frame
             final Object parent = tracker.getParent();
             if (parent == schema) {
                 endElement();
+            } else {
+                node.exit();
             }
         } else if (schema instanceof ContainerLike || schema instanceof LeafSchemaNode
                 || schema instanceof AnydataSchemaNode || schema instanceof AnyxmlSchemaNode) {
             endElement();
+            node.exit();
+        }
+
+        if (schema instanceof ChoiceSchemaNode) {
+            node.exit();
+        }
+
+        if (!node.isEmpty() && node.currentStatement() instanceof CaseEffectiveStatement) {
+            node.exit();
         }
     }
 
     @Override
     public void startLeafNode(final NodeIdentifier name) throws IOException {
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
         tracker.startLeafNode(name);
-        startElement(name.getNodeType());
+        node.enterSchemaTree(nodeType);
+        startElement(nodeType);
     }
 
     @Override
@@ -110,22 +138,34 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         tracker.startLeafSet(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
     }
 
     @Override
     public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
         tracker.startLeafSet(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
     }
 
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         final SchemaNode schema = tracker.startContainerNode(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
         startElement(schema.getQName());
     }
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         tracker.startChoiceNode(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
     }
 
     @Override
@@ -137,7 +177,10 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             tracker.startAnyxmlNode(name);
-            startElement(name.getNodeType());
+            final QName nodeType = name.getNodeType();
+            findChildInCases(nodeType);
+            node.enterSchemaTree(nodeType);
+            startElement(nodeType);
             return true;
         }
         return false;
@@ -152,7 +195,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, (TypedDataSchemaNode) current);
+            writeValue(value, (TypedDataSchemaNode) current, node);
         } else if (current instanceof AnydataSchemaNode) {
             anydataValue(value);
         } else {
@@ -170,5 +213,21 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     void startAnydata(final NodeIdentifier name) {
         tracker.startAnydataNode(name);
+        final QName nodeType = name.getNodeType();
+        findChildInCases(nodeType);
+        node.enterSchemaTree(nodeType);
+    }
+
+    private void findChildInCases(final QName qname) {
+        if (!node.isEmpty()) {
+            final List<CaseEffectiveStatement> collect = node.currentStatement()
+                    .streamEffectiveSubstatements(CaseEffectiveStatement.class).collect(Collectors.toList());
+            for (final CaseEffectiveStatement caze : collect) {
+                final Optional<?> potential = caze.findSchemaTreeNode(qname);
+                if (potential.isPresent()) {
+                    node.enterSchemaTree(caze.argument());
+                }
+            }
+        }
     }
 }

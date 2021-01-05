@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -55,7 +56,8 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(lhotkaCodecFactory.getEffectiveModelContext());
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
@@ -90,7 +92,8 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(lhotkaCodecFactory.getEffectiveModelContext());
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 
