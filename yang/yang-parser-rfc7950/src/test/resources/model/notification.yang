@@ -1,0 +1,30 @@
+module notification {
+    yang-version 1.1;
+    namespace "urn:opendaylight.notification";
+    prefix "not";
+
+    revision "2021-01-27" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+    container bar {
+        leaf baz {
+            type string;
+        }
+        notification bar {
+            leaf baz {
+                type string;
+            }
+        }
+    }
+
+    notification foo {
+        leaf foo {
+            type string;
+        }
+        leaf bar {
+            type string;
+        }
+    }
+
+}

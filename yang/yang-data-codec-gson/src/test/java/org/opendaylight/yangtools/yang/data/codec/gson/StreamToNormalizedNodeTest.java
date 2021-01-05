@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +58,9 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
         // JSON -> StreamWriter parser
         try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter, lhotkaCodecFactory)) {
+            final SchemaInferenceStack stack = new SchemaInferenceStack(lhotkaCodecFactory.getEffectiveModelContext());
             // Process multiple readers, flush()/close() as needed
-            jsonHandler.parse(reader);
+            jsonHandler.parse(reader, stack);
         }
     }
 
@@ -77,9 +79,10 @@ public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         // StreamWriter which attaches NormalizedNode under parent
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
+        final SchemaInferenceStack stack = new SchemaInferenceStack(lhotkaCodecFactory.getEffectiveModelContext());
         // JSON -> StreamWriter parser
         try (JsonParserStream handler = JsonParserStream.create(streamWriter, lhotkaCodecFactory)) {
-            handler.parse(new JsonReader(new StringReader(streamAsString)));
+            handler.parse(new JsonReader(new StringReader(streamAsString)), stack);
         }
 
         // Finally build the node

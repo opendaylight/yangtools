@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -176,12 +177,14 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     abstract String encodeAnnotationValue(@NonNull ValueWriter xmlWriter, @NonNull QName qname, @NonNull Object value)
             throws XMLStreamException;
 
-    abstract String encodeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
+    abstract String encodeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context,
+            SchemaInferenceStack node)
             throws XMLStreamException;
 
-    final void writeValue(final @NonNull Object value, final T context) throws IOException {
+    final void writeValue(final @NonNull Object value, final T context, final SchemaInferenceStack node)
+            throws IOException {
         try {
-            facade.writeCharacters(encodeValue(facade, value, context));
+            facade.writeCharacters(encodeValue(facade, value, context, node));
         } catch (XMLStreamException e) {
             throw new IOException("Failed to write value", e);
         }

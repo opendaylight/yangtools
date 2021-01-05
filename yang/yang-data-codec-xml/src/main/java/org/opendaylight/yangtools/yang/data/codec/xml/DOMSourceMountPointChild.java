@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
@@ -18,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractMountPointChild;
-import org.xml.sax.SAXException;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Internal MountPointChild implementation, reusing data bits from {@link DOMSourceAnydata}.
@@ -42,8 +41,9 @@ final class DOMSourceMountPointChild extends AbstractMountPointChild {
 
         try {
             final XMLStreamReader reader = new DOMSourceXMLStreamReader(source);
-            xmlParser.parse(reader).flush();
-        } catch (XMLStreamException | URISyntaxException | SAXException e) {
+            final SchemaInferenceStack node = SchemaInferenceStack.of(mountCtx.getEffectiveModelContext());
+            xmlParser.parse(reader, node).flush();
+        } catch (XMLStreamException e) {
             throw new IOException("Failed to parse payload", e);
         }
     }
