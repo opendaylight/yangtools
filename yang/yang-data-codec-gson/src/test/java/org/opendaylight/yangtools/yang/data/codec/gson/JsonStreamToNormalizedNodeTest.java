@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 
 /**
  * Each test tests whether json input is correctly transformed to normalized node structure.
@@ -190,8 +190,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, parentNode);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
+            Inference.ofDataTreePath(schemaContext, CONT_1));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -203,8 +203,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, parentNode);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory,
+            Inference.ofDataTreePath(schemaContext, CONT_1));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -216,9 +216,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
 
-        final QName augmentChoice1QName = QName.create(parentNode.getQName(), "augment-choice1");
+        final QName augmentChoice1QName = QName.create(CONT_1, "augment-choice1");
         final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
@@ -230,7 +229,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NodeIdentifier containerId = new NodeIdentifier(containerQName);
 
         final NormalizedNode cont1Normalized =
-                containerBuilder().withNodeIdentifier(new NodeIdentifier(parentNode.getQName()))
+                containerBuilder().withNodeIdentifier(new NodeIdentifier(CONT_1))
                         .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
                                 .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
                                         .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)

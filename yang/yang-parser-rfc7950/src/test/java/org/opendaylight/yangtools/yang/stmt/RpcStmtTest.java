@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
@@ -32,10 +32,9 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class RpcStmtTest {
-
     @Test
     public void rpcTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+        final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/model/baz.yang"))
                 .addSource(sourceForResource("/model/bar.yang"))
                 .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))

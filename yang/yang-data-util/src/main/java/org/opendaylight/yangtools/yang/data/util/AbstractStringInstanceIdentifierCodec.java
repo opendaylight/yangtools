@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.codec.InstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 /**
  * Abstract utility class for representations which encode {@link YangInstanceIdentifier} as a
@@ -89,7 +90,8 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      */
     protected abstract @NonNull DataSchemaContextTree getDataContextTree();
 
-    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
+            final String value) {
         return value;
     }
 

@@ -7,7 +7,7 @@ module augment-leafref-module {
 
     typedef leafreftype {
         type leafref {
-            path "/cont/lf3";
+            path "/auglfrfmo:cont/auglfrfmo:lf3";
         }
     }
 
