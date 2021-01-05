@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -89,7 +88,7 @@ public class Bug5335Test {
 
     @Test
     public void correctTest4() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F)
             .orElse(null);
         assertThat(mandatoryLeaf, instanceOf(LeafSchemaNode.class));
