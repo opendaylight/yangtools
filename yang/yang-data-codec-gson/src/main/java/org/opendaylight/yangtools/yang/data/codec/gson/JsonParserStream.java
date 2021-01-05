@@ -37,11 +37,11 @@ import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
+import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -49,9 +49,9 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -70,16 +70,14 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
-    private final DataSchemaNode parentNode;
 
     // TODO: consider class specialization to remove this field
     private final boolean lenient;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final JSONCodecFactory codecs,
-            final DataSchemaNode parentNode, final boolean lenient) {
+            final boolean lenient) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
-        this.parentNode = parentNode;
         this.lenient = lenient;
     }
 
@@ -95,22 +93,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
-        return new JsonParserStream(writer, codecFactory, codecFactory.getEffectiveModelContext(), false);
-    }
-
-    /**
-     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
-     * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
-     *
-     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
-     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
-     * @return A new {@link JsonParserStream}
-     * @throws NullPointerException if any of the arguments are null
-     */
-    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
-            final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
-        return new JsonParserStream(writer, codecFactory, validateParent(parentNode), false);
+        return new JsonParserStream(writer, codecFactory, false);
     }
 
     /**
@@ -131,31 +114,10 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
-        return new JsonParserStream(writer, codecFactory, codecFactory.getEffectiveModelContext(), true);
+        return new JsonParserStream(writer, codecFactory, true);
     }
 
-    /**
-     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
-     * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
-     *
-     * <p>
-     * Returned parser will treat incoming JSON data leniently:
-     * <ul>
-     *   <li>JSON elements referring to unknown constructs will be silently ignored</li>
-     * </ul>
-     *
-     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
-     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
-     * @return A new {@link JsonParserStream}
-     * @throws NullPointerException if any of the arguments are null
-     */
-    public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
-            final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
-        return new JsonParserStream(writer, codecFactory, validateParent(parentNode), true);
-    }
-
-    public JsonParserStream parse(final JsonReader reader) {
+    public JsonParserStream parse(final JsonReader reader, final SchemaInferenceStack node) {
         // code copied from gson's JsonParser and Stream classes
 
         final boolean readerLenient = reader.isLenient();
@@ -164,9 +126,15 @@ public final class JsonParserStream implements Closeable, Flushable {
         try {
             reader.peek();
             isEmpty = false;
+            DataSchemaNode schema;
+            if (node.isEmpty()) {
+                schema = node.getEffectiveModelContext();
+            } else {
+                schema = (DataSchemaNode) node.currentStatement();
+            }
             final CompositeNodeDataWithSchema<?> compositeNodeDataWithSchema =
-                    new CompositeNodeDataWithSchema<>(parentNode);
-            read(reader, compositeNodeDataWithSchema);
+                    new CompositeNodeDataWithSchema<>(schema);
+            read(reader, compositeNodeDataWithSchema, node);
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -239,30 +207,34 @@ public final class JsonParserStream implements Closeable, Flushable {
         parent.setValue(domSource);
     }
 
-    public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
+    public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent, final SchemaInferenceStack stack)
+            throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
-                setValue(parent, in.nextString());
+                setValue(parent, in.nextString(), stack.copy());
                 break;
             case BOOLEAN:
-                setValue(parent, Boolean.toString(in.nextBoolean()));
+                setValue(parent, Boolean.toString(in.nextBoolean()), stack.copy());
                 break;
             case NULL:
                 in.nextNull();
-                setValue(parent, null);
+                setValue(parent, null, stack.copy());
                 break;
             case BEGIN_ARRAY:
                 in.beginArray();
                 while (in.hasNext()) {
                     if (parent instanceof LeafNodeDataWithSchema) {
-                        read(in, parent);
+                        read(in, parent, stack);
                     } else {
                         final AbstractNodeDataWithSchema<?> newChild = newArrayEntry(parent);
-                        read(in, newChild);
+                        read(in, newChild, stack);
                     }
                 }
                 in.endArray();
+                if (parent instanceof ListNodeDataWithSchema || parent instanceof LeafListNodeDataWithSchema) {
+                    stack.exit();
+                }
                 return;
             case BEGIN_OBJECT:
                 final Set<String> namesakes = new HashSet<>();
@@ -296,7 +268,7 @@ public final class JsonParserStream implements Closeable, Flushable {
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName,
-                                getCurrentNamespace());
+                                getCurrentNamespace(), stack);
                     checkState(!childDataSchemaNodes.isEmpty(),
                         "Schema for node with name %s and namespace %s does not exist at %s",
                         localName, getCurrentNamespace(), parentSchema);
@@ -307,7 +279,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
                     } else {
-                        read(in, newChild);
+                        stack.enterSchemaTree(newChild.getSchema().getQName());
+                        read(in, newChild, stack);
                     }
                     removeNamespace();
                 }
@@ -315,6 +288,13 @@ public final class JsonParserStream implements Closeable, Flushable {
                 return;
             default:
                 break;
+        }
+        if (!stack.isEmpty() && !(parent instanceof LeafListEntryNodeDataWithSchema)) {
+            stack.exit();
+            if (!stack.isEmpty() && stack.currentStatement() instanceof CaseEffectiveStatement) {
+                stack.exit();
+                stack.exit();
+            }
         }
     }
 
@@ -329,20 +309,22 @@ public final class JsonParserStream implements Closeable, Flushable {
         return ((MultipleEntryDataWithSchema<?>) parent).newChildEntry();
     }
 
-    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) {
+    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value,
+            final SchemaInferenceStack node) {
         checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema<?> parentSimpleNode = (SimpleNodeDataWithSchema<?>) parent;
         checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
                 parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 
-        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
+        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema(), node);
         parentSimpleNode.setValue(translatedValue);
     }
 
-    private Object translateValueByType(final String value, final DataSchemaNode node) {
+    private Object translateValueByType(final String value, final DataSchemaNode node,
+            final SchemaInferenceStack nodeStack) {
         checkArgument(node instanceof TypedDataSchemaNode);
-        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(null, value);
+        return codecs.codecFor((TypedDataSchemaNode) node, nodeStack).parseValue(null, value);
     }
 
     private void removeNamespace() {
@@ -420,16 +402,6 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private URI getCurrentNamespace() {
         return namespaces.peek();
-    }
-
-    private static DataSchemaNode validateParent(final SchemaNode parent) {
-        if (parent instanceof DataSchemaNode) {
-            return (DataSchemaNode) parent;
-        } else if (parent instanceof OperationDefinition) {
-            return OperationAsContainer.of((OperationDefinition) parent);
-        } else {
-            throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parent));
-        }
     }
 
     @Override

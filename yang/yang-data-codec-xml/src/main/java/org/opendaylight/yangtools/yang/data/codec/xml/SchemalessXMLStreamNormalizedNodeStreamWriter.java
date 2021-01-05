@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<Object> {
     private enum NodeType {
@@ -89,7 +90,8 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    String encodeValue(final ValueWriter xmlWriter, final Object value, final Object context) {
+    String encodeValue(final ValueWriter xmlWriter, final Object value, final Object context,
+            final SchemaInferenceStack node) {
         return value.toString();
     }
 
@@ -113,7 +115,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     public void scalarValue(final Object value) throws IOException {
         final NodeType type = nodeTypeStack.peek();
         if (type == NodeType.SCALAR) {
-            writeValue(value, null);
+            writeValue(value, null, null);
         } else if (type == NodeType.ANYDATA) {
             anydataValue(value);
         } else {

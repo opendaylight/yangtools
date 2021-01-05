@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1050Test {
@@ -52,9 +53,12 @@ public class YT1050Test {
     public void testFindDataSchemaNodeForRelativeXPathWithDeref() {
         final TypeDefinition<?> typeNodeType = secondaryType.getType();
         assertThat(typeNodeType, isA(LeafrefTypeDefinition.class));
-
-        final SchemaNode found =  SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, secondaryType,
-            ((LeafrefTypeDefinition) typeNodeType).getPathStatement());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterGrouping(QName.create(module.getQNameModule(), "grp"));
+        stack.enterSchemaTree(SECONDARY);
+        stack.enterSchemaTree(TYPE);
+        final SchemaNode found =  SchemaContextUtil.findDataSchemaNodeForRelativeXPath(module,
+            ((LeafrefTypeDefinition) typeNodeType).getPathStatement(), stack);
         assertSame(primaryType, found);
     }
 }

@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
@@ -26,25 +25,19 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.xml.sax.SAXException;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
 
     @Test
     public void testAnydataNormalizeToContainer()
-            throws XMLStreamException, SAXException, IOException, URISyntaxException, AnydataNormalizationException {
+            throws XMLStreamException, IOException, AnydataNormalizationException {
         //Create Data Scheme from yang file
-        SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
-        final SchemaNode fooSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(FOO_QNAME);
+        final SchemaNode fooSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
         assertTrue(fooSchemaNode instanceof AnydataSchemaNode);
-        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) fooSchemaNode;
-
-        SchemaPath containerPath = SchemaPath.create(true, CONT_QNAME);
-        final SchemaNode barSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, containerPath);
-        assertTrue(barSchemaNode instanceof ContainerSchemaNode);
-        final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) barSchemaNode;
 
         // deserialization
         final XMLStreamReader reader
@@ -56,17 +49,23 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, anyDataSchemaNode);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT);
+        xmlParser.parse(reader, stack);
+        stack.clear();
 
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertTrue(transformedInput instanceof AnydataNode);
-        AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
+        final AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
 
         //Normalize anydata content to specific container element
-        DOMSourceAnydata domSourceAnydata = (DOMSourceAnydata) anydataNode.body();
-        NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(SCHEMA_CONTEXT, containerSchemaNode);
+        final DOMSourceAnydata domSourceAnydata = (DOMSourceAnydata) anydataNode.body();
+
+        stack.enterSchemaTree(CONT_QNAME);
+        final SchemaNode barSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
+        assertTrue(barSchemaNode instanceof ContainerSchemaNode);
+        final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) barSchemaNode;
+        final NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(SCHEMA_CONTEXT, containerSchemaNode);
         assertNotNull(normalizedAnydata);
     }
 }

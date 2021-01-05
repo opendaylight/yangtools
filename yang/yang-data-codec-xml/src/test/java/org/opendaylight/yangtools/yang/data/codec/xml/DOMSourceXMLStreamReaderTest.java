@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -85,8 +86,12 @@ public class DOMSourceXMLStreamReaderTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, outerContainerSchema);
-        xmlParser.parse(domXMLReader);
+
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(QName.create("foo-ns", "top-cont"));
+        xmlParser.parse(domXMLReader, stack);
+        stack.clear();
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
 

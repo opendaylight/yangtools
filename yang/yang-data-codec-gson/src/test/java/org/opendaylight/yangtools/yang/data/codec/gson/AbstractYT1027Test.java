@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public abstract class AbstractYT1027Test {
@@ -145,7 +146,8 @@ public abstract class AbstractYT1027Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, codecFactory());
-        jsonParser.parse(new JsonReader(new StringReader(input)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(codecFactory().getEffectiveModelContext());
+        jsonParser.parse(new JsonReader(new StringReader(input)), stack);
         return result.getResult();
     }
 
