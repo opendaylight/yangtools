@@ -308,13 +308,15 @@ public final class LeafRefValidation {
                     return;
                 }
 
+                final List<QName> currentPath = leafRefContext.getCurrentSchemaInferenceStackState()
+                    .toSchemaNodeIdentifier().getNodeIdentifiers();
                 LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node: {} path "
                         + "of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.getNodeType(), leafRefContext.getCurrentNodePath(),
+                        leafRefTargetNodeValues, leaf.getNodeType(), currentPath,
                         leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
                 errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation of leafref"
                         + " TARGET node: %s path of invalid LEAFREF node: %s leafRef target path: %s %s", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.getNodeType(), leafRefContext.getCurrentNodePath(),
+                        leafRefTargetNodeValues, leaf.getNodeType(), currentPath,
                         leafRefContext.getAbsoluteLeafRefTargetPath(),
                         FAILED));
             });
