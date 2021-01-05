@@ -10,14 +10,13 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class LeafRefContextBuilder implements Builder<LeafRefContext> {
 
@@ -26,7 +25,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
 
     private final QName currentNodeQName;
-    private final SchemaPath currentNodePath;
+    private final SchemaInferenceStack stack;
     private final EffectiveModelContext schemaContext;
 
     private LeafRefPath leafRefTargetPath = null;
@@ -36,12 +35,11 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
 
-    LeafRefContextBuilder(final QName currentNodeQName, final SchemaPath currentNodePath,
+    LeafRefContextBuilder(final QName currentNodeQName, final SchemaInferenceStack stack,
             final EffectiveModelContext schemaContext) {
         this.currentNodeQName = requireNonNull(currentNodeQName);
-        this.currentNodePath = requireNonNull(currentNodePath);
-        // FIXME: requireNonNull
-        this.schemaContext = schemaContext;
+        this.stack = requireNonNull(stack);
+        this.schemaContext = requireNonNull(schemaContext);
     }
 
     @Override
@@ -88,8 +86,8 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
         return referencedByChildren;
     }
 
-    SchemaPath getCurrentNodePath() {
-        return currentNodePath;
+    SchemaInferenceStack getCurrentSchemaInferenceStackState() {
+        return stack;
     }
 
     LeafRefPath getLeafRefTargetPath() {
@@ -122,7 +120,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
                 absoluteLeafRefTargetPath = leafRefTargetPath;
             } else {
                 absoluteLeafRefTargetPath = LeafRefUtils.createAbsoluteLeafRefPath(leafRefTargetPath,
-                    currentNodePath, getLeafRefContextModule());
+                    stack, getLeafRefContextModule());
             }
         }
 
@@ -130,8 +128,8 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     Module getLeafRefContextModule() {
-        final Iterator<QName> it = currentNodePath.getPathFromRoot().iterator();
-        final QNameModule qnameModule = it.hasNext() ? it.next().getModule() : currentNodeQName.getModule();
+        final QNameModule qnameModule = stack.inInstantiatedContext() ? stack.currentModule().localQNameModule()
+                : currentNodeQName.getModule();
         return schemaContext.findModule(qnameModule).orElse(null);
     }
 
