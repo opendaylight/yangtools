@@ -61,7 +61,7 @@ public class GroupingTest {
         ctx = TestUtils.parseYangSources("/model");
         foo = TestUtils.findModule(ctx, "foo").get();
         baz = TestUtils.findModule(ctx, "baz").get();
-        assertEquals(3, ctx.getModules().size());
+        assertEquals(4, ctx.getModules().size());
     }
 
     @Test

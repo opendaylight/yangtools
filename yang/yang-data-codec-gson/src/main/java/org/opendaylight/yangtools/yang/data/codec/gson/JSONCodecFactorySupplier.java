@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,8 @@ public enum JSONCodecFactorySupplier {
             final Stopwatch sw = Stopwatch.createStarted();
             final LazyCodecCache<JSONCodec<?>> lazyCache = new LazyCodecCache<>();
             final JSONCodecFactory lazy = factorySupplier.apply(key, lazyCache);
-            final int visitedLeaves = requestCodecsForChildren(lazy, key);
+            final SchemaInferenceStack stack = new SchemaInferenceStack(key);
+            final int visitedLeaves = requestCodecsForChildren(lazy, key, stack);
             sw.stop();
 
             final PrecomputedCodecCache<JSONCodec<?>> cache = lazyCache.toPrecomputed();
@@ -80,14 +82,16 @@ public enum JSONCodecFactorySupplier {
             return factorySupplier.apply(key, cache);
         }
 
-        private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent) {
+        private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent,
+                final SchemaInferenceStack stack) {
             int ret = 0;
             for (DataSchemaNode child : parent.getChildNodes()) {
+                stack.enterSchemaTree(child.getQName());
                 if (child instanceof TypedDataSchemaNode) {
-                    lazy.codecFor((TypedDataSchemaNode) child);
+                    lazy.codecFor((TypedDataSchemaNode) child, stack);
                     ++ret;
                 } else if (child instanceof DataNodeContainer) {
-                    ret += requestCodecsForChildren(lazy, (DataNodeContainer) child);
+                    ret += requestCodecsForChildren(lazy, (DataNodeContainer) child, stack);
                 }
             }
 

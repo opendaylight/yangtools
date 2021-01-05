@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Each test tests whether json input is correctly transformed to normalized node structure.
@@ -179,7 +180,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.createLenient(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -191,8 +193,10 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, parentNode);
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(parentNode.getQName());
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -204,8 +208,10 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory, parentNode);
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(parentNode.getQName());
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -244,7 +250,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
                                 .build()).build();
 
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(lhotkaCodecFactory.getEffectiveModelContext());
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
         assertEquals(cont1Normalized, transformedInput);
@@ -255,7 +262,8 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(lhotkaCodecFactory.getEffectiveModelContext());
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
                 transformedInput);
