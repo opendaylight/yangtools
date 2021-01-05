@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
@@ -102,7 +103,8 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.RFC7951.getShared(FULL_SCHEMA_CONTEXT));
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(FULL_SCHEMA_CONTEXT);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
 
         assertTrue(transformedInput instanceof ContainerNode);
@@ -122,7 +124,8 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -137,7 +140,8 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }
@@ -152,7 +156,8 @@ public class Bug8083Test {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
-        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)), stack);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);
     }

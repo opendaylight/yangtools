@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements EffectiveModelContextProvider {
     private final @NonNull EffectiveModelContext schemaContext;
@@ -30,8 +31,9 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
     }
 
     @Override
-    TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type) {
-        final TypeDefinition<?> ret = SchemaContextUtil.getBaseTypeForLeafRef(type, schemaContext, schemaNode);
+    TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type,
+            final SchemaInferenceStack stack) {
+        final TypeDefinition<?> ret = SchemaContextUtil.getBaseTypeForLeafRef(type, schemaContext, schemaNode, stack);
         return verifyNotNull(ret, "Unable to find base type for leafref node '%s'.", schemaNode);
     }
 

@@ -22,6 +22,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -32,8 +35,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 
@@ -45,12 +47,6 @@ public class AnyXmlWithParamsParsingTest {
     private static final EffectiveModelContext SCHEMA = YangParserTestUtils.parseYangResourceDirectory(
             "/anyxml-support/params/");
 
-    private static final SchemaNode SCHEMA_NODE = SCHEMA.getOperations().stream()
-            .filter(o -> o.getQName().getLocalName().equals("edit-config"))
-            .findFirst()
-            .map(OperationDefinition::getInput)
-            .get();
-
     @Test
     public void testAnyXmlWithParams() throws Exception {
         final Document doc = UntrustedXML.newDocumentBuilder().parse(EDIT_CONFIG);
@@ -58,8 +54,14 @@ public class AnyXmlWithParamsParsingTest {
         final NormalizedNodeResult resultHolder = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter writer = ImmutableNormalizedNodeStreamWriter.from(resultHolder);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(writer, SCHEMA, SCHEMA_NODE);
-        xmlParser.traverse(new DOMSource(doc.getDocumentElement()));
+        final XmlParserStream xmlParser = XmlParserStream.create(writer, SCHEMA);
+        final QNameModule qNameModule = QNameModule.create(XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0"),
+                Revision.of("2011-06-01"));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA);
+        stack.enterSchemaTree(QName.create(qNameModule, "edit-config"));
+        stack.enterSchemaTree(QName.create(qNameModule, "input"));
+        xmlParser.traverse(new DOMSource(doc.getDocumentElement()), stack);
+        stack.clear();
         final NormalizedNode parsed = resultHolder.getResult();
 
         final DataContainerChild editCfg = ((ContainerNode) parsed).childByArg(getNodeId(parsed, "edit-content"));

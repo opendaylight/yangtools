@@ -20,6 +20,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Iterator which lazily parses {@link PathArgument} from string representation.
@@ -73,19 +76,21 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
         this.offset = 0;
     }
 
-    @Override
     public List<PathArgument> build() {
+        final DataSchemaNode schemaContext = codec.getDataContextTree().getRoot().getDataSchemaNode();
+        final SchemaInferenceStack node = new SchemaInferenceStack((EffectiveModelContext) schemaContext);
         while (!allCharactersConsumed()) {
-            product.add(computeNextArgument());
+            product.add(computeNextArgument(node));
         }
         return ImmutableList.copyOf(product);
     }
 
-    private PathArgument computeNextArgument() {
+    private PathArgument computeNextArgument(final SchemaInferenceStack node) {
         checkValid(SLASH == currentChar(), "Identifier must start with '/'.");
         skipCurrentChar();
         checkValid(!allCharactersConsumed(), "Identifier cannot end with '/'.");
         final QName name = nextQName();
+        node.enterSchemaTree(name);
         // Memoize module
         lastModule = name.getModule();
         if (allCharactersConsumed() || SLASH == currentChar()) {
@@ -93,7 +98,7 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
         }
 
         checkValid(PRECONDITION_START == currentChar(), "Last element must be identifier, predicate or '/'");
-        return computeIdentifierWithPredicate(name);
+        return computeIdentifierWithPredicate(name, node);
     }
 
     private DataSchemaContextNode<?> nextContextNode(final QName name) {
@@ -121,7 +126,7 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
      * @param name QName of node, for which predicates are computed.
      * @return PathArgument representing node selection with predictes
      */
-    private PathArgument computeIdentifierWithPredicate(final QName name) {
+    private PathArgument computeIdentifierWithPredicate(final QName name, final SchemaInferenceStack node) {
         DataSchemaContextNode<?> currentNode = nextContextNode(name);
         checkValid(currentNode.isKeyedEntry(), "Entry %s does not allow specifying predicates.", name);
 
@@ -150,7 +155,7 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
             }
             final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
             checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
-            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), keyValue);
+            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), keyValue, node);
             keyValues.put(key, value);
         }
         return NodeIdentifierWithPredicates.of(name, keyValues.build());

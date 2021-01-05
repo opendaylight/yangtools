@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class SchemalessXMLStreamWriterUtils extends XMLStreamWriterUtils {
     static final SchemalessXMLStreamWriterUtils INSTANCE = new SchemalessXMLStreamWriterUtils();
@@ -20,7 +21,8 @@ final class SchemalessXMLStreamWriterUtils extends XMLStreamWriterUtils {
     }
 
     @Override
-    TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type) {
+    TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type,
+            final SchemaInferenceStack stack) {
         return type;
     }
 

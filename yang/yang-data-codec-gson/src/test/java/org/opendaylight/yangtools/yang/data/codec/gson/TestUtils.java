@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public final class TestUtils {
     private TestUtils() {
@@ -60,8 +61,10 @@ public final class TestUtils {
             final EffectiveModelContext schemaContext) throws Exception {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(xmlInputStream);
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
-        xmlParser.parse(reader);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        xmlParser.parse(reader, stack);
+        stack.clear();
     }
 
     static String normalizedNodesToJsonString(final NormalizedNode data,

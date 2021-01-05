@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +50,12 @@ abstract class XMLStreamWriterUtils {
      * @throws XMLStreamException if an encoding problem occurs
      */
     String encodeValue(final @NonNull ValueWriter writer,final @NonNull SchemaNode schemaNode,
-            final TypeDefinition<?> type, final @NonNull Object value, final QNameModule parent)
+            final TypeDefinition<?> type, final @NonNull Object value, final QNameModule parent,
+            final @NonNull SchemaInferenceStack node)
                     throws XMLStreamException {
         return type instanceof LeafrefTypeDefinition
-                ? encodeValue(writer, getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type), value, parent)
+                ? encodeValue(writer, getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type, node), value,
+                parent)
                         : encodeValue(writer, type, value, parent);
     }
 
@@ -162,7 +165,7 @@ abstract class XMLStreamWriterUtils {
     }
 
     abstract @NonNull TypeDefinition<?> getBaseTypeForLeafRef(SchemaNode schemaNode,
-            @NonNull LeafrefTypeDefinition type);
+            @NonNull LeafrefTypeDefinition type, @NonNull SchemaInferenceStack stack);
 
     abstract String encodeInstanceIdentifier(@NonNull ValueWriter writer, YangInstanceIdentifier value)
             throws XMLStreamException;
