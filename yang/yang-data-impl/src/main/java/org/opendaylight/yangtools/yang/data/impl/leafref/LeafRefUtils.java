@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public final class LeafRefUtils {
     private LeafRefUtils() {
@@ -29,19 +30,19 @@ public final class LeafRefUtils {
      * Create an absolute leafref path.
      *
      * @param leafRefPath leafRefPath
-     * @param contextNodeSchemaPath contextNodeSchemaPath
+     * @param stack schemaInferenceStack
      * @param module module
      * @return LeafRefPath object
      */
     public static LeafRefPath createAbsoluteLeafRefPath(
-            final LeafRefPath leafRefPath, final SchemaPath contextNodeSchemaPath,
+            final LeafRefPath leafRefPath, final SchemaInferenceStack stack,
             final Module module) {
         if (leafRefPath.isAbsolute()) {
             return leafRefPath;
         }
 
         final Deque<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
-                contextNodeSchemaPath, module);
+                stack, module);
         final Iterator<QNameWithPredicate> leafRefTgtPathFromRootIterator = leafRefPath.getPathFromRoot().iterator();
 
         while (leafRefTgtPathFromRootIterator.hasNext()) {
@@ -56,9 +57,11 @@ public final class LeafRefUtils {
         return LeafRefPath.create(absoluteLeafRefTargetPathList, true);
     }
 
-    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(final SchemaPath nodePath, final Module module) {
+    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(final SchemaInferenceStack stack,
+            final Module module) {
         final Deque<QNameWithPredicate> xpath = new LinkedList<>();
-        final Iterator<QName> nodePathIterator = nodePath.getPathFromRoot().iterator();
+        final Iterator<QName> nodePathIterator = stack.inInstantiatedContext() ? stack.getPathFromRoot().iterator()
+                : Collections.emptyIterator();
 
         DataNodeContainer currenDataNodeContainer = module;
         while (nodePathIterator.hasNext()) {
@@ -90,7 +93,7 @@ public final class LeafRefUtils {
         return xpath;
     }
 
-    public static LeafRefPath schemaPathToLeafRefPath(final SchemaPath nodePath, final Module module) {
-        return LeafRefPath.create(schemaPathToXPathQNames(nodePath, module), true);
+    public static LeafRefPath schemaPathToLeafRefPath(final SchemaInferenceStack stack, final Module module) {
+        return LeafRefPath.create(schemaPathToXPathQNames(stack, module), true);
     }
 }

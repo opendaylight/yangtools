@@ -16,6 +16,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -65,6 +66,20 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public SchemaInferenceStack(final EffectiveModelContext effectiveModel) {
         this.deque = new ArrayDeque<>();
         this.effectiveModel = requireNonNull(effectiveModel);
+    }
+
+    /**
+     * Convert current state into a list of QNames representing path from root
+     * to current state.
+     *
+     * @return List of Qnames representing path from root
+     * @throws IllegalStateException if current state is not instantiated
+     */
+    public List<QName> getPathFromRoot() {
+        checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
+        final ImmutableList.Builder<QName> builder = ImmutableList.builderWithExpectedSize(deque.size());
+        deque.descendingIterator().forEachRemaining(stmt -> builder.add(stmt.argument()));
+        return builder.build();
     }
 
     @Override
@@ -153,6 +168,16 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return pushSchema(requireNonNull(nodeIdentifier));
     }
 
+    public @NonNull EffectiveStatement<QName, ?> enterSchemaTree(final QName... nodeIdentifiers) {
+        EffectiveStatement<QName, ?> stmt = null;
+        requireNonNull(nodeIdentifiers);
+        checkArgument(nodeIdentifiers.length != 0);
+        for (final QName nodeIdentifier : nodeIdentifiers) {
+            stmt = enterSchemaTree(nodeIdentifier);
+        }
+        return requireNonNull(stmt);
+    }
+
     /**
      * Pop the current statement from the stack.
      *
@@ -177,10 +202,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if current state is not instantiated
      */
     public @NonNull Absolute toSchemaNodeIdentifier() {
-        checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
-        final ImmutableList.Builder<QName> builder = ImmutableList.builderWithExpectedSize(deque.size());
-        deque.descendingIterator().forEachRemaining(stmt -> builder.add(stmt.argument()));
-        return Absolute.of(builder.build());
+        return Absolute.of(getPathFromRoot());
     }
 
     /**
