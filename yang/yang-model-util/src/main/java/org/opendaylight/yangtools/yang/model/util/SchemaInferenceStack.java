@@ -15,7 +15,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -65,6 +69,15 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public SchemaInferenceStack(final EffectiveModelContext effectiveModel) {
         this.deque = new ArrayDeque<>();
         this.effectiveModel = requireNonNull(effectiveModel);
+    }
+
+    public List<QName> getPathFromRoot() {
+        final List<QName> qNames = new ArrayList<>();
+        final ArrayDeque<EffectiveStatement<QName, ?>> clone = this.deque.clone();
+        while(!clone.isEmpty()) {
+            qNames.add(clone.pollLast().argument());
+        }
+        return qNames;
     }
 
     @Override
