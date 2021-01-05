@@ -16,27 +16,29 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug5396Test {
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5396");
+        EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5396");
         assertNotNull(context);
 
         QName root = QName.create("foo", "root");
         QName myLeaf2 = QName.create("foo", "my-leaf2");
 
-        SchemaPath schemaPath = SchemaPath.create(true, root, myLeaf2);
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(root);
+        stack.enterSchemaTree(myLeaf2);
+        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
 
         LeafSchemaNode leaf2 = (LeafSchemaNode) findDataSchemaNode;

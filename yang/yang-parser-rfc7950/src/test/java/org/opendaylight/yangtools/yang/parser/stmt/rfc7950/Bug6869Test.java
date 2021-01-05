@@ -21,13 +21,14 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -36,7 +37,7 @@ public class Bug6869Test {
 
     @Test
     public void identityNoFeaureTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
                 ImmutableSet.of());
         assertNotNull(schemaContext);
 
@@ -51,7 +52,7 @@ public class Bug6869Test {
 
     @Test
     public void identityAllFeauresTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
                 createFeaturesSet("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
         assertNotNull(schemaContext);
 
@@ -80,10 +81,12 @@ public class Bug6869Test {
         return ImmutableSet.copyOf(supportedFeatures);
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
+    private static SchemaNode findNode(final EffectiveModelContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
             localName -> QName.create(FOO_NS, localName));
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        qNames.forEach(stack::enterSchemaTree);
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     @Test

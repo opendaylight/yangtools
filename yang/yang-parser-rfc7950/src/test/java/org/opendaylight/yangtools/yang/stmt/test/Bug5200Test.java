@@ -15,10 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -26,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug5200Test {
@@ -34,15 +34,20 @@ public class Bug5200Test {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5200");
+        EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5200");
         assertNotNull(context);
 
         QName root = QName.create(NS, REV, "root");
         QName myLeaf = QName.create(NS, REV, "my-leaf");
         QName myLeaf2 = QName.create(NS, REV, "my-leaf-2");
 
-        SchemaNode myLeafNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, myLeaf));
-        SchemaNode myLeaf2Node = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, myLeaf2));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(root);
+        stack.enterSchemaTree(myLeaf);
+        SchemaNode myLeafNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+        stack.exit();
+        stack.enterSchemaTree(myLeaf2);
+        SchemaNode myLeaf2Node = SchemaContextUtil.findDataSchemaNode(context, stack);
 
         assertTrue(myLeafNode instanceof LeafSchemaNode);
         assertTrue(myLeaf2Node instanceof LeafSchemaNode);

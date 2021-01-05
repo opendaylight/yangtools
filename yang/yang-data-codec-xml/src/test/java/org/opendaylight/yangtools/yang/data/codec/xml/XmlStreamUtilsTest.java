@@ -32,14 +32,15 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class XmlStreamUtilsTest {
@@ -48,7 +49,7 @@ public class XmlStreamUtilsTest {
         void accept(XMLStreamWriter writer) throws XMLStreamException;
     }
 
-    private static SchemaContext schemaContext;
+    private static EffectiveModelContext schemaContext;
     private static Module leafRefModule;
 
     @BeforeClass
@@ -144,12 +145,14 @@ public class XmlStreamUtilsTest {
     }
 
     private TypeDefinition<?> getTargetNodeForLeafRef(final String nodeName, final Class<?> clas) {
-        final LeafSchemaNode schemaNode = findSchemaNodeWithLeafrefType(leafRefModule, nodeName);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        final LeafSchemaNode schemaNode = findSchemaNodeWithLeafrefType(leafRefModule, nodeName, stack);
         assertNotNull(schemaNode);
         final LeafrefTypeDefinition leafrefTypedef = findLeafrefType(schemaNode);
         assertNotNull(leafrefTypedef);
         final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext,
-                schemaNode);
+                schemaNode, stack);
+        stack.clear();
         assertTrue("Wrong class found.", clas.isInstance(targetBaseType));
         return targetBaseType;
     }
@@ -172,21 +175,25 @@ public class XmlStreamUtilsTest {
         return QName.create(namespace, revision, localName);
     }
 
-    private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
+    private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName,
+            final SchemaInferenceStack stack) {
         for (final DataSchemaNode childNode : module.getChildNodes()) {
             if (childNode instanceof DataNodeContainer) {
+                stack.enterSchemaTree(childNode.getQName());
                 LeafSchemaNode leafrefFromRecursion = findSchemaNodeWithLeafrefType((DataNodeContainer) childNode,
-                        nodeName);
+                        nodeName, stack);
                 if (leafrefFromRecursion != null) {
                     return leafrefFromRecursion;
                 }
             } else if (childNode.getQName().getLocalName().equals(nodeName) && childNode instanceof LeafSchemaNode) {
                 final TypeDefinition<?> leafSchemaNodeType = ((LeafSchemaNode) childNode).getType();
                 if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {
+                    stack.enterSchemaTree(childNode.getQName());
                     return (LeafSchemaNode) childNode;
                 }
             }
         }
+        stack.exit();
         return null;
     }
 

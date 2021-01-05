@@ -48,10 +48,12 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -166,7 +168,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             isEmpty = false;
             final CompositeNodeDataWithSchema<?> compositeNodeDataWithSchema =
                     new CompositeNodeDataWithSchema<>(parentNode);
-            read(reader, compositeNodeDataWithSchema);
+            read(reader, compositeNodeDataWithSchema, new SchemaInferenceStack((EffectiveModelContext) parentNode));
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -239,30 +241,34 @@ public final class JsonParserStream implements Closeable, Flushable {
         parent.setValue(domSource);
     }
 
-    public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
+    public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent, final SchemaInferenceStack stack)
+            throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
-                setValue(parent, in.nextString());
+                setValue(parent, in.nextString(), stack);
                 break;
             case BOOLEAN:
-                setValue(parent, Boolean.toString(in.nextBoolean()));
+                setValue(parent, Boolean.toString(in.nextBoolean()), stack);
                 break;
             case NULL:
                 in.nextNull();
-                setValue(parent, null);
+                setValue(parent, null, stack);
                 break;
             case BEGIN_ARRAY:
                 in.beginArray();
                 while (in.hasNext()) {
                     if (parent instanceof LeafNodeDataWithSchema) {
-                        read(in, parent);
+                        stack.enterSchemaTree(parent.getSchema().getQName());
+                        read(in, parent, stack);
                     } else {
                         final AbstractNodeDataWithSchema<?> newChild = newArrayEntry(parent);
-                        read(in, newChild);
+                        stack.enterSchemaTree(newChild.getSchema().getQName());
+                        read(in, newChild, stack);
                     }
                 }
                 in.endArray();
+                stack.exit();
                 return;
             case BEGIN_OBJECT:
                 final Set<String> namesakes = new HashSet<>();
@@ -296,7 +302,7 @@ public final class JsonParserStream implements Closeable, Flushable {
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName,
-                                getCurrentNamespace());
+                                getCurrentNamespace(), stack);
                     checkState(!childDataSchemaNodes.isEmpty(),
                         "Schema for node with name %s and namespace %s does not exist at %s",
                         localName, getCurrentNamespace(), parentSchema);
@@ -307,7 +313,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
                     } else {
-                        read(in, newChild);
+                        stack.enterSchemaTree(newChild.getSchema().getQName());
+                        read(in, newChild, stack);
                     }
                     removeNamespace();
                 }
@@ -315,6 +322,9 @@ public final class JsonParserStream implements Closeable, Flushable {
                 return;
             default:
                 break;
+        }
+        if (!stack.isEmpty()) {
+            stack.exit();
         }
     }
 
@@ -329,20 +339,22 @@ public final class JsonParserStream implements Closeable, Flushable {
         return ((MultipleEntryDataWithSchema<?>) parent).newChildEntry();
     }
 
-    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) {
+    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value,
+            final SchemaInferenceStack node) {
         checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema<?> parentSimpleNode = (SimpleNodeDataWithSchema<?>) parent;
         checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
                 parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 
-        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
+        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema(), node);
         parentSimpleNode.setValue(translatedValue);
     }
 
-    private Object translateValueByType(final String value, final DataSchemaNode node) {
+    private Object translateValueByType(final String value, final DataSchemaNode node,
+            final SchemaInferenceStack nodeStack) {
         checkArgument(node instanceof TypedDataSchemaNode);
-        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(null, value);
+        return codecs.codecFor((TypedDataSchemaNode) node, nodeStack).parseValue(null, value);
     }
 
     private void removeNamespace() {

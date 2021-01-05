@@ -15,18 +15,18 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug7879Test {
     private static final String NS = "my-model-ns";
 
     @Test
     public void test() throws Exception {
-        final SchemaContext context = TestUtils.parseYangSources("/bugs/bug7879");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug7879");
         assertNotNull(context);
 
         assertTrue(findNode(context, qN("my-alarm"), qN("my-content"), qN("my-event-container"))
@@ -36,8 +36,12 @@ public class Bug7879Test {
         assertEquals(Optional.of("new description"), myEventValueLeaf.getDescription());
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));
+    private static SchemaNode findNode(final EffectiveModelContext context, final QName... qnames) {
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        for (final QName qname : qnames) {
+            stack.enterSchemaTree(qname);
+        }
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     private static QName qN(final String localName) {

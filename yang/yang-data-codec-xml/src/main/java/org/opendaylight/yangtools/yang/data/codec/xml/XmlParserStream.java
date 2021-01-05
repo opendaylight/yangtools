@@ -83,6 +83,10 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -265,8 +269,9 @@ public final class XmlParserStream implements Closeable, Flushable {
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
-
-            read(reader, nodeDataWithSchema, reader.getLocalName());
+            final SchemaInferenceStack node = new SchemaInferenceStack(codecs.getEffectiveModelContext());
+            read(reader, nodeDataWithSchema, reader.getLocalName(), node);
+            node.clear();
             nodeDataWithSchema.write(writer);
         }
 
@@ -296,7 +301,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
-    private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in) {
+    private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in,
+            final SchemaInferenceStack node) {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
         final Map<QName, Object> attributes = new LinkedHashMap<>();
 
@@ -324,7 +330,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     codecs.getEffectiveModelContext(), qname);
                 if (optAnnotation.isPresent()) {
                     final AnnotationSchemaNode schema = optAnnotation.get();
-                    final Object value = codecs.codecFor(schema).parseValue(in.getNamespaceContext(), attrValue);
+                    final Object value = codecs.codecFor(schema, node).parseValue(in.getNamespaceContext(), attrValue);
                     attributes.put(schema.getQName(), value);
                     continue;
                 }
@@ -363,15 +369,19 @@ public final class XmlParserStream implements Closeable, Flushable {
         return (Document) result.getNode();
     }
 
-    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema<?> parent, final String rootElement)
-            throws XMLStreamException {
+    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema<?> parent, final String rootElement,
+            final SchemaInferenceStack node) throws XMLStreamException {
         if (!in.hasNext()) {
+            node.exit();
             return;
         }
 
         if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
-            parent.setAttributes(getElementAttributes(in));
-            setValue((SimpleNodeDataWithSchema<?>) parent, in.getElementText().trim(), in.getNamespaceContext());
+            node.enterSchemaTree(parent.getSchema().getQName());
+            parent.setAttributes(getElementAttributes(in, node.copy()));
+            setValue((SimpleNodeDataWithSchema<?>) parent, in.getElementText().trim(), in.getNamespaceContext(),
+                    node.copy());
+            node.exit();
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -383,25 +393,28 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         if (parent instanceof ListEntryNodeDataWithSchema || parent instanceof ContainerNodeDataWithSchema) {
-            parent.setAttributes(getElementAttributes(in));
+            node.enterSchemaTree(parent.getSchema().getQName());
+            parent.setAttributes(getElementAttributes(in, node));
         }
 
         if (parent instanceof LeafListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema) {
             String xmlElementName = in.getLocalName();
             while (xmlElementName.equals(parent.getSchema().getQName().getLocalName())) {
-                read(in, newEntryNode(parent), rootElement);
+                final AbstractNodeDataWithSchema<?> child = newEntryNode(parent);
+                read(in, child, rootElement, node);
                 if (in.getEventType() == XMLStreamConstants.END_DOCUMENT
                         || in.getEventType() == XMLStreamConstants.END_ELEMENT) {
                     break;
                 }
                 xmlElementName = in.getLocalName();
             }
-
             return;
         }
 
         if (parent instanceof AnyXmlNodeDataWithSchema) {
-            setValue((AnyXmlNodeDataWithSchema) parent, readAnyXmlValue(in), in.getNamespaceContext());
+            node.enterSchemaTree(parent.getSchema().getQName());
+            setValue((AnyXmlNodeDataWithSchema) parent, readAnyXmlValue(in), in.getNamespaceContext(), node);
+            node.exit();
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -416,8 +429,10 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (parent instanceof AnydataNodeDataWithSchema) {
             final AnydataNodeDataWithSchema anydata = (AnydataNodeDataWithSchema) parent;
             anydata.setObjectModel(DOMSourceAnydata.class);
-            anydata.setAttributes(getElementAttributes(in));
-            setValue(anydata, readAnyXmlValue(in), in.getNamespaceContext());
+            node.enterSchemaTree(parent.getSchema().getQName());
+            anydata.setAttributes(getElementAttributes(in, node));
+            setValue(anydata, readAnyXmlValue(in), in.getNamespaceContext(), node);
+            node.exit();
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -468,7 +483,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                     }
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
-                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
+                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri,
+                                    node);
                     if (!childDataSchemaNodes.isEmpty()) {
                         final boolean elementList = isElementList(childDataSchemaNodes);
                         if (!added && !elementList) {
@@ -478,8 +494,15 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         // We have a match, proceed with it
-                        read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes,
-                            elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP), rootElement);
+                        final AbstractNodeDataWithSchema<?> child = ((CompositeNodeDataWithSchema<?>) parent)
+                                .addChild(childDataSchemaNodes,
+                                elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP);
+                        read(in, child, rootElement, node);
+                        EffectiveStatement<QName, ?> stmt = node.currentStatement();
+                        while (stmt instanceof CaseEffectiveStatement || stmt instanceof ChoiceEffectiveStatement) {
+                            node.exit();
+                            stmt = node.currentStatement();
+                        }
                         continue;
                     }
 
@@ -536,6 +559,9 @@ public final class XmlParserStream implements Closeable, Flushable {
                 break;
             default:
                 break;
+        }
+        if (parent instanceof ListEntryNodeDataWithSchema || parent instanceof ContainerNodeDataWithSchema) {
+            node.exit();
         }
     }
 
@@ -603,15 +629,15 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private void setValue(final SimpleNodeDataWithSchema<?> parent, final Object value,
-            final NamespaceContext nsContext) {
+            final NamespaceContext nsContext, final SchemaInferenceStack node) {
         final DataSchemaNode schema = parent.getSchema();
         final Object prev = parent.getValue();
         checkArgument(prev == null, "Node '%s' has already set its value to '%s'", schema.getQName(), prev);
-        parent.setValue(translateValueByType(value, schema, nsContext));
+        parent.setValue(translateValueByType(value, schema, nsContext, node));
     }
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
-            final NamespaceContext namespaceCtx) {
+            final NamespaceContext namespaceCtx, final SchemaInferenceStack stackNode) {
         if (node instanceof AnyxmlSchemaNode) {
             checkArgument(value instanceof Document);
             /*
@@ -627,7 +653,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         checkArgument(node instanceof TypedDataSchemaNode);
         checkArgument(value instanceof String);
-        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(namespaceCtx, (String) value);
+        return codecs.codecFor((TypedDataSchemaNode) node, stackNode).parseValue(namespaceCtx, (String) value);
     }
 
     private static AbstractNodeDataWithSchema<?> newEntryNode(final AbstractNodeDataWithSchema<?> parent) {

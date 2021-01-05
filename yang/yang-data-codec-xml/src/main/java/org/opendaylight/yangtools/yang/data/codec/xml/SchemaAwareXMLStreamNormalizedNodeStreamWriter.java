@@ -13,6 +13,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -34,11 +35,14 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
     private final SchemaTracker tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
+
 
     SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final EffectiveModelContext context,
             final SchemaTracker tracker) {
@@ -48,10 +52,11 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     }
 
     @Override
-    String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode)
+    String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode,
+            final SchemaInferenceStack node)
             throws XMLStreamException {
         return streamUtils.encodeValue(xmlWriter, schemaNode, schemaNode.getType(), value,
-            schemaNode.getQName().getModule());
+            schemaNode.getQName().getModule(), node);
     }
 
     @Override
@@ -61,7 +66,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
         if (optAnnotation.isPresent()) {
             final AnnotationSchemaNode schema = optAnnotation.get();
-            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule());
+            final SchemaInferenceStack emptyStack = new SchemaInferenceStack(streamUtils.getEffectiveModelContext());
+            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule(), emptyStack);
         }
 
         checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
@@ -151,8 +157,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
+        final SchemaInferenceStack node = tracker.transformToInferecenceStack(getEffectiveModelContext());
         if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, (TypedDataSchemaNode) current);
+            writeValue(value, (TypedDataSchemaNode) current, node);
         } else if (current instanceof AnydataSchemaNode) {
             anydataValue(value);
         } else {

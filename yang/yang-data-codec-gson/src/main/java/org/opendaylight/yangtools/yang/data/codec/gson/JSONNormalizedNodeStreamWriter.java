@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -402,8 +403,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
+        final SchemaInferenceStack node = tracker.transformToInferecenceStack(codecs.getEffectiveModelContext());
         if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
+            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current, node));
         } else if (current instanceof AnydataSchemaNode) {
             writeAnydataValue(value);
         } else {

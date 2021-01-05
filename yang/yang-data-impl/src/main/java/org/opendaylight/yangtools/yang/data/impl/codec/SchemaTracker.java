@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -46,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,5 +279,16 @@ public final class SchemaTracker {
 
     public Object endNode() {
         return schemaStack.pop();
+    }
+
+    public SchemaInferenceStack transformToInferecenceStack(final EffectiveModelContext context) {
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final Iterator<WithStatus> withStatusIterator = schemaStack.descendingIterator();
+        while (withStatusIterator.hasNext()) {
+            final WithStatus next = withStatusIterator.next();
+            stack.enterSchemaTree(((SchemaNode)next).getQName());
+        }
+
+        return stack;
     }
 }

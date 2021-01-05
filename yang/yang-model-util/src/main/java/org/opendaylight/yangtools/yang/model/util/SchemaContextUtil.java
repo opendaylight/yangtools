@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -55,7 +56,6 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -88,26 +88,26 @@ public final class SchemaContextUtil {
 
     /**
      * Method attempts to find DataSchemaNode in Schema Context via specified Schema Path. The returned DataSchemaNode
-     * from method will be the node at the end of the SchemaPath. If the DataSchemaNode is not present in the Schema
-     * Context the method will return {@code null}.
+     * from method will be the node at the end of the SchemaInferenceStack. If the DataSchemaNode is not present
+     * in the Schema Context the method will return {@code null}.
      *
      * <p>
      * In case that Schema Context or Schema Path are not specified correctly (i.e. contains {@code null} values) the
      * method will throw IllegalArgumentException.
      *
      * @param context Schema Context
-     * @param schemaPath Schema Path to search for
+     * @param stack represents the schema path to search for
      * @return SchemaNode from the end of the Schema Path or {@code null} if the Node is not present.
-     * @throws NullPointerException if context or schemaPath is null
+     * @throws NullPointerException if context or schemaStack is null
      */
-    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
-        final Iterable<QName> prefixedPath = schemaPath.getPathFromRoot();
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaInferenceStack stack) {
+        final Iterable<QName> prefixedPath = stack.toSchemaPath().getPathFromRoot();
         if (prefixedPath == null) {
-            LOG.debug("Schema path {} has null path", schemaPath);
+            LOG.debug("Schema path {} has null path", stack);
             return null;
         }
 
-        LOG.trace("Looking for path {} in context {}", schemaPath, context);
+        LOG.trace("Looking for path {} in context {}", stack, context);
         return findNodeInSchemaContext(context, prefixedPath);
     }
 
@@ -265,11 +265,11 @@ public final class SchemaContextUtil {
     //        that feels like an overkill.
     // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to a dedicated class
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
-            final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
+            final SchemaNode actualSchemaNode, final PathExpression relativeXPath, final SchemaInferenceStack node) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                 + "for non relative Revision Aware XPath use findDataSchemaNode method");
         return resolveRelativeXPath(context, module, removePredicatesFromXpath(relativeXPath.getOriginalString()),
-                actualSchemaNode);
+                actualSchemaNode, node);
     }
 
     private static String removePredicatesFromXpath(final String xpath) {
@@ -308,35 +308,36 @@ public final class SchemaContextUtil {
      * Returns NotificationDefinition from Schema Context.
      *
      * @param schema SchemaContext in which lookup should be performed.
-     * @param path Schema Path of notification
+     * @param stack Schema inference stack of notification
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
     public static @Nullable NotificationDefinition getNotificationSchema(final @NonNull SchemaContext schema,
-            final @NonNull SchemaPath path) {
+            final @NonNull SchemaInferenceStack stack) {
         requireNonNull(schema, "Schema context must not be null.");
-        requireNonNull(path, "Schema path must not be null.");
-        for (final NotificationDefinition potential : schema.getNotifications()) {
-            if (path.equals(potential.getPath())) {
-                return potential;
-            }
+        final List<QName> pathFromRoot = stack.toSchemaPath().getPathFromRoot();
+        checkArgument(!pathFromRoot.isEmpty(), "Schema inference stack path must enter schema tree");
+        final SchemaNode dataSchemaNode = findDataSchemaNode(schema, pathFromRoot);
+        if (dataSchemaNode instanceof NotificationDefinition) {
+            return (NotificationDefinition) dataSchemaNode;
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
      * Returns RPC Input or Output Data container from RPC definition.
      *
      * @param schema SchemaContext in which lookup should be performed.
-     * @param path Schema path of RPC input/output data container
+     * @param stack Schema inference stack of RPC input/output data container
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
     public static @Nullable ContainerLike getRpcDataSchema(final @NonNull SchemaContext schema,
-            final @NonNull SchemaPath path) {
+            final @NonNull SchemaInferenceStack stack) {
         requireNonNull(schema, "Schema context must not be null.");
-        requireNonNull(path, "Schema path must not be null.");
-        final Iterator<QName> it = path.getPathFromRoot().iterator();
+        requireNonNull(stack, "Schema inference stack must not be null.");
+        final Iterator<QName> it = stack.toSchemaNodeIdentifier().getNodeIdentifiers().iterator();
         checkArgument(it.hasNext(), "Rpc must have QName.");
         final QName rpcName = it.next();
         checkArgument(it.hasNext(), "input or output must be part of path.");
@@ -656,29 +657,45 @@ public final class SchemaContextUtil {
      * @throws IllegalArgumentException if any arguments are null
      */
     private static @Nullable SchemaNode resolveRelativeXPath(final SchemaContext context, final Module module,
-            final String pathStr, final SchemaNode actualSchemaNode) {
+            final String pathStr, final SchemaNode actualSchemaNode, final SchemaInferenceStack node) {
         checkState(actualSchemaNode.getPath() != null, "Schema Path reference for Leafref cannot be NULL");
 
-        return pathStr.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, pathStr)
+        return pathStr.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, pathStr, node)
                 : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
-                    doSplitXPath(pathStr)));
+                    doSplitXPath(pathStr), node));
     }
 
     private static Iterable<QName> resolveRelativePath(final SchemaContext context, final Module module,
-            final SchemaNode actualSchemaNode, final List<String> steps) {
+            final SchemaNode actualSchemaNode, final List<String> steps, final SchemaInferenceStack node) {
         // Find out how many "parent" components there are and trim them
         final int colCount = normalizeXPath(steps);
         final List<String> xpaths = colCount == 0 ? steps : steps.subList(colCount, steps.size());
 
-        final List<QName> walkablePath = createWalkablePath(actualSchemaNode.getPath().getPathFromRoot(),
+        final List<QName> walkablePath = createWalkablePath(node.toSchemaPath().getPathFromRoot(),
                 context, colCount);
 
         if (walkablePath.size() - colCount >= 0) {
-            return Iterables.concat(Iterables.limit(walkablePath, walkablePath.size() - colCount),
+            final Iterable<QName> returnPath = Iterables.concat(Iterables.limit(walkablePath,
+                    walkablePath.size() - colCount),
                     Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+            try {
+                for (int i = 0; i < colCount; i++) {
+                    node.exit();
+                }
+                for (final String xpath : xpaths) {
+                    node.enterSchemaTree(stringPathPartToQName(context, module, xpath));
+                }
+            } catch (IllegalArgumentException e) {
+                LOG.info("Node could not be found on path {} from node {}", String.join("/", steps), walkablePath, e);
+            }
+            return returnPath;
         }
+        // FIXME we should never get here since this means that we have more '..' in relative path then the node path
+        // contains. Although this does not create any parsing problem since we are throwing exception higher in the
+        // code
         return Iterables.concat(walkablePath,
                 Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+
     }
 
     /**
@@ -712,14 +729,14 @@ public final class SchemaContextUtil {
     }
 
     private static SchemaNode resolveDerefPath(final SchemaContext context, final Module module,
-            final SchemaNode actualSchemaNode, final String xpath) {
+            final SchemaNode actualSchemaNode, final String xpath, final SchemaInferenceStack node) {
         final int paren = xpath.indexOf(')', 6);
         checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
 
         final String derefArg = xpath.substring(6, paren).strip();
         // Look up the node which we need to reference
         final SchemaNode derefTarget = findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
-            doSplitXPath(derefArg)));
+            doSplitXPath(derefArg), node));
         checkArgument(derefTarget != null, "Cannot find deref(%s) target node %s in context of %s", derefArg,
                 actualSchemaNode);
         checkArgument(derefTarget instanceof TypedDataSchemaNode, "deref(%s) resolved to non-typed %s", derefArg,
@@ -738,11 +755,17 @@ public final class SchemaContextUtil {
 
         final PathExpression targetPath = ((LeafrefTypeDefinition) targetType).getPathStatement();
         LOG.debug("Derefencing path {}", targetPath);
-
+        final QNameModule moduleQname = node.currentStatement().argument().getModule();
         final SchemaNode deref = targetPath.isAbsolute()
-                ? findTargetNode(context, actualSchemaNode.getQName().getModule(),
+                ? findTargetNode(context, moduleQname,
                     ((LocationPathSteps) targetPath.getSteps()).getLocationPath())
-                        : findDataSchemaNodeForRelativeXPath(context, module, actualSchemaNode, targetPath);
+                        : findDataSchemaNodeForRelativeXPath(context, module, actualSchemaNode, targetPath, node);
+        if (targetPath.isAbsolute()) {
+            node.clear();
+            final YangLocationPath locationPath = ((LocationPathSteps) targetPath.getSteps()).getLocationPath();
+            locationPath.getSteps().forEach(step -> node.enterSchemaTree(resolve(((QNameStep) step).getQName(),
+                    moduleQname)));
+        }
         if (deref == null) {
             LOG.debug("Path {} could not be derefenced", targetPath);
             return null;
@@ -751,7 +774,7 @@ public final class SchemaContextUtil {
         checkArgument(deref instanceof LeafSchemaNode, "Unexpected %s reference in %s", deref, targetPath);
 
         final List<String> qnames = doSplitXPath(xpath.substring(paren + 1).stripLeading());
-        return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
+        return findTargetNode(context, resolveRelativePath(context, module, deref, qnames, node));
     }
 
     private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule localNamespace,
@@ -855,7 +878,7 @@ public final class SchemaContextUtil {
      *         is there to preserve backwards compatibility)
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
-            final SchemaContext schemaContext, final SchemaNode schema) {
+            final SchemaContext schemaContext, final SchemaNode schema, final SchemaInferenceStack node) {
         final PathExpression pathStatement = typeDefinition.getPathStatement();
         final String pathStr = stripConditionsFromXPathString(pathStatement);
 
@@ -872,11 +895,15 @@ public final class SchemaContextUtil {
             }
 
             final Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
-            dataSchemaNode = (DataSchemaNode) findTargetNode(schemaContext,
-                xpathToQNamePath(schemaContext, parentModule, pathStr));
+            final List<QName> qnamePath = xpathToQNamePath(schemaContext, parentModule, pathStr);
+            node.clear();
+            for (final QName qname : qnamePath) {
+                node.enterSchemaTree(qname);
+            }
+            dataSchemaNode = (DataSchemaNode) findTargetNode(schemaContext, qnamePath);
         } else {
             Module parentModule = findParentModule(schemaContext, schema);
-            dataSchemaNode = (DataSchemaNode) resolveRelativeXPath(schemaContext, parentModule, pathStr, schema);
+            dataSchemaNode = (DataSchemaNode) resolveRelativeXPath(schemaContext, parentModule, pathStr, schema, node);
         }
 
         // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
@@ -889,7 +916,8 @@ public final class SchemaContextUtil {
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
 
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
-            return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
+            return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode,
+                    node);
         }
 
         return targetTypeDefinition;
@@ -904,7 +932,7 @@ public final class SchemaContextUtil {
      * Because {@code typeDefinition} is definied via typedef statement, only absolute path is meaningful.
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
-            final SchemaContext schemaContext, final QName qname) {
+            final EffectiveModelContext schemaContext, final QName qname) {
         final PathExpression pathStatement = typeDefinition.getPathStatement();
         if (!pathStatement.isAbsolute()) {
             return null;
@@ -913,11 +941,18 @@ public final class SchemaContextUtil {
         final Optional<Module> parentModule = schemaContext.findModule(qname.getModule());
         checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
 
+        final List<QName> qnamePath = xpathToQNamePath(schemaContext, parentModule.get(),
+                stripConditionsFromXPathString(pathStatement));
         final DataSchemaNode dataSchemaNode = (DataSchemaNode) findTargetNode(schemaContext,
-            xpathToQNamePath(schemaContext, parentModule.get(), stripConditionsFromXPathString(pathStatement)));
+                qnamePath);
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
-            return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
+            final SchemaInferenceStack node = new SchemaInferenceStack(schemaContext);
+            for (final QName pathPart : qnamePath) {
+                node.enterSchemaTree(pathPart);
+            }
+            return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode,
+                    node);
         }
 
         return targetTypeDefinition;

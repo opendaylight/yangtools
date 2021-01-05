@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public final class ParserStreamUtils {
     private ParserStreamUtils() {
@@ -34,7 +35,7 @@ public final class ParserStreamUtils {
      *         (where n is number of choices through it was passed)
      */
     public static Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
-                                                                   final String childName, final URI namespace) {
+            final String childName, final URI namespace, final SchemaInferenceStack node) {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
         final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
         DataSchemaNode potentialChildNode = null;
@@ -59,15 +60,19 @@ public final class ParserStreamUtils {
 
         // try to find data schema node in choice (looking for first match)
         for (final ChoiceSchemaNode choiceNode : childChoices) {
+            node.enterSchemaTree(choiceNode.getQName());
             for (final CaseSchemaNode concreteCase : choiceNode.getCases()) {
+                node.enterSchemaTree(concreteCase.getQName());
                 final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase,
-                        childName, namespace);
+                        childName, namespace, node);
                 if (!resultFromRecursion.isEmpty()) {
                     resultFromRecursion.push(concreteCase);
                     resultFromRecursion.push(choiceNode);
                     return resultFromRecursion;
                 }
+                node.exit();
             }
+            node.exit();
         }
         return result;
     }
