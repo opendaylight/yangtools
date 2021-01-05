@@ -153,6 +153,15 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return pushSchema(requireNonNull(nodeIdentifier));
     }
 
+    public @NonNull EffectiveStatement<QName, ?> enterSchemaTree(final QName... nodeIdentifiers) {
+        EffectiveStatement<QName, ?> stmt = null;
+        checkArgument(nodeIdentifiers.length != 0);
+        for (QName nodeIdentifier : nodeIdentifiers) {
+            stmt = enterSchemaTree(nodeIdentifier);
+        }
+        return requireNonNull(stmt);
+    }
+
     /**
      * Pop the current statement from the stack.
      *

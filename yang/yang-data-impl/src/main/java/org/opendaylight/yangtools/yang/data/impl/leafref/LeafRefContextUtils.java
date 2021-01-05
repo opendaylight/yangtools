@@ -15,23 +15,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public final class LeafRefContextUtils {
     private LeafRefContextUtils() {
         // Hidden on purpose
     }
 
-    public static LeafRefContext getLeafRefReferencingContext(final SchemaNode node, final LeafRefContext root) {
-        final SchemaPath schemaPath = node.getPath();
-        return getLeafRefReferencingContext(schemaPath, root);
-    }
-
-    public static LeafRefContext getLeafRefReferencingContext(
-            final SchemaPath schemaPath, final LeafRefContext root) {
-        final Iterable<QName> pathFromRoot = schemaPath.getPathFromRoot();
-        return getLeafRefReferencingContext(pathFromRoot, root);
+    public static LeafRefContext getLeafRefReferencingContext(final SchemaInferenceStack stack,
+            final LeafRefContext root) {
+        return getLeafRefReferencingContext(stack.toSchemaNodeIdentifier().getNodeIdentifiers(), root);
     }
 
     public static LeafRefContext getLeafRefReferencingContext(final Iterable<QName> pathFromRoot, LeafRefContext root) {
@@ -48,15 +41,9 @@ public final class LeafRefContextUtils {
         return leafRefCtx;
     }
 
-    public static LeafRefContext getLeafRefReferencedByContext(final SchemaNode node, final LeafRefContext root) {
-        final SchemaPath schemaPath = node.getPath();
-        return getLeafRefReferencedByContext(schemaPath, root);
-    }
-
-    public static LeafRefContext getLeafRefReferencedByContext(
-            final SchemaPath schemaPath, final LeafRefContext root) {
-        final Iterable<QName> pathFromRoot = schemaPath.getPathFromRoot();
-        return getLeafRefReferencedByContext(pathFromRoot, root);
+    public static LeafRefContext getLeafRefReferencedByContext(final SchemaInferenceStack stack,
+            final LeafRefContext root) {
+        return getLeafRefReferencedByContext(stack.toSchemaNodeIdentifier().getNodeIdentifiers(), root);
     }
 
     public static LeafRefContext getLeafRefReferencedByContext(final Iterable<QName> pathFromRoot,
@@ -75,12 +62,12 @@ public final class LeafRefContextUtils {
         return leafRefCtx;
     }
 
-    public static boolean isLeafRef(final SchemaNode node, final LeafRefContext root) {
-        if (node == null || root == null) {
+    public static boolean isLeafRef(final SchemaInferenceStack stack, final LeafRefContext root) {
+        if (stack == null || root == null) {
             return false;
         }
 
-        final LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(node, root);
+        final LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(stack, root);
         if (leafRefReferencingContext == null) {
             return false;
         }
@@ -88,12 +75,12 @@ public final class LeafRefContextUtils {
         return leafRefReferencingContext.isReferencing();
     }
 
-    public static boolean hasLeafRefChild(final SchemaNode node, final LeafRefContext root) {
-        if (node == null || root == null) {
+    public static boolean hasLeafRefChild(final SchemaInferenceStack stack, final LeafRefContext root) {
+        if (stack == null || root == null) {
             return false;
         }
 
-        final LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(node, root);
+        final LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(stack, root);
         if (leafRefReferencingContext == null) {
             return false;
         }
@@ -101,12 +88,12 @@ public final class LeafRefContextUtils {
         return leafRefReferencingContext.hasReferencingChild();
     }
 
-    public static boolean isReferencedByLeafRef(final SchemaNode node, final LeafRefContext root) {
-        if (node == null || root == null) {
+    public static boolean isReferencedByLeafRef(final SchemaInferenceStack stack, final LeafRefContext root) {
+        if (stack == null || root == null) {
             return false;
         }
 
-        final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(node, root);
+        final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(stack, root);
         if (leafRefReferencedByContext == null) {
             return false;
         }
@@ -114,12 +101,12 @@ public final class LeafRefContextUtils {
         return leafRefReferencedByContext.isReferenced();
     }
 
-    public static boolean hasChildReferencedByLeafRef(final SchemaNode node, final LeafRefContext root) {
-        if (node == null || root == null) {
+    public static boolean hasChildReferencedByLeafRef(final SchemaInferenceStack stack, final LeafRefContext root) {
+        if (stack == null || root == null) {
             return false;
         }
 
-        final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(node, root);
+        final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(stack, root);
         if (leafRefReferencedByContext == null) {
             return false;
         }
@@ -127,12 +114,9 @@ public final class LeafRefContextUtils {
         return leafRefReferencedByContext.hasReferencedChild();
     }
 
-    public static List<LeafRefContext> findAllLeafRefChilds(final SchemaNode node, final LeafRefContext root) {
-        return findAllLeafRefChilds(node.getPath(), root);
-    }
-
-    public static List<LeafRefContext> findAllLeafRefChilds(final SchemaPath schemaPath, final LeafRefContext root) {
-        return findAllLeafRefChilds(schemaPath.getPathFromRoot(), root);
+    public static List<LeafRefContext> findAllLeafRefChilds(final SchemaInferenceStack stack,
+            final LeafRefContext root) {
+        return findAllLeafRefChilds(stack.toSchemaNodeIdentifier().getNodeIdentifiers(), root);
     }
 
     public static List<LeafRefContext> findAllLeafRefChilds(final Iterable<QName> pathFromRoot,
@@ -161,14 +145,9 @@ public final class LeafRefContextUtils {
         return leafRefChilds;
     }
 
-    public static List<LeafRefContext> findAllChildsReferencedByLeafRef(final SchemaNode node,
+    public static List<LeafRefContext> findAllChildsReferencedByLeafRef(final SchemaInferenceStack stack,
             final LeafRefContext root) {
-        return findAllChildsReferencedByLeafRef(node.getPath(), root);
-    }
-
-    public static List<LeafRefContext> findAllChildsReferencedByLeafRef(final SchemaPath schemaPath,
-            final LeafRefContext root) {
-        return findAllChildsReferencedByLeafRef(schemaPath.getPathFromRoot(), root);
+        return findAllChildsReferencedByLeafRef(stack.toSchemaNodeIdentifier().getNodeIdentifiers(), root);
     }
 
     public static List<LeafRefContext> findAllChildsReferencedByLeafRef(final Iterable<QName> pathFromRoot,
@@ -200,13 +179,8 @@ public final class LeafRefContextUtils {
     }
 
     public static Map<QName, LeafRefContext> getAllLeafRefsReferencingThisNode(
-            final SchemaNode node, final LeafRefContext root) {
-        return getAllLeafRefsReferencingThisNode(node.getPath(), root);
-    }
-
-    public static Map<QName, LeafRefContext> getAllLeafRefsReferencingThisNode(final SchemaPath path,
-            final LeafRefContext root) {
-        return getAllLeafRefsReferencingThisNode(path.getPathFromRoot(), root);
+            final SchemaInferenceStack stack, final LeafRefContext root) {
+        return getAllLeafRefsReferencingThisNode(stack.toSchemaNodeIdentifier().getNodeIdentifiers(), root);
     }
 
     public static Map<QName, LeafRefContext> getAllLeafRefsReferencingThisNode(final Iterable<QName> pathFromRoot,
