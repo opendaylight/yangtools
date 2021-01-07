@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eee4f241_a949525c",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefContextUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-07T10:24:51Z",
+      "side": 1,
+      "message": "please don\u0027t do this",
+      "range": {
+        "startLine": 27,
+        "startChar": 62,
+        "endLine": 28,
+        "endChar": 87
+      },
+      "revId": "8738043cffbabb361c2c7dc985168f46169c2d4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b025fbba_ada1d5fd",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaInferenceStack.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-07T10:24:51Z",
+      "side": 1,
+      "message": "see toSchemaNodeIdentifier() on how to properly do this",
+      "range": {
+        "startLine": 74,
+        "startChar": 23,
+        "endLine": 74,
+        "endChar": 42
+      },
+      "revId": "8738043cffbabb361c2c7dc985168f46169c2d4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "314fe06b_a530f21e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaInferenceStack.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-07T10:24:51Z",
+      "side": 1,
+      "message": "do not use \u0027this.\u0027 qualifier, it is just cluter",
+      "range": {
+        "startLine": 76,
+        "startChar": 63,
+        "endLine": 76,
+        "endChar": 68
+      },
+      "revId": "8738043cffbabb361c2c7dc985168f46169c2d4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
