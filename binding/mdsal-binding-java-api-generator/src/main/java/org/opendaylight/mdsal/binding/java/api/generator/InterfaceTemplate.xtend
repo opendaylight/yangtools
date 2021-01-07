@@ -248,7 +248,7 @@ class InterfaceTemplate extends BaseTemplate {
         val propReturn = method.propertyNameFromGetter + ", or " + orString + " if it is not present."
 
         return wrapToDocumentation('''
-            Return «propReturn».
+            Return «propReturn»
 
             «reference.formatReference»
             @return {@code «method.returnType.fullyQualifiedName»} «propReturn»
