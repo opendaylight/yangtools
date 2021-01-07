@@ -14,6 +14,7 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableSet
 import com.google.common.collect.Sets
 import java.util.ArrayList
 import java.util.Collection
@@ -33,7 +34,6 @@ import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
-import com.google.common.collect.ImmutableSet
 
 /**
  * Template for generating JAVA builder classes.
@@ -322,7 +322,11 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         val returnType = field.returnType
         if (returnType instanceof ParameterizedType) {
             if (Types.isListType(returnType)) {
-                return generateListSetter(field, returnType.actualTypeArguments.get(0))
+                val arguments = returnType.actualTypeArguments
+                if (arguments.isEmpty) {
+                    return generateListSetter(field, Types.objectType)
+                }
+                return generateListSetter(field, arguments.get(0))
             } else if (Types.isMapType(returnType)) {
                 return generateMapSetter(field, returnType.actualTypeArguments.get(1))
             }
