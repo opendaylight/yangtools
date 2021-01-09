@@ -11,8 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class UtilTest {
 
     @Test
@@ -50,12 +50,12 @@ public class UtilTest {
         artifacts.add(artifact);
         artifacts.add(artifact2);
 
-        when(project.getArtifacts()).thenReturn(artifacts);
-        when(artifact.getFile()).thenReturn(file);
-        when(file.isFile()).thenReturn(true);
-        when(file.getName()).thenReturn("iamjar.jar");
-        when(artifact2.getFile()).thenReturn(file2);
-        when(file2.isDirectory()).thenReturn(true);
+        doReturn(artifacts).when(project).getArtifacts();
+        doReturn(file).when(artifact).getFile();
+        doReturn(true).when(file).isFile();
+        doReturn("iamjar.jar").when(file).getName();
+        doReturn(file2).when(artifact2).getFile();
+        doReturn(true).when(file2).isDirectory();
 
         final List<File> files = Util.getClassPath(project);
         assertEquals(2, files.size());
@@ -81,15 +81,15 @@ public class UtilTest {
         final List<Dependency> listDepcy = new ArrayList<>();
         listDepcy.add(dep);
 
-        when(project.getPlugin(anyString())).thenReturn(plugin);
-        when(plugin.getDependencies()).thenReturn(listDepcy);
-        when(artifact.getArtifactId()).thenReturn("artifactId");
-        when(artifact.getGroupId()).thenReturn("groupId");
-        when(artifact.getVersion()).thenReturn("SNAPSHOT");
-        when(repoSystem.createDependencyArtifact(dep)).thenReturn(artifact);
-        when(repoSystem.resolve(any(ArtifactResolutionRequest.class))).thenReturn(artifactResolResult);
-        when(artifactResolResult.getArtifacts()).thenReturn(artifacts);
-        when(project.getDependencyArtifacts()).thenReturn(artifacts);
+        doReturn(plugin).when(project).getPlugin(anyString());
+        doReturn(listDepcy).when(plugin).getDependencies();
+        doReturn("artifactId").when(artifact).getArtifactId();
+        doReturn("groupId").when(artifact).getGroupId();
+        doReturn("SNAPSHOT").when(artifact).getVersion();
+        doReturn(artifact).when(repoSystem).createDependencyArtifact(dep);
+        doReturn(artifactResolResult).when(repoSystem).resolve(any(ArtifactResolutionRequest.class));
+        doReturn(artifacts).when(artifactResolResult).getArtifacts();
+        doReturn(artifacts).when(project).getDependencyArtifacts();
 
         Util.checkClasspath(project, repoSystem, localRepo, remoteRepos);
         assertEquals(1, artifacts.size());

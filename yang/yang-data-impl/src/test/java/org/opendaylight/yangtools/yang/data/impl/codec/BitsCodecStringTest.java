@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
  * Unit tests for BitsCodecString.
  *
  * @author Thomas Pantelis
- *
  */
 public class BitsCodecStringTest {
     private  static BitsTypeDefinition toBitsTypeDefinition(final String... bits) {
@@ -37,8 +35,8 @@ public class BitsCodecStringTest {
         long pos = 0;
         for (String bit : bits) {
             BitsTypeDefinition.Bit mockBit = mock(BitsTypeDefinition.Bit.class);
-            when(mockBit.getName()).thenReturn(bit);
-            when(mockBit.getPosition()).thenReturn(Uint32.valueOf(pos));
+            doReturn(bit).when(mockBit).getName();
+            doReturn(Uint32.valueOf(pos)).when(mockBit).getPosition();
             b.addBit(mockBit);
             ++pos;
         }

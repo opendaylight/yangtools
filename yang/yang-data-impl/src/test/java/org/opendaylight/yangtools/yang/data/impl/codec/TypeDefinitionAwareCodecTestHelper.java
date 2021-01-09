@@ -10,20 +10,21 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 
 public final class TypeDefinitionAwareCodecTestHelper {
     private TypeDefinitionAwareCodecTestHelper() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
@@ -46,9 +47,9 @@ public final class TypeDefinitionAwareCodecTestHelper {
         final EnumerationTypeBuilder b = BaseTypes.enumerationTypeBuilder(mock(SchemaPath.class));
         int val = 0;
         for (String en : enums) {
-            EnumTypeDefinition.EnumPair mockEnum = mock(EnumTypeDefinition.EnumPair.class);
-            when(mockEnum.getName()).thenReturn(en);
-            when(mockEnum.getValue()).thenReturn(val);
+            EnumTypeDefinition.EnumPair mockEnum = mock(EnumPair.class);
+            doReturn(en).when(mockEnum).getName();
+            doReturn(val).when(mockEnum).getValue();
             b.addEnum(mockEnum);
             val++;
         }

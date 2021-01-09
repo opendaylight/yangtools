@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.BufferedInputStream;
@@ -59,11 +59,11 @@ public class ScannedDependencyTest {
         target.close();
 
         final Artifact artifact = mock(Artifact.class);
-        when(artifact.getFile()).thenReturn(new File(ScannedDependencyTest.class.getResource("/tests").toURI()));
+        doReturn(new File(ScannedDependencyTest.class.getResource("/tests").toURI())).when(artifact).getFile();
 
         final Artifact artifact2 = mock(Artifact.class);
-        when(artifact2.getFile()).thenReturn(testFile2);
-        when(project.getArtifacts()).thenReturn(ImmutableSet.of(artifact, artifact2));
+        doReturn(testFile2).when(artifact2).getFile();
+        doReturn(ImmutableSet.of(artifact, artifact2)).when(project).getArtifacts();
     }
 
     private static void addSourceFileToTargetJar(final File source, final JarOutputStream target) throws IOException {

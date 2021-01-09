@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -1257,11 +1256,10 @@ public class DataTreeCandidatesAggregateTest {
 
     private static void setChildNodes(final TerminalDataTreeCandidateNode parentNode,
                                       final List<DataTreeCandidateNode> childNodes) {
-        when(parentNode.getIdentifier()).thenReturn(null);
+        doReturn(null).when(parentNode).getIdentifier();
         childNodes.forEach(child -> {
-            when(child.getIdentifier()).thenReturn(CHILD_ID);
+            doReturn(CHILD_ID).when(child).getIdentifier();
         });
-        when(parentNode.getChildNodes()).thenReturn(childNodes);
+        doReturn(childNodes).when(parentNode).getChildNodes();
     }
-
 }
