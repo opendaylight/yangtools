@@ -384,7 +384,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
           * @return this builder
           * @throws IllegalArgumentException if the list contains entries with the same key
           * @throws NullPointerException if the list contains a null entry
-          * @deprecated Use {#link #«setterName»(«JU_MAP.importedName»)} instead.
+          * @deprecated Use {@link #«setterName»(«JU_MAP.importedName»)} instead.
           */
         @«DEPRECATED.importedName»(forRemoval = true)
         public «type.getName» «setterName»(final «JU_LIST.importedName»<«actualTypeRef»> values) {
@@ -417,7 +417,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              *
              * @param value field value in legacy type
              * @return this builder
-             * @deprecated Use {#link «setterName»(«field.returnType.importedJavadocName»)} instead.
+             * @deprecated Use {@link #«setterName»(«field.returnType.importedJavadocName»)} instead.
              */
             @Deprecated(forRemoval = true)
             public «type.getName» «setterName»(final «uintType.importedName» value) {
