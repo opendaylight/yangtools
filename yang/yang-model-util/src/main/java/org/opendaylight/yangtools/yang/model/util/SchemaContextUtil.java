@@ -88,26 +88,26 @@ public final class SchemaContextUtil {
 
     /**
      * Method attempts to find DataSchemaNode in Schema Context via specified Schema Path. The returned DataSchemaNode
-     * from method will be the node at the end of the SchemaPath. If the DataSchemaNode is not present in the Schema
-     * Context the method will return {@code null}.
+     * from method will be the node at the end of the SchemaInferenceStack. If the DataSchemaNode is not present
+     * in the Schema Context the method will return {@code null}.
      *
      * <p>
      * In case that Schema Context or Schema Path are not specified correctly (i.e. contains {@code null} values) the
      * method will throw IllegalArgumentException.
      *
      * @param context Schema Context
-     * @param schemaPath Schema Path to search for
+     * @param stack represents the schema path to search for
      * @return SchemaNode from the end of the Schema Path or {@code null} if the Node is not present.
-     * @throws NullPointerException if context or schemaPath is null
+     * @throws NullPointerException if context or schemaStack is null
      */
-    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
-        final Iterable<QName> prefixedPath = schemaPath.getPathFromRoot();
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaInferenceStack stack) {
+        final Iterable<QName> prefixedPath = stack.getPathFromRoot();
         if (prefixedPath == null) {
-            LOG.debug("Schema path {} has null path", schemaPath);
+            LOG.debug("Schema path {} has null path", stack);
             return null;
         }
 
-        LOG.trace("Looking for path {} in context {}", schemaPath, context);
+        LOG.trace("Looking for path {} in context {}", stack, context);
         return findNodeInSchemaContext(context, prefixedPath);
     }
 
