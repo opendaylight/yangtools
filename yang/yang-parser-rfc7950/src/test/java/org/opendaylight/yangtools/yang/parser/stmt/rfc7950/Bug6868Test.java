@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -20,11 +21,11 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -49,12 +50,12 @@ public class Bug6868Test {
         assertSchemaContextFor(ImmutableSet.of("foo", "bar", "baz", "imp:bar"),
                 ImmutableSet.of("my-container-1", "my-container-2", "my-container-3", "foo", "imp-bar"));
         assertSchemaContextFor(ImmutableSet.of("foo", "baz", "imp:bar"),
-            ImmutableSet.of("foo", "imp-bar", "imp-bar-2"));
+                ImmutableSet.of("foo", "imp-bar", "imp-bar-2"));
     }
 
     private static void assertSchemaContextFor(final Set<String> supportedFeatures,
             final Set<String> expectedContainers) throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6868/yang11",
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6868/yang11",
                 supportedFeatures != null ? createFeaturesSet(supportedFeatures) : null,
                 StatementParserMode.DEFAULT_MODE);
         assertNotNull(schemaContext);
@@ -66,8 +67,14 @@ public class Bug6868Test {
 
         final Set<String> unexpectedContainers = Sets.difference(ALL_CONTAINERS, expectedContainers);
         for (final String unexpectedContainer : unexpectedContainers) {
-            assertNull(String.format("Unexpected container %s.", unexpectedContainer),
-                    findNode(schemaContext, unexpectedContainer));
+            try {
+                assertNull(String.format("Unexpected container %s.", unexpectedContainer),
+                        findNode(schemaContext, unexpectedContainer));
+            } catch (final IllegalArgumentException e) {
+                assertEquals(
+                        String.format("Schema tree child %s not present", QName.create(FOO_NS, unexpectedContainer)),
+                        e.getMessage());
+            }
         }
     }
 
@@ -85,9 +92,10 @@ public class Bug6868Test {
         return ImmutableSet.copyOf(supportedFeatures);
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final String localName) {
-        return SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, QName.create(FOO_NS, localName)));
+    private static SchemaNode findNode(final EffectiveModelContext context, final String localName) {
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(QName.create(FOO_NS, localName));
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     @Test

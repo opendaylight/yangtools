@@ -73,10 +73,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * to current state.
      *
      * @return List of Qnames representing path from root
-     * @throws IllegalStateException if current state is not instantiated
      */
     public List<QName> getPathFromRoot() {
-        checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
         final ImmutableList.Builder<QName> builder = ImmutableList.builderWithExpectedSize(deque.size());
         deque.descendingIterator().forEachRemaining(stmt -> builder.add(stmt.argument()));
         return builder.build();
@@ -178,6 +176,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return requireNonNull(stmt);
     }
 
+
     /**
      * Pop the current statement from the stack.
      *
@@ -202,6 +201,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalStateException if current state is not instantiated
      */
     public @NonNull Absolute toSchemaNodeIdentifier() {
+        checkState(inInstantiatedContext(), "Cannot convert uninstantiated context %s", this);
         return Absolute.of(getPathFromRoot());
     }
 

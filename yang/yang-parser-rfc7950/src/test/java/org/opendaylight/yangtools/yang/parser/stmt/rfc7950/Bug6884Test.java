@@ -14,10 +14,10 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6884Test {
@@ -25,7 +25,7 @@ public class Bug6884Test {
 
     @Test
     public void testYang11() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6884/yang1-1");
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6884/yang1-1");
         assertNotNull(schemaContext);
 
         assertTrue(findNode(schemaContext, ImmutableList.of(foo("sub-root"), foo("sub-foo-2-con")))
@@ -34,7 +34,8 @@ public class Bug6884Test {
 
     @Test
     public void testCircularIncludesYang10() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6884/circular-includes");
+        final EffectiveModelContext schemaContext = StmtTestUtils
+                .parseYangSources("/rfc7950/bug6884/circular-includes");
 
         assertNotNull(schemaContext);
         assertTrue(findNode(schemaContext, ImmutableList.of(foo("sub-root"), foo("sub-foo-2-con")))
@@ -43,8 +44,10 @@ public class Bug6884Test {
             instanceof ContainerSchemaNode);
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qnames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qnames, true));
+    private static SchemaNode findNode(final EffectiveModelContext context, final Iterable<QName> qnames) {
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        qnames.forEach(stack::enterSchemaTree);
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     private static QName foo(final String localName) {

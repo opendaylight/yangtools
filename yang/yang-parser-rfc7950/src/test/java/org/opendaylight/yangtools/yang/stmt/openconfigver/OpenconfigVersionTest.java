@@ -18,12 +18,13 @@ import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -127,7 +128,7 @@ public class OpenconfigVersionTest {
 
     @Test
     public void nodeTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/node-test",
+        EffectiveModelContext context = StmtTestUtils.parseYangSources("/openconfig-version/node-test",
             StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
@@ -141,23 +142,32 @@ public class OpenconfigVersionTest {
 
         QName root = QName.create("foo", "2016-01-01", "foo-root");
         QName container20160404 = QName.create("foo", "2016-01-01", "con20160404");
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20160404));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(root, container20160404);
+        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+        stack.exit();
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
 
         QName container20160405 = QName.create("foo", "2016-01-01", "con20160405");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20160405));
+        stack.enterSchemaTree(container20160405);
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+        stack.exit();
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
 
         QName container20160406 = QName.create("foo", "2016-01-01", "con20160406");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20160406));
+        stack.enterSchemaTree(container20160406);
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+        stack.exit();
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
 
         QName container20170406 = QName.create("foo", "2016-01-01", "con20170406");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20170406));
-        assertNull(findDataSchemaNode);
+        try {
+            stack.enterSchemaTree(container20170406);
+            findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(findDataSchemaNode);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", container20170406), e.getMessage());
+        }
+        stack.clear();
     }
 }

@@ -44,8 +44,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -85,8 +85,10 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             throws IOException, SAXException, XMLStreamException, URISyntaxException, TransformerException {
 
         //Create Data Scheme from yang file
-        SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
-        final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(FOO_QNAME);
+        final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
+        stack.clear();
         assertTrue(dataSchemaNode instanceof AnydataSchemaNode);
         final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) dataSchemaNode;
 
@@ -131,14 +133,16 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     @Test
     public void testAnydataLoadFromXML() throws IOException, SAXException, XMLStreamException, URISyntaxException {
         // Load XML file
-        Document doc = loadXmlDocument("/test-anydata.xml");
+        final Document doc = loadXmlDocument("/test-anydata.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
         //Load XML from file and write it with xmlParseStream
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(FOO_QNAME);
         final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) SchemaContextUtil.findDataSchemaNode(
-                SCHEMA_CONTEXT, SchemaPath.create(true, FOO_QNAME));
+                SCHEMA_CONTEXT, stack);
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, SCHEMA_CONTEXT);
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
@@ -165,12 +169,15 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     public void testAnydataSerialization()
             throws IOException, SAXException, XMLStreamException, URISyntaxException, TransformerException {
         //Get XML Data.
-        Document doc = loadXmlDocument("/test-anydata.xml");
+        final Document doc = loadXmlDocument("/test-anydata.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(FOO_QNAME);
         //Get specific attribute from Yang file.
         final AnydataSchemaNode contWithAttr = (AnydataSchemaNode) SchemaContextUtil.findDataSchemaNode(
-                SCHEMA_CONTEXT, SchemaPath.create(true, FOO_QNAME));
+                SCHEMA_CONTEXT, stack);
+        stack.clear();
 
         //Create NormalizedNodeResult
         NormalizedNodeResult normalizedResult = new NormalizedNodeResult();

@@ -18,11 +18,11 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6883Test {
@@ -30,7 +30,7 @@ public class Bug6883Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6883");
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6883");
         assertNotNull(schemaContext);
 
         final AnydataSchemaNode topAnyData = assertAnyData(schemaContext, ImmutableList.of("top"));
@@ -51,11 +51,13 @@ public class Bug6883Test {
         assertAnyData(schemaContext, ImmutableList.of("my-choice", "case-shorthand-anydata", "case-shorthand-anydata"));
     }
 
-    private static AnydataSchemaNode assertAnyData(final SchemaContext context, final Iterable<String> localNamesPath) {
+    private static AnydataSchemaNode assertAnyData(final EffectiveModelContext context,
+            final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
             localName -> QName.create(FOO_NS, localName));
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(qNames, true));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        qNames.forEach(stack::enterSchemaTree);
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof AnydataSchemaNode);
         return (AnydataSchemaNode) findDataSchemaNode;
     }

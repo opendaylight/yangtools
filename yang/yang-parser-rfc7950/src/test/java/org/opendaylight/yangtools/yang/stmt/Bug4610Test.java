@@ -15,41 +15,51 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug4610Test {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4610");
+        EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug4610");
 
         Revision revision = Revision.of("2015-12-12");
-        QNameModule foo = QNameModule.create(URI.create("foo"), revision);
         QNameModule bar = QNameModule.create(URI.create("bar"), revision);
 
         QName g1 = QName.create(bar, "g1");
         QName g2 = QName.create(bar, "g2");
         QName c1Bar = QName.create(bar, "c1");
 
-        QName c1Foo = QName.create(foo, "c1");
-        QName g3 = QName.create(foo, "g3");
-        QName root = QName.create(foo, "root");
 
-        ContainerEffectiveStatement effectiveContainerStatementG1 = findContainer(context, g1, c1Bar);
-        ContainerEffectiveStatement effectiveContainerStatementG2 = findContainer(context, g2, c1Bar);
-        ContainerEffectiveStatement effectiveContainerStatementG3 = findContainer(context, g3, c1Foo);
-        ContainerEffectiveStatement effectiveContainerStatementRoot = findContainer(context, root, c1Foo);
-
-        // check arguments
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterGrouping(g1);
+        stack.enterSchemaTree(c1Bar);
+        ContainerEffectiveStatement effectiveContainerStatementG1 = findContainer(context, stack);
+        stack.clear();
+        stack.enterGrouping(g2);
+        stack.enterSchemaTree(c1Bar);
+        ContainerEffectiveStatement effectiveContainerStatementG2 = findContainer(context, stack);
         QName originalStatementArgument = effectiveContainerStatementG1.argument();
         assertTrue(originalStatementArgument.equals(effectiveContainerStatementG2.argument()));
+        stack.clear();
+        QNameModule foo = QNameModule.create(URI.create("foo"), revision);
+        QName g3 = QName.create(foo, "g3");
+        stack.enterGrouping(g3);
+        QName c1Foo = QName.create(foo, "c1");
+        stack.enterSchemaTree(c1Foo);
+        ContainerEffectiveStatement effectiveContainerStatementG3 = findContainer(context, stack);
         assertFalse(originalStatementArgument.equals(effectiveContainerStatementG3.argument()));
+        stack.clear();
+        QName root = QName.create(foo, "root");
+        stack.enterSchemaTree(root, c1Foo);
+        ContainerEffectiveStatement effectiveContainerStatementRoot = findContainer(context, stack);
         assertFalse(originalStatementArgument.equals(effectiveContainerStatementRoot.argument()));
+        stack.clear();
 
         ContainerStatement originalContainerStatement = effectiveContainerStatementG1.getDeclared();
         ContainerStatement inGrouping2ContainerStatement = effectiveContainerStatementG2.getDeclared();
@@ -63,8 +73,9 @@ public class Bug4610Test {
 
     }
 
-    private static ContainerEffectiveStatement findContainer(final SchemaContext context, final QName... path) {
-        SchemaNode node = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, path));
+    private static ContainerEffectiveStatement findContainer(final EffectiveModelContext context,
+            final SchemaInferenceStack stack) {
+        final SchemaNode node = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(node instanceof ContainerEffectiveStatement);
         return (ContainerEffectiveStatement) node;
     }

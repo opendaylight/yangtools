@@ -7,18 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug6669Test {
     private static final String REV = "2016-09-08";
@@ -33,61 +34,80 @@ public class Bug6669Test {
 
     @Test
     public void testInvalidAugment() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test1");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test1");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, M));
-        assertNull(findDataSchemaNode);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        try {
+            stack.enterSchemaTree(ROOT, BAR, BAR_1, M);
+            final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(findDataSchemaNode);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", BAR), e.getMessage());
+        }
     }
 
     @Test
     public void testInvalidAugment2() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test2");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test2");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, M));
-        assertNull(findDataSchemaNode);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        try {
+            stack.enterSchemaTree(ROOT, BAR, BAR_1, BAR_2, M);
+            final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(findDataSchemaNode);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", M));
+        }
+        stack.clear();
     }
 
     @Test
     public void testInvalidAugment3() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test3");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test3");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, L));
-        assertNull(findDataSchemaNode);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        try {
+            stack.enterSchemaTree(ROOT, BAR, BAR_1, BAR_2, L);
+            final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(findDataSchemaNode);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(e.getMessage(), String.format("Schema tree child %s not present", L));
+        }
     }
 
     @Test
     public void testValidAugment() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test1");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test1");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, M));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, BAR, BAR_1, M);
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
     }
 
     @Test
     public void testValidAugment2() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test2");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test2");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, M));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, BAR, BAR_1, BAR_2, M);
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
     }
 
     @Test
     public void testValidAugment3() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test3");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test3");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, L));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, BAR, BAR_1, BAR_2, L);
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof ListSchemaNode);
     }
 }
