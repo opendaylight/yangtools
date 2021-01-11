@@ -145,13 +145,23 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * their operations with regard to their statements being replicated into different contexts, so that
      * {@link Mutable} instances are not created when it is evident they are superfluous.
      *
-     * @param stmt Context of statement to be copied statement.
+     * <p>
+     * The copy operation has three intrinsic parts:
+     * <ul>
+     *   <li>target {@code parent}, i.e. new parent statement for the copy. This determines things like default value
+     *       of the {@code config} statement and similar</li>
+     *   <li>copy operation type</li>
+     *   <li>{@code target module}, which defines the default namespace for the statement copy. This might not be always
+     *       present, in which case the namespace is retained from the source. As an example, {@code uses} changes
+     *       the default namespace to parent's namespace, whereas {@code augment} does not.</li>
+     * </ul>
+     *
+     * @param stmt Context of statement to be copied statement
      * @param parent Parent statement context
      * @param copyType Type of copy being performed
      * @param targetModule Target module, if present
      * @return Policy that needs to be applied to the copy operation of this statement.
      */
-    // FIXME: YANGTOOLS-694: clarify targetModule semantics (does null mean 'same as declared'?)
     default @NonNull CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
             final CopyType copyType, @Nullable final QNameModule targetModule) {
         // Most of statement supports will just want to copy the statement
