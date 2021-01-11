@@ -16,11 +16,11 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -29,11 +29,12 @@ public class Bug6880Test {
 
     @Test
     public void valid10Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6880/foo.yang");
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6880/foo.yang");
         assertNotNull(schemaContext);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext,
-                SchemaPath.create(true, QName.create(FOO_NS, "my-leaf-list")));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        stack.enterSchemaTree(QName.create(FOO_NS, "my-leaf-list"));
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext, stack);
         assertTrue(findDataSchemaNode instanceof LeafListSchemaNode);
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) findDataSchemaNode;
 

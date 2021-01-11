@@ -49,8 +49,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -107,16 +107,19 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         assertNotNull(transformedInput);
 
         assertTrue(transformedInput instanceof ContainerNode);
-        ContainerNode bazContainer = (ContainerNode) transformedInput;
+        final ContainerNode bazContainer = (ContainerNode) transformedInput;
         assertEquals(bazContainer.getNodeType(), bazQName);
 
-        DataContainerChild bazContainerChild = bazContainer.childByArg(new NodeIdentifier(myAnyXMLDataBaz));
+        final DataContainerChild bazContainerChild = bazContainer.childByArg(new NodeIdentifier(myAnyXMLDataBaz));
         assertTrue(bazContainerChild instanceof YangModeledAnyXmlNode);
-        YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) bazContainerChild;
+        final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) bazContainerChild;
 
-        DataSchemaNode schemaOfAnyXmlData = yangModeledAnyXmlNode.getSchemaOfAnyXmlData();
-        SchemaNode myContainer2SchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT,
-                SchemaPath.create(true, bazQName, myContainer2QName));
+        final DataSchemaNode schemaOfAnyXmlData = yangModeledAnyXmlNode.getSchemaOfAnyXmlData();
+
+        final SchemaInferenceStack stack = new SchemaInferenceStack(SCHEMA_CONTEXT);
+        stack.enterSchemaTree(bazQName, myContainer2QName);
+        final SchemaNode myContainer2SchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, stack);
+        stack.clear();
         assertTrue(myContainer2SchemaNode instanceof ContainerSchemaNode);
         assertEquals(myContainer2SchemaNode, schemaOfAnyXmlData);
 
@@ -140,8 +143,8 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         XMLUnit.setIgnoreAttributeOrder(true);
         XMLUnit.setNormalize(true);
 
-        String expectedXml = toString(doc.getDocumentElement());
-        String serializedXml = toString(domResult.getNode());
+        final String expectedXml = toString(doc.getDocumentElement());
+        final String serializedXml = toString(domResult.getNode());
 
         assertXMLEqual(expectedXml, serializedXml);
     }

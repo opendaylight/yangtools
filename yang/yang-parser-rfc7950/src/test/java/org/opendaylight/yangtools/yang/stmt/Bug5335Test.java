@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -19,11 +20,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug5335Test {
     private static final String FOO = "foo";
@@ -53,12 +54,18 @@ public class Bug5335Test {
 
     @Test
     public void incorrectTest1() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-1");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-1");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
-        assertNull(mandatoryLeaf);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        try {
+            stack.enterSchemaTree(ROOT, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+            final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(mandatoryLeaf);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", MANDATORY_LEAF_B), e.getMessage());
+        }
+        stack.clear();
 
         final String testLog = output.toString();
         assertTrue(testLog.contains(
@@ -67,12 +74,18 @@ public class Bug5335Test {
 
     @Test
     public void incorrectTest2() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_F, MANDATORY_LEAF_B);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
-        assertNull(mandatoryLeaf);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        try {
+            stack.enterSchemaTree(ROOT, PRESENCE_CONTAINER_F, MANDATORY_LEAF_B);
+            final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(mandatoryLeaf);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", MANDATORY_LEAF_B), e.getMessage());
+        }
+        stack.clear();
 
         final String testLog = output.toString();
         assertTrue(testLog.contains(
@@ -81,13 +94,18 @@ public class Bug5335Test {
 
     @Test
     public void incorrectTest3() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_F, NON_PRESENCE_CONTAINER_B,
-                MANDATORY_LEAF_B);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
-        assertNull(mandatoryLeaf);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        try {
+            stack.enterSchemaTree(ROOT, PRESENCE_CONTAINER_F, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+            final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
+            assertNull(mandatoryLeaf);
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", NON_PRESENCE_CONTAINER_B), e.getMessage());
+        }
+        stack.clear();
 
         final String testLog = output.toString();
         assertTrue(testLog.contains(
@@ -96,43 +114,45 @@ public class Bug5335Test {
 
     @Test
     public void correctTest1() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-1");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-1");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 
     @Test
     public void correctTest2() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B,
-                MANDATORY_LEAF_B);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 
     @Test
     public void correctTest3() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-3");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-3");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B,
-                MANDATORY_LEAF_B);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 
     @Test
     public void correctTest4() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
         assertNotNull(context);
 
-        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F);
-        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 }

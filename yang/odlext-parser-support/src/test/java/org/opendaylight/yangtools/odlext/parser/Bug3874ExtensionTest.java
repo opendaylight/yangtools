@@ -21,12 +21,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -53,31 +53,33 @@ public class Bug3874ExtensionTest {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = reactor.newBuild()
+        final EffectiveModelContext context = reactor.newBuild()
                 .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/bugs/bug3874/foo.yang")))
                 .addSource(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/bugs/bug3874/yang-ext.yang")))
                 .buildEffective();
 
-        QNameModule foo = QNameModule.create(URI.create("foo"));
-        QName myContainer2QName = QName.create(foo, "my-container-2");
-        QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
+        final QNameModule foo = QNameModule.create(URI.create("foo"));
+        final QName myContainer2QName = QName.create(foo, "my-container-2");
+        final QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
-        DataSchemaNode dataChildByName = context.findDataChildByName(myAnyXmlDataQName).get();
+        final DataSchemaNode dataChildByName = context.findDataChildByName(myAnyXmlDataQName).get();
         assertTrue(dataChildByName instanceof YangModeledAnyxmlSchemaNode);
-        YangModeledAnyxmlSchemaNode yangModeledAnyXml = (YangModeledAnyxmlSchemaNode) dataChildByName;
+        final YangModeledAnyxmlSchemaNode yangModeledAnyXml = (YangModeledAnyxmlSchemaNode) dataChildByName;
 
-        SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
-            SchemaPath.create(true, myContainer2QName));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(myContainer2QName);
+        final SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context, stack);
+        stack.clear();
         assertTrue(myContainer2 instanceof ContainerSchemaNode);
         assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
 
-        Collection<? extends UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
-        UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
+        final UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
         assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
-        AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
+        final AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
                 (AnyxmlSchemaLocationEffectiveStatementImpl) next;
         assertEquals(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION.getStatementName(),
             anyxmlSchemaLocationUnknownNode.getNodeType());

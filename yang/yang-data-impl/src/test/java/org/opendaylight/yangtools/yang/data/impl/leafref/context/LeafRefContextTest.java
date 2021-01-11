@@ -83,9 +83,7 @@ public class LeafRefContextTest {
         assertTrue(LeafRefContextUtils.hasChildReferencedByLeafRef(stack, rootLeafRefContext));
 
         stack.exit();
-        stack.enterSchemaTree(q3);
-        stack.enterSchemaTree(q5);
-        stack.enterSchemaTree(q6);
+        stack.enterSchemaTree(q3, q5, q6);
         Map<QName, LeafRefContext> leafRefs = LeafRefContextUtils.getAllLeafRefsReferencingThisNode(stack,
                 rootLeafRefContext);
         assertEquals(4, leafRefs.size());

@@ -160,9 +160,7 @@ public class LeafRefContextTreeBuilderTest {
 
         //final DataSchemaNode odlContrProjNameNode = tstMod.findDataChildByName(q1, q2, q3).get();
         final SchemaInferenceStack stack = new SchemaInferenceStack(context);
-        stack.enterSchemaTree(q1);
-        stack.enterSchemaTree(q2);
-        stack.enterSchemaTree(q3);
+        stack.enterSchemaTree(q1, q2, q3);
         final LeafRefContext foundOdlContrProjNameCtx = LeafRefContextUtils.getLeafRefReferencingContext(
                 stack, rootLeafRefContext);
 
@@ -182,9 +180,7 @@ public class LeafRefContextTreeBuilderTest {
                 .getReferencedChildByName(q3);
 
         final SchemaInferenceStack stack = new SchemaInferenceStack(context);
-        stack.enterSchemaTree(q1);
-        stack.enterSchemaTree(q2);
-        stack.enterSchemaTree(q3);
+        stack.enterSchemaTree(q1, q2, q3);
         LeafRefContext foundOdlProjNameCtx = LeafRefContextUtils.getLeafRefReferencingContext(stack,
                 rootLeafRefContext);
 
