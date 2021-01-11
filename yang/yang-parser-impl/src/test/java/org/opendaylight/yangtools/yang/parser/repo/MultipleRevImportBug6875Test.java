@@ -19,11 +19,10 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -58,7 +57,7 @@ public class MultipleRevImportBug6875Test {
                     foo.getId(), bar1.getId(), bar2.getId(), bar3.getId());
         assertTrue(schemaContextFuture.isDone());
 
-        final SchemaContext context = schemaContextFuture.get();
+        final EffectiveModelContext context = schemaContextFuture.get();
         assertEquals(context.getModules().size(), 4);
 
         assertTrue(findNode(context, ImmutableList.of(foo("root"), foo("my-container-1")))
@@ -71,11 +70,27 @@ public class MultipleRevImportBug6875Test {
         assertTrue(findNode(context, ImmutableList.of(bar3("root"), foo("my-container-2")))
             instanceof ContainerSchemaNode);
 
-        assertNull(findNode(context, ImmutableList.of(bar2("root"), foo("my-container-1"))));
-        assertNull(findNode(context, ImmutableList.of(bar2("root"), foo("my-container-2"))));
+        try {
+            assertNull(findNode(context, ImmutableList.of(bar2("root"), foo("my-container-1"))));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", foo("my-container-1")), e.getMessage());
+        }
+        try {
+            assertNull(findNode(context, ImmutableList.of(bar2("root"), foo("my-container-2"))));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", foo("my-container-2")), e.getMessage());
+        }
 
-        assertNull(findNode(context, ImmutableList.of(bar1("root"), foo("my-container-1"))));
-        assertNull(findNode(context, ImmutableList.of(bar1("root"), foo("my-container-2"))));
+        try {
+            assertNull(findNode(context, ImmutableList.of(bar1("root"), foo("my-container-1"))));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", foo("my-container-1")), e.getMessage());
+        }
+        try {
+            assertNull(findNode(context, ImmutableList.of(bar1("root"), foo("my-container-2"))));
+        } catch (final IllegalArgumentException e) {
+            assertEquals(String.format("Schema tree child %s not present", foo("my-container-2")), e.getMessage());
+        }
     }
 
     @Test
@@ -121,8 +136,10 @@ public class MultipleRevImportBug6875Test {
             IRSchemaSource.class);
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qnames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qnames, true));
+    private static SchemaNode findNode(final EffectiveModelContext context, final Iterable<QName> qnames) {
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        qnames.forEach(stack::enterSchemaTree);
+        return SchemaContextUtil.findDataSchemaNode(context, stack);
     }
 
     private static QName foo(final String localName) {

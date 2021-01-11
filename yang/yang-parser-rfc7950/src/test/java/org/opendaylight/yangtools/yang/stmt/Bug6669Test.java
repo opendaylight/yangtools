@@ -16,12 +16,12 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -67,31 +67,34 @@ public class Bug6669Test {
 
     @Test
     public void testValidAugment() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test1");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test1");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, M));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, BAR, BAR_1, M);
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
     }
 
     @Test
     public void testValidAugment2() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test2");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test2");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, M));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, BAR, BAR_1, BAR_2, M);
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
     }
 
     @Test
     public void testValidAugment3() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test3");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test3");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, QName.create(BAR_NS, REV, "l")));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, BAR, BAR_1, BAR_2, QName.create(BAR_NS, REV, "l"));
+        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof ListSchemaNode);
     }
 }
