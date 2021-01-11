@@ -12,12 +12,12 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug6771Test {
     private static final String NS = "http://www.example.com/typedef-bug";
@@ -28,18 +28,21 @@ public class Bug6771Test {
 
     @Test
     public void augmentTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/augment");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/augment");
         assertNotNull(context);
 
-        verifyLeafType(SchemaContextUtil
-                .findDataSchemaNode(context, SchemaPath.create(true, ROOT, CONT_B, LEAF_CONT_B)));
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, CONT_B, LEAF_CONT_B);
+        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context, stack));
+        stack.clear();
+        stack.enterSchemaTree(ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B);
+        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context, stack));
+        stack.clear();
     }
 
     @Test
     public void choiceCaseTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/choice-case");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/choice-case");
         assertNotNull(context);
 
         final QName myChoice = QName.create(NS, "my-choice");
@@ -50,20 +53,26 @@ public class Bug6771Test {
         final QName containerTwo = QName.create(NS, "container-two");
         final QName containerThree = QName.create(NS, "container-three");
 
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, myChoice, caseOne, containerOne, LEAF_CONT_B)));
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, myChoice, caseTwo, containerTwo, LEAF_CONT_B)));
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, myChoice, caseThree, containerThree, INNER_CONTAINER, LEAF_CONT_B)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, myChoice, caseOne, containerOne, LEAF_CONT_B);
+        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context, stack));
+        stack.clear();
+        stack.enterSchemaTree(ROOT, myChoice, caseTwo, containerTwo, LEAF_CONT_B);
+        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context, stack));
+        stack.clear();
+        stack.enterSchemaTree(ROOT, myChoice, caseThree, containerThree, INNER_CONTAINER, LEAF_CONT_B);
+        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context, stack));
+        stack.clear();
     }
 
     @Test
     public void groupingTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/grouping");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/grouping");
         assertNotNull(context);
-        verifyLeafType(SchemaContextUtil
-                .findDataSchemaNode(context, SchemaPath.create(true, ROOT, CONT_B, LEAF_CONT_B)));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterSchemaTree(ROOT, CONT_B, LEAF_CONT_B);
+        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context, stack));
+        stack.clear();
     }
 
     private static void verifyLeafType(final SchemaNode schemaNode) {

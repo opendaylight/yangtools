@@ -14,11 +14,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug5101Test {
     private static final String NS = "foo";
@@ -26,30 +26,38 @@ public class Bug5101Test {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5101");
+        EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5101");
         assertNotNull(context);
 
         QName grp = QName.create(NS, REV, "my-grouping");
         QName myContainer = QName.create(NS, REV, "my-container");
-        QName root = QName.create(NS, REV, "root");
 
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, grp, myContainer));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterGrouping(grp);
+        stack.enterSchemaTree(myContainer);
+        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
         ContainerSchemaNode myContainerInGrouping = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.DEPRECATED, myContainerInGrouping.getStatus());
 
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, myContainer));
+        QName root = QName.create(NS, REV, "root");
+        stack.clear();
+        stack.enterSchemaTree(root, myContainer);
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
         ContainerSchemaNode myContainerInRoot = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.DEPRECATED, myContainerInRoot.getStatus());
 
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, myContainer));
+        stack.clear();
+        stack.enterSchemaTree(myContainer);
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
         ContainerSchemaNode myContainerInModule = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.DEPRECATED, myContainerInModule.getStatus());
 
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root));
+        stack.clear();
+        stack.enterSchemaTree(root);
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, stack);
         assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
         ContainerSchemaNode rootContainer = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.CURRENT, rootContainer.getStatus());

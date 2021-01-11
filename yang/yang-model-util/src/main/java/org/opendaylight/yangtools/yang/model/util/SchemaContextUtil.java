@@ -88,26 +88,26 @@ public final class SchemaContextUtil {
 
     /**
      * Method attempts to find DataSchemaNode in Schema Context via specified Schema Path. The returned DataSchemaNode
-     * from method will be the node at the end of the SchemaPath. If the DataSchemaNode is not present in the Schema
-     * Context the method will return {@code null}.
+     * from method will be the node at the end of the SchemaInferenceStack. If the DataSchemaNode is not present
+     * in the Schema Context the method will return {@code null}.
      *
      * <p>
      * In case that Schema Context or Schema Path are not specified correctly (i.e. contains {@code null} values) the
      * method will throw IllegalArgumentException.
      *
      * @param context Schema Context
-     * @param schemaPath Schema Path to search for
+     * @param stack represents the schema path to search for
      * @return SchemaNode from the end of the Schema Path or {@code null} if the Node is not present.
-     * @throws NullPointerException if context or schemaPath is null
+     * @throws NullPointerException if context or schemaStack is null
      */
-    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
-        final Iterable<QName> prefixedPath = schemaPath.getPathFromRoot();
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaInferenceStack stack) {
+        final Iterable<QName> prefixedPath = stack.getPathFromRoot();
         if (prefixedPath == null) {
-            LOG.debug("Schema path {} has null path", schemaPath);
+            LOG.debug("Schema path {} has null path", stack);
             return null;
         }
 
-        LOG.trace("Looking for path {} in context {}", schemaPath, context);
+        LOG.trace("Looking for path {} in context {}", stack, context);
         return findNodeInSchemaContext(context, prefixedPath);
     }
 
@@ -331,15 +331,15 @@ public final class SchemaContextUtil {
      * Returns RPC Input or Output Data container from RPC definition.
      *
      * @param schema SchemaContext in which lookup should be performed.
-     * @param path Schema path of RPC input/output data container
+     * @param stack Schema inference stack of RPC input/output data container
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
     public static @Nullable ContainerLike getRpcDataSchema(final @NonNull SchemaContext schema,
-            final @NonNull SchemaPath path) {
+            final @NonNull SchemaInferenceStack stack) {
         requireNonNull(schema, "Schema context must not be null.");
-        requireNonNull(path, "Schema path must not be null.");
-        final Iterator<QName> it = path.getPathFromRoot().iterator();
+        requireNonNull(stack, "Schema inference stack must not be null.");
+        final Iterator<QName> it = stack.getPathFromRoot().iterator();
         checkArgument(it.hasNext(), "Rpc must have QName.");
         final QName rpcName = it.next();
         checkArgument(it.hasNext(), "input or output must be part of path.");
