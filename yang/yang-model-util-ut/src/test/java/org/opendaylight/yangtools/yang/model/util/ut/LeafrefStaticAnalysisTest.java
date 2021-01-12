@@ -22,9 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafrefStaticAnalysisTest {
@@ -61,7 +62,9 @@ public class LeafrefStaticAnalysisTest {
             ((LeafrefTypeDefinition) leaf.getType()).getPathStatement());
 
         assertThat(found, isA(LeafSchemaNode.class));
-        assertEquals(SchemaPath.create(true, FOO, QName.create(FOO, "id")), found.getPath());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final EffectiveStatement<QName, ?> idStatement = stack.enterSchemaTree(FOO, QName.create(FOO, "id"));
+        assertEquals(idStatement, found);
     }
 
     @Test
