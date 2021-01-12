@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f50a56db_11bfff03",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/leafref/context/LeafRefContextTreeBuilderTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-12T13:36:39Z",
+      "side": 1,
+      "message": "move these exit()s as close to their enter()s as possible",
+      "range": {
+        "startLine": 215,
+        "startChar": 8,
+        "endLine": 215,
+        "endChar": 21
+      },
+      "revId": "6a85a724799c603e6133a05d44b5924003e06a22",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
