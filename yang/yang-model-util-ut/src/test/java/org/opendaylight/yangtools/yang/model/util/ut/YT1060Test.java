@@ -24,9 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
@@ -62,7 +63,9 @@ public class YT1060Test {
     public void testFindDataSchemaNode() {
         final SchemaNode found = SchemaContextUtil.findDataTreeSchemaNode(context, CONT.getModule(), path);
         assertThat(found, isA(LeafSchemaNode.class));
-        assertEquals(SchemaPath.create(true, QName.create("imported", "root"), QName.create("imported", "leaf1")),
-            found.getPath());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final EffectiveStatement<QName, ?> leaf1Statement = stack.enterSchemaTree(
+                QName.create("imported", "root"), QName.create("imported", "leaf1"));
+        assertEquals(leaf1Statement, found);
     }
 }
