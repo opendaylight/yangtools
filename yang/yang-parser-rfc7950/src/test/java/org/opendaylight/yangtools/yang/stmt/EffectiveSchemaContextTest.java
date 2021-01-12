@@ -13,15 +13,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -29,10 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -40,8 +37,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContex
 
 public class EffectiveSchemaContextTest {
     @Test
-    public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
-            YangSyntaxErrorException {
+    public void testEffectiveSchemaContext() throws ReactorException {
         final EffectiveSchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
             .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/foo.yang"))
             .addSource(StmtTestUtils.sourceForResource("/effective-schema-context-test/bar.yang"))
@@ -80,7 +76,8 @@ public class EffectiveSchemaContextTest {
         assertFalse(schemaContext.getDescription().isPresent());
         assertFalse(schemaContext.getReference().isPresent());
         assertEquals(SchemaContext.NAME, schemaContext.getQName());
-        assertEquals(SchemaPath.ROOT, schemaContext.getPath());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(schemaContext);
+        assertTrue(stack.isEmpty());
         assertEquals(Status.CURRENT, schemaContext.getStatus());
         assertNotNull(schemaContext.getUses());
         assertTrue(schemaContext.getUses().isEmpty());
@@ -88,6 +85,8 @@ public class EffectiveSchemaContextTest {
         assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
 
         Module fooModule = schemaContext.findModule("foo", Revision.of("2016-09-21")).get();
+        assertEquals(QNameModule.create(URI.create("foo-namespace"), Revision.of("2016-09-21")),
+                fooModule.getQNameModule());
         assertEquals(3, schemaContext.getModules().size());
         assertEquals(3, schemaContext.getRootDeclaredStatements().size());
         assertEquals(3, schemaContext.getModuleStatements().size());
