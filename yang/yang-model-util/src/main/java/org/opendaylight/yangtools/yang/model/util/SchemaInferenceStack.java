@@ -25,10 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
@@ -129,6 +131,14 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         groupingDepth = 0;
     }
 
+    public @NonNull FeatureEffectiveStatement enterFeature(final QName nodeIdentifier) {
+        return pushFeature(requireNonNull(nodeIdentifier));
+    }
+
+    public @NonNull TypedefEffectiveStatement enterTypedef(final QName nodeIdentifier) {
+        return pushTypedef(requireNonNull(nodeIdentifier));
+    }
+
     /**
      * Lookup a grouping by its node identifier and push it to the stack.
      *
@@ -162,6 +172,21 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return requireNonNull(stmt);
     }
 
+    /**
+     * Pop last "amount" statements from the stack.
+     *
+     * @param amount amount of statements to exit
+     * @return Previous statement
+     * @throws NoSuchElementException if this stack was emptied
+     */
+    public @NonNull EffectiveStatement<QName, ?> exit(final int amount) {
+        checkArgument(amount > 0, "Trying to exit less then 1 time");
+        EffectiveStatement<QName, ?> ret = exit();
+        for (int i = 1; i < amount; i++) {
+            ret = exit();
+        }
+        return ret;
+    }
 
     /**
      * Pop the current statement from the stack.
@@ -213,6 +238,50 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("stack", deque).toString();
+    }
+
+    private @NonNull FeatureEffectiveStatement pushFeature(final @NonNull QName nodeIdentifier) {
+        final EffectiveStatement<QName, ?> parent = deque.peekFirst();
+        return parent != null ? pushFeature(parent, nodeIdentifier) : pushFirstFeature(nodeIdentifier);
+    }
+
+    private @NonNull FeatureEffectiveStatement pushFeature(final @NonNull EffectiveStatement<?, ?> parent,
+            final @NonNull QName nodeIdentifier) {
+        final FeatureEffectiveStatement ret = parent.streamEffectiveSubstatements(FeatureEffectiveStatement.class)
+                .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Type definition " + nodeIdentifier + " not present"));
+        deque.push(ret);
+        return ret;
+    }
+
+    private @NonNull FeatureEffectiveStatement pushFirstFeature(final @NonNull QName nodeIdentifier) {
+        final ModuleEffectiveStatement module = getModule(nodeIdentifier);
+        final FeatureEffectiveStatement ret = pushFeature(module, nodeIdentifier);
+        currentModule = module;
+        return ret;
+    }
+
+    private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull QName nodeIdentifier) {
+        final EffectiveStatement<QName, ?> parent = deque.peekFirst();
+        return parent != null ? pushTypedef(parent, nodeIdentifier) : pushFirstTypedef(nodeIdentifier);
+    }
+
+    private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull EffectiveStatement<?, ?> parent,
+            final @NonNull QName nodeIdentifier) {
+        final TypedefEffectiveStatement ret = parent.streamEffectiveSubstatements(TypedefEffectiveStatement.class)
+                .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Type definition " + nodeIdentifier + " not present"));
+        deque.push(ret);
+        return ret;
+    }
+
+    private @NonNull TypedefEffectiveStatement pushFirstTypedef(final @NonNull QName nodeIdentifier) {
+        final ModuleEffectiveStatement module = getModule(nodeIdentifier);
+        final TypedefEffectiveStatement ret = pushTypedef(module, nodeIdentifier);
+        currentModule = module;
+        return ret;
     }
 
     private @NonNull GroupingEffectiveStatement pushGrouping(final @NonNull QName nodeIdentifier) {

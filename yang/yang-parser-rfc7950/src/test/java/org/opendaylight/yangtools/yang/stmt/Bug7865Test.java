@@ -16,20 +16,27 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class Bug7865Test {
     private static final String NS = "foo";
 
     @Test
     public void test() throws Exception {
-        final SchemaContext context = TestUtils.parseYangSources("/bugs/bug7865");
+        final EffectiveModelContext context = TestUtils.parseYangSources("/bugs/bug7865");
         assertNotNull(context);
-
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
+        stack.enterSchemaTree(root.getQName());
         assertTrue(root instanceof ContainerSchemaNode);
+        final UnrecognizedEffectiveStatement expectedUnrecognizedStmt = stack.currentStatement()
+                .findFirstEffectiveSubstatement(UnrecognizedEffectiveStatement.class).get()
+                .findFirstEffectiveSubstatement(UnrecognizedEffectiveStatement.class).get()
+                .findFirstEffectiveSubstatement(UnrecognizedEffectiveStatement.class).get();
         final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
@@ -42,8 +49,7 @@ public class Bug7865Test {
         assertEquals(1, subSubUnknownSchemaNodes.size());
 
         final UnknownSchemaNode subSubUnknownNode = subSubUnknownSchemaNodes.iterator().next();
-        final SchemaPath expectedPath = SchemaPath.create(true, foo("root"), foo("p"), foo("p"), foo("p"));
-        assertEquals(expectedPath, subSubUnknownNode.getPath());
+        assertEquals(((SchemaNode)expectedUnrecognizedStmt).getQName(), subSubUnknownNode.getQName());
     }
 
     private static QName foo(final String localName) {
