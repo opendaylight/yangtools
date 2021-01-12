@@ -40,10 +40,7 @@ public class Bug7440Test {
         assertEquals(1, deviates.size());
         final DeviateDefinition deviateReplace = deviates.iterator().next();
 
-        final SchemaPath deviatedTypePath = SchemaPath.create(true, QName.create(bar.getQNameModule(), "test-leaf"),
-                QName.create(bar.getQNameModule(), "uint32"));
-
         final TypeDefinition<?> deviatedType = deviateReplace.getDeviatedType();
-        assertEquals(deviatedTypePath, deviatedType.getPath());
+        assertEquals(QName.create(bar.getQNameModule(), "uint32"), deviatedType.getQName());
     }
 }
