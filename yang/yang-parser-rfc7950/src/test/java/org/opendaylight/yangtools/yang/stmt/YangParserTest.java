@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -39,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
@@ -49,11 +51,12 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
@@ -62,6 +65,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -78,7 +82,7 @@ public class YangParserTest {
     private static final QNameModule BAZ = QNameModule.create(URI.create("urn:opendaylight.baz"),
         Revision.of("2013-02-27"));
 
-    private SchemaContext context;
+    private EffectiveModelContext context;
     private Module foo;
     private Module bar;
     private Module baz;
@@ -92,7 +96,7 @@ public class YangParserTest {
     }
 
     @Test
-    public void testHeaders() throws ParseException {
+    public void testHeaders() {
         assertEquals("foo", foo.getName());
         assertEquals(YangVersion.VERSION_1, foo.getYangVersion());
         assertEquals(FOO.getNamespace(), foo.getNamespace());
@@ -124,9 +128,11 @@ public class YangParserTest {
             "ifEntry"));
         // test SchemaNode args
         assertEquals(QName.create(BAR, "ifEntry"), ifEntry.getQName());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final EffectiveStatement<QName, ?> ifEntryStmt = stack.enterSchemaTree(
+                QName.create(BAR, "interfaces"), QName.create(BAR, "ifEntry"));
 
-        final SchemaPath expectedPath = TestUtils.createPath(true, BAR, "interfaces", "ifEntry");
-        assertEquals(expectedPath, ifEntry.getPath());
+        assertEquals(ifEntryStmt, ifEntry);
         assertFalse(ifEntry.getDescription().isPresent());
         assertFalse(ifEntry.getReference().isPresent());
         assertEquals(Status.CURRENT, ifEntry.getStatus());
@@ -166,7 +172,7 @@ public class YangParserTest {
     }
 
     @Test
-    public void testTypedefRangesResolving() throws ParseException {
+    public void testTypedefRangesResolving() {
         final LeafSchemaNode int32Leaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
             "int32-leaf"));
 
@@ -490,10 +496,12 @@ public class YangParserTest {
 
     @Test
     public void testChoice() {
+        @NonNull final QName transferQname = QName.create(foo.getQNameModule(), "transfer");
         final ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName(
-            QName.create(foo.getQNameModule(), "transfer"));
+                transferQname);
+        @NonNull final QName howQname = QName.create(foo.getQNameModule(), "how");
         final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(
-            QName.create(foo.getQNameModule(), "how"));
+                howQname);
         final Collection<? extends CaseSchemaNode> cases = how.getCases();
         assertEquals(5, cases.size());
         CaseSchemaNode input = null;
@@ -505,10 +513,17 @@ public class YangParserTest {
                 output = caseNode;
             }
         }
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final EffectiveStatement<QName, ?> inputStmt = stack.enterSchemaTree(transferQname, howQname,
+                QName.create(transferQname, "input"));
+        stack.exit();
         assertNotNull(input);
-        assertNotNull(input.getPath());
+        assertEquals(inputStmt, input);
+
+        final EffectiveStatement<QName, ?> outputStmt = stack.enterSchemaTree(QName.create(transferQname, "output"));
+        stack.clear();
         assertNotNull(output);
-        assertNotNull(output.getPath());
+        assertEquals(outputStmt, output);
     }
 
     @Test
@@ -558,9 +573,11 @@ public class YangParserTest {
 
         final NotificationDefinition notification = notifications.iterator().next();
         // test SchemaNode args
-        assertEquals(QName.create(BAZ, "event"), notification.getQName());
-        final SchemaPath expectedPath = SchemaPath.create(true,  QName.create(BAZ, "event"));
-        assertEquals(expectedPath, notification.getPath());
+        final QName notificationQname = QName.create(BAZ, "event");
+        assertEquals(notificationQname, notification.getQName());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final EffectiveStatement<QName, ?> qNameEffectiveStatement = stack.enterSchemaTree(notificationQname);
+        assertEquals(qNameEffectiveStatement, notification);
         assertFalse(notification.getDescription().isPresent());
         assertFalse(notification.getReference().isPresent());
         assertEquals(Status.CURRENT, notification.getStatus());
@@ -598,9 +615,9 @@ public class YangParserTest {
         final QName int32TypedefQName = QName.create(BAR, "int32-ext1");
         assertEquals(int32TypedefQName, int32ext1.getQName());
 
-        final SchemaPath typeSchemaPath = int32ext1.getPath();
-        final Iterable<QName> typePath = typeSchemaPath.getPathFromRoot();
-        final Iterator<QName> typePathIt = typePath.iterator();
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterTypedef(int32TypedefQName);
+        final Iterator<QName> typePathIt = stack.getPathFromRoot().iterator();
         assertEquals(int32TypedefQName, typePathIt.next());
         assertFalse(typePathIt.hasNext());
 
@@ -620,9 +637,9 @@ public class YangParserTest {
         assertEquals(BAR, myDecTypeQName.getModule());
         assertEquals("my-decimal-type", myDecTypeQName.getLocalName());
 
-        final SchemaPath typeSchemaPath = myDecType.getPath();
-        final Iterable<QName> typePath = typeSchemaPath.getPathFromRoot();
-        final Iterator<QName> typePathIt = typePath.iterator();
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterTypedef(myDecTypeQName);
+        final Iterator<QName> typePathIt = stack.getPathFromRoot().iterator();
         assertEquals(myDecTypeQName, typePathIt.next());
         assertFalse(typePathIt.hasNext());
 
@@ -633,14 +650,15 @@ public class YangParserTest {
         assertEquals(BAR, dec64QName.getModule());
         assertEquals("decimal64", dec64QName.getLocalName());
 
-        final SchemaPath dec64SchemaPath = dec64.getPath();
-        final Iterable<QName> dec64Path = dec64SchemaPath.getPathFromRoot();
-        final Iterator<QName> dec64PathIt = dec64Path.iterator();
+        final TypeDefinition<?> typeDefinition = ((TypeDefinitionAware) stack.currentStatement()).getTypeDefinition();
+
+        final Iterator<QName> dec64PathIt = stack.getPathFromRoot().iterator();
         assertEquals(myDecTypeQName, dec64PathIt.next());
-        assertEquals(dec64QName, dec64PathIt.next());
+        assertEquals(dec64QName, typeDefinition.getBaseType().getQName());
         assertFalse(dec64PathIt.hasNext());
     }
 
+    // FIXME Do we still need these two following private methods? They are not used anywhere.
     private static void checkOrder(final Collection<Module> modules) {
         final Iterator<Module> it = modules.iterator();
         Module module = it.next();
