@@ -73,6 +73,7 @@ public class YangDataExtensionTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance())
                 .build();
     }

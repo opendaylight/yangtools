@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
@@ -25,29 +27,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 @Beta
 final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode {
 
     private final @Nullable SchemaPath path;
-    private final @NonNull QName maybeQNameArgument;
+    private final @NonNull QName argumentQName;
     private final @NonNull ContainerEffectiveStatement container;
 
     YangDataEffectiveStatementImpl(final Current<String, YangDataStatement> stmt,
-             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname) {
         super(stmt, substatements);
+        this.argumentQName = requireNonNull(qname);
 
-        QName maybeQNameArgumentInit;
-        try {
-            maybeQNameArgumentInit = StmtContextUtils.parseIdentifier(stmt.caerbannog(), argument());
-        } catch (IllegalArgumentException e) {
-            maybeQNameArgumentInit = getNodeType();
-        }
-        this.maybeQNameArgument = maybeQNameArgumentInit;
-
-        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(maybeQNameArgument));
+        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is
@@ -56,8 +50,8 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     }
 
     @Override
-    public @NonNull QName getQName() {
-        return maybeQNameArgument;
+    public QName getQName() {
+        return argumentQName;
     }
 
     @Override
@@ -85,7 +79,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
-                .add("qname", maybeQNameArgument)
+                .add("qname", argumentQName)
                 .add("path", path)
                 .add("container", container).toString();
     }
