@@ -13,9 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,24 +23,26 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class YangParserSimpleTest {
     private static final QNameModule SN = QNameModule.create(URI.create("urn:opendaylight:simple-nodes"),
         Revision.of("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
-    private static final SchemaPath SN_NODES_PATH = SchemaPath.create(true, SN_NODES);
 
-    private SchemaContext context;
+    private EffectiveModelContext context;
     private Module testModule;
 
     @Before
@@ -147,10 +147,12 @@ public class YangParserSimpleTest {
     @Test
     public void testParseContainer() {
         final ContainerSchemaNode nodes = (ContainerSchemaNode) testModule
-                .getDataChildByName(QName.create(testModule.getQNameModule(), "nodes"));
+                .getDataChildByName(SN_NODES);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
         // test SchemaNode args
+        final EffectiveStatement<QName, ?> nodesStmt = stack.enterSchemaTree(SN_NODES);
         assertEquals(SN_NODES, nodes.getQName());
-        assertEquals(SN_NODES_PATH, nodes.getPath());
+        assertEquals(nodesStmt, nodes);
         assertEquals(Optional.of("nodes collection"), nodes.getDescription());
         assertEquals(Optional.of("nodes ref"), nodes.getReference());
         assertEquals(Status.CURRENT, nodes.getStatus());
@@ -193,7 +195,9 @@ public class YangParserSimpleTest {
         final TypeDefinition<?> nodesType = typedefs.iterator().next();
         final QName typedefQName = QName.create(SN, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
-        assertEquals(SN_NODES_PATH.createChild(QName.create(SN, "nodes-type")), nodesType.getPath());
+        final TypedefEffectiveStatement nodesTypeStmt = stack.enterTypedef(QName.create(SN, "nodes-type"));
+        stack.clear();
+        assertEquals(nodesTypeStmt.getTypeDefinition(), nodesType);
         assertFalse(nodesType.getDescription().isPresent());
         assertFalse(nodesType.getReference().isPresent());
         assertEquals(Status.CURRENT, nodesType.getStatus());
@@ -204,8 +208,13 @@ public class YangParserSimpleTest {
         assertEquals(8, nodes.getChildNodes().size());
         final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "added"));
-        assertEquals(createPath("nodes", "added"), added.getPath());
-        assertEquals(createPath("mytype"), added.getType().getPath());
+        final EffectiveStatement<QName, ?> addedStmt = stack.enterSchemaTree(QName.create(SN, "nodes"),
+                QName.create(SN, "added"));
+        stack.clear();
+        assertEquals(addedStmt, added);
+        final TypedefEffectiveStatement mytypeStmt = stack.enterTypedef(QName.create(SN, "mytype"));
+        stack.clear();
+        assertEquals(mytypeStmt.getTypeDefinition(), added.getType());
 
         final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "links"));
@@ -216,25 +225,15 @@ public class YangParserSimpleTest {
         final GroupingDefinition nodeGroup = groupings.iterator().next();
         final QName groupQName = QName.create(SN, "node-group");
         assertEquals(groupQName, nodeGroup.getQName());
-        final SchemaPath nodeGroupPath = SN_NODES_PATH.createChild(groupQName);
-        assertEquals(nodeGroupPath, nodeGroup.getPath());
+        stack.enterSchemaTree(SN_NODES);
+        final GroupingEffectiveStatement groupStmt = stack.enterGrouping(groupQName);
+        stack.clear();
+        assertEquals(groupStmt, nodeGroup);
 
         final Collection<? extends UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());
         final UsesNode use = uses.iterator().next();
         assertEquals(nodeGroup, use.getSourceGrouping());
-    }
-
-
-    private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
-
-    private static SchemaPath createPath(final String... names) {
-        final Revision rev = Revision.of("2013-07-30");
-        final List<QName> path = new ArrayList<>();
-        for (final String name : names) {
-            path.add(QName.create(NS, rev, name));
-        }
-        return SchemaPath.create(path, true);
     }
 
 }
