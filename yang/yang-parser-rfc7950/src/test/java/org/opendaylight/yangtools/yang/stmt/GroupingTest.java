@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -38,17 +39,17 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class GroupingTest {
-    private SchemaContext ctx;
+    private EffectiveModelContext ctx;
     private Module foo;
     private Module baz;
 
@@ -470,8 +471,10 @@ public class GroupingTest {
         // grouping-V/container-grouping-V
         assertNotNull(containerGroupingV);
         assertFalse(containerGroupingV.isAddedByUses());
-        SchemaPath expectedPath = TestUtils.createPath(true, expectedModule, "grouping-V", "container-grouping-V");
-        assertEquals(expectedPath, containerGroupingV.getPath());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(ctx);
+        createStack(stack, expectedModule, "grouping-V", "container-grouping-V");
+        assertEquals(stack.currentStatement(), containerGroupingV);
+        stack.clear();
         childNodes = containerGroupingV.getChildNodes();
         assertEquals(2, childNodes.size());
         for (final DataSchemaNode childNode : childNodes) {
@@ -482,16 +485,16 @@ public class GroupingTest {
         final LeafSchemaNode leafXinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "leaf-grouping-X"));
         assertNotNull(leafXinContainerV);
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-V", "container-grouping-V",
-            "leaf-grouping-X");
-        assertEquals(expectedPath, leafXinContainerV.getPath());
+        createStack(stack, expectedModule, "grouping-V", "container-grouping-V", "leaf-grouping-X");
+        assertEquals(stack.currentStatement(), leafXinContainerV);
+        stack.clear();
         // grouping-V/container-grouping-V/leaf-grouping-Y
         final LeafSchemaNode leafYinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "leaf-grouping-Y"));
         assertNotNull(leafYinContainerV);
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-V", "container-grouping-V",
-            "leaf-grouping-Y");
-        assertEquals(expectedPath, leafYinContainerV.getPath());
+        createStack(stack, expectedModule, "grouping-V", "container-grouping-V", "leaf-grouping-Y");
+        assertEquals(stack.currentStatement(), leafYinContainerV);
+        stack.clear();
 
         // grouping-X
         childNodes = gx.getChildNodes();
@@ -502,16 +505,18 @@ public class GroupingTest {
                 testModule.getQNameModule(), "leaf-grouping-X"));
         assertNotNull(leafXinGX);
         assertFalse(leafXinGX.isAddedByUses());
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-X", "leaf-grouping-X");
-        assertEquals(expectedPath, leafXinGX.getPath());
+        createStack(stack, expectedModule, "grouping-X" , "leaf-grouping-X");
+        assertEquals(stack.currentStatement(), leafXinGX);
+        stack.clear();
 
         // grouping-X/leaf-grouping-Y
         final LeafSchemaNode leafYinGX = (LeafSchemaNode) gx.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "leaf-grouping-Y"));
         assertNotNull(leafYinGX);
         assertTrue(leafYinGX.isAddedByUses());
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-X", "leaf-grouping-Y");
-        assertEquals(expectedPath, leafYinGX.getPath());
+        createStack(stack, expectedModule, "grouping-X", "leaf-grouping-Y");
+        assertEquals(stack.currentStatement(), leafYinGX);
+        stack.clear();
 
         // grouping-Y
         childNodes = gy.getChildNodes();
@@ -522,8 +527,9 @@ public class GroupingTest {
                 testModule.getQNameModule(), "leaf-grouping-Y"));
         assertNotNull(leafYinGY);
         assertFalse(leafYinGY.isAddedByUses());
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-Y", "leaf-grouping-Y");
-        assertEquals(expectedPath, leafYinGY.getPath());
+        createStack(stack, expectedModule, "grouping-Y", "leaf-grouping-Y");
+        assertEquals(stack.currentStatement(), leafYinGY);
+        stack.clear();
 
         // grouping-Z
         childNodes = gz.getChildNodes();
@@ -534,8 +540,9 @@ public class GroupingTest {
                 testModule.getQNameModule(), "leaf-grouping-Z"));
         assertNotNull(leafZinGZ);
         assertFalse(leafZinGZ.isAddedByUses());
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-Z", "leaf-grouping-Z");
-        assertEquals(expectedPath, leafZinGZ.getPath());
+        createStack(stack, expectedModule, "grouping-Z", "leaf-grouping-Z");
+        assertEquals(stack.currentStatement(), leafZinGZ);
+        stack.clear();
 
         // grouping-ZZ
         childNodes = gzz.getChildNodes();
@@ -546,8 +553,9 @@ public class GroupingTest {
                 testModule.getQNameModule(), "leaf-grouping-ZZ"));
         assertNotNull(leafZZinGZZ);
         assertFalse(leafZZinGZZ.isAddedByUses());
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-ZZ", "leaf-grouping-ZZ");
-        assertEquals(expectedPath, leafZZinGZZ.getPath());
+        createStack(stack, expectedModule, "grouping-ZZ", "leaf-grouping-ZZ");
+        assertEquals(stack.currentStatement(), leafZZinGZZ);
+        stack.clear();
 
         // TEST getOriginal from grouping-U
         assertEquals(
@@ -615,5 +623,13 @@ public class GroupingTest {
 
         assertNotNull(impType);
         assertEquals(leaf.getType().getQName(), impType.getQName());
+    }
+
+    private static void createStack(final SchemaInferenceStack stack, final QNameModule module,
+            final String grouping, final String... names) {
+        stack.enterGrouping(QName.create(module, grouping));
+        for (String name : names) {
+            stack.enterSchemaTree(QName.create(module, name));
+        }
     }
 }

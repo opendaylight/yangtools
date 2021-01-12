@@ -84,7 +84,6 @@ public class EffectiveStatementTypeTest {
         assertEquals("binary", binaryEff.getQName().getLocalName());
         assertFalse(binaryEff.getLengthConstraint().isPresent());
         assertEquals(Status.CURRENT, binaryEff.getStatus());
-        assertEquals("binary", binaryEff.getPath().getPathFromRoot().iterator().next().getLocalName());
         assertNotNull(binaryEff.getUnknownSchemaNodes());
         assertFalse(binaryEff.getDescription().isPresent());
         assertFalse(binaryEff.getReference().isPresent());
@@ -106,7 +105,6 @@ public class EffectiveStatementTypeTest {
         assertNull(bitsEff.getBaseType());
         assertNotNull(bitsEff.getQName());
         assertEquals("bits", bitsEff.getQName().getLocalName());
-        assertEquals("bits", bitsEff.getPath().getLastComponent().getLocalName());
         assertNotNull(bitsEff.getUnknownSchemaNodes());
         assertFalse(bitsEff.getDescription().isPresent());
         assertFalse(bitsEff.getReference().isPresent());
@@ -145,7 +143,6 @@ public class EffectiveStatementTypeTest {
         assertEquals(Optional.empty(), booleanEff.getUnits());
         assertEquals(Optional.empty(), booleanEff.getDefaultValue());
         assertEquals("boolean", booleanEff.getQName().getLocalName());
-        assertNull(booleanEff.getPath().getParent().getParent());
         assertNotNull(booleanEff.getUnknownSchemaNodes());
         assertFalse(booleanEff.getDescription().isPresent());
         assertFalse(booleanEff.getReference().isPresent());
@@ -181,7 +178,6 @@ public class EffectiveStatementTypeTest {
         assertFalse(decimal64Eff.equals(null));
         assertFalse(decimal64Eff.equals("test"));
         assertTrue(decimal64Eff.equals(decimal64Eff));
-        assertEquals("decimal64", decimal64Eff.getPath().getLastComponent().getLocalName());
     }
 
     @Test
@@ -196,7 +192,6 @@ public class EffectiveStatementTypeTest {
         assertEquals(Optional.empty(), emptyEff.getDefaultValue());
         assertNull(emptyEff.getBaseType());
         assertEquals("empty", emptyEff.getQName().getLocalName());
-        assertNull(emptyEff.getPath().getParent().getParent());
         assertNotNull(emptyEff.getUnknownSchemaNodes());
         assertFalse(emptyEff.getDescription().isPresent());
         assertFalse(emptyEff.getReference().isPresent());
@@ -216,7 +211,6 @@ public class EffectiveStatementTypeTest {
                 .getTypeDefinition();
 
         assertEquals("enumeration", enumSpecEff.getQName().getLocalName());
-        assertEquals("enumeration", enumSpecEff.getPath().getLastComponent().getLocalName());
         assertEquals(Optional.empty(), enumSpecEff.getDefaultValue());
         assertEquals(3, enumSpecEff.getValues().size());
         assertNull(enumSpecEff.getBaseType());
@@ -250,7 +244,6 @@ public class EffectiveStatementTypeTest {
 
         assertEquals(Optional.empty(), identityRefEff.getDefaultValue());
         assertEquals("identityref", identityRefEff.getQName().getLocalName());
-        assertEquals("identityref", identityRefEff.getPath().getLastComponent().getLocalName());
         assertNull(identityRefEff.getBaseType());
         assertNotNull(identityRefEff.getUnknownSchemaNodes());
         assertEquals(Status.CURRENT, identityRefEff.getStatus());
@@ -275,7 +268,6 @@ public class EffectiveStatementTypeTest {
 
         assertFalse(instanceIdentEff.requireInstance());
         assertEquals("instance-identifier", instanceIdentEff.getQName().getLocalName());
-        assertEquals("instance-identifier", instanceIdentEff.getPath().getLastComponent().getLocalName());
         assertNull(instanceIdentEff.getBaseType());
         assertEquals(Optional.empty(), instanceIdentEff.getDefaultValue());
         assertNotNull(instanceIdentEff.getUnknownSchemaNodes());
@@ -306,7 +298,6 @@ public class EffectiveStatementTypeTest {
         assertEquals("leafref", leafrefEff.getQName().getLocalName());
         assertEquals(Status.CURRENT, leafrefEff.getStatus());
         assertNotNull(leafrefEff.getUnknownSchemaNodes());
-        assertEquals("leafref", leafrefEff.getPath().getLastComponent().getLocalName());
         assertFalse(leafrefEff.getDescription().isPresent());
         assertFalse(leafrefEff.getReference().isPresent());
         assertNotNull(leafrefEff.hashCode());
@@ -334,7 +325,6 @@ public class EffectiveStatementTypeTest {
         assertEquals("leafref", leafrefEff.getQName().getLocalName());
         assertEquals(Status.CURRENT, leafrefEff.getStatus());
         assertNotNull(leafrefEff.getUnknownSchemaNodes());
-        assertEquals("leafref", leafrefEff.getPath().getLastComponent().getLocalName());
         assertFalse(leafrefEff.getDescription().isPresent());
         assertFalse(leafrefEff.getReference().isPresent());
         assertNotNull(leafrefEff.hashCode());
@@ -416,7 +406,6 @@ public class EffectiveStatementTypeTest {
         assertFalse(unionEff.equals(null));
         assertFalse(unionEff.equals("test"));
         assertTrue(unionEff.equals(unionEff));
-        assertEquals("union", unionEff.getPath().getLastComponent().getLocalName());
     }
 
     @Test
@@ -497,7 +486,6 @@ public class EffectiveStatementTypeTest {
         assertFalse(stringEff.equals(null));
         assertFalse(stringEff.equals("test"));
         assertTrue(stringEff.equals(stringEff));
-        assertEquals("string", stringEff.getPath().getLastComponent().getLocalName());
         assertFalse(stringEff.getLengthConstraint().isPresent());
         assertNotNull(stringEff.getPatternConstraints());
     }

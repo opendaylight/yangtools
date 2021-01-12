@@ -23,44 +23,56 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public class ControllerStmtParserTest {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/sal-broker-impl");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/sal-broker-impl");
         assertNotNull(context);
 
         salDomBrokerImplModuleTest(context);
         configModuleTest(context);
     }
 
-    private static void salDomBrokerImplModuleTest(final SchemaContext context) {
+    private static void salDomBrokerImplModuleTest(final EffectiveModelContext context) {
         final Module module = context.findModule("opendaylight-sal-dom-broker-impl", Revision.of("2013-10-28")).get();
 
         boolean checked = false;
+
         for (final AugmentationSchemaNode augmentationSchema : module.getAugmentations()) {
-            final DataSchemaNode dataNode = augmentationSchema.dataChildByName(
-                QName.create(module.getQNameModule(), "dom-broker-impl"));
+            final QName domBrokerImplQName = QName.create(module.getQNameModule(), "dom-broker-impl");
+            final DataSchemaNode dataNode = augmentationSchema.dataChildByName(domBrokerImplQName);
             if (dataNode instanceof CaseSchemaNode) {
                 final CaseSchemaNode caseNode = (CaseSchemaNode) dataNode;
-                final DataSchemaNode dataNode2 = caseNode.dataChildByName(
-                    QName.create(module.getQNameModule(), "async-data-broker"));
+                final QName asyncDataBrokerQName = QName.create(module.getQNameModule(), "async-data-broker");
+                final DataSchemaNode dataNode2 = caseNode.dataChildByName(asyncDataBrokerQName);
                 if (dataNode2 instanceof ContainerSchemaNode) {
+                    final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+                    for (final QName qname : augmentationSchema.getTargetPath().getNodeIdentifiers()) {
+                        stack.enterSchemaTree(qname);
+                    }
                     final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
-                    final DataSchemaNode leaf = containerNode
-                            .getDataChildByName(QName.create(module.getQNameModule(), "type"));
+                    final QName typeQName = QName.create(module.getQNameModule(), "type");
+                    final DataSchemaNode leaf = containerNode.getDataChildByName(typeQName);
+                    stack.enterSchemaTree(domBrokerImplQName, asyncDataBrokerQName, typeQName);
                     final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
                     assertEquals(1, unknownSchemaNodes.size());
 
                     final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
                     assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
-                    assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
+                    final QName domAsyncDataBrokerQName = ((SchemaNode) stack.currentStatement()
+                            .findFirstEffectiveSubstatement(UnrecognizedEffectiveStatement.class).get()).getQName();
+                    stack.clear();
+                    assertEquals(unknownSchemaNode.getQName(), domAsyncDataBrokerQName);
 
                     checked = true;
                 }
@@ -69,51 +81,63 @@ public class ControllerStmtParserTest {
         assertTrue(checked);
     }
 
-    private static void configModuleTest(final SchemaContext context) {
+    private static void configModuleTest(final EffectiveModelContext context) {
         final Module configModule = context.findModule("config", Revision.of("2013-04-05")).get();
         final Module module = context.findModule("opendaylight-sal-dom-broker-impl", Revision.of("2013-10-28")).get();
-
-        final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(),
-            "modules"));
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final QName modulesQName = QName.create(configModule.getQNameModule(), "modules");
+        stack.enterSchemaTree(modulesQName);
+        final DataSchemaNode dataNode = configModule.getDataChildByName(modulesQName);
         assertTrue(dataNode instanceof ContainerSchemaNode);
 
         final ContainerSchemaNode moduleContainer = (ContainerSchemaNode) dataNode;
-        final DataSchemaNode dataChildList = moduleContainer
-                .getDataChildByName(QName.create(configModule.getQNameModule(), "module"));
+        final QName moduleQName = QName.create(configModule.getQNameModule(), "module");
+        stack.enterSchemaTree(moduleQName);
+        final DataSchemaNode dataChildList = moduleContainer.getDataChildByName(moduleQName);
 
         assertTrue(dataChildList instanceof ListSchemaNode);
 
         final ListSchemaNode listModule = (ListSchemaNode) dataChildList;
-        final DataSchemaNode dataChildChoice = listModule
-                .getDataChildByName(QName.create(configModule.getQNameModule(), "configuration"));
+        final QName configurationQName = QName.create(configModule.getQNameModule(), "configuration");
+        stack.enterSchemaTree(configurationQName);
+        final DataSchemaNode dataChildChoice = listModule.getDataChildByName(configurationQName);
 
         assertTrue(dataChildChoice instanceof ChoiceSchemaNode);
 
         final ChoiceSchemaNode confChoice = (ChoiceSchemaNode) dataChildChoice;
         final CaseSchemaNode caseNodeByName = confChoice.findCaseNodes("dom-broker-impl").iterator().next();
+        stack.enterSchemaTree(QName.create(caseNodeByName.getQName().getModule(), "dom-broker-impl"));
 
         assertNotNull(caseNodeByName);
-        final DataSchemaNode dataNode2 = caseNodeByName
-                .getDataChildByName(QName.create(module.getQNameModule(), "async-data-broker"));
+        final QName asyncDataBrokerQName = QName.create(module.getQNameModule(), "async-data-broker");
+        stack.enterSchemaTree(asyncDataBrokerQName);
+        final DataSchemaNode dataNode2 = caseNodeByName.getDataChildByName(asyncDataBrokerQName);
         assertTrue(dataNode2 instanceof ContainerSchemaNode);
 
         final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
-        final DataSchemaNode leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
+        final QName typeQName = QName.create(module.getQNameModule(), "type");
+        stack.enterSchemaTree(typeQName);
+        final DataSchemaNode leaf = containerNode.getDataChildByName(typeQName);
         final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
 
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
 
-        assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
+        final QName domAsyncDataBrokerQName = ((SchemaNode) stack.currentStatement()
+                .findFirstEffectiveSubstatement(UnrecognizedEffectiveStatement.class).get()).getQName();
+        stack.exit(3);
+        assertEquals(unknownSchemaNode.getQName(), domAsyncDataBrokerQName);
         assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
 
         final CaseSchemaNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
                 .next();
+        stack.enterSchemaTree(QName.create(domInmemoryDataBroker.getQName().getModule(), "dom-inmemory-data-broker"));
 
         assertNotNull(domInmemoryDataBroker);
-        final DataSchemaNode schemaService = domInmemoryDataBroker
-                .getDataChildByName(QName.create(module.getQNameModule(), "schema-service"));
+        final QName schemaServiceQName = QName.create(module.getQNameModule(), "schema-service");
+        stack.enterSchemaTree(schemaServiceQName);
+        final DataSchemaNode schemaService = domInmemoryDataBroker.getDataChildByName(schemaServiceQName);
         assertTrue(schemaService instanceof ContainerSchemaNode);
 
         final ContainerSchemaNode schemaServiceContainer = (ContainerSchemaNode) schemaService;
@@ -125,8 +149,8 @@ public class ControllerStmtParserTest {
         assertEquals(groupingQName, uses.getSourceGrouping().getQName());
         assertEquals(0, getChildNodeSizeWithoutUses(schemaServiceContainer));
 
-        final DataSchemaNode type = schemaServiceContainer.getDataChildByName(QName.create(module.getQNameModule(),
-            "type"));
+        stack.enterSchemaTree(typeQName);
+        final DataSchemaNode type = schemaServiceContainer.getDataChildByName(typeQName);
         final Collection<? extends UnknownSchemaNode> typeUnknownSchemaNodes = type.getUnknownSchemaNodes();
         assertEquals(1, typeUnknownSchemaNodes.size());
 
@@ -136,8 +160,9 @@ public class ControllerStmtParserTest {
         final QName qName = QName.create(qNameModule, "schema-service");
 
         assertEquals(qName, typeUnknownSchemaNode.getQName());
-        assertEquals(typeUnknownSchemaNode.getQName(), typeUnknownSchemaNode
-                .getPath().getLastComponent());
+        final QName typeUnknownQname = ((SchemaNode) stack.currentStatement()
+                .findFirstEffectiveSubstatement(UnrecognizedEffectiveStatement.class).get()).getQName();
+        assertEquals(typeUnknownSchemaNode.getQName(), typeUnknownQname);
     }
 
     private static int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {

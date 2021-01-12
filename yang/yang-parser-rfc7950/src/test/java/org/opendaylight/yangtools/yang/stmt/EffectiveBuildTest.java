@@ -25,10 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
 
 public class EffectiveBuildTest {
 
@@ -40,7 +41,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void effectiveBuildTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
+        EffectiveSchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
                 .buildEffective();
 
         assertNotNull(result);
@@ -84,9 +85,13 @@ public class EffectiveBuildTest {
         ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode) grpSubCon2.getDataChildByName(q6);
         assertNotNull(grpSubSubCon2);
 
-        assertEquals(SchemaPath.create(true, q1, q2, q3), subSubCon.getPath());
-        assertEquals(SchemaPath.create(true, q4, q5, q6), subSubCon2.getPath());
-        assertEquals(SchemaPath.create(true, q7, q5, q6), grpSubSubCon2.getPath());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(result);
+        assertEquals(stack.enterSchemaTree(q1, q2, q3), subSubCon);
+        stack.clear();
+        assertEquals(stack.enterSchemaTree(q4, q5, q6), subSubCon2);
+        stack.clear();
+        stack.enterGrouping(q7);
+        assertEquals(stack.enterSchemaTree(q5, q6), grpSubSubCon2);
     }
 
     @Test
