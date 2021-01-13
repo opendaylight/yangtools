@@ -122,7 +122,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     public interface OnDemandSchemaTreeStorageNode extends NamespaceStorageNode {
         /**
          * Request that a new member of this node's schema tree statement be added. Implementations are required to
-         * perform lookup in their internal structure and create a child if tracktable. Resulting node is expected to
+         * perform lookup in their internal structure and create a child if tractable. Resulting node is expected to
          * have been registered with local storage, so that it is accessible through
          * {@link #getFromLocalStorage(Class, Object)}.
          *
