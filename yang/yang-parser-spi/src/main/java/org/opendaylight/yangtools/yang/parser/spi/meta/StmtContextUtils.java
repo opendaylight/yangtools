@@ -336,20 +336,20 @@ public final class StmtContextUtils {
      * Checks whether at least one ancestor of a StatementContext matches one from a collection of statement
      * definitions.
      *
-     * @param stmt EffectiveStmtCtx to be checked
+     * @param stmt Statement context to be checked
      * @param ancestorTypes collection of statement definitions
      * @return true if at least one ancestor of a StatementContext matches one
      *         from collection of statement definitions, otherwise false.
      */
-    public static boolean hasAncestorOfType(final EffectiveStmtCtx stmt,
+    public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> stmt,
             final Collection<StatementDefinition> ancestorTypes) {
         requireNonNull(ancestorTypes);
-        Parent current = stmt.effectiveParent();
+        StmtContext<?, ?, ?> current = stmt.getParentContext();
         while (current != null) {
             if (ancestorTypes.contains(current.publicDefinition())) {
                 return true;
             }
-            current = current.effectiveParent();
+            current = current.getParentContext();
         }
         return false;
     }
