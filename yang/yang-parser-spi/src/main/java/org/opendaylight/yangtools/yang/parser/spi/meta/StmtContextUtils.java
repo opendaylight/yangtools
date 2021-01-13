@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -336,20 +335,20 @@ public final class StmtContextUtils {
      * Checks whether at least one ancestor of a StatementContext matches one from a collection of statement
      * definitions.
      *
-     * @param stmt EffectiveStmtCtx to be checked
+     * @param stmt Statement context to be checked
      * @param ancestorTypes collection of statement definitions
      * @return true if at least one ancestor of a StatementContext matches one
      *         from collection of statement definitions, otherwise false.
      */
-    public static boolean hasAncestorOfType(final EffectiveStmtCtx stmt,
+    public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> stmt,
             final Collection<StatementDefinition> ancestorTypes) {
         requireNonNull(ancestorTypes);
-        Parent current = stmt.effectiveParent();
+        StmtContext<?, ?, ?> current = stmt.getParentContext();
         while (current != null) {
             if (ancestorTypes.contains(current.publicDefinition())) {
                 return true;
             }
-            current = current.effectiveParent();
+            current = current.getParentContext();
         }
         return false;
     }
@@ -381,20 +380,6 @@ public final class StmtContextUtils {
         }
 
         return true;
-    }
-
-    /**
-     * Checks whether the parent of EffectiveStmtCtx is of specified type.
-     *
-     * @param stmt EffectiveStmtCtx to be checked
-     * @param parentType type of parent to check
-     * @return true if the parent statement of {@code stmt} is of specified type, otherwise false
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    public static boolean hasParentOfType(final EffectiveStmtCtx stmt, final StatementDefinition parentType) {
-        requireNonNull(parentType);
-        final Parent parent = stmt.effectiveParent();
-        return parent != null && parentType.equals(parent.publicDefinition());
     }
 
     /**
