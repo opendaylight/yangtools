@@ -17,4 +17,5 @@ module org.opendaylight.yangtools.yang.parser.spi {
     // Annotations
     requires static com.github.spotbugs.annotations;
     requires static org.eclipse.jdt.annotation;
+    requires org.opendaylight.yangtools.yang.common;
 }
