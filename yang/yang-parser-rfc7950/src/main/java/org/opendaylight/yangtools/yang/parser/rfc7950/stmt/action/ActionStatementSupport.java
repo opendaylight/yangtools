@@ -62,6 +62,13 @@ public final class ActionStatementSupport extends
     }
 
     @Override
+    public void onStatementAdded(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
+        // FIXME: check parents
+        // FIXME: hook a full declaration check for 'list' parents to ensure the key is present
+        super.onStatementAdded(stmt);
+    }
+
+    @Override
     public void onFullDefinitionDeclared(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 

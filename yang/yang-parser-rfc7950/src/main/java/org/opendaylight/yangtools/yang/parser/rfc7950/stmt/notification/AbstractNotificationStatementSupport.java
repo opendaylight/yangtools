@@ -50,5 +50,6 @@ abstract class AbstractNotificationStatementSupport
         }
     }
 
+    // FIXME: remove this method
     abstract void checkEffective(Current<QName, NotificationStatement> stmt);
 }
