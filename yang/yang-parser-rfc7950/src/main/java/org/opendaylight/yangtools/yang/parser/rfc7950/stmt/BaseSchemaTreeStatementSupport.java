@@ -29,8 +29,13 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
         super(publicDefinition, copyPolicy);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This method ensures the statement is added to its parent {@link SchemaTreeNamespace}.
+     */
     @Override
-    public final void onStatementAdded(final Mutable<QName, D, E> stmt) {
+    public void onStatementAdded(final Mutable<QName, D, E> stmt) {
         stmt.coerceParentContext().addToNs(SchemaTreeNamespace.class, stmt.getArgument(), stmt);
     }
 

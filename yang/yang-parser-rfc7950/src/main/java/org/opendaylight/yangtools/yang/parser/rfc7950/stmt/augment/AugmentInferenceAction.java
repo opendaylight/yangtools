@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -76,15 +75,8 @@ final class AugmentInferenceAction implements InferenceAction {
             augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, Empty.getInstance(), augmentTargetCtx);
         }
 
-        // FIXME: this is a workaround for models which augment a node which is added via an extension
-        //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
-        try {
-            copyFromSourceToTarget((StatementContextBase<?, ?, ?>) augmentNode, augmentTargetCtx);
-            augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
-        } catch (final SourceException e) {
-            LOG.warn("Failed to add augmentation {} defined at {}", augmentTargetCtx.sourceReference(),
-                augmentNode.sourceReference(), e);
-        }
+        copyFromSourceToTarget((StatementContextBase<?, ?, ?>) augmentNode, augmentTargetCtx);
+        augmentTargetCtx.addEffectiveSubstatement(augmentNode.replicaAsChildOf(augmentTargetCtx));
     }
 
     @Override
