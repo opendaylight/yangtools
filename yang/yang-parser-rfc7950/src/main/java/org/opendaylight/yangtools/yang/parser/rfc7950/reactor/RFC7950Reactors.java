@@ -63,6 +63,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.max_elements.MaxEleme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements.MinElementsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier.ModifierStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.ModuleStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.QNameModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must.MustStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace.NamespaceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC6020Support;
@@ -169,6 +170,7 @@ public final class RFC7950Reactors {
             .addSupport(PreLinkageModuleNamespace.BEHAVIOUR)
             .addSupport(ImpPrefixToNamespace.BEHAVIOUR)
             .addSupport(ModuleCtxToModuleQName.BEHAVIOUR)
+            .addSupport(QNameModuleNamespace.BEHAVIOUR)
             .build();
 
     private static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle

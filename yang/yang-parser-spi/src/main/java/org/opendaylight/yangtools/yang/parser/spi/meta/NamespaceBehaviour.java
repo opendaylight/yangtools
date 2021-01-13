@@ -180,7 +180,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> statementLocal(
            final Class<N> identifier) {
-        return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
+        return new StatementLocal<>(identifier);
     }
 
     /**
@@ -288,7 +288,42 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         storage.putToLocalStorage(getIdentifier(), key, value);
     }
 
-    static final class StorageSpecific<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
+    abstract static class AbstractSpecific<K, V, N extends IdentifierNamespace<K, V>>
+            extends NamespaceBehaviour<K, V, N> {
+        AbstractSpecific(final Class<N> identifier) {
+            super(identifier);
+        }
+
+        @Override
+        public final V getFrom(final NamespaceStorageNode storage, final K key) {
+            return getFromLocalStorage(findStorageNode(storage), key);
+        }
+
+        @Override
+        public final Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
+            return getAllFromLocalStorage(findStorageNode(storage));
+        }
+
+        @Override
+        public final void addTo(final NamespaceStorageNode storage, final K key, final V value) {
+            addToStorage(findStorageNode(storage), key, value);
+        }
+
+        abstract NamespaceStorageNode findStorageNode(NamespaceStorageNode storage);
+    }
+
+    static final class StatementLocal<K, V, N extends IdentifierNamespace<K, V>> extends AbstractSpecific<K, V, N> {
+        StatementLocal(final Class<N> identifier) {
+            super(identifier);
+        }
+
+        @Override
+        NamespaceStorageNode findStorageNode(final NamespaceStorageNode storage) {
+            return storage;
+        }
+    }
+
+    static final class StorageSpecific<K, V, N extends IdentifierNamespace<K, V>> extends AbstractSpecific<K, V, N> {
         private final StorageNodeType storageType;
 
         StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
@@ -297,25 +332,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         }
 
         @Override
-        public V getFrom(final NamespaceStorageNode storage, final K key) {
-            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
-            return getFromLocalStorage(current, key);
-        }
-
-        @Override
-        public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
-            NamespaceStorageNode current = storage;
-            while (current.getStorageNodeType() != storageType) {
-                current = current.getParentNamespaceStorage();
-            }
-
-            return getAllFromLocalStorage(current);
-        }
-
-        @Override
-        public void addTo(final NamespaceBehaviour.NamespaceStorageNode storage, final K key, final V value) {
-            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
-            addToStorage(current, key, value);
+        NamespaceStorageNode findStorageNode(final NamespaceStorageNode storage) {
+            return findClosestTowardsRoot(storage, storageType);
         }
 
         @Override
@@ -325,7 +343,6 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     static final class TreeScoped<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
-
         TreeScoped(final Class<N> identifier) {
             super(identifier);
         }
