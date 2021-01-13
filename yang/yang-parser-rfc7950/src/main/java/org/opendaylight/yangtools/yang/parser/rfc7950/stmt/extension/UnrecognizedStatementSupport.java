@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -20,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class UnrecognizedStatementSupport
@@ -69,6 +73,32 @@ final class UnrecognizedStatementSupport
     @Override
     protected UnrecognizedEffectiveStatement createEffective(final Current<String, UnrecognizedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new UnrecognizedEffectiveStatementImpl(stmt, substatements);
+        // FIXME: Remove following section after fixing 4380
+        final UnknownSchemaNode original = (UnknownSchemaNode) stmt.original();
+        return new UnrecognizedEffectiveStatementImpl(stmt, substatements,
+            original == null ? qnameFromArgument(stmt) : original.getQName());
+    }
+
+    private static QName qnameFromArgument(final Current<String, UnrecognizedStatement> stmt) {
+        final String value = stmt.argument();
+        if (value == null || value.isEmpty()) {
+            return stmt.publicDefinition().getStatementName();
+        }
+
+        final int colon = value.indexOf(':');
+        if (colon == -1) {
+            final UnqualifiedQName qname = UnqualifiedQName.tryCreate(value);
+            return qname == null ? null : qname.bindTo(StmtContextUtils.getRootModuleQName(stmt.caerbannog())).intern();
+        }
+
+        final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt.caerbannog(),
+            value.substring(0, colon));
+        if (qnameModule == null) {
+            return null;
+        }
+
+        final int next = value.indexOf(':', colon + 1);
+        final String localName = next == -1 ? value.substring(colon + 1) : value.substring(colon + 1, next);
+        return QName.create(qnameModule, localName).intern();
     }
 }

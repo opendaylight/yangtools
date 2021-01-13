@@ -11,11 +11,8 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
@@ -23,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +32,9 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     private final @Nullable SchemaPath path;
 
     UnrecognizedEffectiveStatementImpl(final Current<String, UnrecognizedStatement> stmt,
-            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qnameArgument) {
         super(stmt, substatements);
-
-        // FIXME: Remove following section after fixing 4380
-        final UnknownSchemaNode original = (UnknownSchemaNode) stmt.original();
-        if (original == null) {
-            final QName qname = qnameFromArgument(stmt);
-            maybeQNameArgument = qname != null ? qname : getNodeType();
-        } else {
-            maybeQNameArgument = original.getQName();
-        }
+        this.maybeQNameArgument = qnameArgument != null ? qnameArgument : getNodeType();
 
         SchemaPath maybePath;
         try {
@@ -73,28 +61,5 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     @Override
     public StatementDefinition statementDefinition() {
         return getDeclared().statementDefinition();
-    }
-
-    private static QName qnameFromArgument(final Current<String, UnrecognizedStatement> stmt) {
-        final String value = stmt.argument();
-        if (value == null || value.isEmpty()) {
-            return stmt.publicDefinition().getStatementName();
-        }
-
-        final int colon = value.indexOf(':');
-        if (colon == -1) {
-            final UnqualifiedQName qname = UnqualifiedQName.tryCreate(value);
-            return qname == null ? null : qname.bindTo(StmtContextUtils.getRootModuleQName(stmt.caerbannog())).intern();
-        }
-
-        final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt.caerbannog(),
-            value.substring(0, colon));
-        if (qnameModule == null) {
-            return null;
-        }
-
-        final int next = value.indexOf(':', colon + 1);
-        final String localName = next == -1 ? value.substring(colon + 1) : value.substring(colon + 1, next);
-        return QName.create(qnameModule, localName).intern();
     }
 }
