@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
-import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModu
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement, ModuleEffectiveStatement>
         implements Module, ModuleEffectiveStatement {
@@ -55,10 +54,9 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
 
     ModuleEffectiveStatementImpl(final Current<UnqualifiedQName, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Collection<? extends Submodule> submodules) {
+            final Collection<? extends Submodule> submodules, final QNameModule qnameModule) {
         super(stmt, substatements, findPrefix(stmt, substatements, "module", stmt.getRawArgument()));
-
-        qnameModule = verifyNotNull(stmt.getFromNamespace(ModuleCtxToModuleQName.class, stmt.caerbannog()));
+        this.qnameModule = requireNonNull(qnameModule);
         this.submodules = ImmutableList.copyOf(submodules);
 
         final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
