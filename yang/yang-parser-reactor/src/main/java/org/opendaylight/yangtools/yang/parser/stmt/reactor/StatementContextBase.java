@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -345,10 +346,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
 
-    // Exposed for ReplicaStatementContext
+
     @Override
-    E createEffective() {
-        return definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+    final E createEffective() {
+        final E result = definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        if (result instanceof MutableStatement) {
+            getRoot().addMutableStmtToSeal((MutableStatement) result);
+        }
+        return result;
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
