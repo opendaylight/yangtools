@@ -88,7 +88,7 @@ final class UnrecognizedStatementSupport
         final int colon = value.indexOf(':');
         if (colon == -1) {
             final UnqualifiedQName qname = UnqualifiedQName.tryCreate(value);
-            return qname == null ? null : qname.bindTo(StmtContextUtils.getRootModuleQName(stmt.caerbannog())).intern();
+            return qname == null ? null : qname.bindTo(stmt.moduleName().getModule()).intern();
         }
 
         final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt.caerbannog(),
