@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -127,7 +128,7 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
     @Beta
     interface Current<A, D extends DeclaredStatement<A>> extends Parent, NamespaceStmtCtx, BoundStmtCtxCompat<A, D> {
 
-        @NonNull CommonStmtCtx root();
+        @NonNull QName moduleName();
 
         @Nullable EffectiveStatement<?, ?> original();
 

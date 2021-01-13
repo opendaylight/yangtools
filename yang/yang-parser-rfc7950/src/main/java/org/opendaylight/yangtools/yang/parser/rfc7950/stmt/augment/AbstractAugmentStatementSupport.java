@@ -134,8 +134,7 @@ abstract class AbstractAugmentStatementSupport
 
         try {
             return new AugmentEffectiveStatementImpl(stmt.declared(), stmt.getArgument(), flags,
-                StmtContextUtils.getRootModuleQName(stmt.caerbannog()), substatements,
-                (AugmentationSchemaNode) stmt.original());
+                stmt.moduleName().getModule(), substatements, (AugmentationSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
