@@ -388,11 +388,13 @@ public final class StmtContextUtils {
      *
      * @param stmt EffectiveStmtCtx to be checked
      * @param parentType type of parent to check
-     * @return true if the parent of StmtContext is of specified type, otherwise false
+     * @return true if the parent statement of {@code stmt} is of specified type, otherwise false
+     * @throws NullPointerException if any argument is {@code null}
      */
-    public static boolean hasParentOfType(final EffectiveStmtCtx.Current<?, ?> stmt,
-            final StatementDefinition parentType) {
-        return hasParentOfType(stmt.caerbannog(), parentType);
+    public static boolean hasParentOfType(final EffectiveStmtCtx stmt, final StatementDefinition parentType) {
+        requireNonNull(parentType);
+        final Parent parent = stmt.effectiveParent();
+        return parent != null && parentType.equals(parent.publicDefinition());
     }
 
     /**
