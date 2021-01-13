@@ -252,7 +252,14 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
         this.rootVersion = requireNonNull(version);
     }
 
-    void addMutableStmtToSealImpl(final MutableStatement mutableStatement) {
+    /**
+     * Add mutable statement to seal. Each mutable statement must be sealed
+     * as the last step of statement parser processing.
+     *
+     * @param mutableStatement
+     *            mutable statement which should be sealed
+     */
+    void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         sourceContext.globalContext().addMutableStmtToSeal(mutableStatement);
     }
 

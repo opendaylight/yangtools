@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -96,12 +95,11 @@ final class SubmoduleEffectiveStatementImpl
             submoduleContexts = ImmutableSet.of();
         }
 
-        if (!submoduleContexts.isEmpty()) {
-            ((Mutable<?, ?, ?>) stmt.caerbannog()).addMutableStmtToSeal(this);
-            sealed = false;
-        } else {
+        if (submoduleContexts.isEmpty()) {
             submodules = ImmutableSet.of();
             sealed = true;
+        } else {
+            sealed = false;
         }
     }
 
