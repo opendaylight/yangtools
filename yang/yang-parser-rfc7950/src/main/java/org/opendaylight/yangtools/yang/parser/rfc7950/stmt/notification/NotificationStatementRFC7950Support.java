@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.CommonChecks;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -43,8 +44,6 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addAny(YangStmtMapping.USES)
             .build();
 
-    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
-            YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
     private static final NotificationStatementRFC7950Support INSTANCE = new NotificationStatementRFC7950Support();
 
     private NotificationStatementRFC7950Support() {
@@ -56,20 +55,21 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
     }
 
     @Override
+    public void onStatementAdded(final Mutable<QName, NotificationStatement, NotificationEffectiveStatement> stmt) {
+        CommonChecks.checkActionNotificationNesting(stmt, "Notification");
+        super.onStatementAdded(stmt);
+    }
+
+    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
 
-
     @Override
     void checkEffective(final Current<QName, NotificationStatement> stmt) {
         final QName argument = stmt.argument();
-        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(stmt, ILLEGAL_PARENTS), stmt,
-            "Notification %s is defined within an rpc, action, or another notification", argument);
         SourceException.throwIf(
             !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), stmt,
             "Notification %s is defined within a list that has no key statement", argument);
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.CASE), stmt,
-            "Notification %s is defined within a case statement", argument);
     }
 }
