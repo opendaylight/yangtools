@@ -50,6 +50,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity.IdentityStat
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportedVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include.IncludeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key.KeyStatementSupport;
@@ -171,6 +172,7 @@ public final class RFC7950Reactors {
             .addSupport(ImpPrefixToNamespace.BEHAVIOUR)
             .addSupport(ModuleCtxToModuleQName.BEHAVIOUR)
             .addSupport(QNameModuleNamespace.BEHAVIOUR)
+            .addSupport(ImportedVersionNamespace.BEHAVIOUR)
             .build();
 
     private static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle

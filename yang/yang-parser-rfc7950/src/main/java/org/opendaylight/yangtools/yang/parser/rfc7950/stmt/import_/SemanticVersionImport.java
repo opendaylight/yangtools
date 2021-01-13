@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -127,8 +128,7 @@ final class SemanticVersionImport {
 
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
             SemanticVersionModuleNamespace.class, criterion, SOURCE_LINKAGE);
-        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(),
-            SOURCE_LINKAGE);
+        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
@@ -139,6 +139,7 @@ final class SemanticVersionImport {
                     ModuleCtxToSourceIdentifier.class, importedModule);
                 final SemVerSourceIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
                     importedModuleIdentifier, importedVersion);
+                stmt.addToNs(ImportedVersionNamespace.class, Empty.getInstance(), semVerModuleIdentifier);
 
                 linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
                     importedModule);
@@ -148,7 +149,6 @@ final class SemanticVersionImport {
 
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
                     ModuleCtxToModuleQName.class, importedModule), stmt, "Failed to find module of %s", importedModule);
-
                 stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
             }
 

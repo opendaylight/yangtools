@@ -18,20 +18,15 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -42,10 +37,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -149,35 +142,7 @@ public final class ImportStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         checkState(!substatements.isEmpty(), "Unexpected empty effective import statement");
 
-        final ImportStatement declared = stmt.declared();
-        final String prefix = declared.getPrefix().getValue();
-        final SemVer semVer;
-        final Revision revision;
-        final var rabbit = stmt.caerbannog();
-        if (!rabbit.isEnabledSemanticVersioning()) {
-            final Optional<Revision> optRev = substatements.stream()
-                    .filter(RevisionDateEffectiveStatement.class::isInstance)
-                    .findFirst()
-                    .map(subStmt -> ((RevisionDateEffectiveStatement) subStmt).argument());
-            revision = optRev.isPresent() ? optRev.get() : getImportedRevision(rabbit, declared.getModule(), prefix);
-            semVer = null;
-        } else {
-            final SemVerSourceIdentifier importedModuleIdentifier = stmt.getFromNamespace(
-                    ImportPrefixToSemVerSourceIdentifier.class, prefix);
-            revision = importedModuleIdentifier.getRevision().orElse(null);
-            semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
-        }
-
-        return new ImportEffectiveStatementImpl(declared, substatements, revision, semVer);
-    }
-
-    private static Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx,
-            final String moduleName, final String prefix) {
-        // When 'revision-date' of an import is not specified in yang source, we need to find revision of imported
-        // module.
-        final QNameModule importedModule = SourceException.throwIfNull(
-            StmtContextUtils.getModuleQNameByPrefix(ctx, prefix), ctx,
-            "Unable to find import of module %s with prefix %s.", moduleName, prefix);
-        return importedModule.getRevision().orElse(null);
+        return new ImportEffectiveStatementImpl(stmt.declared(), substatements,
+            verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.class, Empty.getInstance())));
     }
 }

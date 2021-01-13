@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -17,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
 
@@ -27,10 +30,12 @@ final class ImportEffectiveStatementImpl extends WithSubstatements<String, Impor
 
     ImportEffectiveStatementImpl(final ImportStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final @Nullable Revision revision, final @Nullable SemVer semVer) {
+            final @NonNull SourceIdentifier importedSource) {
         super(declared, substatements);
-        this.revision = revision;
-        this.semVer = semVer;
+        this.revision = importedSource.getRevision().orElse(null);
+        this.semVer = importedSource instanceof SemVerSourceIdentifier
+            ? ((SemVerSourceIdentifier) importedSource).getSemanticVersion().orElse(null)
+                : null;
     }
 
     @Override

@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import java.util.Collection;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -62,11 +63,15 @@ final class RevisionImport {
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
+                final SourceIdentifier importedModuleIdentifier =
+                    stmt.getFromNamespace(ModuleCtxToSourceIdentifier.class, importedModule);
+                stmt.addToNs(ImportedVersionNamespace.class, Empty.getInstance(), importedModuleIdentifier);
+
                 final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
                     ModuleCtxToModuleQName.class, importedModule), stmt, "Failed to find module of %s", importedModule);
 
                 linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,
-                    stmt.getFromNamespace(ModuleCtxToSourceIdentifier.class, importedModule), importedModule);
+                    importedModuleIdentifier, importedModule);
                 final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                 stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
                 stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
