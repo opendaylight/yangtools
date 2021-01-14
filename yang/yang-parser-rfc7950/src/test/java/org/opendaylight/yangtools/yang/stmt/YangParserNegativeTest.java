@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Throwables;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingE
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class YangParserNegativeTest {
 
@@ -46,149 +47,127 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testInvalidImport() throws IOException, ReactorException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile1.yang");
-            fail("SomeModifiersUnresolvedException should be thrown");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, isA(InferenceException.class));
-            assertThat(rootCause.getMessage(), startsWith("Imported module"));
-            assertThat(rootCause.getMessage(), containsString("was not found."));
-        }
+    public void testInvalidImport() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile1.yang"));
+
+        final Throwable rootCause = Throwables.getRootCause(ex);
+        assertThat(rootCause, isA(InferenceException.class));
+        assertThat(rootCause.getMessage(), startsWith("Imported module"));
+        assertThat(rootCause.getMessage(), containsString("was not found."));
     }
 
     @Test
-    public void testTypeNotFound() throws IOException, ReactorException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile2.yang");
-            fail("InferenceException should be thrown");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, isA(InferenceException.class));
-            assertThat(rootCause.getMessage(),
-                startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."));
-        }
+    public void testTypeNotFound() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile2.yang"));
+        final Throwable rootCause = Throwables.getRootCause(ex);
+        assertThat(rootCause, isA(InferenceException.class));
+        assertThat(rootCause.getMessage(),
+            startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."));
     }
 
     @Test
-    public void testInvalidAugmentTarget() throws IOException, ReactorException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(),
-                "/negative-scenario/testfile0.yang",
-                "/negative-scenario/testfile3.yang");
-            fail("SomeModifiersUnresolvedException should be thrown");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, isA(InferenceException.class));
-            assertThat(rootCause.getMessage(), startsWith(
-                "Augment target 'Absolute{qnames=[(urn:simple.container.demo)unknown]}' not found"));
-        }
+    public void testInvalidAugmentTarget() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(),
+                "/negative-scenario/testfile0.yang", "/negative-scenario/testfile3.yang"));
+        final Throwable rootCause = Throwables.getRootCause(ex);
+        assertThat(rootCause, isA(InferenceException.class));
+        assertThat(rootCause.getMessage(), startsWith(
+            "Augment target 'Absolute{qnames=[(urn:simple.container.demo)unknown]}' not found"));
     }
 
     @Test
-    public void testInvalidRefine() throws IOException, ReactorException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile4.yang");
-            fail("ReactorException should be thrown");
-        } catch (final ReactorException e) {
-            assertThat(e.getCause().getMessage(), containsString("Error in module 'test4' in the refine of uses "
-                    + "'Descendant{qnames=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
-                    + " the target 'LEAF_LIST'."));
-        }
+    public void testInvalidRefine() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile4.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), containsString("Error in module 'test4' in the refine of uses "
+            + "'Descendant{qnames=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
+            + " the target 'LEAF_LIST'."));
     }
 
     @Test
-    public void testInvalidLength() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile5.yang");
-            fail("ReactorException should be thrown");
-        } catch (final ReactorException e) {
-            assertThat(e.getCause().getMessage(), containsString("Invalid length constraint [4..10]"));
-        }
+    public void testInvalidLength() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile5.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), containsString("Invalid length constraint [4..10]"));
     }
 
     @Test
-    public void testInvalidRange() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile6.yang");
-            fail("ReactorException should be thrown");
-        } catch (final ReactorException e) {
-            assertThat(e.getCause().getMessage(), startsWith("Invalid range constraint: [[5..20]]"));
-        }
+    public void testInvalidRange() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile6.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("Invalid range constraint: [[5..20]]"));
     }
 
     @Test
-    public void testDuplicateContainer() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container.yang");
-            fail("SourceException should be thrown");
-        } catch (final ReactorException e) {
-            final String expected = "Error in module 'container': cannot add '(urn:simple.container.demo)foo'. "
-                    + "Node name collision: '(urn:simple.container.demo)foo' already declared";
-            assertThat(e.getCause().getMessage(), containsString(expected));
-        }
+    public void testDuplicateContainer() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), containsString("Error in module 'container': cannot add "
+            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
+            + "declared"));
     }
 
     @Test
-    public void testDuplicateContainerList() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-list.yang");
-            fail("SourceException should be thrown");
-        } catch (final ReactorException e) {
-            final String expected = "Error in module 'container-list': cannot add '(urn:simple.container.demo)foo'. "
-                    + "Node name collision: '(urn:simple.container.demo)foo' already declared";
-            assertThat(e.getCause().getMessage(), containsString(expected));
-        }
+    public void testDuplicateContainerList() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-list.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), containsString("Error in module 'container-list': cannot add "
+            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
+            + "declared"));
     }
 
     @Test
-    public void testDuplicateContainerLeaf() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-leaf.yang");
-            fail("SourceException should be thrown");
-        } catch (final ReactorException e) {
-            final String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container.demo)foo'. "
-                    + "Node name collision: '(urn:simple.container.demo)foo' already declared";
-            assertThat(e.getCause().getMessage(), containsString(expected));
-        }
+    public void testDuplicateContainerLeaf() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-leaf.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), containsString("Error in module 'container-leaf': cannot add "
+            + "'(urn:simple.container.demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already "
+            + "declared"));
     }
 
     @Test
-    public void testDuplicateTypedef() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/typedef.yang");
-            fail("SourceException should be thrown");
-        } catch (final ReactorException e) {
-            assertThat(e.getCause().getMessage(), startsWith(
-                "Duplicate name for typedef (urn:simple.container.demo)int-ext [at"));
-        }
+    public void testDuplicateTypedef() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/typedef.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(SourceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "Duplicate name for typedef (urn:simple.container.demo)int-ext [at"));
     }
 
     @Test
     public void testDuplicityInAugmentTarget1() throws IOException, ReactorException, YangSyntaxErrorException {
         TestUtils.loadModuleResources(getClass(),
-            "/negative-scenario/duplicity/augment0.yang",
-                "/negative-scenario/duplicity/augment1.yang");
+            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang");
         testLog = output.toString();
         assertThat(testLog, containsString(
             "An augment cannot add node named 'id' because this name is already used in target"));
     }
 
     @Test
-    public void testDuplicityInAugmentTarget2() throws IOException, ReactorException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(),
-                "/negative-scenario/duplicity/augment0.yang",
-                    "/negative-scenario/duplicity/augment2.yang");
-            fail("Duplicate leaf not detected");
-        } catch (SomeModifiersUnresolvedException e) {
-            final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, isA(SubstatementIndexingException.class));
-            assertThat(rootCause.getMessage(), containsString("Cannot add schema tree child with name "
-                    + "(urn:simple.augment2.demo?revision=2014-06-02)delta, a conflicting child already exists"));
-
-        }
+    public void testDuplicityInAugmentTarget2() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(),
+                "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang"));
+        final Throwable rootCause = Throwables.getRootCause(ex);
+        assertThat(rootCause, isA(SubstatementIndexingException.class));
+        assertThat(rootCause.getMessage(), containsString("Cannot add schema tree child with name "
+            + "(urn:simple.augment2.demo?revision=2014-06-02)delta, a conflicting child already exists"));
     }
 
     @Test
@@ -203,12 +182,11 @@ public class YangParserNegativeTest {
 
     @Test
     public void testInvalidListKeyDefinition() throws IOException, YangSyntaxErrorException {
-        try {
-            TestUtils.loadModuleResources(getClass(), "/negative-scenario/invalid-list-key-def.yang");
-            fail("InferenceException should be thrown");
-        } catch (final ReactorException e) {
-            assertThat(e.getCause().getMessage(),
-                startsWith("Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'"));
-        }
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/invalid-list-key-def.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'"));
     }
 }
