@@ -24,5 +24,5 @@ public interface AnyxmlSchemaLocationNamespace extends IdentifierNamespace<State
     NamespaceBehaviour<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
         AnyxmlSchemaLocationEffectiveStatement>,
         @NonNull AnyxmlSchemaLocationNamespace> BEHAVIOUR =
-            NamespaceBehaviour.treeScoped(AnyxmlSchemaLocationNamespace.class);
+            NamespaceBehaviour.statementLocal(AnyxmlSchemaLocationNamespace.class);
 }
