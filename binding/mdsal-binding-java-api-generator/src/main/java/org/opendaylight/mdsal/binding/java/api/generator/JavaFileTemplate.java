@@ -327,10 +327,8 @@ class JavaFileTemplate {
             final String implMethodName) {
         for (MethodSignature method : methods) {
             final String methodName = method.getName();
-            if (BindingMapping.isGetterMethodName(methodName)) {
-                if (isSameProperty(method.getName(), implMethodName)) {
-                    return Optional.of(method);
-                }
+            if (BindingMapping.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
+                return Optional.of(method);
             }
         }
         return Optional.empty();
