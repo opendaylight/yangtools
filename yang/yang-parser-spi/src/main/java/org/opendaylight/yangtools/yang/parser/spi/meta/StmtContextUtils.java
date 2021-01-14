@@ -11,8 +11,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -22,9 +25,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
@@ -35,6 +38,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -354,32 +361,56 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether all of StmtContext's ancestors of specified type have a child of specified type.
+     * Check whether all of StmtContext's {@code list} ancestors have a {@code key}.
      *
      * @param stmt EffectiveStmtCtx to be checked
-     * @param ancestorType type of ancestor to search for
-     * @param ancestorChildType type of child to search for in the specified ancestor type
-     * @return true if all of StmtContext's ancestors of specified type have a child of specified type, otherwise false
+     * @param name Human-friendly statement name
+     * @throws SourceException if there is any keyless list ancestor
      */
-    public static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(
-            final EffectiveStmtCtx.Current<?, ?> stmt, final StatementDefinition ancestorType,
-            final StatementDefinition ancestorChildType) {
+    public static void validateNoKeylessListAncestorOf(final Mutable<?, ?, ?> stmt, final String name) {
         requireNonNull(stmt);
-        requireNonNull(ancestorType);
 
-        final Class<? extends EffectiveStatement<?, ?>> repr = ancestorChildType.getEffectiveRepresentationClass();
-        StmtContext<?, ?, ?> current = stmt.caerbannog().getParentContext();
-        StmtContext<?, ?, ?> parent = current.getParentContext();
+        // We do not expect this to by typically populated
+        final List<Mutable<?, ?, ?>> incomplete = new ArrayList<>(0);
+
+        Mutable<?, ?, ?> current = stmt.coerceParentContext();
+        Mutable<?, ?, ?> parent = current.getParentContext();
         while (parent != null) {
-            if (ancestorType.equals(current.publicDefinition()) && !current.hasSubstatement(repr)) {
-                return false;
+            if (YangStmtMapping.LIST == current.publicDefinition()
+                    && !current.hasSubstatement(KeyEffectiveStatement.class)) {
+                if (ModelProcessingPhase.FULL_DECLARATION.isCompletedBy(current.getCompletedPhase())) {
+                    throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,
+                        stmt.argument());
+                }
+
+                // Ancestor has not completed full declaration yet missing 'key' statement may materialize later
+                incomplete.add(current);
             }
 
             current = parent;
             parent = current.getParentContext();
         }
 
-        return true;
+        // Deal with whatever incomplete ancestors we encountered
+        for (Mutable<?, ?, ?> ancestor : incomplete) {
+            // This check must complete during the ancestor's FULL_DECLARATION phase, i.e. the ancestor must not reach
+            // EFFECTIVE_MODEL until it is done.
+            final ModelActionBuilder action = ancestor.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+            action.apply(new InferenceAction() {
+                @Override
+                public void apply(final InferenceContext ctx) {
+                    if (!ancestor.hasSubstatement(KeyEffectiveStatement.class)) {
+                        throw new SourceException(stmt, "%s %s is defined within a list that has no key statement",
+                            name, stmt.argument());
+                    }
+                }
+
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    throw new VerifyException("Should never happen");
+                }
+            });
+        }
     }
 
     /**
