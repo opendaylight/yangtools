@@ -1,0 +1,14 @@
+module ill2 {
+    namespace ill2;
+    prefix ill2;
+
+    import foo { prefix foo; }
+
+    //invalid augment (mandatory list)
+    augment "/foo:root" {
+        list mandatory-list {
+            min-elements 1;
+        }
+    }
+}
+

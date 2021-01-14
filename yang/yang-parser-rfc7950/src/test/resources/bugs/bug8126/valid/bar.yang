@@ -38,35 +38,4 @@ module bar {
             }
         }
     }
-
-    //invalid augment (mandatory choice)
-    augment "/foo:root" {
-        container mandatory-container {
-            choice mandatory-choice {
-                mandatory true;
-            }
-        }
-    }
-
-    //invalid augment (mandatory list)    
-    augment "/foo:root" {
-        list mandatory-list {
-            min-elements 1;
-        }
-    }
-
-    //invalid augments (mandatory container)
-    augment "/foo:root" {
-        container mandatory-container-2 {
-        }
-    }
-
-    augment "/foo:root/mandatory-container-2" {
-        container one {
-            leaf mandatory-leaf-3 {
-                mandatory true;
-                type empty;
-            }
-        }
-    }
 }
