@@ -354,21 +354,28 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether all of StmtContext's ancestors of specified type have a child of specified type.
+     * Check whether all of StmtContext's {@code list} ancestors have a {@code key}.
      *
      * @param stmt EffectiveStmtCtx to be checked
-     * @param ancestorType type of ancestor to search for
-     * @param ancestorChildType type of child to search for in the specified ancestor type
-     * @return true if all of StmtContext's ancestors of specified type have a child of specified type, otherwise false
+     * @param name Human-friendly statement name
+     * @throws SourceException if there is any keyless list ancestor
      */
-    public static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(
-            final EffectiveStmtCtx.Current<?, ?> stmt, final StatementDefinition ancestorType,
+    public static void validateNoKeylessListAncestorOf(final StmtContext<?, ?, ?> stmt, final String name) {
+        // FIXME: this check may not be enough, we also need to deal with ancestors not being fully defined
+        if (!hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY)) {
+            throw new SourceException(stmt, "%s %s is defined within a list that has no key statement", name,
+                stmt.argument());
+        }
+    }
+
+    private static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(
+            final StmtContext<?, ?, ?> stmt, final StatementDefinition ancestorType,
             final StatementDefinition ancestorChildType) {
         requireNonNull(stmt);
         requireNonNull(ancestorType);
 
         final Class<? extends EffectiveStatement<?, ?>> repr = ancestorChildType.getEffectiveRepresentationClass();
-        StmtContext<?, ?, ?> current = stmt.caerbannog().getParentContext();
+        StmtContext<?, ?, ?> current = stmt.coerceParentContext();
         StmtContext<?, ?, ?> parent = current.getParentContext();
         while (parent != null) {
             if (ancestorType.equals(current.publicDefinition()) && !current.hasSubstatement(repr)) {

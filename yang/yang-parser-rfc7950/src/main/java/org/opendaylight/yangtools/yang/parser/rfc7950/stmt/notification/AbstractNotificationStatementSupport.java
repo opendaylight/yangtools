@@ -40,8 +40,6 @@ abstract class AbstractNotificationStatementSupport
     @Override
     protected final NotificationEffectiveStatement createEffective(final Current<QName, NotificationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        checkEffective(stmt);
-
         try {
             return new NotificationEffectiveStatementImpl(stmt.declared(), substatements,
                 historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
@@ -49,7 +47,4 @@ abstract class AbstractNotificationStatementSupport
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
-
-    // FIXME: remove this method
-    abstract void checkEffective(Current<QName, NotificationStatement> stmt);
 }

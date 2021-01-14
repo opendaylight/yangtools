@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
@@ -70,6 +69,8 @@ public final class ActionStatementSupport extends
             "Action %s is defined within a case statement", argument);
         SourceException.throwIf(StmtContextUtils.hasParentOfType(stmt, YangStmtMapping.MODULE), stmt,
             "Action %s is defined at the top level of a module", stmt.getArgument());
+        StmtContextUtils.validateNoKeylessListAncestorOf(stmt, "Action");
+
         super.onStatementAdded(stmt);
     }
 
@@ -108,11 +109,7 @@ public final class ActionStatementSupport extends
     protected ActionEffectiveStatement createEffective(final Current<QName, ActionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final StatementSourceReference ref = stmt.sourceReference();
-        checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
-        final QName argument = stmt.getArgument();
-        SourceException.throwIf(
-            !StmtContextUtils.hasAncestorOfTypeWithChildOfType(stmt, YangStmtMapping.LIST, YangStmtMapping.KEY), stmt,
-            "Action %s is defined within a list that has no key statement", argument);
+        verify(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
 
         try {
             return new ActionEffectiveStatementImpl(stmt.declared(), stmt.wrapSchemaPath(),
