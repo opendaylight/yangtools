@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class NotificationStatementRFC6020Support extends AbstractNotificationStatementSupport {
@@ -43,10 +40,5 @@ public final class NotificationStatementRFC6020Support extends AbstractNotificat
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
-    }
-
-    @Override
-    void checkEffective(final Current<QName, NotificationStatement> stmt) {
-        // No-op
     }
 }
