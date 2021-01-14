@@ -1,0 +1,22 @@
+module ill3 {
+    namespace ill3;
+    prefix ill3;
+
+    import foo { prefix foo; }
+
+    //invalid augments (mandatory container)
+    augment "/foo:root" {
+        container mandatory-container-2 {
+        }
+    }
+
+    augment "/foo:root/mandatory-container-2" {
+        container one {
+            leaf mandatory-leaf-3 {
+                mandatory true;
+                type empty;
+            }
+        }
+    }
+}
+

@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -18,24 +20,56 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug8126Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
 
     @Test
-    public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8126");
-        assertNotNull(context);
-        assertTrue(findNode(context, foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"),
-            bar("mandatory-leaf")) instanceof LeafSchemaNode);
-        assertTrue(findNode(context, foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2"))
-            instanceof LeafSchemaNode);
+    public void testValidAugments() throws Exception {
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8126/valid");
+        assertThat(findNode(context, foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"),
+            bar("mandatory-leaf")), instanceOf(LeafSchemaNode.class));
+        assertThat(findNode(context, foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2")),
+            instanceOf(LeafSchemaNode.class));
 
         assertNull(findNode(context, foo("root"), bar("mandatory-list")));
         assertNull(findNode(context, foo("root"), bar("mandatory-container"), bar("mandatory-choice")));
         assertNull(findNode(context, foo("root"), bar("mandatory-container-2"), bar("one"), bar("mandatory-leaf-3")));
     }
+
+    @Test
+    public void testAugmentMandatoryChoice() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/bugs/bug8126/inv-choice"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "An augment cannot add node 'mandatory-choice' because it is mandatory and in module different than "));
+    }
+
+    @Test
+    public void testAugmentMandatoryList() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/bugs/bug8126/inv-list"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "An augment cannot add node 'mandatory-list' because it is mandatory and in module different than "));
+    }
+
+    @Test
+    public void testAugmentMandatoryContainer() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/bugs/bug8126/inv-cont"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "An augment cannot add node 'mandatory-leaf-3' because it is mandatory and in module different than "));
+    }
+
 
     private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
         return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));

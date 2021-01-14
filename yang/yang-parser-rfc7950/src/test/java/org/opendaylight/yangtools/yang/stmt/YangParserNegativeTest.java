@@ -14,37 +14,13 @@ import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Throwables;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class YangParserNegativeTest {
-
-    @SuppressWarnings("checkstyle:regexpSinglelineJava")
-    private final PrintStream stdout = System.out;
-    private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    private String testLog;
-
-    @Before
-    public void setUp() {
-        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
-    }
-
-    @After
-    public void cleanUp() {
-        System.setOut(stdout);
-    }
-
     @Test
     public void testInvalidImport() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
@@ -150,11 +126,13 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testDuplicityInAugmentTarget1() throws IOException, ReactorException, YangSyntaxErrorException {
-        TestUtils.loadModuleResources(getClass(),
-            "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang");
-        testLog = output.toString();
-        assertThat(testLog, containsString(
+    public void testDuplicityInAugmentTarget1() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(),
+                "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
             "An augment cannot add node named 'id' because this name is already used in target"));
     }
 
@@ -170,12 +148,13 @@ public class YangParserNegativeTest {
     }
 
     @Test
-    public void testMandatoryInAugment() throws IOException, ReactorException, YangSyntaxErrorException {
-        TestUtils.loadModuleResources(getClass(),
-            "/negative-scenario/testfile8.yang",
-                "/negative-scenario/testfile7.yang");
-        testLog = output.toString();
-        assertThat(testLog, containsString(
+    public void testMandatoryInAugment() {
+        final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModuleResources(getClass(),
+                "/negative-scenario/testfile8.yang", "/negative-scenario/testfile7.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, isA(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
             "An augment cannot add node 'linkleaf' because it is mandatory and in module different than target"));
     }
 

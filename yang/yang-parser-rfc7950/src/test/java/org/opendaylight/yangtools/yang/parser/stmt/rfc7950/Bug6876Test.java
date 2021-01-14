@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
@@ -19,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6876Test {
@@ -31,20 +35,20 @@ public class Bug6876Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/bug6876/yang11");
         assertNotNull(context);
 
-        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"),
-            bar("my-leaf"))) instanceof LeafSchemaNode);
-        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"),
-            foo("mandatory-leaf"))) instanceof LeafSchemaNode);
+        assertThat(findNode(context, ImmutableList.of(bar("augment-target"), bar("my-leaf"))),
+            instanceOf(LeafSchemaNode.class));
+        assertThat(findNode(context, ImmutableList.of(bar("augment-target"), foo("mandatory-leaf"))),
+            instanceOf(LeafSchemaNode.class));
     }
 
     @Test
-    public void yang10Test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/bug6876/yang10");
-        assertNotNull(context);
-
-        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"),
-            bar("my-leaf"))) instanceof LeafSchemaNode);
-        assertNull(findNode(context, ImmutableList.of(bar("augment-target"), foo("mandatory-leaf"))));
+    public void yang10Test() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/rfc7950/bug6876/yang10"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qnames) {
