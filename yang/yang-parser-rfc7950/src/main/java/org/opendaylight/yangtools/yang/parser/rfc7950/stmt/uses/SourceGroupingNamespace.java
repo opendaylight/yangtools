@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public interface SourceGroupingNamespace extends IdentifierNamespace<Empty, StmtContext<?, ?, ?>> {
+public interface SourceGroupingNamespace extends ParserNamespace<Empty, StmtContext<?, ?, ?>> {
     NamespaceBehaviour<Empty, StmtContext<?, ?, ?>, @NonNull SourceGroupingNamespace> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(SourceGroupingNamespace.class);
 }

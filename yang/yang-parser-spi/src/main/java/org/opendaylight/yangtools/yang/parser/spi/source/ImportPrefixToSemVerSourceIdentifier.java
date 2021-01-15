@@ -9,16 +9,15 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Source-specific mapping of prefixes to source identifier with specified semantic version.
  */
 @Beta
-public interface ImportPrefixToSemVerSourceIdentifier
-    extends IdentifierNamespace<String, SemVerSourceIdentifier> {
+public interface ImportPrefixToSemVerSourceIdentifier extends ParserNamespace<String, SemVerSourceIdentifier> {
     NamespaceBehaviour<String, SemVerSourceIdentifier, @NonNull ImportPrefixToSemVerSourceIdentifier> BEHAVIOUR =
         NamespaceBehaviour.rootStatementLocal(ImportPrefixToSemVerSourceIdentifier.class);
 

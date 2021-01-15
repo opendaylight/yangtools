@@ -15,7 +15,6 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
@@ -188,11 +187,11 @@ public interface ModelActionBuilder {
         return mutatesCtx(context, EFFECTIVE_MODEL);
     }
 
-    <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+    <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
         @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace,
                 K key);
 
-    default <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+    default <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
         @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
                 final Class<N> namespace, final Iterable<K> keys) {
         throw new UnsupportedOperationException(getClass() + " does not implement mutatesEffectiveCtxPath()");
@@ -262,6 +261,6 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    <N extends IdentifierNamespace<?, ?>> @NonNull Prerequisite<Mutable<?,?,?>> mutatesNs(Mutable<?,?, ?> ctx,
+    <N extends ParserNamespace<?, ?>> @NonNull Prerequisite<Mutable<?,?,?>> mutatesNs(Mutable<?,?, ?> ctx,
             Class<N> namespace);
 }

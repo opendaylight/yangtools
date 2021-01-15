@@ -11,34 +11,30 @@ import java.net.URI;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Map of fully qualified statement name to statement definition.
  */
-public interface QNameToStatementDefinition extends IdentifierNamespace<QName, StatementDefinition> {
+public interface QNameToStatementDefinition extends ParserNamespace<QName, StatementDefinition> {
     NamespaceBehaviour<QName, StatementDefinition, @NonNull QNameToStatementDefinition> BEHAVIOUR =
             NamespaceBehaviour.sourceLocal(QNameToStatementDefinition.class);
 
     /**
      * Returns StatementDefinition with specified QName.
      *
-     * @param identifier
-     *            QName of requested statement
+     * @param identifier QName of requested statement
      * @return StatementDefinition
      */
-    @Override
     StatementDefinition get(QName identifier);
 
     /**
      * Returns StatementDefinition with specified namespace and localName.
      *
-     * @param namespace
-     *            namespace of requested statement
-     * @param localName
-     *            localName of requested statement
+     * @param namespace namespace of requested statement
+     * @param localName localName of requested statement
      * @return StatementDefinition
      */
     @Nullable StatementDefinition getByNamespaceAndLocalName(@NonNull URI namespace, @NonNull String localName);

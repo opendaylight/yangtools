@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  * An {@link NamespaceBehaviour} which derives keys from a different namespace.
@@ -22,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  * @param <L> Original key type
  * @param <O> Original namespace type
  */
-public abstract class DerivedNamespaceBehaviour<K, V, L, N extends IdentifierNamespace<K, V>,
-       O extends IdentifierNamespace<L, ?>> extends NamespaceBehaviour<K, V, N> {
+public abstract class DerivedNamespaceBehaviour<K, V, L, N extends ParserNamespace<K, V>,
+       O extends ParserNamespace<L, ?>> extends NamespaceBehaviour<K, V, N> {
 
     private final Class<O> derivedFrom;
 

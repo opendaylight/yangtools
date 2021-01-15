@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Statement-local namespace carrying the versioning information about how the import was satisfied.
  */
 @Beta
-public interface ImportedVersionNamespace extends IdentifierNamespace<Empty, SourceIdentifier> {
+public interface ImportedVersionNamespace extends ParserNamespace<Empty, SourceIdentifier> {
     NamespaceBehaviour<Empty, SourceIdentifier, @NonNull ImportedVersionNamespace> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(ImportedVersionNamespace.class);
 
