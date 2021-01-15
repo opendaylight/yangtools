@@ -23,10 +23,10 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -119,7 +119,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+    private <K, C extends Mutable<?, ?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<C> mutatesCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
                     final K key, final ModelProcessingPhase phase) {
         checkNotRegistered();
@@ -227,20 +227,20 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Override
     @Deprecated
-    public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(
-            final Mutable<?, ?, ?> context, final Class<N> namespace) {
+    public <N extends ParserNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
+            final Class<N> namespace) {
         return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
     }
 
     @Override
-    public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+    public <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
     }
 
     @Override
-    public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+    public <K, E extends EffectiveStatement<?, ?>, N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final Iterable<K> keys) {
         checkNotRegistered();
@@ -321,7 +321,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private final class NamespaceMutation<N extends IdentifierNamespace<?, ?>>
+    private final class NamespaceMutation<N extends ParserNamespace<?, ?>>
             extends AbstractPrerequisite<Mutable<?, ?, ?>>  {
         NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
             resolvePrereq(ctx);
@@ -385,7 +385,7 @@ final class ModifierImpl implements ModelActionBuilder {
      * give us the first step. When it does, we hook onto the first item to provide us the second step and so on.
      */
     private final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K,
-            N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
+            N extends ParserNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, ContextMutation {
         private final ModelProcessingPhase modPhase;
         private final Iterable<K> keys;

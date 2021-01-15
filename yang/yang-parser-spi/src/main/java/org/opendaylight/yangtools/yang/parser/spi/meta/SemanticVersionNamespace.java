@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  * Namespace class for storing semantic version of yang modules.
  */
 @Beta
-public interface SemanticVersionNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, SemVer> {
+public interface SemanticVersionNamespace extends ParserNamespace<StmtContext<?, ?, ?>, SemVer> {
     NamespaceBehaviour<StmtContext<?, ?, ?>, SemVer, @NonNull SemanticVersionNamespace> BEHAVIOUR =
             NamespaceBehaviour.global(SemanticVersionNamespace.class);
 

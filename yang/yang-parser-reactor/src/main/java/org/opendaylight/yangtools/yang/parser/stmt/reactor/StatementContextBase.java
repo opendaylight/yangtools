@@ -34,7 +34,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -44,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -166,7 +166,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
+    public final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNs(
             final Class<@NonNull N> type, final T key, final U value) {
         addToNamespace(type, key, value);
     }
@@ -457,7 +457,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return definition;
     }
 
-    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
+    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
             final OnNamespaceItemAdded listener) {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
@@ -474,7 +474,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         });
     }
 
-    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
+    final <K, V, N extends ParserNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> existing = getFromNamespace(type, criterion);
@@ -500,7 +500,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         });
     }
 
-    final <K, V, N extends IdentifierNamespace<K, V>> void selectMatch(final Class<N> type,
+    final <K, V, N extends ParserNamespace<K, V>> void selectMatch(final Class<N> type,
             final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
         checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
@@ -509,7 +509,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
 
-    final <K, V, N extends IdentifierNamespace<K, V>> void waitForPhase(final Object value, final Class<N> type,
+    final <K, V, N extends ParserNamespace<K, V>> void waitForPhase(final Object value, final Class<N> type,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
@@ -519,7 +519,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             });
     }
 
-    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
+    private <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
             final Class<N> type) {
         final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",

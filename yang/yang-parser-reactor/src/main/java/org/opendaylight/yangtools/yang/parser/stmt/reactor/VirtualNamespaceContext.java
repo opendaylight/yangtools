@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D>
+final class VirtualNamespaceContext<K, V, N extends ParserNamespace<K, V>, D>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
     private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();

@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.odlext.parser;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
-public interface AnyxmlSchemaLocationNamespace extends IdentifierNamespace<StatementDefinition,
+public interface AnyxmlSchemaLocationNamespace extends ParserNamespace<StatementDefinition,
         Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, AnyxmlSchemaLocationEffectiveStatement>> {
     NamespaceBehaviour<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
         AnyxmlSchemaLocationEffectiveStatement>,

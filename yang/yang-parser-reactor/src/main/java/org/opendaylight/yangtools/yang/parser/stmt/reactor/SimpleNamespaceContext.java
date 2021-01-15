@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
+final class SimpleNamespaceContext<K, V, N extends ParserNamespace<K, V>>
         extends NamespaceBehaviourWithListeners<K, V, N> {
     // FIXME: Change this to Multimap, once issue with modules is resolved.
     private List<KeyedValueAddedListener<K>> listeners;

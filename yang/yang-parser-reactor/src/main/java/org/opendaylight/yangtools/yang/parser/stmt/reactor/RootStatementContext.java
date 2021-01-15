@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
@@ -38,6 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -130,7 +130,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
             final V value) {
         if (IncludedModuleContext.class.isAssignableFrom(type)) {
             if (includedContexts.isEmpty()) {
@@ -143,7 +143,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
+    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
         return getFromLocalStorage(type, key, new HashSet<>());
     }
 
@@ -151,7 +151,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
      * We need to track already checked RootStatementContexts due to possible
      * circular chains of includes between submodules
      */
-    private <K, V, N extends IdentifierNamespace<K, V>> @Nullable V getFromLocalStorage(final Class<N> type,
+    private <K, V, N extends ParserNamespace<K, V>> @Nullable V getFromLocalStorage(final Class<N> type,
             final K key, final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
         final V potentialLocal = super.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
@@ -172,7 +172,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
         return getAllFromLocalStorage(type, new HashSet<>());
     }
 
@@ -180,7 +180,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
      * We need to track already checked RootStatementContexts due to possible
      * circular chains of includes between submodules
      */
-    private <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(final Class<N> type,
+    private <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(final Class<N> type,
             final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
         final Map<K, V> potentialLocal = super.getAllFromLocalStorage(type);
         if (potentialLocal != null) {

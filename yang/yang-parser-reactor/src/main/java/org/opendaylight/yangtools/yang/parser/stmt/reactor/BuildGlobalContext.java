@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -49,6 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -159,7 +159,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(
+    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(
             final Class<N> type) {
         NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
@@ -182,7 +182,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
+    private <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
             final NamespaceBehaviour<K, V, N> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour) {
             final VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(
