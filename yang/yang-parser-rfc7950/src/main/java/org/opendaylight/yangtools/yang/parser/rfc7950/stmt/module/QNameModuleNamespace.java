@@ -11,14 +11,14 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Module-local namespace holding the module's QName.
  */
 @Beta
-public interface QNameModuleNamespace extends IdentifierNamespace<Empty, QNameModule> {
+public interface QNameModuleNamespace extends ParserNamespace<Empty, QNameModule> {
     NamespaceBehaviour<Empty, QNameModule, @NonNull QNameModuleNamespace> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(QNameModuleNamespace.class);
 

@@ -12,8 +12,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.SetMultimap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Namespace used for storing information about modules that support deviation resolution.
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
  */
 @Beta
 public interface ModulesDeviatedByModules
-        extends IdentifierNamespace<ModulesDeviatedByModules.SupportedModules, SetMultimap<QNameModule, QNameModule>> {
+        extends ParserNamespace<ModulesDeviatedByModules.SupportedModules, SetMultimap<QNameModule, QNameModule>> {
     NamespaceBehaviour<SupportedModules, SetMultimap<QNameModule, QNameModule>, @NonNull ModulesDeviatedByModules>
         BEHAVIOUR = NamespaceBehaviour.global(ModulesDeviatedByModules.class);
 

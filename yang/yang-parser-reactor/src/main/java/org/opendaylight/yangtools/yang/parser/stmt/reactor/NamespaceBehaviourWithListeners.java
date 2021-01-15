@@ -15,10 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespace<K, V>>
+abstract class NamespaceBehaviourWithListeners<K, V, N extends ParserNamespace<K, V>>
         extends NamespaceBehaviour<K, V, N> {
 
     abstract static class ValueAddedListener<K> {

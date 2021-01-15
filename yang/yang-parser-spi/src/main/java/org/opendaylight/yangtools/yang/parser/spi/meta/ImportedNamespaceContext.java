@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-
 /**
  * Special namespace which allows import of namespaces from other sources.
  *
@@ -22,6 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  *
  * @param <K> Imported context identifier
  */
-public interface ImportedNamespaceContext<K> extends IdentifierNamespace<K, StmtContext<?, ?, ?>> {
+public interface ImportedNamespaceContext<K> extends ParserNamespace<K, StmtContext<?, ?, ?>> {
 
 }

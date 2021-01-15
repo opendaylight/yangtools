@@ -49,12 +49,6 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
         return (SchemaTreeNamespace<D, E>) INSTANCE;
     }
 
-    @Override
-    public StmtContext<?, D, E> get(final QName key) {
-        // FIXME: 7.0.0: this method needs to be well-defined
-        return null;
-    }
-
     /**
      * {@inheritDoc}
      *
