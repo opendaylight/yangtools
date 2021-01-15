@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.parser.spi.validation;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Namespace used for validating whether a node is of some type, e.g. usable target for some operation or has other
  * significant properties.
  */
-public interface ValidationBundlesNamespace extends
-        IdentifierNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
+public interface ValidationBundlesNamespace
+        extends ParserNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
     NamespaceBehaviour<ValidationBundleType, Collection<?>, @NonNull ValidationBundlesNamespace> BEHAVIOUR =
             NamespaceBehaviour.global(ValidationBundlesNamespace.class);
 

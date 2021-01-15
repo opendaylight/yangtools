@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
@@ -37,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -279,29 +279,29 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //
 
     @Override
-    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V namespaceItem(final Class<@NonNull N> type,
+    public final <K, V, T extends K, N extends ParserNamespace<K, V>> V namespaceItem(final Class<@NonNull N> type,
             final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> namespace(final Class<@NonNull N> type) {
+    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> namespace(final Class<@NonNull N> type) {
         return getNamespace(type);
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>>
+    public final <K, V, N extends ParserNamespace<K, V>>
             Map<K, V> localNamespacePortion(final Class<@NonNull N> type) {
         return getLocalNamespace(type);
     }
 
     @Override
-    protected final void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
+    protected final void checkLocalNamespaceAllowed(final Class<? extends ParserNamespace<?, ?>> type) {
         definition().checkNamespaceAllowed(type);
     }
 
     @Override
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
+    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
             final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }

@@ -23,7 +23,6 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +100,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
 
     @Override
     @SuppressWarnings("unchecked")
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
+    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
             final Class<N> namespace) {
         final NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);
         if (potential != null) {
@@ -116,7 +115,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return null;
     }
 
-    public <K, V, N extends IdentifierNamespace<K, V>> boolean hasNamespaceBehaviour(final Class<N> namespace) {
+    public <K, V, N extends ParserNamespace<K, V>> boolean hasNamespaceBehaviour(final Class<N> namespace) {
         if (namespaceDefinitions.containsKey(namespace)) {
             return true;
         }
@@ -185,7 +184,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
-        public <K, V, N extends IdentifierNamespace<K, V>> Builder addSupport(
+        public <K, V, N extends ParserNamespace<K, V>> Builder addSupport(
                 final NamespaceBehaviour<K, V, N> namespaceSupport) {
             final Class<N> identifier = namespaceSupport.getIdentifier();
             checkState(!namespaces.containsKey(identifier));

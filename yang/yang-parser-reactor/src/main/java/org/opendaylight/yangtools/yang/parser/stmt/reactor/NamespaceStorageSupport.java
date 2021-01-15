@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -50,7 +50,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      */
     public abstract @NonNull Registry getBehaviourRegistry();
 
-    protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
+    protected void checkLocalNamespaceAllowed(final Class<? extends ParserNamespace<?, ?>> type) {
         // NOOP
     }
 
@@ -59,31 +59,31 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      *
      * @throws SourceException instance of SourceException
      */
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
+    protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
             final V value) {
         // NOOP
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(
+    public final <K, V, N extends ParserNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(
             final Class<N> type, final NamespaceKeyCriterion<K> criterion) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getNamespace(final Class<N> type) {
+    public final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getNamespace(final Class<N> type) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
     @SuppressWarnings("unchecked")
-    final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getLocalNamespace(final Class<N> type) {
+    final <K, V, N extends ParserNamespace<K, V>> Map<K, V> getLocalNamespace(final Class<N> type) {
         return (Map<K, V>) accessNamespaces().get(type);
     }
 
-    final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNamespace(
+    final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNamespace(
             final Class<N> type, final T key, final U value) {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this, key, value);
     }
 
-    final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNamespace(
+    final <K, V, T extends K, U extends V, N extends ParserNamespace<K, V>> void addToNamespace(
             final Class<N> type, final Map<T, U> map) {
         final NamespaceBehaviour<K, V, N> behavior = getBehaviourRegistry().getNamespaceBehaviour(type);
         for (final Entry<T, U> validationBundle : map.entrySet()) {
@@ -109,20 +109,20 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
+    public <K, V, N extends ParserNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
         final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace == null ? null : localNamespace.get(key);
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+    public <K, V, N extends ParserNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
         @SuppressWarnings("unchecked")
         final Map<K, V> localNamespace = (Map<K, V>) accessNamespaces().get(type);
         return localNamespace;
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
             final V value) {
         final V ret = ensureLocalNamespace(type).put(key, value);
         onNamespaceElementAdded(type, key, value);
@@ -130,7 +130,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
+    public <K, V, N extends ParserNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
             final V value) {
         final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
         if (ret == null) {
@@ -164,7 +164,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return verifyNotNull(namespaces, "Attempted to access swept namespaces of %s", this);
     }
 
-    private <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> ensureLocalNamespace(final Class<N> type) {
+    private <K, V, N extends ParserNamespace<K, V>> Map<K, V> ensureLocalNamespace(final Class<N> type) {
         @SuppressWarnings("unchecked")
         Map<K, V> ret = (Map<K,V>) accessNamespaces().get(type);
         if (ret == null) {
