@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -180,7 +181,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     final <K, V> NamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> type) {
-        return getRoot().getSourceContext().accessNamespace(type);
+        return StatementSupport.NAMESPACE.equals(type) ? getRoot().getSourceContext().statementSupports()
+            : BuildGlobalContext.current().accessNamespace(type);
     }
 
     @Override
