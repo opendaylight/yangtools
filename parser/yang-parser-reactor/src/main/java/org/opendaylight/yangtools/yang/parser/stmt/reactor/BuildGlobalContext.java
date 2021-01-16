@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Throwables;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -29,6 +31,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.Callable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -67,6 +71,11 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         ModelProcessingPhase.EFFECTIVE_MODEL
     };
 
+    /**
+     * Currently executing {@link BuildGlobalContext}.
+     */
+    private static final ScopedValue<BuildGlobalContext> CURRENT = ScopedValue.newInstance();
+
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
     private final Map<ParserNamespace<?, ?>, BehaviourNamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
@@ -90,6 +99,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
         supportedVersions = ImmutableSet.copyOf(
             verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
+    }
+
+    /**
+     * Return the global context associated with this thread. Since our the entire inference pipeline executes
+     * reactively within a single thread, this method may only be valid during execution of TBD.
+     *
+     * @return Current {@link BuildGlobalContext}
+     * @throws VerifyException if there is no global context
+     */
+    static @NonNull BuildGlobalContext current() {
+        return verifyNotNull(CURRENT.get(), "Current BuildGlobalContext unavailable");
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -155,23 +175,40 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         modelDefinedStmtDefs.put(name, def);
     }
 
+    ReactorDeclaredModel build() throws ReactorException {
+        return execute(() -> {
+            executePhases();
+            return transform();
+        });
+    }
+
+    EffectiveSchemaContext buildEffective() throws ReactorException {
+        return execute(() -> {
+            executePhases();
+            return transformEffective();
+        });
+    }
+
+    // Workaround for bad exception propagation, fixed in JEP 481.
+    // FIXME: once we have Java 23+, inline the ScopedValue.callWhere() to the two users
+    private <T> T execute(final Callable<T> callable) throws ReactorException {
+        try {
+            return ScopedValue.callWhere(CURRENT, this, callable);
+        } catch (ReactorException e) {
+            throw e;
+        } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new VerifyException(e);
+        }
+    }
+
     private void executePhases() throws ReactorException {
-        for (final ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
+        for (var phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
             completePhaseActions();
             endPhase(phase);
         }
-    }
-
-    ReactorDeclaredModel build() throws ReactorException {
-        executePhases();
-        return transform();
-    }
-
-    EffectiveSchemaContext buildEffective() throws ReactorException {
-        executePhases();
-        return transformEffective();
     }
 
     private ReactorDeclaredModel transform() {

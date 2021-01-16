@@ -320,13 +320,9 @@ final class SourceSpecificContext implements NamespaceStorage, Mutable {
         return null;
     }
 
-    <K, V> NamespaceAccess<K, V> accessNamespace(final ParserNamespace<K, V> type) {
-        if (StatementSupport.NAMESPACE.equals(type)) {
-            @SuppressWarnings("unchecked")
-            final var ret = (NamespaceAccess<K, V>) statementSupports;
-            return ret;
-        }
-        return globalContext.accessNamespace(type);
+    @SuppressWarnings("unchecked")
+    <K, V> @NonNull NamespaceAccess<K, V> statementSupports() {
+        return (NamespaceAccess<K, V>) statementSupports;
     }
 
     @Override
