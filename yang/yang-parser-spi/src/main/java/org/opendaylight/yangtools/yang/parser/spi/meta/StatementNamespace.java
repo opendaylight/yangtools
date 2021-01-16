@@ -13,8 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 public interface StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
         extends ParserNamespace<K, StmtContext<?, D, E>> {
 
-    interface TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> extends
-            StatementNamespace<K, D, E> {
-        TreeScoped<K, D, E> getParentContext();
+    interface TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+            extends StatementNamespace<K, D, E> {
+
     }
 }
