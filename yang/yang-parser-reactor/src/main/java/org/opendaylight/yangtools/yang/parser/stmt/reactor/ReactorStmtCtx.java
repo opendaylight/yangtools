@@ -180,7 +180,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final @NonNull Registry getBehaviourRegistry() {
-        return getRoot().getBehaviourRegistryImpl();
+        return BuildGlobalContext.current().getBehaviourRegistry();
     }
 
     @Override
@@ -205,7 +205,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final boolean isEnabledSemanticVersioning() {
-        return getRoot().isEnabledSemanticVersioningImpl();
+        return BuildGlobalContext.current().isEnabledSemanticVersioning();
     }
 
     @Override
