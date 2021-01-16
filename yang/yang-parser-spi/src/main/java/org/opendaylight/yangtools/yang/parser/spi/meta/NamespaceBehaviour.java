@@ -84,6 +84,14 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
 
         @Nullable NamespaceStorageNode getParentNamespaceStorage();
 
+        /**
+         * The global parent namespace storage. This is the storage node which has no parents and is a singleton in
+         * a particular {@link NamespaceStorageNode} hierarchy.
+         *
+         * @return The global namespace storage node.
+         */
+        @NonNull GlobalNamespaceStorageNode getGlobalNamespaceStorage();
+
         <K, V, N extends ParserNamespace<K, V>> @Nullable V getFromLocalStorage(Class<N> type, K key);
 
         <K, V, N extends ParserNamespace<K, V>> @Nullable Map<K, V> getAllFromLocalStorage(Class<N> type);
@@ -109,6 +117,14 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
          * @return Preexisting value or null if there was no previous mapping
          */
         <K, V, N extends ParserNamespace<K, V>> @Nullable V putToLocalStorageIfAbsent(Class<N> type, K key, V value);
+    }
+
+    /**
+     * Tagging interface for the singleton {@link GlobalNamespaceStorageNode} which exists in the reactor, as implied
+     * by {@link StorageNodeType#GLOBAL}.
+     */
+    public interface GlobalNamespaceStorageNode extends NamespaceStorageNode {
+
     }
 
     /**
@@ -308,6 +324,17 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
         }
 
         abstract NamespaceStorageNode findStorageNode(NamespaceStorageNode storage);
+    }
+
+    static final class Global<K, V, N extends ParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
+        Global(final Class<N> identifier) {
+            super(identifier);
+        }
+
+        @Override
+        GlobalNamespaceStorageNode findStorageNode(final NamespaceStorageNode current) {
+            return current.getGlobalNamespaceStorage();
+        }
     }
 
     static final class StatementLocal<K, V, N extends ParserNamespace<K, V>> extends AbstractSpecific<K, V, N> {
