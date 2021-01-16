@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
@@ -229,14 +228,6 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     void setRootIdentifierImpl(final SourceIdentifier identifier) {
         this.rootIdentifier = requireNonNull(identifier);
-    }
-
-    @NonNull Registry getBehaviourRegistryImpl() {
-        return sourceContext;
-    }
-
-    boolean isEnabledSemanticVersioningImpl() {
-        return sourceContext.globalContext().isEnabledSemanticVersioning();
     }
 
     @NonNull YangVersion getRootVersionImpl() {

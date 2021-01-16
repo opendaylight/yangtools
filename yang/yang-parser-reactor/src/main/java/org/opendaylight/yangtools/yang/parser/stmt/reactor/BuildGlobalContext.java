@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -80,6 +82,12 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Global
         ModelProcessingPhase.EFFECTIVE_MODEL
     };
 
+    /**
+     * Currently executing {@link BuildGlobalContext}. Since we are inherently single-threaded, we keep this
+     * thread-local global state and guard access to it.
+     */
+    private static final ThreadLocal<BuildGlobalContext> CURRENT = new ThreadLocal<>();
+
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
     private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
@@ -112,6 +120,17 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Global
         addToNamespace(ValidationBundlesNamespace.class, supportedValidation);
 
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
+    }
+
+    /**
+     * Return the global context associated with this thread. Since our the entire inference pipeline executes
+     * reactively within a single thread, this method may only be valid during execution of TBD.
+     *
+     * @return Current {@link BuildGlobalContext}
+     * @throws VerifyException if there is no global context
+     */
+    static @NonNull BuildGlobalContext current() {
+        return verifyNotNull(CURRENT.get(), "Current BuildGlobalContext unavailable");
     }
 
     boolean isEnabledSemanticVersioning() {
@@ -179,7 +198,7 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Global
             }
         }
 
-        Verify.verify(type.equals(potential.getIdentifier()));
+        verify(type.equals(potential.getIdentifier()));
         /*
          * Safe cast, previous checkState checks equivalence of key from which
          * type argument are derived
@@ -231,13 +250,35 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Global
     }
 
     ReactorDeclaredModel build() throws ReactorException {
-        executePhases();
-        return transform();
+        enterCurrent();
+        try {
+            executePhases();
+            return transform();
+        } finally {
+            exitCurrent();
+        }
     }
 
     EffectiveSchemaContext buildEffective() throws ReactorException {
-        executePhases();
-        return transformEffective();
+        enterCurrent();
+        try {
+            executePhases();
+            return transformEffective();
+        } finally {
+            exitCurrent();
+        }
+    }
+
+    private void enterCurrent() {
+        final BuildGlobalContext current = CURRENT.get();
+        verify(current == null, "Cannot enter, currently executing %s", current);
+        CURRENT.set(this);
+    }
+
+    private void exitCurrent() {
+        final BuildGlobalContext current = CURRENT.get();
+        verify(equals(current), "Cannot exit, currently executing %s", current);
+        CURRENT.remove();
     }
 
     private ReactorDeclaredModel transform() {
