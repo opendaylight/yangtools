@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
             E extends SchemaTreeEffectiveStatement<D>>
+        // FIXME: split the behaviour into a separate class
         extends NamespaceBehaviour<QName, StmtContext<?, D, E>, SchemaTreeNamespace<D, E>>
         implements StatementNamespace<QName, D, E> {
     private static final @NonNull SchemaTreeNamespace<?, ?> INSTANCE = new SchemaTreeNamespace<>();
@@ -47,6 +48,11 @@ public final class SchemaTreeNamespace<D extends DeclaredStatement<QName>,
     public static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
             @NonNull SchemaTreeNamespace<D, E> getInstance() {
         return (SchemaTreeNamespace<D, E>) INSTANCE;
+    }
+
+    @Override
+    public NamespaceBehaviour<QName, StmtContext<?, D, E>, ?> behaviour() {
+        return this;
     }
 
     /**

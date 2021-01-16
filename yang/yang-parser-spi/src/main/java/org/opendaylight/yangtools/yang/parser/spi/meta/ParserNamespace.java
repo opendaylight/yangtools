@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * {@link ParserNamespace} serves as common superclass for namespaces used during parser operation. Each such namespace,
@@ -20,5 +21,11 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface ParserNamespace<K, V> {
-
+    /**
+     * Return the {@link NamespaceBehaviour} governing this namespace. This method is typically not used by users, but
+     * rather serves the implementation to maintain the namespace's organization.
+     *
+     * @return A {@link NamespaceBehaviour}.
+     */
+    @NonNull NamespaceBehaviour<K, V, ?> behaviour();
 }
