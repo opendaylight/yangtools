@@ -15,14 +15,15 @@ import static org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBu
 
 import java.util.Collection;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.GlobalNamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 
 public class ValidationBundlesNamespaceTest {
     @Test
     public void testBehaviour() {
-        final NamespaceStorageNode node = mock(NamespaceStorageNode.class);
+        final GlobalNamespaceStorageNode node = mock(GlobalNamespaceStorageNode.class);
         doReturn(StorageNodeType.GLOBAL).when(node).getStorageNodeType();
+        doReturn(node).when(node).getGlobalNamespaceStorage();
 
         final Collection<?> result = mock(Collection.class);
         doReturn(result).when(node).getFromLocalStorage(ValidationBundlesNamespace.class, SUPPORTED_DATA_NODES);

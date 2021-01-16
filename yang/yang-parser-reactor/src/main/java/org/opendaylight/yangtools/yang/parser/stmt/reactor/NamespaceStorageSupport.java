@@ -43,6 +43,9 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
 
+    @Override
+    public abstract BuildGlobalContext getGlobalNamespaceStorage();
+
     /**
      * Return the registry of a source context.
      *
