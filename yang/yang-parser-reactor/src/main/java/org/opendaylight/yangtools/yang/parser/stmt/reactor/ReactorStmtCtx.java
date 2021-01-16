@@ -281,6 +281,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //
 
     @Override
+    public final BuildGlobalContext getGlobalNamespaceStorage() {
+        return getRoot().getSourceContext().globalContext();
+    }
+
+    @Override
     public final <K, V, T extends K, N extends ParserNamespace<K, V>> V namespaceItem(final Class<@NonNull N> type,
             final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
