@@ -17,8 +17,4 @@ public interface StatementNamespace<K, D extends DeclaredStatement<?>, E extends
             StatementNamespace<K, D, E> {
         TreeScoped<K, D, E> getParentContext();
     }
-
-    interface TreeBased<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> {
-
-    }
 }
