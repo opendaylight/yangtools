@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
@@ -57,7 +56,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
+final class SourceSpecificContext implements NamespaceStorageNode, Mutable {
     enum PhaseCompletionProgress {
         NO_PROGRESS,
         PROGRESS,
@@ -255,12 +254,6 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
             }
         }
         return null;
-    }
-
-    @Override
-    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
-            final Class<N> type) {
-        return globalContext.getNamespaceBehaviour(type);
     }
 
     @Override
