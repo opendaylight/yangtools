@@ -189,6 +189,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
+    public final BuildGlobalContext getGlobalNamespaceStorage() {
+        return getRoot().getSourceContext().getGlobalNamespaceStorage();
+    }
+
+    @Override
     public final YangVersion yangVersion() {
         return getRoot().getRootVersionImpl();
     }
