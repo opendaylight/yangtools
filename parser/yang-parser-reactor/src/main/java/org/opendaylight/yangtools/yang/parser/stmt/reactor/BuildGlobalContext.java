@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -74,6 +75,12 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         ModelProcessingPhase.EFFECTIVE_MODEL
     };
 
+    /**
+     * Currently executing {@link BuildGlobalContext}.
+     */
+    @NonNullByDefault
+    private static final ScopedValue<BuildGlobalContext> CURRENT = ScopedValue.newInstance();
+
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final HashMap<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
     private final HashMap<ParserNamespace<?, ?>, BehaviourNamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
@@ -95,6 +102,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
         }
 
         supportedVersions = verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions();
+    }
+
+    /**
+     * Return the global context associated with this thread. Since our the entire inference pipeline executes
+     * reactively within a single thread, this method may only be valid during execution of TBD.
+     *
+     * @return Current {@link BuildGlobalContext}
+     * @throws NoSuchElementException if there is no global context
+     */
+    static @NonNull BuildGlobalContext current() {
+        return CURRENT.get();
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -293,14 +311,18 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
 
     @NonNullByDefault
     ReactorDeclaredModel build() throws ReactorException {
-        executePhases();
-        return transform();
+        return ScopedValue.where(CURRENT, this).call(() -> {
+            executePhases();
+            return transform();
+        });
     }
 
     @NonNullByDefault
     EffectiveSchemaContext buildEffective() throws ReactorException {
-        executePhases();
-        return transformEffective();
+        return ScopedValue.where(CURRENT, this).call(() -> {
+            executePhases();
+            return transformEffective();
+        });
     }
 
     @NonNullByDefault
