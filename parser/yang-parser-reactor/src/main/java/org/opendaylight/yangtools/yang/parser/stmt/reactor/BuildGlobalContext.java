@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -66,6 +68,12 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
         ModelProcessingPhase.EFFECTIVE_MODEL
     };
 
+    /**
+     * Currently executing {@link BuildGlobalContext}.
+     */
+    @NonNullByDefault
+    private static final ScopedValue<BuildGlobalContext> CURRENT = ScopedValue.newInstance();
+
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
     private final Map<ParserNamespace<?, ?>, BehaviourNamespaceAccess<?, ?>> supportedNamespaces = new HashMap<>();
@@ -89,6 +97,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
 
         supportedVersions = ImmutableSet.copyOf(
             verifyNotNull(supports.get(ModelProcessingPhase.INIT)).getSupportedVersions());
+    }
+
+    /**
+     * Return the global context associated with this thread. Since our the entire inference pipeline executes
+     * reactively within a single thread, this method may only be valid during execution of TBD.
+     *
+     * @return Current {@link BuildGlobalContext}
+     * @throws NoSuchElementException if there is no global context
+     */
+    static @NonNull BuildGlobalContext current() {
+        return CURRENT.get();
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -155,13 +174,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Globa
     }
 
     @NonNull ReactorDeclaredModel build() throws ReactorException {
-        executePhases();
-        return transform();
+        return ScopedValue.where(CURRENT, this).call(() -> {
+            executePhases();
+            return transform();
+        });
     }
 
     @NonNull EffectiveSchemaContext buildEffective() throws ReactorException {
-        executePhases();
-        return transformEffective();
+        return ScopedValue.where(CURRENT, this).call(() -> {
+            executePhases();
+            return transformEffective();
+        });
     }
 
     private void executePhases() throws ReactorException {
