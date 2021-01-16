@@ -11,14 +11,18 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
  */
-public interface NamespaceToModule extends StatementNamespace<QNameModule, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<QNameModule, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
-            @NonNull NamespaceToModule> BEHAVIOUR = NamespaceBehaviour.global(NamespaceToModule.class);
+public final class NamespaceToModule
+        extends StatementNamespace<QNameModule, ModuleStatement, ModuleEffectiveStatement> {
+    public static final @NonNull NamespaceToModule INSTANCE = new NamespaceToModule();
+
+    private NamespaceToModule() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.global(NamespaceToModule.class));
+    }
 }

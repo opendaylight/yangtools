@@ -19,8 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * @author Robert Varga
  */
 @Beta
-public interface StatementDefinitionNamespace extends ParserNamespace<QName, StatementSupport<?, ?, ?>> {
-    NamespaceBehaviour<QName, StatementSupport<?, ?, ?>, @NonNull StatementDefinitionNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(StatementDefinitionNamespace.class);
+public final class StatementDefinitionNamespace extends AbstractParserNamespace<QName, StatementSupport<?, ?, ?>> {
+    public static final @NonNull StatementDefinitionNamespace INSTANCE = new StatementDefinitionNamespace();
 
+    private StatementDefinitionNamespace() {
+        super(ModelProcessingPhase.STATEMENT_DEFINITION, NamespaceBehaviour.global(StatementDefinitionNamespace.class));
+    }
 }

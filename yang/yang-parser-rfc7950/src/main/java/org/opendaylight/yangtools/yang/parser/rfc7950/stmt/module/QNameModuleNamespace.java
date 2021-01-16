@@ -11,15 +11,18 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Module-local namespace holding the module's QName.
  */
 @Beta
-public interface QNameModuleNamespace extends ParserNamespace<Empty, QNameModule> {
-    NamespaceBehaviour<Empty, QNameModule, @NonNull QNameModuleNamespace> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(QNameModuleNamespace.class);
+public final class QNameModuleNamespace extends AbstractParserNamespace<Empty, QNameModule> {
+    public static final @NonNull QNameModuleNamespace INSTANCE = new QNameModuleNamespace();
 
+    private QNameModuleNamespace() {
+        super(ModelProcessingPhase.SOURCE_PRE_LINKAGE, NamespaceBehaviour.statementLocal(QNameModuleNamespace.class));
+    }
 }

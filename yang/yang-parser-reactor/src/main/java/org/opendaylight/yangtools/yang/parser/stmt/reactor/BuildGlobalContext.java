@@ -81,7 +81,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
-    private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
+    private final Map<ParserNamespace<?, ?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces =
+        new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
@@ -160,10 +161,13 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     @Override
     public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(
-            final Class<N> type) {
-        NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
+            final N namespace) {
+        NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(requireNonNull(namespace));
         if (potential == null) {
-            final NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
+
+
+
+            final NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(namespace);
             if (potentialRaw != null) {
                 potential = createNamespaceContext(potentialRaw);
                 supportedNamespaces.put(type, potential);

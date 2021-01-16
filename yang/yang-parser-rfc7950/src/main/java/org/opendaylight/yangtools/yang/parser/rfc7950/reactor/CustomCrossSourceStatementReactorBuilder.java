@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
@@ -62,12 +61,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
         return this;
     }
 
-    public @NonNull CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
-            final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
-        reactorSupportBundles.get(phase).addSupport(namespaceSupport);
-        return this;
-    }
-
     public @NonNull CustomCrossSourceStatementReactorBuilder addValidationBundle(
             final ValidationBundleType validationBundleType, final Collection<StatementDefinition> validationBundle) {
         reactorValidationBundles.put(validationBundleType, validationBundle);
@@ -78,16 +71,6 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
             final StatementSupportBundle stmtSupportBundle) {
         addAllCommonStatementSupports(phase, stmtSupportBundle.getCommonDefinitions().values());
         addAllVersionSpecificSupports(phase, stmtSupportBundle.getAllVersionSpecificDefinitions());
-        addAllNamespaceSupports(phase, stmtSupportBundle.getNamespaceDefinitions().values());
-        return this;
-    }
-
-    public @NonNull CustomCrossSourceStatementReactorBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
-            final Collection<NamespaceBehaviour<?, ?, ?>> namespaceSupports) {
-        final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
-        for (final NamespaceBehaviour<?, ?, ?> namespaceSupport : namespaceSupports) {
-            stmtBundleBuilder.addSupport(namespaceSupport);
-        }
         return this;
     }
 

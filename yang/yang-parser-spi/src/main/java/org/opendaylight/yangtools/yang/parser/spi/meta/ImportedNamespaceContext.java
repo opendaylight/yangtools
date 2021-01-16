@@ -20,6 +20,9 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
  *
  * @param <K> Imported context identifier
  */
-public interface ImportedNamespaceContext<K> extends ParserNamespace<K, StmtContext<?, ?, ?>> {
-
+public abstract class ImportedNamespaceContext<K> extends AbstractParserNamespace<K, StmtContext<?, ?, ?>> {
+    protected ImportedNamespaceContext(final ModelProcessingPhase phase,
+            final NamespaceBehaviour<K, StmtContext<?, ?, ?>, ?> behaviour) {
+        super(phase, behaviour);
+    }
 }

@@ -11,15 +11,19 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Statement-local namespace carrying the versioning information about how the import was satisfied.
  */
 @Beta
-public interface ImportedVersionNamespace extends ParserNamespace<Empty, SourceIdentifier> {
-    NamespaceBehaviour<Empty, SourceIdentifier, @NonNull ImportedVersionNamespace> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(ImportedVersionNamespace.class);
+public final class ImportedVersionNamespace extends AbstractParserNamespace<Empty, SourceIdentifier> {
+    public static final @NonNull ImportedVersionNamespace INSTANCE = new ImportedVersionNamespace();
 
+    private ImportedVersionNamespace() {
+        super(ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+            NamespaceBehaviour.statementLocal(ImportedVersionNamespace.class));
+    }
 }

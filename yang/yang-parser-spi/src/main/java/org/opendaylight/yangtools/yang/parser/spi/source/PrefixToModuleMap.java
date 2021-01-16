@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 /**
  * Map-based {@link PrefixToModule} namespace. This class is NOT thread-safe.
  */
-public class PrefixToModuleMap implements PrefixToModule {
+public class PrefixToModuleMap extends PrefixToModule {
     private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
     private final Map<URI, QNameModule> namespaceToModuleMap = new HashMap<>();
 

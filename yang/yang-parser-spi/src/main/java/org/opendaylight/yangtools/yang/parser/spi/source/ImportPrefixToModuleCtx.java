@@ -8,14 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Source-specific mapping of prefix strings to module context.
  */
-public interface ImportPrefixToModuleCtx extends ParserNamespace<String, StmtContext<?, ?, ?>> {
-    NamespaceBehaviour<String, StmtContext<?, ?, ?>, @NonNull ImportPrefixToModuleCtx> BEHAVIOUR =
-            NamespaceBehaviour.rootStatementLocal(ImportPrefixToModuleCtx.class);
+public final class ImportPrefixToModuleCtx extends AbstractParserNamespace<String, StmtContext<?, ?, ?>> {
+    public static final @NonNull ImportPrefixToModuleCtx INSTANCE = new ImportPrefixToModuleCtx();
+
+    private ImportPrefixToModuleCtx() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE,
+            NamespaceBehaviour.rootStatementLocal(ImportPrefixToModuleCtx.class));
+    }
 }

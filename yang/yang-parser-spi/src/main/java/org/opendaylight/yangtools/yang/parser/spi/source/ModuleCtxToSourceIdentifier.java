@@ -9,14 +9,18 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Global mapping of modules to source identifier.
  */
-public interface ModuleCtxToSourceIdentifier extends ParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
-    NamespaceBehaviour<StmtContext<?, ?, ?>, SourceIdentifier, @NonNull ModuleCtxToSourceIdentifier> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleCtxToSourceIdentifier.class);
+public final class ModuleCtxToSourceIdentifier extends AbstractParserNamespace<StmtContext<?, ?, ?>, SourceIdentifier> {
+    public static final @NonNull ModuleCtxToSourceIdentifier INSTANCE = new ModuleCtxToSourceIdentifier();
+
+    private ModuleCtxToSourceIdentifier() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.global(ModuleCtxToSourceIdentifier.class));
+    }
 }

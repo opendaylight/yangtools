@@ -17,7 +17,5 @@ public class NamespaceTest {
         // Touch behaviors
         // FIXME: add more checks/split this up when behaviours are testable
         assertNotNull(SemanticVersionNamespace.BEHAVIOUR);
-        assertNotNull(SemanticVersionModuleNamespace.BEHAVIOUR);
-        assertNotNull(StatementDefinitionNamespace.BEHAVIOUR);
     }
 }

@@ -12,17 +12,22 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 @Beta
-public interface YangNamespaceContextNamespace extends ParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
-    NamespaceBehaviour<StmtContext<?, ?, ?>, YangNamespaceContext, @NonNull YangNamespaceContextNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(YangNamespaceContextNamespace.class);
+public final class YangNamespaceContextNamespace
+        extends AbstractParserNamespace<StmtContext<?, ?, ?>, YangNamespaceContext> {
+    public static final @NonNull YangNamespaceContextNamespace INSTANCE = new YangNamespaceContextNamespace();
 
-    static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
+    private YangNamespaceContextNamespace() {
+        super(ModelProcessingPhase.FULL_DECLARATION, NamespaceBehaviour.global(YangNamespaceContextNamespace.class));
+    }
+
+    public static @NonNull YangNamespaceContext computeIfAbsent(final StmtContext<?, ?, ?> ctx) {
         final StmtContext<?, ?, ?> root = ctx.getRoot();
         YangNamespaceContext ret = ctx.getFromNamespace(YangNamespaceContextNamespace.class, root);
         if (ret == null) {

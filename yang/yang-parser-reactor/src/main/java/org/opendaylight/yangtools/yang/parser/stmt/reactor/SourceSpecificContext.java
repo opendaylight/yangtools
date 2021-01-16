@@ -259,8 +259,8 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     @Override
     public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
-            final Class<N> type) {
-        return globalContext.getNamespaceBehaviour(type);
+            final N namespace) {
+        return globalContext.getNamespaceBehaviour(namespace);
     }
 
     @Override

@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 /**
@@ -19,9 +20,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
  * the effective augment has correct implicit statements created.
  */
 @Beta
-public interface AugmentImplicitHandlingNamespace
-        extends ParserNamespace<Empty, StatementContextBase<?, ?, ?>> {
-    NamespaceBehaviour<Empty, StatementContextBase<?, ?, ?>, @NonNull AugmentImplicitHandlingNamespace>
-        BEHAVIOUR = NamespaceBehaviour.statementLocal(AugmentImplicitHandlingNamespace.class);
+public final class AugmentImplicitHandlingNamespace
+        extends AbstractParserNamespace<Empty, StatementContextBase<?, ?, ?>> {
+    public static final @NonNull AugmentImplicitHandlingNamespace INSTANCE = new AugmentImplicitHandlingNamespace();
 
+    private AugmentImplicitHandlingNamespace() {
+        super(ModelProcessingPhase.FULL_DECLARATION,
+            NamespaceBehaviour.statementLocal(AugmentImplicitHandlingNamespace.class));
+    }
 }

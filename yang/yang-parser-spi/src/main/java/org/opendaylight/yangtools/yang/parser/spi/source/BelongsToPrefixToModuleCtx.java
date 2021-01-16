@@ -9,15 +9,18 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
  * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
  * statement.
  */
-public interface BelongsToPrefixToModuleCtx extends ImportedNamespaceContext<String> {
-    NamespaceBehaviour<String, StmtContext<?, ?, ?>, @NonNull BelongsToPrefixToModuleCtx> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(BelongsToPrefixToModuleCtx.class);
+public final class BelongsToPrefixToModuleCtx extends ImportedNamespaceContext<String> {
+    public static final @NonNull BelongsToPrefixToModuleCtx INSTANCE = new BelongsToPrefixToModuleCtx();
+
+    private BelongsToPrefixToModuleCtx() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.sourceLocal(BelongsToPrefixToModuleCtx.class));
+    }
 }

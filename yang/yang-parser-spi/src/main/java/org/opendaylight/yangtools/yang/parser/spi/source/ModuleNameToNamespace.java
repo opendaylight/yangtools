@@ -9,13 +9,17 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.net.URI;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Pre-linkage global mapping of module names to namespaces.
  */
-public interface ModuleNameToNamespace extends ParserNamespace<String, URI> {
-    NamespaceBehaviour<String, URI, @NonNull ModuleNameToNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(ModuleNameToNamespace.class);
+public final class ModuleNameToNamespace extends AbstractParserNamespace<String, URI> {
+    public static final @NonNull ModuleNameToNamespace INSTANCE = new ModuleNameToNamespace();
+
+    private ModuleNameToNamespace() {
+        super(ModelProcessingPhase.SOURCE_PRE_LINKAGE, NamespaceBehaviour.global(ModuleNameToNamespace.class));
+    }
 }

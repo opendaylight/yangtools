@@ -10,16 +10,19 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * namespace class similar to {@link org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace} for storing modules
  * into Yang model storage but keyed by plain name.
  */
-public interface ModuleNamespaceForBelongsTo
+public final class ModuleNamespaceForBelongsTo
         extends StatementNamespace<String, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<String, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
-        @NonNull ModuleNamespaceForBelongsTo> BEHAVIOUR = NamespaceBehaviour.global(ModuleNamespaceForBelongsTo.class);
+    public static final @NonNull ModuleNamespaceForBelongsTo INSTANCE = new ModuleNamespaceForBelongsTo();
+
+    private ModuleNamespaceForBelongsTo() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.global(ModuleNamespaceForBelongsTo.class));
+    }
 }

@@ -9,12 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 @Beta
-public interface ConfigListWarningNamespace extends ParserNamespace<StatementSourceReference, Boolean> {
-    NamespaceBehaviour<StatementSourceReference, Boolean, @NonNull ConfigListWarningNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(ConfigListWarningNamespace.class);
+public final class ConfigListWarningNamespace extends AbstractParserNamespace<StatementSourceReference, Boolean> {
+    public static final @NonNull ConfigListWarningNamespace INSTANCE = new ConfigListWarningNamespace();
+
+    private ConfigListWarningNamespace() {
+        super(ModelProcessingPhase.STATEMENT_DEFINITION, NamespaceBehaviour.global(ConfigListWarningNamespace.class));
+    }
 }

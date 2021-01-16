@@ -11,16 +11,20 @@ import java.net.URISyntaxException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
-public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
-    NamespaceBehaviour<String, QNameModule, @NonNull PrefixToModule> BEHAVIOUR =
-            NamespaceBehaviour.global(PrefixToModule.class);
-    String DEFAULT_PREFIX = "";
+public abstract class PrefixToModule extends AbstractParserNamespace<String, QNameModule> {
+    // FIXME: document this constant
+    public final @NonNull String DEFAULT_PREFIX = "";
+
+    protected PrefixToModule() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.global(PrefixToModule.class));
+    }
 
     /**
      * Returns QNameModule (namespace + revision) associated with supplied prefix.
@@ -28,7 +32,7 @@ public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
      * @param prefix Prefix
      * @return QNameModule associated with supplied prefix, or null if prefix is not defined.
      */
-    QNameModule get(String prefix);
+    public abstract @Nullable QNameModule get(String prefix);
 
     /**
      * Returns QNameModule (namespace + revision) associated with XML namespace (URI).
@@ -37,5 +41,5 @@ public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
      * @return QNameModule associated with supplied namespace, or null if prefix is not defined.
      * @throws URISyntaxException if the input string is not valid URI
      */
-    @Nullable QNameModule getByNamespace(String namespace) throws URISyntaxException;
+    public abstract @Nullable QNameModule getByNamespace(String namespace) throws URISyntaxException;
 }

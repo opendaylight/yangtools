@@ -10,15 +10,19 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Implementation-internal cache for looking up URI to import prefix. URIs are taken in as Strings to save ourselves
  * some quality parsing time.
  */
 @Beta
-public interface ModuleQNameToPrefix extends ParserNamespace<QNameModule, String> {
-    NamespaceBehaviour<QNameModule, String, @NonNull ModuleQNameToPrefix> BEHAVIOUR =
-            NamespaceBehaviour.rootStatementLocal(ModuleQNameToPrefix.class);
+public final class ModuleQNameToPrefix extends AbstractParserNamespace<QNameModule, String> {
+    public static final @NonNull ModuleQNameToPrefix INSTANCE = new ModuleQNameToPrefix();
+
+    private ModuleQNameToPrefix() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.rootStatementLocal(ModuleQNameToPrefix.class));
+    }
 }

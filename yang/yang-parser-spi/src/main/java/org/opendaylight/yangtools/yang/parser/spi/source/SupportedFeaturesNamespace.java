@@ -10,15 +10,19 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
-public interface SupportedFeaturesNamespace
-        extends ParserNamespace<SupportedFeaturesNamespace.SupportedFeatures, Set<QName>> {
-    NamespaceBehaviour<SupportedFeatures, Set<QName>, @NonNull SupportedFeaturesNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SupportedFeaturesNamespace.class);
+public final class SupportedFeaturesNamespace
+        extends AbstractParserNamespace<SupportedFeaturesNamespace.SupportedFeatures, Set<QName>> {
+    public static final @NonNull SupportedFeaturesNamespace INSTANCE = new SupportedFeaturesNamespace();
 
-    enum SupportedFeatures {
+    private SupportedFeaturesNamespace() {
+        super(ModelProcessingPhase.INIT, NamespaceBehaviour.global(SupportedFeaturesNamespace.class));
+    }
+
+    public enum SupportedFeatures {
         SUPPORTED_FEATURES
     }
 }

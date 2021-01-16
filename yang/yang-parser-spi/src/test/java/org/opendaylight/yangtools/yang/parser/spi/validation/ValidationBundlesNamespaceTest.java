@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.validation;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.BEHAVIOUR;
 import static org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType.SUPPORTED_DATA_NODES;
 
 import java.util.Collection;
@@ -26,6 +25,6 @@ public class ValidationBundlesNamespaceTest {
 
         final Collection<?> result = mock(Collection.class);
         doReturn(result).when(node).getFromLocalStorage(ValidationBundlesNamespace.class, SUPPORTED_DATA_NODES);
-        assertSame(result, BEHAVIOUR.getFrom(node, SUPPORTED_DATA_NODES));
+        assertSame(result, ValidationBundlesNamespace.INSTANCE.behaviour().getFrom(node, SUPPORTED_DATA_NODES));
     }
 }

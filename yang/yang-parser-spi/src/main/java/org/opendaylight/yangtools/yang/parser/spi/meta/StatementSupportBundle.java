@@ -26,26 +26,22 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class StatementSupportBundle implements Immutable, NamespaceBehaviour.Registry {
-
+public final class StatementSupportBundle implements Immutable {
     private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, null, ImmutableMap.of(),
-            ImmutableMap.of(), ImmutableTable.of());
+            ImmutableTable.of());
 
     private final StatementSupportBundle parent;
     private final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
     private final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions;
-    private final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
     private final ImmutableSet<YangVersion> supportedVersions;
 
     private StatementSupportBundle(final StatementSupportBundle parent,
             final ImmutableSet<YangVersion> supportedVersions,
             final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonStatements,
-            final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces,
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements) {
         this.parent = parent;
         this.supportedVersions = supportedVersions;
         this.commonDefinitions = commonStatements;
-        this.namespaceDefinitions = namespaces;
         this.versionSpecificDefinitions = versionSpecificStatements;
     }
 
@@ -82,10 +78,6 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         return versionSpecificDefinitions;
     }
 
-    public ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> getNamespaceDefinitions() {
-        return namespaceDefinitions;
-    }
-
     public static Builder builder(final Set<YangVersion> supportedVersions) {
         return new Builder(supportedVersions, EMPTY);
     }
@@ -96,33 +88,6 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
 
     public Set<YangVersion> getSupportedVersions() {
         return supportedVersions;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
-            final Class<N> namespace) {
-        final NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);
-        if (potential != null) {
-            checkState(namespace.equals(potential.getIdentifier()));
-
-            // Safe cast, previous checkState checks equivalence of key from which type argument are derived
-            return (NamespaceBehaviour<K, V, N>) potential;
-        }
-        if (parent != null) {
-            return parent.getNamespaceBehaviour(namespace);
-        }
-        return null;
-    }
-
-    public <K, V, N extends ParserNamespace<K, V>> boolean hasNamespaceBehaviour(final Class<N> namespace) {
-        if (namespaceDefinitions.containsKey(namespace)) {
-            return true;
-        }
-        if (parent != null) {
-            return parent.hasNamespaceBehaviour(namespace);
-        }
-        return false;
     }
 
     public StatementSupport<?, ?, ?> getStatementDefinition(final YangVersion version, final QName stmtName) {
@@ -162,11 +127,10 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
         private final Map<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
-        private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements = HashBasedTable
-                .create();
-        private final Map<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
-
+        private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements =
+            HashBasedTable.create();
         private final ImmutableSet<YangVersion> supportedVersions;
+
         private StatementSupportBundle parent;
 
         Builder(final Set<YangVersion> supportedVersions, final StatementSupportBundle parent) {
@@ -181,15 +145,6 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             checkState(!commonStatements.containsKey(identifier),
                     "Statement %s already defined in common statement bundle.", identifier);
             commonStatements.put(identifier, support);
-            return this;
-        }
-
-        public <K, V, N extends ParserNamespace<K, V>> Builder addSupport(
-                final NamespaceBehaviour<K, V, N> namespaceSupport) {
-            final Class<N> identifier = namespaceSupport.getIdentifier();
-            checkState(!namespaces.containsKey(identifier));
-            checkState(!parent.hasNamespaceBehaviour(identifier));
-            namespaces.put(identifier, namespaceSupport);
             return this;
         }
 
@@ -232,7 +187,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         public StatementSupportBundle build() {
             Preconditions.checkState(parent != null, "Parent must not be null");
             return new StatementSupportBundle(parent, supportedVersions, ImmutableMap.copyOf(commonStatements),
-                    ImmutableMap.copyOf(namespaces), ImmutableTable.copyOf(versionSpecificStatements));
+                    ImmutableTable.copyOf(versionSpecificStatements));
         }
 
         private void checkNoParentDefinition(final QName identifier) {

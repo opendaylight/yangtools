@@ -18,10 +18,11 @@ import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
  * used only in case the semantic versioning is enabled, otherwise it is empty.
  */
 @Beta
-public interface SemanticVersionModuleNamespace
-    extends StatementNamespace<SemVerSourceIdentifier, ModuleStatement, ModuleEffectiveStatement> {
-    NamespaceBehaviour<SemVerSourceIdentifier, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,
-            @NonNull SemanticVersionModuleNamespace> BEHAVIOUR =
-            NamespaceBehaviour.global(SemanticVersionModuleNamespace.class);
+public final class SemanticVersionModuleNamespace
+        extends StatementNamespace<SemVerSourceIdentifier, ModuleStatement, ModuleEffectiveStatement> {
+    public static final @NonNull SemanticVersionModuleNamespace INSTANCE = new SemanticVersionModuleNamespace();
 
+    private SemanticVersionModuleNamespace() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.global(SemanticVersionModuleNamespace.class));
+    }
 }

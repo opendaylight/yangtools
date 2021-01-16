@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 public final class CustomInferencePipeline {
     public static final CrossSourceStatementReactor CUSTOM_REACTOR = RFC7950Reactors.defaultReactorBuilder()
             .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyExtensionSupport.getInstance())
-            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyNamespace.BEHAVIOR)
             .build();
 
     private CustomInferencePipeline() {

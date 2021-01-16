@@ -8,13 +8,17 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
-public interface BelongsToPrefixToModuleName extends ParserNamespace<String, String> {
-    NamespaceBehaviour<String, String, @NonNull BelongsToPrefixToModuleName> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(BelongsToPrefixToModuleName.class);
+public final class BelongsToPrefixToModuleName extends AbstractParserNamespace<String, String> {
+    public static final @NonNull BelongsToPrefixToModuleName INSTANCE = new BelongsToPrefixToModuleName();
+
+    private BelongsToPrefixToModuleName() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.sourceLocal(BelongsToPrefixToModuleName.class));
+    }
 }

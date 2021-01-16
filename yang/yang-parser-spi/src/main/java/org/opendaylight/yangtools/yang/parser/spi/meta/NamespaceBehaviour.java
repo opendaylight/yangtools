@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 
 /**
  * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
@@ -64,14 +65,16 @@ public abstract class NamespaceBehaviour<K, V, N extends ParserNamespace<K, V>>
         /**
          * Get a namespace behavior.
          *
-         * @param type Namespace type class
+         * @param namespace Namespace
          * @param <K> key type
          * @param <V> value type
          * @param <N> namespace type
          * @return Namespace behaviour
          * @throws NamespaceNotAvailableException when the namespace is not available
+         * @throws NullPointerException if namespace is null
          */
-        <K, V, N extends ParserNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type);
+        <K, V, N extends ParserNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
+            @NonNull N namespace);
     }
 
     public interface NamespaceStorageNode {

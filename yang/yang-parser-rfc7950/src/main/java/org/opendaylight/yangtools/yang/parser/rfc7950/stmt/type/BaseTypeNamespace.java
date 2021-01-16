@@ -10,12 +10,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public interface BaseTypeNamespace extends ParserNamespace<Empty, StmtContext<?, ?, ?>> {
-    NamespaceBehaviour<Empty, StmtContext<?, ?, ?>, @NonNull BaseTypeNamespace> BEHAVIOUR =
-        NamespaceBehaviour.statementLocal(BaseTypeNamespace.class);
+public final class BaseTypeNamespace extends AbstractParserNamespace<Empty, StmtContext<?, ?, ?>> {
+    public static final @NonNull BaseTypeNamespace INSTANCE = new BaseTypeNamespace();
+
+    private BaseTypeNamespace() {
+        super(ModelProcessingPhase.STATEMENT_DEFINITION, NamespaceBehaviour.statementLocal(BaseTypeNamespace.class));
+    }
 }

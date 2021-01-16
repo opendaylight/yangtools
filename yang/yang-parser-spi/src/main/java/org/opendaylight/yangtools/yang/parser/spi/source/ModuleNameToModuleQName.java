@@ -9,13 +9,17 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
-public interface ModuleNameToModuleQName extends ParserNamespace<String, QNameModule> {
-    NamespaceBehaviour<String, QNameModule, @NonNull ModuleNameToModuleQName> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(ModuleNameToModuleQName.class);
+public final class ModuleNameToModuleQName extends AbstractParserNamespace<String, QNameModule> {
+    public static final @NonNull ModuleNameToModuleQName INSTANCE = new ModuleNameToModuleQName();
+
+    private ModuleNameToModuleQName() {
+        super(ModelProcessingPhase.SOURCE_LINKAGE, NamespaceBehaviour.sourceLocal(ModuleNameToModuleQName.class));
+    }
 }

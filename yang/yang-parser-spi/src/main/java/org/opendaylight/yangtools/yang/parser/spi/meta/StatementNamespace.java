@@ -10,15 +10,19 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public interface StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
-        extends ParserNamespace<K, StmtContext<?, D, E>> {
-
-    interface TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> extends
-            StatementNamespace<K, D, E> {
-        TreeScoped<K, D, E> getParentContext();
+public abstract class StatementNamespace<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+        extends AbstractParserNamespace<K, StmtContext<?, D, E>> {
+    public abstract static class TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>>
+            extends StatementNamespace<K, D, E> {
+        protected TreeScoped(final ModelProcessingPhase phase,
+                // FIXME: YANGTOOLS-1204: behaviour is implied
+                final NamespaceBehaviour<K, StmtContext<?, D, E>, ?> behaviour) {
+            super(phase, behaviour);
+        }
     }
 
-    interface TreeBased<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> {
-
+    protected StatementNamespace(final ModelProcessingPhase phase,
+            final NamespaceBehaviour<K, StmtContext<?, D, E>, ?> behaviour) {
+        super(phase, behaviour);
     }
 }
