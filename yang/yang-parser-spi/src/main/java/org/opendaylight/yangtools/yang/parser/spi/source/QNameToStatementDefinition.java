@@ -12,16 +12,11 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Map of fully qualified statement name to statement definition.
  */
-public interface QNameToStatementDefinition extends ParserNamespace<QName, StatementDefinition> {
-    NamespaceBehaviour<QName, StatementDefinition, @NonNull QNameToStatementDefinition> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(QNameToStatementDefinition.class);
-
+public interface QNameToStatementDefinition {
     /**
      * Returns StatementDefinition with specified QName.
      *

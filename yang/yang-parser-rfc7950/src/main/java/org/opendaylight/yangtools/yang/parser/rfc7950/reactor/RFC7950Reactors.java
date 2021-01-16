@@ -130,7 +130,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelon
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
@@ -196,7 +195,6 @@ public final class RFC7950Reactors {
             .addSupport(BelongsToPrefixToModuleCtx.BEHAVIOUR)
             .addSupport(ModuleQNameToPrefix.BEHAVIOUR)
             .addSupport(BelongsToModuleContext.BEHAVIOUR)
-            .addSupport(QNameToStatementDefinition.BEHAVIOUR)
             .addSupport(BelongsToPrefixToModuleName.BEHAVIOUR)
             .build();
 
