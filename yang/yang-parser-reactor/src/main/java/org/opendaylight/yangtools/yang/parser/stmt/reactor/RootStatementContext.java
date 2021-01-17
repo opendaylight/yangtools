@@ -274,7 +274,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     StatementContextBase<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
-        throw new UnsupportedOperationException("Root statement cannot be reparented to" + newParent);
+        throw new UnsupportedOperationException("Root statement cannot be reparented to " + newParent);
     }
 
     @Override
