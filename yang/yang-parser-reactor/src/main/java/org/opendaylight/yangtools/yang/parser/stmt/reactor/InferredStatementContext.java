@@ -376,6 +376,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private Optional<? extends Mutable<?, ?, ?>> copySubstatement(final Mutable<?, ?, ?> substatement) {
+        // FIXME: YANGTOOLS-1195: this is not exactly what we want to do here, because we are deling with two different
+        //                        requests: copy for inference purposes (this method), while we also copy for purposes
+        //                        of buildEffective() -- in which case we want to probably invoke asEffectiveChildOf()
+        //                        or similar
         return substatement.copyAsChildOf(this, childCopyType, targetModule);
     }
 

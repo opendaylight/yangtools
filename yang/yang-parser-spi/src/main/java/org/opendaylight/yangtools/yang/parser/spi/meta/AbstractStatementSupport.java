@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -46,9 +47,23 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
-            final CopyType copyType, final QNameModule targetModule) {
+    public final CopyPolicy copyPolicy() {
         return copyPolicy;
+    }
+
+    @Override
+    public final StmtContext<?, ?, ?> effectiveCopyOf(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
+            final CopyType copyType, final QNameModule targetModule) {
+        switch (copyPolicy) {
+            case CONTEXT_INDEPENDENT:
+                return stmt;
+            case DECLARED_COPY:
+                // FIXME: YANGTOOLS-1195: this is too harsh, we need to make a callout to subclass methods so they
+                //                        actually examine the differences.
+                return parent.childCopyOf(stmt, copyType, targetModule);
+            default:
+                throw new VerifyException("Attempted to apply " + copyPolicy);
+        }
     }
 
     @Override

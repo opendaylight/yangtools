@@ -141,7 +141,42 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     @Nullable StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
 
     /**
-     * Determine reactor copy behavior of a statement instance. Statement support classes are required to determine
+     * Return this statement's {@link CopyPolicy}. This is a static value, reflecting how this statement reacts to being
+     * replicated to a different context, without reflecting on behaviour of potential substatements, which would come
+     * into play in something like:
+     *
+     * <pre>
+     *   <code>
+     *     module foo {
+     *       namespace foo;
+     *       prefix foo;
+     *
+     *       extension note {
+     *         argument string {
+     *           type string {
+     *             length 1..max;
+     *           }
+     *         }
+     *         description "Can be used in description/reference statements to attach additional notes";
+     *       }
+     *
+     *       description "A nice module extending description statement semantics" {
+     *         foo:note "We can now attach description/reference a note.";
+     *         foo:note "Also another note";
+     *       }
+     *     }
+     *   </code>
+     * </pre>
+     *
+     * <p>
+     * In this scenario, it is the reactor's job to figure out what to do (like talking to substatements).
+     *
+     * @return This statement's copy policy
+     */
+    @NonNull CopyPolicy copyPolicy();
+
+    /**
+     * Determine reactor copy behaviour of a statement instance. Statement support classes are required to determine
      * their operations with regard to their statements being replicated into different contexts, so that
      * {@link Mutable} instances are not created when it is evident they are superfluous.
      *
@@ -156,26 +191,18 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *       the default namespace to parent's namespace, whereas {@code augment} does not.</li>
      * </ul>
      *
+     * <p>
+     * Implementations should return
+     *
+     *
      * @param stmt Context of statement to be copied statement
      * @param parent Parent statement context
      * @param copyType Type of copy being performed
      * @param targetModule Target module, if present
-     * @return Policy that needs to be applied to the copy operation of this statement.
+     * @return
      */
-    default @NonNull CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
-            final CopyType copyType, @Nullable final QNameModule targetModule) {
-        // Most of statement supports will just want to copy the statement
-        // FIXME: YANGTOOLS-694: that is not strictly true. Subclasses of this should indicate if they are themselves
-        //                       copy-sensitive:
-        //                       1) if they are not and cannot be targeted by inference, and all their current
-        //                          substatements are also non-sensitive, we want to return the same context.
-        //                       2) if they are not and their current substatements are sensitive, we want to copy
-        //                          as a lazily-instantiated interceptor to let it deal with substatements when needed
-        //                          (YANGTOOLS-1067 prerequisite)
-        //                       3) otherwise perform this eager copy
-        //      return Optional.of(parent.childCopyOf(stmt, copyType, targetModule));
-        return CopyPolicy.DECLARED_COPY;
-    }
+    @NonNull StmtContext<?, ?, ?> effectiveCopyOf(StmtContext<?, ?, ?> stmt, Mutable<?, ?, ?> parent, CopyType copyType,
+        @Nullable QNameModule targetModule);
 
     /**
      * Given a raw string representation of an argument, try to use a shared representation.
@@ -247,7 +274,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     /**
      * Statement context copy policy, indicating how should reactor handle statement copy operations. Every statement
      * copied by the reactor is subject to policy check done by
-     * {@link StatementSupport#applyCopyPolicy(Mutable, Mutable, CopyType, QNameModule)}.
+     * {@link StatementSupport#effectiveCopyOf(Mutable, Mutable, CopyType, QNameModule)}.
      *
      */
     enum CopyPolicy {
