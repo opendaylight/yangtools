@@ -597,23 +597,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkEffectiveModelCompleted(this);
 
         final StatementSupport<A, D, E> support = definition.support();
-        final CopyPolicy policy = support.applyCopyPolicy(this, parent, type, targetModule);
+        final CopyPolicy policy = support.copyPolicy();
         switch (policy) {
             case CONTEXT_INDEPENDENT:
-                if (hasEmptySubstatements()) {
-                    // This statement is context-independent and has no substatements -- hence it can be freely shared.
+                if (substatementsContextIndependent()) {
                     return Optional.of(replicaAsChildOf(parent));
                 }
-                // ascertaining substatements could be quite costly, let's just fall through to declared copy and deal
-                // shortcut it when we build the statements.
+
                 // fall through
             case DECLARED_COPY:
-                // FIXME: YANGTOOLS-694: this is still to eager, we really want to copy as a lazily-instantiated
-                //                       context, so that we can support building an effective statement without copying
-                //                       anything -- we will typically end up not being inferred against. In that case,
-                //                       this slim context should end up dealing with differences at buildContext()
-                //                       time. This is a YANGTOOLS-1067 prerequisite (which will deal with what can and
-                //                       cannot be shared across instances).
                 return Optional.of(parent.childCopyOf(this, type, targetModule));
             case IGNORE:
                 return Optional.empty();
@@ -622,6 +614,37 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             default:
                 throw new IllegalStateException("Unhandled policy " + policy);
         }
+    }
+
+    private boolean substatementsContextIndependent() {
+        // FIXME: YANGTOOLS-1195: we really want to compute (and cache) the summary for substatements.
+        //
+        // For now we just check if there are any substatements, but we really want to ask:
+        //
+        //   Are all substatements (recursively) CONTEXT_INDEPENDENT as well?
+        //
+        // Which is something we want to compute once and store. This needs to be implemented.
+        return hasEmptySubstatements();
+    }
+
+    // FIXME: YANGTOOLS-1195: this method is unused, but should be called from InferredStatementContext at the very
+    //        least. It should return @NonNull -- either 'E' or EffectiveStmtCtx.Current'. Perhaps its arguments need
+    //        to be adjusted, too.
+    final void asEffectiveChildOf(final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
+        checkEffectiveModelCompleted(this);
+
+        final StatementSupport<A, D, E> support = definition.support();
+        final StmtContext<?, ?, ?> effective = support.effectiveCopyOf(this, parent, type, targetModule);
+        if (effective == this) {
+            LOG.debug("Should reuse {}", this);
+            return;
+        }
+
+        // FIXME: YANGTOOLS-1195: here is probably where we want to do some statement reuse: even if the parent is
+        //                        affected, some substatements may not -- in which case we want to reuse them. This
+        //                        probably needs to be a callout of some kind.
+        // FIXME: YANGTOOLS-1067: an incremental improvement to that is that if no substatements changed, we want to
+        //                        be reusing the entire List<EffectiveStatement> and pass that as substatements.
     }
 
     @Override
