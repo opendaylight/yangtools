@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -346,14 +347,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
 
-
     @Override
     final E createEffective() {
-        final E result = definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        final E result = createEffective(definition.getFactory());
         if (result instanceof MutableStatement) {
             getRoot().addMutableStmtToSeal((MutableStatement) result);
         }
         return result;
+    }
+
+    E createEffective(final StatementFactory<A, D, E> factory) {
+        return createEffective(factory, this);
+    }
+
+    // Creates EffectiveStatement through full materialization
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
+            final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
+        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -592,7 +602,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+    public Optional<ReactorStmtCtx<A, D, E>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
 
@@ -606,7 +616,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
                 // fall through
             case DECLARED_COPY:
-                return Optional.of(parent.childCopyOf(this, type, targetModule));
+                return Optional.of((ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, type, targetModule));
             case IGNORE:
                 return Optional.empty();
             case REJECT:
@@ -627,36 +637,63 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return hasEmptySubstatements();
     }
 
-    // FIXME: YANGTOOLS-1195: this method is unused, but should be called from InferredStatementContext at the very
-    //        least. It should return @NonNull -- either 'E' or EffectiveStmtCtx.Current'. Perhaps its arguments need
-    //        to be adjusted, too.
-    final void asEffectiveChildOf(final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
+    @Override
+    final StatementContextBase<A, D, E> asEffectiveChildOf(final StatementContextBase<?, ?, ?> newParent,
+            final CopyType type, final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
 
         final StatementSupport<A, D, E> support = definition.support();
-        final StmtContext<?, ?, ?> effective = support.effectiveCopyOf(this, parent, type, targetModule);
+        final Current<A, D> effective = support.effectiveCopyOf(this, newParent, type, targetModule);
         if (effective == this) {
-            LOG.debug("Should reuse {}", this);
-            return;
+            return reuseAsChildOf(newParent, type, targetModule);
         }
+        verify(effective instanceof InferredStatementContext, "Unexpected effective copy %s", effective);
+        @SuppressWarnings("unchecked")
+        final StatementContextBase<A, D, E> impl = (StatementContextBase<A, D, E>) effective;
+        return createAsChildOf(impl, newParent, type, targetModule);
+    }
 
-        // FIXME: YANGTOOLS-1195: here is probably where we want to do some statement reuse: even if the parent is
-        //                        affected, some substatements may not -- in which case we want to reuse them. This
-        //                        probably needs to be a callout of some kind.
-        // FIXME: YANGTOOLS-1067: an incremental improvement to that is that if no substatements changed, we want to
-        //                        be reusing the entire List<EffectiveStatement> and pass that as substatements.
+    // We can potentially reuse the entire effective statement, but substatements have to agree as well.
+    private @NonNull StatementContextBase<A, D, E> reuseAsChildOf(final StatementContextBase<?, ?, ?> parent,
+            final CopyType type, final QNameModule targetModule) {
+        // For that we need a copy of ourselves to act as a pretend-parent
+        final StatementContextBase<A, D, E> current = parent.childCopyOf(this, type, targetModule, false);
+
+        // Let all substatements consider the newly-created parent. If they end up producing same declared instance,
+        // we will just reuse this statement
+        return allSubstatementsStream()
+            .anyMatch(sub -> ((ReactorStmtCtx<?, ?, ?>) sub).asEffectiveChildOf(current, type, targetModule) != sub)
+            // If any substatement would want a different context fall back to not reusing the effective view
+            ? createAsChildOf(current, parent, type, targetModule) : this;
+    }
+
+    private @NonNull StatementContextBase<A, D, E> createAsChildOf(final @NonNull StatementContextBase<A, D, E> current,
+            final StatementContextBase<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
+        // FIXME: YANGTOOLS-1067: an incremental improvement here is that we reuse statements that are not affected
+        //                        by us changing parent. For example: if our SchemaPath changed, but the namespace
+        //                        remained the same, 'key' statement should get reused.
+        return current;
     }
 
     @Override
-    public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
+    public final StatementContextBase<A, D, E> withParent(final Parent newParent, final CopyType copyType,
+            final QNameModule targetModule) {
+        verify(newParent instanceof StatementContextBase, "Unexpected parent %s", newParent);
+        return ((StatementContextBase<?, ?, ?>)newParent).childCopyOf(this, copyType, targetModule, false);
+    }
+
+    @Override
+    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull StatementContextBase<X, Y, Z> childCopyOf(final StmtContext<X, Y, Z> stmt, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(stmt);
         checkArgument(stmt instanceof StatementContextBase, "Unsupported statement %s", stmt);
-        return childCopyOf((StatementContextBase<?, ?, ?>) stmt, type, targetModule);
+        return childCopyOf((StatementContextBase<X, Y, Z>) stmt, type, targetModule, true);
     }
 
-    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
-            final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
+    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull StatementContextBase<X, Y, Z> childCopyOf(final StatementContextBase<X, Y, Z> original,
+                final CopyType type, final QNameModule targetModule, final boolean addCopy) {
         final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
             original.publicDefinition());
 
@@ -688,7 +725,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             result = copy = new InferredStatementContext<>(this, original, type, type, targetModule);
         }
 
-        original.definition.onStatementAdded(copy);
+        if (addCopy) {
+            original.definition.onStatementAdded(copy);
+        }
         return result;
     }
 

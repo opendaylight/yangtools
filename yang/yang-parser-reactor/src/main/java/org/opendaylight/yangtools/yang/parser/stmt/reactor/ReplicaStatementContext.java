@@ -52,6 +52,17 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    public Current<A, D> withParent(final Parent newParent, final CopyType copyType, final QNameModule targetModule) {
+        return source.withParent(newParent, copyType, targetModule);
+    }
+
+    @Override
+    ReactorStmtCtx<A, D, E> asEffectiveChildOf(final StatementContextBase<?, ?, ?> newParent, final CopyType type,
+            final QNameModule targetModule) {
+        return source.asEffectiveChildOf(newParent, type, targetModule);
+    }
+
+    @Override
     public EffectiveConfig effectiveConfig() {
         return source.effectiveConfig();
     }
@@ -107,7 +118,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> newParent, final CopyType type,
+    public Optional<ReactorStmtCtx<A, D, E>> copyAsChildOf(final Mutable<?, ?, ?> newParent, final CopyType type,
             final QNameModule targetModule) {
         return source.copyAsChildOf(newParent, type, targetModule);
     }
@@ -163,8 +174,9 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
-            final QNameModule targetModule) {
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @NonNull Mutable<X, Y, Z> childCopyOf(final StmtContext<X, Y, Z> stmt, final CopyType type,
+                final QNameModule targetModule) {
         throw new UnsupportedOperationException();
     }
 
