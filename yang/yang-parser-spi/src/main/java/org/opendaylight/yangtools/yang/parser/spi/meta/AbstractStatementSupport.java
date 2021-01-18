@@ -11,14 +11,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.VerifyException;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 /**
  * Class providing necessary support for processing a YANG statement. This class is intended to be subclassed
@@ -31,14 +31,121 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         implements StatementDefinition, StatementFactory<A, D, E>, StatementSupport<A, D, E> {
 
+    // FIXME: add javadocs
+    public static abstract class EffectiveComparator<A, D extends DeclaredStatement<A>> implements Immutable {
+        final @NonNull CopyPolicy copyPolicy;
+
+        EffectiveComparator(final CopyPolicy copyPolicy) {
+            this.copyPolicy = requireNonNull(copyPolicy);
+        }
+
+        @SuppressWarnings("unchecked")
+        public static final <A, D extends DeclaredStatement<A>>
+                @NonNull EffectiveComparator<A, D> contextIndependent() {
+            return (EffectiveComparator<A, D>) AlwaysReuse.CONTEXT_INDEPENDENT;
+        }
+
+        @SuppressWarnings("unchecked")
+        public static final <A, D extends DeclaredStatement<A>> @NonNull EffectiveComparator<A, D> ignore() {
+            return (EffectiveComparator<A, D>) AlwaysFail.IGNORE;
+        }
+
+        @SuppressWarnings("unchecked")
+        public static final <A, D extends DeclaredStatement<A>> @NonNull EffectiveComparator<A, D> reject() {
+            return (EffectiveComparator<A, D>) AlwaysFail.REJECT;
+        }
+
+        protected abstract boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
+            @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
+
+        @Deprecated
+        @SuppressWarnings("unchecked")
+        static <A, D extends DeclaredStatement<A>> EffectiveComparator<A, D> compat(final CopyPolicy copyPolicy) {
+            switch (copyPolicy) {
+                case CONTEXT_INDEPENDENT:
+                    return contextIndependent();
+                case DECLARED_COPY:
+                    return (EffectiveComparator<A, D>) AlwaysCopy.DECLARED_COPY;
+                case IGNORE:
+                    return ignore();
+                case REJECT:
+                    return reject();
+                default:
+                    throw new IllegalStateException("Unsupported policy " + copyPolicy);
+            }
+        }
+
+        private static final class AlwaysCopy<A, D extends DeclaredStatement<A>> extends EffectiveComparator<A, D> {
+            @Deprecated
+            static final @NonNull AlwaysCopy<?, ?> DECLARED_COPY = new AlwaysCopy<>(CopyPolicy.DECLARED_COPY);
+
+            AlwaysCopy(final CopyPolicy copyPolicy) {
+                super(copyPolicy);
+            }
+
+            @Override
+            protected boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
+                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                return false;
+            }
+        }
+
+        private static final class AlwaysReuse<A, D extends DeclaredStatement<A>> extends EffectiveComparator<A, D> {
+            static final @NonNull AlwaysReuse<?, ?> CONTEXT_INDEPENDENT =
+                new AlwaysReuse<>(CopyPolicy.CONTEXT_INDEPENDENT);
+
+            private AlwaysReuse(final CopyPolicy copyPolicy) {
+                super(copyPolicy);
+            }
+
+            @Override
+            protected boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
+                final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                return true;
+            }
+        }
+
+        private static final class AlwaysFail<A, D extends DeclaredStatement<A>> extends EffectiveComparator<A, D> {
+            static final @NonNull AlwaysFail<?, ?> IGNORE = new AlwaysFail<>(CopyPolicy.IGNORE);
+            static final @NonNull AlwaysFail<?, ?> REJECT = new AlwaysFail<>(CopyPolicy.REJECT);
+
+            private AlwaysFail(final CopyPolicy copyPolicy) {
+                super(copyPolicy);
+            }
+
+            @Override
+            protected boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
+                final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                throw new UnsupportedOperationException("This implementation should never be invoked");
+            }
+        }
+    }
+
+    protected static abstract class AbstractEffectiveComparator<A, D extends DeclaredStatement<A>>
+            extends EffectiveComparator<A, D> {
+        protected AbstractEffectiveComparator() {
+            super(CopyPolicy.DECLARED_COPY);
+        }
+    }
+
+    private final @NonNull EffectiveComparator<A, D> comparator;
     private final @NonNull StatementDefinition type;
     private final @NonNull CopyPolicy copyPolicy;
 
     @Beta
-    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition,
+            final EffectiveComparator<A, D> comparator) {
         this.type = requireNonNull(publicDefinition);
-        this.copyPolicy = requireNonNull(copyPolicy);
+        this.comparator = requireNonNull(comparator);
+        this.copyPolicy = comparator.copyPolicy;
         checkArgument(publicDefinition != this);
+    }
+
+    @Beta
+    @Deprecated
+    // FIXME: remove this constructor
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        this(publicDefinition, EffectiveComparator.compat(copyPolicy));
     }
 
     @Override
@@ -52,18 +159,9 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final StmtContext<?, ?, ?> effectiveCopyOf(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
-            final CopyType copyType, final QNameModule targetModule) {
-        switch (copyPolicy) {
-            case CONTEXT_INDEPENDENT:
-                return stmt;
-            case DECLARED_COPY:
-                // FIXME: YANGTOOLS-1195: this is too harsh, we need to make a callout to subclass methods so they
-                //                        actually examine the differences.
-                return parent.childCopyOf(stmt, copyType, targetModule);
-            default:
-                throw new VerifyException("Attempted to apply " + copyPolicy);
-        }
+    public final boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
+             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return comparator.canReuseCurrent(copy, current, substatements);
     }
 
     @Override
