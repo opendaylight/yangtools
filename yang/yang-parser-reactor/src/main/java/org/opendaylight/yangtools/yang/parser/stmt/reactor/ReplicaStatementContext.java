@@ -113,6 +113,12 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> newParent, final CopyType type,
+            final QNameModule targetModule) {
+        return source.asEffectiveChildOf(newParent, type, targetModule);
+    }
+
+    @Override
     StatementDefinitionContext<A, D, E> definition() {
         return source.definition();
     }

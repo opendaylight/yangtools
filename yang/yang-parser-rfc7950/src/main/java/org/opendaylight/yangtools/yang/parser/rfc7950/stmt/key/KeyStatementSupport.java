@@ -14,6 +14,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -54,13 +55,20 @@ public final class KeyStatementSupport
      */
     private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
 
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.KEY)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.KEY).build();
     private static final KeyStatementSupport INSTANCE = new KeyStatementSupport();
 
     private KeyStatementSupport() {
-        super(YangStmtMapping.KEY, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.KEY, new AbstractEffectiveComparator<Set<QName>, KeyStatement>() {
+            @Override
+            protected boolean canReuseCurrent(final Current<Set<QName>, KeyStatement> copy,
+                    final Current<Set<QName>, KeyStatement> current,
+                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
+                return copy.getArgument() == current.getArgument();
+            }
+        });
     }
 
     public static KeyStatementSupport getInstance() {
@@ -97,8 +105,7 @@ public final class KeyStatementSupport
             }
         }
 
-        // This makes sure we reuse the collection when a grouping is
-        // instantiated in the same module
+        // This makes sure we reuse the collection when a grouping is instantiated in the same module.
         return replaced ? builder.build() : ctx.argument();
     }
 
