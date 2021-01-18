@@ -11,4 +11,6 @@ module org.opendaylight.yangtools.rfc7952.data.api {
     exports org.opendaylight.yangtools.rfc7952.data.api;
 
     requires transitive org.opendaylight.yangtools.yang.data.api;
+    requires org.opendaylight.yangtools.concepts;
+    requires org.opendaylight.yangtools.yang.common;
 }

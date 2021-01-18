@@ -15,8 +15,9 @@ module org.opendaylight.yangtools.yang.model.api {
     exports org.opendaylight.yangtools.yang.model.repo.spi;
 
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
-
+    requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.slf4j;
 
     // Annotations
