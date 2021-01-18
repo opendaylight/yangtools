@@ -54,13 +54,14 @@ public final class KeyStatementSupport
      */
     private static final Splitter KEY_ARG_SPLITTER = Splitter.on(SEP).omitEmptyStrings();
 
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.KEY)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.KEY).build();
     private static final KeyStatementSupport INSTANCE = new KeyStatementSupport();
 
     private KeyStatementSupport() {
-        super(YangStmtMapping.KEY, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.KEY, StatementPolicy.copyDeclared(
+            // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
+            (copy, current, substatements) -> copy.getArgument() == current.getArgument()));
     }
 
     public static KeyStatementSupport getInstance() {
@@ -97,8 +98,7 @@ public final class KeyStatementSupport
             }
         }
 
-        // This makes sure we reuse the collection when a grouping is
-        // instantiated in the same module
+        // This makes sure we reuse the collection when a grouping is instantiated in the same module.
         return replaced ? builder.build() : ctx.argument();
     }
 

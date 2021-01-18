@@ -37,9 +37,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
-
+    @Deprecated
     protected BaseStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
+    }
+
+    protected BaseStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
+        super(publicDefinition, policy);
     }
 
     @Override

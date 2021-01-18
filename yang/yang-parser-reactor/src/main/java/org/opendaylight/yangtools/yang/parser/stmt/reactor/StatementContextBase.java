@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -346,14 +347,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
 
-
     @Override
     final E createEffective() {
-        final E result = definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        final E result = createEffective(definition.getFactory());
         if (result instanceof MutableStatement) {
             getRoot().addMutableStmtToSeal((MutableStatement) result);
         }
         return result;
+    }
+
+    @NonNull E createEffective(final StatementFactory<A, D, E> factory) {
+        return createEffective(factory, this);
+    }
+
+    // Creates EffectiveStatement through full materialization
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
+            final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
+        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -595,20 +605,25 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(this);
+        return Optional.ofNullable(copyAsChildOfImpl(parent, type, targetModule));
+    }
 
+    private ReactorStmtCtx<A, D, E> copyAsChildOfImpl(final Mutable<?, ?, ?> parent, final CopyType type,
+            final QNameModule targetModule) {
         final StatementSupport<A, D, E> support = definition.support();
         final CopyPolicy policy = support.copyPolicy();
         switch (policy) {
             case CONTEXT_INDEPENDENT:
-                if (substatementsContextIndependent()) {
-                    return Optional.of(replicaAsChildOf(parent));
+                if (allSubstatementsContextIndependent()) {
+                    return replicaAsChildOf(parent);
                 }
 
                 // fall through
             case DECLARED_COPY:
-                return Optional.of(parent.childCopyOf(this, type, targetModule));
+                // FIXME: ugly cast
+                return (ReactorStmtCtx<A, D, E>) parent.childCopyOf(this, type, targetModule);
             case IGNORE:
-                return Optional.empty();
+                return null;
             case REJECT:
                 throw new IllegalStateException("Statement " + support.getPublicView() + " should never be copied");
             default:
@@ -616,35 +631,35 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
-    private boolean substatementsContextIndependent() {
-        // FIXME: YANGTOOLS-1195: we really want to compute (and cache) the summary for substatements.
-        //
-        // For now we just check if there are any substatements, but we really want to ask:
-        //
-        //   Are all substatements (recursively) CONTEXT_INDEPENDENT as well?
-        //
-        // Which is something we want to compute once and store. This needs to be implemented.
-        return hasEmptySubstatements();
-    }
-
-    // FIXME: YANGTOOLS-1195: this method is unused, but should be called from InferredStatementContext at the very
-    //        least. It should return @NonNull -- either 'E' or EffectiveStmtCtx.Current'. Perhaps its arguments need
-    //        to be adjusted, too.
-    final void asEffectiveChildOf(final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
-        checkEffectiveModelCompleted(this);
-
-        final StatementSupport<A, D, E> support = definition.support();
-        final StmtContext<?, ?, ?> effective = support.effectiveCopyOf(this, parent, type, targetModule);
-        if (effective == this) {
-            LOG.debug("Should reuse {}", this);
-            return;
+    @Override
+    final ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(final StatementContextBase<?, ?, ?> parent, final CopyType type,
+            final QNameModule targetModule) {
+        final ReactorStmtCtx<A, D, E> copy = copyAsChildOfImpl(parent, type, targetModule);
+        if (copy == null) {
+            // The statement fizzled, this should never happen, perhaps a verify()?
+            return null;
         }
 
-        // FIXME: YANGTOOLS-1195: here is probably where we want to do some statement reuse: even if the parent is
-        //                        affected, some substatements may not -- in which case we want to reuse them. This
-        //                        probably needs to be a callout of some kind.
-        // FIXME: YANGTOOLS-1067: an incremental improvement to that is that if no substatements changed, we want to
-        //                        be reusing the entire List<EffectiveStatement> and pass that as substatements.
+        parent.ensureCompletedPhase(copy);
+        return canReuseCurrent(copy) ? replicaAsChildOf(parent) : copy;
+    }
+
+    private boolean canReuseCurrent(final ReactorStmtCtx<A, D, E> copy) {
+        // Defer to statement factory to see if we can reuse this object. If we can and have only context-independent
+        // substatements we can reuse the object. More complex cases are handled indirectly via the copy.
+        return definition.getFactory().canReuseCurrent(copy, this, buildEffective().effectiveSubstatements())
+            && allSubstatementsContextIndependent();
+    }
+
+    // FIXME: YANGTOOLS-1195: we really want to compute (and cache) the summary for substatements.
+    //
+    // For now we just check if there are any substatements, but we really want to ask:
+    //
+    //   Are all substatements (recursively) CONTEXT_INDEPENDENT as well?
+    //
+    // Which is something we want to compute once and store. This needs to be implemented.
+    private boolean allSubstatementsContextIndependent() {
+        return hasEmptySubstatements();
     }
 
     @Override
