@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
@@ -346,14 +347,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effective.isEmpty() ? new ArrayList<>(toAdd) : effective;
     }
 
-
     @Override
     final E createEffective() {
-        final E result = definition.getFactory().createEffective(this, streamDeclared(), streamEffective());
+        final E result = createEffective(definition.getFactory());
         if (result instanceof MutableStatement) {
             getRoot().addMutableStmtToSeal((MutableStatement) result);
         }
         return result;
+    }
+
+    @NonNull E createEffective(final StatementFactory<A, D, E> factory) {
+        return createEffective(factory, this);
+    }
+
+    // Creates EffectiveStatement through full materialization
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> @NonNull E createEffective(
+            final StatementFactory<A, D, E> factory, final StatementContextBase<A, D, E> ctx) {
+        return factory.createEffective(ctx, ctx.streamDeclared(), ctx.streamEffective());
     }
 
     abstract Stream<? extends StmtContext<?, ?, ?>> streamDeclared();
@@ -625,26 +635,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         //
         // Which is something we want to compute once and store. This needs to be implemented.
         return hasEmptySubstatements();
-    }
-
-    // FIXME: YANGTOOLS-1195: this method is unused, but should be called from InferredStatementContext at the very
-    //        least. It should return @NonNull -- either 'E' or EffectiveStmtCtx.Current'. Perhaps its arguments need
-    //        to be adjusted, too.
-    final void asEffectiveChildOf(final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
-        checkEffectiveModelCompleted(this);
-
-        final StatementSupport<A, D, E> support = definition.support();
-        final StmtContext<?, ?, ?> effective = support.effectiveCopyOf(this, parent, type, targetModule);
-        if (effective == this) {
-            LOG.debug("Should reuse {}", this);
-            return;
-        }
-
-        // FIXME: YANGTOOLS-1195: here is probably where we want to do some statement reuse: even if the parent is
-        //                        affected, some substatements may not -- in which case we want to reuse them. This
-        //                        probably needs to be a callout of some kind.
-        // FIXME: YANGTOOLS-1067: an incremental improvement to that is that if no substatements changed, we want to
-        //                        be reusing the entire List<EffectiveStatement> and pass that as substatements.
     }
 
     @Override

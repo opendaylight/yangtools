@@ -14,6 +14,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,9 +31,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class KeyStatementSupport
         extends BaseStatementSupport<Set<QName>, KeyStatement, KeyEffectiveStatement> {
+    private static final Logger LOG = LoggerFactory.getLogger(KeyStatementSupport.class);
+
     /**
      * This is equivalent to {@link YangStatementLexer#SEP}'s definition. Currently equivalent to the non-repeating
      * part of:
@@ -60,7 +65,18 @@ public final class KeyStatementSupport
     private static final KeyStatementSupport INSTANCE = new KeyStatementSupport();
 
     private KeyStatementSupport() {
-        super(YangStmtMapping.KEY, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.KEY, new AbstractEffectiveComparator<Set<QName>, KeyStatement>() {
+            @Override
+            protected boolean canReuseCurrent(final Current<Set<QName>, KeyStatement> copy,
+                    final Current<Set<QName>, KeyStatement> current,
+                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                final boolean result = copy.getArgument().equals(current.getArgument());
+                if (result) {
+                    LOG.info("Reuse statement for {}", copy);
+                }
+                return result;
+            }
+        });
     }
 
     public static KeyStatementSupport getInstance() {
