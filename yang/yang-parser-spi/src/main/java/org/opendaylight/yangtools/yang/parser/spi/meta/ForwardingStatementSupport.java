@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
+import java.util.Collection;
 import java.util.stream.Stream;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -97,8 +97,8 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public StmtContext<?, ?, ?> effectiveCopyOf(final StmtContext<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
-            final CopyType copyType, final QNameModule targetModule) {
-        return delegate().effectiveCopyOf(stmt, parent, copyType, targetModule);
+    public boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return delegate().canReuseCurrent(copy, current, substatements);
     }
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -305,6 +307,9 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
+
+    abstract @Nullable ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(StatementContextBase<?, ?, ?> parent, CopyType type,
+        QNameModule targetModule);
 
     //
     //
@@ -603,6 +608,15 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         if (refcount == REFCOUNT_NONE) {
             lastDecRef();
         }
+    }
+
+    /**
+     * Return {@code true} if this context has an outstanding reference.
+     *
+     * @return True if this context has an outstanding reference.
+     */
+    final boolean haveRef() {
+        return refcount > REFCOUNT_NONE;
     }
 
     private void lastDecRef() {
