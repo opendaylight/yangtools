@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -22,28 +22,24 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Implementation-internal base class for {@link StatementSupport} implementations.
+ * Baseline implementation class for common {@link StatementSupport} implementations. This class performs many of the
+ * its duties in the canonical way -- taking away some amount of freedom for common functionality.
  *
  * @param <A> Argument type
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-// FIXME: YANGTOOLS-1161: move this into yang-parser-spi, as the substatement handling has natural place there. Also
-//        we rely on  getEffectOfStatement() -- which is something reactor mechanics need to make work better.
 @Beta
-public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
+public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
-
     @Deprecated
-    protected BaseStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
     }
 
-    protected BaseStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
         super(publicDefinition, policy);
     }
 
@@ -86,7 +82,8 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         return substatements;
     }
 
-    protected static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
+    // FIXME: add documentation
+    public static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
             final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
         for (EffectiveStatement<?, ?> stmt : statements) {
             if (type.isInstance(stmt)) {
@@ -96,7 +93,8 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         return null;
     }
 
-    protected static final <A, E extends EffectiveStatement<A, ?>> A findFirstArgument(
+    // FIXME: add documentation
+    public static final <A, E extends EffectiveStatement<A, ?>> A findFirstArgument(
             final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<@NonNull E> type,
                     final A defValue) {
         final @Nullable E stmt = findFirstStatement(statements, type);
@@ -163,6 +161,9 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         for (final StmtContext<?, ?, ?> declaredSubstatement : declaredInit) {
             substatementsInit.add(declaredSubstatement);
 
+            // FIXME: YANGTOOLS-1161: we need to integrate this functionality into the reactor, so that this
+            //                        transformation is something reactor's declared statements already take into
+            //                        account.
             final Collection<? extends StmtContext<?, ?, ?>> effect = declaredSubstatement.getEffectOfStatement();
             if (!effect.isEmpty()) {
                 if (filteredStatements == null) {
