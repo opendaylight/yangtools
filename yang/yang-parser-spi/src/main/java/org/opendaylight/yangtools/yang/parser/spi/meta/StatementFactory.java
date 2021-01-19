@@ -42,6 +42,17 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
         Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements);
 
     /**
+     * Create a {@link EffectiveStatement} for specified context and substatements.
+     *
+     * @param stmt Effective capture of this statement's significant state
+     * @param substatements Current effective substatements
+     * @return An effective statement instance
+     * @throws NullPointerException if any argument is null
+     */
+    @NonNull E createEffective(EffectiveStmtCtx.@NonNull Current<A, D> stmt,
+        @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
+
+    /**
      * Determine reactor copy behaviour of a statement instance. Implementations classes are required to determine
      * their operations with regard to their statements being replicated into different contexts -- potentially sharing
      * instantiations.
@@ -55,6 +66,7 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * @param substatements Current effective substatements
      * @return True if the differences between {@code copy} and {@code current} do not affect this statement's effective
      *         semantics.
+     * @throws NullPointerException if any argument is null
      */
     boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
         @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
