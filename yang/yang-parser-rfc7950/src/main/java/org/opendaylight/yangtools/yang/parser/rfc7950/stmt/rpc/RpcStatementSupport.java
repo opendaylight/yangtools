@@ -60,7 +60,7 @@ public final class RpcStatementSupport extends BaseSchemaTreeStatementSupport<Rp
 
     private RpcStatementSupport(final InputStatementSupport implicitInput,
             final OutputStatementSupport implicitOutput) {
-        super(YangStmtMapping.RPC, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.RPC, StatementPolicy.reject());
         this.implicitInput = requireNonNull(implicitInput);
         this.implicitOutput = requireNonNull(implicitOutput);
     }
