@@ -63,8 +63,8 @@ import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilde
 import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -83,7 +83,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractTypeStatementSupport
-        extends BaseStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+        extends AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeStatementSupport.class);
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(

@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  *
  * <p>
  * This interface is intended to be implemented by developers, which want to introduce support of statement to parser.
+ * Consider subclassing {@link AbstractStatementSupport} for easier implementation of this interface.
  *
  * @param <A> Argument type
  * @param <D> Declared Statement representation

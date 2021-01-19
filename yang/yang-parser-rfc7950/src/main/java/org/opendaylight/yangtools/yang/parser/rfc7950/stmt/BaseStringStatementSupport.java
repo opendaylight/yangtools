@@ -11,18 +11,19 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Specialization of {@link BaseStatementSupport} for String statement arguments. Note this implies context-independence
- * by default.
+ * Specialization of {@link AbstractStatementSupport} for String statement arguments. Note this implies
+ * context-independence by default.
  *
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
 @Beta
 public abstract class BaseStringStatementSupport<D extends DeclaredStatement<String>,
-        E extends EffectiveStatement<String, D>> extends BaseStatementSupport<String, D, E> {
+        E extends EffectiveStatement<String, D>> extends AbstractStatementSupport<String, D, E> {
     protected BaseStringStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
     }
