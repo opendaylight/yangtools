@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -191,27 +192,40 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private @NonNull E tryToReusePrototype(final StatementFactory<A, D, E> factory) {
         final E origEffective = prototype.buildEffective();
-        final Collection<? extends @NonNull EffectiveStatement<?, ?>> origSubstatements =
-            origEffective.effectiveSubstatements();
+        final Collection<? extends EffectiveStatement<?, ?>> origSubstatements = origEffective.effectiveSubstatements();
 
-        // First check if we can reuse the entire prototype
+        // First check if we can reuse the entire prototype. If not, deal with it separately.
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            // FIXME: YANGTOOLS-1067: an incremental improvement here is that we reuse statements that are not affected
-            //                        by us changing parent. For example: if our SchemaPath changed, but the namespace
-            //                        remained the same, 'key' statement should get reused.
-            // Fall back to full instantiation
-            return super.createEffective(factory);
+            return tryToReuseSubstatements(factory, origSubstatements);
         }
 
         // No substatements to deal with, we can freely reuse the original
         if (origSubstatements.isEmpty()) {
             LOG.debug("Reusing empty: {}", origEffective);
+            // FIXME: this really is a assertion: we should never request substatements
             substatements = ImmutableList.of();
             prototype.decRef();
             return origEffective;
         }
 
-        // We can reuse this statement let's see if all the statements agree
+        // All substatements are known to be context-independent: reuse original
+        if (allSubstatementsContextIndependent()) {
+            // FIXME: merge with previous case once we know this works
+            LOG.debug("Reusing context-independent: {}", origEffective);
+            // FIXME: this really is a assertion: we should never request substatements
+            verify(!haveRef(), "FIXME: initialize substatements");
+            prototype.decRef();
+            return origEffective;
+        }
+
+        // Static checks are done, derefer to heavy lifting
+        return tryToReusePrototype(factory, origEffective);
+    }
+
+    // The heavy-lifting of prototype reuse. There are some substatements which indicate they potentially need special
+    // treatment provided by a child copy -- which is the default outcome of this method.
+    // We need to examine all statements and decide what to do -- either reuse original or create a new object.
+    private @NonNull E tryToReusePrototype(final StatementFactory<A, D, E> factory, final @NonNull E orig) {
         final List<EffectiveCopy> declared = prototype.streamDeclared()
             .filter(StmtContext::isSupportedByFeatures)
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
@@ -221,7 +235,17 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
+        // We no longer need the prototype's substatements
+        prototype.decRef();
 
+        // We ended up reusing all statements, yaay!
+        if (allReused(declared) && allReused(effective)) {
+            LOG.debug("Reusing unmodified: {}", orig);
+            verify(!haveRef(), "FIXME: initialize substatements");
+            return orig;
+        }
+
+        // FIXME: do we need to record substatements?
         final List<Mutable<?, ?, ?>> declaredSubs = new ArrayList<>(declared.size());
         for (EffectiveCopy entry : declared) {
             declaredSubs.add(entry.toChildContext(this));
@@ -231,22 +255,47 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             declaredSubs.add(entry.toChildContext(this));
         }
 
-        // We no longer need the prototype's substatements, but we may need to retain ours
-        prototype.decRef();
-        if (haveRef()) {
-            substatements = ImmutableList.builder().addAll(declaredSubs).add(effectiveSubs).build();
-        } else {
-            // This should immediately get swept anyway. Should we use a poison object?
-            substatements = List.of();
-        }
-
-        if (allReused(declared) && allReused(effective)) {
-            LOG.debug("Reusing after substatement check: {}", origEffective);
-            return origEffective;
-        }
+        verify(!haveRef(), "FIXME: initialize substatements");
 
         // Values are the effective copies, hence this efficiently deals with recursion.
         return factory.createEffective(this, declaredSubs.stream(), effectiveSubs.stream());
+    }
+
+    private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory,
+            final @NonNull Collection<? extends EffectiveStatement<?, ?>> origSubstatements) {
+        if (allSubstatementsContextIndependent()) {
+            LOG.debug("Reusing substatements of: {}", prototype);
+            // FIXME: also mark substatements to never be accessible
+            return factory.createEffective(this, origSubstatements);
+        }
+
+        // Fall back to full instantiation, then check if we can reuse original substatements
+        final E result = super.createEffective(factory);
+        if (sameSubstatements(origSubstatements, result)) {
+            LOG.debug("Reusing unchanged substatements of: {}", prototype);
+            return factory.createEffective(this, origSubstatements);
+        }
+        return result;
+    }
+
+    private static boolean sameSubstatements(final Collection<?> original, final EffectiveStatement<?, ?> effective) {
+        final Collection<?> copied = effective.effectiveSubstatements();
+        if (copied != effective.effectiveSubstatements() || original.size() != copied.size()) {
+            // Do not bother if result is treating substatements as transient
+            return false;
+        }
+
+        final Iterator<?> oit = original.iterator();
+        final Iterator<?> cit = copied.iterator();
+        while (oit.hasNext()) {
+            verify(cit.hasNext());
+            // Identity comparison on purpose
+            if (oit.next() != cit.next()) {
+                return false;
+            }
+        }
+        verify(!cit.hasNext());
+        return true;
     }
 
     // An effective copy view, with enough information to decide what to do next
@@ -285,6 +334,30 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return prototype.hasEmptySubstatements();
         }
         return substatements instanceof HashMap ? false : ((List<?>) substatements).isEmpty();
+    }
+
+    @Override
+    boolean noSensitiveSubstatements() {
+        accessSubstatements();
+        if (substatements == null) {
+            // No difference, defer to prototype
+            return prototype.allSubstatementsContextIndependent();
+        }
+        if (substatements instanceof List) {
+            // Fully materialized, walk all statements
+            return noSensitiveSubstatements(castEffective(substatements));
+        }
+
+        // Partially-materialized. This case has three distinct outcomes:
+        // - prototype does not have a sensitive statement (1)
+        // - protype has a sensitive substatement, and
+        //   - we have not marked is as unsupported (2)
+        //   - we have marked it as unsupported (3)
+        //
+        // Determining the outcome between (2) and (3) is a bother, this check errs on the side of false negative
+        // side and treats (3) as (2).
+        return prototype.allSubstatementsContextIndependent()
+            && noSensitiveSubstatements(castMaterialized(substatements).values());
     }
 
     @Override
