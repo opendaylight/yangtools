@@ -17,18 +17,19 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Specialization of {@link BaseStatementSupport} for QName statement arguments.
+ * Specialization of {@link AbstractStatementSupport} for QName statement arguments.
  *
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
 @Beta
 public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QName>,
-        E extends EffectiveStatement<QName, D>> extends BaseStatementSupport<QName, D, E> {
+        E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     protected BaseQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
     }

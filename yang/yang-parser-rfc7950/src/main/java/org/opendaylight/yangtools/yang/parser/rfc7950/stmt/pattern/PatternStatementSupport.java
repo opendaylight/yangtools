@@ -21,15 +21,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class PatternStatementSupport
-        extends BaseStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
+        extends AbstractStatementSupport<PatternExpression, PatternStatement, PatternEffectiveStatement> {
     private static final @NonNull PatternStatementSupport RFC6020_INSTANCE = new PatternStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.PATTERN)
             .addOptional(YangStmtMapping.DESCRIPTION)

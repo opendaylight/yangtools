@@ -19,15 +19,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class UnrecognizedStatementSupport
-        extends BaseStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
+        extends AbstractStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition, CopyPolicy.DECLARED_COPY);
     }

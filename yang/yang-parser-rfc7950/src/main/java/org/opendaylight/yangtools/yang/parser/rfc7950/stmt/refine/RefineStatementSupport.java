@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
 public final class RefineStatementSupport
-        extends BaseStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
+        extends AbstractStatementSupport<Descendant, RefineStatement, RefineEffectiveStatement> {
     private static final @NonNull RefineStatementSupport RFC6020_INSTANCE = new RefineStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.REFINE)
             .addOptional(YangStmtMapping.DEFAULT)

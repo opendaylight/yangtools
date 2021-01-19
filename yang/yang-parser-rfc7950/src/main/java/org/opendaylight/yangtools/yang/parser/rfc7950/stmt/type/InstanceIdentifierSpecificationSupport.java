@@ -16,12 +16,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIden
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-final class InstanceIdentifierSpecificationSupport extends BaseStatementSupport<String,
+final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupport<String,
         InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
