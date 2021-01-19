@@ -50,7 +50,8 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     protected final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return createDeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
+            return createDeclaredEffective(
+                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -62,7 +63,8 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     @Override
     protected final E createUndeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return createUndeclaredEffective(historyAndStatusFlags(stmt.history(), substatements), stmt, substatements);
+        return createUndeclaredEffective(EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements),
+            stmt, substatements);
     }
 
     protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,

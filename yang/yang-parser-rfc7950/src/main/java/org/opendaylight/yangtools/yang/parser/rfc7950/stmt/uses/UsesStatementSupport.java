@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -150,7 +151,7 @@ public final class UsesStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final GroupingDefinition sourceGrouping = (GroupingDefinition)
             verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.getInstance())).buildEffective();
-        final int flags = historyAndStatusFlags(stmt.history(), substatements);
+        final int flags = EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements);
         final QName argument = stmt.getArgument();
         final UsesStatement declared = stmt.declared();
 
