@@ -30,7 +30,7 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     private final StatementSupport<A, D, E> delegate;
 
     protected ForwardingStatementSupport(final StatementSupport<A, D, E> delegate) {
-        super(delegate.getPublicView(), delegate.copyPolicy());
+        super(delegate);
         this.delegate = delegate;
     }
 

@@ -85,9 +85,8 @@ public final class ChoiceStatementSupport
     private final SubstatementValidator validator;
     private final CaseStatementSupport implicitCase;
 
-    private ChoiceStatementSupport(final SubstatementValidator validator,
-            final CaseStatementSupport implicitCase) {
-        super(YangStmtMapping.CHOICE, CopyPolicy.DECLARED_COPY);
+    private ChoiceStatementSupport(final SubstatementValidator validator, final CaseStatementSupport implicitCase) {
+        super(YangStmtMapping.CHOICE, StatementPolicy.legacyDeclaredCopy());
         this.validator = requireNonNull(validator);
         this.implicitCase = requireNonNull(implicitCase);
     }
