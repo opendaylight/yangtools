@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -58,8 +59,8 @@ public final class EffectiveStmtUtils {
     public static Optional<ElementCountConstraint> createElementCountConstraint(
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return createElementCountConstraint(
-            BaseQNameStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
-            BaseQNameStatementSupport.findFirstArgument(substatements, MaxElementsEffectiveStatement.class, null));
+            AbstractStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
+            AbstractStatementSupport.findFirstArgument(substatements, MaxElementsEffectiveStatement.class, null));
     }
 
     private static Optional<ElementCountConstraint> createElementCountConstraint(
