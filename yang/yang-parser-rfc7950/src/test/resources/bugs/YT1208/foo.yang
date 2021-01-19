@@ -1,0 +1,14 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  grouping foo {
+    container bar {
+      // Two substatements to defeat singleton squashing
+      description "bar";
+      reference "bar";
+    }
+  }
+
+  uses foo;
+}

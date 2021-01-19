@@ -262,6 +262,30 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
+    boolean anySensitiveSubstatements() {
+        accessSubstatements();
+        if (substatements == null) {
+            // No difference, defer to prototype
+            return prototype.anySensitiveSubstatements();
+        }
+        if (substatements instanceof List) {
+            // Fully materialized, walk all statements
+            return anySensitiveSubstatements(castEffective(substatements));
+        }
+
+        // Partially-materialized. This case has three distinct outcomes:
+        // - prototype does not have a sensitive statement (1)
+        // - protype has a sensitive substatement, and
+        //   - we have not marked is as unsupported (2)
+        //   - we have marked it as unsupported (3)
+        //
+        // Determining the outcome between (2) and (3) is a bother, this check errs on the side of false positive
+        // side and treats (3) as (2).
+        return prototype.anySensitiveSubstatements()
+            || anySensitiveSubstatements(castMaterialized(substatements).values());
+    }
+
+    @Override
     public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
         if (substatements instanceof List) {

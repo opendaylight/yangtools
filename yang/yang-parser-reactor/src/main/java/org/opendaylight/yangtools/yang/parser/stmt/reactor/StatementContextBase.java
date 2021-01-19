@@ -423,11 +423,50 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     private void onPhaseCompleted(final ModelProcessingPhase phase) {
         completedPhase = phase;
+        if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
+            summarizeSubstatementPolicy();
+        }
 
         final Collection<OnPhaseFinished> listeners = phaseListeners.get(phase);
         if (!listeners.isEmpty()) {
             runPhaseListeners(phase, listeners);
         }
+    }
+
+    private void summarizeSubstatementPolicy() {
+        if (!anySensitiveSubstatements()) {
+            setAllSubstatementsContextIndependent();
+        }
+    }
+
+    /**
+     * Determine whether any substatements are context-sensitive as determined by {@link StatementSupport#copyPolicy()}.
+     * Only {@link CopyPolicy#CONTEXT_INDEPENDENT} and {@link CopyPolicy#IGNORE} are context-insensitive. Note that
+     * statements which are not {@link StmtContext#isSupportedToBuildEffective()} are all considered
+     * context-insensitive.
+     *
+     * @return True if any substatements require context-sensitive handling
+     */
+    abstract boolean anySensitiveSubstatements();
+
+    static boolean anySensitiveSubstatements(final Collection<? extends ReactorStmtCtx<?, ?, ?>> substatements) {
+        for (ReactorStmtCtx<?, ?, ?> stmt : substatements) {
+            if (stmt.isSupportedToBuildEffective()) {
+                if (!stmt.allSubstatementsContextIndependent()) {
+                    // This is a recursive property
+                    return true;
+                }
+
+                switch (stmt.definition().support().copyPolicy()) {
+                    case CONTEXT_INDEPENDENT:
+                    case IGNORE:
+                        break;
+                    default:
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void runPhaseListeners(final ModelProcessingPhase phase, final Collection<OnPhaseFinished> listeners) {
@@ -641,17 +680,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // substatements we can reuse the object. More complex cases are handled indirectly via the copy.
         return definition.getFactory().canReuseCurrent(copy, this, buildEffective().effectiveSubstatements())
             && allSubstatementsContextIndependent();
-    }
-
-    // FIXME: YANGTOOLS-1195: we really want to compute (and cache) the summary for substatements.
-    //
-    // For now we just check if there are any substatements, but we really want to ask:
-    //
-    //   Are all substatements (recursively) CONTEXT_INDEPENDENT as well?
-    //
-    // Which is something we want to compute once and store. This needs to be implemented.
-    private boolean allSubstatementsContextIndependent() {
-        return hasEmptySubstatements();
     }
 
     @Override
