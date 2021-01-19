@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
@@ -54,8 +55,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
@@ -582,5 +586,14 @@ public final class EffectiveStatementMixins {
     static Collection<? extends @NonNull TypeDefinition<?>> filterTypeDefinitions(final Mixin<?, ?> stmt) {
         return Collections2.transform(stmt.filterEffectiveStatements(TypedefEffectiveStatement.class),
             TypedefEffectiveStatement::getTypeDefinition);
+    }
+
+    public static int historyAndStatusFlags(final CopyHistory history,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+                .setHistory(history)
+                .setStatus(AbstractStatementSupport.findFirstArgument(substatements,
+                    StatusEffectiveStatement.class, Status.CURRENT))
+                .toFlags();
     }
 }

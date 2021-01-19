@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseSchemaTreeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -42,7 +43,7 @@ abstract class AbstractNotificationStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return new NotificationEffectiveStatementImpl(stmt.declared(), substatements,
-                historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
+                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
