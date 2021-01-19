@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,9 +15,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Specialization of {@link AbstractStatementSupport} for statements which carry a Boolean argument and are essentially
@@ -27,14 +26,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Boolean>,
+public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatement<Boolean>,
         E extends EffectiveStatement<Boolean, D>> extends AbstractStatementSupport<Boolean, D, E> {
     private final @NonNull E emptyEffectiveFalse;
     private final @NonNull E emptyEffectiveTrue;
     private final @NonNull D emptyDeclaredFalse;
     private final @NonNull D emptyDeclaredTrue;
 
-    protected BaseBooleanStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy) {
         super(publicDefinition, policy);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
@@ -45,12 +44,25 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
 
     @Override
     public final Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.parseBoolean(ctx, value);
+        if ("true".equals(value)) {
+            return Boolean.TRUE;
+        } else if ("false".equals(value)) {
+            return Boolean.FALSE;
+        } else {
+            throw new SourceException(ctx, "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
+                getStatementName(), getArgumentDefinition().get().getArgumentName(), value);
+        }
     }
 
     @Override
     public final String internArgument(final String rawArgument) {
-        return ArgumentUtils.internBoolean(rawArgument);
+        if ("true".equals(rawArgument)) {
+            return "true";
+        } else if ("false".equals(rawArgument)) {
+            return "false";
+        } else {
+            return rawArgument;
+        }
     }
 
     @Override

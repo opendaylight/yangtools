@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -51,28 +49,6 @@ public final class ArgumentUtils {
         final BigDecimal num1 = yangConstraintToBigDecimal(n1);
         final BigDecimal num2 = yangConstraintToBigDecimal(n2);
         return new BigDecimal(num1.toString()).compareTo(new BigDecimal(num2.toString()));
-    }
-
-    public static String internBoolean(final String input) {
-        if ("true".equals(input)) {
-            return "true";
-        } else if ("false".equals(input)) {
-            return "false";
-        } else {
-            return input;
-        }
-    }
-
-    public static @NonNull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
-        if ("true".equals(input)) {
-            return Boolean.TRUE;
-        } else if ("false".equals(input)) {
-            return Boolean.FALSE;
-        } else {
-            final StatementDefinition def = ctx.publicDefinition();
-            throw new SourceException(ctx, "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
-                def.getStatementName(), def.getArgumentDefinition().get().getArgumentName(), input);
-        }
     }
 
     public static boolean isAbsoluteXPath(final String path) {
