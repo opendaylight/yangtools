@@ -113,7 +113,7 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
     private final SubstatementValidator validator;
 
     ListStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.LIST, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.LIST, StatementPolicy.legacyDeclaredCopy());
         this.validator = requireNonNull(validator);
     }
 

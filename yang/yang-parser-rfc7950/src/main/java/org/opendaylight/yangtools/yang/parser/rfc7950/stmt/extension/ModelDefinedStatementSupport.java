@@ -28,7 +28,7 @@ final class ModelDefinedStatementSupport
     private final UnrecognizedStatementSupport definition;
 
     ModelDefinedStatementSupport(final ModelDefinedStatementDefinition publicDefinition) {
-        super(publicDefinition, CopyPolicy.DECLARED_COPY);
+        super(publicDefinition, StatementPolicy.legacyDeclaredCopy());
         this.definition = new UnrecognizedStatementSupport(publicDefinition);
     }
 

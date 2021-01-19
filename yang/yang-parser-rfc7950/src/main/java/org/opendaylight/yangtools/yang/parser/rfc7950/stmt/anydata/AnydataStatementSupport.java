@@ -42,7 +42,7 @@ public final class AnydataStatementSupport
     private static final AnydataStatementSupport INSTANCE = new AnydataStatementSupport();
 
     private AnydataStatementSupport() {
-        super(YangStmtMapping.ANYDATA, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.ANYDATA, StatementPolicy.legacyDeclaredCopy());
     }
 
     public static AnydataStatementSupport getInstance() {

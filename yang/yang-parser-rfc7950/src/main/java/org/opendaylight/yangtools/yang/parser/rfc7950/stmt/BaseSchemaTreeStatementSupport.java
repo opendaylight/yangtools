@@ -31,11 +31,6 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
         super(publicDefinition, policy);
     }
 
-    @Deprecated
-    protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
-        super(publicDefinition, copyPolicy);
-    }
-
     /**
      * {@inheritDoc}
      *
