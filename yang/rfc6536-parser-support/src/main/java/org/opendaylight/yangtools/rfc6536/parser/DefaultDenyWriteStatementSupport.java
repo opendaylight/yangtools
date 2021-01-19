@@ -21,15 +21,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultDenyWriteStatementSupport
-        extends BaseVoidStatementSupport<DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
+        extends AbstractVoidStatementSupport<DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
     private static final class Declared extends WithSubstatements implements DefaultDenyWriteStatement {
         static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
 
