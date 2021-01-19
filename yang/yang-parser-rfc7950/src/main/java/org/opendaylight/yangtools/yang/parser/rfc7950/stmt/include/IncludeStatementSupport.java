@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 
 @Beta
 public final class IncludeStatementSupport
-        extends BaseStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
+        extends AbstractStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
     private static final @NonNull IncludeStatementSupport RFC6020_INSTANCE = new IncludeStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.INCLUDE).addOptional(YangStmtMapping.REVISION_DATE).build());
     private static final @NonNull IncludeStatementSupport RFC7950_INSTANCE = new IncludeStatementSupport(
