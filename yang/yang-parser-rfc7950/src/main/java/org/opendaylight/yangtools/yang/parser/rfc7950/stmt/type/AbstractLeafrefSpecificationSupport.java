@@ -16,14 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractLeafrefSpecificationSupport
-        extends BaseStatementSupport<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> {
+abstract class AbstractLeafrefSpecificationSupport extends AbstractStatementSupport<String, LeafrefSpecification,
+            EffectiveStatement<String, LeafrefSpecification>> {
     AbstractLeafrefSpecificationSupport() {
         super(YangStmtMapping.TYPE, CopyPolicy.DECLARED_COPY);
     }

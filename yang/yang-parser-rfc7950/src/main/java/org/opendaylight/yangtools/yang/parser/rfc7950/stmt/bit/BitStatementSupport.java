@@ -17,14 +17,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
-public final class BitStatementSupport extends BaseStatementSupport<String, BitStatement, BitEffectiveStatement> {
+public final class BitStatementSupport extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
     private static final @NonNull BitStatementSupport RFC6020_INSTANCE = new BitStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.BIT)
             .addOptional(YangStmtMapping.DESCRIPTION)

@@ -17,13 +17,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
-public final class EnumStatementSupport extends BaseStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
+public final class EnumStatementSupport
+        extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
     private static final @NonNull EnumStatementSupport RFC6020_INSTANCE = new EnumStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.ENUM)
             .addOptional(YangStmtMapping.DESCRIPTION)

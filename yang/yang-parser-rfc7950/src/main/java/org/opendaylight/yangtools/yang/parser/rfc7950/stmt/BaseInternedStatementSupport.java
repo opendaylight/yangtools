@@ -17,12 +17,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * A {@link BaseStatementSupport} specialized for global interning. This base class is useful when the argument can be
- * reasonably interned and it dominates the {@link EffectiveStatement} implementation. Typical examples include
+ * A {@link AbstractStatementSupport} specialized for global interning. This base class is useful when the argument can
+ * be reasonably interned and it dominates the {@link EffectiveStatement} implementation. Typical examples include
  * {@code position} and {@code value} statements, which typically do not have substatements and are based on simple
  * types.
  *
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  */
 @Beta
 public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatement<A>,
-        E extends EffectiveStatement<A, D>> extends BaseStatementSupport<A, D, E> {
+        E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
     private final LoadingCache<A, D> declaredCache = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<A, D>() {
                 @Override

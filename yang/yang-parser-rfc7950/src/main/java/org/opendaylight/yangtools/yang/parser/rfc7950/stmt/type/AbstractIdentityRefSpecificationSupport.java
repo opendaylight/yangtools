@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.IdentityrefTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractIdentityRefSpecificationSupport
-        extends BaseStatementSupport<String, IdentityRefSpecification,
+        extends AbstractStatementSupport<String, IdentityRefSpecification,
             EffectiveStatement<String, IdentityRefSpecification>> {
     AbstractIdentityRefSpecificationSupport() {
         super(YangStmtMapping.TYPE, CopyPolicy.DECLARED_COPY);
