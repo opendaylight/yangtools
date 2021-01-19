@@ -80,6 +80,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence.PresenceStat
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range.RangeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference.ReferenceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance.RequireInstanceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision.RevisionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date.RevisionDateStatementSupport;
@@ -375,6 +376,7 @@ public final class RFC7950Reactors {
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, AugmentStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, AugmentStatementRFC7950Support.getInstance())
+            .addSupport(RefineTargetNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, RefineStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, RefineStatementSupport.rfc7950Instance())
             .addSupport(FeatureStatementSupport.getInstance())

@@ -154,11 +154,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         throw new UnsupportedOperationException();
     }

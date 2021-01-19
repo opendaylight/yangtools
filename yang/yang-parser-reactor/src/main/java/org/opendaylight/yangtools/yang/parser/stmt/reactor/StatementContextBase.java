@@ -131,14 +131,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
-        if (effectOfStatement.isEmpty()) {
-            effectOfStatement = new ArrayList<>(1);
-        }
-        effectOfStatement.add(ctx);
-    }
-
-    @Override
     public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         if (ctxs.isEmpty()) {
             return;
