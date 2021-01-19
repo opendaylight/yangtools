@@ -27,7 +27,7 @@ public final class ModifierStatementSupport
     private static final ModifierStatementSupport INSTANCE = new ModifierStatementSupport();
 
     private ModifierStatementSupport() {
-        super(YangStmtMapping.MODIFIER, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.MODIFIER, StatementPolicy.contextIndependent());
     }
 
     public static ModifierStatementSupport getInstance() {

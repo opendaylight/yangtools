@@ -34,7 +34,7 @@ public final class PathStatementSupport
 
     private PathStatementSupport(final PathExpressionParser parser) {
         // TODO: can 'path' really be copied?
-        super(YangStmtMapping.PATH, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.PATH, StatementPolicy.contextIndependent());
         this.parser = requireNonNull(parser);
     }
 

@@ -72,7 +72,7 @@ public final class DefaultDenyWriteStatementSupport
     private final SubstatementValidator validator;
 
     DefaultDenyWriteStatementSupport(final StatementDefinition definition) {
-        super(definition, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(definition, StatementPolicy.contextIndependent());
         this.validator = SubstatementValidator.builder(definition).build();
     }
 

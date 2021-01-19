@@ -39,7 +39,7 @@ public final class YangVersionStatementSupport
             new EmptyYangVersionEffectiveStatement(EMPTY_VER1_1_DECL);
 
     private YangVersionStatementSupport() {
-        super(YangStmtMapping.YANG_VERSION, CopyPolicy.REJECT);
+        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject());
     }
 
     public static YangVersionStatementSupport getInstance() {

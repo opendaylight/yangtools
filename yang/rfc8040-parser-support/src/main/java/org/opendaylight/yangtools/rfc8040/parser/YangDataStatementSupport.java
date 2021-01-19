@@ -48,7 +48,7 @@ public final class YangDataStatementSupport
     private final SubstatementValidator validator;
 
     private YangDataStatementSupport(final StatementDefinition definition) {
-        super(definition, CopyPolicy.REJECT);
+        super(definition, StatementPolicy.reject());
         validator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.CONTAINER)
                 .addOptional(YangStmtMapping.USES)

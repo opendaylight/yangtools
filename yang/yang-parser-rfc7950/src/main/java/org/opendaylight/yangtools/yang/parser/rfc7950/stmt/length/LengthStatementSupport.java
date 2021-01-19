@@ -40,7 +40,7 @@ public final class LengthStatementSupport
     private static final LengthStatementSupport INSTANCE = new LengthStatementSupport();
 
     private LengthStatementSupport() {
-        super(YangStmtMapping.LENGTH, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.LENGTH, StatementPolicy.contextIndependent());
     }
 
     public static LengthStatementSupport getInstance() {
