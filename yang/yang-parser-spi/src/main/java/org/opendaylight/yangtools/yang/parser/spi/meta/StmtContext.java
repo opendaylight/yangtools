@@ -330,7 +330,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void addRequiredSource(SourceIdentifier dependency);
 
-        void addAsEffectOfStatement(StmtContext<?, ?, ?> ctx);
+        // FIXME: this is an utter implementation leak between 'uses' and 'refine' statements, where
+        //        UsesStatementSupport calls this method and then RefineStatementSupport.buildEffective() picks it up.
+        @Deprecated
+        void addRefineTargetContext(StmtContext<?, ?, ?> ctx);
 
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 

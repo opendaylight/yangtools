@@ -17,6 +17,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import java.util.ArrayList;
@@ -131,11 +132,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
-        if (effectOfStatement.isEmpty()) {
-            effectOfStatement = new ArrayList<>(1);
-        }
-        effectOfStatement.add(ctx);
+    @Deprecated
+    public final EffectiveStatement<?, ?> getEffectiveRefineTarget() {
+        // FIXME: this has an effect on declared statement filtering, which is a 'uses' statement contract mostly.
+        //        If that effect is not intended, this should be stored in a dedicated namespace instead.
+        return Iterables.getOnlyElement(effectOfStatement).buildEffective();
+    }
+
+    @Override
+    @Deprecated
+    public void addRefineTargetContext(final StmtContext<?, ?, ?> ctx) {
+        verify(effectOfStatement.isEmpty(), "Unexpected pre-existing effects %s", effectOfStatement);
+        effectOfStatement = List.of(ctx);
     }
 
     @Override

@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -302,19 +302,21 @@ public final class UsesStatementSupport
         InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx, "Refine target node %s not found.",
             refineArgument);
 
+        // FIXME: This communicates the looked-up target node to RefineStatementSupport.buildEffective(). We should do
+        //        this trick through a shared namespace or similar reactor-agnostic meeting place. It really feels like
+        //        an inference action RefineStatementSupport should be doing.
         final StmtContext<?, ?, ?> refineTargetNodeCtx = optRefineTargetCtx.get();
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", subStmtCtx.argument(),
                 subStmtCtx.coerceParentContext().argument(), refineTargetNodeCtx.argument(),
                 subStmtCtx.sourceReference());
-            subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
-            return;
+        } else {
+            verify(refineTargetNodeCtx instanceof StatementContextBase);
+            addOrReplaceNodes(subStmtCtx, (StatementContextBase<?, ?, ?>) refineTargetNodeCtx);
         }
 
-        Verify.verify(refineTargetNodeCtx instanceof StatementContextBase);
-        addOrReplaceNodes(subStmtCtx, (StatementContextBase<?, ?, ?>) refineTargetNodeCtx);
-        subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
+        subStmtCtx.addRefineTargetContext(refineTargetNodeCtx);
     }
 
     private static void addOrReplaceNodes(final Mutable<?, ?, ?> subStmtCtx,

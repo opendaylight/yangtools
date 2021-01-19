@@ -154,7 +154,14 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
+    @Deprecated
+    public EffectiveStatement<?, ?> getEffectiveRefineTarget() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Deprecated
+    public void addRefineTargetContext(final StmtContext<?, ?, ?> ctx) {
         throw new UnsupportedOperationException();
     }
 

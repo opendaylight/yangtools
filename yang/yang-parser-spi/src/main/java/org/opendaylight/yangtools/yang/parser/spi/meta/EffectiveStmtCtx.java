@@ -141,5 +141,13 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         // FIXME: YANGTOOLS-1186: lob the Holy Hand Grenade of Antioch
         @Deprecated
         <E extends EffectiveStatement<A, D>> @NonNull StmtContext<A, D, E> caerbannog();
+
+        /**
+         * Acquire the statement stored via {@link Mutable#addRefineTargetContext(StmtContext).
+         *
+         * @return The target effective statement.
+         */
+        @Deprecated
+        @NonNull EffectiveStatement<?, ?> getEffectiveRefineTarget();
     }
 }
