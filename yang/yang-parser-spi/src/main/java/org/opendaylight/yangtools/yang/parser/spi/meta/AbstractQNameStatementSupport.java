@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Specialization of {@link AbstractStatementSupport} for QName statement arguments.
@@ -23,15 +21,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * @param <E> Effective Statement representation
  */
 @Beta
-public abstract class BaseQNameStatementSupport<D extends DeclaredStatement<QName>,
+public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
-    protected BaseQNameStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
         super(publicDefinition, policy);
     }
 
     @Deprecated
-    protected BaseQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
     }
 

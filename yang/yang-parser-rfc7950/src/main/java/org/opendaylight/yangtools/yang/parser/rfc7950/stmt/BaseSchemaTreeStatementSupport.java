@@ -12,19 +12,20 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
- * Specialization of {@link BaseQNameStatementSupport} for {@link SchemaTreeEffectiveStatement} implementations. Every
- * statement automatically participates in {@link SchemaTreeNamespace}.
+ * Specialization of {@link AbstractQNameStatementSupport} for {@link SchemaTreeEffectiveStatement} implementations.
+ * Every statement automatically participates in {@link SchemaTreeNamespace}.
  *
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
 public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
-        E extends SchemaTreeEffectiveStatement<D>> extends BaseQNameStatementSupport<D, E> {
+        E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
     protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
     }
