@@ -423,10 +423,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     private void onPhaseCompleted(final ModelProcessingPhase phase) {
         completedPhase = phase;
+        if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
+            summarizeSubstatementPolicy();
+        }
 
         final Collection<OnPhaseFinished> listeners = phaseListeners.get(phase);
         if (!listeners.isEmpty()) {
             runPhaseListeners(phase, listeners);
+        }
+    }
+
+    private void summarizeSubstatementPolicy() {
+        // FIXME: YANGTOOLS-1195: we really want to compute (and cache) the summary for substatements.
+        //
+        // For now we just check if there are any substatements, but we really want to ask:
+        //
+        //   Are all substatements (recursively) CONTEXT_INDEPENDENT as well?
+        //
+        // Which is something we want to compute once and store. This needs to be implemented.
+        if (hasEmptySubstatements()) {
+            setAllSubstatementContextIndependent();
         }
     }
 
@@ -641,17 +657,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // substatements we can reuse the object. More complex cases are handled indirectly via the copy.
         return definition.getFactory().canReuseCurrent(copy, this, buildEffective().effectiveSubstatements())
             && allSubstatementsContextIndependent();
-    }
-
-    // FIXME: YANGTOOLS-1195: we really want to compute (and cache) the summary for substatements.
-    //
-    // For now we just check if there are any substatements, but we really want to ask:
-    //
-    //   Are all substatements (recursively) CONTEXT_INDEPENDENT as well?
-    //
-    // Which is something we want to compute once and store. This needs to be implemented.
-    private boolean allSubstatementsContextIndependent() {
-        return hasEmptySubstatements();
     }
 
     @Override
