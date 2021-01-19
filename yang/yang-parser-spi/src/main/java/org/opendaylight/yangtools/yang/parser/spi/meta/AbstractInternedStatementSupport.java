@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
@@ -17,9 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * A {@link AbstractStatementSupport} specialized for global interning. This base class is useful when the argument can
@@ -31,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * Note: use of this base class implies context-independence.
  */
 @Beta
-public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatement<A>,
+public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
     private final LoadingCache<A, D> declaredCache = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<A, D>() {
@@ -48,7 +46,7 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
                 }
             });
 
-    protected BaseInternedStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<A, D> policy) {
         super(publicDefinition, policy);
     }

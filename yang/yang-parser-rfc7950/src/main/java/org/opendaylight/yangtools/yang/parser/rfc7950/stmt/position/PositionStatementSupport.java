@@ -14,13 +14,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseInternedStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class PositionStatementSupport
-        extends BaseInternedStatementSupport<Uint32, PositionStatement, PositionEffectiveStatement> {
+        extends AbstractInternedStatementSupport<Uint32, PositionStatement, PositionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.POSITION).build();
     private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
