@@ -132,7 +132,7 @@ public final class ModuleStatementSupport
     private final SubstatementValidator validator;
 
     private ModuleStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.MODULE, CopyPolicy.REJECT);
+        super(YangStmtMapping.MODULE, StatementPolicy.reject());
         this.validator = requireNonNull(validator);
     }
 

@@ -27,7 +27,7 @@ public final class DefValStatementSupport
     private static final DefValStatementSupport INSTANCE = new DefValStatementSupport();
 
     private DefValStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.DEFVAL, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(IetfYangSmiv2ExtensionsMapping.DEFVAL, StatementPolicy.contextIndependent());
     }
 
     public static DefValStatementSupport getInstance() {

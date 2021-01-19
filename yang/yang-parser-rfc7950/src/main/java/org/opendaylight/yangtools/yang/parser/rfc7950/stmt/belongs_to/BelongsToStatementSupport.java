@@ -41,7 +41,7 @@ public final class BelongsToStatementSupport
     private static final BelongsToStatementSupport INSTANCE = new BelongsToStatementSupport();
 
     private BelongsToStatementSupport() {
-        super(YangStmtMapping.BELONGS_TO, CopyPolicy.REJECT);
+        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject());
     }
 
     public static BelongsToStatementSupport getInstance() {

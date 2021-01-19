@@ -41,7 +41,7 @@ public final class OrderedByStatementSupport
             new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
 
     private OrderedByStatementSupport() {
-        super(YangStmtMapping.ORDERED_BY, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent());
     }
 
     public static OrderedByStatementSupport getInstance() {

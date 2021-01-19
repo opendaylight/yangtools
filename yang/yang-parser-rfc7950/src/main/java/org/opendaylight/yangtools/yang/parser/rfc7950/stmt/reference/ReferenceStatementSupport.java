@@ -26,7 +26,7 @@ public final class ReferenceStatementSupport
     private static final ReferenceStatementSupport INSTANCE = new ReferenceStatementSupport();
 
     private ReferenceStatementSupport() {
-        super(YangStmtMapping.REFERENCE, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.REFERENCE, StatementPolicy.contextIndependent());
     }
 
     public static ReferenceStatementSupport getInstance() {
