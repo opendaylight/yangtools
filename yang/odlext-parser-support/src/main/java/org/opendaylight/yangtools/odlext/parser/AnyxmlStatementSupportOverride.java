@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffective
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatemen
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ForwardingStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
@@ -32,22 +30,11 @@ public final class AnyxmlStatementSupportOverride
     private static final AnyxmlStatementSupportOverride INSTANCE = new AnyxmlStatementSupportOverride();
 
     private AnyxmlStatementSupportOverride() {
-
+        super(AnyxmlStatementSupport.getInstance());
     }
 
     public static AnyxmlStatementSupportOverride getInstance() {
         return INSTANCE;
-    }
-
-    @Override
-    protected StatementSupport<QName, AnyxmlStatement, AnyxmlEffectiveStatement> delegate() {
-        return AnyxmlStatementSupport.getInstance();
-    }
-
-    @Override
-    public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-        // FIXME: this is not entirely accurate?
-        return delegate().getEffectiveRepresentationClass();
     }
 
     @Override

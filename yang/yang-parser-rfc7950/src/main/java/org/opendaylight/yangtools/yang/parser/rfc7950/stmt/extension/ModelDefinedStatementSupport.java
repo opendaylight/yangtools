@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
  * @author Robert Varga
  */
 final class ModelDefinedStatementSupport
-        extends AbstractStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
+        extends StatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     private final UnrecognizedStatementSupport definition;
 
     ModelDefinedStatementSupport(final ModelDefinedStatementDefinition publicDefinition) {

@@ -21,12 +21,12 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- * Implementation-internal base class for {@link AbstractStatementSupport} implementations.
+ * Implementation-internal base class for {@link StatementSupport} implementations.
  *
  * @param <A> Argument type
  * @param <D> Declared Statement representation
@@ -36,7 +36,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 //        we rely on  getEffectOfStatement() -- which is something reactor mechanics need to make work better.
 @Beta
 public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
-        E extends EffectiveStatement<A, D>> extends AbstractStatementSupport<A, D, E> {
+        E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
+
     @Deprecated
     protected BaseStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
