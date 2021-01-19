@@ -16,6 +16,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 public abstract class BaseVoidStatementSupport<D extends DeclaredStatement<Void>, E extends EffectiveStatement<Void, D>>
         extends BaseStatementSupport<Void, D, E> {
+    protected BaseVoidStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<Void, D> policy) {
+        super(publicDefinition, policy);
+    }
+
+    @Deprecated
     protected BaseVoidStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
         super(publicDefinition, copyPolicy);
     }

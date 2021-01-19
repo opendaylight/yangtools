@@ -50,7 +50,7 @@ public final class FractionDigitsStatementSupport
     }
 
     private FractionDigitsStatementSupport() {
-        super(YangStmtMapping.FRACTION_DIGITS, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.FRACTION_DIGITS, StatementPolicy.contextIndependent());
     }
 
     public static FractionDigitsStatementSupport getInstance() {

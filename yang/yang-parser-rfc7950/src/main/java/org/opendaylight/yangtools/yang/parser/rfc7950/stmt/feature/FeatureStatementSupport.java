@@ -39,7 +39,7 @@ public final class FeatureStatementSupport
     private static final int EMPTY_EFFECTIVE_FLAGS = new FlagsBuilder().setStatus(Status.CURRENT).toFlags();
 
     private FeatureStatementSupport() {
-        super(YangStmtMapping.FEATURE, CopyPolicy.REJECT);
+        super(YangStmtMapping.FEATURE, StatementPolicy.reject());
     }
 
     public static FeatureStatementSupport getInstance() {

@@ -27,7 +27,7 @@ public final class YinElementStatementSupport
         super(YangStmtMapping.YIN_ELEMENT,
             new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.FALSE)),
             new EmptyYinElementEffectiveStatement(new EmptyYinElementStatement(Boolean.TRUE)),
-            CopyPolicy.REJECT);
+            StatementPolicy.reject());
     }
 
     public static YinElementStatementSupport getInstance() {
