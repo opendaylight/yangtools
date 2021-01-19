@@ -44,7 +44,7 @@ public final class BitStatementSupport extends BaseStatementSupport<String, BitS
     private final SubstatementValidator validator;
 
     private BitStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.BIT, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.BIT, StatementPolicy.contextIndependent());
         this.validator = requireNonNull(validator);
     }
 

@@ -30,7 +30,7 @@ public final class NamespaceStatementSupport
     private static final NamespaceStatementSupport INSTANCE = new NamespaceStatementSupport();
 
     private NamespaceStatementSupport() {
-        super(YangStmtMapping.NAMESPACE, CopyPolicy.REJECT);
+        super(YangStmtMapping.NAMESPACE, StatementPolicy.reject());
     }
 
     public static NamespaceStatementSupport getInstance() {

@@ -51,7 +51,7 @@ public final class TypedefStatementSupport extends
     private static final TypedefStatementSupport INSTANCE = new TypedefStatementSupport();
 
     private TypedefStatementSupport() {
-        super(YangStmtMapping.TYPEDEF, CopyPolicy.REJECT);
+        super(YangStmtMapping.TYPEDEF, StatementPolicy.reject());
     }
 
     public static TypedefStatementSupport getInstance() {

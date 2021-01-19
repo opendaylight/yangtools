@@ -31,7 +31,7 @@ public final class RevisionStatementSupport
     private static final RevisionStatementSupport INSTANCE = new RevisionStatementSupport();
 
     private RevisionStatementSupport() {
-        super(YangStmtMapping.REVISION, CopyPolicy.REJECT);
+        super(YangStmtMapping.REVISION, StatementPolicy.reject());
     }
 
     public static RevisionStatementSupport getInstance() {

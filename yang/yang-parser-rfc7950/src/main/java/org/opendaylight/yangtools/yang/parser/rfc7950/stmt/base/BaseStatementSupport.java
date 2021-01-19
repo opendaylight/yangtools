@@ -36,7 +36,7 @@ public final class BaseStatementSupport extends BaseQNameStatementSupport<BaseSt
     private static final BaseStatementSupport INSTANCE = new BaseStatementSupport();
 
     private BaseStatementSupport() {
-        super(YangStmtMapping.BASE, CopyPolicy.REJECT);
+        super(YangStmtMapping.BASE, StatementPolicy.reject());
     }
 
     public static BaseStatementSupport getInstance() {

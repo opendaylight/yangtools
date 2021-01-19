@@ -24,8 +24,12 @@ public final class ConfigStatementSupport
     private static final ConfigStatementSupport INSTANCE = new ConfigStatementSupport();
 
     private ConfigStatementSupport() {
-        super(YangStmtMapping.CONFIG, new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.FALSE)),
-            new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.TRUE)), CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.CONFIG,
+            new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.FALSE)),
+            new EmptyConfigEffectiveStatement(new EmptyConfigStatement(Boolean.TRUE)),
+            // FIXME: This is not quite true. If we are instantiated in a context which ignores config, which should
+            //        really fizzle. This needs some more analysis.
+            StatementPolicy.contextIndependent());
     }
 
     public static ConfigStatementSupport getInstance() {

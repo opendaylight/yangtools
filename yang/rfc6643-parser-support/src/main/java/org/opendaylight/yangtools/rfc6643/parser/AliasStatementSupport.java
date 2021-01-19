@@ -33,7 +33,7 @@ public final class AliasStatementSupport
     private static final AliasStatementSupport INSTANCE = new AliasStatementSupport();
 
     private AliasStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.ALIAS, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(IetfYangSmiv2ExtensionsMapping.ALIAS, StatementPolicy.contextIndependent());
     }
 
     public static AliasStatementSupport getInstance() {

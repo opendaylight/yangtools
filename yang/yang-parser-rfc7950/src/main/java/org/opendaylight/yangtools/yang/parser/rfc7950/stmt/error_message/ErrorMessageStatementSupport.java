@@ -25,7 +25,7 @@ public final class ErrorMessageStatementSupport
     private static final ErrorMessageStatementSupport INSTANCE = new ErrorMessageStatementSupport();
 
     private ErrorMessageStatementSupport() {
-        super(YangStmtMapping.ERROR_MESSAGE, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.ERROR_MESSAGE, StatementPolicy.contextIndependent());
     }
 
     public static ErrorMessageStatementSupport getInstance() {

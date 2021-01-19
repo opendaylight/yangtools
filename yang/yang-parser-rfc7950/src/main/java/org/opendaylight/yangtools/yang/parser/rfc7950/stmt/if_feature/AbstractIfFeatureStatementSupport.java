@@ -45,7 +45,7 @@ abstract class AbstractIfFeatureStatementSupport
         .build();
 
     AbstractIfFeatureStatementSupport() {
-        super(YangStmtMapping.IF_FEATURE, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent());
     }
 
     @Override
