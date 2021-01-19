@@ -75,7 +75,7 @@ public final class GroupingStatementSupport
     private final SubstatementValidator validator;
 
     GroupingStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.GROUPING, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.GROUPING, StatementPolicy.legacyDeclaredCopy());
         this.validator = requireNonNull(validator);
     }
 
