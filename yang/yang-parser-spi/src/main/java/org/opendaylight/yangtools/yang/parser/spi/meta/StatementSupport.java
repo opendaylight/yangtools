@@ -55,7 +55,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         /**
-         * Return an {@link StatementPolicy} for {@link CopyPolicy#CONTEXT_INDEPENDENT}.
+         * Return a {@link StatementPolicy} for {@link CopyPolicy#CONTEXT_INDEPENDENT}.
          *
          * @param <A> Argument type
          * @param <D> Declared Statement representation
@@ -67,7 +67,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         /**
-         * Return an {@link StatementPolicy} for {@link CopyPolicy#IGNORE}.
+         * Return a {@link StatementPolicy} for {@link CopyPolicy#IGNORE}.
          *
          * @param <A> Argument type
          * @param <D> Declared Statement representation
@@ -79,7 +79,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         /**
-         * Return an {@link StatementPolicy} for {@link CopyPolicy#REJECT}.
+         * Return a {@link StatementPolicy} for {@link CopyPolicy#REJECT}.
          *
          * @param <A> Argument type
          * @param <D> Declared Statement representation
@@ -91,53 +91,39 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         /**
-         * Return an {@link StatementPolicy} for {@link CopyPolicy#DECLARED_COPY}, deferring to a
+         * Return a {@link StatementPolicy} for {@link CopyPolicy#DECLARED_COPY}, deferring to a
          * {@link StatementEquality} for individual decisions.
          *
          * @param <A> Argument type
          * @param <D> Declared Statement representation
          * @param equality {@link StatementEquality} to apply to effective statements
-         * @return Rejecting statement policy
+         * @return Equality-based statement policy
          */
         public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> copyDeclared(
                 final @NonNull StatementEquality<A, D> equality) {
             return new EqualSemantics<>(equality);
         }
 
+        /**
+         * Return a {@link StatementPolicy} for {@link CopyPolicy#DECLARED_COPY}, always performing a copy operation.
+         *
+         * @param <A> Argument type
+         * @param <D> Declared Statement representation
+         * @return Rejecting statement policy
+         */
+        @SuppressWarnings("unchecked")
+        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> alwaysCopyDeclared() {
+            return (StatementPolicy<A, D>) EqualSemantics.ALWAYS_COPY;
+        }
+
+        @Deprecated(forRemoval = true)
+        // FIXME: 7.0.0: remove this method
+        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> legacyDeclaredCopy() {
+            return alwaysCopyDeclared();
+        }
+
         abstract boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
             @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
-
-        @Deprecated
-        @SuppressWarnings("unchecked")
-        static <A, D extends DeclaredStatement<A>> StatementPolicy<A, D> compat(final CopyPolicy copyPolicy) {
-            switch (copyPolicy) {
-                case CONTEXT_INDEPENDENT:
-                    return contextIndependent();
-                case DECLARED_COPY:
-                    return (StatementPolicy<A, D>) AlwaysCopy.DECLARED_COPY;
-                case IGNORE:
-                    return ignore();
-                case REJECT:
-                    return reject();
-                default:
-                    throw new IllegalStateException("Unsupported policy " + copyPolicy);
-            }
-        }
-
-        private static final class AlwaysCopy<A, D extends DeclaredStatement<A>> extends StatementPolicy<A, D> {
-            @Deprecated
-            static final @NonNull AlwaysCopy<?, ?> DECLARED_COPY = new AlwaysCopy<>(CopyPolicy.DECLARED_COPY);
-
-            AlwaysCopy(final CopyPolicy copyPolicy) {
-                super(copyPolicy);
-            }
-
-            @Override
-            boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
-                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-                return false;
-            }
-        }
 
         private static final class AlwaysReuse<A, D extends DeclaredStatement<A>> extends StatementPolicy<A, D> {
             static final @NonNull AlwaysReuse<?, ?> CONTEXT_INDEPENDENT =
@@ -170,6 +156,9 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         private static final class EqualSemantics<A, D extends DeclaredStatement<A>> extends StatementPolicy<A, D> {
+            static final @NonNull EqualSemantics<?, ?> ALWAYS_COPY =
+                new EqualSemantics<>((copy, stmt, substatements) -> true);
+
             private final @NonNull StatementEquality<A, D> equality;
 
             EqualSemantics(final @NonNull StatementEquality<A, D> equality) {
@@ -212,18 +201,19 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     private final @NonNull CopyPolicy copyPolicy;
 
     @Beta
+    protected StatementSupport(final StatementSupport<A, D, E> delegate) {
+        checkArgument(delegate != this);
+        this.def = delegate.def;
+        this.policy = delegate.policy;
+        this.copyPolicy = delegate.copyPolicy;
+    }
+
+    @Beta
     protected StatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
         checkArgument(publicDefinition != this);
         this.def = requireNonNull(publicDefinition);
         this.policy = requireNonNull(policy);
         this.copyPolicy = policy.copyPolicy;
-    }
-
-    @Beta
-    @Deprecated
-    // FIXME: remove this constructor
-    protected StatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
-        this(publicDefinition, StatementPolicy.compat(copyPolicy));
     }
 
     /**

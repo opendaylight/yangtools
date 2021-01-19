@@ -60,7 +60,7 @@ public final class InputStatementSupport
     private final SubstatementValidator validator;
 
     private InputStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.INPUT, YangConstants::operationInputQName, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.INPUT, YangConstants::operationInputQName);
         this.validator = requireNonNull(validator);
     }
 

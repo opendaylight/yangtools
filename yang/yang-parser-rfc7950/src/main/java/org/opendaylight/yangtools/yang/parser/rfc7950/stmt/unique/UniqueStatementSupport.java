@@ -45,7 +45,7 @@ public final class UniqueStatementSupport
     private static final UniqueStatementSupport INSTANCE = new UniqueStatementSupport();
 
     private UniqueStatementSupport() {
-        super(YangStmtMapping.UNIQUE, CopyPolicy.DECLARED_COPY);
+        super(YangStmtMapping.UNIQUE, StatementPolicy.legacyDeclaredCopy());
     }
 
     public static UniqueStatementSupport getInstance() {

@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
  */
 public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
-    protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
-        super(publicDefinition, copyPolicy);
+    protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<QName, D> policy) {
+        super(publicDefinition, policy);
     }
 
     /**

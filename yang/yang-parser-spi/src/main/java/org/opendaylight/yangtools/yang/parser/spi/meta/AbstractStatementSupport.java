@@ -34,11 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 @Beta
 public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
-    @Deprecated
-    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
-        super(publicDefinition, copyPolicy);
-    }
-
     protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
         super(publicDefinition, policy);
     }
