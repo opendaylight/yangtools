@@ -192,6 +192,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
+    final boolean noSensitiveSubstatements() {
+        return hasEmptySubstatements()
+            || noSensitiveSubstatements(substatements) && noSensitiveSubstatements(effective);
+    }
+
+    @Override
     final Iterable<ReactorStmtCtx<?, ?, ?>> effectiveChildrenToComplete() {
         return effective;
     }
