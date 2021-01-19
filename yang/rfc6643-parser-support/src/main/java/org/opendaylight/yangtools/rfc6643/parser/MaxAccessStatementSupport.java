@@ -29,7 +29,7 @@ public final class MaxAccessStatementSupport
     private static final MaxAccessStatementSupport INSTANCE = new MaxAccessStatementSupport();
 
     private MaxAccessStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, StatementPolicy.contextIndependent());
     }
 
     public static MaxAccessStatementSupport getInstance() {

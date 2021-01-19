@@ -28,7 +28,7 @@ public final class SubIdStatementSupport
     private static final SubIdStatementSupport INSTANCE = new SubIdStatementSupport();
 
     private SubIdStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.SUB_ID, CopyPolicy.CONTEXT_INDEPENDENT);
+        super(IetfYangSmiv2ExtensionsMapping.SUB_ID, StatementPolicy.contextIndependent());
     }
 
     public static SubIdStatementSupport getInstance() {
