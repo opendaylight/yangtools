@@ -1,0 +1,27 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  grouping grp {
+    container foo {
+      description "foo";
+      reference "foo";
+    }
+  }
+
+  rpc rpc {
+    // Implies uninstantiated context, which is important for container
+    input {
+      grouping bar {
+        // introduces 'foo' via uses
+        uses grp;
+      }
+
+      container bar {
+        // introduces 'foo' via uses->uses, while the last copy has
+        // the same schemapath
+        uses bar;
+      }
+    }
+  }
+}
