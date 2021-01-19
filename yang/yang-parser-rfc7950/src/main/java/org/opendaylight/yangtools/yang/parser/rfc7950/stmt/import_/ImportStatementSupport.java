@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class ImportStatementSupport
-        extends BaseStringStatementSupport<ImportStatement, ImportEffectiveStatement> {
+        extends AbstractStringStatementSupport<ImportStatement, ImportEffectiveStatement> {
     private static final @NonNull ImportStatementSupport RFC6020_INSTANCE = new ImportStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
