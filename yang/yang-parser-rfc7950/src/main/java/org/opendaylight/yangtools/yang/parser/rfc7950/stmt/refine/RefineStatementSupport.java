@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -96,6 +98,7 @@ public final class RefineStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
         return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.wrapSchemaPath(),
-                (SchemaNode) stmt.caerbannog().getEffectOfStatement().iterator().next().buildEffective());
+            (SchemaNode) verifyNotNull(stmt.namespaceItem(RefineTargetNamespace.class, Empty.getInstance()))
+                .buildEffective());
     }
 }

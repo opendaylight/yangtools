@@ -330,8 +330,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void addRequiredSource(SourceIdentifier dependency);
 
-        void addAsEffectOfStatement(StmtContext<?, ?, ?> ctx);
-
         void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
 
         /**
