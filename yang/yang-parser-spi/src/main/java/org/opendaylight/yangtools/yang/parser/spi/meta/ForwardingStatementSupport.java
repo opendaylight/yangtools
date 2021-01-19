@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ForwardingObject;
-import java.util.Collection;
 import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
@@ -29,76 +26,73 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 @Beta
 public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-    extends ForwardingObject implements StatementSupport<A, D, E> {
+        extends StatementSupport<A, D, E> {
+    private final StatementSupport<A, D, E> delegate;
 
-    @Override
-    protected abstract StatementSupport<A, D, E> delegate();
+    protected ForwardingStatementSupport(final StatementSupport<A, D, E> delegate) {
+        super(delegate.getPublicView(), delegate.copyPolicy());
+        this.delegate = delegate;
+    }
 
     @Override
     public D createDeclared(final StmtContext<A, D, ?> ctx) {
-        return delegate().createDeclared(ctx);
+        return delegate.createDeclared(ctx);
     }
 
     @Override
     public E createEffective(final Current<A, D> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
-        return delegate().createEffective(stmt, declaredSubstatements, effectiveSubstatements);
-    }
-
-    @Override
-    public StatementDefinition getPublicView() {
-        return delegate().getPublicView();
+        return delegate.createEffective(stmt, declaredSubstatements, effectiveSubstatements);
     }
 
     @Override
     public A parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return delegate().parseArgumentValue(ctx, value);
+        return delegate.parseArgumentValue(ctx, value);
     }
 
     @Override
     public void onStatementAdded(final Mutable<A, D, E> stmt) {
-        delegate().onStatementAdded(stmt);
+        delegate.onStatementAdded(stmt);
     }
 
     @Override
     public void onPreLinkageDeclared(final Mutable<A, D, E> stmt) {
-        delegate().onPreLinkageDeclared(stmt);
+        delegate.onPreLinkageDeclared(stmt);
     }
 
     @Override
     public void onLinkageDeclared(final Mutable<A, D, E> stmt) {
-        delegate().onLinkageDeclared(stmt);
+        delegate.onLinkageDeclared(stmt);
     }
 
     @Override
     public void onStatementDefinitionDeclared(final Mutable<A, D, E> stmt) {
-        delegate().onStatementDefinitionDeclared(stmt);
+        delegate.onStatementDefinitionDeclared(stmt);
     }
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<A, D, E> stmt) {
-        delegate().onFullDefinitionDeclared(stmt);
+        delegate.onFullDefinitionDeclared(stmt);
     }
 
     @Override
     public boolean hasArgumentSpecificSupports() {
-        return delegate().hasArgumentSpecificSupports();
+        return delegate.hasArgumentSpecificSupports();
     }
 
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        return delegate().getSupportSpecificForArgument(argument);
+        return delegate.getSupportSpecificForArgument(argument);
     }
 
     @Override
-    public CopyPolicy copyPolicy() {
-        return delegate().copyPolicy();
+    protected SubstatementValidator getSubstatementValidator() {
+        return delegate.getSubstatementValidator();
     }
 
     @Override
-    public boolean canReuseCurrent(final Current<A, D> copy, final Current<A, D> current,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        return delegate().canReuseCurrent(copy, current, substatements);
+    public String toString() {
+        return delegate.toString();
     }
 }
