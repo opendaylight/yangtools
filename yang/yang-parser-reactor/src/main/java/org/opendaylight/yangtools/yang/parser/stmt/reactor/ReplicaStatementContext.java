@@ -92,6 +92,12 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
+        // FIXME: 7.0.0: List.of() ?
+        return source.getEffectOfStatement();
+    }
+
+    @Override
     public ModelProcessingPhase getCompletedPhase() {
         return source.getCompletedPhase();
     }
@@ -155,11 +161,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
         throw new UnsupportedOperationException();
     }
 
