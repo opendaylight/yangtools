@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -102,6 +103,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
+        return List.of();
+    }
+
+    @Override
     public Mutable<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> newParent) {
         return source.replicaAsChildOf(newParent);
     }
@@ -155,11 +161,6 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
         throw new UnsupportedOperationException();
     }
 

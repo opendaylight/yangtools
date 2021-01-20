@@ -1,0 +1,21 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  grouping grp {
+    leaf bar {
+      type string;
+    }
+    leaf baz {
+      when "../bar" {
+        description "desc";
+      }
+      type string;
+    }
+  }
+
+  container foo {
+    uses grp;
+  }
+}
+
