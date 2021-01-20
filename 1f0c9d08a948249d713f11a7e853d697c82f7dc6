@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "e27fee1a_c2337658",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-20T08:54:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b03b56d_c5c95c35",
+      "range": {
+        "startLine": 184,
+        "startChar": 19,
+        "endLine": 184,
+        "endChar": 44
+      },
+      "revId": "1f0c9d08a948249d713f11a7e853d697c82f7dc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6614fc5d_58d79e88",
         "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
         "patchSetId": 5
@@ -69,6 +93,30 @@
       "revId": "1f0c9d08a948249d713f11a7e853d697c82f7dc6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "231c0631_b3281962",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/InferredStatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-20T08:54:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6614fc5d_58d79e88",
+      "range": {
+        "startLine": 186,
+        "startChar": 64,
+        "endLine": 186,
+        "endChar": 100
+      },
+      "revId": "1f0c9d08a948249d713f11a7e853d697c82f7dc6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
