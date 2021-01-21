@@ -7,12 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -26,9 +32,93 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
  */
 public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
+    private static class SchemaTreeEquality<D extends DeclaredStatement<QName>>
+            implements StatementEquality<QName, D> {
+        private static final class Instantiated<D extends DeclaredStatement<QName>> extends SchemaTreeEquality<D> {
+            @Override
+            public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
+                    final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+                return copy.effectiveConfig() == current.effectiveConfig()
+                    && super.canReuseCurrent(copy, current, substatements);
+            }
+        }
+
+        @Override
+        public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
+                final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+            return equalHistory(copy, current)
+                // FIXME: this should devolve to getArgument() equality
+                && copy.getSchemaPath().equals(current.getSchemaPath());
+        }
+
+        // TODO: can we speed this up?
+        private static boolean equalHistory(final Current<?, ?> copy, final Current<?, ?> current) {
+            return isAugmenting(copy) == isAugmenting(current)
+                && isAddedByUses(copy) == isAddedByUses(current);
+        }
+
+        private static boolean isAugmenting(final Current<?, ?> stmt) {
+            final CopyHistory history = stmt.history();
+            return history.contains(CopyType.ADDED_BY_AUGMENTATION)
+                || history.contains(CopyType.ADDED_BY_USES_AUGMENTATION);
+        }
+
+        private static boolean isAddedByUses(final Current<?, ?> stmt) {
+            final CopyHistory history = stmt.history();
+            return history.contains(CopyType.ADDED_BY_USES)
+                || history.contains(CopyType.ADDED_BY_USES_AUGMENTATION);
+        }
+    }
+
+    private static final StatementPolicy<QName, ?> INSTANTIATED_POLICY =
+        StatementPolicy.copyDeclared(new SchemaTreeEquality.Instantiated<>());
+    private static final StatementPolicy<QName, ?> UNINSTANTIATED_POLICY =
+        StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
+
     protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
         super(publicDefinition, policy);
+    }
+
+    /**
+     * Return the {@link StatementPolicy} corresponding to a potentially-instantiated YANG statement. Statements are
+     * reused as long as:
+     * <ul>
+     *   <li>{@link Current#schemaPath()} does not change</li>
+     *   <li>{@link Current#argument()} does not change</li>
+     *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
+     *   <li>{@link Current#effectiveConfig()} does not change</li>
+     * </ul>
+     *
+     * <p>
+     * Typical users include {@code container} and {@code leaf}.
+     *
+     * @param <D> Declared Statement representation
+     * @return A StatementPolicy
+     */
+    @SuppressWarnings("unchecked")
+    public static final <D extends DeclaredStatement<QName>> StatementPolicy<QName, D> instantiatedPolicy() {
+        return (StatementPolicy<QName, D>) INSTANTIATED_POLICY;
+    }
+
+    /**
+     * Return the {@link StatementPolicy} corresponding to an uninstantiated YANG statement. Statements are
+     * reused as long as:
+     * <ul>
+     *   <li>{@link Current#schemaPath()} does not change</li>
+     *   <li>{@link Current#argument()} does not change</li>
+     *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
+     * </ul>
+     *
+     * <p>
+     * Typical users include {@code action} and {@code notification}.
+     *
+     * @param <D> Declared Statement representation
+     * @return A StatementPolicy
+     */
+    @SuppressWarnings("unchecked")
+    public static final <D extends DeclaredStatement<QName>> StatementPolicy<QName, D> uninstantiatedPolicy() {
+        return (StatementPolicy<QName, D>) UNINSTANTIATED_POLICY;
     }
 
     /**
