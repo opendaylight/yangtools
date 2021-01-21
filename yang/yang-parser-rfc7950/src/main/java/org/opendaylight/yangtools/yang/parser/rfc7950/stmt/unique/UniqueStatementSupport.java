@@ -45,7 +45,9 @@ public final class UniqueStatementSupport
     private static final UniqueStatementSupport INSTANCE = new UniqueStatementSupport();
 
     private UniqueStatementSupport() {
-        super(YangStmtMapping.UNIQUE, StatementPolicy.legacyDeclaredCopy());
+        // FIXME: This reflects what the current implementation does. We really want to define an adaptArgumentValue(),
+        //        but how that plays with the argument and expectations needs to be investigated.
+        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent());
     }
 
     public static UniqueStatementSupport getInstance() {
