@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractNotificationStatementSupport
         extends BaseSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport() {
-        super(YangStmtMapping.NOTIFICATION, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy());
     }
 
     @Override
