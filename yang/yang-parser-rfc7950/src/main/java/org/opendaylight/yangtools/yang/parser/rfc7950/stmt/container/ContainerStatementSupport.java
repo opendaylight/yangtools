@@ -83,7 +83,7 @@ public final class ContainerStatementSupport
     private final SubstatementValidator validator;
 
     private ContainerStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.CONTAINER, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.CONTAINER, instantiatedPolicy());
         this.validator = requireNonNull(validator);
     }
 
@@ -114,7 +114,6 @@ public final class ContainerStatementSupport
     @Override
     protected ContainerEffectiveStatement createEffective(final Current<QName, ContainerStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final ContainerSchemaNode original = (ContainerSchemaNode) stmt.original();
         final int flags = new FlagsBuilder()
                 .setHistory(stmt.history())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
@@ -128,7 +127,8 @@ public final class ContainerStatementSupport
 
         final SchemaPath path = stmt.wrapSchemaPath();
         try {
-            return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, flags, path, original);
+            return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, flags, path,
+                (ContainerSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
