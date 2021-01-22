@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import java.util.Collection;
 import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -44,6 +45,12 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
             final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
         return delegate.createEffective(stmt, declaredSubstatements, effectiveSubstatements);
+    }
+
+    @Override
+    public E createEffective(final Current<A, D> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return delegate.createEffective(stmt, substatements);
     }
 
     @Override

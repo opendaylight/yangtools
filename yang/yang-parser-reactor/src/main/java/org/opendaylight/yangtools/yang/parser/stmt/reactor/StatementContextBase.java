@@ -682,7 +682,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
 
         parent.ensureCompletedPhase(copy);
-        return canReuseCurrent(copy) ? replicaAsChildOf(parent) : copy;
+        return canReuseCurrent(copy) ? this : copy;
     }
 
     private boolean canReuseCurrent(final ReactorStmtCtx<A, D, E> copy) {
