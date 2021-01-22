@@ -61,6 +61,13 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         return createEffective(stmt, substatements);
     }
 
+    @Override
+    public final E createEffective(final Current<A, D> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        // This copy should be a no-op
+        return createEffective(stmt, ImmutableList.copyOf(substatements));
+    }
+
     protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
