@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
@@ -308,8 +309,29 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
+    /**
+     * Return the effective statement view of a copy operation. This method may return one of:
+     * <ul>
+     *   <li>{@code this}, when the effective view did not change</li>
+     *   <li>an InferredStatementContext, when there is a need for inference-equivalent copy</li>
+     *   <li>{@code null}, when the statement failed to materialize</li>
+     * </ul>
+     *
+     * @param parent Proposed new parent
+     * @param type Copy operation type
+     * @param targetModule New target module
+     * @return {@link ReactorStmtCtx} holding effective view
+     */
     abstract @Nullable ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(StatementContextBase<?, ?, ?> parent, CopyType type,
         QNameModule targetModule);
+
+    @Override
+    public final ReactorStmtCtx<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+        checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
+        return replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
+    }
+
+    abstract @NonNull ReplicaStatementContext<A, D, E> replicaAsChildOf(@NonNull StatementContextBase<?, ?, ?> parent);
 
     //
     //
