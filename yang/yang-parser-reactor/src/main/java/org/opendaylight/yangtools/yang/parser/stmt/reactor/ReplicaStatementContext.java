@@ -35,15 +35,30 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     private final StatementContextBase<?, ?, ?> parent;
     private final ReactorStmtCtx<A, D, E> source;
 
-    ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final ReactorStmtCtx<A, D, E> source) {
+    private ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final ReactorStmtCtx<A, D, E> source) {
         super(source);
         this.parent = requireNonNull(parent);
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
-            source.incRef();
             // FIXME: is this call really needed? it is inherited from source
             setFullyDefined();
         }
+    }
+
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+            @NonNull ReplicaStatementContext<A, D, E> withRef(final StatementContextBase<?, ?, ?> parent,
+                final ReactorStmtCtx<A, D, E> source) {
+        final ReplicaStatementContext<A, D, E> ret = new ReplicaStatementContext<>(parent, source);
+        if (source.isSupportedToBuildEffective()) {
+            source.incRef();
+        }
+        return ret;
+    }
+
+    static <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+            @NonNull ReplicaStatementContext<A, D, E> noRef(final StatementContextBase<?, ?, ?> parent,
+                final ReactorStmtCtx<A, D, E> source) {
+        return new ReplicaStatementContext<>(parent, source);
     }
 
     @Override
@@ -107,7 +122,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Mutable<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> newParent) {
+    ReplicaStatementContext<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> newParent) {
         return source.replicaAsChildOf(newParent);
     }
 

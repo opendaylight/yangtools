@@ -13,19 +13,19 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -192,61 +192,136 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private @NonNull E tryToReusePrototype(final StatementFactory<A, D, E> factory) {
         final E origEffective = prototype.buildEffective();
-        final Collection<? extends @NonNull EffectiveStatement<?, ?>> origSubstatements =
-            origEffective.effectiveSubstatements();
+        final Collection<? extends EffectiveStatement<?, ?>> origSubstatements = origEffective.effectiveSubstatements();
 
-        // First check if we can reuse the entire prototype
+        // First check if we can reuse the entire prototype. If not, deal with it separately.
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            // FIXME: YANGTOOLS-1067: an incremental improvement here is that we reuse statements that are not affected
-            //                        by us changing parent. For example: if our SchemaPath changed, but the namespace
-            //                        remained the same, 'key' statement should get reused.
-            // Fall back to full instantiation
-            return super.createEffective(factory);
+            return tryToReuseSubstatements(factory, origSubstatements);
         }
 
         // No substatements to deal with, we can freely reuse the original
         if (origSubstatements.isEmpty()) {
             LOG.debug("Reusing empty: {}", origEffective);
+            // FIXME: this really is a assertion: we should never request substatements
             substatements = ImmutableList.of();
             prototype.decRef();
             return origEffective;
         }
 
-        // We can reuse this statement let's see if all the statements agree
-        final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> declared = prototype.streamDeclared()
+        // All substatements are known to be context-independent: reuse original
+        if (allSubstatementsContextIndependent()) {
+            // FIXME: merge with previous case once we know this works
+            LOG.debug("Reusing context-independent: {}", origEffective);
+            // FIXME: this really is a assertion: we should never request substatements
+            verify(!haveRef(), "FIXME: initialize substatements");
+            prototype.decRef();
+            return origEffective;
+        }
+
+        // Static checks are done, derefer to heavy lifting
+        return tryToReusePrototype(factory, origEffective);
+    }
+
+    // The heavy-lifting of prototype reuse. There are some substatements which indicate they potentially need special
+    // treatment provided by a child copy -- which is the default outcome of this method.
+    // We need to examine all statements and decide what to do -- either reuse original or create a new object.
+    private @NonNull E tryToReusePrototype(final StatementFactory<A, D, E> factory, final @NonNull E orig) {
+        final List<EffectiveCopy> declared = prototype.streamDeclared()
             .filter(StmtContext::isSupportedByFeatures)
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
-        final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> effective = prototype.streamEffective()
+        final List<EffectiveCopy> effective = prototype.streamEffective()
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
-
-        // We no longer need the prototype's substatements, but we may need to retain ours
+        // We no longer need the prototype's substatements
         prototype.decRef();
-        if (haveRef()) {
-            substatements = Streams.concat(declared.stream(), effective.stream())
-                .map(Entry::getValue)
-                .collect(ImmutableList.toImmutableList());
-        } else {
-            // This should immediately get swept anyway. Should we use a poison object?
-            substatements = List.of();
-        }
 
+        // We ended up reusing all statements, yaay!
         if (allReused(declared) && allReused(effective)) {
-            LOG.debug("Reusing after substatement check: {}", origEffective);
-            return origEffective;
+            LOG.debug("Reusing unmodified: {}", orig);
+            verify(!haveRef(), "FIXME: initialize substatements");
+            return orig;
         }
 
-        // Values are the effective copies, hence this efficienly deals with recursion.
-        return factory.createEffective(this, declared.stream().map(Entry::getValue),
-            effective.stream().map(Entry::getValue));
+        // FIXME: do we need to record substatements?
+        final List<Mutable<?, ?, ?>> declaredSubs = new ArrayList<>(declared.size());
+        for (EffectiveCopy entry : declared) {
+            declaredSubs.add(entry.toChildContext(this));
+        }
+        final List<Mutable<?, ?, ?>> effectiveSubs = new ArrayList<>(effective.size());
+        for (EffectiveCopy entry : effective) {
+            declaredSubs.add(entry.toChildContext(this));
+        }
+
+        verify(!haveRef(), "FIXME: initialize substatements");
+
+        // Values are the effective copies, hence this efficiently deals with recursion.
+        return factory.createEffective(this, declaredSubs.stream(), effectiveSubs.stream());
     }
 
-    private static boolean allReused(final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> entries) {
-        for (Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>> entry : entries) {
-            if (entry.getKey() != entry.getValue()) {
+    private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory,
+            final @NonNull Collection<? extends EffectiveStatement<?, ?>> origSubstatements) {
+        if (allSubstatementsContextIndependent()) {
+            LOG.debug("Reusing substatements of: {}", prototype);
+            // FIXME: also mark substatements to never be accessible
+            return factory.createEffective(this, origSubstatements);
+        }
+
+        // Fall back to full instantiation, then check if we can reuse original substatements
+        final E result = super.createEffective(factory);
+        if (sameSubstatements(origSubstatements, result)) {
+            LOG.debug("Reusing unchanged substatements of: {}", prototype);
+            return factory.createEffective(this, origSubstatements);
+        }
+        return result;
+    }
+
+    private static boolean sameSubstatements(final Collection<?> original, final EffectiveStatement<?, ?> effective) {
+        final Collection<?> copied = effective.effectiveSubstatements();
+        if (copied != effective.effectiveSubstatements() || original.size() != copied.size()) {
+            // Do not bother if result is treating substatements as transient
+            return false;
+        }
+
+        final Iterator<?> oit = original.iterator();
+        final Iterator<?> cit = copied.iterator();
+        while (oit.hasNext()) {
+            verify(cit.hasNext());
+            // Identity comparison on purpose
+            if (oit.next() != cit.next()) {
+                return false;
+            }
+        }
+        verify(!cit.hasNext());
+        return true;
+    }
+
+    // An effective copy view, with enough information to decide what to do next
+    private static final class EffectiveCopy implements Immutable {
+        // Original statement
+        private final ReactorStmtCtx<?, ?, ?> orig;
+        // Effective view, if the statement is to be reused it equals to orig
+        private final ReactorStmtCtx<?, ?, ?> copy;
+
+        EffectiveCopy(final ReactorStmtCtx<?, ?, ?> orig, final ReactorStmtCtx<?, ?, ?> copy) {
+            this.orig = requireNonNull(orig);
+            this.copy = requireNonNull(copy);
+        }
+
+        boolean isReused() {
+            return orig == copy;
+        }
+
+        ReactorStmtCtx<?, ?, ?> toChildContext(final InferredStatementContext<?, ?, ?> parent) {
+            return isReused() ? orig.replicaAsChildOf(parent) : copy;
+        }
+    }
+
+    private static boolean allReused(final List<EffectiveCopy> entries) {
+        for (EffectiveCopy entry : entries) {
+            if (!entry.isReused()) {
                 return false;
             }
         }
@@ -448,14 +523,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
 
-    private Map.Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>> effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
+    private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
         if (REUSED_DEF_SET.contains(stmt.definition().getPublicView())) {
-            return Map.entry(stmt, stmt.replicaAsChildOf(this));
+            return new EffectiveCopy(stmt, stmt);
         }
 
         final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType, targetModule);
-        return effective == null ? null : Map.entry(stmt, effective);
+        return effective == null ? null : new EffectiveCopy(stmt, effective);
     }
 
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
