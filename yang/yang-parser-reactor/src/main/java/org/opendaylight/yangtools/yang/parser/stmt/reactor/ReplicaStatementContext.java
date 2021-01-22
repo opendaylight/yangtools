@@ -108,7 +108,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public Mutable<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> newParent) {
+    ReplicaStatementContext<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> newParent) {
         return source.replicaAsChildOf(newParent);
     }
 
