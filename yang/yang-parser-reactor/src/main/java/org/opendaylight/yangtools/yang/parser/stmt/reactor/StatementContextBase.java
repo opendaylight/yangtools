@@ -682,7 +682,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
 
         parent.ensureCompletedPhase(copy);
-        return canReuseCurrent(copy) ? replicaAsChildOf(parent) : copy;
+        return canReuseCurrent(copy) ? this : copy;
     }
 
     private boolean canReuseCurrent(final ReactorStmtCtx<A, D, E> copy) {
@@ -738,13 +738,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final ReactorStmtCtx<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
-        checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
-        return replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
-    }
-
-    final @NonNull ReplicaStatementContext<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> stmt) {
-        return new ReplicaStatementContext<>(stmt, this);
+    final ReplicaStatementContext<A, D, E> replicaAsChildOf(final StatementContextBase<?, ?, ?> parent) {
+        return new ReplicaStatementContext<>(parent, this);
     }
 
     private static void checkEffectiveModelCompleted(final StmtContext<?, ?, ?> stmt) {
