@@ -7,35 +7,35 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.collect.Iterables;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
 public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {
-    private Map<NodeWithValue, LeafSetEntryNode<T>> value;
     private NodeIdentifier nodeIdentifier;
+    private List<T> values;
     private boolean dirty;
 
     protected ImmutableUserLeafSetNodeBuilder() {
-        value = new LinkedHashMap<>();
+        values = new ArrayList<>();
         dirty = false;
     }
 
     protected ImmutableUserLeafSetNodeBuilder(final ImmutableUserLeafSetNode<T> node) {
         nodeIdentifier = node.getIdentifier();
-        value = node.getChildren();
+        values = node.values();
         dirty = true;
     }
 
@@ -54,29 +54,32 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
 
     private void checkDirty() {
         if (dirty) {
-            value = new LinkedHashMap<>(value);
+            values = new ArrayList<>(values);
             dirty = false;
         }
     }
 
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withChild(final LeafSetEntryNode<T> child) {
-        checkDirty();
-        this.value.put(child.getIdentifier(), child);
+        final T value = child.body();
+        if (!values.contains(child)) {
+            checkDirty();
+            values.add(value);
+        }
         return this;
     }
 
     @Override
     public ImmutableUserLeafSetNodeBuilder<T> withoutChild(final PathArgument key) {
         checkDirty();
-        this.value.remove(key);
+        this.values.remove(key);
         return this;
     }
 
     @Override
     public UserLeafSetNode<T> build() {
         dirty = true;
-        return new ImmutableUserLeafSetNode<>(nodeIdentifier, value);
+        return new ImmutableUserLeafSetNode<>(nodeIdentifier, values);
     }
 
     @Override
@@ -104,32 +107,38 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
     protected static final class ImmutableUserLeafSetNode<T>
             extends AbstractImmutableNormalizedNode<NodeIdentifier, UserLeafSetNode<?>>
             implements UserLeafSetNode<T> {
-        private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
+        private final List<T> values;
 
-        ImmutableUserLeafSetNode(final NodeIdentifier nodeIdentifier,
-                final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
+        ImmutableUserLeafSetNode(final NodeIdentifier nodeIdentifier, final List<T> values) {
             super(nodeIdentifier);
-            this.children = children;
+            this.values = ImmutableList.copyOf(values);
         }
 
         @Override
-        public LeafSetEntryNode<T> childByArg(final NodeWithValue child) {
-            return children.get(child);
+        public List<T> values() {
+            return values;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public LeafSetEntryNode<T> childByArg(final NodeWithValue<?> child) {
+            return values.contains(child.getValue()) ? ImmutableNodes.leafSetEntry((NodeWithValue<T>) child) : null;
         }
 
         @Override
         public LeafSetEntryNode<T> getChild(final int position) {
-            return Iterables.get(children.values(), position);
+            return ImmutableNodes.leafSetEntry(getIdentifier().getNodeType(), values.get(position));
         }
 
         @Override
         public int size() {
-            return children.size();
+            return values.size();
         }
 
         @Override
         public Collection<LeafSetEntryNode<T>> body() {
-            return UnmodifiableCollection.create(children.values());
+            final QName name = getIdentifier().getNodeType();
+            return Lists.transform(values, value -> ImmutableNodes.leafSetEntry(name, value));
         }
 
         @Override
@@ -139,18 +148,12 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
 
         @Override
         protected int valueHashCode() {
-            return children.hashCode();
+            return values.hashCode();
         }
 
         @Override
         protected boolean valueEquals(final UserLeafSetNode<?> other) {
-            return children.equals(((ImmutableUserLeafSetNode<?>) other).children);
-        }
-
-        @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
-        private Map<NodeWithValue, LeafSetEntryNode<T>> getChildren() {
-            return Collections.unmodifiableMap(children);
+            return values.equals(((ImmutableUserLeafSetNode<?>) other).values);
         }
     }
 

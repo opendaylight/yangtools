@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import com.google.common.annotations.Beta;
+import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
@@ -22,5 +25,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 public interface LeafSetNode<T>
         extends DistinctNodeContainer<NodeIdentifier, NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild,
                 MixinNode {
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Please note that implementations of this method may legally return a transiently-instantiated view over
+     * {@link #value()}.
+     */
+    @Override
+    Collection<@NonNull LeafSetEntryNode<T>> body();
 
+    @Beta
+    // FIXME: YANGTOOLS-1074 this is a LeafSetNodeBody method and is further specialized
+    @NonNull Collection<@NonNull T> values();
 }

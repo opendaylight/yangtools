@@ -135,6 +135,12 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
         }
 
         @Override
+        public @NonNull Collection<@NonNull T> values() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
         protected Class<SystemLeafSetNode<?>> implementedType() {
             return (Class) SystemLeafSetNode.class;
         }

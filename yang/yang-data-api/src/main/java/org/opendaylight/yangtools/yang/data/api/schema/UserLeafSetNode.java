@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * {@link LeafSetNode} which preserves user-supplied ordering. This node represents a data instance of
  * a {@code leaf-list} with a {@code ordered-by user;} substatement.
@@ -14,5 +17,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * @param <T> Value type of Leaf entries
  */
 public interface UserLeafSetNode<T> extends LeafSetNode<T>, OrderedNodeContainer<LeafSetEntryNode<T>> {
-
+    @Override
+    List<@NonNull T> values();
 }
