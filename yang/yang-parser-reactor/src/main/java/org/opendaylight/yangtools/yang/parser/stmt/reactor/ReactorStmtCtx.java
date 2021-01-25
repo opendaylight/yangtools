@@ -118,6 +118,13 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
     private boolean isSupportedToBuildEffective = true;
 
+    // EffectiveConfig mapping
+    private static final int MASK_CONFIG                = 0x03;
+    private static final int HAVE_CONFIG                = 0x04;
+    // Effective instantiation mechanics for StatementContextBase: if this flag is set all substatements are known not
+    // change when instantiated. This includes context-independent statements as well as any statements which are
+    // ignored during copy instantiation.
+    private static final int ALL_INDEPENDENT            = 0x08;
     // Flag bit assignments
     private static final int IS_SUPPORTED_BY_FEATURES   = 0x10;
     private static final int HAVE_SUPPORTED_BY_FEATURES = 0x20;
@@ -127,9 +134,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     private static final int SET_SUPPORTED_BY_FEATURES  = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
     private static final int SET_IGNORE_IF_FEATURE      = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
 
-    // EffectiveConfig mapping
-    private static final int MASK_CONFIG = 0x03;
-    private static final int HAVE_CONFIG = 0x04;
     private static final EffectiveConfig[] EFFECTIVE_CONFIGS;
 
     static {
@@ -483,7 +487,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return false;
     }
 
-    // These two exists only due to memory optimization, should live in AbstractResumedStatement. We are also reusing
+    // These two exist only due to memory optimization, should live in AbstractResumedStatement. We are also reusing
     // this for ReplicaStatementContext's refcount tracking.
     final boolean fullyDefined() {
         return fullyDefined;
@@ -491,6 +495,17 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     final void setFullyDefined() {
         fullyDefined = true;
+    }
+
+    // These two exist only for StatementContextBase. Since we are squeezed for size, with only a single bit available
+    // in flags, we default to 'false' and only set the flag to true when we are absolutely sure -- and all other cases
+    // err on the side of caution by taking the time to evaluate each substatement separately.
+    final boolean allSubstatementsContextIndependent() {
+        return (flags & ALL_INDEPENDENT) != 0;
+    }
+
+    final void setAllSubstatementsContextIndependent() {
+        flags |= ALL_INDEPENDENT;
     }
 
     //
