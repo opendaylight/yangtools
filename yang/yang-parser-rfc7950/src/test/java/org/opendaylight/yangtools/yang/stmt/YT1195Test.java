@@ -7,39 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-import com.google.common.collect.Iterables;
+import java.net.URI;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 public class YT1195Test {
-    private static final QName FOO = QName.create("foo", "foo");
-    private static final QName BAZ = QName.create("foo", "baz");
-
     @Test
-    public void testWhenReuse() throws Exception {
-        final EffectiveModelContext ctx = StmtTestUtils.parseYangSource("/bugs/YT1195/foo.yang");
+    public void testKeyStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1195/key.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
 
-        final GroupingDefinition grp = Iterables.getOnlyElement(ctx.getGroupings());
-        final DataSchemaNode grpBaz = grp.getDataChildByName(BAZ);
-        assertThat(grpBaz, instanceOf(LeafSchemaNode.class));
-        final QualifiedBound grpBazWhen = ((LeafSchemaNode) grpBaz).getWhenCondition().get();
+        final ListEffectiveStatement grpFoo = module
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
+        final ListEffectiveStatement foo = module
+            .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
 
-        final DataSchemaNode foo = ctx.getDataChildByName(FOO);
-        assertThat(foo, instanceOf(ContainerSchemaNode.class));
-        final DataSchemaNode fooBaz = ((ContainerSchemaNode) foo).getDataChildByName(BAZ);
-        assertThat(fooBaz, instanceOf(LeafSchemaNode.class));
-        final QualifiedBound fooBazWhen = ((LeafSchemaNode) fooBaz).getWhenCondition().get();
-        // Both 'when' statements should be the same
-        assertSame(grpBazWhen, fooBazWhen);
+        // The statements should not be the same due history being part of ListSchemaNode
+        assertNotSame(foo, grpFoo);
+        // The statements are instantiated in the same module, hence they should have the same argument
+        assertSame(foo.argument(), grpFoo.argument());
+        // The statements' key substatement should be reused
+        assertSame(foo.findFirstEffectiveSubstatement(KeyEffectiveStatement.class).orElseThrow(),
+            grpFoo.findFirstEffectiveSubstatement(KeyEffectiveStatement.class).orElseThrow());
     }
 }

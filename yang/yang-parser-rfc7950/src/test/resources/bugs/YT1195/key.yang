@@ -1,0 +1,15 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  grouping grp {
+    list foo {
+      key "bar";
+      leaf bar {
+        type string;
+      }
+    }
+  }
+
+  uses grp;
+}
