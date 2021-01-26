@@ -15,7 +15,6 @@ import java.io.DataInput;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -31,12 +30,6 @@ abstract class AbstractNormalizedNodeDataInput extends ForwardingDataInput imple
     @Override
     final DataInput delegate() {
         return input;
-    }
-
-    @Override
-    public final SchemaPath readSchemaPath() throws IOException {
-        final boolean absolute = input.readBoolean();
-        return SchemaPath.create(readQNames(), absolute);
     }
 
     @Override
