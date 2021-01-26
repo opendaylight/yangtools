@@ -197,11 +197,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            // FIXME: YANGTOOLS-1067: an incremental improvement here is that we reuse statements that are not affected
-            //                        by us changing parent. For example: if our SchemaPath changed, but the namespace
-            //                        remained the same, 'key' statement should get reused.
-            // Fall back to full instantiation
-            return super.createEffective(factory);
+            return tryToReuseSubstatements(factory, origSubstatements);
         }
 
         // No substatements to deal with, we can freely reuse the original
@@ -242,6 +238,15 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         // Values are the effective copies, hence this efficienly deals with recursion.
         return factory.createEffective(this, declared.stream().map(Entry::getValue),
             effective.stream().map(Entry::getValue));
+    }
+
+    private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory,
+            final @NonNull Collection<? extends EffectiveStatement<?, ?>> origSubstatements) {
+        // FIXME: YANGTOOLS-1067: an incremental improvement here is that we reuse statements that are not affected
+        //                        by us changing parent. For example: if our SchemaPath changed, but the namespace
+        //                        remained the same, 'key' statement should get reused.
+        // Fall back to full instantiation
+        return super.createEffective(factory);
     }
 
     private static boolean allReused(final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> entries) {
