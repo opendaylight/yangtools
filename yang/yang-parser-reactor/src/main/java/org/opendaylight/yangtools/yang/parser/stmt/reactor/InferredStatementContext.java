@@ -17,6 +17,7 @@ import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -250,8 +251,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return factory.createEffective(this, origSubstatements);
         }
 
-        // Fall back to full instantiation
-        return super.createEffective(factory);
+        // Fall back to full instantiation, which populates our substatements. Then check if we should be reusing
+        // the substatement list, as this operation turned out to not affect them.
+        final E effective = super.createEffective(factory);
+        if (sameSubstatements(origSubstatements, effective)) {
+            LOG.debug("Reusing unchanged substatements of: {}", prototype);
+            return factory.createEffective(this, origSubstatements);
+        }
+        return effective;
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
@@ -264,6 +271,27 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
                 return ret;
             })
             .collect(Collectors.toUnmodifiableList());
+    }
+
+    private static boolean sameSubstatements(final Collection<?> original, final EffectiveStatement<?, ?> effective) {
+        final Collection<?> copied = effective.effectiveSubstatements();
+        if (copied != effective.effectiveSubstatements() || original.size() != copied.size()) {
+            // Do not bother if result is treating substatements as transient
+            return false;
+        }
+
+        final Iterator<?> oit = original.iterator();
+        final Iterator<?> cit = copied.iterator();
+        while (oit.hasNext()) {
+            verify(cit.hasNext());
+            // Identity comparison on purpose to side-step whatever equality there might be. We want to reuse instances
+            // after all.
+            if (oit.next() != cit.next()) {
+                return false;
+            }
+        }
+        verify(!cit.hasNext());
+        return true;
     }
 
     private static boolean allReused(final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> entries) {

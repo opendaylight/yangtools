@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.net.URI;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
@@ -42,7 +41,6 @@ public class YT1212Test {
         assertSame(foo.effectiveSubstatements(), grpFoo.effectiveSubstatements());
     }
 
-    @Ignore
     @Test
     public void testLeafStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/leaf.yang")
