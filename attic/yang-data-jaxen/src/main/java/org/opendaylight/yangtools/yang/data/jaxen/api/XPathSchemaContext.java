@@ -13,7 +13,6 @@ import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * A schema-informed XPath context. It supports creation of {@link XPathDocument}s, which are bound to
@@ -29,14 +28,13 @@ public interface XPathSchemaContext {
      * The user must provide a prefix-to-mapping {@link Converter}, which will be used to convert any prefixes found
      * in the XPath expression being compiled in the resulting context.
      *
-     * @param schemaPath Schema path of the node at which this expression is expected to be evaluated
      * @param prefixes Prefix-to-namespace converter
      * @param xpath XPath expression to compile
      * @return A compiled XPath expression
      * @throws XPathExpressionException if the provided expression is invalid, either syntactically or by referencing
      *         namespaces unknown to this schema context.
      */
-    @NonNull XPathExpression compileExpression(@NonNull SchemaPath schemaPath,
+    @NonNull XPathExpression compileExpression(
             @NonNull Converter<String, QNameModule> prefixes, @NonNull String xpath) throws XPathExpressionException;
 
     /**

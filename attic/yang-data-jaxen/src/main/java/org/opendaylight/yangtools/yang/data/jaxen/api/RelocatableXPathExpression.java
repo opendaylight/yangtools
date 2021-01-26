@@ -9,19 +9,17 @@ package org.opendaylight.yangtools.yang.data.jaxen.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * Interface implemented by {@link XPathExpression}s which can be recompiled to execute more efficiently at a
- * at a different {@link SchemaPath} than they were originally compiled at. This can result in the expression being
- * moved either up or down in a SchemaPath tree, usually closer to their {@link #getApexPath()}.
+ * different path than they were originally compiled at. This can result in the expression being
+ * moved either up or down in a Schema tree.
  */
 @Beta
 @Deprecated
 public interface RelocatableXPathExpression extends XPathExpression {
     /**
-     * Return a new XPathExpression relocated to a SchemaPath of the implementation's choosing. Note that
-     * {@link #getApexPath()} must not change during this operation.
+     * Return a new XPathExpression relocated to a SchemaPath of the implementation's choosing.
      *
      * @return A new XPathExpression instance.
      */

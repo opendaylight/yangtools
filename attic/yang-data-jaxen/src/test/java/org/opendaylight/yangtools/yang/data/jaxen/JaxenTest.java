@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.data.jaxen.api.XPathNodesetResult;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathResult;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class JaxenTest {
@@ -73,8 +72,7 @@ public class JaxenTest {
         xpathSchemaContext = new JaxenSchemaContextFactory().createContext(schemaContext);
         assertNotNull(xpathSchemaContext);
 
-        xpathExpression = xpathSchemaContext.compileExpression(createSchemaPath(), createPrefixes(), createXPath(
-                    false));
+        xpathExpression = xpathSchemaContext.compileExpression(createPrefixes(), createXPath(false));
         assertNotNull(xpathExpression);
 
         xpathDocument = xpathSchemaContext.createDocument(TestUtils.createNormalizedNodes());
@@ -116,20 +114,14 @@ public class JaxenTest {
     }
 
     @Test
-    public void testCompileExpression() {
-        assertNotNull(xpathExpression.getApexPath());
-        assertEquals(createSchemaPath(), xpathExpression.getEvaluationPath());
-    }
-
-    @Test
     public void testJaxenXpath() throws XPathExpressionException {
         assertNotNull(xpathExpression.evaluate(xpathDocument, createYangInstanceIdentifier(false)));
     }
 
     @Test
     public void testXpathWithPredicates() throws XPathExpressionException {
-        XPathExpression xpathExpressionWithPredicates = xpathSchemaContext.compileExpression(createSchemaPath(),
-                createPrefixes(), createXPath(true));
+        XPathExpression xpathExpressionWithPredicates = xpathSchemaContext.compileExpression(createPrefixes(),
+                createXPath(true));
 
         Optional<? extends XPathResult<?>> resultExpressionEvaluate = xpathExpressionWithPredicates
                 .evaluate(xpathDocument, createYangInstanceIdentifier(true));
@@ -150,7 +142,7 @@ public class JaxenTest {
 
     @Test(expected = XPathExpressionException.class)
     public void testCompileExpressionException() throws XPathExpressionException {
-        assertNotNull(xpathSchemaContext.compileExpression(createSchemaPath(), createPrefixes(), "/broken-path*"));
+        assertNotNull(xpathSchemaContext.compileExpression(createPrefixes(), "/broken-path*"));
     }
 
     @Test(expected = UnresolvableException.class)
@@ -205,11 +197,6 @@ public class JaxenTest {
         currentConverter.put("test2", moduleQName);
 
         return Maps.asConverter(currentConverter);
-    }
-
-    // rootQName -> listAQName -> leafAQName
-    private  SchemaPath createSchemaPath() {
-        return SchemaPath.create(true, rootQName, listAQName, leafAQName);
     }
 
     private void initQNames() {
