@@ -16,12 +16,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * Interface for emitting {@link NormalizedNode}s, {@link YangInstanceIdentifier}s, {@link PathArgument}s
- * and {@link SchemaPath}s.
+ * and {@link SchemaNodeIdentifier}s.
  */
 @Beta
 @NonNullByDefault
@@ -33,9 +32,6 @@ public interface NormalizedNodeDataOutput extends AutoCloseable, DataOutput {
     void writePathArgument(PathArgument pathArgument) throws IOException;
 
     void writeYangInstanceIdentifier(YangInstanceIdentifier identifier) throws IOException;
-
-    @Deprecated(forRemoval = true)
-    void writeSchemaPath(SchemaPath path) throws IOException;
 
     void writeSchemaNodeIdentifier(SchemaNodeIdentifier path) throws IOException;
 
