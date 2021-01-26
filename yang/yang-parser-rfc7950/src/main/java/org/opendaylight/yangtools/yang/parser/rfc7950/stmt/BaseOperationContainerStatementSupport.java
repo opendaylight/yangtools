@@ -48,6 +48,26 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     }
 
     @Override
+    protected final @NonNull E copyDeclaredEffective(final Current<QName, D> stmt, final E original) {
+        return copyDeclaredEffective(
+            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
+            stmt, original);
+    }
+
+    protected abstract @NonNull E copyDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
+        @NonNull E original);
+
+    @Override
+    protected final @NonNull E copyUndeclaredEffective(final Current<QName, D> stmt, final E original) {
+        return copyUndeclaredEffective(
+            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
+            stmt, original);
+    }
+
+    protected abstract @NonNull E copyUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
+        @NonNull E original);
+
+    @Override
     protected final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {

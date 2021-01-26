@@ -116,6 +116,11 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
             @Override
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
@@ -126,6 +131,10 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
 
         protected DefaultWithSchemaTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
+        }
+
+        protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
+            this.schemaTree = original.schemaTree;
         }
 
         @Override
@@ -153,6 +162,11 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
             @Override
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
@@ -166,6 +180,11 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
             this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+        }
+
+        protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
+            this.schemaTree = original.schemaTree;
+            this.dataTree = original.dataTree;
         }
 
         @Override

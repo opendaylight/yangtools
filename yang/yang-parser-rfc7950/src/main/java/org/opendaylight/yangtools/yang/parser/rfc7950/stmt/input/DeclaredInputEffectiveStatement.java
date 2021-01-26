@@ -32,6 +32,13 @@ final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, Inp
         this.path = path;
     }
 
+    DeclaredInputEffectiveStatement(final int flags, final DeclaredInputEffectiveStatement original,
+            final SchemaPath path) {
+        super(original);
+        this.flags = flags;
+        this.path = path;
+    }
+
     @Override
     @Deprecated
     public SchemaPath getPath() {

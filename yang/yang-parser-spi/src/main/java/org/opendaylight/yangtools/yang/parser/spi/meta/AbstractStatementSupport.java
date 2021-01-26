@@ -61,15 +61,14 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         return createEffective(stmt, substatements);
     }
 
-    @Override
-    public final E createEffective(final Current<A, D> stmt,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        // This copy should be a no-op
-        return createEffective(stmt, ImmutableList.copyOf(substatements));
-    }
-
     protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
+
+    @Override
+    public E copyEffective(final Current<A, D> stmt, final E original) {
+        // Most implementations are only interested in substatements. copyOf() here should be a no-op
+        return createEffective(stmt, ImmutableList.copyOf(original.effectiveSubstatements()));
+    }
 
     /**
      * Give statement support a hook to transform statement contexts before they are built. Default implementation
@@ -86,7 +85,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     // FIXME: add documentation
     public static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
         for (EffectiveStatement<?, ?> stmt : statements) {
             if (type.isInstance(stmt)) {
                 return type.cast(stmt);
@@ -97,7 +96,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     // FIXME: add documentation
     public static final <A, E extends EffectiveStatement<A, ?>> A findFirstArgument(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<@NonNull E> type,
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<@NonNull E> type,
                     final A defValue) {
         final @Nullable E stmt = findFirstStatement(statements, type);
         return stmt != null ? stmt.argument() : defValue;

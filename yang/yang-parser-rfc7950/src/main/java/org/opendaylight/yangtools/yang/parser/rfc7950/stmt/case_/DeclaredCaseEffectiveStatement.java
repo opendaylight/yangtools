@@ -35,6 +35,14 @@ final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, Case
         this.original = original;
     }
 
+    DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final int flags,
+            final SchemaPath path, final @Nullable CaseSchemaNode original) {
+        super(origEffective);
+        this.flags = flags;
+        this.path = path;
+        this.original = original;
+    }
+
     @Override
     public int flags() {
         return flags;

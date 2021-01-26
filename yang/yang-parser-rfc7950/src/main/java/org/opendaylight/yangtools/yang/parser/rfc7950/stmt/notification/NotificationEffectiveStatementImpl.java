@@ -38,8 +38,15 @@ final class NotificationEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
             final SchemaPath path) {
         super(declared, substatements);
-        this.path = path;
         this.flags = flags;
+        this.path = path;
+    }
+
+    NotificationEffectiveStatementImpl(final NotificationEffectiveStatementImpl original, final int flags,
+            final SchemaPath path) {
+        super(original);
+        this.flags = flags;
+        this.path = path;
     }
 
     @Override

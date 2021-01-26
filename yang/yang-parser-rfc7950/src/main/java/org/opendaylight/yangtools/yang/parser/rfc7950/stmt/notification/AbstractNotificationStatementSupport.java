@@ -48,4 +48,12 @@ abstract class AbstractNotificationStatementSupport
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
+
+    @Override
+    public final NotificationEffectiveStatement copyEffective(final Current<QName, NotificationStatement> stmt,
+            final NotificationEffectiveStatement original) {
+        return new NotificationEffectiveStatementImpl((NotificationEffectiveStatementImpl) original,
+            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
+            stmt.wrapSchemaPath());
+    }
 }
