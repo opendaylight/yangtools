@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
@@ -163,11 +162,6 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
     public final void writeYangInstanceIdentifier(final YangInstanceIdentifier identifier) throws IOException {
         ensureHeaderWritten();
         writeYangInstanceIdentifierInternal(identifier);
-    }
-
-    @Override
-    public final void writeSchemaPath(final SchemaPath path) throws IOException {
-        writeSchemaNodeIdentifier(path.isAbsolute(), path.getPathFromRoot());
     }
 
     @Override
