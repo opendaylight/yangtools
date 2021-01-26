@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
@@ -314,6 +315,14 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     abstract @Nullable ReactorStmtCtx<?, ?, ?> asEffectiveChildOf(StatementContextBase<?, ?, ?> parent, CopyType type,
         QNameModule targetModule);
+
+    @Override
+    public final ReactorStmtCtx<A, D, E> replicaAsChildOf(final Mutable<?, ?, ?> parent) {
+        checkArgument(parent instanceof StatementContextBase, "Unsupported parent %s", parent);
+        return replicaAsChildOf((StatementContextBase<?, ?, ?>) parent);
+    }
+
+    abstract @NonNull ReplicaStatementContext<A, D, E> replicaAsChildOf(@NonNull StatementContextBase<?, ?, ?> parent);
 
     //
     //
