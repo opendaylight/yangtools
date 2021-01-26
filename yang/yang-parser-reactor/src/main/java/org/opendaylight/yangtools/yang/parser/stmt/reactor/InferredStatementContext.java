@@ -236,6 +236,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return origEffective;
         }
 
+        // Quick check for independence
+        if (allSubstatementsContextIndependent()) {
+            LOG.debug("Reusing context-independent: {}", origEffective);
+            substatements = noRefs() ? REUSED_SUBSTATEMENTS : reusePrototypeReplicas();
+            prototype.decRef();
+            return origEffective;
+        }
+
         // We can reuse this statement let's see if all the statements agree
         final List<EffectiveCopy> declCopy = prototype.streamDeclared()
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
