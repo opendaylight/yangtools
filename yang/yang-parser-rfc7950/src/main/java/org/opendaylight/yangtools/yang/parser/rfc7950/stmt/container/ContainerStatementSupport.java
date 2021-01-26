@@ -11,10 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -114,23 +114,34 @@ public final class ContainerStatementSupport
     @Override
     protected ContainerEffectiveStatement createEffective(final Current<QName, ContainerStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final int flags = new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig().asNullable())
-                .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
-                .toFlags();
-
         EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);
         EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
-        final SchemaPath path = stmt.wrapSchemaPath();
         try {
-            return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, flags, path,
-                (ContainerSchemaNode) stmt.original());
+            return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, createFlags(stmt, substatements),
+                stmt.wrapSchemaPath(), (ContainerSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
+
+    @Override
+    public ContainerEffectiveStatement copyEffective(final Current<QName, ContainerStatement> stmt,
+            final ContainerEffectiveStatement original) {
+        return new ContainerEffectiveStatementImpl((ContainerEffectiveStatementImpl) original,
+            (ContainerSchemaNode) stmt.original(), createFlags(stmt, original.effectiveSubstatements()),
+            stmt.wrapSchemaPath());
+    }
+
+    private static int createFlags(final Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setPresence(findFirstStatement(substatements, PresenceEffectiveStatement.class) != null)
+            .toFlags();
+    }
 }
+

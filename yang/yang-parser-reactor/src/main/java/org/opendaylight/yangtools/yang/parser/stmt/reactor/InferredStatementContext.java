@@ -224,7 +224,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            return tryToReuseSubstatements(factory, origSubstatements);
+            return tryToReuseSubstatements(factory, origEffective);
         }
 
         // No substatements to deal with, we can freely reuse the original
@@ -269,22 +269,21 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return factory.createEffective(this, declared.stream(), effective.stream());
     }
 
-    private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory,
-            final @NonNull Collection<? extends EffectiveStatement<?, ?>> origSubstatements) {
+    private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
         if (allSubstatementsContextIndependent()) {
             LOG.debug("Reusing substatements of: {}", prototype);
             // FIXME: can we skip this if !haveRef()?
             substatements = reusePrototypeReplicas();
             prototype.decRef();
-            return factory.createEffective(this, origSubstatements);
+            return factory.copyEffective(this, original);
         }
 
         // Fall back to full instantiation, which populates our substatements. Then check if we should be reusing
         // the substatement list, as this operation turned out to not affect them.
         final E effective = super.createEffective(factory);
-        if (sameSubstatements(origSubstatements, effective)) {
+        if (sameSubstatements(original.effectiveSubstatements(), effective)) {
             LOG.debug("Reusing unchanged substatements of: {}", prototype);
-            return factory.createEffective(this, origSubstatements);
+            return factory.copyEffective(this, original);
         }
         return effective;
     }

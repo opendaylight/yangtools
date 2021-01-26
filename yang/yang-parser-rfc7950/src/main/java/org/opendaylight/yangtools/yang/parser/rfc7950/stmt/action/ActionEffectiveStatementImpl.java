@@ -33,6 +33,12 @@ final class ActionEffectiveStatementImpl extends WithSubstatements<QName, Action
         this.flags = flags;
     }
 
+    ActionEffectiveStatementImpl(final ActionEffectiveStatementImpl original, final SchemaPath path, final int flags) {
+        super(original);
+        this.path = path;
+        this.flags = flags;
+    }
+
     @Override
     @Deprecated
     public SchemaPath getPath() {
