@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -118,6 +119,20 @@ public final class CaseStatementSupport
     }
 
     @Override
+    protected CaseEffectiveStatement copyDeclaredEffective(final Current<QName, CaseStatement> stmt,
+            final CaseEffectiveStatement original) {
+        return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original,
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(), findOriginal(stmt));
+    }
+
+    @Override
+    protected CaseEffectiveStatement copyUndeclaredEffective(final Current<QName, CaseStatement> stmt,
+            final CaseEffectiveStatement original) {
+        return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original,
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(), findOriginal(stmt));
+    }
+
+    @Override
     protected CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
@@ -144,7 +159,7 @@ public final class CaseStatementSupport
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         final Boolean config;
         final EffectiveConfig effective = stmt.effectiveConfig();
         switch (effective) {
@@ -174,7 +189,7 @@ public final class CaseStatementSupport
 
     @SuppressFBWarnings(value = "NP_BOOLEAN_RETURN_NULL", justification = "Internal use tagged with @Nullable")
     private static @Nullable Boolean substatementEffectiveConfig(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         for (EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof DataSchemaNode) {
                 final Optional<Boolean> opt = ((DataSchemaNode) stmt).effectiveConfig();

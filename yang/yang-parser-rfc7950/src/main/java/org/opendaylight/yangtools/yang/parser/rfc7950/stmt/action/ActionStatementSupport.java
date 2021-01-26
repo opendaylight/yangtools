@@ -119,4 +119,11 @@ public final class ActionStatementSupport extends
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
+
+    @Override
+    public ActionEffectiveStatement copyEffective(final Current<QName, ActionStatement> stmt,
+            final ActionEffectiveStatement original) {
+        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, stmt.wrapSchemaPath(),
+            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
+    }
 }

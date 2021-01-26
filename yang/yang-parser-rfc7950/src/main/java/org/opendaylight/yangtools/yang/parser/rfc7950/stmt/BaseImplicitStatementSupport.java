@@ -34,6 +34,19 @@ public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<Q
     }
 
     @Override
+    public final E copyEffective(final Current<QName, D> stmt, final E original) {
+        final StatementSource source = stmt.source();
+        switch (source) {
+            case CONTEXT:
+                return copyUndeclaredEffective(stmt, original);
+            case DECLARATION:
+                return copyDeclaredEffective(stmt, original);
+            default:
+                throw new IllegalStateException("Unhandled statement source " + source);
+        }
+    }
+
+    @Override
     protected E createEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final StatementSource source = stmt.source();
@@ -46,6 +59,10 @@ public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<Q
                 throw new IllegalStateException("Unhandled statement source " + source);
         }
     }
+
+    protected abstract @NonNull E copyDeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
+
+    protected abstract @NonNull E copyUndeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
 
     protected abstract @NonNull E createDeclaredEffective(@NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);

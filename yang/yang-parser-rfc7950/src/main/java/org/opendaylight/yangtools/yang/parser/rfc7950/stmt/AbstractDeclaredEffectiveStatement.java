@@ -125,6 +125,10 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             this.declared = requireNonNull(declared);
         }
 
+        protected Default(final Default<A, D> original) {
+            this.declared = original.declared;
+        }
+
         @Override
         public final D getDeclared() {
             return declared;
@@ -193,6 +197,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final WithSubstatements<A, D> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
             @Override
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
@@ -201,6 +210,10 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
 
         protected DefaultArgument(final D declared) {
             super(declared);
+        }
+
+        protected DefaultArgument(final DefaultArgument<A, D> original) {
+            super(original);
         }
 
         @Override
@@ -265,6 +278,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
             @Override
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
@@ -278,6 +296,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             this.declared = requireNonNull(declared);
             this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
+        }
+
+        protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
+            this.declared = original.declared;
+            this.schemaTree = original.schemaTree;
         }
 
         @Override
@@ -311,6 +334,11 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
             @Override
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
@@ -327,6 +355,12 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
             this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+        }
+
+        protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
+            this.declared = original.declared;
+            this.schemaTree = original.schemaTree;
+            this.dataTree = original.dataTree;
         }
 
         @Override

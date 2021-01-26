@@ -29,8 +29,15 @@ final class UndeclaredOutputEffectiveStatement
     UndeclaredOutputEffectiveStatement(final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
         super(substatements);
-        this.path = path;
         this.flags = flags;
+        this.path = path;
+    }
+
+    UndeclaredOutputEffectiveStatement(final int flags, final UndeclaredOutputEffectiveStatement original,
+            final SchemaPath path) {
+        super(original);
+        this.flags = flags;
+        this.path = path;
     }
 
     @Override

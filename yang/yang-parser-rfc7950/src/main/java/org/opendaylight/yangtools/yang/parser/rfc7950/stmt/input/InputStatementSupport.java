@@ -105,6 +105,20 @@ public final class InputStatementSupport
     }
 
     @Override
+    protected InputEffectiveStatement copyDeclaredEffective(final int flags,
+            final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
+        return new DeclaredInputEffectiveStatement(flags, (DeclaredInputEffectiveStatement) original,
+            stmt.wrapSchemaPath());
+    }
+
+    @Override
+    protected InputEffectiveStatement copyUndeclaredEffective(final int flags,
+            final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
+        return new UndeclaredInputEffectiveStatement(flags, (UndeclaredInputEffectiveStatement) original,
+            stmt.wrapSchemaPath());
+    }
+
+    @Override
     protected InputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
