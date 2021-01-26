@@ -235,6 +235,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return origEffective;
         }
 
+        // Quick check for independence
+        if (allSubstatementsContextIndependent()) {
+            LOG.debug("Reusing context-independent: {}", origEffective);
+            substatements = reusePrototypeReplicas();
+            prototype.decRef();
+            return origEffective;
+        }
+
         // We can reuse this statement let's see if all the statements agree
         final List<EffectiveCopy> declCopy = prototype.streamDeclared()
             .filter(StmtContext::isSupportedByFeatures)
