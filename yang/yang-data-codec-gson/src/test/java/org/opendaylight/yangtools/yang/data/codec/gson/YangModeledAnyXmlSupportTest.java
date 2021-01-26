@@ -22,10 +22,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,9 +39,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.xml.sax.SAXException;
 
 public class YangModeledAnyXmlSupportTest {
     private static EffectiveModelContext schemaContext;
@@ -52,8 +47,7 @@ public class YangModeledAnyXmlSupportTest {
     private static ContainerNode data;
 
     @BeforeClass
-    public static void init() throws XMLStreamException, URISyntaxException, IOException, ParserConfigurationException,
-            SAXException {
+    public static void init() throws Exception {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yang-modeled-anyxml/yang");
         lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
 
@@ -86,7 +80,7 @@ public class YangModeledAnyXmlSupportTest {
     }
 
     @Test
-    public void jsonToNormalizedNodesTest() throws IOException, URISyntaxException, SAXException {
+    public void jsonToNormalizedNodesTest() throws Exception {
         final String inputJson = loadTextFile("/yang-modeled-anyxml/json/baz.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -98,7 +92,7 @@ public class YangModeledAnyXmlSupportTest {
     }
 
     @Test
-    public void normalizedNodesToJsonTest() throws IOException, URISyntaxException, SAXException {
+    public void normalizedNodesToJsonTest() throws Exception {
         final Writer writer = new StringWriter();
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, data);
 
@@ -114,7 +108,7 @@ public class YangModeledAnyXmlSupportTest {
             final NormalizedNode inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
+            lhotkaCodecFactory, schemaContext, null, JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
 

@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.data.codec.xml.XmlParserStream;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class TestUtils {
     private TestUtils() {
@@ -64,11 +63,11 @@ public final class TestUtils {
         xmlParser.parse(reader);
     }
 
-    static String normalizedNodesToJsonString(final NormalizedNode data,
-            final EffectiveModelContext schemaContext, final SchemaPath rootPath) throws IOException {
+    static String normalizedNodesToJsonString(final NormalizedNode data, final EffectiveModelContext schemaContext)
+            throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), rootPath, null,
+                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), schemaContext, null,
                 JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(data);

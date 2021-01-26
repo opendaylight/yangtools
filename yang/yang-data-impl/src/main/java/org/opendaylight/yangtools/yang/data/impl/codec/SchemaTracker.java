@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
@@ -75,7 +74,7 @@ public final class SchemaTracker {
     }
 
     /**
-     * Create a new writer with the specified context and rooted in the specified schema path.
+     * Create a new writer with the specified context and rooted in the specified absolute path.
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
@@ -86,16 +85,12 @@ public final class SchemaTracker {
     }
 
     /**
-     * Create a new writer with the specified context and rooted in the specified schema path.
+     * Create a new writer with the specified context and rooted in the specified path provided by the list of QNames.
      *
      * @param context Associated {@link EffectiveModelContext}
-     * @param path schema path
+     * @param path QNames
      * @return A new {@link NormalizedNodeStreamWriter}
      */
-    public static @NonNull SchemaTracker create(final EffectiveModelContext context, final SchemaPath path) {
-        return create(context, path.getPathFromRoot());
-    }
-
     private static @NonNull SchemaTracker create(final EffectiveModelContext context, final Iterable<QName> path) {
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
         checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
