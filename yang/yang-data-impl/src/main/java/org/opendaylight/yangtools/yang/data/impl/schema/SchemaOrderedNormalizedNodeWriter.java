@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,14 +53,15 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
      *            path
      */
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
-            final EffectiveModelContext schemaContext, final SchemaPath path) {
+            final EffectiveModelContext schemaContext, final List<QName> path) {
         super(writer);
         this.schemaContext = schemaContext;
+
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(schemaContext, path);
-        Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s",
+        Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied qname path: %s",
                 path);
         if (schemaNodes.size() > 1) {
-            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
+            LOG.warn("More possible schema nodes {} for supplied qname path {}", schemaNodes, path);
         }
         this.root = schemaNodes.iterator().next();
     }
