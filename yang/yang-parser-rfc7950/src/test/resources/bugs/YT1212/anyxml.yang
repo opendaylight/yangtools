@@ -1,0 +1,16 @@
+module foo {
+  namespace foo;
+  prefix foo;
+  yang-version 1.1;
+
+  grouping grp {
+    anyxml foo {
+      // Two substatements to defeat singleton list elimination
+      description "desc";
+      reference "ref";
+    }
+  }
+
+  uses grp;
+}
+

@@ -242,11 +242,28 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory,
             final @NonNull Collection<? extends EffectiveStatement<?, ?>> origSubstatements) {
-        // FIXME: YANGTOOLS-1067: an incremental improvement here is that we reuse statements that are not affected
-        //                        by us changing parent. For example: if our SchemaPath changed, but the namespace
-        //                        remained the same, 'key' statement should get reused.
+        if (allSubstatementsContextIndependent()) {
+            LOG.debug("Reusing substatements of: {}", prototype);
+            // FIXME: can we skip this if !haveRef()?
+            substatements = reusePrototypeReplicas();
+            prototype.decRef();
+            return factory.createEffective(this, origSubstatements);
+        }
+
         // Fall back to full instantiation
         return super.createEffective(factory);
+    }
+
+    private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
+        return Streams.concat(
+            prototype.streamDeclared().filter(StmtContext::isSupportedByFeatures),
+            prototype.streamEffective())
+            .map(stmt -> {
+                final ReplicaStatementContext<?, ?, ?> ret = ((ReactorStmtCtx<?, ?, ?>) stmt).replicaAsChildOf(this);
+                ret.buildEffective();
+                return ret;
+            })
+            .collect(Collectors.toUnmodifiableList());
     }
 
     private static boolean allReused(final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> entries) {
