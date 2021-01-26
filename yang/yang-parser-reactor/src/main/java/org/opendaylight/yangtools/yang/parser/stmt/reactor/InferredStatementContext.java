@@ -228,7 +228,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return deduplicate(tryToReuseSubstatements(factory, origEffective));
         }
 
-        // No substatements to deal with, we can freely reuse the original
+        // We can reuse this statement let's see if all statements agree...
+        // ... no substatements to deal with, we can freely reuse the original
         if (origSubstatements.isEmpty()) {
             LOG.debug("Reusing empty: {}", origEffective);
             substatements = ImmutableList.of();
@@ -236,7 +237,15 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return origEffective;
         }
 
-        // We can reuse this statement let's see if all the statements agree
+        // ... all are context independent, reuse the original
+        if (allSubstatementsContextIndependent()) {
+            LOG.debug("Reusing context-independent: {}", origEffective);
+            substatements = noRefs() ? REUSED_SUBSTATEMENTS : reusePrototypeReplicas();
+            prototype.decRef();
+            return origEffective;
+        }
+
+        // ... copy-sensitive check
         final List<EffectiveCopy> declCopy = prototype.streamDeclared()
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
@@ -246,6 +255,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
 
+        // ... are any copy-sensitive?
         if (allReused(declCopy) && allReused(effCopy)) {
             LOG.debug("Reusing after substatement check: {}", origEffective);
             substatements = noRefs() ? REUSED_SUBSTATEMENTS
@@ -255,6 +265,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return origEffective;
         }
 
+        // *sigh*, ok, heavy lifting through a shallow copy
         final List<ReactorStmtCtx<?, ?, ?>> declared = declCopy.stream()
             .map(copy -> copy.toChildContext(this))
             .collect(ImmutableList.toImmutableList());
