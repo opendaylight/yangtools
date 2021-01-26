@@ -105,6 +105,20 @@ public final class OutputStatementSupport
     }
 
     @Override
+    protected OutputEffectiveStatement copyDeclaredEffective(final int flags,
+            final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
+        return new DeclaredOutputEffectiveStatement(flags, (DeclaredOutputEffectiveStatement) original,
+            stmt.wrapSchemaPath());
+    }
+
+    @Override
+    protected OutputEffectiveStatement copyUndeclaredEffective(final int flags,
+            final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
+        return new UndeclaredOutputEffectiveStatement(flags, (UndeclaredOutputEffectiveStatement) original,
+            stmt.wrapSchemaPath());
+    }
+
+    @Override
     protected OutputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

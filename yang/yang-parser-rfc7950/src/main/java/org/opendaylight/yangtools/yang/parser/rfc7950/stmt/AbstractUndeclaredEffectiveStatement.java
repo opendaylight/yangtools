@@ -153,6 +153,11 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
                 this.substatements = maskList(substatements);
             }
 
+            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
             @Override
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
@@ -166,6 +171,11 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
             this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+        }
+
+        protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
+            this.schemaTree = original.schemaTree;
+            this.dataTree = original.dataTree;
         }
 
         @Override

@@ -7,10 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -47,9 +45,9 @@ final class ModelDefinedStatementSupport
     }
 
     @Override
-    public UnrecognizedEffectiveStatement createEffective(final Current<String, UnrecognizedStatement> stmt,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        return definition.createEffective(stmt, substatements);
+    public UnrecognizedEffectiveStatement copyEffective(final Current<String, UnrecognizedStatement> stmt,
+            final UnrecognizedEffectiveStatement original) {
+        return definition.copyEffective(stmt, original);
     }
 
     @Override

@@ -32,6 +32,13 @@ final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, Ou
         this.path = path;
     }
 
+    DeclaredOutputEffectiveStatement(final int flags, final DeclaredOutputEffectiveStatement original,
+            final SchemaPath path) {
+        super(original);
+        this.flags = flags;
+        this.path = path;
+    }
+
     @Override
     @Deprecated
     public SchemaPath getPath() {

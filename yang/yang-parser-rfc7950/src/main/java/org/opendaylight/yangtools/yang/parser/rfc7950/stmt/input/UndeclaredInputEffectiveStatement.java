@@ -33,6 +33,13 @@ final class UndeclaredInputEffectiveStatement
         this.flags = flags;
     }
 
+    UndeclaredInputEffectiveStatement(final int flags, final UndeclaredInputEffectiveStatement original,
+            final SchemaPath path) {
+        super(original);
+        this.path = path;
+        this.flags = flags;
+    }
+
     @Override
     @Deprecated
     public SchemaPath getPath() {
