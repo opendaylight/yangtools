@@ -41,9 +41,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
             source.incRef();
+            // FIXME: is this call really needed? it is inherited from source
             setFullyDefined();
-        } else {
-            setIsSupportedToBuildEffective(false);
         }
     }
 
