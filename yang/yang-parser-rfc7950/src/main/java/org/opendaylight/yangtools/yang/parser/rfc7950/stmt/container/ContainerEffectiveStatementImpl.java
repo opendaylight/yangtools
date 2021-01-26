@@ -49,9 +49,17 @@ final class ContainerEffectiveStatementImpl
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
             final SchemaPath path, final ContainerSchemaNode original) {
         super(declared, substatements);
-        this.path = path;
         this.original = original;
         this.flags = flags;
+        this.path = path;
+    }
+
+    ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective,
+            final ContainerSchemaNode original, final int flags, final @Nullable SchemaPath path) {
+        super(origEffective);
+        this.original = original;
+        this.flags = flags;
+        this.path = path;
     }
 
     @Override

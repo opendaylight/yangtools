@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
@@ -576,7 +575,7 @@ public final class EffectiveStatementMixins {
     }
 
     public static int historyAndStatusFlags(final CopyHistory history,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setHistory(history)
                 .setStatus(AbstractStatementSupport.findFirstArgument(substatements,
