@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -32,7 +34,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
@@ -96,7 +97,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         try (SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext,
-            SchemaPath.ROOT)) {
+                ImmutableList.of())) {
 
             List<MapEntryNode> rule1Names = new ArrayList<>();
             rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
@@ -155,7 +156,8 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         EffectiveModelContext schemaContext = getSchemaContext("/bug1848/order.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
-        try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT)) {
+        try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext,
+                Collections.emptyList())) {
 
             ContainerNode cont = Builders.containerBuilder()
                     .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))

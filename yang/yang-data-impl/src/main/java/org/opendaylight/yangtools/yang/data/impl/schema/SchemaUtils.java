@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 public final class SchemaUtils {
     private SchemaUtils() {
@@ -400,13 +400,14 @@ public final class SchemaUtils {
      *
      * @param schemaContext
      *            schema context
-     * @param path
-     *            path
+     * @param nodeIdentifier
+     *            schema node identifier
      * @return schema node on path
      */
-    public static SchemaNode findDataParentSchemaOnPath(final SchemaContext schemaContext, final SchemaPath path) {
+    public static SchemaNode findDataParentSchemaOnPath(final SchemaContext schemaContext,
+            final SchemaNodeIdentifier nodeIdentifier) {
         SchemaNode current = requireNonNull(schemaContext);
-        for (final QName qname : path.getPathFromRoot()) {
+        for (final QName qname : nodeIdentifier.getNodeIdentifiers()) {
             current = findDataChildSchemaByQName(current, qname);
         }
         return current;
@@ -465,28 +466,7 @@ public final class SchemaUtils {
      * <p>
      * This method returns collection of SchemaNodes, because name conflicts can occur between the namespace
      * of groupings and namespace of data nodes. This method finds and collects all schema nodes that matches supplied
-     * SchemaPath and returns them all as collection of schema nodes.
-     *
-     * @param schemaContext
-     *            schema context
-     * @param path
-     *            path
-     * @return collection of schema nodes on path
-     */
-    public static Collection<SchemaNode> findParentSchemaNodesOnPath(final SchemaContext schemaContext,
-            final SchemaPath path) {
-        return findParentSchemaNodesOnPath(schemaContext, path.getPathFromRoot());
-    }
-
-    /**
-     * Finds schema node for given path in schema context. This method performs lookup in both the namespace
-     * of groupings and the namespace of all leafs, leaf-lists, lists, containers, choices, rpcs, actions,
-     * notifications, anydatas and anyxmls according to Rfc6050/Rfc7950 section 6.2.1.
-     *
-     * <p>
-     * This method returns collection of SchemaNodes, because name conflicts can occur between the namespace
-     * of groupings and namespace of data nodes. This method finds and collects all schema nodes that matches supplied
-     * SchemaPath and returns them all as collection of schema nodes.
+     * path and returns them all as collection of schema nodes.
      *
      * @param schemaContext schema context
      * @param path path
