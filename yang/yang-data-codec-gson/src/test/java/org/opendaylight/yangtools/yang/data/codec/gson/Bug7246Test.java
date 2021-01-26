@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug7246Test {
@@ -46,7 +46,7 @@ public class Bug7246Test {
         final ContainerNode inputStructure = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(qN("my-name")))
                 .withChild(ImmutableNodes.leafNode(new NodeIdentifier(qN("my-name")), "my-value")).build();
-        final SchemaPath rootPath = SchemaPath.create(true, qN("my-name"), qN("input"));
+        final Absolute rootPath = Absolute.of(qN("my-name"), qN("input"));
         final Writer writer = new StringWriter();
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(schemaContext, rootPath, writer,
                 inputStructure);
@@ -60,7 +60,7 @@ public class Bug7246Test {
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final EffectiveModelContext schemaContext,
-            final SchemaPath path, final Writer writer, final NormalizedNode inputStructure)
+            final Absolute path, final Writer writer, final NormalizedNode inputStructure)
             throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
