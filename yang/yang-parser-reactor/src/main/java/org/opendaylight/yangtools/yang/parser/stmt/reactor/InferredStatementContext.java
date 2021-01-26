@@ -20,13 +20,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -55,6 +55,32 @@ import org.slf4j.LoggerFactory;
  */
 final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements OnDemandSchemaTreeStorageNode {
+    // An effective copy view, with enough information to decide what to do next
+    private static final class EffectiveCopy implements Immutable {
+        // Original statement
+        private final ReactorStmtCtx<?, ?, ?> orig;
+        // Effective view, if the statement is to be reused it equals to orig
+        private final ReactorStmtCtx<?, ?, ?> copy;
+
+        EffectiveCopy(final ReactorStmtCtx<?, ?, ?> orig, final ReactorStmtCtx<?, ?, ?> copy) {
+            this.orig = requireNonNull(orig);
+            this.copy = requireNonNull(copy);
+        }
+
+        boolean isReused() {
+            return orig == copy;
+        }
+
+        ReactorStmtCtx<?, ?, ?> toChildContext(final @NonNull InferredStatementContext<?, ?, ?> parent) {
+            return isReused() ? orig.replicaAsChildOf(parent) : copy;
+        }
+
+        ReactorStmtCtx<?, ?, ?> toReusedChild(final @NonNull InferredStatementContext<?, ?, ?> parent) {
+            verify(isReused(), "Attempted to discard copy %s", copy);
+            return orig.replicaAsChildOf(parent);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
 
     // Sentinel object for 'substatements'
@@ -210,35 +236,37 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         }
 
         // We can reuse this statement let's see if all the statements agree
-        final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> declared = prototype.streamDeclared()
+        final List<EffectiveCopy> declCopy = prototype.streamDeclared()
             .filter(StmtContext::isSupportedByFeatures)
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
-        final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> effective = prototype.streamEffective()
+        final List<EffectiveCopy> effCopy = prototype.streamEffective()
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
 
-        // We no longer need the prototype's substatements, but we may need to retain ours
-        prototype.decRef();
-        if (haveRef()) {
-            substatements = Streams.concat(declared.stream(), effective.stream())
-                .map(Entry::getValue)
-                .collect(ImmutableList.toImmutableList());
-        } else {
-            // This should immediately get swept anyway. Should we use a poison object?
-            substatements = List.of();
-        }
-
-        if (allReused(declared) && allReused(effective)) {
+        if (allReused(declCopy) && allReused(effCopy)) {
             LOG.debug("Reusing after substatement check: {}", origEffective);
+            // FIXME: can we skip this if !haveRef()?
+            substatements = reusePrototypeReplicas(Streams.concat(declCopy.stream(), effCopy.stream())
+                .map(copy -> copy.toReusedChild(this)));
+            prototype.decRef();
             return origEffective;
         }
 
-        // Values are the effective copies, hence this efficienly deals with recursion.
-        return factory.createEffective(this, declared.stream().map(Entry::getValue),
-            effective.stream().map(Entry::getValue));
+        final List<ReactorStmtCtx<?, ?, ?>> declared = declCopy.stream()
+            .map(copy -> copy.toChildContext(this))
+            .collect(ImmutableList.toImmutableList());
+        final List<ReactorStmtCtx<?, ?, ?>> effective = effCopy.stream()
+            .map(copy -> copy.toChildContext(this))
+            .collect(ImmutableList.toImmutableList());
+        substatements = declared.isEmpty() ? effective
+            : Streams.concat(declared.stream(), effective.stream()).collect(ImmutableList.toImmutableList());
+        prototype.decRef();
+
+        // Values are the effective copies, hence this efficiently deals with recursion.
+        return factory.createEffective(this, declared.stream(), effective.stream());
     }
 
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory,
@@ -262,9 +290,13 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
-        return Streams.concat(
+        return reusePrototypeReplicas(Streams.concat(
             prototype.streamDeclared().filter(StmtContext::isSupportedByFeatures),
-            prototype.streamEffective())
+            prototype.streamEffective()));
+    }
+
+    private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas(final Stream<StmtContext<?, ?, ?>> stream) {
+        return stream
             .map(stmt -> {
                 final ReplicaStatementContext<?, ?, ?> ret = ((ReactorStmtCtx<?, ?, ?>) stmt).replicaAsChildOf(this);
                 ret.buildEffective();
@@ -294,13 +326,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return true;
     }
 
-    private static boolean allReused(final List<Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>>> entries) {
-        for (Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>> entry : entries) {
-            if (entry.getKey() != entry.getValue()) {
-                return false;
-            }
-        }
-        return true;
+    private static boolean allReused(final List<EffectiveCopy> entries) {
+        return entries.stream().allMatch(EffectiveCopy::isReused);
     }
 
     @Override
@@ -498,14 +525,14 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
 
-    private Map.Entry<Mutable<?, ?, ?>, Mutable<?, ?, ?>> effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
+    private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
         if (REUSED_DEF_SET.contains(stmt.definition().getPublicView())) {
-            return Map.entry(stmt, stmt.replicaAsChildOf(this));
+            return new EffectiveCopy(stmt, stmt);
         }
 
         final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType, targetModule);
-        return effective == null ? null : Map.entry(stmt, effective);
+        return effective == null ? null : new EffectiveCopy(stmt, effective);
     }
 
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
