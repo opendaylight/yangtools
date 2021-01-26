@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -54,8 +53,6 @@ public class EffectiveModuleTest {
 
     private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
-
-    private static final SchemaPath FEATURE1_SCHEMA_PATH = SchemaPath.create(true, FEATURE1);
 
     private static final Revision REVISION = Revision.of("2000-01-01");
 
