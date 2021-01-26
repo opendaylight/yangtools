@@ -62,10 +62,9 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final E createEffective(final Current<A, D> stmt,
-            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-        // This copy should be a no-op
-        return createEffective(stmt, ImmutableList.copyOf(substatements));
+    public E copyEffective(final Current<A, D> stmt, final E original) {
+        // Most implementations are only interested in substatements. copyOf() here should be a no-op
+        return createEffective(stmt, ImmutableList.copyOf(original.effectiveSubstatements()));
     }
 
     protected abstract @NonNull E createEffective(@NonNull Current<A, D> stmt,
@@ -86,7 +85,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     // FIXME: add documentation
     public static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
         for (EffectiveStatement<?, ?> stmt : statements) {
             if (type.isInstance(stmt)) {
                 return type.cast(stmt);
@@ -97,7 +96,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     // FIXME: add documentation
     public static final <A, E extends EffectiveStatement<A, ?>> A findFirstArgument(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<@NonNull E> type,
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<@NonNull E> type,
                     final A defValue) {
         final @Nullable E stmt = findFirstStatement(statements, type);
         return stmt != null ? stmt.argument() : defValue;
