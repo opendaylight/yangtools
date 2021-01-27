@@ -20,6 +20,15 @@ final class RestrictedUnionType extends AbstractRestrictedType<UnionTypeDefiniti
         super(baseType, path, unknownSchemaNodes);
     }
 
+    private RestrictedUnionType(final RestrictedUnionType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedUnionType bindTo(final SchemaPath newPath) {
+        return new RestrictedUnionType(this, newPath);
+    }
+
     @Override
     public List<TypeDefinition<?>> getTypes() {
         return getBaseType().getTypes();

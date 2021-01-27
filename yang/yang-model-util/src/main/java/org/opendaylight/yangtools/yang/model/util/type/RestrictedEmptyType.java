@@ -18,6 +18,15 @@ final class RestrictedEmptyType extends AbstractRestrictedType<EmptyTypeDefiniti
         super(baseType, path, unknownSchemaNodes);
     }
 
+    private RestrictedEmptyType(final RestrictedEmptyType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedEmptyType bindTo(final SchemaPath newPath) {
+        return new RestrictedEmptyType(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return EmptyTypeDefinition.hashCode(this);

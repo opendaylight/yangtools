@@ -21,6 +21,15 @@ final class DerivedBinaryType extends AbstractLengthRestrictedDerivedType<Binary
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedBinaryType(final DerivedBinaryType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedBinaryType bindTo(final SchemaPath newPath) {
+        return new DerivedBinaryType(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return BinaryTypeDefinition.hashCode(this);

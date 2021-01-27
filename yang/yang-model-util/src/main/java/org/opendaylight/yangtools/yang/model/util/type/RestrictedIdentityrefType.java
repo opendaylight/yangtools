@@ -21,6 +21,15 @@ final class RestrictedIdentityrefType extends AbstractRestrictedType<Identityref
         super(baseType, path, unknownSchemaNodes);
     }
 
+    private RestrictedIdentityrefType(final RestrictedIdentityrefType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedIdentityrefType bindTo(final SchemaPath newPath) {
+        return new RestrictedIdentityrefType(this, newPath);
+    }
+
     @Override
     public Set<? extends IdentitySchemaNode> getIdentities() {
         return getBaseType().getIdentities();

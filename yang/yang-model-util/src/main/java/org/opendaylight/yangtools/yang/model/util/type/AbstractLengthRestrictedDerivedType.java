@@ -17,11 +17,14 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefini
 
 abstract class AbstractLengthRestrictedDerivedType<T extends LengthRestrictedTypeDefinition<T>>
         extends AbstractDerivedType<T> implements LengthRestrictedTypeDefinition<T> {
-
     AbstractLengthRestrictedDerivedType(final T baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+    }
+
+    AbstractLengthRestrictedDerivedType(final AbstractLengthRestrictedDerivedType<T> original, final SchemaPath path) {
+        super(original, path);
     }
 
     @Override

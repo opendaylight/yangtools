@@ -20,6 +20,15 @@ final class DerivedBooleanType extends AbstractDerivedType<BooleanTypeDefinition
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedBooleanType(final DerivedBooleanType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedBooleanType bindTo(final SchemaPath newPath) {
+        return new DerivedBooleanType(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return BooleanTypeDefinition.hashCode(this);

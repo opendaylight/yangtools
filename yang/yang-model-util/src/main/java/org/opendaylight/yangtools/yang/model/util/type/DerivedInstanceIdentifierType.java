@@ -25,6 +25,16 @@ final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceId
         this.requireInstance = requireInstance;
     }
 
+    private DerivedInstanceIdentifierType(final DerivedInstanceIdentifierType original, final SchemaPath path) {
+        super(original, path);
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    public DerivedInstanceIdentifierType bindTo(final SchemaPath newPath) {
+        return new DerivedInstanceIdentifierType(this, newPath);
+    }
+
     @Override
     public boolean requireInstance() {
         return requireInstance;

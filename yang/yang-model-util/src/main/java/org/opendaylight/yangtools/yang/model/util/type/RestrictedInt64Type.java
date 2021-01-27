@@ -22,6 +22,15 @@ final class RestrictedInt64Type extends AbstractRangeRestrictedType<Int64TypeDef
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedInt64Type(final RestrictedInt64Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedInt64Type bindTo(final SchemaPath newPath) {
+        return new RestrictedInt64Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Int64TypeDefinition.hashCode(this);

@@ -15,14 +15,22 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefinition>
         implements LeafrefTypeDefinition {
-
     private final boolean requireInstance;
 
     RestrictedLeafrefType(final LeafrefTypeDefinition baseType, final SchemaPath path,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
         super(baseType, path, unknownSchemaNodes);
-
         this.requireInstance = requireInstance;
+    }
+
+    private RestrictedLeafrefType(final RestrictedLeafrefType original, final SchemaPath path) {
+        super(original, path);
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    public RestrictedLeafrefType bindTo(final SchemaPath newPath) {
+        return new RestrictedLeafrefType(this, newPath);
     }
 
     @Override

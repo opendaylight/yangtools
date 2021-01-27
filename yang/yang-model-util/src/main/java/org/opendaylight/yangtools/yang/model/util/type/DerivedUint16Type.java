@@ -16,11 +16,19 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 
 final class DerivedUint16Type extends AbstractRangeRestrictedDerivedType<Uint16TypeDefinition, Uint16>
         implements Uint16TypeDefinition {
-
     DerivedUint16Type(final Uint16TypeDefinition baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+    }
+
+    private DerivedUint16Type(final DerivedUint16Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedUint16Type bindTo(final SchemaPath newPath) {
+        return new DerivedUint16Type(this, newPath);
     }
 
     @Override
