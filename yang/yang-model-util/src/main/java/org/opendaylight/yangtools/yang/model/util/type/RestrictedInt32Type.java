@@ -22,6 +22,15 @@ final class RestrictedInt32Type extends AbstractRangeRestrictedType<Int32TypeDef
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedInt32Type(final RestrictedInt32Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedInt32Type bindTo(final SchemaPath newPath) {
+        return new RestrictedInt32Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Int32TypeDefinition.hashCode(this);

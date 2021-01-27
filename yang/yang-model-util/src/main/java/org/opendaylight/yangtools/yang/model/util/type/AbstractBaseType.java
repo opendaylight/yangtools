@@ -25,6 +25,10 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
         super(path, unknownSchemaNodes);
     }
 
+    AbstractBaseType(final AbstractBaseType<T> original, final SchemaPath path) {
+        super(original, path);
+    }
+
     @Override
     public final T getBaseType() {
         return null;
@@ -53,5 +57,11 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
     @Override
     public final Status getStatus() {
         return Status.CURRENT;
+    }
+
+    @Override
+    public AbstractBaseType<T> bindTo(final SchemaPath path) {
+        // Most implementations just return self
+        return this;
     }
 }

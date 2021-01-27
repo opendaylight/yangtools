@@ -22,6 +22,15 @@ final class RestrictedBinaryType extends AbstractLengthRestrictedType<BinaryType
         super(baseType, path, unknownSchemaNodes, lengthConstraint);
     }
 
+    private RestrictedBinaryType(final RestrictedBinaryType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedBinaryType bindTo(final SchemaPath newPath) {
+        return new RestrictedBinaryType(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return BinaryTypeDefinition.hashCode(this);

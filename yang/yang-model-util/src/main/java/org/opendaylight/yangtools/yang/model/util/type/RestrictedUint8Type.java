@@ -23,6 +23,15 @@ final class RestrictedUint8Type extends AbstractRangeRestrictedType<Uint8TypeDef
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedUint8Type(final RestrictedUint8Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedUint8Type bindTo(final SchemaPath newPath) {
+        return new RestrictedUint8Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Uint8TypeDefinition.hashCode(this);
