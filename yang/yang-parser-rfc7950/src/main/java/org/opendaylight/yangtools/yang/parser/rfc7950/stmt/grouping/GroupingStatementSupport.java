@@ -75,7 +75,11 @@ public final class GroupingStatementSupport
     private final SubstatementValidator validator;
 
     GroupingStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.GROUPING, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared(
+            (copy, current, substatements) ->
+                copy.history().isAddedByUses() == current.history().isAddedByUses()
+                && copy.getArgument().equals(current.getArgument())
+                && copy.equalParentPath(current)));
         this.validator = requireNonNull(validator);
     }
 
