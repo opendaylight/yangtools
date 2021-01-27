@@ -22,9 +22,14 @@ final class SlimLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffec
         super(declared, path, flags, substatements, original, elementCountConstraint);
     }
 
-    SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement original, final SchemaPath path,
-            final int flags) {
-        super(original, path, flags);
+    SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement originalEffective,
+            final LeafListSchemaNode original, final SchemaPath path, final int flags) {
+        super(originalEffective, original, path, flags);
+    }
+
+    SlimLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
+            final LeafListSchemaNode original, final SchemaPath path, final int flags) {
+        super(originalEffective, original, path, flags);
     }
 
     @Override

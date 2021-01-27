@@ -28,10 +28,10 @@ final class RegularLeafListEffectiveStatement extends AbstractNonEmptyLeafListEf
         this.defaults = requireNonNull(defaults);
     }
 
-    RegularLeafListEffectiveStatement(final RegularLeafListEffectiveStatement original, final SchemaPath path,
-            final int flags) {
-        super(original, path, flags);
-        this.defaults = original.defaults;
+    RegularLeafListEffectiveStatement(final RegularLeafListEffectiveStatement originalEffective,
+            final LeafListSchemaNode original, final SchemaPath path, final int flags) {
+        super(originalEffective, original, path, flags);
+        this.defaults = originalEffective.defaults;
     }
 
     @Override

@@ -109,15 +109,16 @@ public final class LeafListStatementSupport
     public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
             final LeafListEffectiveStatement original) {
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
-        if (original instanceof EmptyLeafListEffectiveStatement) {
-            return new EmptyLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
-                stmt.wrapSchemaPath(), flags);
-        } else if (original instanceof SlimLeafListEffectiveStatement) {
-            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original, stmt.wrapSchemaPath(),
-                flags);
-        } else if (original instanceof RegularLeafListEffectiveStatement) {
+        if (original instanceof RegularLeafListEffectiveStatement) {
             return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
-                stmt.wrapSchemaPath(), flags);
+                (LeafListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+        } else if (original instanceof SlimLeafListEffectiveStatement) {
+            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original,
+                (LeafListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+        } else if (original instanceof EmptyLeafListEffectiveStatement) {
+            // Promote to slim
+            return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
+                (LeafListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
