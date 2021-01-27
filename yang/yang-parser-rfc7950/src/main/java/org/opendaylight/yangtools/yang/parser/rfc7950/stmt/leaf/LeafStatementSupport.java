@@ -49,7 +49,7 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
     private static final LeafStatementSupport INSTANCE = new LeafStatementSupport();
 
     private LeafStatementSupport() {
-        super(YangStmtMapping.LEAF, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.LEAF, instantiatedPolicy());
     }
 
     public static LeafStatementSupport getInstance() {
