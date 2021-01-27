@@ -61,7 +61,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -505,20 +504,8 @@ public final class EffectiveStatementMixins {
             }
 
             public FlagsBuilder setHistory(final CopyHistory history) {
-                int bits;
-                if (history.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-                    bits = AUGMENTING | ADDED_BY_USES;
-                } else {
-                    bits = 0;
-                    if (history.contains(CopyType.ADDED_BY_AUGMENTATION)) {
-                        bits |= AUGMENTING;
-                    }
-                    if (history.contains(CopyType.ADDED_BY_USES)) {
-                        bits |= ADDED_BY_USES;
-                    }
-                }
-
-                flags = flags & ~MASK_HISTORY | bits;
+                flags = flags & ~MASK_HISTORY
+                    | (history.isAugmenting() ? AUGMENTING : 0) | (history.isAddedByUses() ? ADDED_BY_USES : 0);
                 return this;
             }
 

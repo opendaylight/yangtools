@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -49,28 +48,14 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
         @Override
         public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
                 final Collection<? extends EffectiveStatement<?, ?>> substatements) {
-            return equalHistory(copy, current)
+            return equalHistory(copy.history(), current.history())
                 && copy.getArgument().equals(current.getArgument())
                 // FIXME: 8.0.0: eliminate this call
                 && copy.equalParentPath(current);
         }
 
-        // TODO: can we speed this up?
-        private static boolean equalHistory(final Current<?, ?> copy, final Current<?, ?> current) {
-            return isAugmenting(copy) == isAugmenting(current)
-                && isAddedByUses(copy) == isAddedByUses(current);
-        }
-
-        private static boolean isAugmenting(final Current<?, ?> stmt) {
-            final CopyHistory history = stmt.history();
-            return history.contains(CopyType.ADDED_BY_AUGMENTATION)
-                || history.contains(CopyType.ADDED_BY_USES_AUGMENTATION);
-        }
-
-        private static boolean isAddedByUses(final Current<?, ?> stmt) {
-            final CopyHistory history = stmt.history();
-            return history.contains(CopyType.ADDED_BY_USES)
-                || history.contains(CopyType.ADDED_BY_USES_AUGMENTATION);
+        private static boolean equalHistory(final CopyHistory copy, final CopyHistory current) {
+            return copy.isAugmenting() == current.isAugmenting() && copy.isAddedByUses() == current.isAddedByUses();
         }
     }
 
