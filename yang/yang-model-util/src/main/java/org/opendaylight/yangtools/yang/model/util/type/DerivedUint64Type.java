@@ -22,6 +22,15 @@ final class DerivedUint64Type extends AbstractRangeRestrictedDerivedType<Uint64T
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedUint64Type(final DerivedUint64Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public DerivedUint64Type bindTo(final QName newQName) {
+        return new DerivedUint64Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Uint64TypeDefinition.hashCode(this);
