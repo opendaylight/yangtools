@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
@@ -151,8 +153,9 @@ abstract class AbstractTypeStatementSupport
             .build();
 
     AbstractTypeStatementSupport() {
-        // FIXME: can a type statement be copied?
-        super(YangStmtMapping.TYPE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.TYPE, StatementPolicy.copyDeclared((copy, current, substatements) ->
+            // FIXME: YANGTOOLS-652: this does not seem to trigger at all!
+            copy.getEffectiveParent().effectiveNamespace().equals(current.getEffectiveParent().effectiveNamespace())));
     }
 
     @Override
@@ -227,6 +230,18 @@ abstract class AbstractTypeStatementSupport
         final TypeStatement builtin;
         return (builtin = BuiltinTypeStatement.lookup(ctx)) != null ? builtin
             : new EmptyTypeStatement(ctx.getRawArgument());
+    }
+
+    @Override
+    public EffectiveStatement<String, TypeStatement> copyEffective(final Current<String, TypeStatement> stmt,
+            final EffectiveStatement<String, TypeStatement> original) {
+        if (original instanceof BuiltinEffectiveStatement) {
+            // Built-in substatements are not sensitive
+            return original;
+        }
+
+        verify(original instanceof TypeEffectiveStatementImpl, "Unexpected original %s", original);
+        return ((TypeEffectiveStatementImpl<?, TypeStatement>) original).bindTo(typeEffectiveQName(stmt));
     }
 
     @Override
