@@ -13,6 +13,8 @@ import static org.junit.Assert.assertSame;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -20,6 +22,28 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 public class YT1208Test {
+    @Test
+    public void testCaseStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/case.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final NotificationEffectiveStatement notif = module
+            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+
+        final CaseEffectiveStatement grpBar = notif
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ChoiceEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(CaseEffectiveStatement.class).orElseThrow();
+        final CaseEffectiveStatement contBar = notif
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ChoiceEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(CaseEffectiveStatement.class).orElseThrow();
+
+        assertSame(contBar, grpBar);
+    }
+
     @Test
     public void testGroupingStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/grouping.yang")
