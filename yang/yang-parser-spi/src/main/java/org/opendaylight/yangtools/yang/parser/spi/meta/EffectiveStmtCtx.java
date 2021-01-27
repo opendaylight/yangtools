@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
+import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -141,5 +142,19 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         // FIXME: YANGTOOLS-1186: lob the Holy Hand Grenade of Antioch
         @Deprecated
         <E extends EffectiveStatement<A, D>> @NonNull StmtContext<A, D, E> caerbannog();
+
+        /**
+         * Compare another context for equality of {@code getEffectiveParent().getSchemaPath()}, just in a safer manner.
+         *
+         * @param other Other {@link Current}
+         * @return True if {@code other} has parent path equal to this context's parent path.
+         */
+        // FIXME: 8.0.0: Remove this method
+        default boolean equalParentPath(final Current<QName, D> other) {
+            final Parent ours = effectiveParent();
+            final Parent theirs = other.effectiveParent();
+            return ours == theirs
+                || ours != null && theirs != null && Objects.equals(ours.schemaPath(), theirs.schemaPath());
+        }
     }
 }
