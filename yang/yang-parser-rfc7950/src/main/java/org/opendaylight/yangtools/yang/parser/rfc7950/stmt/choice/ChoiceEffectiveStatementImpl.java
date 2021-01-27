@@ -49,6 +49,15 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
         this.original = original;
     }
 
+    ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final int flags,
+            final SchemaPath path, final ChoiceSchemaNode original) {
+        super(origEffective);
+        this.path = path;
+        this.flags = flags;
+        this.defaultCase = origEffective.defaultCase;
+        this.original = original;
+    }
+
     @Override
     public @NonNull QName argument() {
         return getQName();
