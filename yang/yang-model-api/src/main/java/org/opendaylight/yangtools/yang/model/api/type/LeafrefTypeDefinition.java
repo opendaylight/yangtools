@@ -26,8 +26,8 @@ public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefi
     boolean requireInstance();
 
     static int hashCode(final @NonNull LeafrefTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getPathStatement());
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
+                type.getDefaultValue().orElse(null), type.getPathStatement());
     }
 
     static boolean equals(final @NonNull LeafrefTypeDefinition type, final @Nullable Object obj) {

@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 public final class UnionTypeBuilder extends TypeBuilder<UnionTypeDefinition> {
     private final Builder<TypeDefinition<?>> builder = ImmutableList.builder();
 
-    UnionTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    UnionTypeBuilder() {
+        super(null);
     }
 
     public UnionTypeBuilder addType(final @NonNull TypeDefinition<?> type) {
@@ -28,6 +27,6 @@ public final class UnionTypeBuilder extends TypeBuilder<UnionTypeDefinition> {
 
     @Override
     public UnionTypeDefinition build() {
-        return new BaseUnionType(getPath(), getUnknownSchemaNodes(), builder.build());
+        return new BaseUnionType(getUnknownSchemaNodes(), builder.build());
     }
 }

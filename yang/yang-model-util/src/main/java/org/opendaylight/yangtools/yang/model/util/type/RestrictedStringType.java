@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -22,11 +21,10 @@ final class RestrictedStringType extends AbstractLengthRestrictedType<StringType
         implements StringTypeDefinition {
     private final @NonNull ImmutableList<PatternConstraint> patternConstraints;
 
-    RestrictedStringType(final StringTypeDefinition baseType, final SchemaPath path,
+    RestrictedStringType(final StringTypeDefinition baseType,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final @Nullable LengthConstraint lengthConstraints,
-            final List<PatternConstraint> patternConstraints) {
-        super(baseType, path, unknownSchemaNodes, lengthConstraints);
+            final @Nullable LengthConstraint lengthConstraints, final List<PatternConstraint> patternConstraints) {
+        super(baseType, unknownSchemaNodes, lengthConstraints);
         this.patternConstraints = ImmutableList.copyOf(patternConstraints);
     }
 

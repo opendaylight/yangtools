@@ -83,16 +83,16 @@ public class YangParserWithContextTest {
 
         assertTrue(leaf.getType() instanceof Uint16TypeDefinition);
         final Uint16TypeDefinition leafType = (Uint16TypeDefinition) leaf.getType();
-        QName qname = leafType.getQName();
-        assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
-        assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());
-        assertEquals("port-number", qname.getLocalName());
+        //QName qname = leafType.getQName();
+        //assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
+        //assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());
+        //assertEquals("port-number", qname.getLocalName());
 
         final Uint16TypeDefinition leafBaseType = leafType.getBaseType();
-        qname = leafBaseType.getQName();
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
-        assertEquals(Revision.ofNullable("2010-09-24"), qname.getRevision());
-        assertEquals("port-number", qname.getLocalName());
+        //qname = leafBaseType.getQName();
+        //assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
+        //assertEquals(Revision.ofNullable("2010-09-24"), qname.getRevision());
+        //assertEquals("port-number", qname.getLocalName());
 
         final Uint8TypeDefinition dscpExt = (Uint8TypeDefinition) TestUtils.findTypedef(module.getTypeDefinitions(),
             "dscp-ext");

@@ -29,9 +29,8 @@ public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<Dec
     int getFractionDigits();
 
     static int hashCode(final DecimalTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getFractionDigits(),
-            type.getRangeConstraint().orElse(null));
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
+                type.getDefaultValue().orElse(null), type.getFractionDigits(), type.getRangeConstraint().orElse(null));
     }
 
     static boolean equals(final DecimalTypeDefinition type, final Object obj) {

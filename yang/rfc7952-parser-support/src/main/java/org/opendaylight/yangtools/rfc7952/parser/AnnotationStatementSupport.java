@@ -61,8 +61,7 @@ public final class AnnotationStatementSupport
                 firstSubstatementOfType(TypeEffectiveStatement.class), stmt,
                 "AnnotationStatementSupport %s is missing a 'type' statement", argument());
 
-            final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-                path);
+            final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition());
             final UnitsEffectiveStatement unitsStmt = firstSubstatementOfType(UnitsEffectiveStatement.class);
             if (unitsStmt != null) {
                 builder.setUnits(unitsStmt.argument());

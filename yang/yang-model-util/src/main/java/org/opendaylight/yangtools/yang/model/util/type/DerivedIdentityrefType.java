@@ -10,17 +10,16 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import java.util.Collection;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDefinition>
         implements IdentityrefTypeDefinition {
-    DerivedIdentityrefType(final IdentityrefTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedIdentityrefType(final IdentityrefTypeDefinition baseType, final Object defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+        super(baseType, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
     @Override

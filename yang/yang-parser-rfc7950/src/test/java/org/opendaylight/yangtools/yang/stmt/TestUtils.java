@@ -114,11 +114,11 @@ public final class TestUtils {
 
     public static TypeDefinition<?> findTypedef(final Collection<? extends TypeDefinition<?>> typedefs,
             final String name) {
-        for (TypeDefinition<?> td : typedefs) {
+       /* for (TypeDefinition<?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
                 return td;
             }
-        }
+        }*/
         return null;
     }
 

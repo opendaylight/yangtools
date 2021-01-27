@@ -44,7 +44,7 @@ public final class TypeDefinitionAwareCodecTestHelper {
     }
 
     public static EnumTypeDefinition toEnumTypeDefinition(final String... enums) {
-        final EnumerationTypeBuilder b = BaseTypes.enumerationTypeBuilder(mock(SchemaPath.class));
+        final EnumerationTypeBuilder b = BaseTypes.enumerationTypeBuilder();
         int val = 0;
         for (String en : enums) {
             EnumTypeDefinition.EnumPair mockEnum = mock(EnumPair.class);

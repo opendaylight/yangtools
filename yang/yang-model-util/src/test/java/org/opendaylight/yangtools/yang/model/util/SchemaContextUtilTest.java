@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaContextUtilTest {
@@ -92,16 +91,18 @@ public class SchemaContextUtilTest {
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
 
-        final SchemaNode int32node = BaseTypes.int32Type();
+        final QName int32Qname = org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
+        doReturn(SchemaPath.create(true, int32Qname)).when(schemaNode).getPath();
+
         final PathExpression xpathRelative = new PathExpressionImpl("../prefix", false);
         assertNull("Should be null, Module prefix not found",
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(
-                        mockSchemaContext, mockModule, int32node, xpathRelative));
+                        mockSchemaContext, mockModule, schemaNode, xpathRelative));
 
         assertNull("Should be null. Module TestQName not found",
                 SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qname)));
 
-        assertNull("Should be null.", SchemaContextUtil.findParentModule(mockSchemaContext, int32node));
+        assertNull("Should be null.", SchemaContextUtil.findParentModule(mockSchemaContext, schemaNode));
     }
 
     @Test

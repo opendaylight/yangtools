@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.Uint16;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
@@ -17,10 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 final class DerivedUint16Type extends AbstractRangeRestrictedDerivedType<Uint16TypeDefinition, Uint16>
         implements Uint16TypeDefinition {
 
-    DerivedUint16Type(final Uint16TypeDefinition baseType, final SchemaPath path,
-            final Object defaultValue, final String description, final String reference, final Status status,
-            final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+    DerivedUint16Type(final Uint16TypeDefinition baseType, final Object defaultValue, final String description,
+            final String reference, final Status status, final String units,
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
+        super(baseType, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
     @Override

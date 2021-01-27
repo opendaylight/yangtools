@@ -14,14 +14,13 @@ import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDefinition> {
     private final Builder<IdentitySchemaNode> builder = ImmutableSet.builder();
 
-    IdentityrefTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    IdentityrefTypeBuilder() {
+        super(null);
     }
 
     public IdentityrefTypeBuilder addIdentity(final @NonNull IdentitySchemaNode identity) {
@@ -31,8 +30,9 @@ public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDef
 
     @Override
     public IdentityrefTypeDefinition build() {
+
         final Set<IdentitySchemaNode> identities = builder.build();
-        checkState(!identities.isEmpty(), "No identities specified in %s, at least one is required", getPath());
-        return new BaseIdentityrefType(getPath(), getUnknownSchemaNodes(), identities);
+        checkState(!identities.isEmpty(), "No identities specified, at least one is required");
+        return new BaseIdentityrefType(getUnknownSchemaNodes(), identities);
     }
 }

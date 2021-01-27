@@ -12,19 +12,18 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<EnumTypeDefinition> {
     private final Builder<String, EnumPair> builder = ImmutableMap.builder();
 
-    EnumerationTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    EnumerationTypeBuilder() {
+        super(null);
     }
 
-    EnumerationTypeBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
-        super(baseType, path);
+    EnumerationTypeBuilder(final EnumTypeDefinition baseType) {
+        super(baseType);
     }
 
     public EnumerationTypeBuilder addEnum(final @NonNull EnumPair item) {
@@ -46,7 +45,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
                 if (item.getValue() != baseTypeEnumPair.getValue()) {
                     throw new InvalidEnumDefinitionException(item, "Value of enum '%s' must be the same as the value"
                             + " of corresponding enum in the base enumeration type %s.", item.getName(),
-                            base.getQName());
+                            base);
                 }
                 isASubsetOfBaseEnums = true;
                 break;
@@ -55,7 +54,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
 
         if (!isASubsetOfBaseEnums) {
             throw new InvalidEnumDefinitionException(item, "Enum '%s' is not a subset of its base enumeration type %s.",
-                    item.getName(), base.getQName());
+                    item.getName(), base);
         }
     }
 
@@ -71,7 +70,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
             }
         }
 
-        return getBaseType() == null ? new BaseEnumerationType(getPath(), getUnknownSchemaNodes(), map.values())
-                : new RestrictedEnumerationType(getBaseType(), getPath(), getUnknownSchemaNodes(), map.values());
+        return getBaseType() == null ? new BaseEnumerationType(getUnknownSchemaNodes(), map.values())
+                : new RestrictedEnumerationType(getBaseType(), getUnknownSchemaNodes(), map.values());
     }
 }

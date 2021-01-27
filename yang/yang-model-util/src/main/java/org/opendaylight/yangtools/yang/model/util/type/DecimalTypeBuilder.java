@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
 public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> {
     private Integer fractionDigits;
 
-    DecimalTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    DecimalTypeBuilder() {
+        super(null);
     }
 
     public DecimalTypeBuilder setFractionDigits(final int fractionDigits) {
@@ -30,7 +29,7 @@ public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<Decimal
     DecimalTypeDefinition buildType() {
         Preconditions.checkState(fractionDigits != null, "Fraction digits not defined");
 
-        return new BaseDecimalType(getPath(), getUnknownSchemaNodes(), fractionDigits,
+        return new BaseDecimalType(getUnknownSchemaNodes(), fractionDigits,
             calculateRangeConstraint(BaseDecimalType.constraintsForDigits(fractionDigits)));
     }
 }

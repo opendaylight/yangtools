@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.booleanType;
@@ -24,12 +22,10 @@ public class BooleanTypeTest {
     public void canCreateBooleanType() {
         final BooleanTypeDefinition boolType = booleanType();
 
-        assertEquals("getPath gives List of BOOLEAN_QNAME",
-                Collections.singletonList(BaseTypes.BOOLEAN_QNAME), boolType.getPath().getPathFromRoot());
-        assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
+        //assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
         assertFalse(boolType.getDescription().isPresent());
 
-        assertThat(boolType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)boolean"));
+        assertEquals("BaseBooleanType{status=CURRENT}", boolType.toString());
         assertEquals(Optional.empty(), boolType.getUnits());
         assertEquals("Base type is null", null, boolType.getBaseType());
         assertEquals(Optional.empty(), boolType.getDefaultValue());

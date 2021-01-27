@@ -60,7 +60,7 @@ final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupp
             final Current<String, InstanceIdentifierSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(
-            BaseTypes.instanceIdentifierType(), stmt.wrapSchemaPath());
+            BaseTypes.instanceIdentifierType());
 
         // TODO: we could do better here for empty substatements, but its really splitting hairs
         for (EffectiveStatement<?, ?> subStmt : substatements) {

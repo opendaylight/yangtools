@@ -57,8 +57,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
     }
 
     static int hashCode(final @NonNull EnumTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null),
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
             type.getDefaultValue(), type.getValues());
     }
 

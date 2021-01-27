@@ -28,8 +28,8 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     @NonNull Collection<? extends Bit> getBits();
 
     static int hashCode(final @NonNull BitsTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getBits());
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(),type.getUnits().orElse(null),
+                type.getDefaultValue().orElse(null), type.getBits());
     }
 
     static boolean equals(final @NonNull BitsTypeDefinition type, final @Nullable Object obj) {

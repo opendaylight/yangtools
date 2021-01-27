@@ -13,19 +13,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTypeDefinition> {
     private final Builder<String, Bit> builder = ImmutableMap.builder();
 
-    BitsTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    BitsTypeBuilder() {
+        super(null);
     }
 
-    BitsTypeBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
-        super(baseType, path);
+    BitsTypeBuilder(final BitsTypeDefinition baseType) {
+        super(baseType);
     }
 
     public BitsTypeBuilder addBit(final @NonNull Bit item) {
@@ -46,7 +45,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
                 if (item.getPosition() != baseTypeBit.getPosition()) {
                     throw new InvalidBitDefinitionException(item, "Position of bit '%s' must be the same as the "
                             + "position of corresponding bit in the base bits type %s.", item.getName(),
-                            getBaseType().getQName());
+                            baseTypeBit.getName());
                 }
                 isASubsetOfBaseBits = true;
                 break;
@@ -55,7 +54,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
 
         if (!isASubsetOfBaseBits) {
             throw new InvalidBitDefinitionException(item, "Bit '%s' is not a subset of its base bits type %s.",
-                    item.getName(), getBaseType().getQName());
+                    item.getName(), getBaseType());
         }
     }
 
@@ -71,7 +70,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
             }
         }
 
-        return getBaseType() == null ? new BaseBitsType(getPath(), getUnknownSchemaNodes(), positionMap.values())
-                : new RestrictedBitsType(getBaseType(), getPath(), getUnknownSchemaNodes(), positionMap.values());
+        return getBaseType() == null ? new BaseBitsType(getUnknownSchemaNodes(), positionMap.values())
+                : new RestrictedBitsType(getBaseType(), getUnknownSchemaNodes(), positionMap.values());
     }
 }
