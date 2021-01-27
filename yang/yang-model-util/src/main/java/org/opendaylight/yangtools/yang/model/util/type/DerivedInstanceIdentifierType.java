@@ -25,6 +25,16 @@ final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceId
         this.requireInstance = requireInstance;
     }
 
+    private DerivedInstanceIdentifierType(final DerivedInstanceIdentifierType original, final QName qname) {
+        super(original, qname);
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    DerivedInstanceIdentifierType bindTo(final QName newQName) {
+        return new DerivedInstanceIdentifierType(this, newQName);
+    }
+
     @Override
     public boolean requireInstance() {
         return requireInstance;

@@ -26,6 +26,11 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
     }
 
+    AbstractTypeDefinition(final AbstractTypeDefinition<T> original, final QName qname) {
+        this.unknownSchemaNodes = original.unknownSchemaNodes;
+        this.qname = requireNonNull(qname);
+    }
+
     @Override
     public final QName getQName() {
         return qname;
@@ -35,6 +40,15 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
     public final Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
     }
+
+    /**
+     * Bind this type definition to a new {@link QName}. The resulting definition will be equivalent to this definition
+     * in all aspects except its path.
+     *
+     * @param newQName New {@link QName} to use
+     * @return Bound type definition
+     */
+    abstract @NonNull T bindTo(@NonNull QName newQName);
 
     @Override
     public abstract String toString();

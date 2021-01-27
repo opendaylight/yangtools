@@ -21,6 +21,15 @@ final class DerivedInt16Type extends AbstractRangeRestrictedDerivedType<Int16Typ
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedInt16Type(final DerivedInt16Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    DerivedInt16Type bindTo(final QName newQName) {
+        return new DerivedInt16Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Int16TypeDefinition.hashCode(this);

@@ -21,6 +21,15 @@ final class DerivedInt32Type extends AbstractRangeRestrictedDerivedType<Int32Typ
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedInt32Type(final DerivedInt32Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    DerivedInt32Type bindTo(final QName newQName) {
+        return new DerivedInt32Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Int32TypeDefinition.hashCode(this);

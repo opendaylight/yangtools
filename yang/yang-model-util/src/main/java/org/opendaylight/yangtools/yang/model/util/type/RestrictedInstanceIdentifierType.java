@@ -22,6 +22,16 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
         this.requireInstance = requireInstance;
     }
 
+    private RestrictedInstanceIdentifierType(final RestrictedInstanceIdentifierType original, final QName qname) {
+        super(original, qname);
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    RestrictedInstanceIdentifierType bindTo(final QName newQName) {
+        return new RestrictedInstanceIdentifierType(this, newQName);
+    }
+
     @Override
     public boolean requireInstance() {
         return requireInstance;

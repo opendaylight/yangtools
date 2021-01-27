@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.model.util.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
@@ -57,8 +58,7 @@ abstract class AbstractLeafListEffectiveStatement
         this.substatements = original.substatements;
         this.path = path;
         this.flags = flags;
-        // TODO: lazy instantiation?
-        this.type = buildType();
+        this.type = TypeBuilder.copyTypeDefinition(original.type, getQName());
     }
 
     @Override

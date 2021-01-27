@@ -24,6 +24,16 @@ final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDef
         this.values = ImmutableList.copyOf(values);
     }
 
+    private RestrictedEnumerationType(final RestrictedEnumerationType original, final QName qname) {
+        super(original, qname);
+        this.values = original.values;
+    }
+
+    @Override
+    RestrictedEnumerationType bindTo(final QName newQName) {
+        return new RestrictedEnumerationType(this, newQName);
+    }
+
     @Override
     public List<EnumPair> getValues() {
         return values;

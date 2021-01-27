@@ -22,6 +22,15 @@ final class DerivedUint8Type extends AbstractRangeRestrictedDerivedType<Uint8Typ
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedUint8Type(final DerivedUint8Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    DerivedUint8Type bindTo(final QName newQName) {
+        return new DerivedUint8Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Uint8TypeDefinition.hashCode(this);

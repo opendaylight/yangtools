@@ -22,6 +22,15 @@ final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> im
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedUnionType(final DerivedUnionType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    DerivedUnionType bindTo(final QName newQName) {
+        return new DerivedUnionType(this, newQName);
+    }
+
     @Override
     public List<TypeDefinition<?>> getTypes() {
         return baseType().getTypes();

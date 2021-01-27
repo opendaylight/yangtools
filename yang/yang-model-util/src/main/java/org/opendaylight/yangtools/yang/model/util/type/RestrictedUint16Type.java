@@ -23,6 +23,15 @@ final class RestrictedUint16Type extends AbstractRangeRestrictedType<Uint16TypeD
         super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedUint16Type(final RestrictedUint16Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    RestrictedUint16Type bindTo(final QName newQName) {
+        return new RestrictedUint16Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Uint16TypeDefinition.hashCode(this);

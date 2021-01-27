@@ -24,6 +24,16 @@ final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> imp
         this.values = ImmutableList.copyOf(values);
     }
 
+    private BaseEnumerationType(final BaseEnumerationType original, final QName qname) {
+        super(original, qname);
+        this.values = original.values;
+    }
+
+    @Override
+    BaseEnumerationType bindTo(final QName newQName) {
+        return new BaseEnumerationType(this, newQName);
+    }
+
     @Override
     public List<EnumPair> getValues() {
         return values;

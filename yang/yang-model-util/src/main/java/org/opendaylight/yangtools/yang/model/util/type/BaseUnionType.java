@@ -24,6 +24,16 @@ final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition> implemen
         this.types = ImmutableList.copyOf(types);
     }
 
+    private BaseUnionType(final BaseUnionType original, final QName qname) {
+        super(original, qname);
+        this.types = original.types;
+    }
+
+    @Override
+    BaseUnionType bindTo(final QName newQName) {
+        return new BaseUnionType(this, newQName);
+    }
+
     @Override
     public List<TypeDefinition<?>> getTypes() {
         return types;

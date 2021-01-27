@@ -20,6 +20,15 @@ final class RestrictedUnionType extends AbstractRestrictedType<UnionTypeDefiniti
         super(baseType, qname, unknownSchemaNodes);
     }
 
+    private RestrictedUnionType(final RestrictedUnionType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    RestrictedUnionType bindTo(final QName newQName) {
+        return new RestrictedUnionType(this, newQName);
+    }
+
     @Override
     public List<TypeDefinition<?>> getTypes() {
         return getBaseType().getTypes();

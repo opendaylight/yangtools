@@ -20,6 +20,15 @@ final class DerivedBitsType extends AbstractDerivedType<BitsTypeDefinition> impl
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedBitsType(final DerivedBitsType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    DerivedBitsType bindTo(final QName newQName) {
+        return new DerivedBitsType(this, newQName);
+    }
+
     @Override
     public Collection<? extends Bit> getBits() {
         return baseType().getBits();

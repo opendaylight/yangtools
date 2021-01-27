@@ -22,6 +22,15 @@ final class RestrictedInt64Type extends AbstractRangeRestrictedType<Int64TypeDef
         super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedInt64Type(final RestrictedInt64Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    RestrictedInt64Type bindTo(final QName newQName) {
+        return new RestrictedInt64Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Int64TypeDefinition.hashCode(this);
