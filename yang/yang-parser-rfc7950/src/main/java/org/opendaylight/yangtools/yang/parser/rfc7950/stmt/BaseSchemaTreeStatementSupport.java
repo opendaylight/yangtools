@@ -50,8 +50,9 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
         public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
                 final Collection<? extends EffectiveStatement<?, ?>> substatements) {
             return equalHistory(copy, current)
-                // FIXME: this should devolve to getArgument() equality
-                && copy.getSchemaPath().equals(current.getSchemaPath());
+                && copy.getArgument().equals(current.getArgument())
+                // FIXME: 8.0.0: eliminate this call
+                && copy.equalParentPath(current);
         }
 
         // TODO: can we speed this up?
