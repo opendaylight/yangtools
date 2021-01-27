@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -31,6 +32,12 @@ final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>, D extends Ty
             }
         }
         typeDefinition = builder.build();
+    }
+
+    TypeEffectiveStatementImpl(final TypeEffectiveStatementImpl<T, D> original, final SchemaPath path) {
+        super(original);
+        // FIXME: rebase to 'qname'
+        this.typeDefinition = original.typeDefinition;
     }
 
     @Override
