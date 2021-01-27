@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.RequireInstanceRestrictedTypeDefinition;
 
 @Beta
@@ -16,8 +15,8 @@ public abstract class RequireInstanceRestrictedTypeBuilder<T extends RequireInst
         extends AbstractRestrictedTypeBuilder<T> {
     private boolean requireInstance;
 
-    RequireInstanceRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(baseType, path);
+    RequireInstanceRestrictedTypeBuilder(final T baseType) {
+        super(baseType);
         requireInstance = baseType == null || baseType.requireInstance();
     }
 

@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
 abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeDefinition<T, N>,
         N extends Number & Comparable<N>> extends RangeRestrictedTypeBuilder<T, N> {
 
-    RangeRestrictedTypeBuilderWithBase(final T baseType, final SchemaPath path) {
-        super(requireNonNull(baseType), path);
+    RangeRestrictedTypeBuilderWithBase(final T baseType) {
+        super(requireNonNull(baseType));
     }
 
     @Override

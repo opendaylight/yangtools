@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
@@ -16,7 +14,6 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -249,64 +246,50 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof BitsTypeDefinition) {
             return createBits(stmt, (BitsTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof BooleanTypeDefinition) {
-            return createBoolean(stmt, (BooleanTypeDefinition) baseType, declared, substatements);
+            return createBoolean((BooleanTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof DecimalTypeDefinition) {
             return createDecimal(stmt, (DecimalTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof EmptyTypeDefinition) {
-            return createEmpty(stmt, (EmptyTypeDefinition) baseType, declared, substatements);
+            return createEmpty((EmptyTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof EnumTypeDefinition) {
             return createEnum(stmt, (EnumTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return createIdentityref(stmt, (IdentityrefTypeDefinition) baseType, declared, substatements);
+            return createIdentityref((IdentityrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             return createInstanceIdentifier(stmt, (InstanceIdentifierTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Int8TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType));
         } else if (baseType instanceof Int16TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt16Builder((Int16TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newInt16Builder((Int16TypeDefinition) baseType));
         } else if (baseType instanceof Int32TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt32Builder((Int32TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newInt32Builder((Int32TypeDefinition) baseType));
         } else if (baseType instanceof Int64TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newInt64Builder((Int64TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newInt64Builder((Int64TypeDefinition) baseType));
         } else if (baseType instanceof LeafrefTypeDefinition) {
-            return createLeafref(stmt, (LeafrefTypeDefinition) baseType, declared, substatements);
+            return createLeafref((LeafrefTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof StringTypeDefinition) {
             return createString(stmt, (StringTypeDefinition) baseType, declared, substatements);
         } else if (baseType instanceof Uint8TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint8Builder((Uint8TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newUint8Builder((Uint8TypeDefinition) baseType));
         } else if (baseType instanceof Uint16TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint16Builder((Uint16TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newUint16Builder((Uint16TypeDefinition) baseType));
         } else if (baseType instanceof Uint32TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint32Builder((Uint32TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newUint32Builder((Uint32TypeDefinition) baseType));
         } else if (baseType instanceof Uint64TypeDefinition) {
             return createIntegral(stmt, declared, substatements,
-                RestrictedTypes.newUint64Builder((Uint64TypeDefinition) baseType, typeEffectiveSchemaPath(stmt)));
+                RestrictedTypes.newUint64Builder((Uint64TypeDefinition) baseType));
         } else if (baseType instanceof UnionTypeDefinition) {
-            return createUnion(stmt, (UnionTypeDefinition) baseType, declared, substatements);
+            return createUnion((UnionTypeDefinition) baseType, declared, substatements);
         } else {
             throw new IllegalStateException("Unhandled base type " + baseType);
         }
-    }
-
-    static final SchemaPath typeEffectiveSchemaPath(final Current<?, ?> stmt) {
-        final SchemaPath path = stmt.wrapSchemaPath();
-        if (path == null) {
-            // SchemaPath is forbidden with a system property
-            return null;
-        }
-        final SchemaPath parent = path.getParent();
-        final QName parentQName = parent.getLastComponent();
-        checkArgument(parentQName != null, "Path %s has an empty parent", path);
-
-        final QName qname = path.getLastComponent().bindTo(parentQName.getModule()).intern();
-        return parent.createChild(qname);
     }
 
     /**
@@ -359,7 +342,7 @@ abstract class AbstractTypeStatementSupport
             final BinaryTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final LengthRestrictedTypeBuilder<BinaryTypeDefinition> builder =
-                RestrictedTypes.newBinaryBuilder(baseType, typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newBinaryBuilder(baseType);
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof LengthEffectiveStatement) {
@@ -381,7 +364,7 @@ abstract class AbstractTypeStatementSupport
     private @NonNull TypeEffectiveStatement<TypeStatement> createBits(final Current<?, ?> ctx,
             final BitsTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType, ctx.wrapSchemaPath());
+        final BitsTypeBuilder builder = RestrictedTypes.newBitsBuilder(baseType);
 
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof BitEffectiveStatement) {
@@ -395,18 +378,16 @@ abstract class AbstractTypeStatementSupport
     abstract @NonNull Bit addRestrictedBit(@NonNull EffectiveStmtCtx stmt, @NonNull BitsTypeDefinition base,
         @NonNull BitEffectiveStatement bit);
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final Current<?, ?> ctx,
-            final BooleanTypeDefinition baseType, final TypeStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newBooleanBuilder(baseType,
-            typeEffectiveSchemaPath(ctx)));
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createBoolean(final BooleanTypeDefinition baseType,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newBooleanBuilder(baseType));
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createDecimal(final Current<?, ?> ctx,
             final DecimalTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> builder =
-                RestrictedTypes.newDecima64Builder(baseType, typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newDecima64Builder(baseType);
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof RangeEffectiveStatement) {
@@ -423,17 +404,15 @@ abstract class AbstractTypeStatementSupport
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createEmpty(final Current<?, ?> ctx,
-            final EmptyTypeDefinition baseType, final TypeStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newEmptyBuilder(baseType,
-            typeEffectiveSchemaPath(ctx)));
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createEmpty(final EmptyTypeDefinition baseType,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newEmptyBuilder(baseType));
     }
 
     private @NonNull TypeEffectiveStatement<TypeStatement> createEnum(final Current<?, ?> ctx,
             final EnumTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType, ctx.wrapSchemaPath());
+        final EnumerationTypeBuilder builder = RestrictedTypes.newEnumerationBuilder(baseType);
 
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof EnumEffectiveStatement) {
@@ -447,18 +426,17 @@ abstract class AbstractTypeStatementSupport
     abstract @NonNull EnumPair addRestrictedEnum(@NonNull EffectiveStmtCtx stmt, @NonNull EnumTypeDefinition base,
         @NonNull EnumEffectiveStatement enumStmt);
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createIdentityref(final Current<?, ?> ctx,
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createIdentityref(
             final IdentityrefTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newIdentityrefBuilder(baseType,
-            typeEffectiveSchemaPath(ctx)));
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newIdentityrefBuilder(
+                baseType));
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createInstanceIdentifier(
             final Current<?, ?> ctx, final InstanceIdentifierTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(baseType,
-                    typeEffectiveSchemaPath(ctx));
+        final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(baseType);
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof RequireInstanceEffectiveStatement) {
@@ -487,11 +465,10 @@ abstract class AbstractTypeStatementSupport
         }
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createLeafref(final Current<?, ?> ctx,
-            final LeafrefTypeDefinition baseType, final TypeStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createLeafref(final LeafrefTypeDefinition baseType,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> builder =
-                RestrictedTypes.newLeafrefBuilder(baseType, AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newLeafrefBuilder(baseType);
 
         for (final EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof RequireInstanceEffectiveStatement) {
@@ -504,8 +481,7 @@ abstract class AbstractTypeStatementSupport
     private static @NonNull TypeEffectiveStatement<TypeStatement> createString(final Current<?, ?> ctx,
             final StringTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(baseType,
-            AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
+        final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(baseType);
 
         for (EffectiveStatement<?, ?> stmt : substatements) {
             if (stmt instanceof LengthEffectiveStatement) {
@@ -527,10 +503,8 @@ abstract class AbstractTypeStatementSupport
         return new TypeEffectiveStatementImpl<>(declared, substatements, builder);
     }
 
-    private static @NonNull TypeEffectiveStatement<TypeStatement> createUnion(final Current<?, ?> ctx,
-            final UnionTypeDefinition baseType, final TypeStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType,
-            typeEffectiveSchemaPath(ctx)));
+    private static @NonNull TypeEffectiveStatement<TypeStatement> createUnion(final UnionTypeDefinition baseType,
+            final TypeStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new TypeEffectiveStatementImpl<>(declared, substatements, RestrictedTypes.newUnionBuilder(baseType));
     }
 }

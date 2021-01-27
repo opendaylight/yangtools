@@ -42,6 +42,6 @@ public class DecimalCodecStringTest {
     }
 
     private static DecimalTypeDefinition getType() {
-        return BaseTypes.decimalTypeBuilder(mock(SchemaPath.class)).setFractionDigits(2).build();
+        return BaseTypes.decimalTypeBuilder().setFractionDigits(2).build();
     }
 }

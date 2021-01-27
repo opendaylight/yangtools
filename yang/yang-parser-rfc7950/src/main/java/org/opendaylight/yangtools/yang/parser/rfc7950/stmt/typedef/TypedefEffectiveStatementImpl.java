@@ -15,10 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -60,7 +57,6 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     }
 
     private final @NonNull Object substatements;
-    private final @Nullable SchemaPath path;
     private final int flags;
 
     // Accessed via TYPE_DEFINITION
@@ -70,10 +66,9 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     @SuppressWarnings("unused")
     private volatile ProxyTypeEffectiveStatement typeStatement;
 
-    TypedefEffectiveStatementImpl(final TypedefStatement declared, final SchemaPath path, final int flags,
+    TypedefEffectiveStatementImpl(final TypedefStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
-        this.path = path;
         this.flags = flags;
         this.substatements = maskList(substatements);
     }
@@ -81,12 +76,6 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     @Override
     public int flags() {
         return flags;
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override
@@ -113,7 +102,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
 
     private @NonNull TypeDefinition<?> loadTypeDefinition() {
         final TypeEffectiveStatement<?> type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), path);
+        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition());
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {

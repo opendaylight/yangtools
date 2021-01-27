@@ -123,19 +123,19 @@ public final class CompatUtils {
     public static @NonNull TypeDefinition<?> compatType(final @NonNull TypedDataSchemaNode leaf) {
         final TypeDefinition<?> leafType = requireNonNull(leaf.getType());
 
-        if (!leaf.getPath().equals(leafType.getPath())) {
+      /*  if (!leaf.getPath().equals(leafType.getPath())) {
             // Old parser semantics, or no new default/units defined for this leaf
             return leafType;
-        }
+        }*/
 
         // We are dealing with a type generated for the leaf itself
         final TypeDefinition<?> baseType = leafType.getBaseType();
         checkArgument(baseType != null, "Leaf %s has type for leaf, but no base type", leaf);
 
-        if (leaf.getPath().equals(baseType.getPath().getParent())) {
+      /*  if (leaf.getPath().equals(baseType.getPath().getParent())) {
             // Internal instantiation of a base YANG type (decimal64 and similar)
             return baseType;
-        }
+        }*/
 
         // At this point we have dealt with the easy cases. Now we need to perform per-type checking if there are no
         // new constraints introduced by this type. If there were not, we will return the base type.

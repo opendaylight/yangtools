@@ -25,9 +25,8 @@ public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<Str
     @NonNull List<PatternConstraint> getPatternConstraints();
 
     static int hashCode(final @NonNull StringTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null),
-            type.getPatternConstraints());
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
+            type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null), type.getPatternConstraints());
     }
 
     static boolean equals(final @NonNull StringTypeDefinition type, final @Nullable Object obj) {

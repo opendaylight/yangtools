@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
  */
 public class UnionCodecStringTest {
     private static UnionTypeDefinition toUnionTypeDefinition(final TypeDefinition<?>... types) {
-        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(mock(SchemaPath.class));
+        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder();
 
         for (TypeDefinition<?> t : types) {
             builder.addType(t);

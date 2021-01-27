@@ -27,7 +27,7 @@ import java.util.Optional;
  *            type of the base type (YANG <code>type</code> substatement) which
  *            is included in the instance of this type
  */
-public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode {
+public interface TypeDefinition<T extends TypeDefinition<?>> extends DocumentedNode.WithStatus {
     /**
      * Returns the base type from which this type is derived. If this is yang built-in type, returns null.
      *

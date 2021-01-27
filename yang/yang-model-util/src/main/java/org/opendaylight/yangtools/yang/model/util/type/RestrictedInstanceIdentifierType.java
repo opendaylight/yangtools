@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
@@ -16,9 +15,9 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
         implements InstanceIdentifierTypeDefinition {
     private final boolean requireInstance;
 
-    RestrictedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path,
+    RestrictedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
-        super(baseType, path, unknownSchemaNodes);
+        super(baseType, unknownSchemaNodes);
         this.requireInstance = requireInstance;
     }
 

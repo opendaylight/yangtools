@@ -9,15 +9,13 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 public final class InstanceIdentifierTypeBuilder
         extends RequireInstanceRestrictedTypeBuilder<InstanceIdentifierTypeDefinition> {
 
-    InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType,
-            final SchemaPath path) {
-        super(requireNonNull(baseType), path);
+    InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType) {
+        super(requireNonNull(baseType));
     }
 
     @Override
@@ -27,6 +25,6 @@ public final class InstanceIdentifierTypeBuilder
             return base;
         }
 
-        return new RestrictedInstanceIdentifierType(base, getPath(), getUnknownSchemaNodes(), getRequireInstance());
+        return new RestrictedInstanceIdentifierType(base, getUnknownSchemaNodes(), getRequireInstance());
     }
 }

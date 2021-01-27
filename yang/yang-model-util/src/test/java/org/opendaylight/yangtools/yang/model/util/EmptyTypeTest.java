@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.emptyType;
 
 import java.util.Collections;
@@ -24,9 +23,7 @@ public class EmptyTypeTest {
     public void canCreateEmptyType() {
         EmptyTypeDefinition emptyType = emptyType();
 
-        assertEquals("QName", BaseTypes.EMPTY_QNAME, emptyType.getQName());
-        assertEquals("Path", Collections.singletonList(BaseTypes.EMPTY_QNAME),
-                emptyType.getPath().getPathFromRoot());
+        //assertEquals("QName", BaseTypes.EMPTY_QNAME, emptyType.getQName());
         assertEquals("BaseType", null, emptyType.getBaseType());
         assertEquals("DefaultValue", Optional.empty(), emptyType.getDefaultValue());
         assertEquals("Status", Status.CURRENT, emptyType.getStatus());
@@ -34,6 +31,6 @@ public class EmptyTypeTest {
         assertEquals("Units", Optional.empty(), emptyType.getUnits());
         assertFalse(emptyType.getDescription().isPresent());
         assertEquals("UnknownSchemaNodes", Collections.emptyList(), emptyType.getUnknownSchemaNodes());
-        assertTrue("toString", emptyType.toString().contains("empty"));
+        assertEquals("BaseEmptyType{status=CURRENT}", emptyType.toString());
     }
 }

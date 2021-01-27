@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 final class RestrictedEmptyType extends AbstractRestrictedType<EmptyTypeDefinition> implements EmptyTypeDefinition {
-    RestrictedEmptyType(final EmptyTypeDefinition baseType, final SchemaPath path,
+    RestrictedEmptyType(final EmptyTypeDefinition baseType,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, path, unknownSchemaNodes);
+        super(baseType, unknownSchemaNodes);
     }
 
     @Override

@@ -20,13 +20,13 @@ final class TypeDefinitions {
     }
 
     static int basicHashCode(final @NonNull TypeDefinition<?> type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null));
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
+                type.getDefaultValue().orElse(null));
     }
 
     static int hashCode(final @NonNull RangeRestrictedTypeDefinition<?, ?> type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
+                type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
     }
 
     static <T extends RangeRestrictedTypeDefinition<T, ?>> boolean equals(final @NonNull Class<T> clazz,
@@ -50,8 +50,7 @@ final class TypeDefinitions {
         }
 
         final @NonNull T other = clazz.cast(obj);
-        return Objects.equals(type.getQName(), other.getQName())
-                && Objects.equals(type.getBaseType(), other.getBaseType())
+        return Objects.equals(type.getBaseType(), other.getBaseType())
                 && Objects.equals(type.getDefaultValue(), other.getDefaultValue())
                 && Objects.equals(type.getUnknownSchemaNodes(), other.getUnknownSchemaNodes())
                 && Objects.equals(type.getUnits(), other.getUnits()) ? other : null;
@@ -59,7 +58,6 @@ final class TypeDefinitions {
 
     static @NonNull ToStringHelper toStringHelper(final @NonNull TypeDefinition<?> type) {
         return MoreObjects.toStringHelper(type).omitNullValues()
-                .add("name", type.getQName())
                 .add("baseType", type.getBaseType())
                 .add("default", type.getDefaultValue().orElse(null))
                 .add("description", type.getDescription().orElse(null))

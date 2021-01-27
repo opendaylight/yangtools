@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.annotations.Beta;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -24,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 @Beta
 public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends DerivedTypeBuilder<T> {
-    ConcreteTypeBuilder(final T baseType, final SchemaPath path) {
-        super(baseType, path);
+    ConcreteTypeBuilder(final T baseType) {
+        super(baseType);
 
         setStatus(baseType.getStatus());
         baseType.getDescription().ifPresent(this::setDescription);

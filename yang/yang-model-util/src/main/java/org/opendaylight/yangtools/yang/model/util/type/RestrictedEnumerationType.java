@@ -11,16 +11,15 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDefinition> implements EnumTypeDefinition {
     private final @NonNull ImmutableList<EnumPair> values;
 
-    RestrictedEnumerationType(final EnumTypeDefinition baseType, final SchemaPath path,
+    RestrictedEnumerationType(final EnumTypeDefinition baseType,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final Collection<EnumPair> values) {
-        super(baseType, path, unknownSchemaNodes);
+        super(baseType, unknownSchemaNodes);
         this.values = ImmutableList.copyOf(values);
     }
 

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -63,28 +62,28 @@ public final class BaseTypes {
         return BaseBinaryType.INSTANCE;
     }
 
-    public static @NonNull BitsTypeBuilder bitsTypeBuilder(final SchemaPath path) {
-        return new BitsTypeBuilder(path);
+    public static @NonNull BitsTypeBuilder bitsTypeBuilder() {
+        return new BitsTypeBuilder();
     }
 
     public static @NonNull BooleanTypeDefinition booleanType() {
         return BaseBooleanType.INSTANCE;
     }
 
-    public static @NonNull DecimalTypeBuilder decimalTypeBuilder(final SchemaPath path) {
-        return new DecimalTypeBuilder(path);
+    public static @NonNull DecimalTypeBuilder decimalTypeBuilder() {
+        return new DecimalTypeBuilder();
     }
 
     public static @NonNull EmptyTypeDefinition emptyType() {
         return BaseEmptyType.INSTANCE;
     }
 
-    public static @NonNull EnumerationTypeBuilder enumerationTypeBuilder(final SchemaPath path) {
-        return new EnumerationTypeBuilder(path);
+    public static @NonNull EnumerationTypeBuilder enumerationTypeBuilder() {
+        return new EnumerationTypeBuilder();
     }
 
-    public static @NonNull IdentityrefTypeBuilder identityrefTypeBuilder(final SchemaPath path) {
-        return new IdentityrefTypeBuilder(path);
+    public static @NonNull IdentityrefTypeBuilder identityrefTypeBuilder() {
+        return new IdentityrefTypeBuilder();
     }
 
     public static @NonNull InstanceIdentifierTypeDefinition instanceIdentifierType() {
@@ -107,16 +106,16 @@ public final class BaseTypes {
         return BaseInt64Type.INSTANCE;
     }
 
-    public static @NonNull LeafrefTypeBuilder leafrefTypeBuilder(final SchemaPath path) {
-        return new LeafrefTypeBuilder(path);
+    public static @NonNull LeafrefTypeBuilder leafrefTypeBuilder() {
+        return new LeafrefTypeBuilder();
     }
 
     public static @NonNull StringTypeDefinition stringType() {
         return BaseStringType.INSTANCE;
     }
 
-    public static UnionTypeBuilder unionTypeBuilder(final SchemaPath path) {
-        return new UnionTypeBuilder(path);
+    public static UnionTypeBuilder unionTypeBuilder() {
+        return new UnionTypeBuilder();
     }
 
     public static @NonNull Uint8TypeDefinition uint8Type() {

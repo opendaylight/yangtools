@@ -65,7 +65,7 @@ final class BitsSpecificationSupport
             throw noBits(stmt);
         }
 
-        final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(stmt.wrapSchemaPath());
+        final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder();
         Uint32 highestPosition = null;
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof BitEffectiveStatement) {

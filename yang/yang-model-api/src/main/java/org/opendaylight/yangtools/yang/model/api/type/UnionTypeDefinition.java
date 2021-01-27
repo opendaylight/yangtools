@@ -26,8 +26,8 @@ public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition>
     List<TypeDefinition<?>> getTypes();
 
     static int hashCode(final UnionTypeDefinition type) {
-        return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getTypes());
+        return Objects.hash(type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits().orElse(null),
+                type.getDefaultValue().orElse(null), type.getTypes());
     }
 
     static boolean equals(final UnionTypeDefinition type, final Object obj) {
