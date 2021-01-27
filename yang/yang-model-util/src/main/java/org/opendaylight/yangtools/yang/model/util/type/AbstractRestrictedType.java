@@ -26,6 +26,11 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends Abstr
         this.baseType = requireNonNull(baseType);
     }
 
+    AbstractRestrictedType(final AbstractRestrictedType<T> original, final QName qname) {
+        super(original, qname);
+        this.baseType = original.baseType;
+    }
+
     @Override
     public final T getBaseType() {
         return baseType;

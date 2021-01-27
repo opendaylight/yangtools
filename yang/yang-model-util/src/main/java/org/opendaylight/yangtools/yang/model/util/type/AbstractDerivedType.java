@@ -38,6 +38,16 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
         this.units = units;
     }
 
+    AbstractDerivedType(final AbstractDerivedType<T> original, final QName qname) {
+        super(original, qname);
+        this.baseType = original.baseType;
+        this.status = original.status;
+        this.defaultValue = original.defaultValue;
+        this.description = original.description;
+        this.reference = original.reference;
+        this.units = original.units;
+    }
+
     @Override
     public final T getBaseType() {
         return baseType instanceof AbstractRestrictedType ? baseType.getBaseType() : baseType;
