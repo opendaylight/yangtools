@@ -14,9 +14,10 @@ import com.google.common.base.Verify;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 
 @Beta
-public final class CopyHistory implements Immutable {
+public final class CopyHistory implements Immutable, CopyableNode {
     private static final CopyType[] VALUES = CopyType.values();
 
     private static final CopyHistory[][] CACHE = new CopyHistory[VALUES.length][];
@@ -34,6 +35,10 @@ public final class CopyHistory implements Immutable {
     }
 
     private static final CopyHistory ORIGINAL = cacheObject(CopyType.ORIGINAL, CopyType.ORIGINAL.bit());
+    private static final int IS_ADDED_BY_USES_BITS =
+        CopyType.ADDED_BY_USES_AUGMENTATION.bit() | CopyType.ADDED_BY_USES.bit();
+    private static final int IS_AUGMENTING_BITS =
+        CopyType.ADDED_BY_USES_AUGMENTATION.bit() | CopyType.ADDED_BY_AUGMENTATION.bit();
 
     private final short operations;
     private final short lastOperation;
@@ -83,12 +88,26 @@ public final class CopyHistory implements Immutable {
         return ret;
     }
 
+    @VisibleForTesting
+    // FIXME: 7.0.0: hide this method
     public boolean contains(final CopyType type) {
         return (operations & type.bit()) != 0;
     }
 
     public CopyType getLastOperation() {
         return VALUES[lastOperation];
+    }
+
+    @Override
+    @Deprecated
+    public boolean isAugmenting() {
+        return (operations & IS_AUGMENTING_BITS) != 0;
+    }
+
+    @Override
+    @Deprecated
+    public boolean isAddedByUses() {
+        return (operations & IS_ADDED_BY_USES_BITS) != 0;
     }
 
     @VisibleForTesting

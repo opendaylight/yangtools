@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatement<A>>
@@ -54,13 +53,8 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
 
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.augmenting = true;
-            this.addedByUses = true;
-        } else {
-            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
-            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
-        }
+        this.augmenting = copyTypesFromOriginal.isAugmenting();
+        this.addedByUses = copyTypesFromOriginal.isAddedByUses();
 
         nodeParameter = ctx.rawStatementArgument() == null ? "" : ctx.rawStatementArgument();
     }
