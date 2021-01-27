@@ -13,6 +13,7 @@ import static org.junit.Assert.assertSame;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -22,6 +23,28 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 public class YT1208Test {
+    @Test
+    public void testAugmentStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/augment.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final NotificationEffectiveStatement notif = module
+            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+
+        final AugmentEffectiveStatement grpAug = notif
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(AugmentEffectiveStatement.class).orElseThrow();
+        final AugmentEffectiveStatement contAug = notif
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(AugmentEffectiveStatement.class).orElseThrow();
+
+        assertSame(contAug, grpAug);
+    }
+
     @Test
     public void testCaseStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/case.yang")
