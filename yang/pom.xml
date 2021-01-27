@@ -24,6 +24,7 @@
 
     <modules>
         <module>yang-common</module>
+        <module>yang-common-jackson</module>
         <module>yang-common-netty</module>
         <module>yang-data-api</module>
         <module>yang-data-util</module>
