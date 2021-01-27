@@ -24,6 +24,16 @@ final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> imp
         this.values = ImmutableList.copyOf(values);
     }
 
+    private BaseEnumerationType(final BaseEnumerationType original, final SchemaPath path) {
+        super(original, path);
+        this.values = original.values;
+    }
+
+    @Override
+    public BaseEnumerationType bindTo(final SchemaPath newPath) {
+        return new BaseEnumerationType(this, newPath);
+    }
+
     @Override
     public List<EnumPair> getValues() {
         return values;

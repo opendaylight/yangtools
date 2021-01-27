@@ -21,6 +21,15 @@ final class DerivedInt8Type extends AbstractRangeRestrictedDerivedType<Int8TypeD
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedInt8Type(final DerivedInt8Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedInt8Type bindTo(final SchemaPath newPath) {
+        return new DerivedInt8Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Int8TypeDefinition.hashCode(this);

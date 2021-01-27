@@ -26,6 +26,17 @@ final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> impl
         this.requireInstance = requireInstance;
     }
 
+    private BaseLeafrefType(final BaseLeafrefType original, final SchemaPath path) {
+        super(original, path);
+        this.pathStatement = original.pathStatement;
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    public BaseLeafrefType bindTo(final SchemaPath newPath) {
+        return new BaseLeafrefType(this, newPath);
+    }
+
     @Override
     public PathExpression getPathStatement() {
         return pathStatement;

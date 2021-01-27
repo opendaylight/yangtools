@@ -22,6 +22,16 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
         this.requireInstance = requireInstance;
     }
 
+    private RestrictedInstanceIdentifierType(final RestrictedInstanceIdentifierType original, final SchemaPath path) {
+        super(original, path);
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    public RestrictedInstanceIdentifierType bindTo(final SchemaPath newPath) {
+        return new RestrictedInstanceIdentifierType(this, newPath);
+    }
+
     @Override
     public boolean requireInstance() {
         return requireInstance;

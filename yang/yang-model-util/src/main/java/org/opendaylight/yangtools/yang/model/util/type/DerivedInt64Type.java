@@ -21,6 +21,15 @@ final class DerivedInt64Type extends AbstractRangeRestrictedDerivedType<Int64Typ
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedInt64Type(final DerivedInt64Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedInt64Type bindTo(final SchemaPath newPath) {
+        return new DerivedInt64Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Int64TypeDefinition.hashCode(this);

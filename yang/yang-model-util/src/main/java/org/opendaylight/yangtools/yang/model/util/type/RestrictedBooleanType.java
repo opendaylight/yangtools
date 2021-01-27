@@ -19,6 +19,15 @@ final class RestrictedBooleanType extends AbstractRestrictedType<BooleanTypeDefi
         super(baseType, path, unknownSchemaNodes);
     }
 
+    private RestrictedBooleanType(final RestrictedBooleanType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedBooleanType bindTo(final SchemaPath newPath) {
+        return new RestrictedBooleanType(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return BooleanTypeDefinition.hashCode(this);

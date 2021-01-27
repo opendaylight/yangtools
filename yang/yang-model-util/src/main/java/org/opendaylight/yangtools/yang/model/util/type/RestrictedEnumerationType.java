@@ -24,6 +24,16 @@ final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDef
         this.values = ImmutableList.copyOf(values);
     }
 
+    private RestrictedEnumerationType(final RestrictedEnumerationType original, final SchemaPath path) {
+        super(original, path);
+        this.values = original.values;
+    }
+
+    @Override
+    public RestrictedEnumerationType bindTo(final SchemaPath newPath) {
+        return new RestrictedEnumerationType(this, newPath);
+    }
+
     @Override
     public List<EnumPair> getValues() {
         return values;

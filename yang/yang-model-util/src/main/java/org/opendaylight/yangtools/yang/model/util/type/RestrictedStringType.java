@@ -30,6 +30,16 @@ final class RestrictedStringType extends AbstractLengthRestrictedType<StringType
         this.patternConstraints = ImmutableList.copyOf(patternConstraints);
     }
 
+    private RestrictedStringType(final RestrictedStringType original, final SchemaPath path) {
+        super(original, path);
+        this.patternConstraints = original.patternConstraints;
+    }
+
+    @Override
+    public RestrictedStringType bindTo(final SchemaPath newPath) {
+        return new RestrictedStringType(this, newPath);
+    }
+
     @Override
     public List<PatternConstraint> getPatternConstraints() {
         return patternConstraints;

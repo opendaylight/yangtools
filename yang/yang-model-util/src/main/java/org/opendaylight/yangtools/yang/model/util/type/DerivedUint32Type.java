@@ -16,11 +16,19 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
 final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32TypeDefinition, Uint32>
         implements Uint32TypeDefinition {
-
     DerivedUint32Type(final Uint32TypeDefinition baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+    }
+
+    private DerivedUint32Type(final DerivedUint32Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedUint32Type bindTo(final SchemaPath newPath) {
+        return new DerivedUint32Type(this, newPath);
     }
 
     @Override

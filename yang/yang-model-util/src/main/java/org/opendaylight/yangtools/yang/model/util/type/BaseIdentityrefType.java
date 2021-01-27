@@ -27,6 +27,16 @@ final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefiniti
         this.identities = requireNonNull(identities);
     }
 
+    private BaseIdentityrefType(final BaseIdentityrefType original, final SchemaPath path) {
+        super(original, path);
+        this.identities = original.identities;
+    }
+
+    @Override
+    public BaseIdentityrefType bindTo(final SchemaPath newPath) {
+        return new BaseIdentityrefType(this, newPath);
+    }
+
     @Override
     public Set<? extends IdentitySchemaNode> getIdentities() {
         return identities;

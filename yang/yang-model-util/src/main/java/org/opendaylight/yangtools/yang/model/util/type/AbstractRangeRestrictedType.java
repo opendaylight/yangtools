@@ -27,6 +27,11 @@ abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefiniti
         this.rangeConstraint = rangeConstraint;
     }
 
+    AbstractRangeRestrictedType(final AbstractRangeRestrictedType<T, N> original, final SchemaPath path) {
+        super(original, path);
+        this.rangeConstraint = original.rangeConstraint;
+    }
+
     @Override
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return Optional.ofNullable(rangeConstraint);

@@ -23,6 +23,15 @@ final class RestrictedUint32Type extends AbstractRangeRestrictedType<Uint32TypeD
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedUint32Type(final RestrictedUint32Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedUint32Type bindTo(final SchemaPath newPath) {
+        return new RestrictedUint32Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Uint32TypeDefinition.hashCode(this);
