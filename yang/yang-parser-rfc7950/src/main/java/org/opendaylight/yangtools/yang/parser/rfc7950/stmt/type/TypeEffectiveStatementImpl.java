@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.util.type.BindableTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
@@ -31,6 +33,11 @@ final class TypeEffectiveStatementImpl<T extends TypeDefinition<T>, D extends Ty
             }
         }
         typeDefinition = builder.build();
+    }
+
+    TypeEffectiveStatementImpl(final TypeEffectiveStatementImpl<T, D> original, final SchemaPath path) {
+        super(original);
+        this.typeDefinition = ((BindableTypeDefinition<T>) original.typeDefinition).bindTo(path);
     }
 
     @Override
