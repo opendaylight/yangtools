@@ -21,6 +21,28 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 
 public class YT1208Test {
     @Test
+    public void testGroupingStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/grouping.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final NotificationEffectiveStatement notif = module
+            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+
+        final GroupingEffectiveStatement grpBar = notif
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow();
+        final GroupingEffectiveStatement contBar = notif
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow();
+
+        assertSame(contBar, grpBar);
+    }
+
+    @Test
     public void testLeafStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/leaf.yang")
             .getModuleStatements()
@@ -39,4 +61,5 @@ public class YT1208Test {
 
         assertSame(contBar, grpBar);
     }
+
 }
