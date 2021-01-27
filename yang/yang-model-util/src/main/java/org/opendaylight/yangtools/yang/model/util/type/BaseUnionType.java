@@ -24,6 +24,16 @@ final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition> implemen
         this.types = ImmutableList.copyOf(types);
     }
 
+    private BaseUnionType(final BaseUnionType original, final SchemaPath path) {
+        super(original, path);
+        this.types = original.types;
+    }
+
+    @Override
+    public BaseUnionType bindTo(final SchemaPath newPath) {
+        return new BaseUnionType(this, newPath);
+    }
+
     @Override
     public List<TypeDefinition<?>> getTypes() {
         return types;

@@ -22,6 +22,15 @@ final class RestrictedInt16Type extends AbstractRangeRestrictedType<Int16TypeDef
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedInt16Type(final RestrictedInt16Type original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedInt16Type bindTo(final SchemaPath newPath) {
+        return new RestrictedInt16Type(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return Int16TypeDefinition.hashCode(this);

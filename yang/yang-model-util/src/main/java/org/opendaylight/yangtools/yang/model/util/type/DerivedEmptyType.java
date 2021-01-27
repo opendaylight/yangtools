@@ -20,6 +20,15 @@ final class DerivedEmptyType extends AbstractDerivedType<EmptyTypeDefinition> im
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedEmptyType(final DerivedEmptyType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedEmptyType bindTo(final SchemaPath newPath) {
+        return new DerivedEmptyType(this, newPath);
+    }
+
     @Override
     public int hashCode() {
         return EmptyTypeDefinition.hashCode(this);

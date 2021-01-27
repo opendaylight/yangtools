@@ -23,6 +23,15 @@ final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTyp
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
+    private RestrictedDecimalType(final RestrictedDecimalType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public RestrictedDecimalType bindTo(final SchemaPath newPath) {
+        return new RestrictedDecimalType(this, newPath);
+    }
+
     @Override
     public int getFractionDigits() {
         return getBaseType().getFractionDigits();

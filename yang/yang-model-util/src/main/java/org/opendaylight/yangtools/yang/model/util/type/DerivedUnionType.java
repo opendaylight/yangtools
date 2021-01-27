@@ -22,6 +22,15 @@ final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> im
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedUnionType(final DerivedUnionType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedUnionType bindTo(final SchemaPath newPath) {
+        return new DerivedUnionType(this, newPath);
+    }
+
     @Override
     public List<TypeDefinition<?>> getTypes() {
         return baseType().getTypes();

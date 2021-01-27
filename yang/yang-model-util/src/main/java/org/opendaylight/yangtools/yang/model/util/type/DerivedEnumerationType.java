@@ -21,6 +21,15 @@ final class DerivedEnumerationType extends AbstractDerivedType<EnumTypeDefinitio
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedEnumerationType(final DerivedEnumerationType original, final SchemaPath path) {
+        super(original, path);
+    }
+
+    @Override
+    public DerivedEnumerationType bindTo(final SchemaPath newPath) {
+        return new DerivedEnumerationType(this, newPath);
+    }
+
     @Override
     public List<EnumPair> getValues() {
         return baseType().getValues();
