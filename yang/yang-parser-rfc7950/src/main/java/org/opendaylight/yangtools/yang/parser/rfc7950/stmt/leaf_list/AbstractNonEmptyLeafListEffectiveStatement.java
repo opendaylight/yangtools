@@ -28,11 +28,18 @@ abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafLi
         this.elementCountConstraint = elementCountConstraint;
     }
 
-    AbstractNonEmptyLeafListEffectiveStatement(final AbstractNonEmptyLeafListEffectiveStatement original,
-            final SchemaPath path, final int flags) {
-        super(original, path, flags);
-        this.original = original.original;
-        this.elementCountConstraint = original.elementCountConstraint;
+    AbstractNonEmptyLeafListEffectiveStatement(final AbstractNonEmptyLeafListEffectiveStatement originalEffecive,
+            final LeafListSchemaNode original, final SchemaPath path, final int flags) {
+        super(originalEffecive, path, flags);
+        this.elementCountConstraint = originalEffecive.elementCountConstraint;
+        this.original = original;
+    }
+
+    AbstractNonEmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
+            final LeafListSchemaNode original, final SchemaPath path, final int flags) {
+        super(originalEffective, path, flags);
+        this.elementCountConstraint = null;
+        this.original = original;
     }
 
     @Override
