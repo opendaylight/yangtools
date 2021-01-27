@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
@@ -41,8 +40,9 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         this.parent = requireNonNull(parent);
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
-            verify(source.fullyDefined(), "Source %s is not fully defined", source);
             source.incRef();
+            // FIXME: is this call really needed? it is inherited from source
+            setFullyDefined();
         }
     }
 
