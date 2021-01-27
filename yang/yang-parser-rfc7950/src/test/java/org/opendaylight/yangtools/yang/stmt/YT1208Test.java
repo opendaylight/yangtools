@@ -45,6 +45,26 @@ public class YT1208Test {
     }
 
     @Test
+    public void testChoiceStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/choice.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final NotificationEffectiveStatement notif = module
+            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+
+        final ChoiceEffectiveStatement grpBar = notif
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ChoiceEffectiveStatement.class).orElseThrow();
+        final ChoiceEffectiveStatement contBar = notif
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ChoiceEffectiveStatement.class).orElseThrow();
+
+        assertSame(contBar, grpBar);
+    }
+
+    @Test
     public void testGroupingStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/grouping.yang")
             .getModuleStatements()
