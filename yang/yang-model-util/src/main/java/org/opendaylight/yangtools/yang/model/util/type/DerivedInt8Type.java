@@ -21,6 +21,15 @@ final class DerivedInt8Type extends AbstractRangeRestrictedDerivedType<Int8TypeD
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedInt8Type(final DerivedInt8Type original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public DerivedInt8Type bindTo(final QName newQName) {
+        return new DerivedInt8Type(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return Int8TypeDefinition.hashCode(this);

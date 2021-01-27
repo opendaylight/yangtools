@@ -23,6 +23,16 @@ final class RestrictedBitsType extends AbstractRestrictedType<BitsTypeDefinition
         this.bits = ImmutableList.copyOf(bits);
     }
 
+    private RestrictedBitsType(final RestrictedBitsType original, final QName qname) {
+        super(original, qname);
+        this.bits = original.bits;
+    }
+
+    @Override
+    public RestrictedBitsType bindTo(final QName newQName) {
+        return new RestrictedBitsType(this, newQName);
+    }
+
     @Override
     public Collection<? extends Bit> getBits() {
         return bits;

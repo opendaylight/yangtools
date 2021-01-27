@@ -58,6 +58,11 @@ abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefi
         this.rangeConstraint = requireNonNull(rangeConstraint);
     }
 
+    AbstractRangeRestrictedBaseType(final AbstractRangeRestrictedBaseType<T, N> original, final QName qname) {
+        super(original, qname);
+        this.rangeConstraint = original.rangeConstraint;
+    }
+
     @Override
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return Optional.of(rangeConstraint);

@@ -23,6 +23,15 @@ final class DerivedStringType extends AbstractLengthRestrictedDerivedType<String
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    private DerivedStringType(final DerivedStringType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public DerivedStringType bindTo(final QName newQName) {
+        return new DerivedStringType(this, newQName);
+    }
+
     @Override
     public List<PatternConstraint> getPatternConstraints() {
         return baseType().getPatternConstraints();
