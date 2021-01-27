@@ -22,6 +22,15 @@ final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<Decima
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedDecimalType(final DerivedDecimalType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public DerivedDecimalType bindTo(final QName newQName) {
+        return new DerivedDecimalType(this, newQName);
+    }
+
     @Override
     public int getFractionDigits() {
         return baseType().getFractionDigits();

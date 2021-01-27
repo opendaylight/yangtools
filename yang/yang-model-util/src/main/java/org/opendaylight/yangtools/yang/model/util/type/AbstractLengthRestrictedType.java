@@ -26,6 +26,11 @@ abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefini
         this.lengthConstraint = lengthConstraint;
     }
 
+    AbstractLengthRestrictedType(final AbstractLengthRestrictedType<T> original, final QName qname) {
+        super(original, qname);
+        this.lengthConstraint = original.lengthConstraint;
+    }
+
     @Override
     public final Optional<LengthConstraint> getLengthConstraint() {
         return Optional.ofNullable(lengthConstraint);

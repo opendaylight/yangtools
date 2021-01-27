@@ -23,6 +23,16 @@ final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefi
         this.requireInstance = requireInstance;
     }
 
+    private RestrictedLeafrefType(final RestrictedLeafrefType original, final QName qname) {
+        super(original, qname);
+        this.requireInstance = original.requireInstance;
+    }
+
+    @Override
+    public RestrictedLeafrefType bindTo(final QName newQName) {
+        return new RestrictedLeafrefType(this, newQName);
+    }
+
     @Override
     public PathExpression getPathStatement() {
         return getBaseType().getPathStatement();
