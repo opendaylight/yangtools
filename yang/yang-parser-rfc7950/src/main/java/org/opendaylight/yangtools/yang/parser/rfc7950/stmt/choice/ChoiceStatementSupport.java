@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -86,7 +87,7 @@ public final class ChoiceStatementSupport
     private final CaseStatementSupport implicitCase;
 
     private ChoiceStatementSupport(final SubstatementValidator validator, final CaseStatementSupport implicitCase) {
-        super(YangStmtMapping.CHOICE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.CHOICE, instantiatedPolicy());
         this.validator = requireNonNull(validator);
         this.implicitCase = requireNonNull(implicitCase);
     }
@@ -122,6 +123,15 @@ public final class ChoiceStatementSupport
     }
 
     @Override
+    public ChoiceEffectiveStatement copyEffective(final Current<QName, ChoiceStatement> stmt,
+            final ChoiceEffectiveStatement original) {
+        // FIXME: default case!
+        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original,
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(),
+            (ChoiceSchemaNode) stmt.original());
+    }
+
+    @Override
     protected ChoiceEffectiveStatement createEffective(final Current<QName, ChoiceStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final String defaultArg = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
@@ -141,18 +151,22 @@ public final class ChoiceStatementSupport
             defaultCase = null;
         }
 
-        final int flags = new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig().asNullable())
-                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
-                .toFlags();
         try {
-            return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, flags, stmt.wrapSchemaPath(),
-                defaultCase, (ChoiceSchemaNode) stmt.original());
+            return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, computeFlags(stmt, substatements),
+                stmt.wrapSchemaPath(), defaultCase, (ChoiceSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    private static int computeFlags(final Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+            .toFlags();
     }
 
     private static CaseSchemaNode findCase(final QName qname,
