@@ -20,6 +20,15 @@ final class DerivedBooleanType extends AbstractDerivedType<BooleanTypeDefinition
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
+    private DerivedBooleanType(final DerivedBooleanType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public DerivedBooleanType bindTo(final QName newQName) {
+        return new DerivedBooleanType(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return BooleanTypeDefinition.hashCode(this);

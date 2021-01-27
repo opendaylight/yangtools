@@ -16,9 +16,18 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class DerivedLeafrefType extends AbstractDerivedType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
     DerivedLeafrefType(final LeafrefTypeDefinition baseType, final QName qname, final Object defaultValue,
-        final String description, final String reference, final Status status, final String units,
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
+            final String description, final String reference, final Status status, final String units,
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
+    }
+
+    private DerivedLeafrefType(final DerivedLeafrefType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public DerivedLeafrefType bindTo(final QName newQName) {
+        return new DerivedLeafrefType(this, newQName);
     }
 
     @Override

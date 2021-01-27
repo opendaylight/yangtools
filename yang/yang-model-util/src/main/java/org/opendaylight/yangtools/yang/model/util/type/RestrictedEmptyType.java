@@ -18,6 +18,15 @@ final class RestrictedEmptyType extends AbstractRestrictedType<EmptyTypeDefiniti
         super(baseType, qname, unknownSchemaNodes);
     }
 
+    private RestrictedEmptyType(final RestrictedEmptyType original, final QName qname) {
+        super(original, qname);
+    }
+
+    @Override
+    public RestrictedEmptyType bindTo(final QName newQName) {
+        return new RestrictedEmptyType(this, newQName);
+    }
+
     @Override
     public int hashCode() {
         return EmptyTypeDefinition.hashCode(this);
