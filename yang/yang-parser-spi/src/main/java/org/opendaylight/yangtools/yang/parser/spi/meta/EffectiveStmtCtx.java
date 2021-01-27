@@ -106,16 +106,11 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
          */
         // FIXME: 7.0.0: this needs to be a tri-state present/absent/disabled
         @Deprecated
-        @NonNull Optional<SchemaPath> schemaPath();
-
-        @Deprecated
-        default @NonNull SchemaPath getSchemaPath() {
-            return schemaPath().orElseThrow();
-        }
+        @NonNull ParserSchemaPath schemaPath();
 
         @Deprecated
         default @Nullable SchemaPath wrapSchemaPath() {
-            return SchemaPathSupport.wrap(getSchemaPath());
+            return schemaPath().unwrap();
         }
     }
 
