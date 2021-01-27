@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.common.jackson.deser;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.Uint8;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public final class Uint8Deserializer extends StdScalarDeserializer<Uint8> {
+    private static final Logger LOG = LoggerFactory.getLogger(Uint8Deserializer.class);
+    private static final long serialVersionUID = 1L;
+
+    public Uint8Deserializer() {
+        super(Uint8.class);
+    }
+
+    @Override
+    public Uint8 deserialize(final JsonParser p, final DeserializationContext ctxt)
+            throws IOException, JsonProcessingException {
+        final int intval = _parseIntPrimitive(p, ctxt);
+        try {
+            return Uint8.valueOf(intval);
+        } catch (IllegalArgumentException e) {
+            LOG.debug("Swallowed exception", e);
+            throw MismatchedInputException.from(p, Uint8.class, e.getMessage());
+        }
+    }
+}
