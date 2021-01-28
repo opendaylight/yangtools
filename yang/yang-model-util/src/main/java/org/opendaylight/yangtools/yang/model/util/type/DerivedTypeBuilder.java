@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
     private Status status = Status.CURRENT;
     private String units;
 
-    DerivedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(requireNonNull(baseType), path);
+    DerivedTypeBuilder(final T baseType, final QName qname) {
+        super(requireNonNull(baseType), qname);
 
         checkArgument(baseType instanceof AbstractBaseType || baseType instanceof AbstractDerivedType
             || baseType instanceof AbstractRestrictedType,

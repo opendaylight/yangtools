@@ -9,17 +9,17 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 final class RestrictedInt32Type extends AbstractRangeRestrictedType<Int32TypeDefinition, Integer>
         implements Int32TypeDefinition {
-    RestrictedInt32Type(final Int32TypeDefinition baseType, final SchemaPath path,
+    RestrictedInt32Type(final Int32TypeDefinition baseType, final QName qname,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Integer> rangeConstraint) {
-        super(baseType, path, unknownSchemaNodes, rangeConstraint);
+        super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
     @Override

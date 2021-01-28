@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
  */
 public class UnionCodecStringTest {
     private static UnionTypeDefinition toUnionTypeDefinition(final TypeDefinition<?>... types) {
-        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(mock(SchemaPath.class));
+        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(QName.create("foo", "foo"));
 
         for (TypeDefinition<?> t : types) {
             builder.addType(t);

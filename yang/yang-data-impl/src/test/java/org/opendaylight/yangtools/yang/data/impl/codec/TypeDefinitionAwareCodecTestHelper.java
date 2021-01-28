@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -44,7 +44,7 @@ public final class TypeDefinitionAwareCodecTestHelper {
     }
 
     public static EnumTypeDefinition toEnumTypeDefinition(final String... enums) {
-        final EnumerationTypeBuilder b = BaseTypes.enumerationTypeBuilder(mock(SchemaPath.class));
+        final EnumerationTypeBuilder b = BaseTypes.enumerationTypeBuilder(QName.create("foo", "foo"));
         int val = 0;
         for (String en : enums) {
             EnumTypeDefinition.EnumPair mockEnum = mock(EnumPair.class);

@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringTypeDefinition> {
     private final List<PatternConstraint> patternConstraints = new ArrayList<>(0);
 
-    StringTypeBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
-        super(baseType, path);
+    StringTypeBuilder(final StringTypeDefinition baseType, final QName qname) {
+        super(baseType, qname);
     }
 
     public StringTypeBuilder addPatternConstraint(final PatternConstraint constraint) {

@@ -595,18 +595,10 @@ public class YangParserTest {
 
         // int32-ext1
         final Int32TypeDefinition int32ext1 = (Int32TypeDefinition) TestUtils.findTypedef(types, "int32-ext1");
-        final QName int32TypedefQName = QName.create(BAR, "int32-ext1");
-        assertEquals(int32TypedefQName, int32ext1.getQName());
-
-        final SchemaPath typeSchemaPath = int32ext1.getPath();
-        final Iterable<QName> typePath = typeSchemaPath.getPathFromRoot();
-        final Iterator<QName> typePathIt = typePath.iterator();
-        assertEquals(int32TypedefQName, typePathIt.next());
-        assertFalse(typePathIt.hasNext());
+        assertEquals(QName.create(BAR, "int32-ext1"), int32ext1.getQName());
 
         // int32-ext1/int32
-        final Int32TypeDefinition int32 = int32ext1.getBaseType();
-        assertEquals(BaseTypes.int32Type(), int32);
+        assertEquals(BaseTypes.int32Type(), int32ext1.getBaseType());
     }
 
     @Test
@@ -620,25 +612,12 @@ public class YangParserTest {
         assertEquals(BAR, myDecTypeQName.getModule());
         assertEquals("my-decimal-type", myDecTypeQName.getLocalName());
 
-        final SchemaPath typeSchemaPath = myDecType.getPath();
-        final Iterable<QName> typePath = typeSchemaPath.getPathFromRoot();
-        final Iterator<QName> typePathIt = typePath.iterator();
-        assertEquals(myDecTypeQName, typePathIt.next());
-        assertFalse(typePathIt.hasNext());
-
         // my-base-int32-type/int32
         final DecimalTypeDefinition dec64 = myDecType.getBaseType();
         final QName dec64QName = dec64.getQName();
 
         assertEquals(BAR, dec64QName.getModule());
         assertEquals("decimal64", dec64QName.getLocalName());
-
-        final SchemaPath dec64SchemaPath = dec64.getPath();
-        final Iterable<QName> dec64Path = dec64SchemaPath.getPathFromRoot();
-        final Iterator<QName> dec64PathIt = dec64Path.iterator();
-        assertEquals(myDecTypeQName, dec64PathIt.next());
-        assertEquals(dec64QName, dec64PathIt.next());
-        assertFalse(dec64PathIt.hasNext());
     }
 
     private static void checkOrder(final Collection<Module> modules) {

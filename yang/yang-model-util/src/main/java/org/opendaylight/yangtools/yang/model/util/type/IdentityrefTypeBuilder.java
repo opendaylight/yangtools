@@ -13,15 +13,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDefinition> {
     private final Builder<IdentitySchemaNode> builder = ImmutableSet.builder();
 
-    IdentityrefTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    IdentityrefTypeBuilder(final QName qname) {
+        super(null, qname);
     }
 
     public IdentityrefTypeBuilder addIdentity(final @NonNull IdentitySchemaNode identity) {

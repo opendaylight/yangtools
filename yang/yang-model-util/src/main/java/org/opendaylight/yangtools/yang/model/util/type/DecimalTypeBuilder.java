@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
 public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> {
     private Integer fractionDigits;
 
-    DecimalTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    DecimalTypeBuilder(final QName qname) {
+        super(null, qname);
     }
 
     public DecimalTypeBuilder setFractionDigits(final int fractionDigits) {

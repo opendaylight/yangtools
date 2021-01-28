@@ -18,11 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public class Bug7440Test {
-
     @Test
     public void testRestrictedTypeParentSchemaPathInDeviate() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug7440");
@@ -40,10 +38,7 @@ public class Bug7440Test {
         assertEquals(1, deviates.size());
         final DeviateDefinition deviateReplace = deviates.iterator().next();
 
-        final SchemaPath deviatedTypePath = SchemaPath.create(true, QName.create(bar.getQNameModule(), "test-leaf"),
-                QName.create(bar.getQNameModule(), "uint32"));
-
         final TypeDefinition<?> deviatedType = deviateReplace.getDeviatedType();
-        assertEquals(deviatedTypePath, deviatedType.getPath());
+        assertEquals(QName.create(bar.getQNameModule(), "uint32"), deviatedType.getQName());
     }
 }
