@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -17,11 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefini
 
 abstract class AbstractLengthRestrictedDerivedType<T extends LengthRestrictedTypeDefinition<T>>
         extends AbstractDerivedType<T> implements LengthRestrictedTypeDefinition<T> {
-
-    AbstractLengthRestrictedDerivedType(final T baseType, final SchemaPath path,
+    AbstractLengthRestrictedDerivedType(final T baseType, final QName qname,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
     @Override

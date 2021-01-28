@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
@@ -38,9 +37,8 @@ public class BitsTypeTest {
         doReturn("toString").when(bit).toString();
 
         QName qname = QName.create("namespace", "localname");
-        SchemaPath schemaPath = SchemaPath.create(true, qname);
 
-        BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(schemaPath).addBit(bit).build();
+        BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(qname).addBit(bit).build();
 
         assertFalse(bitsType.getDescription().isPresent());
         assertEquals("QName", qname, bitsType.getQName());
@@ -49,7 +47,6 @@ public class BitsTypeTest {
         assertFalse(bitsType.getReference().isPresent());
         assertNull("BaseType should be null", bitsType.getBaseType());
         assertEquals(Optional.empty(), bitsType.getDefaultValue());
-        assertEquals("getPath should equal schemaPath", schemaPath, bitsType.getPath());
         assertEquals("Status should be CURRENT", Status.CURRENT, bitsType.getStatus());
         assertEquals("Should be empty list", Collections.emptyList(), bitsType.getUnknownSchemaNodes());
         assertEquals("Values should be [enumPair]", Collections.singletonList(bit), bitsType.getBits());

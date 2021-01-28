@@ -15,13 +15,12 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
 abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefinition<T, N>,
-    N extends Number & Comparable<N>> extends AbstractBaseType<T> implements RangeRestrictedTypeDefinition<T, N> {
+        N extends Number & Comparable<N>> extends AbstractBaseType<T> implements RangeRestrictedTypeDefinition<T, N> {
     private static final ConstraintMetaDefinition BUILTIN_CONSTRAINT = new ConstraintMetaDefinition() {
 
         @Override
@@ -53,10 +52,9 @@ abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefi
             Range.closed(minValue, maxValue)));
     }
 
-    AbstractRangeRestrictedBaseType(final SchemaPath path,
-            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+    AbstractRangeRestrictedBaseType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final RangeConstraint<N> rangeConstraint) {
-        super(path, unknownSchemaNodes);
+        super(qname, unknownSchemaNodes);
         this.rangeConstraint = requireNonNull(rangeConstraint);
     }
 

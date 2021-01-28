@@ -133,6 +133,13 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
 
         @Nullable EffectiveStatement<?, ?> original();
 
+        // FIXME: YANGTOOLS-1216: implement near ReactorStmtCtx.createSchemaPath(), this should always be a 'String'
+        //                        sub-case as implied by all callers in stmt.type
+        // FIXME: 7.0.0: this method should be moved to stmt.type in some shape or form
+        default @NonNull QName argumentAsTypeQName() {
+            return verifyNotNull(getSchemaPath().getLastComponent());
+        }
+
         /**
          * Summon the <a href="https://en.wikipedia.org/wiki/Rabbit_of_Caerbannog">Rabbit of Caerbannog</a>.
          *
