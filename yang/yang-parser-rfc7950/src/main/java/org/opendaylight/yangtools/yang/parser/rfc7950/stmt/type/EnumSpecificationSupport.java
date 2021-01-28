@@ -31,7 +31,7 @@ final class EnumSpecificationSupport
             SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.ENUM).build();
 
     EnumSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
 
     @Override

@@ -35,7 +35,7 @@ abstract class AbstractIdentityRefSpecificationSupport
         extends AbstractStatementSupport<String, IdentityRefSpecification,
             EffectiveStatement<String, IdentityRefSpecification>> {
     AbstractIdentityRefSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
 
     @Override

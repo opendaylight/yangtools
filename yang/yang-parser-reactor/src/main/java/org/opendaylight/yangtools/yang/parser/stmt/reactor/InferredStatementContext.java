@@ -520,7 +520,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     //        StatementSupport.
     // FIXME: YANGTOOLS-652: this map looks very much like UsesStatementSupport.TOP_REUSED_DEF_SET
     private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPE,
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
 

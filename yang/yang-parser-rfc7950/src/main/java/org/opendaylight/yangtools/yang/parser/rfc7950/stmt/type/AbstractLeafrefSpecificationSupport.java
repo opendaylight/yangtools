@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractLeafrefSpecificationSupport extends AbstractStatementSupport<String, LeafrefSpecification,
             EffectiveStatement<String, LeafrefSpecification>> {
     AbstractLeafrefSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
 
     @Override

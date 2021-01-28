@@ -33,7 +33,7 @@ final class BitsSpecificationSupport
         .build();
 
     BitsSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
 
     @Override
