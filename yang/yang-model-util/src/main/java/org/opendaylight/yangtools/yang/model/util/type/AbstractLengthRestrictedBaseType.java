@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefini
 
 abstract class AbstractLengthRestrictedBaseType<T extends LengthRestrictedTypeDefinition<T>> extends AbstractBaseType<T>
         implements LengthRestrictedTypeDefinition<T> {
-
     AbstractLengthRestrictedBaseType(final QName qname) {
         super(qname);
     }
