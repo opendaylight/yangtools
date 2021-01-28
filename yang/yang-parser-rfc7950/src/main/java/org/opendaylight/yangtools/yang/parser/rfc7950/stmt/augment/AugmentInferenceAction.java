@@ -139,6 +139,10 @@ final class AugmentInferenceAction implements InferenceAction {
             }
             buffer.add(copy);
         } else if (!unsupported && original.publicDefinition() == YangStmtMapping.TYPEDEF) {
+            // FIXME: what is this branch doing, really?
+            //        Typedef's policy would imply a replica, hence normal target.childCopyOf(original, typeOfCopy)
+            //        would suffice.
+            //        What does the !unsupported thing want to do?
             buffer.add(original.replicaAsChildOf(target));
         }
     }
