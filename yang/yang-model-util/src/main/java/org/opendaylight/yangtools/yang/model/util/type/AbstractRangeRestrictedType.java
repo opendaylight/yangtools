@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
@@ -20,10 +20,10 @@ abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefiniti
         implements RangeRestrictedTypeDefinition<T, N> {
     private final @Nullable RangeConstraint<N> rangeConstraint;
 
-    AbstractRangeRestrictedType(final T baseType, final SchemaPath path,
+    AbstractRangeRestrictedType(final T baseType, final QName qname,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<N> rangeConstraint) {
-        super(baseType, path, unknownSchemaNodes);
+        super(baseType, qname, unknownSchemaNodes);
         this.rangeConstraint = rangeConstraint;
     }
 

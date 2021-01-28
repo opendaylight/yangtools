@@ -13,7 +13,7 @@ import com.google.common.base.MoreObjects;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -26,10 +26,10 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     private final @NonNull Status status;
     private final String units;
 
-    AbstractDerivedType(final T baseType, final SchemaPath path, final Object defaultValue, final String description,
+    AbstractDerivedType(final T baseType, final QName qname, final Object defaultValue, final String description,
             final String reference, final Status status, final String units,
             final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
-        super(path, unknownSchemNodes);
+        super(qname, unknownSchemNodes);
         this.baseType = requireNonNull(baseType);
         this.status = requireNonNull(status);
         this.defaultValue = defaultValue;
@@ -81,7 +81,7 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
                 .add("baseType", baseType)
                 .add("default", defaultValue)
                 .add("description", description)
-                .add("path", getPath())
+                .add("qname", getQName())
                 .add("reference", reference)
                 .add("status", status)
                 .add("units", units).toString();

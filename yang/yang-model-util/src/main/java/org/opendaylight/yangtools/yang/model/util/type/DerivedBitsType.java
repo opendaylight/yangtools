@@ -8,16 +8,16 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 final class DerivedBitsType extends AbstractDerivedType<BitsTypeDefinition> implements BitsTypeDefinition {
-    DerivedBitsType(final BitsTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
-        final String description, final String reference, final Status status, final String units,
-        final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
-        super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
+    DerivedBitsType(final BitsTypeDefinition baseType, final QName qname, final Object defaultValue,
+            final String description, final String reference, final Status status, final String units,
+            final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
+        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
     @Override

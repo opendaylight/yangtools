@@ -24,8 +24,6 @@ public class BooleanTypeTest {
     public void canCreateBooleanType() {
         final BooleanTypeDefinition boolType = booleanType();
 
-        assertEquals("getPath gives List of BOOLEAN_QNAME",
-                Collections.singletonList(BaseTypes.BOOLEAN_QNAME), boolType.getPath().getPathFromRoot());
         assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
         assertFalse(boolType.getDescription().isPresent());
 
