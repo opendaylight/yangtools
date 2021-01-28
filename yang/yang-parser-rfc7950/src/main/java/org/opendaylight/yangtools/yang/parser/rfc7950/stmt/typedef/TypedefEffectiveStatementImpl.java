@@ -113,7 +113,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
 
     private @NonNull TypeDefinition<?> loadTypeDefinition() {
         final TypeEffectiveStatement<?> type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), path);
+        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), getQName());
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {

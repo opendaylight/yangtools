@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -17,11 +17,11 @@ final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceId
         implements InstanceIdentifierTypeDefinition {
     private final boolean requireInstance;
 
-    DerivedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path,
+    DerivedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final QName qname,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final boolean requireInstance) {
-        super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+        super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
         this.requireInstance = requireInstance;
     }
 

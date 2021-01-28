@@ -18,8 +18,8 @@ import com.google.common.collect.RangeSet;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -29,8 +29,8 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
         extends AbstractRestrictedTypeBuilder<T> {
     private LengthConstraint lengthConstraint;
 
-    LengthRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(requireNonNull(baseType), path);
+    LengthRestrictedTypeBuilder(final T baseType, final QName qname) {
+        super(requireNonNull(baseType), qname);
     }
 
     /**
