@@ -79,7 +79,7 @@ public final class UsesStatementSupport
     private static final UsesStatementSupport INSTANCE = new UsesStatementSupport();
 
     private UsesStatementSupport() {
-        super(YangStmtMapping.USES, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.USES, StatementPolicy.exactReplica());
     }
 
     public static UsesStatementSupport getInstance() {
