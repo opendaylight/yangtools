@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -20,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 public class YT1208Test {
     @Test
@@ -104,5 +109,26 @@ public class YT1208Test {
             .findFirstEffectiveSubstatement(LeafEffectiveStatement.class).orElseThrow();
 
         assertSame(contBar, grpBar);
+    }
+
+    @Test
+    public void testUsesStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/uses.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final List<GroupingEffectiveStatement> groupings = module
+            .streamEffectiveSubstatements(GroupingEffectiveStatement.class).collect(Collectors.toList());
+        assertEquals(2, groupings.size());
+
+        final ContainerEffectiveStatement grpFoo = groupings.get(1)
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow();
+        final ContainerEffectiveStatement foo = module
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow();
+
+        assertNotSame(foo, grpFoo);
+        assertSame(foo.findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow(),
+            grpFoo.findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow());
     }
 }

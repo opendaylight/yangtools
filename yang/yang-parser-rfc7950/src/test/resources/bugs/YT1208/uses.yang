@@ -1,0 +1,16 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  grouping grp {
+
+  }
+
+  grouping bar {
+    container foo {
+      uses grp;
+    }
+  }
+
+  uses bar;
+}
