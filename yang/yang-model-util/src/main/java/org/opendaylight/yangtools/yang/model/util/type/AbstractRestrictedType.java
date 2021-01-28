@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     private final @NonNull T baseType;
 
-    AbstractRestrictedType(final T baseType, final SchemaPath path,
+    AbstractRestrictedType(final T baseType, final QName qname,
             final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
-        super(path, unknownSchemaNodes);
+        super(qname, unknownSchemaNodes);
         this.baseType = requireNonNull(baseType);
     }
 

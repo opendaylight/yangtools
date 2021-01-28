@@ -12,20 +12,20 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.TreeMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTypeDefinition> {
     private final Builder<String, Bit> builder = ImmutableMap.builder();
 
-    BitsTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    BitsTypeBuilder(final QName qname) {
+        super(null, qname);
     }
 
-    BitsTypeBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
-        super(baseType, path);
+    BitsTypeBuilder(final BitsTypeDefinition baseType, final QName qname) {
+        super(baseType, qname);
     }
 
     public BitsTypeBuilder addBit(final @NonNull Bit item) {

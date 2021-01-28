@@ -12,19 +12,19 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<EnumTypeDefinition> {
     private final Builder<String, EnumPair> builder = ImmutableMap.builder();
 
-    EnumerationTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    EnumerationTypeBuilder(final QName qname) {
+        super(null, qname);
     }
 
-    EnumerationTypeBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
-        super(baseType, path);
+    EnumerationTypeBuilder(final EnumTypeDefinition baseType, final QName qname) {
+        super(baseType, qname);
     }
 
     public EnumerationTypeBuilder addEnum(final @NonNull EnumPair item) {
