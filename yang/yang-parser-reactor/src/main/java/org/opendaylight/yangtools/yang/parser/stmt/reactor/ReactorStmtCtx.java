@@ -536,6 +536,13 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     //
     //
 
+    @Override
+    public @NonNull QName argumentAsTypeQName() {
+        final Object argument = argument();
+        verify(argument instanceof String, "Unexpected argument %s", argument);
+        return interpretAsQName((String) argument);
+    }
+
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
     final @NonNull Optional<SchemaPath> substatementGetSchemaPath() {
@@ -571,10 +578,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return parentPath.createChild(qname);
         }
         if (argument instanceof String) {
-            // FIXME: This may yield illegal argument exceptions
-            final Optional<StmtContext<A, D, E>> originalCtx = getOriginalCtx();
-            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
-            return parentPath.createChild(qname);
+            return parentPath.createChild(interpretAsQName((String) argument));
         }
         if (argument instanceof SchemaNodeIdentifier
                 && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
@@ -585,6 +589,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
         // FIXME: this does not look right
         return maybeParentPath.orElse(null);
+    }
+
+    private @NonNull QName interpretAsQName(final String argument) {
+        // FIXME: This may yield illegal argument exceptions
+        return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), argument);
     }
 
     //

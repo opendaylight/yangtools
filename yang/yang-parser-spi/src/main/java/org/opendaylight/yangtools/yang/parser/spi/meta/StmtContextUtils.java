@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -477,7 +478,7 @@ public final class StmtContextUtils {
         });
     }
 
-    public static QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
+    public static @NonNull QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
         if (Strings.isNullOrEmpty(value)) {
             return ctx.publicDefinition().getStatementName();
         }
@@ -558,11 +559,11 @@ public final class StmtContextUtils {
         return parseNodeIdentifier(ctx, prefix, localName);
     }
 
-    private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
+    private static @NonNull QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
         return internedQName(ctx, getRootModuleQName(ctx), localName);
     }
 
-    private static QName internedQName(final CommonStmtCtx ctx, final QNameModule module,
+    private static @NonNull QName internedQName(final CommonStmtCtx ctx, final QNameModule module,
             final String localName) {
         final QName template;
         try {
