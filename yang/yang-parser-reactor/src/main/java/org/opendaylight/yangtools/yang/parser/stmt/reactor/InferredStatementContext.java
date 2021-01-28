@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -513,20 +511,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return ret;
     }
 
-    // Statement copy mess starts here
     //
-    // FIXME: This is messy and is probably wrong in some corner case. Even if it is correct, the way how it is correct
-    //        relies on hard-coded maps. At the end of the day, the logic needs to be controlled by statement's
-    //        StatementSupport.
-    // FIXME: YANGTOOLS-652: this map looks very much like UsesStatementSupport.TOP_REUSED_DEF_SET
-    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.USES);
+    // Statement copy mess starts here. As it turns out, it's not that much of a mess, but it does make your head spin
+    // sometimes. Tread softly because you tread on my dreams.
+    //
 
     private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
-        // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
-        if (REUSED_DEF_SET.contains(stmt.definition().getPublicView())) {
-            return new EffectiveCopy(stmt, stmt);
-        }
-
         final ReactorStmtCtx<?, ?, ?> effective = stmt.asEffectiveChildOf(this, childCopyType, targetModule);
         return effective == null ? null : new EffectiveCopy(stmt, effective);
     }
@@ -534,13 +524,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer,
             final Map<StmtContext<?, ?, ?>, ReactorStmtCtx<?, ?, ?>> materializedSchemaTree) {
         final StatementDefinition def = substatement.publicDefinition();
-
-        // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
-        if (REUSED_DEF_SET.contains(def)) {
-            LOG.trace("Reusing substatement {} for {}", substatement, this);
-            buffer.add(substatement.replicaAsChildOf(this));
-            return;
-        }
 
         // Consult materialized substatements. We are in a copy operation and will end up throwing materialized
         // statements away -- hence we do not perform Map.remove() to save ourselves a mutation operation.
