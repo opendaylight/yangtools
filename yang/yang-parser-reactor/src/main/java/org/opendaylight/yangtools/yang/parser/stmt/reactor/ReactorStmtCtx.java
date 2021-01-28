@@ -532,16 +532,29 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     //
     //
-    // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.
+    // Various functionality from AbstractTypeStatementSupport. This used to work on top of SchemaPath, now it still
+    // lives here. Ultimate future is either proper graduation or (more likely) move to AbstractTypeStatementSupport.
     //
     //
 
     @Override
-    public @NonNull QName argumentAsTypeQName() {
+    public final QName argumentAsTypeQName() {
         final Object argument = argument();
         verify(argument instanceof String, "Unexpected argument %s", argument);
         return interpretAsQName((String) argument);
     }
+
+    @Override
+    public final QNameModule effectiveNamespace() {
+        // FIXME: there has to be a better way to do this
+        return getSchemaPath().getLastComponent().getModule();
+    }
+
+    //
+    //
+    // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.
+    //
+    //
 
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
