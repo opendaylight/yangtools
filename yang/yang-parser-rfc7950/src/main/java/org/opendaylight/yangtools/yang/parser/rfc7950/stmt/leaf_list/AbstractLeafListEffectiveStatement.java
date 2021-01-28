@@ -95,7 +95,7 @@ abstract class AbstractLeafListEffectiveStatement
     private TypeDefinition<?> buildType() {
         final TypeEffectiveStatement<?> typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            getPath());
+            getQName());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             // NOTE: 'default' is ommitted here on purpose
             if (stmt instanceof DescriptionEffectiveStatement) {

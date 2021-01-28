@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -55,24 +57,27 @@ public final class AnnotationStatementSupport
         Effective(final Current<QName, AnnotationStatement> stmt,
                   final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(argument()));
+            final QName qname = stmt.getArgument();
 
+            // FIXME: move this into onFullDefinitionDeclared()
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), stmt,
-                "AnnotationStatementSupport %s is missing a 'type' statement", argument());
+                "AnnotationStatementSupport %s is missing a 'type' statement", qname);
 
             final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-                path);
+                qname);
             final UnitsEffectiveStatement unitsStmt = firstSubstatementOfType(UnitsEffectiveStatement.class);
             if (unitsStmt != null) {
                 builder.setUnits(unitsStmt.argument());
             }
             type = builder.build();
+
+            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
         }
 
         @Override
         public QName getQName() {
-            return path.getLastComponent();
+            return verifyNotNull(argument());
         }
 
         @Override

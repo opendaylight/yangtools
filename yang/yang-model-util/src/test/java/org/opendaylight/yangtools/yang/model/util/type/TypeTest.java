@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -56,7 +55,6 @@ import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 
 public class TypeTest {
     private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
-    private static final SchemaPath SCHEMA_PATH = SchemaPath.create(true, Q_NAME);
     private static final PathExpression REVISION_AWARE_XPATH = new PathExpressionImpl("/test", true);
     private static final Bit BIT_A = BitBuilder.create(Q_NAME.getLocalName(), Uint32.valueOf(55L))
         .setDescription("description")
@@ -72,19 +70,19 @@ public class TypeTest {
         assertEquals(baseBinaryType1.getLengthConstraint(), baseBinaryType2.getLengthConstraint());
 
         final DerivedBinaryType derivedBinaryType1 = (DerivedBinaryType)DerivedTypes.derivedTypeBuilder(baseBinaryType1,
-                SCHEMA_PATH).build();
+            Q_NAME).build();
         final DerivedBinaryType derivedBinaryType2 = (DerivedBinaryType)DerivedTypes.derivedTypeBuilder(baseBinaryType2,
-                SCHEMA_PATH).build();
+            Q_NAME).build();
         hashCodeEqualsToStringTest(derivedBinaryType1, derivedBinaryType2);
 
         final RestrictedBinaryType restrictedBinaryType1 = (RestrictedBinaryType)RestrictedTypes.newBinaryBuilder(
-                baseBinaryType1, SCHEMA_PATH).buildType();
+                baseBinaryType1, Q_NAME).buildType();
         final RestrictedBinaryType restrictedBinaryType2 = (RestrictedBinaryType)RestrictedTypes.newBinaryBuilder(
-                baseBinaryType2, SCHEMA_PATH).buildType();
+                baseBinaryType2, Q_NAME).buildType();
         hashCodeEqualsToStringTest(restrictedBinaryType1, restrictedBinaryType2);
 
         final LengthRestrictedTypeBuilder<BinaryTypeDefinition> lengthRestrictedTypeBuilder = RestrictedTypes
-                .newBinaryBuilder(baseBinaryType1, SCHEMA_PATH);
+                .newBinaryBuilder(baseBinaryType1, Q_NAME);
         final BaseBinaryType baseBinaryType = (BaseBinaryType)lengthRestrictedTypeBuilder.build();
         assertEquals(baseBinaryType, baseBinaryType1);
         concreteBuilderTest(baseBinaryType1, derivedBinaryType1);
@@ -97,60 +95,60 @@ public class TypeTest {
         hashCodeEqualsToStringTest(baseBooleanType1, baseBooleanType2);
 
         final DerivedBooleanType derivedBooleanType1 = (DerivedBooleanType)DerivedTypes.derivedTypeBuilder(
-                baseBooleanType1, SCHEMA_PATH).build();
+                baseBooleanType1, Q_NAME).build();
         final DerivedBooleanType derivedBooleanType2 = (DerivedBooleanType)DerivedTypes.derivedTypeBuilder(
-                baseBooleanType1, SCHEMA_PATH).build();
+                baseBooleanType1, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedBooleanType1, derivedBooleanType2);
 
-        restrictedBuilderTest(RestrictedTypes.newBooleanBuilder(baseBooleanType1, SCHEMA_PATH), RestrictedTypes
-                .newBooleanBuilder(baseBooleanType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newBooleanBuilder(baseBooleanType1, Q_NAME), RestrictedTypes
+                .newBooleanBuilder(baseBooleanType2, Q_NAME));
         concreteBuilderTest(baseBooleanType1, derivedBooleanType1);
     }
 
     @Test
     public void identityrefTypeTest() {
-        final IdentityrefTypeBuilder identityrefTypeBuilder1 = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
+        final IdentityrefTypeBuilder identityrefTypeBuilder1 = BaseTypes.identityrefTypeBuilder(Q_NAME);
         final IdentitySchemaNode identitySchemaNode = mock(IdentitySchemaNode.class);
         doReturn("identitySchemaNode").when(identitySchemaNode).toString();
         identityrefTypeBuilder1.addIdentity(identitySchemaNode);
         final IdentityrefTypeDefinition identityrefTypeDefinition1 = identityrefTypeBuilder1.build();
-        final IdentityrefTypeBuilder identityrefTypeBuilder2 = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
+        final IdentityrefTypeBuilder identityrefTypeBuilder2 = BaseTypes.identityrefTypeBuilder(Q_NAME);
         identityrefTypeBuilder2.addIdentity(identitySchemaNode);
         final IdentityrefTypeDefinition identityrefTypeDefinition2 = identityrefTypeBuilder2.build();
         hashCodeEqualsToStringTest(identityrefTypeDefinition1, identityrefTypeDefinition2);
 
         final DerivedIdentityrefType derivedIdentityrefType1 = (DerivedIdentityrefType)DerivedTypes.derivedTypeBuilder(
-                identityrefTypeDefinition1, SCHEMA_PATH).build();
+                identityrefTypeDefinition1, Q_NAME).build();
         final DerivedIdentityrefType derivedIdentityrefType2 = (DerivedIdentityrefType)DerivedTypes.derivedTypeBuilder(
-                identityrefTypeDefinition2, SCHEMA_PATH).build();
+                identityrefTypeDefinition2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedIdentityrefType1, derivedIdentityrefType2);
         concreteBuilderTest(identityrefTypeDefinition1, derivedIdentityrefType1);
 
-        restrictedBuilderTest(RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType1, SCHEMA_PATH),
-                RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType1, Q_NAME),
+                RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType2, Q_NAME));
     }
 
     @Test
     public void decimalTypeTest() {
-        final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(SCHEMA_PATH)
+        final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
                 .buildType();
-        final BaseDecimalType baseDecimalType2 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(SCHEMA_PATH)
+        final BaseDecimalType baseDecimalType2 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
                 .buildType();
         hashCodeEqualsToStringTest(baseDecimalType1, baseDecimalType2);
         assertEquals(baseDecimalType1.getFractionDigits(), baseDecimalType2.getFractionDigits());
 
         final DerivedDecimalType derivedDecimalType1 = (DerivedDecimalType)DerivedTypes
-                .derivedTypeBuilder(baseDecimalType1, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseDecimalType1, Q_NAME).build();
         final DerivedDecimalType derivedDecimalType2 = (DerivedDecimalType)DerivedTypes
-                .derivedTypeBuilder(baseDecimalType1, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseDecimalType1, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedDecimalType1, derivedDecimalType2);
 
         final RestrictedDecimalType restrictedDecimalType1 = (RestrictedDecimalType)
-                RestrictedTypes.newDecima64Builder(baseDecimalType1, SCHEMA_PATH).buildType();
+                RestrictedTypes.newDecima64Builder(baseDecimalType1, Q_NAME).buildType();
         final RestrictedDecimalType restrictedDecimalType2 = (RestrictedDecimalType)
-                RestrictedTypes.newDecima64Builder(baseDecimalType2, SCHEMA_PATH).buildType();
+                RestrictedTypes.newDecima64Builder(baseDecimalType2, Q_NAME).buildType();
         hashCodeEqualsToStringTest(restrictedDecimalType1, restrictedDecimalType2);
         concreteBuilderTest(baseDecimalType1, derivedDecimalType1);
     }
@@ -162,13 +160,13 @@ public class TypeTest {
         hashCodeEqualsToStringTest(baseEmptyType1, baseEmptyType2);
 
         final DerivedEmptyType derivedEmptyType1 = (DerivedEmptyType)DerivedTypes.derivedTypeBuilder(
-                baseEmptyType1, SCHEMA_PATH).build();
+                baseEmptyType1, Q_NAME).build();
         final DerivedEmptyType derivedEmptyType2 = (DerivedEmptyType)DerivedTypes.derivedTypeBuilder(
-                baseEmptyType2, SCHEMA_PATH).build();
+                baseEmptyType2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedEmptyType1, derivedEmptyType2);
 
-        restrictedBuilderTest(RestrictedTypes.newEmptyBuilder(baseEmptyType1, SCHEMA_PATH),
-                RestrictedTypes.newEmptyBuilder(baseEmptyType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newEmptyBuilder(baseEmptyType1, Q_NAME),
+                RestrictedTypes.newEmptyBuilder(baseEmptyType2, Q_NAME));
         concreteBuilderTest(baseEmptyType1, derivedEmptyType1);
     }
 
@@ -181,18 +179,18 @@ public class TypeTest {
         assertFalse(baseInstanceIdentifierType1.requireInstance());
 
         final DerivedInstanceIdentifierType derivedInstanceIdentifierType1 = (DerivedInstanceIdentifierType)
-                DerivedTypes.derivedTypeBuilder(baseInstanceIdentifierType1, SCHEMA_PATH).build();
+                DerivedTypes.derivedTypeBuilder(baseInstanceIdentifierType1, Q_NAME).build();
         final DerivedInstanceIdentifierType derivedInstanceIdentifierType2 = (DerivedInstanceIdentifierType)
-                DerivedTypes.derivedTypeBuilder(baseInstanceIdentifierType2, SCHEMA_PATH).build();
+                DerivedTypes.derivedTypeBuilder(baseInstanceIdentifierType2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedInstanceIdentifierType1, derivedInstanceIdentifierType2);
 
         final InstanceIdentifierTypeBuilder instanceIdentifierBuilder1 = RestrictedTypes
-                .newInstanceIdentifierBuilder(baseInstanceIdentifierType1, SCHEMA_PATH);
+                .newInstanceIdentifierBuilder(baseInstanceIdentifierType1, Q_NAME);
         instanceIdentifierBuilder1.setRequireInstance(true);
         final InstanceIdentifierTypeDefinition instanceIdentifierTypeDefinition1 = instanceIdentifierBuilder1
                 .buildType();
         final InstanceIdentifierTypeBuilder instanceIdentifierBuilder2 = RestrictedTypes
-                .newInstanceIdentifierBuilder(baseInstanceIdentifierType1, SCHEMA_PATH);
+                .newInstanceIdentifierBuilder(baseInstanceIdentifierType1, Q_NAME);
         instanceIdentifierBuilder2.setRequireInstance(true);
         final InstanceIdentifierTypeDefinition instanceIdentifierTypeDefinition2 = instanceIdentifierBuilder2
                 .buildType();
@@ -212,9 +210,9 @@ public class TypeTest {
         testInstance(BaseInt64Type.INSTANCE, integerTypeDefinition64);
 
         final RestrictedInt8Type restrictedIntegerType1 = (RestrictedInt8Type)RestrictedTypes.newInt8Builder(
-                integerTypeDefinition8, SCHEMA_PATH).buildType();
+                integerTypeDefinition8, Q_NAME).buildType();
         final RestrictedInt8Type restrictedIntegerType2 = (RestrictedInt8Type)RestrictedTypes.newInt8Builder(
-                BaseInt8Type.INSTANCE, SCHEMA_PATH).buildType();
+                BaseInt8Type.INSTANCE, Q_NAME).buildType();
         hashCodeEqualsToStringTest(restrictedIntegerType1, restrictedIntegerType2);
 
         final Uint8TypeDefinition integerTypeDefinitionu8 = BaseTypes.uint8Type();
@@ -227,27 +225,27 @@ public class TypeTest {
         testInstance(BaseUint64Type.INSTANCE, BaseTypes.baseTypeOf(integerTypeDefinitionu64));
 
         final DerivedInt8Type derivedIntegerType1 = (DerivedInt8Type)DerivedTypes
-                .derivedTypeBuilder(integerTypeDefinition8, SCHEMA_PATH).build();
+                .derivedTypeBuilder(integerTypeDefinition8, Q_NAME).build();
         final DerivedInt8Type derivedIntegerType2 = (DerivedInt8Type)DerivedTypes
-                .derivedTypeBuilder(BaseInt8Type.INSTANCE, SCHEMA_PATH).build();
+                .derivedTypeBuilder(BaseInt8Type.INSTANCE, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedIntegerType1, derivedIntegerType2);
 
         final DerivedUint8Type derivedUnsignedType1 = (DerivedUint8Type)DerivedTypes
-                .derivedTypeBuilder(integerTypeDefinitionu8, SCHEMA_PATH).build();
+                .derivedTypeBuilder(integerTypeDefinitionu8, Q_NAME).build();
         final DerivedUint8Type derivedUnsignedType2 = (DerivedUint8Type)DerivedTypes
-                .derivedTypeBuilder(BaseUint8Type.INSTANCE, SCHEMA_PATH).build();
+                .derivedTypeBuilder(BaseUint8Type.INSTANCE, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedUnsignedType1, derivedUnsignedType2);
 
         final RestrictedUint8Type restrictedUnsignedType1 = (RestrictedUint8Type)RestrictedTypes
-                .newUint8Builder(integerTypeDefinitionu8, SCHEMA_PATH).buildType();
+                .newUint8Builder(integerTypeDefinitionu8, Q_NAME).buildType();
         final RestrictedUint8Type restrictedUnsignedType2 = (RestrictedUint8Type)RestrictedTypes
-                .newUint8Builder(BaseUint8Type.INSTANCE, SCHEMA_PATH).buildType();
+                .newUint8Builder(BaseUint8Type.INSTANCE, Q_NAME).buildType();
         hashCodeEqualsToStringTest(restrictedUnsignedType1, restrictedUnsignedType2);
         concreteBuilderTest(integerTypeDefinition8, derivedIntegerType1);
         concreteBuilderTest(integerTypeDefinitionu8, derivedUnsignedType2);
 
         final DerivedTypeBuilder<?> derivedTypeBuilder = DerivedTypes.derivedTypeBuilder(integerTypeDefinition8,
-                SCHEMA_PATH);
+            Q_NAME);
         derivedTypeBuilder.setDefaultValue(1);
         derivedTypeBuilder.setDescription("test-description");
         derivedTypeBuilder.setReference("test-reference");
@@ -268,19 +266,19 @@ public class TypeTest {
         assertEquals(baseStringType1.getPatternConstraints(), baseStringType2.getPatternConstraints());
 
         final DerivedStringType derivedStringType1 = (DerivedStringType)
-                DerivedTypes.derivedTypeBuilder(baseStringType1, SCHEMA_PATH).build();
+                DerivedTypes.derivedTypeBuilder(baseStringType1, Q_NAME).build();
         final DerivedStringType derivedStringType2 = (DerivedStringType)
-                DerivedTypes.derivedTypeBuilder(baseStringType2, SCHEMA_PATH).build();
+                DerivedTypes.derivedTypeBuilder(baseStringType2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedStringType1, derivedStringType2);
 
         final RestrictedStringType restrictedStringType1 = (RestrictedStringType)RestrictedTypes
-                .newStringBuilder(baseStringType1, SCHEMA_PATH).buildType();
+                .newStringBuilder(baseStringType1, Q_NAME).buildType();
         final RestrictedStringType restrictedStringType2 = (RestrictedStringType)RestrictedTypes
-                .newStringBuilder(baseStringType2, SCHEMA_PATH).buildType();
+                .newStringBuilder(baseStringType2, Q_NAME).buildType();
         hashCodeEqualsToStringTest(restrictedStringType1, restrictedStringType2);
         concreteBuilderTest(baseStringType1, derivedStringType1);
 
-        final StringTypeBuilder stringTypeBuilder = new StringTypeBuilder(baseStringType1, SCHEMA_PATH);
+        final StringTypeBuilder stringTypeBuilder = new StringTypeBuilder(baseStringType1, Q_NAME);
         final PatternConstraint patternConstraint = BaseConstraints.newPatternConstraint("pattern", ABSENT, ABSENT);
         stringTypeBuilder.addPatternConstraint(patternConstraint);
         final StringTypeDefinition stringTypeDefinition = stringTypeBuilder.buildType();
@@ -289,7 +287,7 @@ public class TypeTest {
 
     @Test
     public void bitsTypeTest() {
-        final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(SCHEMA_PATH);
+        final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(Q_NAME);
         bitsTypeBuilder.addBit(BIT_A);
         final BitsTypeDefinition bitsTypeDefinition1 = bitsTypeBuilder.build();
         final BitsTypeDefinition bitsTypeDefinition2 = bitsTypeBuilder.build();
@@ -297,40 +295,40 @@ public class TypeTest {
         assertEquals(bitsTypeDefinition1.getBits(), bitsTypeDefinition1.getBits());
 
         final DerivedBitsType derivedBitsType1 = (DerivedBitsType)DerivedTypes
-                .derivedTypeBuilder(bitsTypeDefinition1, SCHEMA_PATH).build();
+                .derivedTypeBuilder(bitsTypeDefinition1, Q_NAME).build();
         final DerivedBitsType derivedBitsType2 = (DerivedBitsType)DerivedTypes
-                .derivedTypeBuilder(bitsTypeDefinition2, SCHEMA_PATH).build();
+                .derivedTypeBuilder(bitsTypeDefinition2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedBitsType1, derivedBitsType2);
 
-        restrictedBuilderTest(RestrictedTypes.newBitsBuilder(bitsTypeDefinition1, SCHEMA_PATH),
-                RestrictedTypes.newBitsBuilder(bitsTypeDefinition2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newBitsBuilder(bitsTypeDefinition1, Q_NAME),
+                RestrictedTypes.newBitsBuilder(bitsTypeDefinition2, Q_NAME));
         concreteBuilderTest(bitsTypeDefinition1, derivedBitsType1);
     }
 
     @Test
     public void enumerationTypeTest() {
-        final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(
-                SCHEMA_PATH).build();
-        final BaseEnumerationType baseEnumerationType2 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(
-                SCHEMA_PATH).build();
+        final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(Q_NAME)
+            .build();
+        final BaseEnumerationType baseEnumerationType2 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(Q_NAME)
+            .build();
         hashCodeEqualsToStringTest(baseEnumerationType1, baseEnumerationType2);
         assertEquals(baseEnumerationType1.getValues(), baseEnumerationType2.getValues());
 
         final DerivedEnumerationType derivedEnumerationType1 = (DerivedEnumerationType)DerivedTypes
-                .derivedTypeBuilder(baseEnumerationType1, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseEnumerationType1, Q_NAME).build();
         final DerivedEnumerationType derivedEnumerationType2 = (DerivedEnumerationType)DerivedTypes
-                .derivedTypeBuilder(baseEnumerationType2, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseEnumerationType2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedEnumerationType1, derivedEnumerationType2);
 
-        restrictedBuilderTest(RestrictedTypes.newEnumerationBuilder(baseEnumerationType1, SCHEMA_PATH),
-                RestrictedTypes.newEnumerationBuilder(baseEnumerationType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newEnumerationBuilder(baseEnumerationType1, Q_NAME),
+                RestrictedTypes.newEnumerationBuilder(baseEnumerationType2, Q_NAME));
         concreteBuilderTest(baseEnumerationType1, derivedEnumerationType1);
     }
 
     @Test
     public void leafrefTypeTest() {
-        final LeafrefTypeBuilder leafrefTypeBuilder1 = BaseTypes.leafrefTypeBuilder(SCHEMA_PATH);
-        final LeafrefTypeBuilder leafrefTypeBuilder2 = BaseTypes.leafrefTypeBuilder(SCHEMA_PATH);
+        final LeafrefTypeBuilder leafrefTypeBuilder1 = BaseTypes.leafrefTypeBuilder(Q_NAME);
+        final LeafrefTypeBuilder leafrefTypeBuilder2 = BaseTypes.leafrefTypeBuilder(Q_NAME);
         leafrefTypeBuilder1.setPathStatement(REVISION_AWARE_XPATH);
         leafrefTypeBuilder2.setPathStatement(REVISION_AWARE_XPATH);
         final BaseLeafrefType baseLeafrefType1 = (BaseLeafrefType)leafrefTypeBuilder1.build();
@@ -339,26 +337,26 @@ public class TypeTest {
         assertEquals(baseLeafrefType1.getPathStatement(), REVISION_AWARE_XPATH);
 
         final DerivedLeafrefType derivedLeafrefType1 = (DerivedLeafrefType)DerivedTypes
-                .derivedTypeBuilder(baseLeafrefType1, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseLeafrefType1, Q_NAME).build();
         final DerivedLeafrefType derivedLeafrefType2 = (DerivedLeafrefType)DerivedTypes
-                .derivedTypeBuilder(baseLeafrefType2, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseLeafrefType2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedLeafrefType1, derivedLeafrefType2);
 
-        restrictedBuilderTest(RestrictedTypes.newLeafrefBuilder(baseLeafrefType1, SCHEMA_PATH),
-                RestrictedTypes.newLeafrefBuilder(baseLeafrefType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newLeafrefBuilder(baseLeafrefType1, Q_NAME),
+                RestrictedTypes.newLeafrefBuilder(baseLeafrefType2, Q_NAME));
         concreteBuilderTest(baseLeafrefType1, derivedLeafrefType1);
     }
 
     @Test
     public void unionTypeTest() throws IllegalAccessException, InstantiationException {
-        final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(SCHEMA_PATH)
+        final BaseDecimalType baseDecimalType1 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
                 .buildType();
-        final BaseDecimalType baseDecimalType2 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(SCHEMA_PATH)
+        final BaseDecimalType baseDecimalType2 = (BaseDecimalType)BaseTypes.decimalTypeBuilder(Q_NAME)
                 .setFractionDigits(1)
                 .buildType();
-        final UnionTypeBuilder unionTypeBuilder1 = BaseTypes.unionTypeBuilder(SCHEMA_PATH);
-        final UnionTypeBuilder unionTypeBuilder2 = BaseTypes.unionTypeBuilder(SCHEMA_PATH);
+        final UnionTypeBuilder unionTypeBuilder1 = BaseTypes.unionTypeBuilder(Q_NAME);
+        final UnionTypeBuilder unionTypeBuilder2 = BaseTypes.unionTypeBuilder(Q_NAME);
         unionTypeBuilder1.addType(baseDecimalType1);
         unionTypeBuilder2.addType(baseDecimalType2);
         final BaseUnionType baseUnionType1 = (BaseUnionType)unionTypeBuilder1.build();
@@ -367,20 +365,20 @@ public class TypeTest {
         assertEquals(baseUnionType1.getTypes(), baseUnionType2.getTypes());
 
         final DerivedUnionType derivedUnionType1 = (DerivedUnionType)DerivedTypes
-                .derivedTypeBuilder(baseUnionType1, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseUnionType1, Q_NAME).build();
         final DerivedUnionType derivedUnionType2 = (DerivedUnionType)DerivedTypes
-                .derivedTypeBuilder(baseUnionType2, SCHEMA_PATH).build();
+                .derivedTypeBuilder(baseUnionType2, Q_NAME).build();
         hashCodeEqualsToStringTest(derivedUnionType1, derivedUnionType2);
 
-        restrictedBuilderTest(RestrictedTypes.newUnionBuilder(baseUnionType1, SCHEMA_PATH),
-                RestrictedTypes.newUnionBuilder(baseUnionType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newUnionBuilder(baseUnionType1, Q_NAME),
+                RestrictedTypes.newUnionBuilder(baseUnionType2, Q_NAME));
         concreteBuilderTest(baseUnionType1, derivedUnionType1);
     }
 
     @Test
     public void abstractTypeDefinitionQnameTest() {
         final AbstractTypeDefinition<?> abstractTypeDefinition = (AbstractTypeDefinition<?>)
-            BaseTypes.decimalTypeBuilder(SCHEMA_PATH).setFractionDigits(1).buildType();
+            BaseTypes.decimalTypeBuilder(Q_NAME).setFractionDigits(1).buildType();
         assertEquals(abstractTypeDefinition.getQName(), Q_NAME);
     }
 
@@ -388,7 +386,7 @@ public class TypeTest {
     public void abstractDerivedTypeTest() {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final AbstractDerivedType<?> abstractDerivedType = (AbstractDerivedType<?>)
-            DerivedTypes.derivedTypeBuilder(baseBinaryType1, SCHEMA_PATH).build();
+            DerivedTypes.derivedTypeBuilder(baseBinaryType1, Q_NAME).build();
         assertEquals(Optional.empty(), abstractDerivedType.getDescription());
         assertEquals(Optional.empty(), abstractDerivedType.getReference());
         assertEquals(Status.CURRENT, abstractDerivedType.getStatus());
@@ -397,9 +395,9 @@ public class TypeTest {
     @Test
     public void concreteTypeBuilderBuildTest() {
         final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)
-            BaseTypes.enumerationTypeBuilder(SCHEMA_PATH).build();
+            BaseTypes.enumerationTypeBuilder(Q_NAME).build();
         final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
-                baseEnumerationType1, SCHEMA_PATH);
+                baseEnumerationType1, Q_NAME);
         final TypeDefinition<?> typeDefinition = concreteTypeBuilder.build();
         assertNotNull(typeDefinition);
     }
@@ -408,8 +406,8 @@ public class TypeTest {
     public void constraintTypeBuilderTest() throws InvalidLengthConstraintException {
         final BaseBinaryType baseBinaryType = (BaseBinaryType)BaseTypes.binaryType();
         final LengthRestrictedTypeBuilder<?> lengthRestrictedTypeBuilder = RestrictedTypes
-                .newBinaryBuilder(baseBinaryType, SCHEMA_PATH);
-        final Long min = Long.valueOf(0);
+                .newBinaryBuilder(baseBinaryType, Q_NAME);
+        final Long min = (long) 0;
         final UnresolvedNumber max = UnresolvedNumber.max();
         final List<ValueRange> lengthArrayList = ImmutableList.of(ValueRange.of(min, max));
         lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
@@ -418,7 +416,7 @@ public class TypeTest {
 
         final Int8TypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
         final RangeRestrictedTypeBuilder<?, ?> rangeRestrictedTypeBuilder = RestrictedTypes.newInt8Builder(
-            integerTypeDefinition8, SCHEMA_PATH);
+            integerTypeDefinition8, Q_NAME);
         rangeRestrictedTypeBuilder.setRangeConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition1);
@@ -447,13 +445,13 @@ public class TypeTest {
 
     @Test
     public void identityrefTypeBuilderException() {
-        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
+        final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(Q_NAME);
         assertThrows(IllegalStateException.class, () -> builder.build());
     }
 
     @Test
     public void invalidBitDefinitionExceptionTest() {
-        final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(SCHEMA_PATH)
+        final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(Q_NAME)
                 .addBit(BIT_A)
                 .addBit(BitBuilder.create("test-name-1", Uint32.valueOf(55)).build());
 
@@ -467,7 +465,7 @@ public class TypeTest {
                 .setReference("reference").setUnknownSchemaNodes(unknown).build();
         final EnumPair enumPair2 = EnumPairBuilder.create("enum", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(unknown).build();
-        final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(SCHEMA_PATH);
+        final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(Q_NAME);
         enumerationTypeBuilder.addEnum(enumPair1);
         enumerationTypeBuilder.addEnum(enumPair2);
 
@@ -492,7 +490,7 @@ public class TypeTest {
 
     private static void concreteBuilderTest(final TypeDefinition<?> baseTypeDef,
             final TypeDefinition<?> derivedTypeDef) {
-        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseTypeDef, SCHEMA_PATH);
+        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseTypeDef, Q_NAME);
         final TypeDefinition<?> typeDefinition = concreteTypeBuilder.buildType();
         assertEquals(typeDefinition.getBaseType(), derivedTypeDef.getBaseType());
     }

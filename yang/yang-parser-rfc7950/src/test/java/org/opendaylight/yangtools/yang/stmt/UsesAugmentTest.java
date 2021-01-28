@@ -136,8 +136,7 @@ public class UsesAugmentTest {
         assertEquals(expectedPath, version.getPath());
         expectedQName = QName.create(UG, "version");
         path.offer(expectedQName);
-        expectedPath = SchemaPath.create(true, pcreq.getQName(), expectedQName);
-        assertEquals(expectedPath, version.getType().getPath());
+        assertEquals(expectedQName, version.getType().getQName());
         assertEquals(BaseTypes.uint8Type(), version.getType().getBaseType().getBaseType());
         assertTrue(version.isAddedByUses());
         // * |-- leaf type
@@ -153,10 +152,9 @@ public class UsesAugmentTest {
         assertEquals(expectedPath, type.getPath());
         expectedQName = QName.create(GD, "int-ext");
         path.offer(expectedQName);
-        expectedPath = SchemaPath.create(true, expectedQName);
-        assertEquals(expectedPath, type.getType().getPath());
+        assertEquals(expectedQName, type.getType().getQName());
         final UnionTypeDefinition union = (UnionTypeDefinition) type.getType().getBaseType();
-        assertEquals(SchemaPath.create(true, expectedQName, QName.create(expectedQName, "union")), union.getPath());
+        assertEquals(QName.create(expectedQName, "union"), union.getQName());
         assertEquals(2, union.getTypes().size());
         // * |-- list requests
         final ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName(QName.create(
@@ -651,8 +649,7 @@ public class UsesAugmentTest {
         }
         assertNotNull(intExt);
 
-        SchemaPath expectedPath = SchemaPath.create(true, QName.create(GD, "int-ext"));
-        assertEquals(expectedPath, intExt.getPath());
+        assertEquals(QName.create(GD, "int-ext"), intExt.getQName());
 
         final UnionTypeDefinition union = (UnionTypeDefinition) intExt.getBaseType();
 
@@ -667,9 +664,7 @@ public class UsesAugmentTest {
         }
         assertNotNull(uint8);
         assertNotNull(pv);
-
-        expectedPath = SchemaPath.create(true, QName.create(GD, "int-ext"), QName.create(GD, "union"));
-        assertEquals(expectedPath, union.getPath());
+        assertEquals(QName.create(GD, "union"), union.getQName());
     }
 
 }

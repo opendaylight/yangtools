@@ -11,14 +11,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 abstract class AbstractRestrictedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
     private boolean touched;
 
-    AbstractRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(baseType, path);
+    AbstractRestrictedTypeBuilder(final T baseType, final QName qname) {
+        super(baseType, qname);
         if (baseType != null) {
             checkArgument(baseType instanceof AbstractBaseType || baseType instanceof AbstractDerivedType,
                 "Restricted type has to be based on either a base or derived type, not %s", baseType);
