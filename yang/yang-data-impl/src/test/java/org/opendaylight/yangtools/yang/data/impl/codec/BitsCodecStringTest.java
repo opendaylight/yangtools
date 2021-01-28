@@ -16,9 +16,9 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
  */
 public class BitsCodecStringTest {
     private  static BitsTypeDefinition toBitsTypeDefinition(final String... bits) {
-        final BitsTypeBuilder b = BaseTypes.bitsTypeBuilder(mock(SchemaPath.class));
+        final BitsTypeBuilder b = BaseTypes.bitsTypeBuilder(QName.create("foo", "foo"));
 
         long pos = 0;
         for (String bit : bits) {

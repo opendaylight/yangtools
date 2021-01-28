@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -33,8 +33,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     private ConstraintMetaDefinition constraint;
     private ImmutableList<ValueRange> ranges;
 
-    RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(baseType, path);
+    RangeRestrictedTypeBuilder(final T baseType, final QName qname) {
+        super(baseType, qname);
     }
 
     @SuppressWarnings("checkstyle:hiddenField")

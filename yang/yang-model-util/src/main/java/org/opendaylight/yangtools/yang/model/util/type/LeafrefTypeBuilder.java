@@ -11,15 +11,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> {
     private PathExpression pathStatement;
 
-    LeafrefTypeBuilder(final SchemaPath path) {
-        super(null, path);
+    LeafrefTypeBuilder(final QName qname) {
+        super(null, qname);
     }
 
     public LeafrefTypeBuilder setPathStatement(final @NonNull PathExpression pathStatement) {
@@ -30,6 +30,6 @@ public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuild
 
     @Override
     LeafrefTypeDefinition buildType() {
-        return new BaseLeafrefType(getPath(), pathStatement, getRequireInstance(), getUnknownSchemaNodes());
+        return new BaseLeafrefType(getQName(), pathStatement, getRequireInstance(), getUnknownSchemaNodes());
     }
 }

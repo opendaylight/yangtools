@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition> implements UnionTypeDefinition {
     private final ImmutableList<TypeDefinition<?>> types;
 
-    BaseUnionType(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+    BaseUnionType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final Collection<TypeDefinition<?>> types) {
-        super(path, unknownSchemaNodes);
+        super(qname, unknownSchemaNodes);
         this.types = ImmutableList.copyOf(types);
     }
 

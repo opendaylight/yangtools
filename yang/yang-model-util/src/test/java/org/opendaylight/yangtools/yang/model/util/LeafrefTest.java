@@ -18,7 +18,6 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
@@ -27,28 +26,22 @@ import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestricted
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 
 public class LeafrefTest {
-
     @Test
     public void testMethodsOfLeafrefTest() {
-        final SchemaPath schemaPath = SchemaPath.create(false, QName.create("test", "Cont1"),
-            QName.create("test", "List1"));
+        final QName qname = QName.create("test", "List1");
         final PathExpression revision = new PathExpressionImpl("/test:Cont1/test:List1", false);
         final PathExpression revision2 = new PathExpressionImpl("/test:Cont1/test:List2", false);
 
-        final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision)
-            .build();
-        final LeafrefTypeDefinition leafref2 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision2)
-            .build();
-        final LeafrefTypeDefinition leafref3 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision)
-            .build();
+        final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
+        final LeafrefTypeDefinition leafref2 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision2).build();
+        final LeafrefTypeDefinition leafref3 = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
         final LeafrefTypeDefinition leafref4 = leafref;
 
         assertNotNull("Object 'leafref' shouldn't be null.", leafref);
         assertNull("Base type of 'leafref' should be null.", leafref.getBaseType());
         assertEquals(Optional.empty(), leafref.getUnits());
         assertEquals(Optional.empty(), leafref.getDefaultValue());
-        assertEquals(QName.create("test", "List1"), leafref.getQName());
-        assertEquals("SchemaPath of 'leafref' is '/Cont1/List1'.", schemaPath, leafref.getPath());
+        assertEquals(qname, leafref.getQName());
         assertFalse(leafref.getDescription().isPresent());
         assertFalse(leafref.getReference().isPresent());
         assertEquals("Status of 'leafref' is current.", Status.CURRENT, leafref.getStatus());
@@ -68,10 +61,9 @@ public class LeafrefTest {
 
     @Test
     public void testRequireInstanceSubstatement() {
-        final SchemaPath schemaPath = SchemaPath.create(true, QName.create("test", "my-cont"),
-            QName.create("test", "my-leafref"));
+        final QName qname = QName.create("test", "my-leafref");
         final PathExpression path = new PathExpressionImpl("../my-leaf", false);
-        final LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(path);
+        final LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(path);
 
         assertTrue(leafrefTypeBuilder.build().requireInstance());
 
@@ -84,11 +76,11 @@ public class LeafrefTest {
         assertTrue(trueLeafref.requireInstance());
 
         final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> falseBuilder =
-                RestrictedTypes.newLeafrefBuilder(falseLeafref, schemaPath);
+                RestrictedTypes.newLeafrefBuilder(falseLeafref, qname);
         assertFalse(falseBuilder.build().requireInstance());
 
         final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> trueBuilder =
-                RestrictedTypes.newLeafrefBuilder(trueLeafref, schemaPath);
+                RestrictedTypes.newLeafrefBuilder(trueLeafref, qname);
         assertTrue(trueBuilder.build().requireInstance());
     }
 }

@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 import java.math.BigDecimal;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
@@ -42,6 +41,6 @@ public class DecimalCodecStringTest {
     }
 
     private static DecimalTypeDefinition getType() {
-        return BaseTypes.decimalTypeBuilder(mock(SchemaPath.class)).setFractionDigits(2).build();
+        return BaseTypes.decimalTypeBuilder(QName.create("foo", "foo")).setFractionDigits(2).build();
     }
 }

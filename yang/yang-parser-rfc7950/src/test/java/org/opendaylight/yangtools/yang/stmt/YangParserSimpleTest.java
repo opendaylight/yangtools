@@ -193,7 +193,6 @@ public class YangParserSimpleTest {
         final TypeDefinition<?> nodesType = typedefs.iterator().next();
         final QName typedefQName = QName.create(SN, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
-        assertEquals(SN_NODES_PATH.createChild(QName.create(SN, "nodes-type")), nodesType.getPath());
         assertFalse(nodesType.getDescription().isPresent());
         assertFalse(nodesType.getReference().isPresent());
         assertEquals(Status.CURRENT, nodesType.getStatus());
@@ -205,7 +204,7 @@ public class YangParserSimpleTest {
         final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "added"));
         assertEquals(createPath("nodes", "added"), added.getPath());
-        assertEquals(createPath("mytype"), added.getType().getPath());
+        assertEquals(createPath("mytype").getLastComponent(), added.getType().getQName());
 
         final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "links"));
@@ -214,10 +213,7 @@ public class YangParserSimpleTest {
         final Collection<? extends GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition nodeGroup = groupings.iterator().next();
-        final QName groupQName = QName.create(SN, "node-group");
-        assertEquals(groupQName, nodeGroup.getQName());
-        final SchemaPath nodeGroupPath = SN_NODES_PATH.createChild(groupQName);
-        assertEquals(nodeGroupPath, nodeGroup.getPath());
+        assertEquals(QName.create(SN, "node-group"), nodeGroup.getQName());
 
         final Collection<? extends UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());

@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -95,9 +94,7 @@ public class AugmentTest {
         assertEquals(expectedSchemaPath, ds0ChannelNumber.getPath());
         assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
-        final List<QName> typePath = Collections.singletonList(BaseTypes.STRING_QNAME);
-        expectedSchemaPath = SchemaPath.create(typePath, true);
-        assertEquals(expectedSchemaPath, ds0ChannelNumber.getType().getPath());
+        assertEquals(BaseTypes.STRING_QNAME, ds0ChannelNumber.getType().getQName());
 
         // leaf interface-id
         qname = QName.create(FOO, "interface-id");

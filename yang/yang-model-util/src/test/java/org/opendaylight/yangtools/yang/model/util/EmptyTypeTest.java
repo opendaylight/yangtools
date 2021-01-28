@@ -19,14 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 public class EmptyTypeTest {
-
     @Test
     public void canCreateEmptyType() {
         EmptyTypeDefinition emptyType = emptyType();
 
         assertEquals("QName", BaseTypes.EMPTY_QNAME, emptyType.getQName());
-        assertEquals("Path", Collections.singletonList(BaseTypes.EMPTY_QNAME),
-                emptyType.getPath().getPathFromRoot());
         assertEquals("BaseType", null, emptyType.getBaseType());
         assertEquals("DefaultValue", Optional.empty(), emptyType.getDefaultValue());
         assertEquals("Status", Status.CURRENT, emptyType.getStatus());
