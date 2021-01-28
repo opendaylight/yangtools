@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
@@ -21,9 +21,9 @@ final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefiniti
         implements IdentityrefTypeDefinition {
     private final @NonNull Set<? extends IdentitySchemaNode> identities;
 
-    BaseIdentityrefType(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+    BaseIdentityrefType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final Set<? extends IdentitySchemaNode> identities) {
-        super(path, unknownSchemaNodes);
+        super(qname, unknownSchemaNodes);
         this.identities = requireNonNull(identities);
     }
 
