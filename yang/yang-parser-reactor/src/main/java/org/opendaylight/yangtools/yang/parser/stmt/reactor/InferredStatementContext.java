@@ -519,9 +519,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     //        relies on hard-coded maps. At the end of the day, the logic needs to be controlled by statement's
     //        StatementSupport.
     // FIXME: YANGTOOLS-652: this map looks very much like UsesStatementSupport.TOP_REUSED_DEF_SET
-    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPEDEF,
-        YangStmtMapping.USES);
+    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.USES);
 
     private EffectiveCopy effectiveCopy(final ReactorStmtCtx<?, ?, ?> stmt) {
         // FIXME: YANGTOOLS-652: formerly known as "isReusedByUses"
