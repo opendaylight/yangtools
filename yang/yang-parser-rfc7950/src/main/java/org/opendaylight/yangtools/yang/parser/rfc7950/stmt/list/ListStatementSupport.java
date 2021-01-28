@@ -144,8 +144,6 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
     @Override
     protected ListEffectiveStatement createEffective(final Current<QName, ListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final ListSchemaNode original = (ListSchemaNode) stmt.original();
-
         final ImmutableList<QName> keyDefinition;
         final KeyEffectiveStatement keyStmt = findFirstStatement(substatements, KeyEffectiveStatement.class);
         if (keyStmt != null) {
@@ -188,6 +186,7 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
         final Optional<ElementCountConstraint> elementCountConstraint =
             EffectiveStmtUtils.createElementCountConstraint(substatements);
         final SchemaPath path = stmt.wrapSchemaPath();
+        final ListSchemaNode original = (ListSchemaNode) stmt.original();
         try {
             return original == null && !elementCountConstraint.isPresent()
                 ? new EmptyListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition)
