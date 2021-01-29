@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
@@ -76,7 +77,7 @@ public final class LeafListStatementSupport
     private final SubstatementValidator validator;
 
     private LeafListStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.LEAF_LIST, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy());
         this.validator = requireNonNull(validator);
     }
 
@@ -105,21 +106,31 @@ public final class LeafListStatementSupport
     }
 
     @Override
+    public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
+            final LeafListEffectiveStatement original) {
+        final int flags = computeFlags(stmt, original.effectiveSubstatements());
+        if (original instanceof EmptyLeafListEffectiveStatement) {
+            return new EmptyLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
+                stmt.wrapSchemaPath(), flags);
+        } else if (original instanceof SlimLeafListEffectiveStatement) {
+            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original, stmt.wrapSchemaPath(),
+                flags);
+        } else if(original instanceof RegularLeafListEffectiveStatement) {
+            return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
+                stmt.wrapSchemaPath(), flags);
+        } else {
+            throw new IllegalStateException("Unexpected original " + original);
+        }
+    }
+
+    @Override
     protected LeafListEffectiveStatement createEffective(final Current<QName, LeafListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
                 "Leaf-list is missing a 'type' statement");
 
-        final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
-
-        final int flags = new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig().asNullable())
-                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
-                    .equals(Ordering.USER))
-                .toFlags();
+        final int flags = computeFlags(stmt, substatements);
         final ImmutableSet<String> defaultValues = substatements.stream()
                 .filter(DefaultEffectiveStatement.class::isInstance)
                 .map(DefaultEffectiveStatement.class::cast)
@@ -137,6 +148,7 @@ public final class LeafListStatementSupport
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
 
+        final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
         final LeafListStatement declared = stmt.declared();
         final SchemaPath path = stmt.wrapSchemaPath();
         if (defaultValues.isEmpty()) {
@@ -148,5 +160,16 @@ public final class LeafListStatementSupport
 
         return new RegularLeafListEffectiveStatement(declared, path, flags, substatements, original, defaultValues,
             elementCountConstraint.orElse(null));
+    }
+
+    private static int computeFlags(final Current<?, ?> stmt,
+        final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
+                .equals(Ordering.USER))
+            .toFlags();
     }
 }

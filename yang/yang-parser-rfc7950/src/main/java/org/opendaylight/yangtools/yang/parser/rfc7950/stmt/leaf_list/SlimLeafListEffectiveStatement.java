@@ -22,6 +22,11 @@ final class SlimLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffec
         super(declared, path, flags, substatements, original, elementCountConstraint);
     }
 
+    SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original, path, flags);
+    }
+
     @Override
     public ImmutableSet<String> getDefaults() {
         return ImmutableSet.of();
