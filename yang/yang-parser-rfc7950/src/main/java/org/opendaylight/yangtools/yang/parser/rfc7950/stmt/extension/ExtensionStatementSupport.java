@@ -76,7 +76,7 @@ public final class ExtensionStatementSupport
             YinElementStatement.class);
 
         stmt.addToNs(StatementDefinitionNamespace.class, stmt.argument(),
-            new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
+            new UnrecognizedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
                 argument != null ? argument.argument() : null, yinElement != null && yinElement.getArgument())));
     }
 

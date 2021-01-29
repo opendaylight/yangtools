@@ -51,7 +51,7 @@ final class UnrecognizedStatementSupport
         } else {
             def = new ModelDefinedStatementDefinition(statementName);
         }
-        return Optional.of(new ModelDefinedStatementSupport(def));
+        return Optional.of(new UnrecognizedStatementSupport(def));
     }
 
     @Override
