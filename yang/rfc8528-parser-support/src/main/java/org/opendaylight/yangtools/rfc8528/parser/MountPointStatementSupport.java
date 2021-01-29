@@ -43,7 +43,12 @@ public final class MountPointStatementSupport
     private final SubstatementValidator validator;
 
     MountPointStatementSupport(final StatementDefinition definition) {
-        super(definition, StatementPolicy.legacyDeclaredCopy());
+        super(definition, StatementPolicy.copyDeclared((copy, current, substatements) ->
+            copy.getArgument().equals(current.getArgument())
+            // Implied by UnknownSchemaNode
+            && copy.history().isAugmenting() == current.history().isAugmenting()
+            && copy.history().isAddedByUses() == current.history().isAddedByUses()
+            && copy.equalParentPath(current)));
         this.validator = SubstatementValidator.builder(definition)
                 .addOptional(YangStmtMapping.CONFIG)
                 .addOptional(YangStmtMapping.DESCRIPTION)
@@ -56,6 +61,12 @@ public final class MountPointStatementSupport
         return INSTANCE;
     }
 
+    // FIXME: these two methods are not quite right. RFC8528 states that:
+    //
+    //    If a mount point is defined within a grouping, its label is
+    //    bound to the module where the grouping is used.
+    //
+    // We are not doing exactly that, in that we can end up rebinding the argument through 'augment', I think.
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
