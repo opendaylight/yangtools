@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestricted
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -76,13 +76,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class AbstractTypeStatementSupport
-        extends AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeStatementSupport.class);
-
+        extends AbstractStringStatementSupport<TypeStatement, EffectiveStatement<String, TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.BASE)
@@ -152,11 +148,6 @@ abstract class AbstractTypeStatementSupport
 
     AbstractTypeStatementSupport() {
         super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
-    }
-
-    @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
     }
 
     @Override
@@ -291,11 +282,12 @@ abstract class AbstractTypeStatementSupport
         }
     }
 
+    // FIXME: YANGTOOLS-1208: this needs to happen during onFullDefinitionDeclared() and stored (again) in a namespace
     static final @NonNull QName typeEffectiveQName(final Current<String, ?> stmt) {
-        // FIXME: this really should be handled through A=AbstractQName, with two values coming out of parseArgument():
-        //        -- either UnqualifiedQName or QualifiedQName. Each of those can easily be bound to parent module:
-        //          stmt.getArgument().bindTo(parentNamespace). We could perhaps also make it a QName and deal with this
-        //        bit during adaptArgument().
+        // FIXME: YANGTOOLS-1117: this really should be handled through A=AbstractQName, with two values coming out of
+        //        parseArgument(): either UnqualifiedQName or QualifiedQName. Each of those can easily be bound to
+        //        parent module:
+        //          stmt.getArgument().bindTo(parentNamespace).
         final String argument = stmt.getArgument();
         return QName.create(stmt.getEffectiveParent().effectiveNamespace(),
             // Split out localName event if it is prefixed. This should really be in parseArgument()

@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefS
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -32,15 +32,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractIdentityRefSpecificationSupport
-        extends AbstractStatementSupport<String, IdentityRefSpecification,
+        extends AbstractStringStatementSupport<IdentityRefSpecification,
             EffectiveStatement<String, IdentityRefSpecification>> {
     AbstractIdentityRefSpecificationSupport() {
         super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
-    }
-
-    @Override
-    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
     }
 
     @Override

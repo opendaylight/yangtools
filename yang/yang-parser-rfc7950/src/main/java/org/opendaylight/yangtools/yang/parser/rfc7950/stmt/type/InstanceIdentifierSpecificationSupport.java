@@ -16,13 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIden
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupport<String,
-        InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> {
+final class InstanceIdentifierSpecificationSupport
+        extends AbstractStringStatementSupport<InstanceIdentifierSpecification,
+            EffectiveStatement<String, InstanceIdentifierSpecification>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
@@ -30,11 +31,6 @@ final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupp
 
     InstanceIdentifierSpecificationSupport() {
         super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
-    }
-
-    @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
     }
 
     @Override
