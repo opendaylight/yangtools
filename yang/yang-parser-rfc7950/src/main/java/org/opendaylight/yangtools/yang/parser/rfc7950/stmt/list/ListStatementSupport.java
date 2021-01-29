@@ -14,6 +14,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -113,7 +114,7 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
     private final SubstatementValidator validator;
 
     ListStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.LIST, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.LIST, instantiatedPolicy());
         this.validator = requireNonNull(validator);
     }
 
@@ -142,6 +143,19 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
     }
 
     @Override
+    public ListEffectiveStatement copyEffective(final Current<QName, ListStatement> stmt,
+            final ListEffectiveStatement original) {
+        final int flags = computeFlags(stmt, original.effectiveSubstatements());
+        if (original instanceof EmptyListEffectiveStatement) {
+            return new EmptyListEffectiveStatement((EmptyListEffectiveStatement) original, stmt.wrapSchemaPath(),
+                flags);
+        }
+        verify(original instanceof RegularListEffectiveStatement, "Unexpected original %s", original);
+        return new RegularListEffectiveStatement((RegularListEffectiveStatement) original, stmt.wrapSchemaPath(),
+            flags);
+    }
+
+    @Override
     protected ListEffectiveStatement createEffective(final Current<QName, ListStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final ImmutableList<QName> keyDefinition;
@@ -167,15 +181,8 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
             keyDefinition = ImmutableList.of();
         }
 
-        final EffectiveConfig configuration = stmt.effectiveConfig();
-        final int flags = new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(configuration.asNullable())
-                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
-                    .equals(Ordering.USER))
-                .toFlags();
-        if (configuration == EffectiveConfig.TRUE && keyDefinition.isEmpty() && isInstantied(stmt)) {
+        final int flags = computeFlags(stmt, substatements);
+        if (stmt.effectiveConfig() == EffectiveConfig.TRUE && keyDefinition.isEmpty() && isInstantied(stmt)) {
             warnConfigList(stmt);
         }
 
@@ -195,6 +202,17 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
+    }
+
+    private static int computeFlags(final Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
+                .equals(Ordering.USER))
+            .toFlags();
     }
 
     private static void warnConfigList(final @NonNull Current<QName, ListStatement> stmt) {
