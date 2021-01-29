@@ -31,9 +31,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractIdentityRefSpecificationSupport
-        extends AbstractStatementSupport<String, IdentityRefSpecification,
-            EffectiveStatement<String, IdentityRefSpecification>> {
+abstract class AbstractIdentityRefSpecificationSupport extends AbstractStatementSupport<QName, IdentityRefSpecification,
+            EffectiveStatement<QName, IdentityRefSpecification>> {
     AbstractIdentityRefSpecificationSupport() {
         super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
@@ -44,8 +43,8 @@ abstract class AbstractIdentityRefSpecificationSupport
     }
 
     @Override
-    public final void onFullDefinitionDeclared(final Mutable<String, IdentityRefSpecification,
-            EffectiveStatement<String, IdentityRefSpecification>> stmt) {
+    public final void onFullDefinitionDeclared(final Mutable<QName, IdentityRefSpecification,
+            EffectiveStatement<QName, IdentityRefSpecification>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
@@ -60,20 +59,20 @@ abstract class AbstractIdentityRefSpecificationSupport
     }
 
     @Override
-    protected final IdentityRefSpecification createDeclared(final StmtContext<String, IdentityRefSpecification, ?> ctx,
+    protected final IdentityRefSpecification createDeclared(final StmtContext<QName, IdentityRefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new IdentityRefSpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected final IdentityRefSpecification createEmptyDeclared(
-            final StmtContext<String, IdentityRefSpecification, ?> ctx) {
+            final StmtContext<QName, IdentityRefSpecification, ?> ctx) {
         throw noBase(ctx);
     }
 
     @Override
-    protected final EffectiveStatement<String, IdentityRefSpecification> createEffective(
-            final Current<String, IdentityRefSpecification> stmt,
+    protected final EffectiveStatement<QName, IdentityRefSpecification> createEffective(
+            final Current<QName, IdentityRefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(stmt);

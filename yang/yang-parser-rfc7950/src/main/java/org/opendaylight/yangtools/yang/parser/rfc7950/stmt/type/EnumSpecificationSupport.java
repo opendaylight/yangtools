@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class EnumSpecificationSupport
-        extends AbstractStatementSupport<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> {
+        extends AbstractStatementSupport<QName, EnumSpecification, EffectiveStatement<QName, EnumSpecification>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.ENUM).build();
 
@@ -45,19 +46,18 @@ final class EnumSpecificationSupport
     }
 
     @Override
-    protected EnumSpecification createDeclared(final StmtContext<String, EnumSpecification, ?> ctx,
+    protected EnumSpecification createDeclared(final StmtContext<QName, EnumSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new EnumSpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
-    protected EnumSpecification createEmptyDeclared(final StmtContext<String, EnumSpecification, ?> ctx) {
+    protected EnumSpecification createEmptyDeclared(final StmtContext<QName, EnumSpecification, ?> ctx) {
         throw noEnum(ctx);
     }
 
     @Override
-    protected EffectiveStatement<String, EnumSpecification> createEffective(
-            final Current<String, EnumSpecification> stmt,
+    protected EffectiveStatement<QName, EnumSpecification> createEffective(final Current<QName, EnumSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(stmt);

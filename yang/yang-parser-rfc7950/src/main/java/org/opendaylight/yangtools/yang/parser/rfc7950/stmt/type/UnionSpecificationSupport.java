@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class UnionSpecificationSupport
-        extends AbstractStatementSupport<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> {
+        extends AbstractStatementSupport<QName, UnionSpecification, EffectiveStatement<QName, UnionSpecification>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .TYPE)
         .addMultiple(YangStmtMapping.TYPE)
@@ -45,19 +46,19 @@ final class UnionSpecificationSupport
     }
 
     @Override
-    protected UnionSpecification createDeclared(final StmtContext<String, UnionSpecification, ?> ctx,
+    protected UnionSpecification createDeclared(final StmtContext<QName, UnionSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new UnionSpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
-    protected UnionSpecification createEmptyDeclared(final StmtContext<String, UnionSpecification, ?> ctx) {
+    protected UnionSpecification createEmptyDeclared(final StmtContext<QName, UnionSpecification, ?> ctx) {
         throw noType(ctx);
     }
 
     @Override
-    protected EffectiveStatement<String, UnionSpecification> createEffective(
-            final Current<String, UnionSpecification> stmt,
+    protected EffectiveStatement<QName, UnionSpecification> createEffective(
+            final Current<QName, UnionSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noType(stmt);

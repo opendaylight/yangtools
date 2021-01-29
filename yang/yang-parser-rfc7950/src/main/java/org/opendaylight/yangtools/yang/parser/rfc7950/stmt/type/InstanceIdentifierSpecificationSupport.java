@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,8 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupport<String,
-        InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> {
+final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupport<QName,
+        InstanceIdentifierSpecification, EffectiveStatement<QName, InstanceIdentifierSpecification>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
@@ -44,20 +45,20 @@ final class InstanceIdentifierSpecificationSupport extends AbstractStatementSupp
 
     @Override
     protected InstanceIdentifierSpecification createDeclared(
-            final StmtContext<String, InstanceIdentifierSpecification, ?> ctx,
+            final StmtContext<QName, InstanceIdentifierSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected InstanceIdentifierSpecification createEmptyDeclared(
-            final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
+            final StmtContext<QName, InstanceIdentifierSpecification, ?> ctx) {
         return new EmptyIdentifierSpecification(ctx.getRawArgument());
     }
 
     @Override
-    protected EffectiveStatement<String, InstanceIdentifierSpecification> createEffective(
-            final Current<String, InstanceIdentifierSpecification> stmt,
+    protected EffectiveStatement<QName, InstanceIdentifierSpecification> createEffective(
+            final Current<QName, InstanceIdentifierSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(
             BaseTypes.instanceIdentifierType(), stmt.argumentAsTypeQName());

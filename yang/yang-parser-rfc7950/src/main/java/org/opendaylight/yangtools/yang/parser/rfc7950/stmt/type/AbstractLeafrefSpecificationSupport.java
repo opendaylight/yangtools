@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -22,8 +23,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractLeafrefSpecificationSupport extends AbstractStatementSupport<String, LeafrefSpecification,
-            EffectiveStatement<String, LeafrefSpecification>> {
+abstract class AbstractLeafrefSpecificationSupport extends AbstractStatementSupport<QName, LeafrefSpecification,
+            EffectiveStatement<QName, LeafrefSpecification>> {
     AbstractLeafrefSpecificationSupport() {
         super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
@@ -34,19 +35,19 @@ abstract class AbstractLeafrefSpecificationSupport extends AbstractStatementSupp
     }
 
     @Override
-    protected final LeafrefSpecification createDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx,
+    protected final LeafrefSpecification createDeclared(final StmtContext<QName, LeafrefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new LeafrefSpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
-    protected final LeafrefSpecification createEmptyDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx) {
+    protected final LeafrefSpecification createEmptyDeclared(final StmtContext<QName, LeafrefSpecification, ?> ctx) {
         throw noPath(ctx);
     }
 
     @Override
-    protected EffectiveStatement<String, LeafrefSpecification> createEffective(
-            final Current<String, LeafrefSpecification> stmt,
+    protected EffectiveStatement<QName, LeafrefSpecification> createEffective(
+            final Current<QName, LeafrefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noPath(stmt);

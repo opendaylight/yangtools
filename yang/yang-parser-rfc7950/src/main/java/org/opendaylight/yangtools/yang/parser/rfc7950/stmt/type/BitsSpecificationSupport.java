@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -26,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class BitsSpecificationSupport
-        extends AbstractStatementSupport<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> {
+        extends AbstractStatementSupport<QName, BitsSpecification, EffectiveStatement<QName, BitsSpecification>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addMultiple(YangStmtMapping.BIT)
@@ -47,19 +48,18 @@ final class BitsSpecificationSupport
     }
 
     @Override
-    protected BitsSpecification createDeclared(final StmtContext<String, BitsSpecification, ?> ctx,
+    protected BitsSpecification createDeclared(final StmtContext<QName, BitsSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new BitsSpecificationImpl(ctx.getRawArgument(), substatements);
     }
 
     @Override
-    protected BitsSpecification createEmptyDeclared(final StmtContext<String, BitsSpecification, ?> ctx) {
+    protected BitsSpecification createEmptyDeclared(final StmtContext<QName, BitsSpecification, ?> ctx) {
         throw noBits(ctx);
     }
 
     @Override
-    protected EffectiveStatement<String, BitsSpecification> createEffective(
-            final Current<String, BitsSpecification> stmt,
+    protected EffectiveStatement<QName, BitsSpecification> createEffective(final Current<QName, BitsSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBits(stmt);

@@ -12,11 +12,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class BuiltinTypeStatement extends WithRawStringArgument implements TypeStatement {
+final class BuiltinTypeStatement extends WithQNameArgument implements TypeStatement {
     private static final ImmutableMap<String, BuiltinTypeStatement> BUILTINS;
 
     static {
@@ -45,7 +46,7 @@ final class BuiltinTypeStatement extends WithRawStringArgument implements TypeSt
         super(requireNonNull(rawArgument));
     }
 
-    static @Nullable TypeStatement lookup(final StmtContext<String, TypeStatement, ?> ctx) {
+    static @Nullable TypeStatement lookup(final StmtContext<QName, TypeStatement, ?> ctx) {
         return BUILTINS.get(ctx.getArgument());
     }
 }

@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -76,8 +77,8 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     }
 
     @Override
-    public final String argument() {
-        return getTypeDefinition().getQName().getLocalName();
+    public final QName argument() {
+        return typedef.getQName();
     }
 
     @Override

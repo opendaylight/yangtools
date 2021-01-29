@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
 
-final class EmptyIdentifierSpecification extends WithRawStringArgument implements InstanceIdentifierSpecification {
+final class EmptyIdentifierSpecification extends WithQNameArgument implements InstanceIdentifierSpecification {
     EmptyIdentifierSpecification(final String rawArgument) {
         super(rawArgument);
     }
