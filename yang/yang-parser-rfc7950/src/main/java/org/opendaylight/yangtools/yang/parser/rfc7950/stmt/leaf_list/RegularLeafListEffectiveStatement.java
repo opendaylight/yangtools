@@ -28,6 +28,12 @@ final class RegularLeafListEffectiveStatement extends AbstractNonEmptyLeafListEf
         this.defaults = requireNonNull(defaults);
     }
 
+    RegularLeafListEffectiveStatement(final RegularLeafListEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original, path, flags);
+        this.defaults = original.defaults;
+    }
+
     @Override
     public ImmutableSet<String> getDefaults() {
         return defaults;
