@@ -1,0 +1,21 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  grouping grp {
+    list bar {
+      description "desc";
+      reference "ref";
+    }
+  }
+
+  notification foo {
+    grouping foo {
+      uses grp;
+    }
+
+    container foo {
+      uses foo;
+    }
+  }
+}

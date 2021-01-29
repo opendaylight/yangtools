@@ -59,6 +59,15 @@ abstract class AbstractListEffectiveStatement
         this.flags = flags;
     }
 
+    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original);
+        this.substatements = original.substatements;
+        this.keyDefinition = original.keyDefinition;
+        this.path = path;
+        this.flags = flags;
+    }
+
     @Override
     public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return unmaskList(substatements);
