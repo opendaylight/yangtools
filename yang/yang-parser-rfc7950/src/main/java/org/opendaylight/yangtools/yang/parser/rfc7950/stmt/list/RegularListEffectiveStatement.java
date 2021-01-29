@@ -29,6 +29,13 @@ final class RegularListEffectiveStatement extends AbstractListEffectiveStatement
         this.original = original;
     }
 
+    RegularListEffectiveStatement(final RegularListEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original, path, flags);
+        this.elementCountConstraint = original.elementCountConstraint;
+        this.original = original.original;
+    }
+
     @Override
     public Optional<ListSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
