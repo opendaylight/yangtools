@@ -23,6 +23,10 @@ final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
         super(declared, path, flags, substatements, keyDefinition);
     }
 
+    EmptyListEffectiveStatement(final EmptyListEffectiveStatement original, final SchemaPath path, final int flags) {
+        super(original, path, flags);
+    }
+
     @Override
     public Optional<? extends SchemaNode> getOriginal() {
         return Optional.empty();

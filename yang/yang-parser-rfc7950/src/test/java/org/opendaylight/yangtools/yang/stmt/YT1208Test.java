@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
@@ -149,4 +150,25 @@ public class YT1208Test {
 
         assertSame(contBar, grpBar);
     }
+
+    @Test
+    public void testListStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/list.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final NotificationEffectiveStatement notif = module
+            .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
+
+        final ListEffectiveStatement grpBar = notif
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
+        final ListEffectiveStatement contBar = notif
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ListEffectiveStatement.class).orElseThrow();
+
+        assertSame(contBar, grpBar);
+    }
+
 }
