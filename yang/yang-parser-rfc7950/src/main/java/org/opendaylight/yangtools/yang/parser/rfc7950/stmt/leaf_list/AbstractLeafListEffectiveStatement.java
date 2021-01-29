@@ -51,6 +51,16 @@ abstract class AbstractLeafListEffectiveStatement
         this.type = buildType();
     }
 
+    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original);
+        this.substatements = original.substatements;
+        this.path = path;
+        this.flags = flags;
+        // TODO: lazy instantiation?
+        this.type = buildType();
+    }
+
     @Override
     public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return unmaskList(substatements);
@@ -97,7 +107,7 @@ abstract class AbstractLeafListEffectiveStatement
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             getQName());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            // NOTE: 'default' is ommitted here on purpose
+            // NOTE: 'default' is omitted here on purpose
             if (stmt instanceof DescriptionEffectiveStatement) {
                 builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatement) {
