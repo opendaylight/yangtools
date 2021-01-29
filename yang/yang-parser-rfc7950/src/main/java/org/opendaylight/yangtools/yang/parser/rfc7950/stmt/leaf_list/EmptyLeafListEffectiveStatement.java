@@ -23,6 +23,11 @@ final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveSta
         super(declared, path, flags, substatements);
     }
 
+    EmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original, path, flags);
+    }
+
     @Override
     public Optional<LeafSchemaNode> getOriginal() {
         return Optional.empty();
