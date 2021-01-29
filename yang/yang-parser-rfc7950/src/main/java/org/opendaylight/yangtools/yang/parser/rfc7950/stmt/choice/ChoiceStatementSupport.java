@@ -125,7 +125,6 @@ public final class ChoiceStatementSupport
     @Override
     public ChoiceEffectiveStatement copyEffective(final Current<QName, ChoiceStatement> stmt,
             final ChoiceEffectiveStatement original) {
-        // FIXME: default case!
         return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original,
             computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(),
             (ChoiceSchemaNode) stmt.original());
