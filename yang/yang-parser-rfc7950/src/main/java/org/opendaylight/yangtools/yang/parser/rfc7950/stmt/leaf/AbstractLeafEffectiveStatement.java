@@ -51,6 +51,16 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
         this.type = buildType();
     }
 
+    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final SchemaPath path,
+            final int flags) {
+        super(original);
+        this.substatements = original.substatements;
+        this.path = path;
+        this.flags = flags;
+        // FIXME: share with original?
+        this.type = buildType();
+    }
+
     @Override
     public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return unmaskList(substatements);

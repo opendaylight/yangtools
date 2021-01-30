@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -79,6 +80,13 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
     }
 
     @Override
+    public LeafEffectiveStatement copyEffective(final Current<QName, LeafStatement> stmt,
+            final LeafEffectiveStatement original) {
+        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, stmt.wrapSchemaPath(),
+            computeFlags(stmt, original.effectiveSubstatements()), (LeafSchemaNode) stmt.original());
+    }
+
+    @Override
     protected LeafEffectiveStatement createEffective(final Current<QName, LeafStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
@@ -90,16 +98,20 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         final LeafSchemaNode original = (LeafSchemaNode) stmt.original();
-        final int flags = new FlagsBuilder()
-                .setHistory(stmt.history())
-                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
-                .setConfiguration(stmt.effectiveConfig().asNullable())
-                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
-                .toFlags();
-
+        final int flags = computeFlags(stmt, substatements);
         final LeafStatement declared = stmt.declared();
         final SchemaPath path = stmt.wrapSchemaPath();
         return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
                 : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
+    }
+
+    private static int computeFlags(final Current<?, ?> stmt,
+        final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
+            .setHistory(stmt.history())
+            .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+            .setConfiguration(stmt.effectiveConfig().asNullable())
+            .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+            .toFlags();
     }
 }
