@@ -29,11 +29,18 @@ final class RegularListEffectiveStatement extends AbstractListEffectiveStatement
         this.original = original;
     }
 
-    RegularListEffectiveStatement(final RegularListEffectiveStatement original, final SchemaPath path,
-            final int flags) {
-        super(original, path, flags);
-        this.elementCountConstraint = original.elementCountConstraint;
-        this.original = original.original;
+    RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective, final ListSchemaNode original,
+            final SchemaPath path, final int flags) {
+        super(originalEffective, path, flags);
+        this.elementCountConstraint = originalEffective.elementCountConstraint;
+        this.original = original;
+    }
+
+    RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective, final ListSchemaNode original,
+            final SchemaPath path, final int flags) {
+        super(originalEffective, path, flags);
+        this.elementCountConstraint = null;
+        this.original = original;
     }
 
     @Override

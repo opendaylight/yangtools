@@ -146,12 +146,12 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
     public ListEffectiveStatement copyEffective(final Current<QName, ListStatement> stmt,
             final ListEffectiveStatement original) {
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
-        if (original instanceof EmptyListEffectiveStatement) {
-            return new EmptyListEffectiveStatement((EmptyListEffectiveStatement) original, stmt.wrapSchemaPath(),
-                flags);
-        } else if (original instanceof RegularListEffectiveStatement) {
-            return new RegularListEffectiveStatement((RegularListEffectiveStatement) original, stmt.wrapSchemaPath(),
-                flags);
+        if (original instanceof RegularListEffectiveStatement) {
+            return new RegularListEffectiveStatement((RegularListEffectiveStatement) original,
+                (ListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+        } else if (original instanceof EmptyListEffectiveStatement) {
+            return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original,
+                (ListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
