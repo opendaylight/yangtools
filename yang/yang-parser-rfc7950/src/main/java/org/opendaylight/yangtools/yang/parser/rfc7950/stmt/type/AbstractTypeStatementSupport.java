@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import java.math.BigDecimal;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -113,29 +118,24 @@ abstract class AbstractTypeStatementSupport
     static final String UINT64 = "uint64";
     static final String UNION = "union";
 
-    private static final ImmutableMap<String, String> BUILT_IN_TYPES = ImmutableMap.<String, String>builder()
-        .put(BINARY, BINARY)
-        .put(BITS, BITS)
-        .put(BOOLEAN, BOOLEAN)
-        .put(DECIMAL64, DECIMAL64)
-        .put(EMPTY, EMPTY)
-        .put(ENUMERATION, ENUMERATION)
-        .put(IDENTITY_REF,IDENTITY_REF)
-        .put(INSTANCE_IDENTIFIER, INSTANCE_IDENTIFIER)
-        .put(INT8, INT8)
-        .put(INT16, INT16)
-        .put(INT32, INT32)
-        .put(INT64, INT64)
-        .put(LEAF_REF, LEAF_REF)
-        .put(STRING, STRING)
-        .put(UINT8, UINT8)
-        .put(UINT16, UINT16)
-        .put(UINT32, UINT32)
-        .put(UINT64, UINT64)
-        .put(UNION, UNION)
-        .build();
+    private static final ImmutableMap<String, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =
+        ImmutableMap.<String, BuiltinEffectiveStatement>builder()
+            .put(BINARY, BuiltinEffectiveStatement.BINARY)
+            .put(BOOLEAN, BuiltinEffectiveStatement.BOOLEAN)
+            .put(EMPTY, BuiltinEffectiveStatement.EMPTY)
+            .put(INSTANCE_IDENTIFIER, BuiltinEffectiveStatement.INSTANCE_IDENTIFIER)
+            .put(INT8, BuiltinEffectiveStatement.INT8)
+            .put(INT16, BuiltinEffectiveStatement.INT16)
+            .put(INT32, BuiltinEffectiveStatement.INT32)
+            .put(INT64, BuiltinEffectiveStatement.INT64)
+            .put(STRING, BuiltinEffectiveStatement.STRING)
+            .put(UINT8, BuiltinEffectiveStatement.UINT8)
+            .put(UINT16, BuiltinEffectiveStatement.UINT16)
+            .put(UINT32, BuiltinEffectiveStatement.UINT32)
+            .put(UINT64, BuiltinEffectiveStatement.UINT64)
+            .build();
 
-    private static final ImmutableMap<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS =
+    private static final ImmutableMap<String, StatementSupport<?, ?, ?>> DYNAMIC_BUILT_IN_TYPES =
             ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
             .put(BITS, new BitsSpecificationSupport())
             .put(DECIMAL64, new Decimal64SpecificationSupport())
@@ -146,6 +146,9 @@ abstract class AbstractTypeStatementSupport
             .put(UNION, new UnionSpecificationSupport())
             .build();
 
+    private static final ImmutableMap<String, String> BUILT_IN_TYPES = Maps.uniqueIndex(ImmutableSet.copyOf(
+        Iterables.<String>concat(STATIC_BUILT_IN_TYPES.keySet(), DYNAMIC_BUILT_IN_TYPES.keySet())), key -> key);
+
     AbstractTypeStatementSupport() {
         super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
     }
@@ -155,14 +158,14 @@ abstract class AbstractTypeStatementSupport
             final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        // if it is yang built-in type, no prerequisite is needed, so simply return
-        if (BUILT_IN_TYPES.containsKey(stmt.argument())) {
-            // FIXME: consider populating BaseTypeNamespace here, which could be done quite efficiently, moving the
-            //        logic from resolveType()
+        final String argument = stmt.getArgument();
+        final BuiltinEffectiveStatement builtin = STATIC_BUILT_IN_TYPES.get(argument);
+        if (builtin != null) {
+            stmt.addToNs(BaseTypeNamespace.class, Empty.getInstance(), builtin);
             return;
         }
 
-        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, stmt.argument());
+        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, argument);
         final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
                 typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
@@ -175,7 +178,8 @@ abstract class AbstractTypeStatementSupport
         typeAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                stmt.addToNs(BaseTypeNamespace.class, Empty.getInstance(), typePrereq.resolve(ctx));
+                stmt.addToNs(BaseTypeNamespace.class, Empty.getInstance(),
+                    ((TypedefEffectiveStatement) typePrereq.resolve(ctx).buildEffective()).asTypeEffectiveStatement());
             }
 
             @Override
@@ -193,12 +197,12 @@ abstract class AbstractTypeStatementSupport
 
     @Override
     public boolean hasArgumentSpecificSupports() {
-        return !ARGUMENT_SPECIFIC_SUPPORTS.isEmpty();
+        return !DYNAMIC_BUILT_IN_TYPES.isEmpty();
     }
 
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
+        return DYNAMIC_BUILT_IN_TYPES.get(argument);
     }
 
     @Override
@@ -302,42 +306,7 @@ abstract class AbstractTypeStatementSupport
      * @throws SourceException if the target type cannot be found
      */
     private static @NonNull TypeEffectiveStatement<TypeStatement> resolveType(final Current<String, ?> ctx) {
-        final StmtContext<?, ?, ?> baseType = ctx.namespaceItem(BaseTypeNamespace.class, Empty.getInstance());
-        if (baseType != null) {
-            return ((TypedefEffectiveStatement) baseType.buildEffective()).asTypeEffectiveStatement();
-        }
-
-        final String argument = ctx.getArgument();
-        switch (argument) {
-            case BINARY:
-                return BuiltinEffectiveStatement.BINARY;
-            case BOOLEAN:
-                return BuiltinEffectiveStatement.BOOLEAN;
-            case EMPTY:
-                return BuiltinEffectiveStatement.EMPTY;
-            case INSTANCE_IDENTIFIER:
-                return BuiltinEffectiveStatement.INSTANCE_IDENTIFIER;
-            case INT8:
-                return BuiltinEffectiveStatement.INT8;
-            case INT16:
-                return BuiltinEffectiveStatement.INT16;
-            case INT32:
-                return BuiltinEffectiveStatement.INT32;
-            case INT64:
-                return BuiltinEffectiveStatement.INT64;
-            case STRING:
-                return BuiltinEffectiveStatement.STRING;
-            case UINT8:
-                return BuiltinEffectiveStatement.UINT8;
-            case UINT16:
-                return BuiltinEffectiveStatement.UINT16;
-            case UINT32:
-                return BuiltinEffectiveStatement.UINT32;
-            case UINT64:
-                return BuiltinEffectiveStatement.UINT64;
-            default:
-                throw new IllegalStateException("Unhandled type argument " + argument);
-        }
+        return verifyNotNull(ctx.namespaceItem(BaseTypeNamespace.class, Empty.getInstance()));
     }
 
     private static @NonNull TypeEffectiveStatement<TypeStatement> createBinary(final Current<String, ?> ctx,
