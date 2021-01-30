@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -30,20 +30,24 @@ final class GroupingEffectiveStatementImpl
             DataNodeContainerMixin<QName, GroupingStatement>,
             SchemaNodeMixin<QName, GroupingStatement>, ActionNodeContainerMixin<QName, GroupingStatement>,
             NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
     GroupingEffectiveStatementImpl(final GroupingStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final SchemaPath path) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags) {
         super(declared, substatements);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
     @Override
     public int flags() {
         return flags;
+    }
+
+    @Override
+    public Object pathObject() {
+        return path;
     }
 
     @Override
@@ -54,12 +58,6 @@ final class GroupingEffectiveStatementImpl
     @Override
     public DataSchemaNode dataChildByName(final QName name) {
         return dataSchemaNode(name);
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

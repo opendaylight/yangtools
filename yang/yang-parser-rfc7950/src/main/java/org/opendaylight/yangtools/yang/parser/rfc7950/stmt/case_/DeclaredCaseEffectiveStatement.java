@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
@@ -23,23 +24,23 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffec
 final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement>
         implements CaseEffectiveStatementMixin {
     private final CaseSchemaNode original;
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
     DeclaredCaseEffectiveStatement(final CaseStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final SchemaPath path, final @Nullable CaseSchemaNode original) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags,
+            final @Nullable CaseSchemaNode original) {
         super(declared, substatements);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = path;
         this.original = original;
     }
 
-    DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final int flags,
-            final SchemaPath path, final @Nullable CaseSchemaNode original) {
+    DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final Object path,
+            final int flags, final @Nullable CaseSchemaNode original) {
         super(origEffective);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = path;
         this.original = original;
     }
 
@@ -49,9 +50,8 @@ final class DeclaredCaseEffectiveStatement extends WithSubstatements<QName, Case
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override

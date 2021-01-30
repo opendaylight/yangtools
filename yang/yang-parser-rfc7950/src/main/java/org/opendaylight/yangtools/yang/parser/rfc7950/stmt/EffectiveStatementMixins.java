@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
@@ -41,6 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -314,10 +318,21 @@ public final class EffectiveStatementMixins {
      */
     public interface SchemaNodeMixin<A, D extends DeclaredStatement<A>>
             extends DocumentedNodeMixin.WithStatus<A, D>, SchemaNode {
+        // FIXME: ditch all this complexity once we do not require SchemaPath
         @Override
         default QName getQName() {
-            return getPath().getLastComponent();
+            final Object obj = pathObject();
+            return obj instanceof QName ? (QName) obj : verifyNotNull(((SchemaPath) obj).getLastComponent());
         }
+
+        @Override
+        @Deprecated
+        default SchemaPath getPath() {
+            final Object obj = pathObject();
+            return obj instanceof SchemaPath ? (SchemaPath) obj : SchemaNodeDefaults.throwUnsupported(this);
+        }
+
+        @NonNull Object pathObject();
     }
 
     /**

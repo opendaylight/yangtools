@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
@@ -21,20 +21,19 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 
 final class RpcEffectiveStatementImpl extends WithSubstatements<QName, RpcStatement, RpcEffectiveStatement>
         implements RpcDefinition, RpcEffectiveStatement, OperationDefinitionMixin<RpcStatement> {
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
     RpcEffectiveStatementImpl(final RpcStatement declared,
-        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags, final SchemaPath path) {
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags) {
         super(declared, substatements);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override

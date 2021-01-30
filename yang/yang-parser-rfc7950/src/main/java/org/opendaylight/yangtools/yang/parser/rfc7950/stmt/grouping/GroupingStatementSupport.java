@@ -150,8 +150,8 @@ public final class GroupingStatementSupport
     protected GroupingEffectiveStatement createEffective(final Current<QName, GroupingStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new GroupingEffectiveStatementImpl(stmt.declared(), substatements,
-                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), stmt.wrapSchemaPath());
+            return new GroupingEffectiveStatementImpl(stmt.declared(), substatements, stmt.effectivePath(),
+                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

@@ -77,8 +77,8 @@ public final class FeatureStatementSupport
     protected FeatureEffectiveStatement createEffective(final Current<QName, FeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty()
-            ? new EmptyFeatureEffectiveStatement(stmt.declared(), stmt.wrapSchemaPath(), EMPTY_EFFECTIVE_FLAGS)
-                : new RegularFeatureEffectiveStatement(stmt.declared(), stmt.wrapSchemaPath(),
+            ? new EmptyFeatureEffectiveStatement(stmt.declared(), stmt.effectivePath(), EMPTY_EFFECTIVE_FLAGS)
+                : new RegularFeatureEffectiveStatement(stmt.declared(), stmt.effectivePath(),
                     computeFlags(substatements), substatements);
     }
 

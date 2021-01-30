@@ -107,22 +107,22 @@ public final class OutputStatementSupport
     @Override
     protected OutputEffectiveStatement copyDeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
-        return new DeclaredOutputEffectiveStatement(flags, (DeclaredOutputEffectiveStatement) original,
-            stmt.wrapSchemaPath());
+        return new DeclaredOutputEffectiveStatement((DeclaredOutputEffectiveStatement) original, stmt.effectivePath(),
+            flags);
     }
 
     @Override
     protected OutputEffectiveStatement copyUndeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
-        return new UndeclaredOutputEffectiveStatement(flags, (UndeclaredOutputEffectiveStatement) original,
-            stmt.wrapSchemaPath());
+        return new UndeclaredOutputEffectiveStatement((UndeclaredOutputEffectiveStatement) original,
+            stmt.effectivePath(), flags);
     }
 
     @Override
     protected OutputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeclaredOutputEffectiveStatement(flags, stmt.declared(), substatements, stmt.wrapSchemaPath());
+        return new DeclaredOutputEffectiveStatement(stmt.declared(), substatements, stmt.effectivePath(), flags);
     }
 
     @Override
@@ -130,7 +130,7 @@ public final class OutputStatementSupport
             final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new UndeclaredOutputEffectiveStatement(flags, substatements, stmt.wrapSchemaPath());
+            return new UndeclaredOutputEffectiveStatement(substatements, stmt.effectivePath(), flags);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
