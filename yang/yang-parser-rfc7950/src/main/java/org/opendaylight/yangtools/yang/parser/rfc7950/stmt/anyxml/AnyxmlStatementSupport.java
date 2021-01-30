@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -74,11 +73,11 @@ public final class AnyxmlStatementSupport
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
-        final SchemaPath path = stmt.wrapSchemaPath();
+        final Object path = stmt.effectivePath();
 
         return substatements.isEmpty()
             ? new EmptyAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))
-                : new RegularAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt),substatements);
+                : new RegularAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt), substatements);
     }
 
     private static @Nullable AnyxmlSchemaNode findOriginal(final Current<?, ?> stmt) {

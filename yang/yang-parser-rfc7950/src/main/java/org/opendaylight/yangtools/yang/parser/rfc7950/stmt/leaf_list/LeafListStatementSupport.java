@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -111,14 +110,14 @@ public final class LeafListStatementSupport
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
         if (original instanceof RegularLeafListEffectiveStatement) {
             return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
-                (LeafListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+                (LeafListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
         } else if (original instanceof SlimLeafListEffectiveStatement) {
             return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original,
-                (LeafListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+                (LeafListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
         } else if (original instanceof EmptyLeafListEffectiveStatement) {
             // Promote to slim
             return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
-                (LeafListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+                (LeafListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
@@ -152,16 +151,15 @@ public final class LeafListStatementSupport
 
         final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
         final LeafListStatement declared = stmt.declared();
-        final SchemaPath path = stmt.wrapSchemaPath();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyLeafListEffectiveStatement(declared, path, flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, path, flags, substatements, original,
+                ? new EmptyLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
+                    : new SlimLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
                         elementCountConstraint.orElse(null));
         }
 
-        return new RegularLeafListEffectiveStatement(declared, path, flags, substatements, original, defaultValues,
-            elementCountConstraint.orElse(null));
+        return new RegularLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
+            defaultValues, elementCountConstraint.orElse(null));
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

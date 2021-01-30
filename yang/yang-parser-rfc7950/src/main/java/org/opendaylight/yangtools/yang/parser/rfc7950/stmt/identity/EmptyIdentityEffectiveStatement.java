@@ -10,14 +10,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 
 final class EmptyIdentityEffectiveStatement extends AbstractIdentityEffectiveStatement {
     private static final int CURRENT_FLAGS = new FlagsBuilder().setStatus(Status.CURRENT).toFlags();
 
-    EmptyIdentityEffectiveStatement(final IdentityStatement declared, final SchemaPath path) {
+    EmptyIdentityEffectiveStatement(final IdentityStatement declared, final Object path) {
         super(declared, path);
     }
 

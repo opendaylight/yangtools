@@ -8,29 +8,41 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 @Beta
-@Deprecated
+// FIXME: remove this class once we ditch SchemaPath.getPath()
 public abstract class SchemaPathSupport implements Immutable {
     private static final class Enabled extends SchemaPathSupport {
         @Override
-        SchemaPath nullableWrap(final SchemaPath path) {
+        Object effectivePath(final SchemaPath path) {
+            return path;
+        }
+
+        @Override
+        SchemaPath optionalPath(final SchemaPath path) {
             return path;
         }
     }
 
-    public static final SchemaPathSupport DEFAULT = new Enabled();
+    private static final SchemaPathSupport DEFAULT = new Enabled();
 
     private SchemaPathSupport() {
         // Hidden on purpose
     }
 
-    public static @Nullable SchemaPath wrap(final @Nullable SchemaPath path) {
-        return DEFAULT.nullableWrap(path);
+    public static @NonNull Object toEffectivePath(final @NonNull SchemaPath path) {
+        return DEFAULT.effectivePath(path);
     }
 
-    abstract @Nullable SchemaPath nullableWrap(@Nullable SchemaPath path);
+    public static @Nullable SchemaPath toOptionalPath(final @Nullable SchemaPath path) {
+        return DEFAULT.optionalPath(path);
+    }
+
+    abstract @NonNull Object effectivePath(@NonNull SchemaPath path);
+
+    abstract @Nullable SchemaPath optionalPath(@Nullable SchemaPath path);
 }
