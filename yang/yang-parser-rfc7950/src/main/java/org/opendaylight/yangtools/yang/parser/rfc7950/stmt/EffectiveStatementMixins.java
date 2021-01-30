@@ -315,6 +315,7 @@ public final class EffectiveStatementMixins {
     public interface SchemaNodeMixin<A, D extends DeclaredStatement<A>>
             extends DocumentedNodeMixin.WithStatus<A, D>, SchemaNode {
         @Override
+        // FIXME: 7.0.0: remove this method
         default QName getQName() {
             return getPath().getLastComponent();
         }
