@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66d73bff_94d83e2f",
+        "filename": "yang/openconfig-model-api/src/main/java/org/opendaylight/yangtools/openconfig/model/api/OpenConfigConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-01-30T19:31:04Z",
+      "side": 1,
+      "message": "original?",
+      "range": {
+        "startLine": 84,
+        "startChar": 7,
+        "endLine": 84,
+        "endChar": 34
+      },
+      "revId": "e9736c23fc7f870a612909c5a9b2ed77dca0e869",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
