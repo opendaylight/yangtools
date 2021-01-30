@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.Default;
@@ -20,12 +19,12 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 
 class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
         implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<QName, FeatureStatement> {
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
-    EmptyFeatureEffectiveStatement(final FeatureStatement declared, final SchemaPath path, final int flags) {
+    EmptyFeatureEffectiveStatement(final FeatureStatement declared, final Object path, final int flags) {
         super(declared);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
@@ -41,8 +40,8 @@ class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
 
     @Override
     @Deprecated
-    public final SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public final Object pathObject() {
+        return path;
     }
 
     @Override

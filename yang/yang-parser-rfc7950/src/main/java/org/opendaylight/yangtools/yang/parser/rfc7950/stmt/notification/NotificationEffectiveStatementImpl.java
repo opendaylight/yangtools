@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
@@ -31,22 +31,21 @@ final class NotificationEffectiveStatementImpl
                    AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
                    MustConstraintMixin<QName, NotificationStatement> {
 
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
     NotificationEffectiveStatementImpl(final NotificationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final SchemaPath path) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags) {
         super(declared, substatements);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = path;
     }
 
-    NotificationEffectiveStatementImpl(final NotificationEffectiveStatementImpl original, final int flags,
-            final SchemaPath path) {
+    NotificationEffectiveStatementImpl(final NotificationEffectiveStatementImpl original, final Object path,
+            final int flags) {
         super(original);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = path;
     }
 
     @Override
@@ -65,9 +64,8 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override
