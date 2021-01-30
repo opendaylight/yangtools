@@ -121,23 +121,23 @@ public final class CaseStatementSupport
     @Override
     protected CaseEffectiveStatement copyDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
-        return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original,
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(), findOriginal(stmt));
+        return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original, stmt.effectivePath(),
+            computeFlags(stmt, original.effectiveSubstatements()), findOriginal(stmt));
     }
 
     @Override
     protected CaseEffectiveStatement copyUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
-        return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original,
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(), findOriginal(stmt));
+        return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original, stmt.effectivePath(),
+            computeFlags(stmt, original.effectiveSubstatements()),findOriginal(stmt));
     }
 
     @Override
     protected CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, computeFlags(stmt, substatements),
-                stmt.wrapSchemaPath(), findOriginal(stmt));
+            return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, stmt.effectivePath(),
+                computeFlags(stmt, substatements), findOriginal(stmt));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -147,8 +147,8 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new UndeclaredCaseEffectiveStatement(substatements, computeFlags(stmt, substatements),
-                stmt.wrapSchemaPath(), findOriginal(stmt));
+            return new UndeclaredCaseEffectiveStatement(substatements, stmt.effectivePath(),
+                computeFlags(stmt, substatements), findOriginal(stmt));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

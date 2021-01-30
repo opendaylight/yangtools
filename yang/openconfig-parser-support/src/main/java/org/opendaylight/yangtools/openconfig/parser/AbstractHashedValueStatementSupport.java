@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -49,25 +48,25 @@ abstract class AbstractHashedValueStatementSupport
             extends UnknownEffectiveStatementBase<Void, OpenConfigHashedValueStatement>
             implements OpenConfigHashedValueEffectiveStatement {
         private final @NonNull StatementDefinition definition;
-        private final SchemaPath path;
+        private final @NonNull Object path;
 
         Effective(final Current<Void, OpenConfigHashedValueStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
             definition = stmt.publicDefinition();
-            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath()
+            path = SchemaPathSupport.toEffectivePath(stmt.getEffectiveParent().getSchemaPath()
                     .createChild(stmt.publicDefinition().getStatementName()));
         }
 
         @Override
         public QName getQName() {
-            return path.getLastComponent();
+            return SchemaPathSupport.extractQName(path);
         }
 
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+            return SchemaPathSupport.extractPath(this, path);
         }
 
         @Override

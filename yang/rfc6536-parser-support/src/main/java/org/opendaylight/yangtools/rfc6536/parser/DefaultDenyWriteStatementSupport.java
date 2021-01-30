@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -40,24 +38,24 @@ public final class DefaultDenyWriteStatementSupport
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyWriteStatement>
             implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
-        private final @Nullable SchemaPath path;
+        private final @NonNull Object path;
 
         Effective(final Current<Void, DefaultDenyWriteStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath()
+            path = SchemaPathSupport.toEffectivePath(stmt.getEffectiveParent().getSchemaPath()
                     .createChild(stmt.publicDefinition().getStatementName()));
         }
 
         @Override
         public QName getQName() {
-            return path.getLastComponent();
+            return SchemaPathSupport.extractQName(path);
         }
 
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+            return SchemaPathSupport.extractPath(this, path);
         }
 
         @Override

@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
@@ -22,27 +22,26 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 
 final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
         implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
-    DeclaredOutputEffectiveStatement(final int flags, final OutputStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
+    DeclaredOutputEffectiveStatement(final OutputStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags) {
         super(declared, substatements);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = path;
     }
 
-    DeclaredOutputEffectiveStatement(final int flags, final DeclaredOutputEffectiveStatement original,
-            final SchemaPath path) {
+    DeclaredOutputEffectiveStatement(final DeclaredOutputEffectiveStatement original, final Object path,
+            final int flags) {
         super(original);
+        this.path = requireNonNull(path);
         this.flags = flags;
-        this.path = path;
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override

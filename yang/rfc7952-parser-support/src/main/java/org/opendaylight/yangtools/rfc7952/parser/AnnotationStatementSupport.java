@@ -72,7 +72,7 @@ public final class AnnotationStatementSupport
             }
             type = builder.build();
 
-            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
+            path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
         }
 
         @Override

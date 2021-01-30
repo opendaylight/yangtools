@@ -18,8 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
@@ -35,24 +33,24 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
                    MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
     ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final SchemaPath path, final @Nullable CaseSchemaNode defaultCase,
+            final Object path, final @Nullable CaseSchemaNode defaultCase,
             final @Nullable ChoiceSchemaNode original) {
         super(declared, substatements);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
         this.defaultCase = defaultCase;
         this.original = original;
     }
 
     ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final int flags,
-            final SchemaPath path, final ChoiceSchemaNode original) {
+            final Object path, final ChoiceSchemaNode original) {
         super(origEffective);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
         this.defaultCase = origEffective.defaultCase;
         this.original = original;
@@ -64,9 +62,8 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override

@@ -107,22 +107,22 @@ public final class InputStatementSupport
     @Override
     protected InputEffectiveStatement copyDeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
-        return new DeclaredInputEffectiveStatement(flags, (DeclaredInputEffectiveStatement) original,
-            stmt.wrapSchemaPath());
+        return new DeclaredInputEffectiveStatement((DeclaredInputEffectiveStatement) original, stmt.effectivePath(),
+            flags);
     }
 
     @Override
     protected InputEffectiveStatement copyUndeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
-        return new UndeclaredInputEffectiveStatement(flags, (UndeclaredInputEffectiveStatement) original,
-            stmt.wrapSchemaPath());
+        return new UndeclaredInputEffectiveStatement((UndeclaredInputEffectiveStatement) original, stmt.effectivePath(),
+            flags);
     }
 
     @Override
     protected InputEffectiveStatement createDeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeclaredInputEffectiveStatement(flags, stmt.declared(), substatements, stmt.wrapSchemaPath());
+        return new DeclaredInputEffectiveStatement(stmt.declared(), substatements, stmt.effectivePath(), flags);
     }
 
     @Override
@@ -130,7 +130,7 @@ public final class InputStatementSupport
             final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new UndeclaredInputEffectiveStatement(flags, substatements, stmt.wrapSchemaPath());
+            return new UndeclaredInputEffectiveStatement(substatements, stmt.effectivePath(), flags);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

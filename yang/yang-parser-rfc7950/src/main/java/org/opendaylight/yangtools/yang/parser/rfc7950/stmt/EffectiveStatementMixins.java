@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -60,6 +61,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -314,10 +316,19 @@ public final class EffectiveStatementMixins {
      */
     public interface SchemaNodeMixin<A, D extends DeclaredStatement<A>>
             extends DocumentedNodeMixin.WithStatus<A, D>, SchemaNode {
+        // FIXME: ditch all this complexity once we do not require SchemaPath
         @Override
         default QName getQName() {
-            return getPath().getLastComponent();
+            return SchemaPathSupport.extractQName(pathObject());
         }
+
+        @Override
+        @Deprecated
+        default SchemaPath getPath() {
+            return SchemaPathSupport.extractPath(this, pathObject());
+        }
+
+        @NonNull Object pathObject();
     }
 
     /**

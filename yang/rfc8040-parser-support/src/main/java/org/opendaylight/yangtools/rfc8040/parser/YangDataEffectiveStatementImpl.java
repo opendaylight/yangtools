@@ -41,7 +41,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         super(stmt, substatements);
         this.argumentQName = requireNonNull(qname);
 
-        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
+        path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is

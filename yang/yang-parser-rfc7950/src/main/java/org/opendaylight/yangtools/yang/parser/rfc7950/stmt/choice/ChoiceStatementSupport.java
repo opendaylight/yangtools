@@ -126,7 +126,7 @@ public final class ChoiceStatementSupport
     public ChoiceEffectiveStatement copyEffective(final Current<QName, ChoiceStatement> stmt,
             final ChoiceEffectiveStatement original) {
         return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original,
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.wrapSchemaPath(),
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.effectivePath(),
             (ChoiceSchemaNode) stmt.original());
     }
 
@@ -152,7 +152,7 @@ public final class ChoiceStatementSupport
 
         try {
             return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, computeFlags(stmt, substatements),
-                stmt.wrapSchemaPath(), defaultCase, (ChoiceSchemaNode) stmt.original());
+                stmt.effectivePath(), defaultCase, (ChoiceSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

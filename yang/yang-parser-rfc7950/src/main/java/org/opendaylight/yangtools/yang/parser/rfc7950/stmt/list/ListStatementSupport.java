@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -148,10 +147,10 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
         if (original instanceof RegularListEffectiveStatement) {
             return new RegularListEffectiveStatement((RegularListEffectiveStatement) original,
-                (ListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+                (ListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
         } else if (original instanceof EmptyListEffectiveStatement) {
             return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original,
-                (ListSchemaNode) stmt.original(), stmt.wrapSchemaPath(), flags);
+                (ListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
@@ -195,7 +194,7 @@ public final class ListStatementSupport extends BaseSchemaTreeStatementSupport<L
 
         final Optional<ElementCountConstraint> elementCountConstraint =
             EffectiveStmtUtils.createElementCountConstraint(substatements);
-        final SchemaPath path = stmt.wrapSchemaPath();
+        final Object path = stmt.effectivePath();
         final ListSchemaNode original = (ListSchemaNode) stmt.original();
         try {
             return original == null && !elementCountConstraint.isPresent()

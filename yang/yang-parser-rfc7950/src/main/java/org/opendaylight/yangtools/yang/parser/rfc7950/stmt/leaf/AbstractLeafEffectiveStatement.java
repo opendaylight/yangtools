@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
@@ -37,25 +36,25 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
             DataSchemaNodeMixin<QName, LeafStatement>, MandatoryMixin<QName, LeafStatement>,
             MustConstraintMixin<QName, LeafStatement> {
     private final @NonNull Object substatements;
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final @NonNull TypeDefinition<?> type;
     private final int flags;
 
-    AbstractLeafEffectiveStatement(final LeafStatement declared, final SchemaPath path, final int flags,
+    AbstractLeafEffectiveStatement(final LeafStatement declared, final Object path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
+        this.path = requireNonNull(path);
         this.substatements = maskList(substatements);
-        this.path = path;
         this.flags = flags;
         // TODO: lazy instantiation?
         this.type = buildType();
     }
 
-    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final SchemaPath path,
+    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final Object path,
             final int flags) {
         super(original);
+        this.path = requireNonNull(path);
         this.substatements = original.substatements;
-        this.path = path;
         this.flags = flags;
         // FIXME: share with original?
         this.type = buildType();
@@ -77,9 +76,8 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
     }
 
     @Override
-    @Deprecated
-    public final SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public final Object pathObject() {
+        return path;
     }
 
     @Override

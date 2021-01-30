@@ -100,6 +100,14 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         // FIXME: 7.0.0: this is currently only used by AbstractTypeStatement
         @NonNull QNameModule effectiveNamespace();
 
+        default @NonNull Object effectivePath() {
+            return SchemaPathSupport.toEffectivePath(getSchemaPath());
+        }
+
+        default @Nullable SchemaPath optionalPath() {
+            return SchemaPathSupport.toOptionalPath(getSchemaPath());
+        }
+
         /**
          * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
          * {@link Optional#empty()} is returned.
@@ -115,11 +123,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         @Deprecated
         default @NonNull SchemaPath getSchemaPath() {
             return schemaPath().orElseThrow();
-        }
-
-        @Deprecated
-        default @Nullable SchemaPath wrapSchemaPath() {
-            return SchemaPathSupport.wrap(getSchemaPath());
         }
     }
 
