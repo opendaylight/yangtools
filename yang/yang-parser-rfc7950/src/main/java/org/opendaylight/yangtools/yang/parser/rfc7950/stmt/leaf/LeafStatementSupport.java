@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -82,7 +81,7 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
     @Override
     public LeafEffectiveStatement copyEffective(final Current<QName, LeafStatement> stmt,
             final LeafEffectiveStatement original) {
-        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, stmt.wrapSchemaPath(),
+        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, stmt.effectivePath(),
             computeFlags(stmt, original.effectiveSubstatements()), (LeafSchemaNode) stmt.original());
     }
 
@@ -100,9 +99,8 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
         final LeafSchemaNode original = (LeafSchemaNode) stmt.original();
         final int flags = computeFlags(stmt, substatements);
         final LeafStatement declared = stmt.declared();
-        final SchemaPath path = stmt.wrapSchemaPath();
-        return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
-                : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
+        return original == null ? new EmptyLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
+                : new RegularLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original);
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

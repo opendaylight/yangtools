@@ -104,7 +104,7 @@ public final class MountPointStatementSupport
     @Override
     protected MountPointEffectiveStatement createEffective(final Current<QName, MountPointStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MountPointEffectiveStatementImpl(stmt, substatements,
-            SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(stmt.getArgument())));
+        return new MountPointEffectiveStatementImpl(stmt, substatements, SchemaPathSupport.toOptionalPath(
+            stmt.getEffectiveParent().getSchemaPath().createChild(stmt.getArgument())));
     }
 }

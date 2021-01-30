@@ -108,8 +108,8 @@ public final class RpcStatementSupport extends BaseSchemaTreeStatementSupport<Rp
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", stmt.sourceReference());
 
         try {
-            return new RpcEffectiveStatementImpl(stmt.declared(), substatements, computeFlags(substatements),
-                stmt.wrapSchemaPath());
+            return new RpcEffectiveStatementImpl(stmt.declared(), substatements, stmt.effectivePath(),
+                computeFlags(substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

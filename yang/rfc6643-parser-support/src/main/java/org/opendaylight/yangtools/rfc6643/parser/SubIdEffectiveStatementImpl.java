@@ -29,7 +29,7 @@ final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Ui
     SubIdEffectiveStatementImpl(final Current<Uint32, SubIdStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
+        path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override

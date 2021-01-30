@@ -27,7 +27,7 @@ final class AliasEffectiveStatementImpl extends UnknownEffectiveStatementBase<St
     AliasEffectiveStatementImpl(final Current<String, AliasStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
+        path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(getNodeType()));
     }
 
     @Override

@@ -10,13 +10,11 @@ package org.opendaylight.yangtools.rfc6241.parser;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -48,24 +46,24 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractVo
     private static final class Effective
             extends UnknownEffectiveStatementBase<Void, GetFilterElementAttributesStatement>
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
-        private final @Nullable SchemaPath path;
+        private final @NonNull Object path;
 
         Effective(final Current<Void, GetFilterElementAttributesStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
-            path = SchemaPathSupport.wrap(stmt.getEffectiveParent().getSchemaPath()
+            path = SchemaPathSupport.toEffectivePath(stmt.getEffectiveParent().getSchemaPath()
                     .createChild(stmt.publicDefinition().getStatementName()));
         }
 
         @Override
         public QName getQName() {
-            return path.getLastComponent();
+            return SchemaPathSupport.extractQName(path);
         }
 
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+            return SchemaPathSupport.extractPath(this, path);
         }
 
         @Override

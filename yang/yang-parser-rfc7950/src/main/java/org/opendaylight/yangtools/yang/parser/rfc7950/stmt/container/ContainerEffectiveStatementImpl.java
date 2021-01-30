@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -42,24 +43,24 @@ final class ContainerEffectiveStatementImpl
             AugmentationTargetMixin<QName, ContainerStatement> {
 
     private final int flags;
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final @Nullable ContainerSchemaNode original;
 
     ContainerEffectiveStatementImpl(final ContainerStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final SchemaPath path, final ContainerSchemaNode original) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags,
+            final ContainerSchemaNode original) {
         super(declared, substatements);
+        this.path = requireNonNull(path);
         this.original = original;
         this.flags = flags;
-        this.path = path;
     }
 
-    ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective,
-            final ContainerSchemaNode original, final int flags, final @Nullable SchemaPath path) {
+    ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final Object path,
+            final int flags, final ContainerSchemaNode original) {
         super(origEffective);
+        this.path = requireNonNull(path);
         this.original = original;
         this.flags = flags;
-        this.path = path;
     }
 
     @Override
@@ -73,9 +74,8 @@ final class ContainerEffectiveStatementImpl
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override

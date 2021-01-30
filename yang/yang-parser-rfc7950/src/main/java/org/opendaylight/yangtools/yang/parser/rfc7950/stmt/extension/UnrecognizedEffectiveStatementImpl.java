@@ -44,7 +44,7 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
             LOG.debug("Cannot construct path for {}, attempting to recover", stmt, e);
             maybePath = null;
         }
-        path = SchemaPathSupport.wrap(maybePath);
+        path = SchemaPathSupport.toOptionalPath(maybePath);
     }
 
     @Override

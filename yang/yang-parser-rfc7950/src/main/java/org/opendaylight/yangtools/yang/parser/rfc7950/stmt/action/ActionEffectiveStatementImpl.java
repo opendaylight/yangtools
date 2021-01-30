@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -23,26 +23,25 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 final class ActionEffectiveStatementImpl extends WithSubstatements<QName, ActionStatement, ActionEffectiveStatement>
         implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
                    CopyableMixin<QName, ActionStatement> {
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final int flags;
 
-    ActionEffectiveStatementImpl(final ActionStatement declared, final SchemaPath path, final int flags,
+    ActionEffectiveStatementImpl(final ActionStatement declared, final Object path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
-    ActionEffectiveStatementImpl(final ActionEffectiveStatementImpl original, final SchemaPath path, final int flags) {
+    ActionEffectiveStatementImpl(final ActionEffectiveStatementImpl original, final Object path, final int flags) {
         super(original);
-        this.path = path;
+        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
     @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public Object pathObject() {
+        return path;
     }
 
     @Override

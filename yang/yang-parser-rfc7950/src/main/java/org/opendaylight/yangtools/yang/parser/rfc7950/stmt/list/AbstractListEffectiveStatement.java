@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
@@ -45,26 +44,24 @@ abstract class AbstractListEffectiveStatement
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
     private final @NonNull Object substatements;
-    private final @Nullable SchemaPath path;
+    private final @NonNull Object path;
     private final @NonNull Object keyDefinition;
 
-    AbstractListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
+    AbstractListEffectiveStatement(final ListStatement declared, final Object path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
         super(declared, substatements);
-
+        this.path = requireNonNull(path);
         this.substatements = maskList(substatements);
-        this.path = path;
         this.keyDefinition = maskList(keyDefinition);
         this.flags = flags;
     }
 
-    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final SchemaPath path,
-            final int flags) {
+    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final Object path, final int flags) {
         super(original);
+        this.path = requireNonNull(path);
         this.substatements = original.substatements;
         this.keyDefinition = original.keyDefinition;
-        this.path = path;
         this.flags = flags;
     }
 
@@ -84,9 +81,8 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
-    @Deprecated
-    public final SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
+    public final Object pathObject() {
+        return path;
     }
 
     @Override
