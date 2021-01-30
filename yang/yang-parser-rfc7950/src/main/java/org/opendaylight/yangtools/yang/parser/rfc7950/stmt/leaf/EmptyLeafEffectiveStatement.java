@@ -9,19 +9,17 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 
 final class EmptyLeafEffectiveStatement extends AbstractLeafEffectiveStatement {
-    EmptyLeafEffectiveStatement(final LeafStatement declared, final SchemaPath path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, path, flags, substatements);
-    }
-
-    EmptyLeafEffectiveStatement(final EmptyLeafEffectiveStatement original, final SchemaPath path, final int flags) {
-        super(original, path, flags);
+    EmptyLeafEffectiveStatement(final LeafStatement declared, final @NonNull QName argument, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
+        super(declared, argument, flags, substatements, path);
     }
 
     @Override

@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -20,10 +22,11 @@ abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafLi
     private final @Nullable LeafListSchemaNode original;
     private final @Nullable ElementCountConstraint elementCountConstraint;
 
-    AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final SchemaPath path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
-        super(declared, path, flags, substatements);
+    AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final @NonNull QName argument,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint,
+            final SchemaPath path) {
+        super(declared, argument, flags, substatements, path);
         this.original = original;
         this.elementCountConstraint = elementCountConstraint;
     }

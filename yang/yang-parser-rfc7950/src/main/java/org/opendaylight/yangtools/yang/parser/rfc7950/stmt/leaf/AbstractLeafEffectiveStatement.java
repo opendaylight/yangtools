@@ -37,28 +37,28 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode,
             DataSchemaNodeMixin<QName, LeafStatement>, MandatoryMixin<QName, LeafStatement>,
             MustConstraintMixin<QName, LeafStatement> {
-    private final @NonNull Object substatements;
-    private final @Nullable SchemaPath path;
     private final @NonNull TypeDefinition<?> type;
+    private final @NonNull Object substatements;
+    // FIXME: when removing this field, collapse this class into a final class holding 'original' in its stead
+    private final @Nullable SchemaPath path;
     private final int flags;
 
-    AbstractLeafEffectiveStatement(final LeafStatement declared, final SchemaPath path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+    AbstractLeafEffectiveStatement(final LeafStatement declared, final @NonNull QName argument, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
         super(declared);
         this.substatements = maskList(substatements);
-        this.path = path;
+        this.type = buildType(argument);
         this.flags = flags;
-        // TODO: lazy instantiation?
-        this.type = buildType();
+        this.path = path;
     }
 
     AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final SchemaPath path,
             final int flags) {
         super(original);
         this.substatements = original.substatements;
-        this.path = path;
-        this.flags = flags;
         this.type = TypeBuilder.copyTypeDefinition(original.type, getQName());
+        this.flags = flags;
+        this.path = path;
     }
 
     @Override
@@ -72,8 +72,13 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
     }
 
     @Override
-    public final QName argument() {
-        return getQName();
+    public final QName getQName() {
+        return argument();
+    }
+
+    @Override
+    public final @NonNull QName argument() {
+        return type.getQName();
     }
 
     @Override
@@ -92,10 +97,9 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
         return this;
     }
 
-    private TypeDefinition<?> buildType() {
+    private @NonNull TypeDefinition<?> buildType(final @NonNull QName qname) {
         final TypeEffectiveStatement<?> typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            getQName());
+        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(), qname);
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {
                 builder.setDefaultValue(((DefaultEffectiveStatement)stmt).argument());
