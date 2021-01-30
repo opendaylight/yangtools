@@ -12,10 +12,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public interface BaseTypeNamespace extends ParserNamespace<Empty, StmtContext<?, ?, ?>> {
-    NamespaceBehaviour<Empty, StmtContext<?, ?, ?>, @NonNull BaseTypeNamespace> BEHAVIOUR =
+public interface BaseTypeNamespace extends ParserNamespace<Empty, Object> {
+    NamespaceBehaviour<Empty, Object, @NonNull BaseTypeNamespace> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(BaseTypeNamespace.class);
 }
