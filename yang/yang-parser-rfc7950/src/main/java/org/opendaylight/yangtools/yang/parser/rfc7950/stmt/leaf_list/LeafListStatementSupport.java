@@ -155,13 +155,13 @@ public final class LeafListStatementSupport
         final SchemaPath path = stmt.wrapSchemaPath();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyLeafListEffectiveStatement(declared, path, flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, path, flags, substatements, original,
-                        elementCountConstraint.orElse(null));
+                ? new EmptyLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, path)
+                    : new SlimLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original,
+                        elementCountConstraint.orElse(null), path);
         }
 
-        return new RegularLeafListEffectiveStatement(declared, path, flags, substatements, original, defaultValues,
-            elementCountConstraint.orElse(null));
+        return new RegularLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original,
+            defaultValues, elementCountConstraint.orElse(null), path);
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

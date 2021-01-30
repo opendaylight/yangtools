@@ -101,8 +101,9 @@ public final class LeafStatementSupport extends BaseSchemaTreeStatementSupport<L
         final LeafStatement declared = stmt.declared();
         final SchemaPath path = stmt.wrapSchemaPath();
         final LeafSchemaNode original = (LeafSchemaNode) stmt.original();
-        return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
-                : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
+        return original == null
+            ? new EmptyLeafEffectiveStatement(declared, stmt.getArgument(), flags, substatements, path)
+                : new RegularLeafEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original, path);
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
