@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -16,10 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 final class SlimLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
-    SlimLeafListEffectiveStatement(final LeafListStatement declared, final SchemaPath path, final int flags,
+    SlimLeafListEffectiveStatement(final LeafListStatement declared, final @NonNull QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
-        super(declared, path, flags, substatements, original, elementCountConstraint);
+            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint,
+            final SchemaPath path) {
+        super(declared, argument, flags, substatements, original, elementCountConstraint, path);
     }
 
     SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement originalEffective,
