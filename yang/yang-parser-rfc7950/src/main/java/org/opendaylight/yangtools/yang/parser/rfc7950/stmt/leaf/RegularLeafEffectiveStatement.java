@@ -24,6 +24,12 @@ final class RegularLeafEffectiveStatement extends AbstractLeafEffectiveStatement
         this.original = original;
     }
 
+    RegularLeafEffectiveStatement(final AbstractLeafEffectiveStatement originalEffective, final SchemaPath path,
+            final int flags, final LeafSchemaNode original) {
+        super(originalEffective, path, flags);
+        this.original = original;
+    }
+
     @Override
     public Optional<LeafSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
