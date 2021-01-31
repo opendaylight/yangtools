@@ -11,13 +11,14 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -99,27 +100,52 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
         // FIXME: 7.0.0: this is currently only used by AbstractTypeStatement
         @NonNull QNameModule effectiveNamespace();
 
+        /**
+         * Return the effective path of this statement. This method is intended for use with statements which naturally
+         * have a {@link QName} identifier and this identifier forms the ultimate step in their
+         * {@link SchemaNode#getPath()}.
+         *
+         * <p>
+         * Returned object conforms to {@link SchemaPathSupport}'s view of how these are to be handled. Users of this
+         * method are expected to consult {@link SchemaPathSupport#extractQName(Object)} and
+         * {@link SchemaPathSupport#extractPath(Object, Object)} to ensure correct implementation behaviour with respect
+         * to {@link SchemaNode#getQName()} and {@link SchemaNode#getPath()} respectively.
+         *
+         * @return An effective path object
+         */
+        // FIXME: Remove this when SchemaNode.getPath() is removed. QName users will store getArgument() instead.
         default @NonNull Object effectivePath() {
             return SchemaPathSupport.toEffectivePath(getSchemaPath());
         }
 
+        /**
+         * Return an optional-to-provide path for {@link SchemaNode#getPath()}. The result of this method is expected
+         * to be consulted with {@link SchemaNodeDefaults#throwUnsupportedIfNull(Object, SchemaPath)} to get consistent
+         * API behaviour.
+         *
+         * @return Potentially-null {@link SchemaPath}.
+         */
+        // FIXME: Remove this when SchemaNode.getPath() is removed
         default @Nullable SchemaPath optionalPath() {
             return SchemaPathSupport.toOptionalPath(getSchemaPath());
         }
 
         /**
-         * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
-         * {@link Optional#empty()} is returned.
+         * Return the {@link SchemaNode#getPath()} of this statement. Not all statements have a SchemaPath, in which
+         * case null is returned.
          *
-         * @return Optional SchemaPath
-         * @deprecated Use of SchemaPath in the context of effective statements is going away. Consider not providing
-         *             this information, if your users can exist without it.
+         * @return SchemaPath or null
          */
-        // FIXME: 7.0.0: this needs to be a tri-state present/absent/disabled
-        @Deprecated
+        // FIXME: Remove this when SchemaNode.getPath() is removed
         @Nullable SchemaPath schemaPath();
 
-        @Deprecated
+        /**
+         * Return the {@link SchemaNode#getPath()} of this statement, failing if it is not present.
+         *
+         * @return A SchemaPath.
+         * @throws VerifyException if {@link #schemaPath()} returns null
+         */
+        // FIXME: Remove this when SchemaNode.getPath() is removed
         default @NonNull SchemaPath getSchemaPath() {
             return verifyNotNull(schemaPath(), "Missing path for %s", this);
         }
@@ -158,13 +184,13 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
          * @param other Other {@link Current}
          * @return True if {@code other} has parent path equal to this context's parent path.
          */
-        // FIXME: 8.0.0: Remove this method
+        // FIXME: Remove this when SchemaNode.getPath() is removed
         default boolean equalParentPath(final Current<A, D> other) {
             final Parent ours = effectiveParent();
             final Parent theirs = other.effectiveParent();
             return ours == theirs
-                || ours != null && theirs != null && SchemaPathSupport.effectivelyEqual(ours.schemaPath(),
-                    theirs.schemaPath());
+                || ours != null && theirs != null && SchemaPathSupport.effectivelyEqual(
+                    ours.schemaPath(), theirs.schemaPath());
         }
     }
 }
