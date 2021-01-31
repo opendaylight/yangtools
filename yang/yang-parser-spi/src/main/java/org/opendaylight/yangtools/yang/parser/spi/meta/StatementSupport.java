@@ -67,6 +67,18 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         }
 
         /**
+         * Return a {@link StatementPolicy} for {@link CopyPolicy#EXACT_REPLICA}.
+         *
+         * @param <A> Argument type
+         * @param <D> Declared Statement representation
+         * @return Exact-replica policy
+         */
+        @SuppressWarnings("unchecked")
+        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> exactReplica() {
+            return (StatementPolicy<A, D>) EqualSemantics.EXACT_REPLICA;
+        }
+
+        /**
          * Return a {@link StatementPolicy} for {@link CopyPolicy#IGNORE}.
          *
          * @param <A> Argument type
@@ -145,6 +157,8 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
                 new EqualSemantics<>((copy, stmt, substatements) -> false);
             static final @NonNull EqualSemantics<?, ?> CONTEXT_INDEPENDENT =
                 new EqualSemantics<>(CopyPolicy.CONTEXT_INDEPENDENT, (copy, stmt, substatements) -> true);
+            static final @NonNull EqualSemantics<?, ?> EXACT_REPLICA =
+                new EqualSemantics<>(CopyPolicy.EXACT_REPLICA, (copy, stmt, substatements) -> true);
 
             private final @NonNull StatementEquality<A, D> equality;
 
@@ -479,6 +493,13 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
          */
         // TODO: does this mean source must have transitioned to ModelProcessingPhase.EFFECTIVE_MODEL?
         CONTEXT_INDEPENDENT,
+        /**
+         * Reuse the source statement context in the new place completely. This policy is more stringent than
+         * {@link #CONTEXT_INDEPENDENT} in that the statement is dependent on circumstances of its original definition
+         * and any copy operation must replicate it exactly as is. This implies ignoring the usual policy of its
+         * substatements. A typical example of such a statement is {@code type}.
+         */
+        EXACT_REPLICA,
         /**
          * Create a copy sharing declared instance, but otherwise having a separate disconnected lifecycle.
          */

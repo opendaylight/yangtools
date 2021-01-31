@@ -152,7 +152,7 @@ abstract class AbstractTypeStatementSupport
         Iterables.<String>concat(STATIC_BUILT_IN_TYPES.keySet(), DYNAMIC_BUILT_IN_TYPES.keySet())), key -> key);
 
     AbstractTypeStatementSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
     }
 
     @Override

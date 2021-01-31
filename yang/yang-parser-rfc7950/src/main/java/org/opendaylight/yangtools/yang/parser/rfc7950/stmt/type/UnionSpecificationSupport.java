@@ -31,7 +31,7 @@ final class UnionSpecificationSupport
         .build();
 
     UnionSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
     }
 
     @Override

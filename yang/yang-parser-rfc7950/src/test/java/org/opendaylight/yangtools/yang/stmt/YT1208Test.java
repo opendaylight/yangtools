@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 public class YT1208Test {
     @Test
@@ -171,4 +172,21 @@ public class YT1208Test {
         assertSame(contBar, grpBar);
     }
 
+    @Test
+    public void testTypedefStatementReuse() throws Exception {
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/typedef.yang")
+            .getModuleStatements()
+            .get(QNameModule.create(URI.create("foo")));
+        assertNotNull(module);
+
+        final TypedefEffectiveStatement grpBar = module
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(TypedefEffectiveStatement.class).orElseThrow();
+        final TypedefEffectiveStatement contBar = module
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(TypedefEffectiveStatement.class).orElseThrow();
+
+        assertSame(contBar, grpBar);
+    }
 }

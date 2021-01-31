@@ -1,0 +1,22 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  extension foo;
+
+  grouping grp {
+    container foo {
+      typedef bar {
+        type string;
+        // This extension must not prevent 'bar' reuse
+        foo:foo;
+      }
+
+      leaf baz {
+        type bar;
+      }
+    }
+  }
+
+  uses grp;
+}
