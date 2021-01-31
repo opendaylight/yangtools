@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -118,11 +117,11 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
          */
         // FIXME: 7.0.0: this needs to be a tri-state present/absent/disabled
         @Deprecated
-        @NonNull Optional<SchemaPath> schemaPath();
+        @Nullable SchemaPath schemaPath();
 
         @Deprecated
         default @NonNull SchemaPath getSchemaPath() {
-            return schemaPath().orElseThrow();
+            return verifyNotNull(schemaPath(), "Missing path for %s", this);
         }
     }
 
@@ -164,7 +163,8 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
             final Parent ours = effectiveParent();
             final Parent theirs = other.effectiveParent();
             return ours == theirs
-                || ours != null && theirs != null && Objects.equals(ours.schemaPath(), theirs.schemaPath());
+                || ours != null && theirs != null && SchemaPathSupport.effectivelyEqual(ours.schemaPath(),
+                    theirs.schemaPath());
         }
     }
 }

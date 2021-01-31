@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -30,6 +31,11 @@ public abstract class SchemaPathSupport implements Immutable {
         SchemaPath optionalPath(final SchemaPath path) {
             return path;
         }
+
+        @Override
+        boolean equalPaths(final SchemaPath first, final SchemaPath second) {
+            return Objects.equals(first, second);
+        }
     }
 
     private static final SchemaPathSupport DEFAULT = new Enabled();
@@ -46,6 +52,10 @@ public abstract class SchemaPathSupport implements Immutable {
         return DEFAULT.optionalPath(path);
     }
 
+    public static boolean effectivelyEqual(@Nullable final SchemaPath first, @Nullable final SchemaPath second) {
+        return DEFAULT.equalPaths(first, second);
+    }
+
     public static @NonNull QName extractQName(final @NonNull Object path) {
         return path instanceof QName ? (QName) path : verifyNotNull(((SchemaPath) path).getLastComponent());
     }
@@ -53,6 +63,8 @@ public abstract class SchemaPathSupport implements Immutable {
     public static @NonNull SchemaPath extractPath(final @NonNull Object impl, final @NonNull Object path) {
         return path instanceof SchemaPath ? (SchemaPath) path : SchemaNodeDefaults.throwUnsupported(impl);
     }
+
+    abstract boolean equalPaths(@Nullable SchemaPath first, @Nullable SchemaPath second);
 
     abstract @NonNull Object effectivePath(@NonNull SchemaPath path);
 

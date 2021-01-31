@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -120,8 +119,8 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     @Deprecated
-    public Optional<SchemaPath> schemaPath() {
-        return Optional.of(SchemaPath.ROOT);
+    public SchemaPath schemaPath() {
+        return SchemaPath.ROOT;
     }
 
     @Override

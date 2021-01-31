@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -58,7 +57,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
      */
     @Override
     @Deprecated
-    public Optional<SchemaPath> schemaPath() {
+    public SchemaPath schemaPath() {
         return substatementGetSchemaPath();
     }
 

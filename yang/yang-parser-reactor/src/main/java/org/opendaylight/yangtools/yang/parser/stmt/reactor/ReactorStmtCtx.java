@@ -558,7 +558,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
-    final @NonNull Optional<SchemaPath> substatementGetSchemaPath() {
+    final @Nullable SchemaPath substatementGetSchemaPath() {
         SchemaPath local = schemaPath;
         if (local == null) {
             synchronized (this) {
@@ -569,15 +569,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             }
         }
 
-        return Optional.ofNullable(local);
+        return local;
     }
 
     @Deprecated
     private SchemaPath createSchemaPath(final StatementContextBase<?, ?, ?> parent) {
-        final Optional<SchemaPath> maybeParentPath = parent.schemaPath();
-        verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
-        final SchemaPath parentPath = maybeParentPath.get();
-
+        final SchemaPath parentPath = parent.getSchemaPath();
         if (StmtContextUtils.isUnknownStatement(this)) {
             return parentPath.createChild(publicDefinition().getStatementName());
         }
@@ -585,7 +582,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         if (argument instanceof QName) {
             final QName qname = (QName) argument;
             if (producesDeclared(UsesStatement.class)) {
-                return maybeParentPath.orElse(null);
+                return parentPath;
             }
 
             return parentPath.createChild(qname);
@@ -600,8 +597,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
         }
 
-        // FIXME: this does not look right
-        return maybeParentPath.orElse(null);
+        // FIXME: this does not look right, investigate more?
+        return parentPath;
     }
 
     private @NonNull QName interpretAsQName(final String argument) {
