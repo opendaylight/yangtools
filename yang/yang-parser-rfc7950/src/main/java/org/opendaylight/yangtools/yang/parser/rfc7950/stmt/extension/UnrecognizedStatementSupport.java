@@ -99,6 +99,8 @@ final class UnrecognizedStatementSupport
 
         final int next = value.indexOf(':', colon + 1);
         final String localName = next == -1 ? value.substring(colon + 1) : value.substring(colon + 1, next);
-        return QName.create(qnameModule, localName).intern();
+        // Careful: selected string may still not be an identifier
+        final UnqualifiedQName qname = UnqualifiedQName.tryCreate(localName);
+        return qname == null ? null : qname.bindTo(qnameModule).intern();
     }
 }
