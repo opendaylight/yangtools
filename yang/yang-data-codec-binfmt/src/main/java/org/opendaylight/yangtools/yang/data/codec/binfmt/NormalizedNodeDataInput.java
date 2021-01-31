@@ -12,7 +12,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName.QNameAwareDataInput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  * and {@link SchemaPath}s.
  */
 @Beta
-public interface NormalizedNodeDataInput extends DataInput {
+public interface NormalizedNodeDataInput extends QNameAwareDataInput {
     /**
      * Interpret current stream position as a NormalizedNode, stream its events into a NormalizedNodeStreamWriter.
      *
@@ -67,8 +67,6 @@ public interface NormalizedNodeDataInput extends DataInput {
     }
 
     YangInstanceIdentifier readYangInstanceIdentifier() throws IOException;
-
-    @NonNull QName readQName() throws IOException;
 
     PathArgument readPathArgument() throws IOException;
 

@@ -47,6 +47,31 @@ import org.eclipse.jdt.annotation.Nullable;
  * </ul>
  */
 public final class QName extends AbstractQName implements Comparable<QName> {
+    /**
+     * A {@link DataInput} which has an understanding of {@link QName}'s semantics.
+     */
+    @Beta
+    public interface QNameAwareDataInput extends DataInput {
+        /**
+         * Read a {@link QName} from the stream.
+         *
+         * @return A QName
+         * @throws IOException if an I/O error occurs.
+         */
+        @NonNull QName readQName() throws IOException;
+    }
+
+    @Beta
+    public interface QNameAwareDataOutput extends DataOutput {
+        /**
+         * Write a {@link QName} into the stream.
+         *
+         * @param qname A QName
+         * @throws  IOException if an I/O error occurs.
+         */
+        void writeQName(@NonNull QName qname) throws IOException;
+    }
+
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
     private static final long serialVersionUID = 1L;
@@ -204,6 +229,10 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @throws IOException if I/O error occurs
      */
     public static @NonNull QName readFrom(final DataInput in) throws IOException {
+        if (in instanceof QNameAwareDataInput) {
+            return ((QNameAwareDataInput) in).readQName();
+        }
+
         final QNameModule module = QNameModule.readFrom(in);
         return new QName(module, checkLocalName(in.readUTF()));
     }
@@ -371,8 +400,12 @@ public final class QName extends AbstractQName implements Comparable<QName> {
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
-        module.writeTo(out);
-        out.writeUTF(getLocalName());
+        if (out instanceof QNameAwareDataOutput) {
+            ((QNameAwareDataOutput) out).writeQName(this);
+        } else {
+            module.writeTo(out);
+            out.writeUTF(getLocalName());
+        }
     }
 
     @Override

@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import com.google.common.annotations.Beta;
-import java.io.DataOutput;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QName.QNameAwareDataOutput;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -25,8 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
  */
 @Beta
 @NonNullByDefault
-public interface NormalizedNodeDataOutput extends AutoCloseable, DataOutput {
-    void writeQName(QName qname) throws IOException;
+public interface NormalizedNodeDataOutput extends AutoCloseable, QNameAwareDataOutput {
 
     void writeNormalizedNode(NormalizedNode normalizedNode) throws IOException;
 
