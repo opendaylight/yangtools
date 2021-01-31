@@ -32,7 +32,7 @@ final class Decimal64SpecificationSupport extends AbstractStringStatementSupport
         .build();
 
     Decimal64SpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
     }
 
     @Override

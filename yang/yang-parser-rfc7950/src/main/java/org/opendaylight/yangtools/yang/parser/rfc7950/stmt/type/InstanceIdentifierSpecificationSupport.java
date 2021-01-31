@@ -30,7 +30,7 @@ final class InstanceIdentifierSpecificationSupport
         .build();
 
     InstanceIdentifierSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
     }
 
     @Override

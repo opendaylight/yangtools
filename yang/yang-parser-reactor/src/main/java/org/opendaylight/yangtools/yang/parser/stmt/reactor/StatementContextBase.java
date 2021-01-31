@@ -434,21 +434,21 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private void summarizeSubstatementPolicy() {
-        if (noSensitiveSubstatements()) {
+        if (definition().support().copyPolicy() == CopyPolicy.EXACT_REPLICA || noSensitiveSubstatements()) {
             setAllSubstatementsContextIndependent();
         }
     }
 
     /**
-     * Determine whether any substatements are context-sensitive as determined by {@link StatementSupport#copyPolicy()}.
-     * Only {@link CopyPolicy#CONTEXT_INDEPENDENT} and {@link CopyPolicy#IGNORE} are context-insensitive. Note that
-     * statements which are not {@link StmtContext#isSupportedToBuildEffective()} are all considered
-     * context-insensitive.
+     * Determine whether any substatements are copy-sensitive as determined by {@link StatementSupport#copyPolicy()}.
+     * Only {@link CopyPolicy#CONTEXT_INDEPENDENT}, {@link CopyPolicy#EXACT_REPLICA} and {@link CopyPolicy#IGNORE} are
+     * copy-insensitive. Note that statements which are not {@link StmtContext#isSupportedToBuildEffective()} are all
+     * considered copy-insensitive.
      *
      * <p>
      * Implementations are expected to call {@link #noSensitiveSubstatements()} to actually traverse substatement sets.
      *
-     * @return True if no substatements require context-sensitive handling
+     * @return True if no substatements require copy-sensitive handling
      */
     abstract boolean noSensitiveSubstatements();
 
@@ -469,6 +469,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
                 switch (stmt.definition().support().copyPolicy()) {
                     case CONTEXT_INDEPENDENT:
+                    case EXACT_REPLICA:
                     case IGNORE:
                         break;
                     default:
@@ -654,6 +655,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final StatementSupport<A, D, E> support = definition.support();
         final CopyPolicy policy = support.copyPolicy();
         switch (policy) {
+            case EXACT_REPLICA:
+                return replicaAsChildOf(parent);
             case CONTEXT_INDEPENDENT:
                 if (allSubstatementsContextIndependent()) {
                     return replicaAsChildOf(parent);
