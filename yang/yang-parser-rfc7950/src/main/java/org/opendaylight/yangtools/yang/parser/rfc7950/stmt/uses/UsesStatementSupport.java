@@ -341,14 +341,13 @@ public final class UsesStatementSupport
                 refineSubstatementCtx.getRoot().rawArgument(), refineSubstatementCtx.coerceParentContext().argument(),
                 refineSubstatementCtx.publicDefinition(), refineTargetNodeCtx.publicDefinition());
 
-        if (isAllowedToAddByRefine(refineSubstatementDef)) {
-            refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx);
-        } else {
+        if (!isAllowedToAddByRefine(refineSubstatementDef)) {
             refineTargetNodeCtx.removeStatementFromEffectiveSubstatements(refineSubstatementDef);
-            refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx);
         }
+        refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx.replicaAsChildOf(refineTargetNodeCtx));
     }
 
+    // FIXME: clarify this and inline into single caller
     private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
         return YangStmtMapping.MUST.equals(publicDefinition);
     }
