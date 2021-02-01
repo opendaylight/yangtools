@@ -187,6 +187,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
+    final AbstractResumedStatement<A, D, E> unmodifiedEffectiveSource() {
+        // This statement is comes from the source
+        return this;
+    }
+
+    @Override
     final boolean hasEmptySubstatements() {
         return substatements.size() == 0 && effective.isEmpty();
     }
