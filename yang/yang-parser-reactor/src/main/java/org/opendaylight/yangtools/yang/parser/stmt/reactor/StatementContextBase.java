@@ -166,7 +166,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // SchemaPath cache for use with SubstatementContext and InferredStatementContext. This hurts RootStatementContext
     // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
-    private volatile SchemaPath schemaPath;
+    private SchemaPath schemaPath;
 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
@@ -1074,17 +1074,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Exists only to support {SubstatementContext,InferredStatementContext}.getSchemaPath()
     @Deprecated
     final @NonNull Optional<SchemaPath> substatementGetSchemaPath() {
-        SchemaPath local = schemaPath;
-        if (local == null) {
-            synchronized (this) {
-                local = schemaPath;
-                if (local == null) {
-                    schemaPath = local = createSchemaPath(coerceParentContext());
-                }
-            }
+        if (schemaPath == null) {
+            schemaPath = createSchemaPath(coerceParentContext());
         }
-
-        return Optional.ofNullable(local);
+        return Optional.ofNullable(schemaPath);
     }
 
     @Deprecated
