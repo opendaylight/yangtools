@@ -34,7 +34,7 @@ public class Bug4231Test {
                 QName.create(foo, "my-container-in-grouping"),
                 QName.create(foo, "l2"));
         SchemaNode targetNode = SchemaContextUtil.findNodeInSchemaContext(
-                context, stack.getPathFromRoot());
+                context, stack.toSchemaNodeIdentifier().getNodeIdentifiers());
         assertNotNull(targetNode);
     }
 

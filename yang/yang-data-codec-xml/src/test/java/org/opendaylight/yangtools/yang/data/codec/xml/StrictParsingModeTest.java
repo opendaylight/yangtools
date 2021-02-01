@@ -77,7 +77,7 @@ public class StrictParsingModeTest {
             fail("XMLStreamException should have been thrown because of an unknown child node.");
         } catch (XMLStreamException ex) {
             assertEquals("Schema for node with name unknown-container-a and namespace foo does not exist at "
-                    + "AbsoluteSchemaPath{path=[(foo)top-level-container]}", ex.getMessage());
+                    + "Line number = 3", ex.getMessage());
         }
     }
 }

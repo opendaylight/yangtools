@@ -117,7 +117,6 @@ public class EffectiveModuleTest {
         final FeatureDefinition featureStmt = features.iterator().next();
         assertNotNull(featureStmt);
         assertEquals(FEATURE1, featureStmt.getQName());
-        assertEquals(FEATURE1_SCHEMA_PATH, featureStmt.getPath());
         assertEquals(Optional.of("feature1 description"), featureStmt.getDescription());
         assertEquals(Optional.of("feature1 reference"), featureStmt.getReference());
         assertEquals(Status.CURRENT, featureStmt.getStatus());

@@ -470,7 +470,7 @@ public class SchemaContextUtilTest {
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case");
         assertNotNull(testNode);
 
-        path = Lists.newArrayList( QName.create(myModule.getQNameModule(), "my-choice"),
+        path = Lists.newArrayList(QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "one"),
                 QName.create(myModule.getQNameModule(), "my-container-in-case"),
                 QName.create(myModule.getQNameModule(), "my-grouping-in-case"));
