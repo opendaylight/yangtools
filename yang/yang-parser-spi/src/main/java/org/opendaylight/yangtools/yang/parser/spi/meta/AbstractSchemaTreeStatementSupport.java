@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Objects;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -54,6 +56,30 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
 
         private static boolean equalHistory(final CopyHistory copy, final CopyHistory current) {
             return copy.isAugmenting() == current.isAugmenting() && copy.isAddedByUses() == current.isAddedByUses();
+        }
+    }
+
+    public static final class EffectiveSchemaTreeStatementState extends EffectiveStatementState {
+        private final int flags;
+
+        public EffectiveSchemaTreeStatementState(final Immutable identity, final int flags) {
+            super(identity);
+            this.flags = flags;
+        }
+
+        @Override
+        protected int hashCodeImpl() {
+            return Integer.hashCode(flags);
+        }
+
+        @Override
+        protected boolean equalsImpl(final EffectiveStatementState other) {
+            return flags == ((EffectiveSchemaTreeStatementState) other).flags;
+        }
+
+        @Override
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper).add("flags", flags);
         }
     }
 
