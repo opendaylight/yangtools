@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -155,18 +155,18 @@ public class LeafRefContextTreeBuilderTest {
         final QName q2 = QName.create(tst, "contributor");
         final QName q3 = QName.create(tst, "odl-project-name");
 
-        final LeafRefContext odlContrProjNameCtx = rootLeafRefContext.getReferencingChildByName(q1)
-                .getReferencingChildByName(q2).getReferencingChildByName(q3);
+        final SchemaInferenceStack node = SchemaInferenceStack.of(context);
+        node.enterSchemaTree(q1);
+        node.enterSchemaTree(q2);
+        node.enterSchemaTree(q3);
 
-        final DataSchemaNode odlContrProjNameNode = tstMod.findDataChildByName(q1, q2, q3).get();
+        final LeafRefContext found = LeafRefContextUtils.getLeafRefReferencingContext(node, rootLeafRefContext);
 
-        final LeafRefContext foundOdlContrProjNameCtx = LeafRefContextUtils.getLeafRefReferencingContext(
-                odlContrProjNameNode, rootLeafRefContext);
-
-        assertNotNull(foundOdlContrProjNameCtx);
-        assertTrue(foundOdlContrProjNameCtx.isReferencing());
-        assertNotNull(foundOdlContrProjNameCtx.getLeafRefTargetPath());
-        assertEquals(odlContrProjNameCtx, foundOdlContrProjNameCtx);
+        assertNotNull(found);
+        assertTrue(found.isReferencing());
+        assertNotNull(found.getLeafRefTargetPath());
+        assertEquals(rootLeafRefContext
+            .getReferencingChildByName(q1).getReferencingChildByName(q2).getReferencingChildByName(q3), found);
     }
 
     @Test
@@ -175,29 +175,31 @@ public class LeafRefContextTreeBuilderTest {
         final QName q2 = QName.create(tst, "project");
         final QName q3 = QName.create(tst, "name");
 
-        final LeafRefContext leafRefCtx = rootLeafRefContext.getReferencedChildByName(q1).getReferencedChildByName(q2)
-                .getReferencedChildByName(q3);
+        final SchemaInferenceStack node = SchemaInferenceStack.of(context);
+        node.enterSchemaTree(q1);
+        node.enterSchemaTree(q2);
+        node.enterSchemaTree(q3);
 
-        final DataSchemaNode odlProjNameNode = tstMod.findDataChildByName(q1, q2, q3).get();
+        LeafRefContext found = LeafRefContextUtils.getLeafRefReferencingContext(node, rootLeafRefContext);
+        assertNull(found);
 
-        LeafRefContext foundOdlProjNameCtx = LeafRefContextUtils.getLeafRefReferencingContext(odlProjNameNode,
-                rootLeafRefContext);
+        found = LeafRefContextUtils.getLeafRefReferencedByContext(node, rootLeafRefContext);
 
-        assertNull(foundOdlProjNameCtx);
-
-        foundOdlProjNameCtx = LeafRefContextUtils.getLeafRefReferencedByContext(odlProjNameNode, rootLeafRefContext);
-
-        assertNotNull(foundOdlProjNameCtx);
-        assertTrue(foundOdlProjNameCtx.isReferenced());
-        assertFalse(foundOdlProjNameCtx.getAllReferencedByLeafRefCtxs().isEmpty());
-        assertEquals(6, foundOdlProjNameCtx.getAllReferencedByLeafRefCtxs().size());
-        assertEquals(leafRefCtx, foundOdlProjNameCtx);
+        assertNotNull(found);
+        assertTrue(found.isReferenced());
+        assertFalse(found.getAllReferencedByLeafRefCtxs().isEmpty());
+        assertEquals(6, found.getAllReferencedByLeafRefCtxs().size());
+        assertEquals(rootLeafRefContext
+            .getReferencedChildByName(q1).getReferencedChildByName(q2).getReferencedChildByName(q3), found);
     }
 
     @Test
     public void leafRefContextUtilsTest3() {
         final QName q16 = QName.create(tst, "con1");
-        final DataSchemaNode con1 = tstMod.findDataChildByName(q16).get();
+
+        final SchemaInferenceStack con1 = SchemaInferenceStack.of(context);
+        con1.enterSchemaTree(q16);
+
         final List<LeafRefContext> allLeafRefChilds = LeafRefContextUtils.findAllLeafRefChilds(con1,
             rootLeafRefContext);
 
@@ -205,10 +207,11 @@ public class LeafRefContextTreeBuilderTest {
         assertFalse(allLeafRefChilds.isEmpty());
         assertEquals(4, allLeafRefChilds.size());
 
-        final QName q17 = QName.create(tst, "odl-contributor");
-        final DataSchemaNode odlContributorNode = tstMod.findDataChildByName(q17).get();
+        final SchemaInferenceStack node = SchemaInferenceStack.of(context);
+        node.enterSchemaTree(QName.create(tst, "odl-contributor"));
+
         List<LeafRefContext> allChildsReferencedByLeafRef = LeafRefContextUtils.findAllChildsReferencedByLeafRef(
-                odlContributorNode, rootLeafRefContext);
+            node, rootLeafRefContext);
 
         assertNotNull(allChildsReferencedByLeafRef);
         assertFalse(allChildsReferencedByLeafRef.isEmpty());
