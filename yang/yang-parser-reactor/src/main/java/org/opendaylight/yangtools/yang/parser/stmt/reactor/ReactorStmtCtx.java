@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -34,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -112,7 +114,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
-    private @Nullable E effectiveInstance;
+    /**
+     * Effective instance built from this context. This field as dual types. Under normal circumstances in matches the
+     * {@link #buildEffective()} instance. If this context is reused, it can be inflated to {@link EffectiveInstances}
+     * and also act as a common instance reuse site.
+     */
+    private @Nullable Object effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -148,10 +155,11 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // hence improve memory layout.
     private byte flags;
 
-    // Flag for use with AbstractResumedStatement and ReplicateStatementContext. This is hiding in the alignment shadow
-    // created by above boolean
+    // Flag for use by AbstractResumedStatement, ReplicaStatementContext and InferredStatementContext. Each of them
+    // uses it to indicated a different condition. This is hiding in the alignment shadow created by
+    // 'isSupportedToBuildEffective'.
     // FIXME: move this out once we have JDK15+
-    private boolean fullyDefined;
+    private boolean boolFlag;
 
     // SchemaPath cache for use with SubstatementContext and InferredStatementContext. This hurts RootStatementContext
     // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
@@ -164,13 +172,13 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original) {
         isSupportedToBuildEffective = original.isSupportedToBuildEffective;
-        fullyDefined = original.fullyDefined;
+        boolFlag = original.boolFlag;
         flags = original.flags;
     }
 
     // Used by ReplicaStatementContext only
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original, final Void dummy) {
-        fullyDefined = isSupportedToBuildEffective = original.isSupportedToBuildEffective;
+        boolFlag = isSupportedToBuildEffective = original.isSupportedToBuildEffective;
         flags = original.flags;
     }
 
@@ -352,8 +360,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final E buildEffective() {
-        final E existing;
-        return (existing = effectiveInstance) != null ? existing : loadEffective();
+        final Object existing;
+        return (existing = effectiveInstance) != null ? EffectiveInstances.local(existing) : loadEffective();
     }
 
     private @NonNull E loadEffective() {
@@ -363,7 +371,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         // we attempt to create effective statement:
         declared();
 
-        final E ret = effectiveInstance = createEffective();
+        final E ret = createEffective();
+        effectiveInstance = ret;
         // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
         // some residue.
         if (refcount == REFCOUNT_NONE) {
@@ -373,6 +382,40 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+
+    /**
+     * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
+     * <ul>
+     *   <li>{@code copy} and {@code this} statement share {@link #getOriginalCtx()} if it exists</li>
+     *   <li>{@code copy} did not modify any statements relative to {@code this}</li>
+     * </ul>
+     *
+     *
+     * @param state effective statement state, acting as a lookup key
+     * @param copy New copy to append
+     * @return {@code copy} or a previously-created instances with the same {@code state}
+     */
+    @SuppressWarnings("unchecked")
+    final @NonNull E attachCopy(final @NonNull EffectiveStatementState state, final @NonNull E copy) {
+        final Object effective = verifyNotNull(effectiveInstance, "Attaching copy to a unbuilt %s", this);
+        final EffectiveInstances<E> instances;
+        if (effective instanceof EffectiveInstances) {
+            instances = (EffectiveInstances<E>) effective;
+        } else {
+            effectiveInstance = instances = new EffectiveInstances<>((E) effective);
+        }
+        return instances.attachCopy(state, copy);
+    }
+
+    /**
+     * Walk this statement's copy history and return the statement closest to original which has not had its effective
+     * statements modified. This statement and returned substatement logically have the same set of substatements, hence
+     * share substatement-derived state.
+     *
+     * @return Closest {@link ReactorStmtCtx} with equivalent effective substatements
+     */
+    abstract @NonNull ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource();
 
     /**
      * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
@@ -518,16 +561,32 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     // These two exist only due to memory optimization, should live in AbstractResumedStatement.
     final boolean fullyDefined() {
-        return fullyDefined;
+        return boolFlag;
     }
 
     final void setFullyDefined() {
-        fullyDefined = true;
+        boolFlag = true;
     }
 
-    // This exists only due to memory optimization, should live in ReplicaStatementContext.
+    // This exists only due to memory optimization, should live in ReplicaStatementContext. In this context the flag
+    // indicates the need to drop source's reference count when we are being swept.
     final boolean haveSourceReference() {
-        return fullyDefined;
+        return boolFlag;
+    }
+
+    // These three exist due to memory optimization, should live in InferredStatementContext. In this context the flag
+    // indicates whether or not this statement's substatement file was modified, i.e. it is not quite the same as the
+    // prototype's file.
+    final boolean isModified() {
+        return boolFlag;
+    }
+
+    final void setModified() {
+        boolFlag = true;
+    }
+
+    final void setUnmodified() {
+        boolFlag = false;
     }
 
     // These two exist only for StatementContextBase. Since we are squeezed for size, with only a single bit available
