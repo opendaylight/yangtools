@@ -12,7 +12,6 @@ import java.util.Optional;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * A compiled XPath expression. Each instance is bound to a particular {@link XPathSchemaContext} and may not be
@@ -37,23 +36,4 @@ public interface XPathExpression {
     Optional<? extends XPathResult<?>> evaluate(@NonNull XPathDocument document, @NonNull YangInstanceIdentifier path)
             throws XPathExpressionException;
 
-    /**
-     * Return the evaluation context SchemaPath of this expression. This is corresponds to the SchemaPath at which this
-     * expression was compiled at, or relocated to via {@link RelocatableXPathExpression#relocateExpression()}.
-     *
-     * @return The evaluation {@link SchemaPath}
-     */
-    @NonNull SchemaPath getEvaluationPath();
-
-    /**
-     * Return the SchemaPath of the topmost node which affects the result of evaluation of this expression. This
-     * information is useful for large evolving documents (such as
-     * {@link org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree} implementations) to minimize the frequency
-     * of evaluation. The apex can be either logically higher or lower in the SchemaPath tree than
-     * {@link #getEvaluationPath()}.
-     *
-     * @return The apex node evaluation of this expression can reference, or {@link SchemaPath#ROOT} if it cannot
-     *         cannot be conclusively determined.
-     */
-    @NonNull SchemaPath getApexPath();
 }
