@@ -20,10 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class UndeclaredInputEffectiveStatement
         extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
-        implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
+        implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement>,
+                   EffectiveStatementStateAware {
     private final @NonNull Immutable path;
     private final int flags;
 
@@ -59,6 +63,11 @@ final class UndeclaredInputEffectiveStatement
     @Override
     public InputEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public EffectiveStatementState toEffectiveStatementState() {
+        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override

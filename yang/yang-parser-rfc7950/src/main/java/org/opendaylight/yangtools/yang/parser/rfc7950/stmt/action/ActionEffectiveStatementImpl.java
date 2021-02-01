@@ -20,10 +20,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.CopyableMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationDefinitionMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class ActionEffectiveStatementImpl extends WithSubstatements<QName, ActionStatement, ActionEffectiveStatement>
         implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
-                   CopyableMixin<QName, ActionStatement> {
+                   CopyableMixin<QName, ActionStatement>, EffectiveStatementStateAware {
     private final @NonNull Immutable path;
     private final int flags;
 
@@ -53,5 +56,10 @@ final class ActionEffectiveStatementImpl extends WithSubstatements<QName, Action
     @Override
     public ActionEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public EffectiveStatementState toEffectiveStatementState() {
+        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 }
