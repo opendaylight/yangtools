@@ -31,6 +31,9 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.PresenceMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class ContainerEffectiveStatementImpl
         extends WithSubstatements<QName, ContainerStatement, ContainerEffectiveStatement>
@@ -41,7 +44,7 @@ final class ContainerEffectiveStatementImpl
             NotificationNodeContainerMixin<QName, ContainerStatement>,
             NotificationNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
             MustConstraintMixin<QName, ContainerStatement>, PresenceMixin<QName, ContainerStatement>,
-            AugmentationTargetMixin<QName, ContainerStatement> {
+            AugmentationTargetMixin<QName, ContainerStatement>, EffectiveStatementStateAware {
 
     private final int flags;
     private final @NonNull Immutable path;
@@ -97,6 +100,11 @@ final class ContainerEffectiveStatementImpl
     @Override
     public ContainerEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public EffectiveStatementState toEffectiveStatementState() {
+        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override

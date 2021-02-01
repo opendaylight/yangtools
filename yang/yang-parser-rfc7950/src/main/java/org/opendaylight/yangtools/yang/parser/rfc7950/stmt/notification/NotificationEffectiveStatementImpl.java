@@ -24,13 +24,16 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class NotificationEffectiveStatementImpl
         extends WithSubstatements<QName, NotificationStatement, NotificationEffectiveStatement>
         implements NotificationDefinition, NotificationEffectiveStatement,
                    SchemaNodeMixin<QName, NotificationStatement>, DataNodeContainerMixin<QName, NotificationStatement>,
                    AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
-                   MustConstraintMixin<QName, NotificationStatement> {
+                   MustConstraintMixin<QName, NotificationStatement>, EffectiveStatementStateAware {
 
     private final @NonNull Immutable path;
     private final int flags;
@@ -73,6 +76,11 @@ final class NotificationEffectiveStatementImpl
     @Override
     public NotificationEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public EffectiveStatementState toEffectiveStatementState() {
+        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override
