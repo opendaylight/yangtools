@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -198,6 +199,18 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             ret = ret.createChild(it.next().argument());
         }
         return ret;
+    }
+
+    /**
+     * Return an iterator along {@link SchemaPath#getPathFromRoot()}. This method is a faster equivalent of
+     * {@code toSchemaPath().getPathFromRoot().iterator()}.
+     *
+     * @return An unmodifiable iterator
+     */
+    @Deprecated
+    public @NonNull Iterator<QName> schemaPathIterator() {
+        return Iterators.unmodifiableIterator(Iterators.transform(deque.descendingIterator(),
+            EffectiveStatement::argument));
     }
 
     @Override
