@@ -260,8 +260,8 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnknownChildNode() throws XMLStreamException, IOException,
-            ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldFailOnUnknownChildNode() throws XMLStreamException, IOException, SAXException,
+            URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -275,7 +275,7 @@ public class XmlToNormalizedNodesTest {
             fail("XMLStreamException should have been thrown because of an unknown child node.");
         } catch (XMLStreamException ex) {
             assertEquals("Schema for node with name my-container-1 and namespace baz-namespace does not exist at "
-                    + "AbsoluteSchemaPath{path=[(baz-namespace)outer-container, (baz-namespace)my-container-1]}",
+                    + "Line number = 21",
                     ex.getMessage());
         }
     }

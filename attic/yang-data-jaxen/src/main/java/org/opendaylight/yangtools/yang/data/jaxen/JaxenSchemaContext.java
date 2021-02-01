@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.jaxen.api.XPathExpression;
 import org.opendaylight.yangtools.yang.data.jaxen.api.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 @NonNullByDefault
 final class JaxenSchemaContext implements XPathSchemaContext {
@@ -33,10 +32,10 @@ final class JaxenSchemaContext implements XPathSchemaContext {
     }
 
     @Override
-    public XPathExpression compileExpression(final SchemaPath schemaPath,
-            final Converter<String, QNameModule> prefixes, final String xpath) throws XPathExpressionException {
+    public XPathExpression compileExpression(final Converter<String, QNameModule> prefixes,
+            final String xpath) throws XPathExpressionException {
         try {
-            return JaxenXPath.create(prefixes, schemaPath, xpath);
+            return JaxenXPath.create(prefixes, xpath);
         } catch (JaxenException e) {
             throw new XPathExpressionException(e);
         }

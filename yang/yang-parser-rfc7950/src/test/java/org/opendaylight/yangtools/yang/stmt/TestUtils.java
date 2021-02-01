@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransform
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -194,11 +196,12 @@ public final class TestUtils {
         return result;
     }
 
-    public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws ReactorException {
+    public static EffectiveSchemaContext parseYangSources(final StatementStreamSource... sources)
+            throws ReactorException {
         return RFC7950Reactors.defaultReactor().newBuild().addSources(sources).buildEffective();
     }
 
-    public static SchemaContext parseYangSources(final File... files)
+    public static EffectiveModelContext parseYangSources(final File... files)
             throws ReactorException, IOException, YangSyntaxErrorException {
 
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
@@ -215,7 +218,7 @@ public final class TestUtils {
         return parseYangSources(files.toArray(new File[files.size()]));
     }
 
-    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath)
+    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
         URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
