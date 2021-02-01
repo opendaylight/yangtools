@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 /**
@@ -27,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  */
 @Beta
 public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<QName>,
-        E extends SchemaTreeEffectiveStatement<D>> extends BaseSchemaTreeStatementSupport<D, E> {
+        E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E> {
     protected BaseImplicitStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
         super(publicDefinition, policy);

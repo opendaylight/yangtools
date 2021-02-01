@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -16,12 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
  * Specialization of {@link AbstractQNameStatementSupport} for {@link SchemaTreeEffectiveStatement} implementations.
@@ -30,7 +27,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
+@Beta
+public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
     private static class SchemaTreeEquality<D extends DeclaredStatement<QName>>
             implements StatementEquality<QName, D> {
@@ -64,7 +62,7 @@ public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement
     private static final StatementPolicy<QName, ?> UNINSTANTIATED_POLICY =
         StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
 
-    protected BaseSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+    protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
         super(publicDefinition, policy);
     }
