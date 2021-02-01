@@ -521,12 +521,12 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG identifier
      */
-    public static QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+    public static @NonNull QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Identifier may not be an empty string");
         return internedQName(ctx, str);
     }
 
-    public static QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String prefix,
+    public static @NonNull QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String prefix,
             final String localName) {
         return internedQName(ctx,
             InferenceException.throwIfNull(getModuleQNameByPrefix(ctx, prefix), ctx,
@@ -543,7 +543,7 @@ public final class StmtContextUtils {
      * @throws NullPointerException if any of the arguments are null
      * @throws SourceException if the string is not a valid YANG node identifier
      */
-    public static QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+    public static @NonNull QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx, "Node identifier may not be an empty string");
 
         final int colon = str.indexOf(':');
