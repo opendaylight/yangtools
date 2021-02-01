@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /*
  * Schema structure of document is
@@ -116,7 +117,7 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
     public NormalizedNode createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new NodeIdentifier(SCHEMA_CONTEXT.getQName()))
+                .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
                 .withChild(createTestContainer()).build();
 
     }
