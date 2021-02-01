@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +76,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     public NormalizedNode createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(SCHEMA_CONTEXT.getQName()))
+                .withNodeIdentifier(new NodeIdentifier(SchemaContext.NAME))
                 .withChild(createTestContainer()).build();
 
     }
@@ -185,7 +187,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
     private static ContainerNode createTestContainer() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(
                         mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
                         .withChild(mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID))

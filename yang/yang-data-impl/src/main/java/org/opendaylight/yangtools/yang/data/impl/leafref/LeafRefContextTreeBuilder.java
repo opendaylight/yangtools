@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -32,8 +34,8 @@ final class LeafRefContextTreeBuilder {
     }
 
     LeafRefContext buildLeafRefContextTree() throws LeafRefYangSyntaxErrorException {
-        final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(schemaContext.getQName(),
-            schemaContext.getPath(), schemaContext);
+        final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(SchemaContext.NAME, SchemaPath.ROOT,
+            schemaContext);
 
         final Collection<? extends Module> modules = schemaContext.getModules();
         for (final Module module : modules) {
