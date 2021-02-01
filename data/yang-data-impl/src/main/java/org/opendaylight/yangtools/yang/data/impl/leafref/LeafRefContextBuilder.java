@@ -40,8 +40,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
             final EffectiveModelContext schemaContext) {
         this.currentNodeQName = requireNonNull(currentNodeQName);
         this.currentNodePath = requireNonNull(currentNodePath);
-        // FIXME: requireNonNull
-        this.schemaContext = schemaContext;
+        this.schemaContext = requireNonNull(schemaContext);
     }
 
     @Override
