@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -222,7 +223,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            return tryToReuseSubstatements(factory, origEffective);
+            return deduplicate(tryToReuseSubstatements(factory, origEffective));
         }
 
         // No substatements to deal with, we can freely reuse the original
@@ -263,7 +264,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         prototype.decRef();
 
         // Values are the effective copies, hence this efficiently deals with recursion.
-        return factory.createEffective(this, declared.stream(), effective.stream());
+        return deduplicate(factory.createEffective(this, declared.stream(), effective.stream()));
     }
 
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
@@ -285,9 +286,19 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         return effective;
     }
 
+    private @NonNull E deduplicate(final @NonNull E effective) {
+        if (effective instanceof EffectiveStatementStateAware) {
+            final ReactorStmtCtx<A, D, E> source = unmodifiedEffectiveSource();
+            if (source != this) {
+                return source.attachCopy(((EffectiveStatementStateAware) effective).toEffectiveStatementState(),
+                    effective);
+            }
+        }
+        return effective;
+    }
+
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
-        return reusePrototypeReplicas(Streams.concat(
-            prototype.streamDeclared(), prototype.streamEffective()));
+        return reusePrototypeReplicas(Streams.concat(prototype.streamDeclared(), prototype.streamEffective()));
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas(final Stream<StmtContext<?, ?, ?>> stream) {
@@ -323,6 +334,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private static boolean allReused(final List<EffectiveCopy> entries) {
         return entries.stream().allMatch(EffectiveCopy::isReused);
+    }
+
+    @Override
+    ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource() {
+        // Only forward if we have not materialized
+        return substatements != null ? this : prototype.unmodifiedEffectiveSource();
     }
 
     @Override
