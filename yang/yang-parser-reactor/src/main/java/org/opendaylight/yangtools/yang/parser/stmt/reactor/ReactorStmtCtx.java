@@ -112,7 +112,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
-    private @Nullable E effectiveInstance;
+    /**
+     * Effective instance built from this context. This field as dual types. Under normal circumstances in matches the
+     * {@link #buildEffective()} instance. If this context is reused, it can be inflated to {@link EffectiveInstances}
+     * and also act as a common instance reuse site.
+     */
+    private @Nullable Object effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -345,8 +350,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final E buildEffective() {
-        final E existing;
-        return (existing = effectiveInstance) != null ? existing : loadEffective();
+        final Object existing;
+        return (existing = effectiveInstance) != null ? EffectiveInstances.local(existing) : loadEffective();
     }
 
     private E loadEffective() {
@@ -356,7 +361,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         // we attempt to create effective statement:
         declared();
 
-        final E ret = effectiveInstance = createEffective();
+        final E ret = createEffective();
+        effectiveInstance = ret;
         // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
         // some residue.
         if (refcount == REFCOUNT_NONE) {
