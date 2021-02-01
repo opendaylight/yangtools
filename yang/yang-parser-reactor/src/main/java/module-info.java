@@ -9,6 +9,7 @@ module org.opendaylight.yangtools.yang.parser.reactor {
     exports org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
+    requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
