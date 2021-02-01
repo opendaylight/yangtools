@@ -154,8 +154,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     // SchemaPath cache for use with SubstatementContext and InferredStatementContext. This hurts RootStatementContext
     // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
-    @Deprecated
-    private volatile SchemaPath schemaPath;
+    // FIXME: this should become 'QName'
+    private SchemaPath schemaPath;
 
     ReactorStmtCtx() {
         // Empty on purpose
@@ -559,19 +559,13 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
     final @Nullable SchemaPath substatementGetSchemaPath() {
-        SchemaPath local = schemaPath;
-        if (local == null) {
-            synchronized (this) {
-                local = schemaPath;
-                if (local == null) {
-                    schemaPath = local = createSchemaPath((StatementContextBase<?, ?, ?>) coerceParentContext());
-                }
-            }
+        if (schemaPath == null) {
+            schemaPath = createSchemaPath((StatementContextBase<?, ?, ?>) coerceParentContext());
         }
-
-        return local;
+        return schemaPath;
     }
 
+    // FIXME: 7.0.0: this method's logic needs to be moved to the respective StatementSupport classes
     @Deprecated
     private SchemaPath createSchemaPath(final StatementContextBase<?, ?, ?> parent) {
         final SchemaPath parentPath = parent.getSchemaPath();
