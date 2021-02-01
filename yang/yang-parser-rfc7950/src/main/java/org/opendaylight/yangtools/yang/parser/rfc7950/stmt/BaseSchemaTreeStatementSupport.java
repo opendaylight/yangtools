@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
+// FIXME: YANGTOOLS-1214: move to yang-parser-spi as AbstractSchemaTreeStatementSupport
 public abstract class BaseSchemaTreeStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractQNameStatementSupport<D, E> {
     private static class SchemaTreeEquality<D extends DeclaredStatement<QName>>
