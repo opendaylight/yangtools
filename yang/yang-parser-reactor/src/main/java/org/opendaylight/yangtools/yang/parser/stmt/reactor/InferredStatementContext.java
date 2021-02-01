@@ -252,6 +252,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return origEffective;
         }
 
+        // FIXME: YANGTOOLS-1214: before we do this, we should check unmodifiedEffectiveSource().lookup()
+
         final List<ReactorStmtCtx<?, ?, ?>> declared = declCopy.stream()
             .map(copy -> copy.toChildContext(this))
             .collect(ImmutableList.toImmutableList());
@@ -263,6 +265,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         prototype.decRef();
 
         // Values are the effective copies, hence this efficiently deals with recursion.
+        // FIXME: YANGTOOLS-1214: after we do this, we should populate unmodifiedEffectiveSource().appendCopy()
         return factory.createEffective(this, declared.stream(), effective.stream());
     }
 
@@ -271,13 +274,17 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             LOG.debug("Reusing substatements of: {}", prototype);
             // FIXME: can we skip this if !haveRef()?
             substatements = reusePrototypeReplicas();
+            // FIXME: YANGTOOLS-1214: before we do this, we should check unmodifiedEffectiveSource().lookup()
             prototype.decRef();
+            // FIXME: YANGTOOLS-1214: after we do this, we should populate unmodifiedEffectiveSource().appendCopy()
             return factory.copyEffective(this, original);
         }
 
         // Fall back to full instantiation, which populates our substatements. Then check if we should be reusing
         // the substatement list, as this operation turned out to not affect them.
+        // FIXME: YANGTOOLS-1214: before we do this, we should check unmodifiedEffectiveSource().lookup()
         final E effective = super.createEffective(factory);
+        // FIXME: YANGTOOLS-1214: after we do this, we should populate unmodifiedEffectiveSource().appendCopy()
         if (sameSubstatements(original.effectiveSubstatements(), effective)) {
             LOG.debug("Reusing unchanged substatements of: {}", prototype);
             return factory.copyEffective(this, original);
@@ -323,6 +330,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private static boolean allReused(final List<EffectiveCopy> entries) {
         return entries.stream().allMatch(EffectiveCopy::isReused);
+    }
+
+    @Override
+    ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource() {
+        // Only forward if we have not materialized
+        return substatements != null ? this : prototype.unmodifiedEffectiveSource();
     }
 
     @Override
