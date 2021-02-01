@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -114,7 +114,7 @@ public class NormalizedNodeStreamReaderWriterTest {
     @Parameter(7)
     public int anyxmlStreamingSize;
     @Parameter(8)
-    public int schemaPathSize;
+    public int schemaNodeIdentifierSize;
 
     @Test
     public void testNormalizedNodeStreaming() throws IOException {
@@ -285,19 +285,19 @@ public class NormalizedNodeStreamReaderWriterTest {
     }
 
     @Test
-    public void testSchemaPathSerialization() throws IOException {
-        final SchemaPath expected = SchemaPath.create(true, TestModel.ANY_XML_QNAME);
+    public void testSchemaNodeIdentifierSerialization() throws IOException {
+        final Absolute expected = Absolute.of(TestModel.ANY_XML_QNAME);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
-            nnout.writeSchemaPath(expected);
+            nnout.writeSchemaNodeIdentifier(expected);
         }
 
         final byte[] bytes = bos.toByteArray();
-        assertEquals(schemaPathSize, bytes.length);
+        assertEquals(schemaNodeIdentifierSize, bytes.length);
 
         NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-        assertEquals(expected, nnin.readSchemaPath());
+        assertEquals(expected, nnin.readSchemaNodeIdentifier());
     }
 
     @Test
