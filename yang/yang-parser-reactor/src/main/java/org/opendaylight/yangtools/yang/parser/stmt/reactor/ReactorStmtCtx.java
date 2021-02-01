@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -112,7 +114,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      */
     private static final int REFCOUNT_SWEPT = Integer.MIN_VALUE;
 
-    private @Nullable E effectiveInstance;
+    /**
+     * Effective instance built from this context. This field as dual types. Under normal circumstances in matches the
+     * {@link #buildEffective()} instance. If this context is reused, it can be inflated to {@link EffectiveInstances}
+     * and also act as a common instance reuse site.
+     */
+    private @Nullable Object effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -352,8 +359,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final E buildEffective() {
-        final E existing;
-        return (existing = effectiveInstance) != null ? existing : loadEffective();
+        final Object existing;
+        return (existing = effectiveInstance) != null ? EffectiveInstances.local(existing) : loadEffective();
     }
 
     private E loadEffective() {
@@ -363,7 +370,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         // we attempt to create effective statement:
         declared();
 
-        final E ret = effectiveInstance = createEffective();
+        final E ret = createEffective();
+        effectiveInstance = ret;
         // we have called createEffective(), substatements are no longer guarded by us. Let's see if we can clear up
         // some residue.
         if (refcount == REFCOUNT_NONE) {
@@ -373,6 +381,23 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+    final void appendCopy(final @NonNull Immutable key, final @NonNull E copy) {
+        final Object effective = verifyNotNull(effectiveInstance, "Attaching copy to a unbuilt %s", this);
+        @SuppressWarnings("unchecked")
+        final EffectiveInstances<E> instances = effective instanceof EffectiveInstances
+            ? (EffectiveInstances<E>) effective : new EffectiveInstances<>((E) effective);
+        instances.appendCopy(key, copy);
+    }
+
+    /**
+     * Walk this statement's copy history and return the statement closest to original which has not had its effective
+     * statements modified. This statement and returned substatement logically have the same set of substatements, hence
+     * share substatement-derived state.
+     *
+     * @return Closest {@link ReactorStmtCtx} with equivalent effective substatements
+     */
+    abstract @NonNull ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource();
 
     /**
      * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
