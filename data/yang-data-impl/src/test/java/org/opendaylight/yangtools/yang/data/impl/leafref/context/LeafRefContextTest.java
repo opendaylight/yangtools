@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafRefContextTest {
@@ -62,11 +62,22 @@ public class LeafRefContextTest {
         final QName q5 = QName.create(root, "list1");
         final QName q6 = QName.create(root, "name");
 
-        final DataSchemaNode leafRefNode = rootMod.findDataChildByName(q1).get();
-        final DataSchemaNode targetNode = rootMod.findDataChildByName(q2).get();
-        final DataSchemaNode cont1Node = rootMod.findDataChildByName(q3).get();
-        final DataSchemaNode cont2Node = rootMod.findDataChildByName(q4).get();
-        final DataSchemaNode name1Node = rootMod.findDataChildByName(q3, q5, q6).get();
+        final SchemaInferenceStack leafRefNode = SchemaInferenceStack.of(context);
+        leafRefNode.enterSchemaTree(q1);
+
+        final SchemaInferenceStack targetNode = SchemaInferenceStack.of(context);
+        targetNode.enterSchemaTree(q2);
+
+        final SchemaInferenceStack cont1Node = SchemaInferenceStack.of(context);
+        cont1Node.enterSchemaTree(q3);
+
+        final SchemaInferenceStack cont2Node = SchemaInferenceStack.of(context);
+        cont2Node.enterSchemaTree(q4);
+
+        final SchemaInferenceStack name1Node = SchemaInferenceStack.of(context);
+        name1Node.enterSchemaTree(q3);
+        name1Node.enterSchemaTree(q5);
+        name1Node.enterSchemaTree(q6);
 
         assertTrue(LeafRefContextUtils.isLeafRef(leafRefNode, rootLeafRefContext));
         assertFalse(LeafRefContextUtils.isLeafRef(targetNode, rootLeafRefContext));
