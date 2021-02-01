@@ -20,10 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport.EffectiveSchemaTreeStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class UndeclaredOutputEffectiveStatement
         extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
-        implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
+        implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement>,
+                   EffectiveStatementStateAware {
     private final @NonNull Immutable path;
     private final int flags;
 
@@ -59,6 +63,11 @@ final class UndeclaredOutputEffectiveStatement
     @Override
     public OutputEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public EffectiveStatementState toEffectiveStatementState() {
+        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override
