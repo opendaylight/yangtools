@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -544,17 +545,33 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return interpretAsQName((String) argument);
     }
 
-    @Override
-    public final QNameModule effectiveNamespace() {
-        // FIXME: there has to be a better way to do this
-        return getSchemaPath().getLastComponent().getModule();
-    }
-
     //
     //
     // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.
     //
     //
+
+    @Override
+    public final QName bindEffectivePath(final AbstractQName localName) {
+        // FIXME: is there a better way to do this?
+        final SchemaPath parentPath = ((StatementContextBase<?, ?, ?>) coerceParentContext()).getSchemaPath();
+        final QName qname = localName.bindTo(parentPath.getLastComponent().getModule()).intern();
+
+        SchemaPath local = schemaPath;
+        if (local == null) {
+            synchronized (this) {
+                local = schemaPath;
+                if (local == null) {
+                    schemaPath = local = parentPath.createChild(qname);
+                    return qname;
+                }
+            }
+        }
+
+        final QName last = local.getLastComponent();
+        verify(qname.equals(last), "Mismatched %s and last path item %s in %s", qname, last, this);
+        return qname;
+    }
 
     // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
     @Deprecated
