@@ -18,6 +18,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -341,5 +343,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void setRootIdentifier(SourceIdentifier identifier);
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
+
+        @Beta
+        // FIXME: YANGTOOLS-1117: this is only used by AbstractTypeStatementSupport
+        @NonNull QName bindEffectivePath(@NonNull AbstractQName localName);
     }
 }
