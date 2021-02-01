@@ -20,6 +20,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires transitive org.opendaylight.yangtools.yang.parser.reactor;
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
 
+    requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.openconfig.model.api;
     requires org.opendaylight.yangtools.yang.common;
