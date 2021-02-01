@@ -288,10 +288,7 @@ public final class SchemaContextUtil {
      * @throws NullPointerException if any of the arguments is null
      */
     public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
-        final QName qname = schemaNode.getPath().getLastComponent();
-        checkState(qname != null, "Schema Path contains invalid state of path parts. "
-                + "The Schema Path MUST contain at least ONE QName  which defines namespace and Local name of path.");
-        return context.findModule(qname.getModule()).orElse(null);
+        return context.findModule(schemaNode.getQName().getModule()).orElse(null);
     }
 
     public static SchemaNode findNodeInSchemaContext(final SchemaContext context, final Iterable<QName> path) {
