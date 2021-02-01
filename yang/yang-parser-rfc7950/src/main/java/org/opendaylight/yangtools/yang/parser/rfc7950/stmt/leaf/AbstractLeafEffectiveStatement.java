@@ -31,11 +31,14 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffec
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode,
             DataSchemaNodeMixin<QName, LeafStatement>, MandatoryMixin<QName, LeafStatement>,
-            MustConstraintMixin<QName, LeafStatement> {
+            MustConstraintMixin<QName, LeafStatement>, EffectiveStatementStateAware {
     private final @NonNull Object substatements;
     private final @NonNull Immutable path;
     private final @NonNull TypeDefinition<?> type;
@@ -89,6 +92,11 @@ abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveS
     @Override
     public final LeafEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    public final EffectiveStatementState toEffectiveStatementState() {
+        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     private TypeDefinition<?> buildType() {
