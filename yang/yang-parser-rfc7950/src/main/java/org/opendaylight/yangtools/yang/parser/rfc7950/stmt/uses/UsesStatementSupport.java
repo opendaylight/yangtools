@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -89,6 +90,11 @@ public final class UsesStatementSupport
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseNodeIdentifier(ctx, value);
+    }
+
+    @Override
+    public List<QName> effectivePathSegment(final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx) {
+        return List.of();
     }
 
     @Override

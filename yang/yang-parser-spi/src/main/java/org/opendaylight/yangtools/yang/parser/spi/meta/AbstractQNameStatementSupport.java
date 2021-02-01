@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -32,4 +33,10 @@ public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<
     public QName adaptArgumentValue(final StmtContext<QName, D, E> ctx, final QNameModule targetModule) {
         return ctx.getArgument().bindTo(targetModule).intern();
     }
+
+    @Override
+    public List<QName> effectivePathSegment(final StmtContext<QName, D, E> ctx) {
+        return List.of(ctx.getArgument());
+    }
+
 }

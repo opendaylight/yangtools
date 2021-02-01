@@ -26,12 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -560,40 +555,43 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     @Deprecated
     final @Nullable SchemaPath substatementGetSchemaPath() {
         if (schemaPath == null) {
-            schemaPath = createSchemaPath((StatementContextBase<?, ?, ?>) coerceParentContext());
+            schemaPath = createSchemaPath();
         }
         return schemaPath;
     }
 
     // FIXME: 7.0.0: this method's logic needs to be moved to the respective StatementSupport classes
     @Deprecated
-    private SchemaPath createSchemaPath(final StatementContextBase<?, ?, ?> parent) {
-        final SchemaPath parentPath = parent.getSchemaPath();
-        if (StmtContextUtils.isUnknownStatement(this)) {
-            return parentPath.createChild(publicDefinition().getStatementName());
-        }
-        final Object argument = argument();
-        if (argument instanceof QName) {
-            final QName qname = (QName) argument;
-            if (producesDeclared(UsesStatement.class)) {
-                return parentPath;
-            }
-
-            return parentPath.createChild(qname);
-        }
-        if (argument instanceof String) {
-            return parentPath.createChild(interpretAsQName((String) argument));
-        }
-        if (argument instanceof SchemaNodeIdentifier
-                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
-                        || producesDeclared(DeviationStatement.class))) {
-
-            return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
-        }
-
-        // FIXME: this does not look right, investigate more?
-        return parentPath;
+    private SchemaPath createSchemaPath() {
+        return ((StatementContextBase<?, ?, ?>) coerceParentContext()).getSchemaPath()
+            .createChild(definition().support().effectivePathSegment(this));
     }
+
+    //        final SchemaPath parentPath = parent.getSchemaPath();
+    //        if (StmtContextUtils.isUnknownStatement(this)) {
+    //            return parentPath.createChild(publicDefinition().getStatementName());
+    //        }
+    //        final Object argument = argument();
+    //        if (argument instanceof QName) {
+    //            final QName qname = (QName) argument;
+    //            if (producesDeclared(UsesStatement.class)) {
+    //                return parentPath;
+    //            }
+    //
+    //            return parentPath.createChild(qname);
+    //        }
+    //        if (argument instanceof String) {
+    //            return parentPath.createChild(interpretAsQName((String) argument));
+    //        }
+    //        if (argument instanceof SchemaNodeIdentifier
+    //                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
+    //                        || producesDeclared(DeviationStatement.class))) {
+    //
+    //            return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
+    //        }
+    //
+    //        // FIXME: this does not look right, investigate more?
+    //        return parentPath;
 
     private @NonNull QName interpretAsQName(final String argument) {
         // FIXME: This may yield illegal argument exceptions

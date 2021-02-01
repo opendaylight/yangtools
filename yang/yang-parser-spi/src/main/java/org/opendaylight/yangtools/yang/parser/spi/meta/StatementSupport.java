@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -448,6 +449,9 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     public boolean isIgnoringConfig() {
         return false;
     }
+
+    @Beta
+    public abstract @NonNull List<QName> effectivePathSegment(@NonNull StmtContext<A, D, E> ctx);
 
     @Override
     public final QName getStatementName() {
