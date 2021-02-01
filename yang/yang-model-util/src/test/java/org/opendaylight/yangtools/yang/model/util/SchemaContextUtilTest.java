@@ -125,7 +125,7 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findParentModuleIllegalArgumentTest2() {
-        doReturn(SchemaPath.create(true, QName.create("foo", "bar"))).when(schemaNode).getPath();
+        doReturn(QName.create("foo", "bar")).when(schemaNode).getQName();
         assertThrows(NullPointerException.class, () -> SchemaContextUtil.findParentModule(null, schemaNode));
     }
 
