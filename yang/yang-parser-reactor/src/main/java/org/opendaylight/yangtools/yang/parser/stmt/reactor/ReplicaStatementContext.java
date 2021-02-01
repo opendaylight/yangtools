@@ -52,6 +52,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
+    ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource() {
+        return source.unmodifiedEffectiveSource();
+    }
+
+    @Override
     public EffectiveConfig effectiveConfig() {
         return source.effectiveConfig();
     }
