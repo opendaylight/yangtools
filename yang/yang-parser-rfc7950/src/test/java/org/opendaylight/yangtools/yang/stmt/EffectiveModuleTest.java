@@ -30,15 +30,16 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
 
 public class EffectiveModuleTest {
 
@@ -60,7 +61,7 @@ public class EffectiveModuleTest {
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+        EffectiveSchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE)
                 .buildEffective();
 
@@ -120,7 +121,9 @@ public class EffectiveModuleTest {
         final FeatureDefinition featureStmt = features.iterator().next();
         assertNotNull(featureStmt);
         assertEquals(FEATURE1, featureStmt.getQName());
-        assertEquals(FEATURE1_SCHEMA_PATH, featureStmt.getPath());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(result);
+        assertEquals(stack.enterFeature(FEATURE1), featureStmt);
+        stack.clear();
         assertEquals(Optional.of("feature1 description"), featureStmt.getDescription());
         assertEquals(Optional.of("feature1 reference"), featureStmt.getReference());
         assertEquals(Status.CURRENT, featureStmt.getStatus());
