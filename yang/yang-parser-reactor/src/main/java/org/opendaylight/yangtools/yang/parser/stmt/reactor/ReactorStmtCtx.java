@@ -544,12 +544,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return interpretAsQName((String) argument);
     }
 
-    @Override
-    public final QNameModule effectiveNamespace() {
-        // FIXME: there has to be a better way to do this
-        return getSchemaPath().getLastComponent().getModule();
-    }
-
     //
     //
     // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.

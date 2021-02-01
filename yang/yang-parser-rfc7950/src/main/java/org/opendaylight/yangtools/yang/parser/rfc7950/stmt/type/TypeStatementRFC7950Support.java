@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -52,7 +52,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     }
 
     @Override
-    Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
+    Bit addRestrictedBit(final CommonStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
         // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
         final Optional<Uint32> declaredPosition = bit.getDeclaredPosition();
         final Uint32 effectivePos;
@@ -66,7 +66,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     }
 
     @Override
-    EnumPair addRestrictedEnum(final EffectiveStmtCtx stmt, final EnumTypeDefinition base,
+    EnumPair addRestrictedEnum(final CommonStmtCtx stmt, final EnumTypeDefinition base,
             final EnumEffectiveStatement enumStmt) {
         final EnumEffectiveStatement enumSubStmt = enumStmt;
         final Optional<Integer> declaredValue =
@@ -82,7 +82,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     }
 
     private static Uint32 getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
-            final EffectiveStmtCtx stmt) {
+            final CommonStmtCtx stmt) {
         for (Bit baseTypeBit : baseType.getBits()) {
             if (bitName.equals(baseTypeBit.getName())) {
                 return baseTypeBit.getPosition();
@@ -95,7 +95,7 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
 
 
     private static int getBaseTypeEnumValue(final String enumName, final EnumTypeDefinition baseType,
-            final EffectiveStmtCtx ctx) {
+            final CommonStmtCtx ctx) {
         for (EnumPair baseTypeEnumPair : baseType.getValues()) {
             if (enumName.equals(baseTypeEnumPair.getName())) {
                 return baseTypeEnumPair.getValue();
@@ -105,5 +105,4 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
         throw new SourceException(ctx, "Enum '%s' is not a subset of its base enumeration type %s.", enumName,
             baseType.getQName());
     }
-
 }

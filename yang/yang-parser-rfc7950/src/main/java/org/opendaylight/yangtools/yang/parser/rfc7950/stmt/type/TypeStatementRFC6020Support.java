@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class TypeStatementRFC6020Support extends AbstractTypeStatementSupport {
@@ -28,13 +28,13 @@ public final class TypeStatementRFC6020Support extends AbstractTypeStatementSupp
     }
 
     @Override
-    Bit addRestrictedBit(final EffectiveStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
+    Bit addRestrictedBit(final CommonStmtCtx stmt, final BitsTypeDefinition base, final BitEffectiveStatement bit) {
         throw new SourceException("Restricted bits type is not allowed in YANG version 1", stmt);
     }
 
 
     @Override
-    EnumPair addRestrictedEnum(final EffectiveStmtCtx stmt, final EnumTypeDefinition base,
+    EnumPair addRestrictedEnum(final CommonStmtCtx stmt, final EnumTypeDefinition base,
             final EnumEffectiveStatement enumStmt) {
         throw new SourceException("Restricted enumeration type is not allowed in YANG version 1", stmt);
     }

@@ -15,7 +15,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
@@ -96,9 +95,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
          * @return This statement's effective config
          */
         @NonNull EffectiveConfig effectiveConfig();
-
-        // FIXME: 7.0.0: this is currently only used by AbstractTypeStatement
-        @NonNull QNameModule effectiveNamespace();
 
         /**
          * Return the effective path of this statement. This method is intended for use with statements which naturally
