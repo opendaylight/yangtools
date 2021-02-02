@@ -200,13 +200,6 @@ abstract class AbstractMagnesiumDataOutput extends AbstractNormalizedNodeDataOut
     }
 
     @Override
-    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint)
-            throws IOException {
-        // FIXME: implement this
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public final void endNode() throws IOException {
         if (stack.pop() instanceof PathArgument) {
             output.writeByte(MagnesiumNode.NODE_END);

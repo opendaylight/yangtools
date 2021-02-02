@@ -125,13 +125,6 @@ abstract class AbstractLithiumDataOutput extends AbstractNormalizedNodeDataOutpu
     }
 
     @Override
-    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint)
-            throws IOException {
-        LOG.trace("Starting a new yang modeled anyXml node");
-        startNode(name, LithiumNode.YANG_MODELED_ANY_XML_NODE);
-    }
-
-    @Override
     public final void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
         LOG.trace("Starting a new unkeyed list");
         startNode(name, LithiumNode.UNKEYED_LIST);

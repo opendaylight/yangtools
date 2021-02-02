@@ -19,7 +19,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -235,15 +234,6 @@ public final class SchemaTracker {
 
         checkArgument(isAllowed, "Node %s is not a container nor a notification", schema);
         schemaStack.push(schema);
-        return schema;
-    }
-
-    public SchemaNode startYangModeledAnyXmlNode(final NodeIdentifier name) {
-        LOG.debug("Enter yang modeled anyXml {}", name);
-        final SchemaNode schema = getSchema(name);
-
-        checkArgument(schema instanceof YangModeledAnyxmlSchemaNode, "Node %s is not an yang modeled anyXml.", schema);
-        schemaStack.push(((YangModeledAnyxmlSchemaNode) schema).getSchemaOfAnyXmlData());
         return schema;
     }
 

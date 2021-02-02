@@ -132,12 +132,6 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        super.startYangModeledAnyXmlNode(name, childSizeHint);
-        enterMetadataNode(name);
-    }
-
-    @Override
     public void endNode() throws IOException {
         super.endNode();
 

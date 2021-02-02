@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -57,7 +56,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUs
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -269,11 +267,6 @@ public class BuilderTest {
     @Test(expected = NullPointerException.class)
     public void immutableMapEntryNodeBuilderExceptionTest() {
         ImmutableMapEntryNodeBuilder.create(1).build();
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void immutableYangModeledAnyXmlNodeBuilderExceptionTest() {
-        ImmutableYangModeledAnyXmlNodeBuilder.create(mock(YangModeledAnyxmlSchemaNode.class), 1);
     }
 
     @Test(expected = UnsupportedOperationException.class)

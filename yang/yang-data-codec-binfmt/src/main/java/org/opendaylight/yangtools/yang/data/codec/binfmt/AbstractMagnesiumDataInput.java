@@ -110,9 +110,6 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             case MagnesiumNode.NODE_ANYXML:
                 streamAnyxml(writer, nodeHeader);
                 break;
-            case MagnesiumNode.NODE_ANYXML_MODELED:
-                streamAnyxmlModeled(writer, nodeHeader);
-                break;
             case MagnesiumNode.NODE_LIST_ENTRY:
                 streamListEntry(writer, parent, nodeHeader);
                 break;
@@ -136,12 +133,6 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             writer.domSourceValue(value);
             writer.endNode();
         }
-    }
-
-    private void streamAnyxmlModeled(final NormalizedNodeStreamWriter writer, final byte nodeHeader)
-            throws IOException {
-        // TODO: decide how to deal with these
-        throw new UnsupportedOperationException("Reading YANG-modeled anyxml was never supported");
     }
 
     private void streamAugmentation(final NormalizedNodeStreamWriter writer, final byte nodeHeader) throws IOException {

@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,11 +202,6 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
             writer.startContainerNode(n.getIdentifier(), childSizeHint(n.body()));
-            return writeChildren(n.body());
-        }
-        if (node instanceof YangModeledAnyXmlNode) {
-            final YangModeledAnyXmlNode n = (YangModeledAnyXmlNode) node;
-            writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.body()));
             return writeChildren(n.body());
         }
         if (node instanceof MapEntryNode) {
