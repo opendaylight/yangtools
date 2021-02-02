@@ -128,12 +128,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
             return (StatementPolicy<A, D>) EqualSemantics.ALWAYS_COPY;
         }
 
-        @Deprecated(forRemoval = true)
-        // FIXME: 7.0.0: remove this method
-        public static final <A, D extends DeclaredStatement<A>> @NonNull StatementPolicy<A, D> legacyDeclaredCopy() {
-            return alwaysCopyDeclared();
-        }
-
         abstract boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
             @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
 

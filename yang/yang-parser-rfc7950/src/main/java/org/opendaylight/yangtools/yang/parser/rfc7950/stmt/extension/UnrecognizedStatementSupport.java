@@ -26,10 +26,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
+// FIXME: YANGTOOLS-1196: remove this class
+@Deprecated
 final class UnrecognizedStatementSupport
         extends AbstractStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition, StatementPolicy.legacyDeclaredCopy());
+        super(publicDefinition, StatementPolicy.alwaysCopyDeclared());
     }
 
     @Override
