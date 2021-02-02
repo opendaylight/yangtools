@@ -54,6 +54,7 @@ abstract class ForwardingNormalizedNodeDataInput extends ForwardingDataInput imp
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public final SchemaPath readSchemaPath() throws IOException {
         return delegate().readSchemaPath();
     }

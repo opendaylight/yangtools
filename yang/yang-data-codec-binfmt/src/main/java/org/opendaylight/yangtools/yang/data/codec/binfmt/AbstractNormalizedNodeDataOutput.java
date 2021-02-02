@@ -166,6 +166,7 @@ abstract class AbstractNormalizedNodeDataOutput implements NormalizedNodeDataOut
     }
 
     @Override
+    @Deprecated
     public final void writeSchemaPath(final SchemaPath path) throws IOException {
         writeSchemaNodeIdentifier(path.isAbsolute(), path.getPathFromRoot());
     }

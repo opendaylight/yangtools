@@ -34,6 +34,7 @@ abstract class AbstractNormalizedNodeDataInput extends ForwardingDataInput imple
     }
 
     @Override
+    @Deprecated
     public final SchemaPath readSchemaPath() throws IOException {
         final boolean absolute = input.readBoolean();
         return SchemaPath.create(readQNames(), absolute);
