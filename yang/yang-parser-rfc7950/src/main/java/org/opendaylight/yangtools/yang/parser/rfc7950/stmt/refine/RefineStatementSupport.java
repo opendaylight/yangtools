@@ -59,7 +59,7 @@ public final class RefineStatementSupport
     private final SubstatementValidator validator;
 
     private RefineStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.REFINE, StatementPolicy.legacyDeclaredCopy());
+        super(YangStmtMapping.REFINE, StatementPolicy.reject());
         this.validator = requireNonNull(validator);
     }
 
