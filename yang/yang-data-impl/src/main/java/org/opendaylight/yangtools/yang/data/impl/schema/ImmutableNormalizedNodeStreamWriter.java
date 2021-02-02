@@ -16,7 +16,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -41,7 +40,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUserMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -180,17 +178,6 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         checkDataNodeContainer();
         enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableContainerNodeBuilder.create()
                 : ImmutableContainerNodeBuilder.create(childSizeHint));
-    }
-
-    @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        checkArgument(nextSchema instanceof YangModeledAnyxmlSchemaNode,
-                "Schema of this node should be instance of YangModeledAnyxmlSchemaNode");
-        final YangModeledAnyxmlSchemaNode anyxmlSchema = (YangModeledAnyxmlSchemaNode) nextSchema;
-        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableYangModeledAnyXmlNodeBuilder.create(anyxmlSchema)
-                : ImmutableYangModeledAnyXmlNodeBuilder.create(anyxmlSchema, childSizeHint));
     }
 
     @Override

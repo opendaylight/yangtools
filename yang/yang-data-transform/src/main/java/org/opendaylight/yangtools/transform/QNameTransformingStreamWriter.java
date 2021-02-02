@@ -148,11 +148,6 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
         return super.startAnyxmlNode(transform(name), objectModel);
     }
 
-    @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        super.startYangModeledAnyXmlNode(transform(name), childSizeHint);
-    }
-
     /**
      * Transforms a QName to new mapping.
      *

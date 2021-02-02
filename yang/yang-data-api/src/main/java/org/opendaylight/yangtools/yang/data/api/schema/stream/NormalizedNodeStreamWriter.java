@@ -343,28 +343,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
     void domSourceValue(DOMSource value) throws IOException;
 
     /**
-     * Emits start of new YANG-modeled anyxml node. Valid sub-events are:
-     * <ul>
-     * <li>{@link #startLeafNode}</li>
-     * <li>{@link #startContainerNode}</li>
-     * <li>{@link #startLeafSet}</li>
-     * <li>{@link #startMapNode}</li>
-     * <li>{@link #startUnkeyedList}</li>
-     * </ul>
-     *
-     * @param name name of node as defined in schema, namespace and revision are derived from parent node.
-     * @param childSizeHint Non-negative count of expected direct child nodes or {@link #UNKNOWN_SIZE} if count is
-     *                      unknown. This is only hint and should not fail writing of child events, if there are more
-     *                      events than count.
-     * @throws NullPointerException if {@code name} is null
-     * @throws IllegalArgumentException  If emitted node is invalid in current context or was emitted multiple times.
-     * @throws IllegalStateException If node was emitted inside {@code map}, {@code choice} or a {@code unkeyed list}
-     *                               node.
-     * @throws IOException if an underlying IO error occurs
-     */
-    void startYangModeledAnyXmlNode(NodeIdentifier name, int childSizeHint) throws IOException;
-
-    /**
      * Emits end event for node.
      *
      * @throws IllegalStateException If there is no start* event to be closed.

@@ -42,7 +42,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
@@ -71,7 +70,6 @@ import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.YangModeledAnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -256,8 +254,6 @@ public final class XmlParserStream implements Closeable, Flushable {
                 nodeDataWithSchema = new ContainerNodeDataWithSchema((ContainerLike) parentNode);
             } else if (parentNode instanceof ListSchemaNode) {
                 nodeDataWithSchema = new ListNodeDataWithSchema((ListSchemaNode) parentNode);
-            } else if (parentNode instanceof YangModeledAnyxmlSchemaNode) {
-                nodeDataWithSchema = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyxmlSchemaNode) parentNode);
             } else if (parentNode instanceof AnyxmlSchemaNode) {
                 nodeDataWithSchema = new AnyXmlNodeDataWithSchema((AnyxmlSchemaNode) parentNode);
             } else if (parentNode instanceof LeafSchemaNode) {
@@ -433,10 +429,6 @@ public final class XmlParserStream implements Closeable, Flushable {
             return;
         }
 
-        if (parent instanceof YangModeledAnyxmlSchemaNode) {
-            parent.setAttributes(getElementAttributes(in));
-        }
-
         switch (in.nextTag()) {
             case XMLStreamConstants.START_ELEMENT:
                 // FIXME: 7.0.0: why do we even need this tracker? either document it or remove it.
@@ -445,8 +437,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 final Set<Entry<String, String>> namesakes = new HashSet<>();
                 while (in.hasNext()) {
                     final String xmlElementName = in.getLocalName();
-
-                    DataSchemaNode parentSchema = parent.getSchema();
+                    final DataSchemaNode parentSchema = parent.getSchema();
 
                     final String parentSchemaName = parentSchema.getQName().getLocalName();
                     if (parentSchemaName.equals(xmlElementName)
@@ -463,10 +454,6 @@ public final class XmlParserStream implements Closeable, Flushable {
 
                     if (in.isEndElement() && rootElement.equals(xmlElementName)) {
                         break;
-                    }
-
-                    if (parentSchema instanceof YangModeledAnyxmlSchemaNode) {
-                        parentSchema = ((YangModeledAnyxmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
 
                     final String elementNS = in.getNamespaceURI();

@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
@@ -280,10 +279,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                 }
                 while (in.hasNext()) {
                     final String jsonElementName = in.nextName();
-                    DataSchemaNode parentSchema = parent.getSchema();
-                    if (parentSchema instanceof YangModeledAnyxmlSchemaNode) {
-                        parentSchema = ((YangModeledAnyxmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
-                    }
+                    final DataSchemaNode parentSchema = parent.getSchema();
                     final Entry<String, URI> namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
                     final String localName = namespaceAndName.getKey();
                     final URI namespace = namespaceAndName.getValue();

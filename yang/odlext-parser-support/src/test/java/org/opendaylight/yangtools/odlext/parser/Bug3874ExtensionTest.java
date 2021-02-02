@@ -16,15 +16,16 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -41,8 +42,6 @@ public class Bug3874ExtensionTest {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlSchemaLocationStatementSupport.getInstance())
                 .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
-                .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    AnyxmlStatementSupportOverride.getInstance())
                 .build();
     }
 
@@ -64,21 +63,21 @@ public class Bug3874ExtensionTest {
         QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
         DataSchemaNode dataChildByName = context.findDataChildByName(myAnyXmlDataQName).get();
-        assertTrue(dataChildByName instanceof YangModeledAnyxmlSchemaNode);
-        YangModeledAnyxmlSchemaNode yangModeledAnyXml = (YangModeledAnyxmlSchemaNode) dataChildByName;
+        assertTrue(dataChildByName instanceof AnyxmlSchemaNode);
+        AnyxmlSchemaNode anyxml = (AnyxmlSchemaNode) dataChildByName;
 
         SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
             SchemaPath.create(true, myContainer2QName));
         assertTrue(myContainer2 instanceof ContainerSchemaNode);
-        assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
 
-        Collection<? extends UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
+        Collection<? extends UnknownSchemaNode> unknownSchemaNodes = anyxml.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
         assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
         AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
                 (AnyxmlSchemaLocationEffectiveStatementImpl) next;
+        assertEquals(Absolute.of(myContainer2QName), anyxmlSchemaLocationUnknownNode.argument());
         assertEquals(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION.getStatementName(),
             anyxmlSchemaLocationUnknownNode.getNodeType());
         assertEquals(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION.getStatementName(),

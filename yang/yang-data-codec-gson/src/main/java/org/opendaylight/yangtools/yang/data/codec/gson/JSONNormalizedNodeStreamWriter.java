@@ -380,13 +380,6 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint)
-            throws IOException {
-        tracker.startYangModeledAnyXmlNode(name);
-        context = new JSONStreamWriterNamedObjectContext(context, name, true);
-    }
-
-    @Override
     public final void endNode() throws IOException {
         tracker.endNode();
         context = context.endNode(codecs.getEffectiveModelContext(), writer);

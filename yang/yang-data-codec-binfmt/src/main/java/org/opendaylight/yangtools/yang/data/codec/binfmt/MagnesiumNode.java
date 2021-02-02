@@ -79,8 +79,8 @@ final class MagnesiumNode {
     static final byte NODE_LEAFSET_ENTRY   = 0x0C;
     static final byte NODE_MAP_ENTRY       = 0x0D;
 
-    // TODO: either implement or remove this coding. While Lithium has emit code, it lacks the code do read such nodes,
-    //       which most probably means we do not need to bother ...
+    // Note: unused as of yangtools-7.0.0
+    @Deprecated
     static final byte NODE_ANYXML_MODELED  = 0x0E;
     // 0x0F reserved for anydata
     static final byte TYPE_MASK            = 0x0F;

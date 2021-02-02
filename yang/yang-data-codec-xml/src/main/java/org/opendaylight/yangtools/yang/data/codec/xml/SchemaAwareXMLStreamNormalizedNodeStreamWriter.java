@@ -134,12 +134,6 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final SchemaNode schema = tracker.startYangModeledAnyXmlNode(name);
-        startElement(schema.getQName());
-    }
-
-    @Override
     public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (DOMSource.class.isAssignableFrom(objectModel)) {
             tracker.startAnyxmlNode(name);

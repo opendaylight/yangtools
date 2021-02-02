@@ -93,11 +93,6 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startYangModeledAnyXmlNode(name, childSizeHint);
-    }
-
-    @Override
     public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         return delegate().startAnydataNode(name, objectModel);
     }

@@ -25,6 +25,8 @@ final class LithiumNode {
     static final byte ANY_XML_NODE = 12;
     static final byte END_NODE = 13;
     static final byte ORDERED_LEAF_SET = 14;
+    // Note: never emitted as of yangtools-7.0.0
+    @Deprecated
     static final byte YANG_MODELED_ANY_XML_NODE = 15;
 
     private LithiumNode() {

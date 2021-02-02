@@ -142,8 +142,7 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
     }
 
     private void executebug8927Test(final String inputXmlFile, final String expectedJsonFile) throws Exception {
-        final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class
-                .getResourceAsStream(inputXmlFile);
+        final InputStream resourceAsStream = AnyXmlSupportTest.class.getResourceAsStream(inputXmlFile);
         final NormalizedNodeResult result = new NormalizedNodeResult();
         loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
 

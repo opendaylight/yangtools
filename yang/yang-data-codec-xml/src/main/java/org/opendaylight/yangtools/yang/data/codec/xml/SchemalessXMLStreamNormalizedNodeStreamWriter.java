@@ -89,12 +89,6 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        nodeTypeStack.push(NodeType.YANG_MODELED_ANY_XML);
-        startElement(name.getNodeType());
-    }
-
-    @Override
     String encodeValue(final ValueWriter xmlWriter, final Object value, final Object context) {
         return value.toString();
     }

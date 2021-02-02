@@ -42,7 +42,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 
 public class NormalizedNodeWriterTest {
 
@@ -88,9 +87,6 @@ public class NormalizedNodeWriterTest {
 
         final NormalizedNode mockedContainerNode = mock(ContainerNode.class);
         assertNotNull(orderedNormalizedNodeWriter.write(mockedContainerNode));
-
-        final NormalizedNode mockedYangModeledAnyXmlNode = mock(YangModeledAnyXmlNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedYangModeledAnyXmlNode));
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "list-key-value-1"))
