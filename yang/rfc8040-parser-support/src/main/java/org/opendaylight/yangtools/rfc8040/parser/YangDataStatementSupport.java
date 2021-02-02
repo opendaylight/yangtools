@@ -21,9 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -45,11 +48,11 @@ public final class YangDataStatementSupport
 
     private static final YangDataStatementSupport INSTANCE = new YangDataStatementSupport(YangDataStatements.YANG_DATA);
 
-    private final SubstatementValidator validator;
+    private final SubstatementValidator declaredValidator;
 
     private YangDataStatementSupport(final StatementDefinition definition) {
         super(definition, StatementPolicy.reject());
-        validator = SubstatementValidator.builder(definition)
+        declaredValidator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.CONTAINER)
                 .addOptional(YangStmtMapping.USES)
                 .build();
@@ -60,18 +63,18 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    // FIXME: we could do this in onStatementAdded() instead
-    public void onFullDefinitionDeclared(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
+    public void onStatementAdded(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
         // as per https://tools.ietf.org/html/rfc8040#section-8,
         // yang-data is ignored unless it appears as a top-level statement
         if (ctx.coerceParentContext().getParentContext() != null) {
             ctx.setIsSupportedToBuildEffective(false);
-            return;
         }
+    }
 
+    @Override
+    public void onFullDefinitionDeclared(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
         // Parse and populate our argument to be picked up when we build the effecitve statement
-        final String argument = ctx.argument();
-        SourceException.throwIf(argument == null, ctx, "yang-data requires an argument");
+        final String argument = SourceException.throwIfNull(ctx.argument(), ctx, "yang-data requires an argument");
         final QName qname = StmtContextUtils.parseIdentifier(ctx, argument);
         ctx.addToNs(YangDataArgumentNamespace.class, Empty.getInstance(), qname);
     }
@@ -88,7 +91,7 @@ public final class YangDataStatementSupport
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
-        return validator;
+        return declaredValidator;
     }
 
     @Override
@@ -105,13 +108,19 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataEffectiveStatement createEffective(final Current<String, YangDataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final QName qname = verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class,
-            Empty.getInstance()));
+        // So now we need to deal with effective validation. The requirement is that:
+        //        It MUST contain data definition statements
+        //        that result in exactly one container data node definition.
+        final long dataDefs = substatements.stream().filter(DataTreeEffectiveStatement.class::isInstance).count();
+        if (dataDefs == 0) {
+            throw new MissingSubstatementException("yang-data requires exactly one container", stmt.sourceReference());
+        }
+        if (dataDefs > 1) {
+            throw new InvalidSubstatementException(stmt,
+                "yang-data requires exactly one data definition node, found %s", dataDefs);
+        }
 
-        // in case of yang-data node we need to perform substatement validation at the point when we have
-        // effective substatement contexts already available - if the node has only a uses statement declared in it,
-        // one top-level container node may very well be added to the yang-data as an effective statement
-        validator.validate(stmt.caerbannog());
-        return new YangDataEffectiveStatementImpl(stmt, substatements, qname);
+        return new YangDataEffectiveStatementImpl(stmt, substatements,
+            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class, Empty.getInstance())));
     }
 }

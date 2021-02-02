@@ -194,7 +194,7 @@ public class YangDataExtensionTest {
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(MissingSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("YANG_DATA is missing CONTAINER. Minimal count is 1."));
+        assertThat(cause.getMessage(), startsWith("yang-data requires exactly one container"));
     }
 
     @Test
@@ -203,16 +203,7 @@ public class YangDataExtensionTest {
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InvalidSubstatementException.class));
-        assertTrue(cause.getMessage().startsWith("Maximal count of CONTAINER for YANG_DATA is 1, detected 2."));
-    }
-
-    @Test
-    public void testYangDataWithInvalidToplevelNode() {
-        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE);
-        final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(InvalidSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("LEAF is not valid for YANG_DATA."));
+        assertThat(cause.getMessage(), startsWith("yang-data requires exactly one data definition node, found 2"));
     }
 
     private static StatementStreamSource sourceForResource(final String resourceName) {
