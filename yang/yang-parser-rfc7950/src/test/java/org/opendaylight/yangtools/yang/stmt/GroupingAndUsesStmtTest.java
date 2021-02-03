@@ -27,9 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -81,10 +81,11 @@ public class GroupingAndUsesStmtTest {
         assertEquals(1, grouping.getTypeDefinitions().size());
         assertEquals("group-type", grouping.getTypeDefinitions().iterator().next().getQName().getLocalName());
 
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = grouping.getUnknownSchemaNodes();
+        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = grouping.asEffectiveStatement()
+            .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
-        final UnknownSchemaNode extensionUse = unknownSchemaNodes.iterator().next();
-        assertEquals("opendaylight", extensionUse.getExtensionDefinition().getQName().getLocalName());
+        final UnrecognizedStatement extensionUse = unknownSchemaNodes.iterator().next();
+        assertEquals("opendaylight", extensionUse.statementDefinition().getStatementName().getLocalName());
     }
 
     @Test
