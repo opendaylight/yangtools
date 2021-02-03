@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Public interface exposed to the effective world.
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * @author Robert Varga
  */
 public interface ThirdPartyExtensionEffectiveStatement
-        extends EffectiveStatement<String, ThirdPartyExtensionStatement> {
+        extends UnknownEffectiveStatement<String, ThirdPartyExtensionStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION;

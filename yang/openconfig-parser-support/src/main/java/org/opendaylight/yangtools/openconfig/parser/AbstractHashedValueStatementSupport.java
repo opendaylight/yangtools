@@ -74,6 +74,11 @@ abstract class AbstractHashedValueStatementSupport
         public StatementDefinition statementDefinition() {
             return definition;
         }
+
+        @Override
+        public OpenConfigHashedValueEffectiveStatement asEffectiveStatement() {
+            return this;
+        }
     }
 
     private final SubstatementValidator validator;

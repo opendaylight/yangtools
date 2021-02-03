@@ -47,4 +47,9 @@ final class ThirdPartyExtensionEffectiveStatementImpl
     public SchemaPath getPath() {
         return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
+
+    @Override
+    public ThirdPartyExtensionEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }

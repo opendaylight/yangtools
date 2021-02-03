@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeAware;
@@ -25,8 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>, being attached to a SchemaNode.
  */
 @Beta
-public interface AnnotationSchemaNode
-        extends UnknownSchemaNode, TypeAware, EffectiveStatementEquivalent<AnnotationEffectiveStatement> {
+public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
     /**
      * Find specified annotation if it is supported by the specified SchemaContext.
      *
@@ -68,4 +66,7 @@ public interface AnnotationSchemaNode
 
         return builder.build();
     }
+
+    @Override
+    AnnotationEffectiveStatement asEffectiveStatement();
 }

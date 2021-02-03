@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -19,12 +18,14 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * top-level container node (directly or indirectly via a uses statement).
  */
 @Beta
-public interface YangDataSchemaNode
-        extends UnknownSchemaNode, EffectiveStatementEquivalent<YangDataEffectiveStatement> {
+public interface YangDataSchemaNode extends UnknownSchemaNode {
     /**
      * Returns container schema node container within this yang-data definition.
      *
      * @return container schema node
      */
     ContainerSchemaNode getContainerSchemaNode();
+
+    @Override
+    YangDataEffectiveStatement asEffectiveStatement();
 }
