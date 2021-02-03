@@ -44,4 +44,9 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
     public SchemaPath getPath() {
         return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
+
+    @Override
+    public AnyxmlSchemaLocationEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }

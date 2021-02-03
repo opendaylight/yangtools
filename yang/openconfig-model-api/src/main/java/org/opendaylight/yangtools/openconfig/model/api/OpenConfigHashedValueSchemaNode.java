@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.openconfig.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
@@ -18,8 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * @author Robert Varga
  */
 @Beta
-public interface OpenConfigHashedValueSchemaNode
-        extends UnknownSchemaNode, EffectiveStatementEquivalent<OpenConfigHashedValueEffectiveStatement> {
+public interface OpenConfigHashedValueSchemaNode extends UnknownSchemaNode {
     /**
      * Determine if specified SchemaNode is marked to report its value in hashed form.
      *
@@ -30,4 +28,7 @@ public interface OpenConfigHashedValueSchemaNode
     static boolean isPresentIn(final SchemaNode schemaNode) {
         return schemaNode.getUnknownSchemaNodes().stream().anyMatch(OpenConfigHashedValueSchemaNode.class::isInstance);
     }
+
+    @Override
+    OpenConfigHashedValueEffectiveStatement asEffectiveStatement();
 }

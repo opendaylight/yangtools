@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
@@ -20,8 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://tools.ietf.org/html/rfc8528">RFC8528</a>, being attached to a SchemaNode.
  */
 @Beta
-public interface MountPointSchemaNode
-        extends UnknownSchemaNode, EffectiveStatementEquivalent<MountPointEffectiveStatement> {
+public interface MountPointSchemaNode extends UnknownSchemaNode {
     /**
      * Find all mount points defined in a {@link ContainerSchemaNode}.
      *
@@ -47,4 +45,7 @@ public interface MountPointSchemaNode
                 .filter(MountPointSchemaNode.class::isInstance)
                 .map(MountPointSchemaNode.class::cast);
     }
+
+    @Override
+    MountPointEffectiveStatement asEffectiveStatement();
 }

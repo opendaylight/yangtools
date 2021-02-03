@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.rfc6241.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement representation of 'get-filter-element-attributes' extension defined in
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @Beta
 public interface GetFilterElementAttributesEffectiveStatement
-        extends EffectiveStatement<Empty, GetFilterElementAttributesStatement> {
+        extends UnknownEffectiveStatement<Empty, GetFilterElementAttributesStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES;

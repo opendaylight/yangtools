@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 @Beta
 public interface AnyxmlSchemaLocationEffectiveStatement
-        extends EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> {
+        extends UnknownEffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION;

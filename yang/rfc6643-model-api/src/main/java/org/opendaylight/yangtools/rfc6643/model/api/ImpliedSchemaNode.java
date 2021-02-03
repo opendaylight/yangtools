@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.rfc6643.model.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 @Beta
-public interface ImpliedSchemaNode extends UnknownSchemaNode, EffectiveStatementEquivalent<ImpliedEffectiveStatement> {
+public interface ImpliedSchemaNode extends UnknownSchemaNode {
     default String getArgument() {
         return asEffectiveStatement().argument();
     }
+
+    @Override
+    ImpliedEffectiveStatement asEffectiveStatement();
 }

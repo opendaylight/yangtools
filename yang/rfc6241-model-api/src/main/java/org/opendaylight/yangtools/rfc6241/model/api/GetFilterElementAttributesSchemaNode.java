@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc6241.model.api;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -18,8 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://tools.ietf.org/html/rfc6241">RFC6241</a>.
  */
 @Beta
-public interface GetFilterElementAttributesSchemaNode
-        extends UnknownSchemaNode, EffectiveStatementEquivalent<GetFilterElementAttributesEffectiveStatement> {
+public interface GetFilterElementAttributesSchemaNode extends UnknownSchemaNode {
     /**
      * Attempt to find a {@link GetFilterElementAttributesSchemaNode} in a parent {@link AnyxmlSchemaNode}.
      *
@@ -30,4 +28,7 @@ public interface GetFilterElementAttributesSchemaNode
         return parent.getUnknownSchemaNodes().stream().filter(GetFilterElementAttributesSchemaNode.class::isInstance)
                 .findAny().map(GetFilterElementAttributesSchemaNode.class::cast);
     }
+
+    @Override
+    GetFilterElementAttributesEffectiveStatement asEffectiveStatement();
 }
