@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -42,18 +43,12 @@ public class Bug4623Test {
             QName.create(URI.create("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
 
         // then
-        assertNotNull(leaf);
-
         final TypeDefinition<?> type = leaf.getType();
         assertNotNull(type);
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
-        assertNotNull(unknownSchemaNodes);
-        assertFalse(unknownSchemaNodes.size() == 0);
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
-            "urn:simple.extension.typedefs");
+        // here are no effective extensions
+        assertEquals(0, type.getUnknownSchemaNodes().size());
+        assertExtension(leaf);
 
         final LengthConstraint lengthConstraint = ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
@@ -88,14 +83,8 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         assertNotNull(type);
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
-        assertNotNull(unknownSchemaNodes);
-        assertFalse(unknownSchemaNodes.size() == 0);
-
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
-            "urn:simple.extension.typedefs");
+        assertEquals(0, type.getUnknownSchemaNodes().size());
+        assertExtension(leaf);
 
         final LengthConstraint lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
@@ -130,14 +119,8 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         assertNotNull(type);
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
-        assertNotNull(unknownSchemaNodes);
-        assertFalse(unknownSchemaNodes.size() == 0);
-
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
-            "urn:simple.extension.typedefs");
+        assertEquals(0, type.getUnknownSchemaNodes().size());
+        assertExtension(leaf);
 
         final LengthConstraint lengthConstraints =
                 ((StringTypeDefinition) type).getLengthConstraint().get();
@@ -154,6 +137,18 @@ public class Bug4623Test {
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
         assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+    }
+
+    private static void assertExtension(final LeafSchemaNode leaf) {
+        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = leaf.asEffectiveStatement().getDeclared()
+            .findFirstDeclaredSubstatement(TypeStatement.class).orElseThrow()
+            .declaredSubstatements(UnrecognizedStatement.class);
+        assertEquals(1, unknownSchemaNodes.size());
+
+        final UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
+        assertEquals("unknown", unknownSchemaNode.argument());
+        assertEquals(QName.create("urn:simple.extension.typedefs", "unknown"),
+            unknownSchemaNode.statementDefinition().getStatementName());
     }
 
     private static Module typesModule(final SchemaContext context) {
