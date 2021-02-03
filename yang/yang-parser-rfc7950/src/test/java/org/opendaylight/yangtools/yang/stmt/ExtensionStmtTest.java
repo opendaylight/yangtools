@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -66,13 +66,14 @@ public class ExtensionStmtTest {
             QName.create(testModule2.getQNameModule(), "value"));
         assertNotNull(leaf);
 
-        assertEquals(1, leaf.getUnknownSchemaNodes().size());
-        final Collection<? extends UnknownSchemaNode> unknownNodes = leaf.getUnknownSchemaNodes();
-        final UnknownSchemaNode extensionUse = unknownNodes.iterator().next();
-        assertEquals(extensionDefinition.getQName().getLocalName(), extensionUse.getExtensionDefinition().getQName()
-                .getLocalName());
-        assertEquals(extensionDefinition.getArgument(), extensionUse.getExtensionDefinition().getArgument());
+        final Collection<? extends UnrecognizedStatement> unknownNodes = leaf.asEffectiveStatement().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
+        assertEquals(1, unknownNodes.size());
+        final UnrecognizedStatement extensionUse = unknownNodes.iterator().next();
+        assertEquals(extensionDefinition.getQName(), extensionUse.statementDefinition().getStatementName());
+        assertEquals(extensionDefinition.getArgument(), extensionUse.statementDefinition().getArgumentDefinition()
+            .orElseThrow().getArgumentName().getLocalName());
 
-        assertEquals("key:value", extensionUse.getNodeParameter());
+        assertEquals("key:value", extensionUse.argument());
     }
 }
