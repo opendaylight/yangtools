@@ -34,9 +34,7 @@ public class YT1208Test {
     @Test
     public void testAugmentStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/augment.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -56,9 +54,7 @@ public class YT1208Test {
     @Test
     public void testCaseStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/case.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -78,9 +74,7 @@ public class YT1208Test {
     @Test
     public void testChoiceStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/choice.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -98,9 +92,7 @@ public class YT1208Test {
     @Test
     public void testGroupingStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/grouping.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -120,8 +112,7 @@ public class YT1208Test {
     @Test
     public void testLeafStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/leaf.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
         assertNotNull(module);
 
         final NotificationEffectiveStatement notif = module
@@ -140,9 +131,7 @@ public class YT1208Test {
     @Test
     public void testLeafListStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/leaflist.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -160,9 +149,7 @@ public class YT1208Test {
     @Test
     public void testListStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/list.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -180,9 +167,7 @@ public class YT1208Test {
     @Test
     public void testTypedefStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/typedef.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final TypedefEffectiveStatement grpBar = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -198,8 +183,7 @@ public class YT1208Test {
     @Test
     public void testUsesStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/uses.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
         assertNotNull(module);
         final List<GroupingEffectiveStatement> groupings = module
             .streamEffectiveSubstatements(GroupingEffectiveStatement.class).collect(Collectors.toList());

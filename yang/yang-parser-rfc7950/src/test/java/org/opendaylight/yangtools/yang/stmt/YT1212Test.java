@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
@@ -28,9 +27,7 @@ public class YT1212Test {
     @Test
     public void testActiontatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/anyxml.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final AnyxmlEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -49,9 +46,7 @@ public class YT1212Test {
     @Test
     public void testLeafStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/leaf.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final LeafEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -70,9 +65,7 @@ public class YT1212Test {
     @Test
     public void testContainerStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/container.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final NotificationEffectiveStatement notif =
             module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
