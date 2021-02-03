@@ -7,19 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import com.google.common.collect.Range;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
-import org.junit.Assert;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -39,33 +43,27 @@ public class Bug4623Test {
             QName.create(URI.create("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
 
         // then
-        Assert.assertNotNull(leaf);
-
         final TypeDefinition<?> type = leaf.getType();
-        Assert.assertNotNull(type);
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
-        Assert.assertNotNull(unknownSchemaNodes);
-        Assert.assertFalse(unknownSchemaNodes.size() == 0);
+        assertNotNull(type);
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
-            "urn:simple.extension.typedefs");
+        // here are no effective extensions
+        assertEquals(1, type.getUnknownSchemaNodes().size());
+        assertExtension(leaf);
 
         final LengthConstraint lengthConstraint = ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
 
-        Assert.assertNotNull(lengthConstraint);
-        Assert.assertNotNull(patternConstraints);
-        Assert.assertFalse(lengthConstraint.getAllowedRanges().isEmpty());
-        Assert.assertFalse(patternConstraints.isEmpty());
+        assertNotNull(lengthConstraint);
+        assertNotNull(patternConstraints);
+        assertFalse(lengthConstraint.getAllowedRanges().isEmpty());
+        assertFalse(patternConstraints.isEmpty());
 
         final Range<Integer> span = lengthConstraint.getAllowedRanges().span();
-        Assert.assertEquals(Integer.valueOf(2), span.lowerEndpoint());
-        Assert.assertEquals(Integer.valueOf(10), span.upperEndpoint());
+        assertEquals(Integer.valueOf(2), span.lowerEndpoint());
+        assertEquals(Integer.valueOf(10), span.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+        assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
     }
 
     @Test
@@ -81,33 +79,27 @@ public class Bug4623Test {
                 QName.create(URI.create("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
 
         // then
-        Assert.assertNotNull(leaf);
+        assertNotNull(leaf);
 
         final TypeDefinition<?> type = leaf.getType();
-        Assert.assertNotNull(type);
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
-        Assert.assertNotNull(unknownSchemaNodes);
-        Assert.assertFalse(unknownSchemaNodes.size() == 0);
-
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
-            "urn:simple.extension.typedefs");
+        assertNotNull(type);
+        assertEquals(1, type.getUnknownSchemaNodes().size());
+        assertExtension(leaf);
 
         final LengthConstraint lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
 
-        Assert.assertNotNull(lengthConstraints);
-        Assert.assertNotNull(patternConstraints);
-        Assert.assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
-        Assert.assertFalse(patternConstraints.isEmpty());
+        assertNotNull(lengthConstraints);
+        assertNotNull(patternConstraints);
+        assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
+        assertFalse(patternConstraints.isEmpty());
 
         final Range<Integer> lengthConstraint = lengthConstraints.getAllowedRanges().span();
-        Assert.assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
-        Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
+        assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
+        assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+        assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
     }
 
     @Test
@@ -123,34 +115,40 @@ public class Bug4623Test {
                 QName.create(URI.create("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
-        Assert.assertNotNull(leaf);
+        assertNotNull(leaf);
 
         final TypeDefinition<?> type = leaf.getType();
-        Assert.assertNotNull(type);
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
-        Assert.assertNotNull(unknownSchemaNodes);
-        Assert.assertFalse(unknownSchemaNodes.size() == 0);
-
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
-            "urn:simple.extension.typedefs");
+        assertNotNull(type);
+        assertEquals(1, type.getUnknownSchemaNodes().size());
+        assertExtension(leaf);
 
         final LengthConstraint lengthConstraints =
                 ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
 
-        Assert.assertNotNull(lengthConstraints);
-        Assert.assertNotNull(patternConstraints);
-        Assert.assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
-        Assert.assertFalse(patternConstraints.size() == 0);
+        assertNotNull(lengthConstraints);
+        assertNotNull(patternConstraints);
+        assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
+        assertFalse(patternConstraints.size() == 0);
 
         final Range<Integer> lengthConstraint = lengthConstraints.getAllowedRanges().span();
-        Assert.assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
-        Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
+        assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
+        assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+        assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
+    }
+
+    private static void assertExtension(final LeafSchemaNode leaf) {
+        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = leaf.asEffectiveStatement().getDeclared()
+            .findFirstDeclaredSubstatement(TypeStatement.class).orElseThrow()
+            .declaredSubstatements(UnrecognizedStatement.class);
+        assertEquals(1, unknownSchemaNodes.size());
+
+        final UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
+        assertEquals("unknown", unknownSchemaNode.argument());
+        assertEquals(QName.create("urn:simple.extension.typedefs", "unknown"),
+            unknownSchemaNode.statementDefinition().getStatementName());
     }
 
     private static Module typesModule(final SchemaContext context) {

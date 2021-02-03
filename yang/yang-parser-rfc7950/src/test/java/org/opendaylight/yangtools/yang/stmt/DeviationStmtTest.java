@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -131,6 +132,9 @@ public class DeviationStmtTest {
         }
 
         assertEquals(1, deviation1.getUnknownSchemaNodes().size());
+        assertEquals(1,
+            deviation1.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
+
         assertTrue(deviation1.equals(deviation1));
         assertFalse(deviation1.equals(null));
         assertFalse(deviation1.equals("str"));

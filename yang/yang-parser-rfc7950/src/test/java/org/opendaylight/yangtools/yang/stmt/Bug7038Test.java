@@ -8,26 +8,43 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class Bug7038Test {
     @Test
     public void unknownNodeTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug7038");
-        assertNotNull(context);
-        assertEquals(1, context.getUnknownSchemaNodes().size());
+        final ModuleStatement bar = StmtTestUtils.parseYangSources("/bugs/bug7038")
+            .getModuleStatement(QNameModule.create(URI.create("bar"))).getDeclared();
+        final UnrecognizedStatement decimal64 = bar.findFirstDeclaredSubstatement(UnrecognizedStatement.class)
+            .orElseThrow();
+        assertEquals("decimal64", decimal64.argument());
+        assertEquals(QName.create("foo", "decimal64"), decimal64.statementDefinition().getStatementName());
     }
 
     @Test
     public void testYang11() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug7038/yang11");
-        assertNotNull(context);
+        final ContainerSchemaNode root = (ContainerSchemaNode) StmtTestUtils.parseYangSources("/bugs/bug7038/yang11")
+            .getDataChildByName(QName.create("foo", "root"));
+        final TypeDefinition<?> typedef = ((LeafSchemaNode) root.getDataChildByName(QName.create("foo", "my-leafref")))
+            .getType();
+        assertThat(typedef, instanceOf(LeafrefTypeDefinition.class));
+        assertFalse(((LeafrefTypeDefinition) typedef).requireInstance());
     }
 
     @Test

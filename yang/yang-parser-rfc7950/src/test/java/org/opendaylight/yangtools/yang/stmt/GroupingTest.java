@@ -40,9 +40,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -108,6 +109,9 @@ public class GroupingTest {
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
         assertEquals(1, refineLeaf.getUnknownSchemaNodes().size());
+        assertEquals(1, usesNode.asEffectiveStatement()
+            .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class).size());
 
         // container port
         assertNotNull(refineContainer);
@@ -246,16 +250,9 @@ public class GroupingTest {
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
 
-        final Collection<? extends UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
-        assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.iterator().next();
-        assertTrue(node_u.isAddedByUses());
-
-        final Collection<? extends UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
-        assertEquals(1, nodes_g.size());
-        final UnknownSchemaNode node_g = nodes_g.iterator().next();
-        assertFalse(node_g.isAddedByUses());
-        assertFalse(node_u.equals(node_g));
+        assertEquals(1, destination.getUnknownSchemaNodes().size());
+        assertEquals(1,
+            grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
     }
 
     @Test
@@ -362,16 +359,9 @@ public class GroupingTest {
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
 
-        final Collection<? extends UnknownSchemaNode> nodes_u = foo.getUnknownSchemaNodes();
-        assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.iterator().next();
-        assertTrue(node_u.isAddedByUses());
-
-        final Collection<? extends UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
-        assertEquals(1, nodes_g.size());
-        final UnknownSchemaNode node_g = nodes_g.iterator().next();
-        assertFalse(node_g.isAddedByUses());
-        assertFalse(node_u.equals(node_g));
+        assertEquals(1, grouping.getUnknownSchemaNodes().size());
+        assertEquals(1, grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class)
+            .size());
 
         final UsesNode un = uses.iterator().next();
         final Collection<? extends AugmentationSchemaNode> usesAugments = un.getAugmentations();
