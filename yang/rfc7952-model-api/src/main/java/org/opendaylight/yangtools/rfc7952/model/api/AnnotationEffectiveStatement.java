@@ -12,14 +12,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement representation of 'annotation' extension defined in
  * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>.
  */
 @Beta
-public interface AnnotationEffectiveStatement extends EffectiveStatement<QName, AnnotationStatement>,
-        TypeDefinitionAware {
+public interface AnnotationEffectiveStatement extends EffectiveStatement<QName, AnnotationStatement>, UnknownEffectiveStatement<QName>, TypeDefinitionAware {
     @Override
     default StatementDefinition statementDefinition() {
         return MetadataStatements.ANNOTATION;

@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
-public interface UnknownEffectiveStatement<A> extends EffectiveStatement<A, UnknownStatement<A>> {
+// FIXME: evaluate usefulness of this
+public interface UnknownEffectiveStatement<A, D extends UnknownStatement<A>> extends EffectiveStatement<A, D> {
 
 }
