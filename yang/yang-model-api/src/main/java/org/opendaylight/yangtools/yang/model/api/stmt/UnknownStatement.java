@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -17,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
+// FIXME: evaluate usefulness of this
+@Beta
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
 
 }

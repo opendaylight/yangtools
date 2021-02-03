@@ -62,4 +62,9 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     public StatementDefinition statementDefinition() {
         return getDeclared().statementDefinition();
     }
+
+    @Override
+    public UnrecognizedEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }
