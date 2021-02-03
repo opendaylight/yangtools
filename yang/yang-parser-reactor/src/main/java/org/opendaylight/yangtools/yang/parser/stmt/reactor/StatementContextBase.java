@@ -286,11 +286,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     final List<ReactorStmtCtx<?, ?, ?>> addEffectiveSubstatementsImpl(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final Collection<? extends Mutable<?, ?, ?>> statements) {
         final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, statements.size());
-        final Collection<? extends StatementContextBase<?, ?, ?>> casted =
-            (Collection<? extends StatementContextBase<?, ?, ?>>) statements;
+        final Collection<? extends ReactorStmtCtx<?, ?, ?>> casted =
+            (Collection<? extends ReactorStmtCtx<?, ?, ?>>) statements;
         final ModelProcessingPhase phase = completedPhase;
         if (phase != null) {
-            for (StatementContextBase<?, ?, ?> stmt : casted) {
+            for (ReactorStmtCtx<?, ?, ?> stmt : casted) {
                 ensureCompletedPhase(stmt, phase);
             }
         }
