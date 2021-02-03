@@ -11,11 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -26,8 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 public class ControllerStmtParserTest {
 
@@ -55,13 +55,17 @@ public class ControllerStmtParserTest {
                     final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
                     final DataSchemaNode leaf = containerNode
                             .getDataChildByName(QName.create(module.getQNameModule(), "type"));
-                    final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
-                    assertEquals(1, unknownSchemaNodes.size());
+                    assertEquals(0, leaf.getUnknownSchemaNodes().size());
 
-                    final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-                    assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
-                    assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
+                    final Collection<? extends UnrecognizedStatement> unknownSchemaNodes =
+                        containerNode.asEffectiveStatement()
+                            .findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow()
+                            .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow()
+                            .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
 
+
+                    final UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
+                    assertEquals("sal:dom-async-data-broker", unknownSchemaNode.argument());
                     checked = true;
                 }
             }
@@ -99,14 +103,7 @@ public class ControllerStmtParserTest {
 
         final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
         final DataSchemaNode leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
-
-        assertEquals(1, unknownSchemaNodes.size());
-
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-
-        assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
-        assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
+        assertEquals(0, leaf.getUnknownSchemaNodes().size());
 
         final CaseSchemaNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
                 .next();
@@ -127,17 +124,20 @@ public class ControllerStmtParserTest {
 
         final DataSchemaNode type = schemaServiceContainer.getDataChildByName(QName.create(module.getQNameModule(),
             "type"));
-        final Collection<? extends UnknownSchemaNode> typeUnknownSchemaNodes = type.getUnknownSchemaNodes();
+        assertEquals(0, type.getUnknownSchemaNodes().size());
+
+        final Collection<? extends UnrecognizedStatement> typeUnknownSchemaNodes =
+            schemaServiceContainer.asEffectiveStatement()
+                .findFirstEffectiveSubstatement(UsesEffectiveStatement.class).orElseThrow()
+                .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow()
+                .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, typeUnknownSchemaNodes.size());
 
-        final UnknownSchemaNode typeUnknownSchemaNode = typeUnknownSchemaNodes.iterator().next();
-        final QNameModule qNameModule = QNameModule.create(
-            URI.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"), Revision.of("2013-10-28"));
-        final QName qName = QName.create(qNameModule, "schema-service");
 
-        assertEquals(qName, typeUnknownSchemaNode.getQName());
-        assertEquals(typeUnknownSchemaNode.getQName(), typeUnknownSchemaNode
-                .getPath().getLastComponent());
+        final UnrecognizedStatement typeUnknownSchemaNode = typeUnknownSchemaNodes.iterator().next();
+        assertEquals("sal:schema-service", typeUnknownSchemaNode.argument());
+        assertEquals(QName.create(groupingQName, "required-identity"),
+            typeUnknownSchemaNode.statementDefinition().getStatementName());
     }
 
     private static int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {

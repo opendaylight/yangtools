@@ -47,7 +47,7 @@ public class Bug4623Test {
         assertNotNull(type);
 
         // here are no effective extensions
-        assertEquals(1, type.getUnknownSchemaNodes().size());
+        assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
         final LengthConstraint lengthConstraint = ((StringTypeDefinition) type).getLengthConstraint().get();
@@ -83,7 +83,7 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         assertNotNull(type);
-        assertEquals(1, type.getUnknownSchemaNodes().size());
+        assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
         final LengthConstraint lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().get();
@@ -119,7 +119,7 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         assertNotNull(type);
-        assertEquals(1, type.getUnknownSchemaNodes().size());
+        assertEquals(0, type.getUnknownSchemaNodes().size());
         assertExtension(leaf);
 
         final LengthConstraint lengthConstraints =

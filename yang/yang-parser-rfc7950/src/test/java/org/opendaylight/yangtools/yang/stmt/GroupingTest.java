@@ -108,7 +108,7 @@ public class GroupingTest {
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.getXpath().toString());
-        assertEquals(1, refineLeaf.getUnknownSchemaNodes().size());
+        assertEquals(0, refineLeaf.getUnknownSchemaNodes().size());
         assertEquals(1, usesNode.asEffectiveStatement()
             .findFirstEffectiveSubstatement(RefineEffectiveStatement.class).orElseThrow().getDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
@@ -250,7 +250,7 @@ public class GroupingTest {
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
 
-        assertEquals(1, destination.getUnknownSchemaNodes().size());
+        assertEquals(0, destination.getUnknownSchemaNodes().size());
         assertEquals(1,
             grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
     }
@@ -359,7 +359,7 @@ public class GroupingTest {
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
 
-        assertEquals(1, grouping.getUnknownSchemaNodes().size());
+        assertEquals(0, grouping.getUnknownSchemaNodes().size());
         assertEquals(1, grouping.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class)
             .size());
 
