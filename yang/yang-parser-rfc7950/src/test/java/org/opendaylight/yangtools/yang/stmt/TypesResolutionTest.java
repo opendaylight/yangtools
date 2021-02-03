@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -178,7 +179,8 @@ public class TypesResolutionTest {
                 QName.create(tested.getQNameModule(), "inst-id-leaf1"));
         InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
         assertFalse(leafType.requireInstance());
-        assertEquals(1, leaf.getUnknownSchemaNodes().size());
+        assertEquals(1,
+            leaf.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
     }
 
     @Test
@@ -218,7 +220,8 @@ public class TypesResolutionTest {
         assertEquals(3, context.getDerivedIdentities(cryptoBase).size());
 
         assertNotNull(cryptoId);
-        assertEquals(1, cryptoId.getUnknownSchemaNodes().size());
+        assertEquals(1,
+            cryptoId.asEffectiveStatement().getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
     }
 
     @Test

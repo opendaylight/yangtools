@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 /**
  * Test ANTLR4 grammar capability to parse description statement in unknown node.
@@ -35,25 +35,24 @@ public class Bug1412Test {
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
                 bug1412.getQNameModule(), "node"));
-        Collection<? extends UnknownSchemaNode> unknownNodes = node.getUnknownSchemaNodes();
+        Collection<? extends UnrecognizedStatement> unknownNodes = node.asEffectiveStatement().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
-        final UnknownSchemaNode action = unknownNodes.iterator().next();
+        final UnrecognizedStatement action = unknownNodes.iterator().next();
 
         final QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), Revision.of("2014-07-25"));
         QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");
-        assertEquals(expectedNodeType, action.getNodeType());
-        assertEquals("hello", action.getNodeParameter());
-        final QName expectedQName = QName.create(qm, "hello");
-        assertEquals(expectedQName, action.getQName());
+        assertEquals(expectedNodeType, action.statementDefinition().getStatementName());
+        assertEquals("hello", action.argument());
 
-        unknownNodes = action.getUnknownSchemaNodes();
+        unknownNodes = action.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(4, unknownNodes.size());
-        UnknownSchemaNode info = null;
-        UnknownSchemaNode description = null;
-        UnknownSchemaNode actionPoint = null;
-        UnknownSchemaNode output = null;
-        for (final UnknownSchemaNode un : unknownNodes) {
-            final String name = un.getNodeType().getLocalName();
+        UnrecognizedStatement info = null;
+        UnrecognizedStatement description = null;
+        UnrecognizedStatement actionPoint = null;
+        UnrecognizedStatement output = null;
+        for (final UnrecognizedStatement un : unknownNodes) {
+            final String name = un.statementDefinition().getStatementName().getLocalName();
             if ("info".equals(name)) {
                 info = un;
             } else if ("description".equals(name)) {
@@ -71,20 +70,20 @@ public class Bug1412Test {
         assertNotNull(output);
 
         expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info");
-        assertEquals(expectedNodeType, info.getNodeType());
-        assertEquals("greeting", info.getNodeParameter());
+        assertEquals(expectedNodeType, info.statementDefinition().getStatementName());
+        assertEquals("greeting", info.argument());
 
         expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "description");
-        assertEquals(expectedNodeType, description.getNodeType());
-        assertEquals("say greeting", description.getNodeParameter());
+        assertEquals(expectedNodeType, description.statementDefinition().getStatementName());
+        assertEquals("say greeting", description.argument());
 
         expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint");
-        assertEquals(expectedNodeType, actionPoint.getNodeType());
-        assertEquals("entry", actionPoint.getNodeParameter());
+        assertEquals(expectedNodeType, actionPoint.statementDefinition().getStatementName());
+        assertEquals("entry", actionPoint.argument());
 
         expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output");
-        assertEquals(expectedNodeType, output.getNodeType());
-        assertEquals("", output.getNodeParameter());
+        assertEquals(expectedNodeType, output.statementDefinition().getStatementName());
+        assertEquals(null, output.argument());
     }
 
 }
