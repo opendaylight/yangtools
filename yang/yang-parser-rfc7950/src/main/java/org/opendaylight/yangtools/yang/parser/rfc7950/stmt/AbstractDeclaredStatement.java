@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -54,6 +56,21 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
     }
 
     public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement<A> {
+        public abstract static class WithSubstatements<A> extends WithRawArgument<A> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final String rawArgument,
+                    final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+                super(rawArgument);
+                this.substatements = maskList(substatements);
+            }
+
+            @Override
+            public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
         private final String rawArgument;
 
         protected WithRawArgument(final String rawArgument) {
@@ -89,7 +106,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
 
         @Override
-        public final @NonNull QName argument() {
+        public final QName argument() {
             return argument;
         }
 
@@ -116,12 +133,12 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
 
         protected WithRawStringArgument(final String rawArgument) {
-            super(rawArgument);
+            super(verifyNotNull(rawArgument));
         }
 
         @Override
         public final String argument() {
-            return rawArgument();
+            return verifyNotNull(rawArgument());
         }
     }
 
@@ -141,11 +158,11 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
             }
         }
 
-        private final A argument;
+        private final @NonNull A argument;
 
         protected WithArgument(final String rawArgument, final A argument) {
             super(rawArgument);
-            this.argument = argument;
+            this.argument = requireNonNull(argument);
         }
 
         @Override
@@ -172,12 +189,12 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
 
         private final @NonNull A argument;
 
-        protected ArgumentToString(final A argument) {
+        protected ArgumentToString(final @NonNull A argument) {
             this.argument = requireNonNull(argument);
         }
 
         @Override
-        public final @NonNull A argument() {
+        public final A argument() {
             return argument;
         }
 
@@ -187,7 +204,7 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
     }
 
-    public abstract static class WithoutArgument extends AbstractDeclaredStatement<Void> {
+    public abstract static class WithoutArgument extends AbstractDeclaredStatement<Empty> {
         public abstract static class WithSubstatements extends WithoutArgument {
             private final @NonNull Object substatements;
 
@@ -202,8 +219,8 @@ public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatemen
         }
 
         @Override
-        public final Void argument() {
-            return null;
+        public final Empty argument() {
+            return Empty.getInstance();
         }
 
         @Override

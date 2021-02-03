@@ -24,14 +24,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, UnrecognizedStatement>
+final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatementBase<Object, UnrecognizedStatement>
         implements UnrecognizedEffectiveStatement {
     private static final Logger LOG = LoggerFactory.getLogger(UnrecognizedEffectiveStatementImpl.class);
 
     private final QName maybeQNameArgument;
     private final @Nullable SchemaPath path;
 
-    UnrecognizedEffectiveStatementImpl(final Current<String, UnrecognizedStatement> stmt,
+    UnrecognizedEffectiveStatementImpl(final Current<Object, UnrecognizedStatement> stmt,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qnameArgument) {
         super(stmt, substatements);
         this.maybeQNameArgument = qnameArgument != null ? qnameArgument : getNodeType();

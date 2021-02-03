@@ -50,7 +50,7 @@ final class ImportEffectiveStatementImpl extends WithSubstatements<String, Impor
 
     @Override
     public String getPrefix() {
-        return getDeclared().getPrefix().getValue();
+        return getDeclared().getPrefix().argument();
     }
 
     @Override

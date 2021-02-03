@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
@@ -15,10 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * interfaces in this package. This interface is meant to be specialized by external semantic plugins, such that they
  * are properly anchored in the metamodel.
  *
- * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
-    default @Nullable A getArgument() {
-        return argument();
-    }
+
 }

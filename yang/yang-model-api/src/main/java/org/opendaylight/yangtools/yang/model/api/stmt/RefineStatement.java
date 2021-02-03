@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -24,11 +22,6 @@ public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<D
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.REFINE;
-    }
-
-    default @NonNull String getTargetNode() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(rawArgument());
     }
 
     default @NonNull Collection<? extends DefaultStatement> getDefaults() {
