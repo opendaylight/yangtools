@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.openconfig.model.api;
 
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
  * Effective statement corresponding to config's "openconfig-hashed-value" (new name) or "openconfig-encrypted-value"
@@ -17,6 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @author Robert Varga
  */
 public interface OpenConfigHashedValueEffectiveStatement
-    extends EffectiveStatement<Empty, OpenConfigHashedValueStatement> {
+    extends UnknownEffectiveStatement<Empty, OpenConfigHashedValueStatement> {
 
 }

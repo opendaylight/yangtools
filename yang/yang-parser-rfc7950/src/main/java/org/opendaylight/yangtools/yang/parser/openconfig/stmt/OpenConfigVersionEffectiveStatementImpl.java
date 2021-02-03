@@ -42,4 +42,9 @@ final class OpenConfigVersionEffectiveStatementImpl
     public SchemaPath getPath() {
         return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
+
+    @Override
+    public OpenConfigVersionEffectiveStatement asEffectiveStatement() {
+        return this;
+    }
 }
