@@ -10,28 +10,25 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-// FIXME: YANGTOOLS-1196: remove this class
-@Deprecated
 final class UnrecognizedStatementSupport
         extends AbstractStatementSupport<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition, StatementPolicy.alwaysCopyDeclared());
+        // We have no idea about the statement's semantics, hence there should be noone interested in its semantics.
+        // Nevertheless it may be of interest for various hacks to understand there was an extension involved.
+        super(publicDefinition, StatementPolicy.exactReplica());
     }
 
     @Override
@@ -58,6 +55,7 @@ final class UnrecognizedStatementSupport
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
+        // We know nothing about this statement
         return null;
     }
 
@@ -72,37 +70,17 @@ final class UnrecognizedStatementSupport
         return createDeclared(ctx, ImmutableList.of());
     }
 
+    // createEffective() should never be called, ensure that for each declared statement
+
+    @Override
+    public void onStatementAdded(final Mutable<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> stmt) {
+        stmt.setIsSupportedToBuildEffective(false);
+    }
+
     @Override
     protected UnrecognizedEffectiveStatement createEffective(final Current<Object, UnrecognizedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        // FIXME: Remove following section after fixing 4380
-        final UnknownSchemaNode original = (UnknownSchemaNode) stmt.original();
-        return new UnrecognizedEffectiveStatementImpl(stmt, substatements,
-            original == null ? qnameFromArgument(stmt) : original.getQName());
-    }
-
-    private static QName qnameFromArgument(final Current<Object, UnrecognizedStatement> stmt) {
-        final String value = stmt.rawArgument();
-        if (value == null || value.isEmpty()) {
-            return stmt.publicDefinition().getStatementName();
-        }
-
-        final int colon = value.indexOf(':');
-        if (colon == -1) {
-            final UnqualifiedQName qname = UnqualifiedQName.tryCreate(value);
-            return qname == null ? null : qname.bindTo(stmt.moduleName().getModule()).intern();
-        }
-
-        final QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(stmt.caerbannog(),
-            value.substring(0, colon));
-        if (qnameModule == null) {
-            return null;
-        }
-
-        final int next = value.indexOf(':', colon + 1);
-        final String localName = next == -1 ? value.substring(colon + 1) : value.substring(colon + 1, next);
-        // Careful: selected string may still not be an identifier
-        final UnqualifiedQName qname = UnqualifiedQName.tryCreate(localName);
-        return qname == null ? null : qname.bindTo(qnameModule).intern();
+        throw new InferenceException(stmt, "Attempted to instantiate unrecognized effective statement %s",
+            stmt.publicDefinition());
     }
 }

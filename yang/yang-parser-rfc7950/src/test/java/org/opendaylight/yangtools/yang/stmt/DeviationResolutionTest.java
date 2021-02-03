@@ -117,13 +117,11 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-anyxml"));
         assertNotNull(myAnyxml);
         assertTrue(myAnyxml.isMandatory());
-        assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
 
         final AnydataSchemaNode myAnyData = (AnydataSchemaNode) barModule.findDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anydata")).orElse(null);
         assertNotNull(myAnyData);
         assertTrue(myAnyData.isMandatory());
-        assertEquals(2, myAnyData.getUnknownSchemaNodes().size());
     }
 
     @Test
@@ -158,8 +156,8 @@ public class DeviationResolutionTest {
         assertNotNull(myChoice);
 
         assertFalse(myChoice.isMandatory());
-        assertEquals(1, myChoice.getUnknownSchemaNodes().size());
-        assertEquals("new arg", myChoice.getUnknownSchemaNodes().iterator().next().getNodeParameter());
+        // FIXME: we need a supported extension to properly test this
+        assertEquals(0, myChoice.getUnknownSchemaNodes().size());
 
         final ContainerSchemaNode myCont = (ContainerSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-cont"));
@@ -171,8 +169,8 @@ public class DeviationResolutionTest {
         assertThat(myAugLeaf.getType(), instanceOf(Uint32TypeDefinition.class));
         assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myAugLeaf.getType().getDefaultValue());
-        assertEquals(1, myAugLeaf.getUnknownSchemaNodes().size());
-        assertEquals("new arg", myAugLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
+        // FIXME: we need a supported extension to properly test this
+        assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
@@ -180,8 +178,8 @@ public class DeviationResolutionTest {
         assertThat(myUsedLeaf.getType(), instanceOf(Uint32TypeDefinition.class));
         assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
-        assertEquals(1, myUsedLeaf.getUnknownSchemaNodes().size());
-        assertEquals("new arg", myUsedLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
+        // FIXME: we need a supported extension to properly test this
+        assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
     }
 
     @Test
