@@ -52,8 +52,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
@@ -526,11 +526,10 @@ public class YangParserTest {
     public void testUnknownNode() {
         final ContainerSchemaNode network = (ContainerSchemaNode) baz.getDataChildByName(
             QName.create(baz.getQNameModule(), "network"));
-        final Collection<? extends UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
+        final Collection<? extends UnrecognizedStatement> unknownNodes = network.asEffectiveStatement().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
-        final UnknownSchemaNode unknownNode = unknownNodes.iterator().next();
-        assertNotNull(unknownNode.getNodeType());
-        assertEquals("point", unknownNode.getNodeParameter());
+        assertEquals("point", unknownNodes.iterator().next().argument());
     }
 
     @Test

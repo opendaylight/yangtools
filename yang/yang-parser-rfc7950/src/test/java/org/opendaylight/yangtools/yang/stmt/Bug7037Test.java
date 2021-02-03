@@ -19,8 +19,8 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 public class Bug7037Test {
     private static final String FOO_NS = "foo";
@@ -28,52 +28,58 @@ public class Bug7037Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug7037");
+        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug7037");
         assertNotNull(context);
 
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = context.getUnknownSchemaNodes();
+        final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = context.getModuleStatement(foo("foo"))
+            .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnknownSchemaNode first = unknownSchemaNodes.iterator().next();
-        final Collection<? extends UnknownSchemaNode> firstUnknownNodes = first.getUnknownSchemaNodes();
+        final UnrecognizedStatement first = unknownSchemaNodes.iterator().next();
+        final Collection<? extends UnrecognizedStatement> firstUnknownNodes =
+            first.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, firstUnknownNodes.size());
 
-        final UnknownSchemaNode barExtCont = firstUnknownNodes.iterator().next();
-        assertEquals(bar("container"), barExtCont.getNodeType());
-        assertEquals(foo("bar-ext-con"), barExtCont.getQName());
+        final UnrecognizedStatement barExtCont = firstUnknownNodes.iterator().next();
+        assertEquals(bar("container"), barExtCont.statementDefinition().getStatementName());
+        assertEquals("bar-ext-con", barExtCont.argument());
 
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
         assertTrue(root instanceof ContainerSchemaNode);
 
-        final Collection<? extends UnknownSchemaNode> rootUnknownNodes = root.getUnknownSchemaNodes();
+        final Collection<? extends UnrecognizedStatement> rootUnknownNodes =
+            ((ContainerSchemaNode) root).asEffectiveStatement().getDeclared()
+            .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, rootUnknownNodes.size());
 
-        final Map<QName, UnknownSchemaNode> rootUnknownNodeMap = rootUnknownNodes.stream()
-                .collect(Collectors.toMap(u -> u.getNodeType(), u -> u));
+        final Map<QName, UnrecognizedStatement> rootUnknownNodeMap = rootUnknownNodes.stream()
+                .collect(Collectors.toMap(u -> u.statementDefinition().getStatementName(), u -> u));
 
-        final UnknownSchemaNode barExt = rootUnknownNodeMap.get(bar("bar-ext"));
-        final Collection<? extends UnknownSchemaNode> barExtUnknownNodes = barExt.getUnknownSchemaNodes();
+        final UnrecognizedStatement barExt = rootUnknownNodeMap.get(bar("bar-ext"));
+        final Collection<? extends UnrecognizedStatement> barExtUnknownNodes =
+            barExt.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(3, barExtUnknownNodes.size());
 
-        final Iterator<? extends UnknownSchemaNode> iterator = barExtUnknownNodes.iterator();
-        UnknownSchemaNode barExtCont2 = null;
+        final Iterator<? extends UnrecognizedStatement> iterator = barExtUnknownNodes.iterator();
+        UnrecognizedStatement barExtCont2 = null;
         while (iterator.hasNext()) {
-            final UnknownSchemaNode next = iterator.next();
-            if (bar("container").equals(next.getNodeType())) {
+            final UnrecognizedStatement next = iterator.next();
+            if (bar("container").equals(next.statementDefinition().getStatementName())) {
                 barExtCont2 = next;
                 break;
             }
         }
         assertNotNull(barExtCont2);
-        assertEquals(foo("bar-ext-con-2"), barExtCont2.getQName());
+        assertEquals("bar-ext-con-2", barExtCont2.argument());
 
-        final UnknownSchemaNode fooExt = rootUnknownNodeMap.get(foo("foo-ext"));
-        final Collection<? extends UnknownSchemaNode> fooUnknownNodes = fooExt.getUnknownSchemaNodes();
+        final UnrecognizedStatement fooExt = rootUnknownNodeMap.get(foo("foo-ext"));
+        final Collection<? extends UnrecognizedStatement> fooUnknownNodes =
+            fooExt.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, fooUnknownNodes.size());
 
-        final UnknownSchemaNode fooExtCont = fooUnknownNodes.iterator().next();
-        assertEquals(foo("container"), fooExtCont.getNodeType());
-        assertEquals(foo("foo-ext-con"), fooExtCont.getQName());
+        final UnrecognizedStatement fooExtCont = fooUnknownNodes.iterator().next();
+        assertEquals(foo("container"), fooExtCont.statementDefinition().getStatementName());
+        assertEquals("foo-ext-con", fooExtCont.argument());
     }
 
     private static QName foo(final String localName) {
