@@ -56,7 +56,7 @@ public class ControllerStmtParserTest {
                     final DataSchemaNode leaf = containerNode
                             .getDataChildByName(QName.create(module.getQNameModule(), "type"));
                     final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
-                    assertEquals(1, unknownSchemaNodes.size());
+                    assertEquals(0, unknownSchemaNodes.size());
 
                     final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
                     assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());

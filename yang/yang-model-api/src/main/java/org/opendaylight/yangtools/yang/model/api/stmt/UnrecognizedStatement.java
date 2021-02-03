@@ -10,9 +10,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 
 /**
- * Common interface for unrecognized unknown statements. UnrecognizedStatement is an instance of a statement defined via
- *  an 'extension' statement, for which the parser did not have semantic support (in which case the statement would
- * result in a corresponding semantic subclass of {@link UnknownStatement}).
+ * Common interface for unrecognized unknown statements. An {@link UnrecognizedStatement} is an instance of a statement
+ * defined via an {@code extension} statement, for which the parser did not have semantic support (in which case the
+ * statement would result in a corresponding semantic subclass of {@link UnknownStatement}).
+ *
+ * <p>
+ * This construct does not have a {@link UnknownEffectiveStatement} counterpart because we cannot reasonably build an
+ * effective model of something we do not recognize.
  */
 @Beta
 public interface UnrecognizedStatement extends UnknownStatement<Object> {
