@@ -318,7 +318,13 @@ public final class UsesStatementSupport
             addOrReplaceNodes(subStmtCtx, (StatementContextBase<?, ?, ?>) refineTargetNodeCtx);
         }
 
-        subStmtCtx.addToNs(RefineTargetNamespace.class, Empty.getInstance(), refineTargetNodeCtx);
+        // Target is a prerequisite for the 'refine', hence if the target is not supported, the refine is not supported
+        // as well. Otherwise add a pointer to the target into refine's local namespace.
+        if (refineTargetNodeCtx.isSupportedToBuildEffective()) {
+            subStmtCtx.addToNs(RefineTargetNamespace.class, Empty.getInstance(), refineTargetNodeCtx);
+        } else {
+            subStmtCtx.setIsSupportedToBuildEffective(false);
+        }
     }
 
     private static void addOrReplaceNodes(final Mutable<?, ?, ?> subStmtCtx,
