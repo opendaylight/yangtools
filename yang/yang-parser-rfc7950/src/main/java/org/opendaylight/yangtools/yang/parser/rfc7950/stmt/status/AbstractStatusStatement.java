@@ -22,7 +22,7 @@ abstract class AbstractStatusStatement extends AbstractDeclaredStatement<Status>
     }
 
     @Override
-    public final @NonNull Status argument() {
+    public final Status argument() {
         return argument;
     }
 

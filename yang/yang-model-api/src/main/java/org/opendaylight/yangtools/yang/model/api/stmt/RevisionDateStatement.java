@@ -17,8 +17,4 @@ public interface RevisionDateStatement extends DeclaredStatement<Revision> {
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.REVISION_DATE;
     }
-
-    default Revision getDate() {
-        return argument();
-    }
 }
