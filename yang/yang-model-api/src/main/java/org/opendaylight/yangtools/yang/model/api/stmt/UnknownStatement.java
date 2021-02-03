@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
@@ -18,7 +17,5 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  */
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
-    default @Nullable A getArgument() {
-        return argument();
-    }
+
 }

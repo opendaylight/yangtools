@@ -18,6 +18,6 @@ public interface YinElementStatement extends DeclaredStatement<Boolean> {
     }
 
     default boolean getValue() {
-        return argument().booleanValue();
+        return argument();
     }
 }

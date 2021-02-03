@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -32,8 +30,8 @@ public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
      * @return Predicate on a collection of QNames against which to evaluate
      */
     @Beta
+    // FIXME: YANGTOOLS-908: remove this method
     default @NonNull IfFeatureExpr getIfFeaturePredicate() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 }

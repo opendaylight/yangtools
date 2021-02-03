@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,11 +20,6 @@ public interface TypeStatement extends DeclaredStatement<String> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.TYPE;
-    }
-
-    default @NonNull String getName() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
     }
 
     @Rfc6020AbnfRule("numerical-restrictions")
