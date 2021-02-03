@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 public class Bug4456Test {
     @Test
@@ -34,16 +34,19 @@ public class Bug4456Test {
         assertEquals(5, extensionSchemaNodes.size());
         for (ExtensionDefinition extensionDefinition : extensionSchemaNodes) {
 
-            Collection<? extends UnknownSchemaNode> unknownSchemaNodes = extensionDefinition.getUnknownSchemaNodes();
+            Collection<? extends UnrecognizedStatement> unknownSchemaNodes = extensionDefinition.asEffectiveStatement()
+                .getDeclared().declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, unknownSchemaNodes.size());
-            UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-            String unknownNodeExtensionDefName = unknownSchemaNode.getExtensionDefinition().getQName().getLocalName();
+            UnrecognizedStatement unknownSchemaNode = unknownSchemaNodes.iterator().next();
+            String unknownNodeExtensionDefName = unknownSchemaNode.statementDefinition().getStatementName()
+                .getLocalName();
 
-            Collection<? extends UnknownSchemaNode> subUnknownSchemaNodes = unknownSchemaNode.getUnknownSchemaNodes();
+            Collection<? extends UnrecognizedStatement> subUnknownSchemaNodes =
+                unknownSchemaNode.declaredSubstatements(UnrecognizedStatement.class);
             assertEquals(1, subUnknownSchemaNodes.size());
-            UnknownSchemaNode subUnknownSchemaNode = subUnknownSchemaNodes.iterator().next();
-            String subUnknownNodeExtensionDefName = subUnknownSchemaNode.getExtensionDefinition().getQName()
-                    .getLocalName();
+            UnrecognizedStatement subUnknownSchemaNode = subUnknownSchemaNodes.iterator().next();
+            String subUnknownNodeExtensionDefName = subUnknownSchemaNode.statementDefinition().getStatementName()
+                .getLocalName();
 
             switch (extensionDefinition.getQName().getLocalName()) {
                 case "a":
