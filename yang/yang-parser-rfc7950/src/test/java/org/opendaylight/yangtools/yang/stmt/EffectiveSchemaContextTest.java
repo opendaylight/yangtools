@@ -31,7 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -64,8 +65,9 @@ public class EffectiveSchemaContextTest {
         final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
         assertEquals(3, extensions.size());
 
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = schemaContext.getUnknownSchemaNodes();
-        assertEquals(3, unknownSchemaNodes.size());
+        for (ModuleEffectiveStatement module : schemaContext.getModuleStatements().values()) {
+            assertEquals(1, module.getDeclared().declaredSubstatements(UnrecognizedStatement.class).size());
+        }
 
         assertNull(schemaContext.dataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
 

@@ -41,8 +41,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -306,18 +308,18 @@ public class YangParserWithContextTest {
                 .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
-        final ContainerSchemaNode network = (ContainerSchemaNode) module.getDataChildByName(QName.create(
-                module.getQNameModule(), "network"));
-        final Collection<? extends UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
+        final ContainerStatement network = ((ContainerSchemaNode) module.getDataChildByName(
+            QName.create(module.getQNameModule(), "network"))).asEffectiveStatement().getDeclared();
+        final Collection<? extends UnrecognizedStatement> unknownNodes =
+            network.declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(1, unknownNodes.size());
 
-        final UnknownSchemaNode un = unknownNodes.iterator().next();
-        final QName unType = un.getNodeType();
+        final UnrecognizedStatement un = unknownNodes.iterator().next();
+        final QName unType = un.statementDefinition().getStatementName();
         assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), unType.getRevision());
         assertEquals("mountpoint", unType.getLocalName());
-        assertEquals("point", un.getNodeParameter());
-        assertNotNull(un.getExtensionDefinition());
+        assertEquals("point", un.argument());
     }
 
     @Test
