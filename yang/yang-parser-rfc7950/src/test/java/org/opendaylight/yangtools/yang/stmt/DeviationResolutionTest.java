@@ -117,13 +117,11 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-anyxml"));
         assertNotNull(myAnyxml);
         assertTrue(myAnyxml.isMandatory());
-        assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
 
         final AnydataSchemaNode myAnyData = (AnydataSchemaNode) barModule.findDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anydata")).orElse(null);
         assertNotNull(myAnyData);
         assertTrue(myAnyData.isMandatory());
-        assertEquals(2, myAnyData.getUnknownSchemaNodes().size());
     }
 
     @Test
