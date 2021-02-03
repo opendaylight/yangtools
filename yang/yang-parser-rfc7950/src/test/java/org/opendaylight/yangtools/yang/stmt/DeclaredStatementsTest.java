@@ -86,11 +86,11 @@ public class DeclaredStatementsTest {
         assertNotNull(anyxmlSchemaNode);
         final AnyxmlStatement anyxmlStatement = ((AnyxmlEffectiveStatement) anyxmlSchemaNode).getDeclared();
 
-        final QName name = anyxmlStatement.getName();
+        final QName name = anyxmlStatement.argument();
         assertNotNull(name);
 
         final WhenStatement whenStatement = anyxmlStatement.getWhenStatement().get();
-        assertNotNull(whenStatement.getCondition());
+        assertNotNull(whenStatement.argument());
         final DescriptionStatement whenStatementDescription = whenStatement.getDescription().get();
         assertTrue(whenStatement.getReference().isPresent());
 
@@ -104,7 +104,7 @@ public class DeclaredStatementsTest {
         assertNotNull(mustStatements);
         assertEquals(1, mustStatements.size());
         final MustStatement mustStatement = mustStatements.iterator().next();
-        assertNotNull(mustStatement.getCondition());
+        assertNotNull(mustStatement.argument());
         assertTrue(mustStatement.getErrorAppTagStatement().isPresent());
         assertTrue(mustStatement.getErrorMessageStatement().isPresent());
         assertTrue(mustStatement.getDescription().isPresent());
@@ -114,14 +114,14 @@ public class DeclaredStatementsTest {
         assertFalse(configStatement.getValue());
 
         final StatusStatement statusStatement = anyxmlStatement.getStatus().get();
-        final Status status = statusStatement.getValue();
+        final Status status = statusStatement.argument();
         assertNotNull(status);
 
         final DescriptionStatement descriptionStatement = anyxmlStatement.getDescription().get();
-        assertEquals("anyxml description", descriptionStatement.getText());
+        assertEquals("anyxml description", descriptionStatement.argument());
 
         final ReferenceStatement referenceStatement = anyxmlStatement.getReference().get();
-        assertEquals("anyxml reference", referenceStatement.getText());
+        assertEquals("anyxml reference", referenceStatement.argument());
 
         assertTrue(anyxmlStatement.getMandatory().isPresent());
     }
@@ -142,11 +142,11 @@ public class DeclaredStatementsTest {
         assertNotNull(choiceSchemaNode);
         final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatement) choiceSchemaNode).getDeclared();
 
-        final QName name = choiceStatement.getName();
+        final QName name = choiceStatement.argument();
         assertNotNull(name);
 
         final DefaultStatement defaultStatement = choiceStatement.getDefault().get();
-        assertEquals("case-two", defaultStatement.getValue());
+        assertEquals("case-two", defaultStatement.argument());
 
         assertTrue(choiceStatement.getConfig().isPresent());
         assertTrue(choiceStatement.getMandatory().isPresent());
@@ -155,7 +155,7 @@ public class DeclaredStatementsTest {
         assertNotNull(caseStatements);
         assertEquals(3, caseStatements.size());
         final CaseStatement caseStatement = caseStatements.iterator().next();
-        final QName caseStatementName = caseStatement.getName();
+        final QName caseStatementName = caseStatement.argument();
         assertNotNull(caseStatementName);
         final WhenStatement caseStatementWhen = caseStatement.getWhenStatement().get();
         final Collection<? extends IfFeatureStatement> caseStatementIfFeatures = caseStatement.getIfFeatures();
@@ -198,7 +198,7 @@ public class DeclaredStatementsTest {
         final AugmentationSchemaNode augmentationSchema = augmentationSchemas.iterator().next();
         final AugmentStatement augmentStatement = ((AugmentEffectiveStatement) augmentationSchema).getDeclared();
 
-        final SchemaNodeIdentifier targetNode = augmentStatement.getTargetNode();
+        final SchemaNodeIdentifier targetNode = augmentStatement.argument();
         assertNotNull(targetNode);
 
         final Collection<? extends DataDefinitionStatement> augmentStatementDataDefinitions =
@@ -222,25 +222,23 @@ public class DeclaredStatementsTest {
         assertNotNull(testModule);
 
         final ModuleStatement moduleStatement = ((ModuleEffectiveStatement) testModule).getDeclared();
-
-        final String moduleStatementName = moduleStatement.getName();
-        assertNotNull(moduleStatementName);
+        assertNotNull(moduleStatement.argument());
 
         final YangVersionStatement moduleStatementYangVersion = moduleStatement.getYangVersion();
         assertNotNull(moduleStatementYangVersion);
-        assertNotNull(moduleStatementYangVersion.getValue());
+        assertNotNull(moduleStatementYangVersion.argument());
 
         final NamespaceStatement moduleStatementNamspace = moduleStatement.getNamespace();
         assertNotNull(moduleStatementNamspace);
-        assertNotNull(moduleStatementNamspace.getUri());
+        assertNotNull(moduleStatementNamspace.argument());
 
         final PrefixStatement moduleStatementPrefix = moduleStatement.getPrefix();
         assertNotNull(moduleStatementPrefix);
-        assertNotNull(moduleStatementPrefix.getValue());
+        assertNotNull(moduleStatementPrefix.argument());
 
         assertEquals(1, moduleStatement.getIncludes().size());
         final IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
-        assertEquals("child-module-declared-test", includeStatement.getModule());
+        assertEquals("child-module-declared-test", includeStatement.argument());
 
         final Collection<? extends Submodule> submodules = testModule.getSubmodules();
         assertNotNull(submodules);
@@ -249,15 +247,14 @@ public class DeclaredStatementsTest {
         final Submodule submodule = submodules.iterator().next();
         final SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatement) submodule).getDeclared();
 
-        final String submoduleStatementName = submoduleStatement.getName();
-        assertNotNull(submoduleStatementName);
+        assertNotNull(submoduleStatement.argument());
 
         final YangVersionStatement submoduleStatementYangVersion = submoduleStatement.getYangVersion();
         assertNotNull(submoduleStatementYangVersion);
 
         final BelongsToStatement belongsToStatement = submoduleStatement.getBelongsTo();
         assertNotNull(belongsToStatement);
-        assertNotNull(belongsToStatement.getModule());
+        assertNotNull(belongsToStatement.argument());
         assertNotNull(belongsToStatement.getPrefix());
     }
 
@@ -280,60 +277,60 @@ public class DeclaredStatementsTest {
 
         assertEquals(1, moduleStatement.getImports().size());
         final ImportStatement importStatement = moduleStatement.getImports().iterator().next();
-        assertEquals("imported-module-declared-test", importStatement.getModule());
-        assertEquals("imdt", importStatement.getPrefix().getValue());
-        assertEquals(revision, importStatement.getRevisionDate().getDate());
+        assertEquals("imported-module-declared-test", importStatement.argument());
+        assertEquals("imdt", importStatement.getPrefix().argument());
+        assertEquals(revision, importStatement.getRevisionDate().argument());
 
-        assertEquals("test description", moduleStatement.getDescription().get().getText());
-        assertEquals("test reference", moduleStatement.getReference().get().getText());
-        assertEquals("test organization", moduleStatement.getOrganization().get().getText());
-        assertEquals("test contact", moduleStatement.getContact().get().getText());
+        assertEquals("test description", moduleStatement.getDescription().get().argument());
+        assertEquals("test reference", moduleStatement.getReference().get().argument());
+        assertEquals("test organization", moduleStatement.getOrganization().get().argument());
+        assertEquals("test contact", moduleStatement.getContact().get().argument());
 
         assertEquals(1, moduleStatement.getRevisions().size());
         final RevisionStatement revisionStatement = moduleStatement.getRevisions().iterator().next();
-        assertEquals(revision, revisionStatement.getDate());
-        assertEquals("test description", revisionStatement.getDescription().get().getText());
-        assertEquals("test reference", revisionStatement.getReference().get().getText());
+        assertEquals(revision, revisionStatement.argument());
+        assertEquals("test description", revisionStatement.getDescription().get().argument());
+        assertEquals("test reference", revisionStatement.getReference().get().argument());
 
         assertEquals(1, moduleStatement.getExtensions().size());
         final ExtensionStatement extensionStatement = moduleStatement.getExtensions().iterator().next();
-        assertEquals(Status.CURRENT, extensionStatement.getStatus().get().getValue());
-        assertEquals("test description", extensionStatement.getDescription().get().getText());
-        assertEquals("test reference", extensionStatement.getReference().get().getText());
+        assertEquals(Status.CURRENT, extensionStatement.getStatus().get().argument());
+        assertEquals("test description", extensionStatement.getDescription().get().argument());
+        assertEquals("test reference", extensionStatement.getReference().get().argument());
         final ArgumentStatement argumentStatement = extensionStatement.getArgument();
-        assertEquals("ext-argument", argumentStatement.getName().getLocalName());
-        assertTrue(argumentStatement.getYinElement().getValue());
+        assertEquals("ext-argument", argumentStatement.argument().getLocalName());
+        assertTrue(argumentStatement.getYinElement().argument());
 
         assertEquals(2, moduleStatement.getFeatures().size());
         final FeatureStatement featureStatement = moduleStatement.getFeatures().iterator().next();
-        assertEquals(Status.CURRENT, featureStatement.getStatus().get().getValue());
-        assertEquals("test description", featureStatement.getDescription().get().getText());
-        assertEquals("test reference", featureStatement.getReference().get().getText());
-        assertEquals("test-feature", featureStatement.getName().getLocalName());
+        assertEquals(Status.CURRENT, featureStatement.getStatus().get().argument());
+        assertEquals("test description", featureStatement.getDescription().get().argument());
+        assertEquals("test reference", featureStatement.getReference().get().argument());
+        assertEquals("test-feature", featureStatement.argument().getLocalName());
         assertEquals(1, featureStatement.getIfFeatures().size());
 
         assertEquals(2, moduleStatement.getIdentities().size());
         IdentityStatement identityStatement = null;
         for (final IdentityStatement identity : moduleStatement.getIdentities()) {
-            if (identity.getName().getLocalName().equals("test-id")) {
+            if (identity.argument().getLocalName().equals("test-id")) {
                 identityStatement = identity;
             }
         }
 
-        assertEquals("test-base-id", identityStatement.getBases().iterator().next().getName().getLocalName());
-        assertEquals(Status.CURRENT, identityStatement.getStatus().get().getValue());
-        assertEquals("test description", identityStatement.getDescription().get().getText());
-        assertEquals("test reference", identityStatement.getReference().get().getText());
-        assertEquals("test-id", identityStatement.getName().getLocalName());
+        assertEquals("test-base-id", identityStatement.getBases().iterator().next().argument().getLocalName());
+        assertEquals(Status.CURRENT, identityStatement.getStatus().get().argument());
+        assertEquals("test description", identityStatement.getDescription().get().argument());
+        assertEquals("test reference", identityStatement.getReference().get().argument());
+        assertEquals("test-id", identityStatement.argument().getLocalName());
 
         assertEquals(1, moduleStatement.getTypedefs().size());
         final TypedefStatement typedefStatement = moduleStatement.getTypedefs().iterator().next();
-        assertEquals(Status.CURRENT, typedefStatement.getStatus().get().getValue());
-        assertEquals("test description", typedefStatement.getDescription().get().getText());
-        assertEquals("test reference", typedefStatement.getReference().get().getText());
-        assertEquals("test-typedef", typedefStatement.getName().getLocalName());
-        assertEquals("int32", typedefStatement.getType().getName());
-        assertEquals("meter", typedefStatement.getUnits().get().getName());
+        assertEquals(Status.CURRENT, typedefStatement.getStatus().get().argument());
+        assertEquals("test description", typedefStatement.getDescription().get().argument());
+        assertEquals("test reference", typedefStatement.getReference().get().argument());
+        assertEquals("test-typedef", typedefStatement.argument().getLocalName());
+        assertEquals("int32", typedefStatement.getType().argument());
+        assertEquals("meter", typedefStatement.getUnits().get().argument());
     }
 
     @Test
@@ -353,7 +350,7 @@ public class DeclaredStatementsTest {
         final ContainerStatement containerStatement =
                 ((ContainerEffectiveStatement) containerSchemaNode).getDeclared();
 
-        final QName name = containerStatement.getName();
+        final QName name = containerStatement.argument();
         assertNotNull(name);
 
         final WhenStatement containerStatementWhen = containerStatement.getWhenStatement().get();
@@ -369,7 +366,7 @@ public class DeclaredStatementsTest {
 
         final PresenceStatement containerStatementPresence = containerStatement.getPresence();
         assertNotNull(containerStatementPresence);
-        assertNotNull(containerStatementPresence.getValue());
+        assertNotNull(containerStatementPresence.argument());
 
         assertTrue(containerStatement.getConfig().isPresent());
         assertTrue(containerStatement.getStatus().isPresent());

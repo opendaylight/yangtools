@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -19,10 +16,5 @@ public interface DeviateStatement extends DeclaredStatement<DeviateKind> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.DEVIATE;
-    }
-
-    default @NonNull DeviateKind getValue() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
     }
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Model statement. There are two base types of model statements:
@@ -25,7 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * </li>
  * </ul>
  *
- * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
 public interface ModelStatement<A> {
     /**
@@ -38,9 +39,9 @@ public interface ModelStatement<A> {
     /**
      * Returns statement argument.
      *
-     * @return statement argument or null if statement does not have argument.
+     * @return statement argument.
      */
-    A argument();
+    @NonNull A argument();
 
     /**
      * Returns statement source, which denotes if statement was

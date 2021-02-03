@@ -23,7 +23,7 @@ abstract class AbstractOrderedByStatement extends AbstractDeclaredStatement<Orde
     }
 
     @Override
-    public final @NonNull Ordering argument() {
+    public final Ordering argument() {
         return argument;
     }
 

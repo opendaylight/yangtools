@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveState
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -20,14 +21,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultDenyAllStatementSupport
-        extends AbstractVoidStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
+        extends AbstractEmptyStatementSupport<DefaultDenyAllStatement, DefaultDenyAllEffectiveStatement> {
     private static final class Declared extends WithSubstatements implements DefaultDenyAllStatement {
         static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
 
@@ -36,11 +37,11 @@ public final class DefaultDenyAllStatementSupport
         }
     }
 
-    private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyAllStatement>
+    private static final class Effective extends UnknownEffectiveStatementBase<Empty, DefaultDenyAllStatement>
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
         private final @NonNull Object path;
 
-        Effective(final Current<Void, DefaultDenyAllStatement> stmt,
+        Effective(final Current<Empty, DefaultDenyAllStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
             path = SchemaPathSupport.toEffectivePath(stmt.getEffectiveParent().getSchemaPath()
@@ -84,18 +85,18 @@ public final class DefaultDenyAllStatementSupport
     }
 
     @Override
-    protected DefaultDenyAllStatement createDeclared(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx,
+    protected DefaultDenyAllStatement createDeclared(final StmtContext<Empty, DefaultDenyAllStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new Declared(substatements);
     }
 
     @Override
-    protected DefaultDenyAllStatement createEmptyDeclared(final StmtContext<Void, DefaultDenyAllStatement, ?> ctx) {
+    protected DefaultDenyAllStatement createEmptyDeclared(final StmtContext<Empty, DefaultDenyAllStatement, ?> ctx) {
         return Declared.EMPTY;
     }
 
     @Override
-    protected DefaultDenyAllEffectiveStatement createEffective(final Current<Void, DefaultDenyAllStatement> stmt,
+    protected DefaultDenyAllEffectiveStatement createEffective(final Current<Empty, DefaultDenyAllStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new Effective(stmt, substatements);
     }
