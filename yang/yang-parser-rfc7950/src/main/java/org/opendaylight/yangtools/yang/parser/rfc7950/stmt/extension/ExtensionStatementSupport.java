@@ -99,7 +99,7 @@ public final class ExtensionStatementSupport
     @Override
     public ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+            final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
         Map<Current<?, ?>, ExtensionEffectiveStatementImpl> tl = TL_BUILDERS.get();
         if (tl == null) {
             tl = new IdentityHashMap<>();
@@ -117,7 +117,7 @@ public final class ExtensionStatementSupport
                 stmt.optionalPath());
             verify(tl.put(stmt, created) == null);
             try {
-                return super.createEffective(stmt, declaredSubstatements, effectiveSubstatements);
+                return super.createEffective(stmt, declaredSubstatements, inferredSubstatements);
             } finally {
                 verify(tl.remove(stmt) == created);
             }

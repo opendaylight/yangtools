@@ -204,12 +204,12 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     final Stream<? extends StmtContext<?, ?, ?>> streamDeclared() {
-        return declaredSubstatements().stream();
+        return declaredSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
     @Override
     final Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
-        return effective.stream();
+        return effective.stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
     @Override

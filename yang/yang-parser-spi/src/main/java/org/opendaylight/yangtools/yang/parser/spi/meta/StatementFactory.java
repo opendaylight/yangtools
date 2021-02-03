@@ -35,11 +35,14 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * Create a {@link EffectiveStatement} for specified context.
      *
      * @param stmt Effective capture of this statement's significant state
+     * @param declaredSubstatements effectively-visible declared substatements
+     * @param inferredSubstatements effectively-visible inferred substatements
      * @return An effective statement instance
      */
+    // FIXME: we really want a single coherent 'effectiveSubstatements' stream
     @NonNull E createEffective(@NonNull Current<A, D> stmt,
         Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-        Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements);
+        Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements);
 
     /**
      * Create a {@link EffectiveStatement} copy of provided original for specified context.

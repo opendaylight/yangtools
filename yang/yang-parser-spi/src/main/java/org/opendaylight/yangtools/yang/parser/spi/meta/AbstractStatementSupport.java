@@ -54,10 +54,10 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     @Override
     public E createEffective(final Current<A, D> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+            final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
                 buildEffectiveSubstatements(stmt, statementsToBuild(stmt,
-                    declaredSubstatements(declaredSubstatements, effectiveSubstatements)));
+                    declaredSubstatements(declaredSubstatements, inferredSubstatements)));
         return createEffective(stmt, substatements);
     }
 
@@ -112,15 +112,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      */
     protected @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
             final Current<A, D> stmt, final List<? extends StmtContext<?, ?, ?>> substatements) {
-        return defaultBuildEffectiveSubstatements(substatements);
-    }
-
-    private static @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> defaultBuildEffectiveSubstatements(
-            final List<? extends StmtContext<?, ?, ?>> substatements) {
-        return substatements.stream()
-                .filter(StmtContext::isSupportedToBuildEffective)
-                .map(StmtContext::buildEffective)
-                .collect(ImmutableList.toImmutableList());
+        return substatements.stream().map(StmtContext::buildEffective).collect(ImmutableList.toImmutableList());
     }
 
     private static @NonNull List<StmtContext<?, ?, ?>> declaredSubstatements(

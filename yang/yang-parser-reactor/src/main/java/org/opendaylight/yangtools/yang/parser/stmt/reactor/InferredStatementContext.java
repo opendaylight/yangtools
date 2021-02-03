@@ -235,7 +235,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // We can reuse this statement let's see if all the statements agree
         final List<EffectiveCopy> declCopy = prototype.streamDeclared()
-            .filter(StmtContext::isSupportedByFeatures)
             .map(sub -> effectiveCopy((ReactorStmtCtx<?, ?, ?>) sub))
             .filter(Objects::nonNull)
             .collect(Collectors.toUnmodifiableList());
@@ -288,8 +287,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
         return reusePrototypeReplicas(Streams.concat(
-            prototype.streamDeclared().filter(StmtContext::isSupportedByFeatures),
-            prototype.streamEffective()));
+            prototype.streamDeclared(), prototype.streamEffective()));
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas(final Stream<StmtContext<?, ?, ?>> stream) {
@@ -460,7 +458,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
         accessSubstatements();
-        return ensureEffectiveSubstatements().stream();
+        return ensureEffectiveSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
     private void accessSubstatements() {
