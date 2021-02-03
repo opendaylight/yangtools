@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
@@ -23,9 +22,7 @@ public class YT1195Test {
     @Test
     public void testKeyStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1195/key.yang")
-            .getModuleStatements()
-            .get(QNameModule.create(URI.create("foo")));
-        assertNotNull(module);
+            .getModuleStatement(QNameModule.create(URI.create("foo")));
 
         final ListEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()

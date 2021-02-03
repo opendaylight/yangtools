@@ -7,8 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import java.util.Map;
+import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -24,4 +30,20 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 public interface EffectiveModelContext extends SchemaContext {
 
     Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();
+
+    default Optional<ModuleEffectiveStatement> findModuleStatement(final QNameModule moduleName) {
+        return Optional.ofNullable(getModuleStatements().get(requireNonNull(moduleName)));
+    }
+
+    default Optional<ModuleEffectiveStatement> findModuleStatement(final QName moduleName) {
+        return findModuleStatement(moduleName.getModule());
+    }
+
+    default @NonNull ModuleEffectiveStatement getModuleStatement(final QNameModule moduleName) {
+        return verifyNotNull(getModuleStatements().get(requireNonNull(moduleName)));
+    }
+
+    default @NonNull ModuleEffectiveStatement getModuleStatement(final QName moduleName) {
+        return getModuleStatement(moduleName.getModule());
+    }
 }
