@@ -45,6 +45,7 @@ import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
+import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
@@ -453,6 +454,10 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     private enum InitializeInstanceField implements ByteCodeAppender {
         INSTANCE;
 
+        // TODO: eliminate this constant when ElementMatchers.isDefaultConstructor() returns a singleton
+        private static final ElementMatcher<MethodDescription> IS_DEFAULT_CONSTRUCTOR =
+            ElementMatchers.isDefaultConstructor();
+
         @Override
         public Size apply(final MethodVisitor methodVisitor, final Context implementationContext,
                 final MethodDescription instrumentedMethod) {
@@ -461,7 +466,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
                 TypeCreation.of(instrumentedType),
                 Duplication.SINGLE,
                 MethodInvocation.invoke(instrumentedType.getDeclaredMethods()
-                    .filter(ElementMatchers.isDefaultConstructor()).getOnly().asDefined()),
+                    .filter(IS_DEFAULT_CONSTRUCTOR).getOnly().asDefined()),
                 putField(instrumentedType, INSTANCE_FIELD))
                     .apply(methodVisitor, implementationContext);
             return new Size(operandStackSize.getMaximalSize(), instrumentedMethod.getStackSize());

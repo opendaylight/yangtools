@@ -10,9 +10,10 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.THIS;
+import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.computeFrames;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.getField;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.invokeMethod;
+import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.loadThis;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.collect.ImmutableMap;
@@ -276,7 +277,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         final Generic bindingDef = TypeDefinition.Sort.describe(bindingInterface);
         @SuppressWarnings("unchecked")
         Builder<T> builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
-            .visit(ByteBuddyUtils.computeFrames()).name(fqcn).implement(bindingDef);
+            .visit(computeFrames()).name(fqcn).implement(bindingDef);
 
         builder = generateGetters(builder);
 
@@ -308,7 +309,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static Implementation codecHashCode(final Class<?> bindingInterface) {
         return new Implementation.Simple(
             // return Foo.bindingHashCode(this);
-            THIS,
+            loadThis(),
             invokeMethod(bindingInterface, BindingMapping.BINDING_HASHCODE_NAME, bindingInterface),
             MethodReturn.INTEGER);
     }
@@ -316,7 +317,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static Implementation codecEquals(final Class<?> bindingInterface) {
         return new Implementation.Simple(
             // return Foo.bindingEquals(this, obj);
-            THIS,
+            loadThis(),
             FIRST_ARG_REF,
             invokeMethod(bindingInterface, BindingMapping.BINDING_EQUALS_NAME, bindingInterface, Object.class),
             MethodReturn.INTEGER);
@@ -325,7 +326,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static Implementation toString(final Class<?> bindingInterface) {
         return new Implementation.Simple(
             // return Foo.bindingToString(this);
-            THIS,
+            loadThis(),
             invokeMethod(bindingInterface, BindingMapping.BINDING_TO_STRING_NAME, bindingInterface),
             MethodReturn.REFERENCE);
     }
@@ -386,7 +387,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         public ByteCodeAppender appender(final Target implementationTarget) {
             return new ByteCodeAppender.Simple(
                 // return (FooType) codecKey(getFoo$$$V);
-                THIS,
+                loadThis(),
                 getField(implementationTarget.getInstrumentedType(), handleName),
                 CODEC_KEY,
                 TypeCasting.to(retType),
@@ -434,7 +435,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final TypeDescription instrumentedType = implementationTarget.getInstrumentedType();
             return new ByteCodeAppender.Simple(
                 // return (FooType) codecMember(getFoo$$$V, getFoo$$$S);
-                THIS,
+                loadThis(),
                 getField(instrumentedType, handleName),
                 getField(instrumentedType, stringName),
                 CODEC_MEMBER,
@@ -459,7 +460,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         public ByteCodeAppender appender(final Target implementationTarget) {
             return new ByteCodeAppender.Simple(
                 // return (FooType) codecMember(getFoo$$$V, FooType.class);
-                THIS,
+                loadThis(),
                 getField(implementationTarget.getInstrumentedType(), handleName),
                 ClassConstant.of(TypeDefinition.Sort.describe(bindingClass).asErasure()),
                 CODEC_MEMBER,
@@ -501,7 +502,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final TypeDescription instrumentedType = implementationTarget.getInstrumentedType();
             return new ByteCodeAppender.Simple(
                 // return (FooType) codecMember(getFoo$$$V, getFoo$$$C);
-                THIS,
+                loadThis(),
                 getField(instrumentedType, handleName),
                 getField(instrumentedType, contextName),
                 CODEC_MEMBER,

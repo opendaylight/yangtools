@@ -8,6 +8,9 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.getField;
+import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.loadThis;
+import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
@@ -120,7 +123,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
     private enum ConstructorImplementation implements Implementation {
         INSTANCE;
 
-        private static final StackManipulation INSTANT_ARG = MethodVariableAccess.REFERENCE.loadFrom(3);
+        private static final StackManipulation LOAD_INSTANT_ARG = MethodVariableAccess.REFERENCE.loadFrom(3);
         private static final StackManipulation LOAD_CTOR_ARGS;
 
         static {
@@ -145,12 +148,12 @@ final class NotificationCodecContext<D extends DataObject & Notification>
                     .filter(ElementMatchers.isConstructor()).getOnly();
 
             return new ByteCodeAppender.Simple(
-                ByteBuddyUtils.THIS,
+                loadThis(),
                 LOAD_CTOR_ARGS,
                 MethodInvocation.invoke(superCtor),
-                ByteBuddyUtils.THIS,
-                INSTANT_ARG,
-                ByteBuddyUtils.putField(instrumentedType, INSTANT_FIELD),
+                loadThis(),
+                LOAD_INSTANT_ARG,
+                putField(instrumentedType, INSTANT_FIELD),
                 MethodReturn.VOID);
         }
     }
@@ -166,8 +169,8 @@ final class NotificationCodecContext<D extends DataObject & Notification>
         @Override
         public ByteCodeAppender appender(final Target implementationTarget) {
             return new ByteCodeAppender.Simple(
-              ByteBuddyUtils.THIS,
-              ByteBuddyUtils.getField(implementationTarget.getInstrumentedType(), INSTANT_FIELD),
+              loadThis(),
+              getField(implementationTarget.getInstrumentedType(), INSTANT_FIELD),
               MethodReturn.REFERENCE);
         }
     }

@@ -33,10 +33,15 @@ import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.pool.TypePool;
 
 final class ByteBuddyUtils {
-    static final StackManipulation THIS = MethodVariableAccess.loadThis();
+    private static final StackManipulation LOAD_THIS = MethodVariableAccess.loadThis();
 
     private ByteBuddyUtils() {
 
+    }
+
+    // TODO: eliminate this method once MethodVariableAccess.loadThis() returns a singleton
+    static StackManipulation loadThis() {
+        return LOAD_THIS;
     }
 
     static StackManipulation invokeMethod(final Method method) {
@@ -57,10 +62,6 @@ final class ByteBuddyUtils {
 
     static StackManipulation markLabel(final Label label) {
         return new Mark(label);
-    }
-
-    static StackManipulation loadThis() {
-        return THIS;
     }
 
     static StackManipulation getField(final Field field) {
