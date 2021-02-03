@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -95,7 +96,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
 
     @Override
     public Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements() {
-        return substatements;
+        return verifyNotNull(substatements);
     }
 
     @Override

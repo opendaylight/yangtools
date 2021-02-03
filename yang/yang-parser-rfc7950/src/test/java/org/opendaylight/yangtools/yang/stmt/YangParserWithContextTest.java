@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -193,17 +192,6 @@ public class YangParserWithContextTest {
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
-
-        final Collection<? extends UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
-        assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.iterator().next();
-        assertTrue(node_u.isAddedByUses());
-
-        final Collection<? extends UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
-        assertEquals(1, nodes_g.size());
-        final UnknownSchemaNode node_g = nodes_g.iterator().next();
-        assertFalse(node_g.isAddedByUses());
-        assertFalse(node_u.equals(node_g));
     }
 
     @Test
