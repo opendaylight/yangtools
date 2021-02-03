@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -20,14 +21,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractHashedValueStatementSupport
-        extends AbstractVoidStatementSupport<OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> {
+        extends AbstractEmptyStatementSupport<OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> {
 
     private static final class Declared extends WithSubstatements implements OpenConfigHashedValueStatement {
         private final @NonNull StatementDefinition definition;
@@ -45,12 +46,12 @@ abstract class AbstractHashedValueStatementSupport
     }
 
     private static final class Effective
-            extends UnknownEffectiveStatementBase<Void, OpenConfigHashedValueStatement>
+            extends UnknownEffectiveStatementBase<Empty, OpenConfigHashedValueStatement>
             implements OpenConfigHashedValueEffectiveStatement {
         private final @NonNull StatementDefinition definition;
         private final @NonNull Object path;
 
-        Effective(final Current<Void, OpenConfigHashedValueStatement> stmt,
+        Effective(final Current<Empty, OpenConfigHashedValueStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             super(stmt, substatements);
             definition = stmt.publicDefinition();
@@ -89,20 +90,20 @@ abstract class AbstractHashedValueStatementSupport
 
     @Override
     protected final OpenConfigHashedValueStatement createDeclared(
-            final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx,
+            final StmtContext<Empty, OpenConfigHashedValueStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new Declared(getPublicView(), substatements);
     }
 
     @Override
     protected final OpenConfigHashedValueStatement createEmptyDeclared(
-            final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
+            final StmtContext<Empty, OpenConfigHashedValueStatement, ?> ctx) {
         return createDeclared(ctx, ImmutableList.of());
     }
 
     @Override
     protected OpenConfigHashedValueEffectiveStatement createEffective(
-            final Current<Void, OpenConfigHashedValueStatement> stmt,
+            final Current<Empty, OpenConfigHashedValueStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new Effective(stmt, substatements);
     }

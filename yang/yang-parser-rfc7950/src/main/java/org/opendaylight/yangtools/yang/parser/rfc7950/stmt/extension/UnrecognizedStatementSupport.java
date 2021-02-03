@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 // FIXME: YANGTOOLS-1196: remove this class
 @Deprecated
 final class UnrecognizedStatementSupport
-        extends AbstractStatementSupport<String, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
+        extends AbstractStatementSupport<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition, StatementPolicy.alwaysCopyDeclared());
     }
@@ -62,18 +62,18 @@ final class UnrecognizedStatementSupport
     }
 
     @Override
-    protected UnrecognizedStatement createDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx,
+    protected UnrecognizedStatement createDeclared(final StmtContext<Object, UnrecognizedStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new UnrecognizedStatementImpl(ctx.rawArgument(), ctx.publicDefinition(), substatements);
     }
 
     @Override
-    protected UnrecognizedStatement createEmptyDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx) {
+    protected UnrecognizedStatement createEmptyDeclared(final StmtContext<Object, UnrecognizedStatement, ?> ctx) {
         return createDeclared(ctx, ImmutableList.of());
     }
 
     @Override
-    protected UnrecognizedEffectiveStatement createEffective(final Current<String, UnrecognizedStatement> stmt,
+    protected UnrecognizedEffectiveStatement createEffective(final Current<Object, UnrecognizedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // FIXME: Remove following section after fixing 4380
         final UnknownSchemaNode original = (UnknownSchemaNode) stmt.original();
@@ -81,8 +81,8 @@ final class UnrecognizedStatementSupport
             original == null ? qnameFromArgument(stmt) : original.getQName());
     }
 
-    private static QName qnameFromArgument(final Current<String, UnrecognizedStatement> stmt) {
-        final String value = stmt.argument();
+    private static QName qnameFromArgument(final Current<Object, UnrecognizedStatement> stmt) {
+        final String value = stmt.rawArgument();
         if (value == null || value.isEmpty()) {
             return stmt.publicDefinition().getStatementName();
         }

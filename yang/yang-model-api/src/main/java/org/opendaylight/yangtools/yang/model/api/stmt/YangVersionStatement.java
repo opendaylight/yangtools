@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -19,11 +16,6 @@ public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.YANG_VERSION;
-    }
-
-    default @NonNull YangVersion getValue() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
     }
 }
 

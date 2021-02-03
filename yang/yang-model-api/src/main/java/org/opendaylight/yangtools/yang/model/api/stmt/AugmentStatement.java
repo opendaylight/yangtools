@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -25,11 +23,7 @@ public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
         return YangStmtMapping.AUGMENT;
     }
 
-    default @NonNull SchemaNodeIdentifier getTargetNode() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
-    }
-
+    // FIXME: 7.0.0: determine the utility of this method
     default @NonNull Collection<? extends CaseStatement> getCases() {
         return declaredSubstatements(CaseStatement.class);
     }

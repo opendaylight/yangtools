@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.openconfig.model.api;
 
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 /**
@@ -15,6 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
  *
  * @author Robert Varga
  */
-public interface OpenConfigHashedValueStatement extends UnknownStatement<Void> {
+public interface OpenConfigHashedValueStatement extends UnknownStatement<Empty> {
 
 }

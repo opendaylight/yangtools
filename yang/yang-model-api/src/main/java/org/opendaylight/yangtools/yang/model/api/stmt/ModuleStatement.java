@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -20,11 +17,6 @@ public interface ModuleStatement extends MetaDeclaredStatement<UnqualifiedQName>
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.MODULE;
-    }
-
-    default @NonNull String getName() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(rawArgument());
     }
 
     @Override

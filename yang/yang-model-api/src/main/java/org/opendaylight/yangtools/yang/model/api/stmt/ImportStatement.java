@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -19,11 +17,6 @@ public interface ImportStatement extends DocumentedDeclaredStatement<String> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.IMPORT;
-    }
-
-    default @NonNull String getModule() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(rawArgument());
     }
 
     default @NonNull PrefixStatement getPrefix() {

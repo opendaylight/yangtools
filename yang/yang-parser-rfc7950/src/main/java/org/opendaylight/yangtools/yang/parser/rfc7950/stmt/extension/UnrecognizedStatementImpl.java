@@ -11,12 +11,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawArgument.WithSubstatements;
 
-final class UnrecognizedStatementImpl extends WithSubstatements implements UnrecognizedStatement {
+final class UnrecognizedStatementImpl extends WithSubstatements<Object> implements UnrecognizedStatement {
     private final @NonNull StatementDefinition definition;
 
     UnrecognizedStatementImpl(final String rawArgument, final @NonNull StatementDefinition statementDefinition,
@@ -28,5 +29,11 @@ final class UnrecognizedStatementImpl extends WithSubstatements implements Unrec
     @Override
     public StatementDefinition statementDefinition() {
         return definition;
+    }
+
+    @Override
+    public @NonNull Object argument() {
+        final String raw = rawArgument();
+        return raw != null ? raw : Empty.getInstance();
     }
 }

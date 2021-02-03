@@ -8,20 +8,22 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
-public abstract class AbstractVoidStatementSupport<D extends DeclaredStatement<Void>,
-        E extends EffectiveStatement<Void, D>> extends AbstractStatementSupport<Void, D, E> {
-    protected AbstractVoidStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<Void, D> policy) {
+public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement<Empty>,
+        E extends EffectiveStatement<Empty, D>> extends AbstractStatementSupport<Empty, D, E> {
+    protected AbstractEmptyStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<Empty, D> policy) {
         super(publicDefinition, policy);
     }
 
     @Override
-    public final Void parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return null;
+    public final Empty parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        InferenceException.throwIf(value != null, ctx, "Unexpected argument value %s", value);
+        return Empty.getInstance();
     }
 }

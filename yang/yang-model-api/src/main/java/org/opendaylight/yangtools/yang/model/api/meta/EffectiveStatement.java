@@ -14,11 +14,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Effective model statement which should be used to derive application behaviour.
  *
- * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
 public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {

@@ -22,7 +22,7 @@ abstract class AbstractKeyStatement extends WithRawArgument<Set<QName>> implemen
     }
 
     @Override
-    public final @NonNull Set<QName> argument() {
+    public final Set<QName> argument() {
         return KeyStatementSupport.unmaskSet(argument);
     }
 }

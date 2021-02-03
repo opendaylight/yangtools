@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -21,11 +19,7 @@ public interface DeviationStatement extends DocumentedDeclaredStatement<Absolute
         return YangStmtMapping.DEVIATION;
     }
 
-    default @NonNull Absolute getTargetNode() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
-    }
-
+    // FIXME: 7.0.0: evaluate usefulness of this
     default @NonNull Collection<? extends DeviateStatement> getDeviateStatements() {
         return declaredSubstatements(DeviateStatement.class);
     }
