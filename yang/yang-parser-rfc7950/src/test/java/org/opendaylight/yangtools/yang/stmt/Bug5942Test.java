@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 public class Bug5942Test {
     @Test
@@ -41,10 +41,11 @@ public class Bug5942Test {
 
         assertEquals("0!=1", usesNode.getWhenCondition().orElseThrow().toString());
 
-        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = usesNode.getUnknownSchemaNodes();
-        assertEquals(1, unknownSchemaNodes.size());
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-        assertEquals("argument", unknownSchemaNode.getNodeParameter());
-        assertEquals(QName.create("foo", "2016-06-02", "e"), unknownSchemaNode.getExtensionDefinition().getQName());
+        final UnrecognizedStatement unknownSchemaNode = usesNode.asEffectiveStatement().getDeclared()
+            .findFirstDeclaredSubstatement(UnrecognizedStatement.class).orElseThrow();
+
+        assertEquals("argument", unknownSchemaNode.argument());
+        assertEquals(QName.create("foo", "2016-06-02", "e"),
+            unknownSchemaNode.statementDefinition().getStatementName());
     }
 }
