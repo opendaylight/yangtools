@@ -7,13 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.stream.Stream;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -42,8 +36,6 @@ public final class ExtensionStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .build();
     private static final ExtensionStatementSupport INSTANCE = new ExtensionStatementSupport();
-    private static final ThreadLocal<Map<Current<?, ?>, ExtensionEffectiveStatementImpl>> TL_BUILDERS =
-            new ThreadLocal<>();
 
     private ExtensionStatementSupport() {
         super(YangStmtMapping.EXTENSION, StatementPolicy.reject());
@@ -97,43 +89,8 @@ public final class ExtensionStatementSupport
     }
 
     @Override
-    public ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
-            final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
-            final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
-        Map<Current<?, ?>, ExtensionEffectiveStatementImpl> tl = TL_BUILDERS.get();
-        if (tl == null) {
-            tl = new IdentityHashMap<>();
-            TL_BUILDERS.set(tl);
-        }
-
-        final ExtensionEffectiveStatementImpl existing = tl.get(stmt);
-        if (existing != null) {
-            // Implies non-empty map, no cleanup necessary
-            return existing;
-        }
-
-        try {
-            final ExtensionEffectiveStatementImpl created = new ExtensionEffectiveStatementImpl(stmt.declared(),
-                stmt.optionalPath());
-            verify(tl.put(stmt, created) == null);
-            try {
-                return super.createEffective(stmt, declaredSubstatements, inferredSubstatements);
-            } finally {
-                verify(tl.remove(stmt) == created);
-            }
-        } finally {
-            if (tl.isEmpty()) {
-                TL_BUILDERS.remove();
-            }
-        }
-    }
-
-    @Override
     protected ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final ExtensionEffectiveStatementImpl ret = verifyNotNull(verifyNotNull(TL_BUILDERS.get(),
-            "Statement build state not initialized").get(stmt), "No build state found for %s", stmt);
-        ret.setSubstatements(substatements);
-        return ret;
+        return new ExtensionEffectiveStatementImpl(stmt.declared(), substatements, stmt.optionalPath());
     }
 }

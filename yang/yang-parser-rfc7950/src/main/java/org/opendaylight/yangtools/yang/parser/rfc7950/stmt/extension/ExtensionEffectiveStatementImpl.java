@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
@@ -65,11 +64,12 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
 
     private final @Nullable SchemaPath path;
+    private final Object substatements;
 
-    private volatile Object substatements;
-
-    ExtensionEffectiveStatementImpl(final ExtensionStatement declared, final SchemaPath path) {
+    ExtensionEffectiveStatementImpl(final ExtensionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
         super(declared);
+        this.substatements = maskList(substatements);
         this.path = path;
     }
 
@@ -132,11 +132,6 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
         } finally {
             TOSTRING_DETECTOR.pop();
         }
-    }
-
-    void setSubstatements(final ImmutableList<? extends EffectiveStatement<?, ?>> newSubstatements) {
-        verify(substatements == null, "Substatements already initialized");
-        substatements = maskList(newSubstatements);
     }
 
     private String recursedToString() {
