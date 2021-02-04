@@ -163,7 +163,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
                     filteredStatements = new HashSet<>();
                 }
                 filteredStatements.addAll(effect);
-                substatementsInit.addAll(effect);
+                // Note: we need to filter here to exclude unsupported statements
+                effect.stream().filter(StmtContext::isSupportedToBuildEffective).forEach(substatementsInit::add);
             }
         }
 
