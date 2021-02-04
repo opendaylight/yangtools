@@ -42,8 +42,11 @@ import org.slf4j.LoggerFactory;
  * IT IS PROBABLY YOUR FAULT AND YOU ARE ON YOUR OWN.
  *
  * @author Robert Varga
+ * @deprecated This class is not used anywhere anymore and is scheduled for removal in the next major release.
  */
 @Beta
+@Deprecated(forRemoval = true)
+// FIXME: 8.0.0: remove this class
 public final class RecursiveObjectLeaker {
     // Logging note. Only keys passed can be logged, as objects beng resolved may not be properly constructed.
     private static final Logger LOG = LoggerFactory.getLogger(RecursiveObjectLeaker.class);
