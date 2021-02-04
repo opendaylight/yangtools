@@ -52,7 +52,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     protected abstract @NonNull D createEmptyDeclared(@NonNull StmtContext<A, D, ?> ctx);
 
     @Override
-    public E createEffective(final Current<A, D> stmt,
+    public final E createEffective(final Current<A, D> stmt,
             final Stream<? extends StmtContext<?, ?, ?>> declaredSubstatements,
             final Stream<? extends StmtContext<?, ?, ?>> inferredSubstatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
