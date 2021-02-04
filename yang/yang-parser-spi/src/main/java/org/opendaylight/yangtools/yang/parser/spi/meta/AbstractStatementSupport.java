@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -163,7 +164,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
                     filteredStatements = new HashSet<>();
                 }
                 filteredStatements.addAll(effect);
-                substatementsInit.addAll(effect);
+                // Note: we need to filter here to exclude unsupported statements
+                substatementsInit.addAll(Collections2.filter(effect, StmtContext::isSupportedToBuildEffective));
             }
         }
 
