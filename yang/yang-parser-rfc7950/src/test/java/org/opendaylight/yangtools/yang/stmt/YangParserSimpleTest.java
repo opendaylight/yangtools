@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -148,7 +149,7 @@ public class YangParserSimpleTest {
                 .getDataChildByName(QName.create(testModule.getQNameModule(), "nodes"));
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
-        assertEquals(SN_NODES_PATH, nodes.getPath());
+        assertPathEquals(SN_NODES_PATH, nodes);
         assertEquals(Optional.of("nodes collection"), nodes.getDescription());
         assertEquals(Optional.of("nodes ref"), nodes.getReference());
         assertEquals(Status.CURRENT, nodes.getStatus());
@@ -201,7 +202,7 @@ public class YangParserSimpleTest {
         assertEquals(8, nodes.getChildNodes().size());
         final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "added"));
-        assertEquals(createPath("nodes", "added"), added.getPath());
+        assertPathEquals(createPath("nodes", "added"), added);
         assertEquals(createPath("mytype").getLastComponent(), added.getType().getQName());
 
         final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
