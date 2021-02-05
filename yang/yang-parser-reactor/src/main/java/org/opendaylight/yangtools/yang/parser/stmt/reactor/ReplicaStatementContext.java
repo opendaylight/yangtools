@@ -36,13 +36,11 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     private final ReactorStmtCtx<A, D, E> source;
 
     ReplicaStatementContext(final StatementContextBase<?, ?, ?> parent, final ReactorStmtCtx<A, D, E> source) {
-        super(source);
+        super(source, null);
         this.parent = requireNonNull(parent);
         this.source = requireNonNull(source);
         if (source.isSupportedToBuildEffective()) {
             source.incRef();
-            // FIXME: is this call really needed? it is inherited from source
-            setFullyDefined();
         }
     }
 
@@ -136,7 +134,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     int sweepSubstatements() {
-        if (fullyDefined()) {
+        if (haveSourceReference()) {
             source.decRef();
         }
         return 0;

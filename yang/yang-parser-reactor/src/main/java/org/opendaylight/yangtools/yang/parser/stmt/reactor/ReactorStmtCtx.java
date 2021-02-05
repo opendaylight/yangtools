@@ -148,7 +148,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // hence improve memory layout.
     private byte flags;
 
-    // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
+    // Flag for use with AbstractResumedStatement and ReplicateStatementContext. This is hiding in the alignment shadow
+    // created by above boolean
     // FIXME: move this out once we have JDK15+
     private boolean fullyDefined;
 
@@ -164,6 +165,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original) {
         isSupportedToBuildEffective = original.isSupportedToBuildEffective;
         fullyDefined = original.fullyDefined;
+        flags = original.flags;
+    }
+
+    // Used by ReplicaStatementContext only
+    ReactorStmtCtx(final ReactorStmtCtx<A, D, E> original, final Void dummy) {
+        fullyDefined = isSupportedToBuildEffective = original.isSupportedToBuildEffective;
         flags = original.flags;
     }
 
@@ -509,14 +516,18 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return false;
     }
 
-    // These two exist only due to memory optimization, should live in AbstractResumedStatement. We are also reusing
-    // this for ReplicaStatementContext's refcount tracking.
+    // These two exist only due to memory optimization, should live in AbstractResumedStatement.
     final boolean fullyDefined() {
         return fullyDefined;
     }
 
     final void setFullyDefined() {
         fullyDefined = true;
+    }
+
+    // This exists only due to memory optimization, should live in ReplicaStatementContext.
+    final boolean haveSourceReference() {
+        return fullyDefined;
     }
 
     // These two exist only for StatementContextBase. Since we are squeezed for size, with only a single bit available
@@ -647,6 +658,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
         if (current <= REFCOUNT_NONE) {
             // Underflow, become defunct
+            // FIXME: add a global 'warn once' flag
             LOG.warn("Statement refcount underflow, reference counting disabled for {}", this, new Throwable());
             refcount = REFCOUNT_DEFUNCT;
             return;
@@ -855,6 +867,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             return true;
         }
         if (childRefs < 0 || childRefs >= REFCOUNT_DEFUNCT) {
+            // FIXME: add a global 'warn once' flag
             LOG.warn("Negative child refcount {} cannot be stored, reference counting disabled for {}", childRefs, this,
                 new Throwable());
             refcount = REFCOUNT_DEFUNCT;
