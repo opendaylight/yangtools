@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.FileNotFoundException;
@@ -84,9 +85,9 @@ public class EffectiveBuildTest {
         ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode) grpSubCon2.getDataChildByName(q6);
         assertNotNull(grpSubSubCon2);
 
-        assertEquals(SchemaPath.create(true, q1, q2, q3), subSubCon.getPath());
-        assertEquals(SchemaPath.create(true, q4, q5, q6), subSubCon2.getPath());
-        assertEquals(SchemaPath.create(true, q7, q5, q6), grpSubSubCon2.getPath());
+        assertPathEquals(SchemaPath.create(true, q1, q2, q3), subSubCon);
+        assertPathEquals(SchemaPath.create(true, q4, q5, q6), subSubCon2);
+        assertPathEquals(SchemaPath.create(true, q7, q5, q6), grpSubSubCon2);
     }
 
     @Test

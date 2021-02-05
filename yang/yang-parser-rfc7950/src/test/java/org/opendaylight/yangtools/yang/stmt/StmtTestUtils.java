@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileFilter;
@@ -27,6 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -274,5 +278,25 @@ public final class StmtTestUtils {
 
         return context.findModule(requestedModuleImport.getModuleName(), requestedModuleImport.getRevision())
                 .orElse(null);
+    }
+
+    /**
+     * Assertion that a {@link SchemaNode} reports expected path. This method deals with {@link SchemaNode#getPath()}
+     * being unavailable by comparing {@link SchemaNode#getQName()} to {@link SchemaPath#getLastComponent()}.
+     *
+     * @param expected Expected
+     * @param node Node to examine
+     * @throws AssertionError if the
+     */
+    public static void assertPathEquals(final SchemaPath expected, final SchemaNode node) {
+        final SchemaPath actual;
+        try {
+            actual = node.getPath();
+        } catch (UnsupportedOperationException e) {
+            LOG.trace("Node {} does not support getPath()", node, e);
+            assertEquals(expected.getLastComponent(), node.getQName());
+            return;
+        }
+        assertEquals(expected, actual);
     }
 }

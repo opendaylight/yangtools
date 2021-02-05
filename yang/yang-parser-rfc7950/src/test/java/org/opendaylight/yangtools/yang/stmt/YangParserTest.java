@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Range;
@@ -126,7 +127,7 @@ public class YangParserTest {
         assertEquals(QName.create(BAR, "ifEntry"), ifEntry.getQName());
 
         final SchemaPath expectedPath = TestUtils.createPath(true, BAR, "interfaces", "ifEntry");
-        assertEquals(expectedPath, ifEntry.getPath());
+        assertPathEquals(expectedPath, ifEntry);
         assertFalse(ifEntry.getDescription().isPresent());
         assertFalse(ifEntry.getReference().isPresent());
         assertEquals(Status.CURRENT, ifEntry.getStatus());
@@ -506,9 +507,7 @@ public class YangParserTest {
             }
         }
         assertNotNull(input);
-        assertNotNull(input.getPath());
         assertNotNull(output);
-        assertNotNull(output.getPath());
     }
 
     @Test
@@ -559,7 +558,7 @@ public class YangParserTest {
         // test SchemaNode args
         assertEquals(QName.create(BAZ, "event"), notification.getQName());
         final SchemaPath expectedPath = SchemaPath.create(true,  QName.create(BAZ, "event"));
-        assertEquals(expectedPath, notification.getPath());
+        assertPathEquals(expectedPath, notification);
         assertFalse(notification.getDescription().isPresent());
         assertFalse(notification.getReference().isPresent());
         assertEquals(Status.CURRENT, notification.getStatus());
