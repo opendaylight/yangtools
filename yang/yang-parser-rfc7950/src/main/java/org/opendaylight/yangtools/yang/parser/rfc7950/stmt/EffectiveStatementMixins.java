@@ -412,7 +412,7 @@ public final class EffectiveStatementMixins {
         }
 
         default String defaultToString() {
-            return MoreObjects.toStringHelper(this).add("path", getPath()).toString();
+            return MoreObjects.toStringHelper(this).add("qname", getQName()).toString();
         }
     }
 
