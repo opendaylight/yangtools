@@ -15,7 +15,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +22,6 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.Uint16;
-import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.common.Uint64;
-import org.opendaylight.yangtools.yang.common.Uint8;
 
 /**
  * Helper methods for generated binding code. This class concentrates useful primitives generated code may call
@@ -317,66 +312,6 @@ public final class CodeHelpers {
     }
 
     /**
-     * Compatibility utility for converting a legacy {@link Short} {@code uint8} value to its {@link Uint8}
-     * counterpart.
-     *
-     * @param value Legacy value
-     * @return Converted value
-     * @throws IllegalArgumentException if the value does not fit an Uint8
-     * @deprecated This method is provided for migration purposes only, do not use it outside of deprecated
-     *             compatibility methods.
-     */
-    @Deprecated
-    public static @Nullable Uint8 compatUint(final @Nullable Short value) {
-        return value == null ? null : Uint8.valueOf(value.shortValue());
-    }
-
-    /**
-     * Compatibility utility for converting a legacy {@link Integer} {@code uint16} value to its {@link Uint16}
-     * counterpart.
-     *
-     * @param value Legacy value
-     * @return Converted value
-     * @throws IllegalArgumentException if the value does not fit an Uint16
-     * @deprecated This method is provided for migration purposes only, do not use it outside of deprecated
-     *             compatibility methods.
-     */
-    @Deprecated
-    public static @Nullable Uint16 compatUint(final @Nullable Integer value) {
-        return value == null ? null : Uint16.valueOf(value.intValue());
-    }
-
-    /**
-     * Compatibility utility for converting a legacy {@link Long} {@code uint32} value to its {@link Uint32}
-     * counterpart.
-     *
-     * @param value Legacy value
-     * @return Converted value
-     * @throws IllegalArgumentException if the value does not fit an Uint32
-     * @deprecated This method is provided for migration purposes only, do not use it outside of deprecated
-     *             compatibility methods.
-     */
-    @Deprecated
-    public static @Nullable Uint32 compatUint(final @Nullable Long value) {
-        return value == null ? null : Uint32.valueOf(value.longValue());
-    }
-
-    /**
-     * Compatibility utility for converting a legacy {@link BigInteger} {@code uint64} value to its {@link Uint64}
-     * counterpart.
-     *
-     * @param value Legacy value
-     * @return Converted value
-     * @throws IllegalArgumentException if the value does not fit an Uint64
-     * @deprecated This method is provided for migration purposes only, do not use it outside of deprecated
-     *             compatibility methods.
-     */
-    @Deprecated
-    public static @Nullable Uint64 compatUint(final @Nullable BigInteger value) {
-        return value == null ? null : Uint64.valueOf(value);
-    }
-
-    /**
      * Utility method for checking whether a target object is a compatible DataObject.
      *
      * @param requiredClass Required DataObject class
@@ -435,10 +370,12 @@ public final class CodeHelpers {
     /**
      * The constant '31' is the result of folding this code:
      * <pre>
+     *   <code>
      *     final int prime = 31;
      *     int result = 1;
      *     result = result * prime + Objects.hashCode(obj);
      *     return result;
+     *   </code>
      * </pre>
      * when hashCode is returned as 0, such as due to obj being null or its hashCode being 0.
      *
