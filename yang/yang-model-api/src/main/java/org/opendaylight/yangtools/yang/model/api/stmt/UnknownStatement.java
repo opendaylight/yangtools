@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-// FIXME: evaluate usefulness of this
 @Beta
+// FIXME: remove this interface once UnknownSchemaNode is gone
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
 
 }
