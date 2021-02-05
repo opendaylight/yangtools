@@ -451,12 +451,12 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    Stream<? extends StmtContext<?, ?, ?>> streamDeclared() {
+    Stream<? extends @NonNull StmtContext<?, ?, ?>> streamDeclared() {
         return Stream.empty();
     }
 
     @Override
-    Stream<? extends StmtContext<?, ?, ?>> streamEffective() {
+    Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective() {
         accessSubstatements();
         return ensureEffectiveSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
     }
