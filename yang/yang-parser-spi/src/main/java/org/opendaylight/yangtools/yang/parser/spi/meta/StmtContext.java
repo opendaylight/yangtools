@@ -147,9 +147,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     }
 
     /**
-     * Builds {@link EffectiveStatement} for statement context.
+     * Return the {@link EffectiveStatement} for statement context, creating it if required. Implementations of this
+     * method are required to memoize the returned object, so that subsequent invocation return the same object.
+     *
+     * <p>
+     * If {@link #isSupportedToBuildEffective()} returns {@code false}, this method's behaviour is undefined.
+     *
+     * @return Effective statement instance.
      */
-    E buildEffective();
+    @NonNull E buildEffective();
 
     boolean isSupportedToBuildEffective();
 

@@ -356,7 +356,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return (existing = effectiveInstance) != null ? existing : loadEffective();
     }
 
-    private E loadEffective() {
+    private @NonNull E loadEffective() {
         // Creating an effective statement does not strictly require a declared instance -- there are statements like
         // 'input', which are implicitly defined.
         // Our implementation design makes an invariant assumption that buildDeclared() has been called by the time
