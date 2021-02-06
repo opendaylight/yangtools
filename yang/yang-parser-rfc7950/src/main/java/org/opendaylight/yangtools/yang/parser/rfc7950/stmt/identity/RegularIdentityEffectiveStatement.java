@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -20,7 +21,7 @@ final class RegularIdentityEffectiveStatement extends AbstractIdentityEffectiveS
     private final @NonNull Object substatements;
     private final int flags;
 
-    RegularIdentityEffectiveStatement(final IdentityStatement declared, final Object path, final int flags,
+    RegularIdentityEffectiveStatement(final IdentityStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableSet<? extends IdentitySchemaNode> baseIdentities) {
         super(declared, path);

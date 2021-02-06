@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -49,7 +50,7 @@ abstract class AbstractHashedValueStatementSupport
             extends UnknownEffectiveStatementBase<Empty, OpenConfigHashedValueStatement>
             implements OpenConfigHashedValueEffectiveStatement {
         private final @NonNull StatementDefinition definition;
-        private final @NonNull Object path;
+        private final @NonNull Immutable path;
 
         Effective(final Current<Empty, OpenConfigHashedValueStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

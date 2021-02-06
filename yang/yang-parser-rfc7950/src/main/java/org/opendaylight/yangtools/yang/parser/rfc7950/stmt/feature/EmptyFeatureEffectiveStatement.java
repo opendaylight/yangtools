@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
@@ -19,10 +20,10 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 
 class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
         implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<QName, FeatureStatement> {
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
-    EmptyFeatureEffectiveStatement(final FeatureStatement declared, final Object path, final int flags) {
+    EmptyFeatureEffectiveStatement(final FeatureStatement declared, final Immutable path, final int flags) {
         super(declared);
         this.path = requireNonNull(path);
         this.flags = flags;
@@ -40,7 +41,7 @@ class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
 
     @Override
     @Deprecated
-    public final Object pathObject() {
+    public final Immutable pathObject() {
         return path;
     }
 

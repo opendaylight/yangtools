@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -44,10 +45,10 @@ abstract class AbstractListEffectiveStatement
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
     private final @NonNull Object substatements;
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final @NonNull Object keyDefinition;
 
-    AbstractListEffectiveStatement(final ListStatement declared, final Object path, final int flags,
+    AbstractListEffectiveStatement(final ListStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
         super(declared, substatements);
@@ -57,7 +58,8 @@ abstract class AbstractListEffectiveStatement
         this.flags = flags;
     }
 
-    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final Object path, final int flags) {
+    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final Immutable path,
+            final int flags) {
         super(original);
         this.path = requireNonNull(path);
         this.substatements = original.substatements;
@@ -81,7 +83,7 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
-    public final Object pathObject() {
+    public final Immutable pathObject() {
         return path;
     }
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc6536.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
@@ -39,7 +40,7 @@ public final class DefaultDenyAllStatementSupport
 
     private static final class Effective extends UnknownEffectiveStatementBase<Empty, DefaultDenyAllStatement>
             implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
-        private final @NonNull Object path;
+        private final @NonNull Immutable path;
 
         Effective(final Current<Empty, DefaultDenyAllStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

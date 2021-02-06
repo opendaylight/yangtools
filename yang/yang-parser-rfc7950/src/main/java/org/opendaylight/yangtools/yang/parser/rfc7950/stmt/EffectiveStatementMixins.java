@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -328,7 +329,7 @@ public final class EffectiveStatementMixins {
             return SchemaPathSupport.extractPath(this, pathObject());
         }
 
-        @NonNull Object pathObject();
+        @NonNull Immutable pathObject();
     }
 
     /**

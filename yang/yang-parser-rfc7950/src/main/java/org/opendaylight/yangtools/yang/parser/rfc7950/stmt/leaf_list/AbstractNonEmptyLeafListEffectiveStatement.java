@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,7 +20,7 @@ abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafLi
     private final @Nullable LeafListSchemaNode original;
     private final @Nullable ElementCountConstraint elementCountConstraint;
 
-    AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final Object path, final int flags,
+    AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
         super(declared, path, flags, substatements);
@@ -28,14 +29,14 @@ abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafLi
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final AbstractNonEmptyLeafListEffectiveStatement originalEffecive,
-            final LeafListSchemaNode original, final Object path, final int flags) {
+            final LeafListSchemaNode original, final Immutable path, final int flags) {
         super(originalEffecive, path, flags);
         this.elementCountConstraint = originalEffecive.elementCountConstraint;
         this.original = original;
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
-            final LeafListSchemaNode original, final Object path, final int flags) {
+            final LeafListSchemaNode original, final Immutable path, final int flags) {
         super(originalEffective, path, flags);
         this.elementCountConstraint = null;
         this.original = original;

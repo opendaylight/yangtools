@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc6241.parser;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
@@ -47,7 +48,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     private static final class Effective
             extends UnknownEffectiveStatementBase<Empty, GetFilterElementAttributesStatement>
             implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
-        private final @NonNull Object path;
+        private final @NonNull Immutable path;
 
         Effective(final Current<Empty, GetFilterElementAttributesStatement> stmt,
                 final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
