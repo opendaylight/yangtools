@@ -377,6 +377,8 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
 
     /**
      * Returns true if this support has argument specific supports.
+     *
+     * @return true if this support has argument specific supports.
      */
     public boolean hasArgumentSpecificSupports() {
         // Most of statement supports don't have any argument specific supports, so return 'false'.
