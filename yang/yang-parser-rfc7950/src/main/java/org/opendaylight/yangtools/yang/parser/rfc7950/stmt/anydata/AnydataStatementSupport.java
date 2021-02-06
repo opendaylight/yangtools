@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -73,7 +74,7 @@ public final class AnydataStatementSupport
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
-        final Object path = stmt.effectivePath();
+        final Immutable path = stmt.effectivePath();
 
         return substatements.isEmpty()
             ? new EmptyAnydataEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))

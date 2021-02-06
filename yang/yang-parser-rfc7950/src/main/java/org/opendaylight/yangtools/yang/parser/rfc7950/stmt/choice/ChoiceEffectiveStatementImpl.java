@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -33,12 +34,12 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
                    MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
     ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final Object path, final @Nullable CaseSchemaNode defaultCase,
+            final Immutable path, final @Nullable CaseSchemaNode defaultCase,
             final @Nullable ChoiceSchemaNode original) {
         super(declared, substatements);
         this.path = requireNonNull(path);
@@ -48,7 +49,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final int flags,
-            final Object path, final ChoiceSchemaNode original) {
+            final Immutable path, final ChoiceSchemaNode original) {
         super(origEffective);
         this.path = requireNonNull(path);
         this.flags = flags;
@@ -62,7 +63,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 

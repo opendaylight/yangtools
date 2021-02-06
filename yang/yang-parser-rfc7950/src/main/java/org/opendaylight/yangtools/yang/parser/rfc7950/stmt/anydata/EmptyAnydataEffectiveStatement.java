@@ -13,6 +13,7 @@ import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -23,11 +24,11 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 
 class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
         implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final AnydataSchemaNode original;
     private final int flags;
 
-    EmptyAnydataEffectiveStatement(final AnydataStatement declared, final Object path, final int flags,
+    EmptyAnydataEffectiveStatement(final AnydataStatement declared, final Immutable path, final int flags,
             final @Nullable AnydataSchemaNode original) {
         super(declared);
         this.path = requireNonNull(path);
@@ -36,7 +37,7 @@ class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
     }
 
     @Override
-    public final Object pathObject() {
+    public final Immutable pathObject() {
         return path;
     }
 

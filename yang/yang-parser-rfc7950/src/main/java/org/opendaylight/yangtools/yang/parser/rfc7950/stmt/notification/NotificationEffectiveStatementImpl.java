@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -31,11 +32,12 @@ final class NotificationEffectiveStatementImpl
                    AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
                    MustConstraintMixin<QName, NotificationStatement> {
 
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
     NotificationEffectiveStatementImpl(final NotificationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags) {
         super(declared, substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
@@ -64,7 +66,7 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 

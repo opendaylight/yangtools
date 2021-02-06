@@ -11,18 +11,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Optional;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
 final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveStatement {
-    EmptyLeafListEffectiveStatement(final LeafListStatement declared, final Object path, final int flags,
+    EmptyLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, path, flags, substatements);
     }
 
-    EmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement original, final Object path,
+    EmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement original, final Immutable path,
             final int flags) {
         super(original, path, flags);
     }

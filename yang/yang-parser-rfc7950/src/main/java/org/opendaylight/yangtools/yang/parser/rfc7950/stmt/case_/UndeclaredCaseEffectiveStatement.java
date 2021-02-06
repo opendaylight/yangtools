@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -24,18 +25,18 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractUndeclaredEff
 final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement>
         implements CaseEffectiveStatementMixin {
     private final @Nullable CaseSchemaNode original;
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
     UndeclaredCaseEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Object path, final int flags, final @Nullable CaseSchemaNode original) {
+            final Immutable path, final int flags, final @Nullable CaseSchemaNode original) {
         super(substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
         this.original = original;
     }
 
-    UndeclaredCaseEffectiveStatement(final UndeclaredCaseEffectiveStatement origEffective, final Object path,
+    UndeclaredCaseEffectiveStatement(final UndeclaredCaseEffectiveStatement origEffective, final Immutable path,
             final int flags, final @Nullable CaseSchemaNode original) {
         super(origEffective);
         this.path = requireNonNull(path);
@@ -49,7 +50,7 @@ final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, Ca
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 

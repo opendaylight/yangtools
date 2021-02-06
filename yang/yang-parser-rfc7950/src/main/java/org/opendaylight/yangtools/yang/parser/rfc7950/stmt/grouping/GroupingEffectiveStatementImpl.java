@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -30,11 +31,12 @@ final class GroupingEffectiveStatementImpl
             DataNodeContainerMixin<QName, GroupingStatement>,
             SchemaNodeMixin<QName, GroupingStatement>, ActionNodeContainerMixin<QName, GroupingStatement>,
             NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
     GroupingEffectiveStatementImpl(final GroupingStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags) {
         super(declared, substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
@@ -46,7 +48,7 @@ final class GroupingEffectiveStatementImpl
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 

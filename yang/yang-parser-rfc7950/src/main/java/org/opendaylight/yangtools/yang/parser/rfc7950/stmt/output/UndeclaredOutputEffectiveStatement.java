@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
@@ -23,17 +24,17 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 final class UndeclaredOutputEffectiveStatement
         extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
         implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
     UndeclaredOutputEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Object path, final int flags) {
+            final Immutable path, final int flags) {
         super(substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
     }
 
-    UndeclaredOutputEffectiveStatement(final UndeclaredOutputEffectiveStatement original, final Object path,
+    UndeclaredOutputEffectiveStatement(final UndeclaredOutputEffectiveStatement original, final Immutable path,
             final int flags) {
         super(original);
         this.path = requireNonNull(path);
@@ -41,7 +42,7 @@ final class UndeclaredOutputEffectiveStatement
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 

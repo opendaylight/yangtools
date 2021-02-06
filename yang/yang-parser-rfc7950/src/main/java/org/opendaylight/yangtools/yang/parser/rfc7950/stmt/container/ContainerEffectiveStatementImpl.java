@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -43,19 +44,19 @@ final class ContainerEffectiveStatementImpl
             AugmentationTargetMixin<QName, ContainerStatement> {
 
     private final int flags;
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final @Nullable ContainerSchemaNode original;
 
     ContainerEffectiveStatementImpl(final ContainerStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Object path, final int flags,
-            final ContainerSchemaNode original) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags, final ContainerSchemaNode original) {
         super(declared, substatements);
         this.path = requireNonNull(path);
         this.original = original;
         this.flags = flags;
     }
 
-    ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final Object path,
+    ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final Immutable path,
             final int flags, final ContainerSchemaNode original) {
         super(origEffective);
         this.path = requireNonNull(path);
@@ -74,7 +75,7 @@ final class ContainerEffectiveStatementImpl
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 
