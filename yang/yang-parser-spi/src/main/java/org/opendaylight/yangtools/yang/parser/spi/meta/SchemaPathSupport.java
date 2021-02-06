@@ -44,7 +44,7 @@ public abstract class SchemaPathSupport implements Immutable {
         // Hidden on purpose
     }
 
-    public static @NonNull Object toEffectivePath(final @NonNull SchemaPath path) {
+    public static @NonNull Immutable toEffectivePath(final @NonNull SchemaPath path) {
         return DEFAULT.effectivePath(path);
     }
 
@@ -56,17 +56,23 @@ public abstract class SchemaPathSupport implements Immutable {
         return DEFAULT.equalPaths(first, second);
     }
 
-    public static @NonNull QName extractQName(final @NonNull Object path) {
-        return path instanceof QName ? (QName) path : verifyNotNull(((SchemaPath) path).getLastComponent());
+    public static @NonNull QName extractQName(final @NonNull Immutable path) {
+        if (path instanceof SchemaPath) {
+            return verifyNotNull(((SchemaPath) path).getLastComponent());
+        } else if (path instanceof QName) {
+            return (QName) path;
+        } else {
+            throw new IllegalArgumentException("Unhandled object " + path);
+        }
     }
 
-    public static @NonNull SchemaPath extractPath(final @NonNull Object impl, final @NonNull Object path) {
+    public static @NonNull SchemaPath extractPath(final @NonNull Immutable impl, final @NonNull Object path) {
         return path instanceof SchemaPath ? (SchemaPath) path : SchemaNodeDefaults.throwUnsupported(impl);
     }
 
     abstract boolean equalPaths(@Nullable SchemaPath first, @Nullable SchemaPath second);
 
-    abstract @NonNull Object effectivePath(@NonNull SchemaPath path);
+    abstract @NonNull Immutable effectivePath(@NonNull SchemaPath path);
 
     abstract @Nullable SchemaPath optionalPath(@Nullable SchemaPath path);
 }
