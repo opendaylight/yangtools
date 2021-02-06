@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 final class RegularAnydataEffectiveStatement extends EmptyAnydataEffectiveStatement {
     private final @NonNull Object substatements;
 
-    RegularAnydataEffectiveStatement(final AnydataStatement declared, final Object path, final int flags,
+    RegularAnydataEffectiveStatement(final AnydataStatement declared, final Immutable path, final int flags,
             final @Nullable AnydataSchemaNode original,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, path, flags, original);

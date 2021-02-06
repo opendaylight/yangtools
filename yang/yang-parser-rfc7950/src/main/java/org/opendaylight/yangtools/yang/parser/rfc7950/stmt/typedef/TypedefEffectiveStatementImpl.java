@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -59,7 +60,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     }
 
     private final @NonNull Object substatements;
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final int flags;
 
     // Accessed via TYPE_DEFINITION
@@ -69,7 +70,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     @SuppressWarnings("unused")
     private volatile ProxyTypeEffectiveStatement typeStatement;
 
-    TypedefEffectiveStatementImpl(final TypedefStatement declared, final Object path, final int flags,
+    TypedefEffectiveStatementImpl(final TypedefStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.path = requireNonNull(path);
@@ -83,7 +84,7 @@ final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatemen
     }
 
     @Override
-    public Object pathObject() {
+    public Immutable pathObject() {
         return path;
     }
 

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -195,7 +196,7 @@ public final class ListStatementSupport
 
         final Optional<ElementCountConstraint> elementCountConstraint =
             EffectiveStmtUtils.createElementCountConstraint(substatements);
-        final Object path = stmt.effectivePath();
+        final Immutable path = stmt.effectivePath();
         final ListSchemaNode original = (ListSchemaNode) stmt.original();
         try {
             return original == null && !elementCountConstraint.isPresent()

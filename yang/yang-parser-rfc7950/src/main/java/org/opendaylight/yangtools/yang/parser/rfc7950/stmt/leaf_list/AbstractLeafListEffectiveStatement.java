@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -36,11 +37,11 @@ abstract class AbstractLeafListEffectiveStatement
             UserOrderedMixin<QName, LeafListStatement>, DataSchemaNodeMixin<QName, LeafListStatement>,
             MustConstraintMixin<QName, LeafListStatement> {
     private final @NonNull Object substatements;
-    private final @NonNull Object path;
+    private final @NonNull Immutable path;
     private final @NonNull TypeDefinition<?> type;
     private final int flags;
 
-    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final Object path, final int flags,
+    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.path = requireNonNull(path);
@@ -50,7 +51,7 @@ abstract class AbstractLeafListEffectiveStatement
         this.type = buildType();
     }
 
-    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final Object path,
+    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final Immutable path,
             final int flags) {
         super(original);
         this.path = requireNonNull(path);
@@ -76,7 +77,7 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
-    public final Object pathObject() {
+    public final Immutable pathObject() {
         return path;
     }
 
