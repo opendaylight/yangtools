@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNotNull;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +24,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -83,8 +82,8 @@ public class ImmutableNormalizedNodeStreamWriterTest {
     private DOMSource anyxmlDomSource;
 
     @Before
-    public void setup() throws URISyntaxException, ParseException {
-        bazModule = QNameModule.create(new URI("baz-namespace"), Revision.of("1970-01-01"));
+    public void setup() throws ParseException {
+        bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
 
         outerContainer = QName.create(bazModule, "outer-container");
 

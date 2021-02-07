@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -39,11 +39,11 @@ import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 public class AugmentTest {
     private static final QNameModule FOO = QNameModule.create(
-        URI.create("urn:opendaylight.foo"), Revision.of("2013-10-13"));
+        XMLNamespace.of("urn:opendaylight.foo"), Revision.of("2013-10-13"));
     private static final QNameModule BAR = QNameModule.create(
-        URI.create("urn:opendaylight.bar"), Revision.of("2013-10-14"));
+        XMLNamespace.of("urn:opendaylight.bar"), Revision.of("2013-10-14"));
     private static final QNameModule BAZ = QNameModule.create(
-        URI.create("urn:opendaylight.baz"), Revision.of("2013-10-15"));
+        XMLNamespace.of("urn:opendaylight.baz"), Revision.of("2013-10-15"));
 
     private static final QName Q0 = QName.create(BAR, "interfaces");
     private static final QName Q1 = QName.create(BAR, "ifEntry");
@@ -325,8 +325,8 @@ public class AugmentTest {
     @Test
     public void testAugmentRpc() throws Exception {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
-        final URI NS_BAR = URI.create("urn:opendaylight:bar");
-        final URI NS_FOO = URI.create("urn:opendaylight:foo");
+        final XMLNamespace NS_BAR = XMLNamespace.of("urn:opendaylight:bar");
+        final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
         final Revision revision = Revision.of("2013-10-11");
         final Module bar = TestUtils.findModule(context, "bar").get();
         final Collection<? extends RpcDefinition> rpcs = bar.getRpcs();

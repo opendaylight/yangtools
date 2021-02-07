@@ -15,12 +15,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -53,11 +52,11 @@ import org.w3c.dom.NodeList;
 public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<SourceIdentifier>
         implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
-    private static final LoadingCache<String, URI> URI_CACHE = CacheBuilder.newBuilder().weakValues().build(
-        new CacheLoader<String, URI>() {
+    private static final LoadingCache<String, XMLNamespace> NS_CACHE = CacheBuilder.newBuilder().weakValues().build(
+        new CacheLoader<String, XMLNamespace>() {
             @Override
-            public URI load(final String key) throws URISyntaxException {
-                return new URI(key);
+            public XMLNamespace load(final String key) {
+                return XMLNamespace.of(key).intern();
             }
         });
     private final Node root;
@@ -77,7 +76,7 @@ public final class YinStatementStreamSource extends AbstractSimpleIdentifiable<S
 
     private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
-        final URI uri = URI_CACHE.getUnchecked(node.getNamespaceURI());
+        final XMLNamespace uri = NS_CACHE.getUnchecked(node.getNamespaceURI());
         final StatementDefinition def = stmtDef.getByNamespaceAndLocalName(uri, node.getLocalName());
 
         if (def == null) {

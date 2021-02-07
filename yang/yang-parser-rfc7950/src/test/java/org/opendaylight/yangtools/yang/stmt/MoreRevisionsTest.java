@@ -13,13 +13,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -124,7 +124,7 @@ public class MoreRevisionsTest {
     }
 
     private static void checkContentFullTest(final SchemaContext context) {
-        URI yangTypesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types");
+        final XMLNamespace yangTypesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
         final Revision rev20100924 = Revision.of("2010-09-24");
         final Revision rev20130516 = Revision.of("2013-05-16");
@@ -187,7 +187,7 @@ public class MoreRevisionsTest {
     }
 
     private static void checkContentSimpleTest(final SchemaContext context) {
-        URI yangTypesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types");
+        final XMLNamespace yangTypesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
         final Revision rev20100924 = Revision.of("2010-09-24");
         final Revision rev20130516 = Revision.of("2013-05-16");
@@ -214,7 +214,7 @@ public class MoreRevisionsTest {
 
     private static void checkInterfacesModuleSimpleTest(final SchemaContext context,
             final Revision rev20100924, final QName dateTimeTypeDef20100924) {
-        URI interfacesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-interfaces");
+        XMLNamespace interfacesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-interfaces");
         Revision rev20121115 = Revision.of("2012-11-15");
         final QNameModule interfacesNS20121115 = QNameModule.create(interfacesNS, rev20121115);
         QName lastChange = QName.create(interfacesNS20121115, "last-change");
@@ -236,7 +236,7 @@ public class MoreRevisionsTest {
 
     private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
             final Revision rev20130715, final QName dateTimeTypeDef20130715) {
-        URI monitoringNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
+        final XMLNamespace monitoringNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
         final QNameModule monitoring19700101 = QNameModule.create(monitoringNS);
         QName lockedTime = QName.create(monitoring19700101, "locked-time");
 

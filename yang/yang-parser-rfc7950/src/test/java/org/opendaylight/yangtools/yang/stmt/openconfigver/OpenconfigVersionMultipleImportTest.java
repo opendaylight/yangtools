@@ -12,9 +12,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -54,8 +54,9 @@ public class OpenconfigVersionMultipleImportTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModules(new URI("foo")).iterator().next();
-        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
+            .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -69,8 +70,9 @@ public class OpenconfigVersionMultipleImportTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModules(new URI("foo")).iterator().next();
-        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
+            .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());

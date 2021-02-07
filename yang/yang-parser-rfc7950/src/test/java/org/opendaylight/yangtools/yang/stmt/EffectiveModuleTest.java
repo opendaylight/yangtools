@@ -12,13 +12,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -50,7 +50,7 @@ public class EffectiveModuleTest {
     private static final StatementStreamSource SUBMODULE = sourceForResource(
             "/semantic-statement-parser/effective-module/submod.yang");
 
-    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"));
+    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(XMLNamespace.of("root-ns"));
 
     private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
@@ -106,7 +106,7 @@ public class EffectiveModuleTest {
         assertEquals(1, deviations.size());
         final Deviation deviationStmt = deviations.iterator().next();
         assertNotNull(deviationStmt);
-        final QNameModule importedModuleQName = QNameModule.create(URI.create("imported"), REVISION);
+        final QNameModule importedModuleQName = QNameModule.create(XMLNamespace.of("imported"), REVISION);
         final QName importedContQName = QName.create(importedModuleQName, "cont");
         assertEquals(Absolute.of(importedContQName), deviationStmt.getTargetPath());
         assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());

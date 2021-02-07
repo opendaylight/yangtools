@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,12 +26,12 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
         prefixes = new RandomPrefix(nsContext);
     }
 
-    Iterable<Entry<URI, String>> getPrefixes() {
+    Iterable<Entry<XMLNamespace, String>> getPrefixes() {
         return prefixes.getPrefixes();
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(final XMLNamespace namespace) {
         return prefixes.encodePrefix(namespace);
     }
 

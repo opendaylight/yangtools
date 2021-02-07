@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.odlext.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.Collection;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -18,6 +17,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -58,7 +58,7 @@ public class Bug3874ExtensionTest {
                     YangTextSchemaSource.forResource("/bugs/bug3874/yang-ext.yang")))
                 .buildEffective();
 
-        QNameModule foo = QNameModule.create(URI.create("foo"));
+        QNameModule foo = QNameModule.create(XMLNamespace.of("foo"));
         QName myContainer2QName = QName.create(foo, "my-container-2");
         QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 

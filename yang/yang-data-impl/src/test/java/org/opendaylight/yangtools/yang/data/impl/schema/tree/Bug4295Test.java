@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -45,7 +45,7 @@ public class Bug4295Test {
 
     @Before
     public void init() {
-        foo = QNameModule.create(URI.create("foo"));
+        foo = QNameModule.create(XMLNamespace.of("foo"));
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");
         outerList = QName.create(foo, "outer-list");

@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -37,6 +36,7 @@ import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -82,7 +82,7 @@ public class YT1108Test {
 
     @Before
     public void setup() {
-        fooModule = QNameModule.create(URI.create("foo-namespace"));
+        fooModule = QNameModule.create(XMLNamespace.of("foo-namespace"));
         fooLeafContainer = QName.create(fooModule, "leaf-container");
 
         fooIdentity = QName.create(fooModule, "ident-one");
@@ -122,7 +122,7 @@ public class YT1108Test {
         new XMLTestCase() {}.assertXMLEqual(diff, true);
     }
 
-    private DOMResult convertNormalizedNodeToXml(NormalizedNode normalizedNode)
+    private DOMResult convertNormalizedNodeToXml(final NormalizedNode normalizedNode)
             throws XMLStreamException, IOException {
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
 

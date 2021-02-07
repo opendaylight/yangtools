@@ -11,12 +11,12 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -179,7 +179,7 @@ public class NormalizedDataBuilderTest {
     }
 
     private static QName getQName(final String localName) {
-        return QName.create(URI.create("namespace"), localName);
+        return QName.create(XMLNamespace.of("namespace"), localName);
     }
 
     private static NodeIdentifier getNodeIdentifier(final String localName) {

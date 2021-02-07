@@ -12,12 +12,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -39,7 +39,7 @@ public class EffectiveModulesAndSubmodulesTest {
     private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
             "/stmt-test/submodules/submodule-to-submodule-1.yang");
 
-    private static final QNameModule ROOT = QNameModule.create(URI.create("root-module"));
+    private static final QNameModule ROOT = QNameModule.create(XMLNamespace.of("root-module"));
 
     @Test
     public void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
@@ -164,8 +164,8 @@ public class EffectiveModulesAndSubmodulesTest {
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
         final Module foundRoot = result.findModule("root-module").get();
-        final Collection<? extends Module> foundRoots = result.findModules(URI.create("root-module"));
-        final Module foundRoot3 = result.findModule(URI.create("root-module")).get();
+        final Collection<? extends Module> foundRoots = result.findModules(XMLNamespace.of("root-module"));
+        final Module foundRoot3 = result.findModule(XMLNamespace.of("root-module")).get();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
@@ -180,8 +180,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot3);
 
         final Module foundImported = result.findModule("imported-module").get();
-        final Collection<? extends Module> foundImporteds = result.findModules(URI.create("imported-module"));
-        final Module foundImported3 = result.findModule(URI.create("imported-module")).get();
+        final Collection<? extends Module> foundImporteds = result.findModules(XMLNamespace.of("imported-module"));
+        final Module foundImported3 = result.findModule(XMLNamespace.of("imported-module")).get();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);

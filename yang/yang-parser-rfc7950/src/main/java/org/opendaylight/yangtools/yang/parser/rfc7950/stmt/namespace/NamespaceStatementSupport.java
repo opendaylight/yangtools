@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
-import java.net.URISyntaxException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class NamespaceStatementSupport
-        extends AbstractStatementSupport<URI, NamespaceStatement, NamespaceEffectiveStatement> {
+        extends AbstractStatementSupport<XMLNamespace, NamespaceStatement, NamespaceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .NAMESPACE)
         .build();
@@ -38,10 +37,10 @@ public final class NamespaceStatementSupport
     }
 
     @Override
-    public URI parseArgumentValue(final StmtContext<?, ?,?> ctx, final String value) {
+    public XMLNamespace parseArgumentValue(final StmtContext<?, ?,?> ctx, final String value) {
         try {
-            return new URI(value);
-        } catch (URISyntaxException e) {
+            return XMLNamespace.of(value).intern();
+        } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid namespace \"%s\"", value);
         }
     }
@@ -52,18 +51,18 @@ public final class NamespaceStatementSupport
     }
 
     @Override
-    protected NamespaceStatement createDeclared(@NonNull final StmtContext<URI, NamespaceStatement, ?> ctx,
+    protected NamespaceStatement createDeclared(@NonNull final StmtContext<XMLNamespace, NamespaceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new RegularNamespaceStatement(ctx.getArgument(), substatements);
     }
 
     @Override
-    protected NamespaceStatement createEmptyDeclared(final StmtContext<URI, NamespaceStatement, ?> ctx) {
+    protected NamespaceStatement createEmptyDeclared(final StmtContext<XMLNamespace, NamespaceStatement, ?> ctx) {
         return new EmptyNamespaceStatement(ctx.getArgument());
     }
 
     @Override
-    protected NamespaceEffectiveStatement createEffective(final Current<URI, NamespaceStatement> stmt,
+    protected NamespaceEffectiveStatement createEffective(final Current<XMLNamespace, NamespaceStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyNamespaceEffectiveStatement(stmt.declared())
             : new RegularNamespaceEffectiveStatement(stmt.declared(), substatements);

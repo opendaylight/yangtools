@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.stmt.TestUtils;
 import org.xml.sax.SAXException;
 
 public class YinFileIncludeStmtTest {
-
     private SchemaContext context;
 
     @Before
@@ -45,6 +44,6 @@ public class YinFileIncludeStmtTest {
         Submodule childModule = submodulesIterator.next() ;
         assertNotNull(childModule);
         assertEquals("child", childModule.getName());
-        assertEquals(new URI("urn:opendaylight/parent"), childModule.getNamespace());
+        assertEquals(XMLNamespace.of("urn:opendaylight/parent"), childModule.getNamespace());
     }
 }

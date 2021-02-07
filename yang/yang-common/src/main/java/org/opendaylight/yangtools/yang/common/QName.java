@@ -15,8 +15,6 @@ import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -104,7 +102,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @param localName
      *            YANG schema identifier
      */
-    private QName(final URI namespace, final String localName) {
+    private QName(final XMLNamespace namespace, final String localName) {
         this(QNameModule.create(namespace), checkLocalName(localName));
     }
 
@@ -118,7 +116,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
         }
         matcher = QNAME_PATTERN_NO_REVISION.matcher(input);
         if (matcher.matches()) {
-            final URI namespace = URI.create(matcher.group(1));
+            final XMLNamespace namespace = XMLNamespace.of(matcher.group(1));
             final String localName = matcher.group(2);
             return new QName(namespace, localName);
         }
@@ -150,7 +148,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static @NonNull QName create(final URI namespace, final @Nullable Revision revision,
+    public static @NonNull QName create(final XMLNamespace namespace, final @Nullable Revision revision,
             final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
@@ -163,7 +161,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static @NonNull QName create(final URI namespace, final Optional<Revision> revision,
+    public static @NonNull QName create(final XMLNamespace namespace, final Optional<Revision> revision,
             final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
@@ -177,7 +175,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @return Instance of QName
      */
     public static @NonNull QName create(final String namespace, final String localName, final Revision revision) {
-        return create(QNameModule.create(parseNamespace(namespace), revision), localName);
+        return create(QNameModule.create(XMLNamespace.of(namespace), revision), localName);
     }
 
     /**
@@ -192,7 +190,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      *         to {@code YYYY-mm-dd}.
      */
     public static @NonNull QName create(final String namespace, final String revision, final String localName) {
-        return create(parseNamespace(namespace), Revision.of(revision), localName);
+        return create(XMLNamespace.of(namespace), Revision.of(revision), localName);
     }
 
     /**
@@ -205,7 +203,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @throws IllegalArgumentException If {@code namespace} is not valid URI.
      */
     public static @NonNull QName create(final String namespace, final String localName) {
-        return create(parseNamespace(namespace), localName);
+        return create(XMLNamespace.of(namespace), localName);
     }
 
     /**
@@ -217,7 +215,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      * @throws NullPointerException If any of parameters is null.
      * @throws IllegalArgumentException If <code>namespace</code> is not valid URI.
      */
-    public static @NonNull QName create(final URI namespace, final String localName) {
+    public static @NonNull QName create(final XMLNamespace namespace, final String localName) {
         return new QName(namespace, localName);
     }
 
@@ -268,7 +266,7 @@ public final class QName extends AbstractQName implements Comparable<QName> {
      *
      * @return XMLNamespace assigned to the YANG module.
      */
-    public @NonNull URI getNamespace() {
+    public @NonNull XMLNamespace getNamespace() {
         return module.getNamespace();
     }
 
@@ -320,14 +318,6 @@ public final class QName extends AbstractQName implements Comparable<QName> {
         }
         final QName other = (QName) obj;
         return Objects.equals(getLocalName(), other.getLocalName()) && module.equals(other.module);
-    }
-
-    private static @NonNull URI parseNamespace(final String namespace) {
-        try {
-            return new URI(namespace);
-        } catch (final URISyntaxException ue) {
-            throw new IllegalArgumentException("Namespace '" + namespace + "' is not a valid URI", ue);
-        }
     }
 
     @Override

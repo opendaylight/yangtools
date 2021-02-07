@@ -12,12 +12,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
-import java.net.URI;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -53,7 +53,7 @@ public class OrderedListTest {
 
     @Before
     public void setup() {
-        testModule = QNameModule.create(URI.create("ordered-list-modification-test"));
+        testModule = QNameModule.create(XMLNamespace.of("ordered-list-modification-test"));
         parentContainer = QName.create(testModule, "parent-container");
         childContainer = QName.create(testModule, "child-container");
         parentOrderedList = QName.create(testModule, "parent-ordered-list");

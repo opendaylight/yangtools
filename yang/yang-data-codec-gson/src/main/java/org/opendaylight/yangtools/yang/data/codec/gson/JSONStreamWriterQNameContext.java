@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
  * Abstract base class for {@link JSONNormalizedNodeStreamWriter} recursion
@@ -34,7 +34,7 @@ abstract class JSONStreamWriterQNameContext extends JSONStreamWriterContext {
     }
 
     @Override
-    protected final URI getNamespace() {
+    protected final XMLNamespace getNamespace() {
         return qname.getNamespace();
     }
 }
