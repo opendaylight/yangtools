@@ -13,13 +13,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ContactStatementSupport
-        extends AbstractStringStatementSupport<ContactStatement, ContactEffectiveStatement> {
+        extends AbstractInternedStringStatementSupport<ContactStatement, ContactEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.CONTACT).build();
     private static final ContactStatementSupport INSTANCE = new ContactStatementSupport();
@@ -38,20 +36,24 @@ public final class ContactStatementSupport
     }
 
     @Override
-    protected ContactStatement createDeclared(final StmtContext<String, ContactStatement, ?> ctx,
+    protected ContactStatement createDeclared(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularContactStatement(ctx.getRawArgument(), substatements);
+        return new RegularContactStatement(argument, substatements);
     }
 
     @Override
-    protected ContactStatement createEmptyDeclared(final StmtContext<String, ContactStatement, ?> ctx) {
-        return new EmptyContactStatement(ctx.getRawArgument());
+    protected ContactStatement createEmptyDeclared(final String argument) {
+        return new EmptyContactStatement(argument);
     }
 
     @Override
-    protected ContactEffectiveStatement createEffective(final Current<String, ContactStatement> stmt,
+    protected ContactEffectiveStatement createEffective(final ContactStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyContactEffectiveStatement(stmt.declared())
-            : new RegularContactEffectiveStatement(stmt.declared(), substatements);
+        return new RegularContactEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected ContactEffectiveStatement createEmptyEffective(final ContactStatement declared) {
+        return new EmptyContactEffectiveStatement(declared);
     }
 }
