@@ -11,10 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -26,7 +26,7 @@ public class Bug4456Test {
         SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
         assertNotNull(schema);
 
-        Set<Module> modules = (Set<Module>) schema.findModules(URI.create("foo"));
+        Set<Module> modules = (Set<Module>) schema.findModules(XMLNamespace.of("foo"));
         assertEquals(1, modules.size());
         Module moduleFoo = modules.iterator().next();
 

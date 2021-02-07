@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 final class QNameFactory {
@@ -116,7 +116,7 @@ final class QNameFactory {
         }
 
         QNameModule toQNameModule() {
-            return QNameModule.create(URI.create(namespace), Revision.ofNullable(revision));
+            return QNameModule.create(XMLNamespace.of(namespace), Revision.ofNullable(revision));
         }
     }
 

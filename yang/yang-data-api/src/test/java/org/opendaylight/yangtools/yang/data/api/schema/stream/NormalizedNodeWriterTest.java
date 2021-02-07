@@ -17,7 +17,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.Before;
@@ -25,6 +24,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -53,7 +53,7 @@ public class NormalizedNodeWriterTest {
 
     @Before
     public void setUp() {
-        bazModule = QNameModule.create(URI.create("baz-namespace"), Revision.of("1970-01-01"));
+        bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"), Revision.of("1970-01-01"));
         myKeyedList = QName.create(bazModule, "my-keyed-list");
         myKeyLeaf = QName.create(bazModule, "my-key-leaf");
         myLeafList = QName.create(bazModule, "my-leaf-list");

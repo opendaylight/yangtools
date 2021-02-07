@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.URI;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -40,7 +40,7 @@ public class SchemaContextUtilTest {
     @BeforeClass
     public static void beforeClass() {
         context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-        myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
+        myModule = context.findModule(XMLNamespace.of("uri:my-module"), Revision.of("2014-10-07")).get();
     }
 
     @Test
@@ -285,7 +285,7 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findDataSchemaNodeTest() {
-        final Module importedModule = context.findModule(URI.create("uri:imported-module"),
+        final Module importedModule = context.findModule(XMLNamespace.of("uri:imported-module"),
             Revision.of("2014-10-07")).get();
 
         final SchemaNode testNode = ((ContainerSchemaNode) importedModule.getDataChildByName(QName.create(

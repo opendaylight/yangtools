@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -669,7 +670,7 @@ public class SchemaContextProxyTest {
     private static void mockModuleLike(final ModuleLike mockedModule, final String name) {
         doReturn(name).when(mockedModule).getName();
         doReturn(Optional.of(REVISION)).when(mockedModule).getRevision();
-        final URI newNamespace = URI.create(NAMESPACE.toString() + ":" + name);
+        final XMLNamespace newNamespace = XMLNamespace.of(NAMESPACE.toString() + ":" + name);
         doReturn(newNamespace).when(mockedModule).getNamespace();
         doReturn(QNameModule.create(newNamespace, REVISION)).when(mockedModule).getQNameModule();
         doReturn(new HashSet<>()).when(mockedModule).getSubmodules();

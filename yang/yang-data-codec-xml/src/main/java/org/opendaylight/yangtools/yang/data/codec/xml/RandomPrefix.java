@@ -12,10 +12,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 class RandomPrefix {
     // 32 characters, carefully chosen
@@ -26,18 +26,18 @@ class RandomPrefix {
     private int counter = 0;
 
     // BiMap to make values lookup faster
-    private final BiMap<URI, String> prefixes = HashBiMap.create();
+    private final BiMap<XMLNamespace, String> prefixes = HashBiMap.create();
     private final NamespaceContext context;
 
     RandomPrefix(final NamespaceContext context) {
         this.context = context;
     }
 
-    Iterable<Entry<URI, String>> getPrefixes() {
+    Iterable<Entry<XMLNamespace, String>> getPrefixes() {
         return prefixes.entrySet();
     }
 
-    String encodePrefix(final URI namespace) {
+    String encodePrefix(final XMLNamespace namespace) {
         String prefix = prefixes.get(namespace);
         if (prefix != null) {
             return prefix;

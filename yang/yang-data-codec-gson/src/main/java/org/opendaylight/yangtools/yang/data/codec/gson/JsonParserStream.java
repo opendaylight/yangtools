@@ -21,7 +21,6 @@ import java.io.Closeable;
 import java.io.EOFException;
 import java.io.Flushable;
 import java.io.IOException;
-import java.net.URI;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -32,6 +31,7 @@ import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -67,7 +67,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
-    private final Deque<URI> namespaces = new ArrayDeque<>();
+    private final Deque<XMLNamespace> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
@@ -280,9 +280,10 @@ public final class JsonParserStream implements Closeable, Flushable {
                 while (in.hasNext()) {
                     final String jsonElementName = in.nextName();
                     final DataSchemaNode parentSchema = parent.getSchema();
-                    final Entry<String, URI> namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    final Entry<String, XMLNamespace> namespaceAndName =
+                        resolveNamespace(jsonElementName, parentSchema);
                     final String localName = namespaceAndName.getKey();
-                    final URI namespace = namespaceAndName.getValue();
+                    final XMLNamespace namespace = namespaceAndName.getValue();
                     if (lenient && (localName == null || namespace == null)) {
                         LOG.debug("Schema node with name {} was not found under {}", localName,
                             parentSchema.getQName());
@@ -349,15 +350,15 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.pop();
     }
 
-    private void addNamespace(final URI namespace) {
+    private void addNamespace(final XMLNamespace namespace) {
         namespaces.push(namespace);
     }
 
-    private Entry<String, URI> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, XMLNamespace> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         String moduleNamePart = null;
         String nodeNamePart = null;
-        URI namespace = null;
+        XMLNamespace namespace = null;
         if (lastIndexOfColon != -1) {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
@@ -370,7 +371,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
 
         if (namespace == null) {
-            final Set<URI> potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
+            final Set<XMLNamespace> potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
             if (potentialUris.contains(getCurrentNamespace())) {
                 namespace = getCurrentNamespace();
             } else if (potentialUris.size() == 1) {
@@ -387,9 +388,9 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new SimpleImmutableEntry<>(nodeNamePart, namespace);
     }
 
-    private String toModuleNames(final Set<URI> potentialUris) {
+    private String toModuleNames(final Set<XMLNamespace> potentialUris) {
         final StringBuilder builder = new StringBuilder();
-        for (final URI potentialUri : potentialUris) {
+        for (final XMLNamespace potentialUri : potentialUris) {
             builder.append('\n');
             //FIXME how to get information about revision from JSON input? currently first available is used.
             builder.append(codecs.getEffectiveModelContext().findModules(potentialUri).iterator().next().getName());
@@ -397,8 +398,9 @@ public final class JsonParserStream implements Closeable, Flushable {
         return builder.toString();
     }
 
-    private Set<URI> resolveAllPotentialNamespaces(final String elementName, final DataSchemaNode dataSchemaNode) {
-        final Set<URI> potentialUris = new HashSet<>();
+    private Set<XMLNamespace> resolveAllPotentialNamespaces(final String elementName,
+            final DataSchemaNode dataSchemaNode) {
+        final Set<XMLNamespace> potentialUris = new HashSet<>();
         final Set<ChoiceSchemaNode> choices = new HashSet<>();
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childSchemaNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
@@ -418,7 +420,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return potentialUris;
     }
 
-    private URI getCurrentNamespace() {
+    private XMLNamespace getCurrentNamespace() {
         return namespaces.peek();
     }
 

@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -22,7 +22,7 @@ public class YT1195Test {
     @Test
     public void testKeyStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1195/key.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final ListEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()

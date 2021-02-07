@@ -17,14 +17,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Optional;
 import org.junit.Test;
 
 public class BiMapYangNamespaceContextTest {
-    private static final QNameModule FOO = QNameModule.create(URI.create("foo"));
-    private static final QNameModule BAR = QNameModule.create(URI.create("bar"));
-    private static final QNameModule BAZ = QNameModule.create(URI.create("baz"));
+    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"));
+    private static final QNameModule BAR = QNameModule.create(XMLNamespace.of("bar"));
+    private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("baz"));
 
     private final BiMapYangNamespaceContext context = new BiMapYangNamespaceContext(
         ImmutableBiMap.of("foo", FOO, "bar", BAR));

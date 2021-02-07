@@ -14,7 +14,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -157,7 +157,7 @@ public final class ModuleStatementSupport
     public void onPreLinkageDeclared(final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final String moduleName = stmt.getRawArgument();
 
-        final URI moduleNs = SourceException.throwIfNull(
+        final XMLNamespace moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", moduleName);
         stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
@@ -178,7 +178,7 @@ public final class ModuleStatementSupport
 
     @Override
     public void onLinkageDeclared(final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
-        final URI moduleNs = SourceException.throwIfNull(
+        final XMLNamespace moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
 

@@ -16,7 +16,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -29,12 +28,12 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
-    private final @NonNull URI namespace;
+    private final @NonNull XMLNamespace namespace;
     private final @Nullable Revision revision;
 
     private transient int hash = 0;
 
-    private QNameModule(final URI namespace, final @Nullable Revision revision) {
+    private QNameModule(final XMLNamespace namespace, final @Nullable Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -56,7 +55,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A new, potentially shared, QNameModule instance
      * @throws NullPointerException if any argument is null
      */
-    public static @NonNull QNameModule create(final URI namespace, final Optional<Revision> revision) {
+    public static @NonNull QNameModule create(final XMLNamespace namespace, final Optional<Revision> revision) {
         return new QNameModule(namespace, revision.orElse(null));
     }
 
@@ -67,7 +66,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A new, potentially shared, QNameModule instance
      * @throws NullPointerException if {@code namespace} is null
      */
-    public static @NonNull QNameModule create(final URI namespace) {
+    public static @NonNull QNameModule create(final XMLNamespace namespace) {
         return new QNameModule(namespace, null);
     }
 
@@ -79,7 +78,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A new, potentially shared, QNameModule instance
      * @throws NullPointerException if any argument is null
      */
-    public static @NonNull QNameModule create(final URI namespace, final @Nullable Revision revision) {
+    public static @NonNull QNameModule create(final XMLNamespace namespace, final @Nullable Revision revision) {
         return new QNameModule(namespace, revision);
     }
 
@@ -94,15 +93,15 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     public static @NonNull QNameModule readFrom(final DataInput in) throws IOException {
         final String namespace = in.readUTF();
         final String revision = in.readUTF();
-        return new QNameModule(URI.create(namespace), revision.isEmpty() ? null : Revision.of(revision));
+        return new QNameModule(XMLNamespace.of(namespace), revision.isEmpty() ? null : Revision.of(revision));
     }
 
     /**
      * Returns the namespace of the module which is specified as argument of YANG Module {@code namespace} keyword.
      *
-     * @return URI format of the namespace of the module
+     * @return XMLNamespace of the namespace of the module
      */
-    public @NonNull URI getNamespace() {
+    public @NonNull XMLNamespace getNamespace() {
         return namespace;
     }
 

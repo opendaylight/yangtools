@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import java.net.URI;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
  * The root node of a particular {@link JSONNormalizedNodeStreamWriter} instance.
  * It holds the base namespace and can never be removed from the stack.
  */
 abstract class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
-    JSONStreamWriterRootContext(final URI namespace, final boolean mandatory) {
+    JSONStreamWriterRootContext(final XMLNamespace namespace, final boolean mandatory) {
         super(null, namespace, mandatory);
     }
 }

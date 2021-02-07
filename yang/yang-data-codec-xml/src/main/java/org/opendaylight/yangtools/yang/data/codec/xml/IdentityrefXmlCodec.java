@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
@@ -18,6 +17,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -45,7 +45,8 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             }
 
             final String prefixedNS = ctx.getNamespaceURI(prefix);
-            final Iterator<? extends Module> modules = schemaContext.findModules(URI.create(prefixedNS)).iterator();
+            final Iterator<? extends Module> modules =
+                schemaContext.findModules(XMLNamespace.of(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
             return modules.next().getQNameModule();
         }).getQName();
@@ -56,7 +57,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
         final RandomPrefix prefixes = new RandomPrefix(ctx.getNamespaceContext());
         final String str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
 
-        for (Entry<URI, String> e : prefixes.getPrefixes()) {
+        for (Entry<XMLNamespace, String> e : prefixes.getPrefixes()) {
             ctx.writeNamespace(e.getValue(), e.getKey().toString());
         }
         ctx.writeCharacters(str);

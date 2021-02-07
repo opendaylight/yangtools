@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.net.URI;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 final class JSONStreamWriterExclusiveRootContext extends JSONStreamWriterRootContext {
-    JSONStreamWriterExclusiveRootContext(final URI namespace) {
+    JSONStreamWriterExclusiveRootContext(final XMLNamespace namespace) {
         super(namespace, true);
     }
 

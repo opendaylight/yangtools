@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +29,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -53,10 +53,10 @@ import org.xml.sax.SAXException;
 
 public class XmlToNormalizedNodesTest {
 
-    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo-namespace"));
+    private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo-namespace"));
     private static final QName PARENT_CONTAINER = QName.create(FOO_MODULE, "parent-container");
 
-    private static final QNameModule BAZ_MODULE = QNameModule.create(URI.create("baz-namespace"));
+    private static final QNameModule BAZ_MODULE = QNameModule.create(XMLNamespace.of("baz-namespace"));
     private static final QName OUTER_CONTAINER = QName.create(BAZ_MODULE, "outer-container");
 
     private static final QName MY_CONTAINER_1 = QName.create(BAZ_MODULE, "my-container-1");

@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -118,7 +118,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
 
     @Before
     public void setup() {
-        foobarModule = QNameModule.create(URI.create("foobar-namespace"), Revision.of("2016-09-19"));
+        foobarModule = QNameModule.create(XMLNamespace.of("foobar-namespace"), Revision.of("2016-09-19"));
 
         outerContainer = QName.create(foobarModule, "outer-container");
 

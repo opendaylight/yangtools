@@ -22,7 +22,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,6 +35,7 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
@@ -49,7 +49,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private final ImmutableSet<Module> filteredModules;
 
     //collections to be filled in with filtered data
-    private final ImmutableSetMultimap<URI, Module> namespaceToModules;
+    private final ImmutableSetMultimap<XMLNamespace, Module> namespaceToModules;
     private final ImmutableSetMultimap<String, Module> nameToModules;
 
     /**
@@ -91,7 +91,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         sortedModules.sort(NAME_REVISION_COMPARATOR);
         this.filteredModules = ImmutableSet.copyOf(sortedModules);
 
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+        final SetMultimap<XMLNamespace, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
@@ -165,7 +165,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     @Override
-    protected SetMultimap<URI, Module> getNamespaceToModules() {
+    protected SetMultimap<XMLNamespace, Module> getNamespaceToModules() {
         return namespaceToModules;
     }
 

@@ -16,7 +16,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,6 +32,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -93,7 +93,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
      *
      * @return Map of modules where key is namespace
      */
-    protected abstract SetMultimap<URI, Module> getNamespaceToModules();
+    protected abstract SetMultimap<XMLNamespace, Module> getNamespaceToModules();
 
     /**
      * Returns the module name-to-module mapping.
@@ -162,7 +162,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Collection<? extends Module> findModules(final URI namespace) {
+    public Collection<? extends Module> findModules(final XMLNamespace namespace) {
         return getNamespaceToModules().get(namespace);
     }
 

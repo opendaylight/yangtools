@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.net.URI;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 public interface QNameModuleAware {
     /**
@@ -21,8 +21,7 @@ public interface QNameModuleAware {
      */
     @NonNull QNameModule getQNameModule();
 
-    @Deprecated
-    default @NonNull URI getNamespace() {
+    default @NonNull XMLNamespace getNamespace() {
         return getQNameModule().getNamespace();
     }
 

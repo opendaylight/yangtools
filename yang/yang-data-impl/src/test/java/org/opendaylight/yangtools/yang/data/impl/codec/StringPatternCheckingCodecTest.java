@@ -12,10 +12,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodecTestHelper.getCodec;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -35,7 +35,7 @@ public class StringPatternCheckingCodecTest {
             "/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
-        final QNameModule testModuleQName = QNameModule.create(URI.create("string-pattern-checking-codec-test"));
+        final QNameModule testModuleQName = QNameModule.create(XMLNamespace.of("string-pattern-checking-codec-test"));
 
         final Module testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.findDataChildByName(

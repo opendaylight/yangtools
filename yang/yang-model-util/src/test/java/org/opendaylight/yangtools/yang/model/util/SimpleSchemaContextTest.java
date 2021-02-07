@@ -13,7 +13,6 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +20,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 public class SimpleSchemaContextTest {
@@ -45,7 +45,7 @@ public class SimpleSchemaContextTest {
         assertFindModules(expected, "foo", foo2, foo0, foo1);
         assertFindModules(expected, "foo", foo2, foo1, foo0);
 
-        final URI uri = URI.create("foo");
+        final XMLNamespace uri = XMLNamespace.of("foo");
         assertFindModules(expected, uri, foo0, foo1, foo2);
         assertFindModules(expected, uri, foo0, foo2, foo1);
         assertFindModules(expected, uri, foo1, foo0, foo2);
@@ -65,14 +65,15 @@ public class SimpleSchemaContextTest {
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
-    private static void assertFindModules(final List<Module> expected, final URI uri, final Module... modules) {
+    private static void assertFindModules(final List<Module> expected, final XMLNamespace uri,
+            final Module... modules) {
         final Collection<? extends Module> actual = SimpleSchemaContext.forModules(ImmutableSet.copyOf(modules))
                 .findModules(uri);
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     private static Module mockModule(final String name, final Optional<Revision> revision) {
-        final QNameModule mod = QNameModule.create(URI.create(name), revision);
+        final QNameModule mod = QNameModule.create(XMLNamespace.of(name), revision);
         final Module ret = mock(Module.class);
         doReturn(name).when(ret).getName();
         doReturn(mod.getNamespace()).when(ret).getNamespace();

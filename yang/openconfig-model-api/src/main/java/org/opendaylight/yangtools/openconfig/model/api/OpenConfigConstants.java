@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.openconfig.model.api;
 
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -26,7 +26,7 @@ public final class OpenConfigConstants {
     private static final String MODULE_NAME = "yang-ext";
 
     // Package-visible, because openconfig-version applies across all known revisions and needs to bind to all of them
-    static final URI MODULE_NAMESPACE = URI.create("http://openconfig.net/yang/openconfig-ext");
+    static final XMLNamespace MODULE_NAMESPACE = XMLNamespace.of("http://openconfig.net/yang/openconfig-ext").intern();
 
     // Initial revision, defining semantic-version
     private static final Revision SEMVER_REVISION = Revision.of("2015-10-09");

@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableMap;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Deque;
@@ -52,6 +51,7 @@ import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractMountPointDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
@@ -110,7 +110,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *             annotations.
      */
     @Deprecated
-    public static final QNameModule LEGACY_ATTRIBUTE_NAMESPACE = QNameModule.create(URI.create("")).intern();
+    public static final QNameModule LEGACY_ATTRIBUTE_NAMESPACE = QNameModule.create(XMLNamespace.of("")).intern();
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlParserStream.class);
     private static final String XML_STANDARD_VERSION = "1.0";
@@ -459,7 +459,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     final String elementNS = in.getNamespaceURI();
                     final boolean added = namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName));
 
-                    final URI nsUri;
+                    final XMLNamespace nsUri;
                     try {
                         nsUri = rawXmlNamespace(elementNS).getNamespace();
                     } catch (IllegalArgumentException e) {
@@ -546,8 +546,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         return last instanceof ListSchemaNode || last instanceof LeafListSchemaNode;
     }
 
-    private static void addMountPointChild(final MountPointData mount, final URI namespace, final String localName,
-            final DOMSource source) {
+    private static void addMountPointChild(final MountPointData mount, final XMLNamespace namespace,
+            final String localName, final DOMSource source) {
         final DOMSourceMountPointChild child = new DOMSourceMountPointChild(source);
         if (YangLibraryConstants.MODULE_NAMESPACE.equals(namespace)) {
             final Optional<ContainerName> optName = ContainerName.forLocalName(localName);
@@ -648,13 +648,13 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Optional<QNameModule> resolveXmlNamespace(final String xmlNamespace) {
         return resolvedNamespaces.computeIfAbsent(xmlNamespace, nsUri -> {
-            final Iterator<? extends Module> it = codecs.getEffectiveModelContext().findModules(URI.create(nsUri))
+            final Iterator<? extends Module> it = codecs.getEffectiveModelContext().findModules(XMLNamespace.of(nsUri))
                     .iterator();
             return it.hasNext() ? Optional.of(it.next().getQNameModule()) : Optional.empty();
         });
     }
 
     private QNameModule rawXmlNamespace(final String xmlNamespace) {
-        return rawNamespaces.computeIfAbsent(xmlNamespace, nsUri -> QNameModule.create(URI.create(nsUri)));
+        return rawNamespaces.computeIfAbsent(xmlNamespace, nsUri -> QNameModule.create(XMLNamespace.of(nsUri)));
     }
 }
