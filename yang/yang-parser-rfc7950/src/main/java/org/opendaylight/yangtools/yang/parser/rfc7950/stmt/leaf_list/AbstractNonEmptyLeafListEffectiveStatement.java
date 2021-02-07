@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
@@ -21,9 +22,9 @@ abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafLi
     private final @Nullable ElementCountConstraint elementCountConstraint;
 
     AbstractNonEmptyLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final TypeDefinition<?> type, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
-        super(declared, path, flags, substatements);
+        super(declared, path, flags, type, substatements);
         this.original = original;
         this.elementCountConstraint = elementCountConstraint;
     }

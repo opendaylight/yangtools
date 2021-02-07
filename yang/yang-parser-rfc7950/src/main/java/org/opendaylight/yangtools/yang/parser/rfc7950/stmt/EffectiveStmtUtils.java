@@ -15,7 +15,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -23,13 +25,19 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -196,5 +204,32 @@ public final class EffectiveStmtUtils {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(stmt, statement);
             }
         }
+    }
+
+    /**
+     * Compute the effective {@link TypeDefinition} for {@code leaf} or {@code leaf-list}.
+     *
+     * @param qname TypeDefinition's QName
+     * @param type Statement's {@link TypeEffectiveStatement} substatement
+     * @param substatements Statement's substatements
+     * @return A {@link TypeDefinition}
+     */
+    public static @NonNull TypeDefinition<?> createTypeDefinition(final QName qname,
+            final TypeEffectiveStatement<?> type,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(type.getTypeDefinition(), qname);
+        for (final EffectiveStatement<?, ?> stmt : substatements) {
+            // NOTE: 'default' is omitted here on purpose
+            if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
+            }
+        }
+        return builder.build();
     }
 }

@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 
@@ -19,8 +20,9 @@ final class RegularLeafEffectiveStatement extends AbstractLeafEffectiveStatement
     private final @Nullable LeafSchemaNode original;
 
     RegularLeafEffectiveStatement(final LeafStatement declared, final Immutable path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final LeafSchemaNode original) {
-        super(declared, path, flags, substatements);
+            final TypeDefinition<?> type, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final LeafSchemaNode original) {
+        super(declared, path, flags, type, substatements);
         this.original = original;
     }
 

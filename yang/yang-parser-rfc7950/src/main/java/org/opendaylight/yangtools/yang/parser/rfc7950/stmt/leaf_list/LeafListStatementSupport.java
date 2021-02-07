@@ -20,15 +20,21 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -151,15 +157,18 @@ public final class LeafListStatementSupport
 
         final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
         final LeafListStatement declared = stmt.declared();
+        final TypeDefinition<?> type = EffectiveStmtUtils.createTypeDefinition(stmt.getArgument(), typeStmt,
+            substatements);
+
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
-                        elementCountConstraint.orElse(null));
+                ? new EmptyLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, type, substatements)
+                    : new SlimLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, type, substatements,
+                        original, elementCountConstraint.orElse(null));
         }
 
-        return new RegularLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
-            defaultValues, elementCountConstraint.orElse(null));
+        return new RegularLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, type, substatements,
+            original, defaultValues, elementCountConstraint.orElse(null));
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
@@ -171,5 +180,23 @@ public final class LeafListStatementSupport
             .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
                 .equals(Ordering.USER))
             .toFlags();
+    }
+
+    private static @NonNull TypeDefinition<?> computeType(final QName qname, final TypeEffectiveStatement<?> type,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(type.getTypeDefinition(), qname);
+        for (final EffectiveStatement<?, ?> stmt : substatements) {
+            // NOTE: 'default' is omitted here on purpose
+            if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
+            }
+        }
+        return builder.build();
     }
 }

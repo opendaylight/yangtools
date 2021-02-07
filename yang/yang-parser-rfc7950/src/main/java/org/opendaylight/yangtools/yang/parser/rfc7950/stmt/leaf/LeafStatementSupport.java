@@ -12,6 +12,7 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -99,9 +100,13 @@ public final class LeafStatementSupport
 
         final LeafSchemaNode original = (LeafSchemaNode) stmt.original();
         final int flags = computeFlags(stmt, substatements);
-        final LeafStatement declared = stmt.declared();
-        return original == null ? new EmptyLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
-                : new RegularLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original);
+        final TypeDefinition<?> type = EffectiveStmtUtils.createTypeDefinition(stmt.getArgument(), typeStmt,
+            substatements);
+
+        return original == null
+            ? new EmptyLeafEffectiveStatement(stmt.declared(), stmt.effectivePath(), flags, type, substatements)
+                : new RegularLeafEffectiveStatement(stmt.declared(), stmt.effectivePath(), flags, type, substatements,
+                    original);
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

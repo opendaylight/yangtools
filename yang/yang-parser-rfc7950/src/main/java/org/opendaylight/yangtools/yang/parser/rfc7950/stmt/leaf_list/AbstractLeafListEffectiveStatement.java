@@ -17,15 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
-import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.model.util.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
@@ -42,13 +36,12 @@ abstract class AbstractLeafListEffectiveStatement
     private final int flags;
 
     AbstractLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            final TypeDefinition<?> type, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.path = requireNonNull(path);
+        this.type = requireNonNull(type);
         this.substatements = maskList(substatements);
         this.flags = flags;
-        // TODO: lazy instantiation?
-        this.type = buildType();
     }
 
     AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final Immutable path,
@@ -57,8 +50,7 @@ abstract class AbstractLeafListEffectiveStatement
         this.path = requireNonNull(path);
         this.substatements = original.substatements;
         this.flags = flags;
-        // FIXME: share with original?
-        this.type = buildType();
+        this.type = TypeBuilder.copyTypeDefinition(original.type, getQName());
     }
 
     @Override
@@ -99,24 +91,5 @@ abstract class AbstractLeafListEffectiveStatement
     @Override
     public final String toString() {
         return getClass().getSimpleName() + "[" + getQName() + "]";
-    }
-
-    private TypeDefinition<?> buildType() {
-        final TypeEffectiveStatement<?> typeStmt = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            getQName());
-        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            // NOTE: 'default' is omitted here on purpose
-            if (stmt instanceof DescriptionEffectiveStatement) {
-                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatement) {
-                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatement) {
-                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatement) {
-                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
-            }
-        }
-        return builder.build();
     }
 }
