@@ -11,16 +11,16 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-import java.net.URI;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class IdentityCodecUtilTest {
-    private static final QNameModule MODULE = QNameModule.create(URI.create("yangtools846"));
+    private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("yangtools846"));
     private static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass

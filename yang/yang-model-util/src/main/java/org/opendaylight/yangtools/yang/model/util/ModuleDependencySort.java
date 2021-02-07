@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ import org.opendaylight.yangtools.util.TopologicalSort;
 import org.opendaylight.yangtools.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -89,13 +89,13 @@ public final class ModuleDependencySort {
      */
     private static void processDependencies(final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph,
             final Collection<? extends Module> mmbs) {
-        final Map<URI, Module> allNS = new HashMap<>();
+        final Map<XMLNamespace, Module> allNS = new HashMap<>();
 
         // Create edges in graph
         for (final Module module : mmbs) {
             final Map<String, Optional<Revision>> imported = new HashMap<>();
             final String fromName = module.getName();
-            final URI ns = module.getNamespace();
+            final XMLNamespace ns = module.getNamespace();
             final Optional<Revision> fromRevision = module.getRevision();
 
             // check for existence of module with same namespace
@@ -250,18 +250,10 @@ public final class ModuleDependencySort {
                 return false;
             }
             final ModuleNodeImpl other = (ModuleNodeImpl) obj;
-            if (name == null) {
-                if (other.name != null) {
-                    return false;
-                }
-            } else if (!name.equals(other.name)) {
+            if (!Objects.equals(name, other.name)) {
                 return false;
             }
-            if (revision == null) {
-                if (other.revision != null) {
-                    return false;
-                }
-            } else if (!revision.equals(other.revision)) {
+            if (!Objects.equals(revision, other.revision)) {
                 return false;
             }
             return true;

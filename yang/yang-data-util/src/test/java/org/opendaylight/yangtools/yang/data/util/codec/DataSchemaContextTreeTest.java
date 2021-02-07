@@ -10,19 +10,19 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class DataSchemaContextTreeTest {
-    private static final QNameModule MODULE = QNameModule.create(URI.create("dataschemacontext"));
+    private static final QNameModule MODULE = QNameModule.create(XMLNamespace.of("dataschemacontext"));
     private static final QName FOO = QName.create(MODULE, "foo");
     private static final QName BAR = QName.create(MODULE, "bar");
     private static final QName BAZ = QName.create(MODULE, "baz");

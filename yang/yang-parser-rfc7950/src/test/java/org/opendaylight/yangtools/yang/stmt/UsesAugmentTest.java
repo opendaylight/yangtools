@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -43,9 +43,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 public class UsesAugmentTest {
 
     private static final QNameModule UG = QNameModule.create(
-        URI.create("urn:opendaylight:params:xml:ns:yang:uses-grouping"), Revision.of("2013-07-30"));
+        XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:uses-grouping"), Revision.of("2013-07-30"));
     private static final QNameModule GD = QNameModule.create(
-        URI.create("urn:opendaylight:params:xml:ns:yang:grouping-definitions"), Revision.of("2013-09-04"));
+        XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:grouping-definitions"), Revision.of("2013-09-04"));
 
     private SchemaContext context;
 

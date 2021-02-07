@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
@@ -42,7 +42,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
             writer.getNamespaceContext());
         String serializedValue = iiCodec.serialize(value);
 
-        for (Entry<URI, String> e : iiCodec.getPrefixes()) {
+        for (Entry<XMLNamespace, String> e : iiCodec.getPrefixes()) {
             writer.writeNamespace(e.getValue(), e.getKey().toString());
         }
 

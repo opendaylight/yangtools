@@ -11,13 +11,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -31,7 +31,7 @@ public class Bug2872Test {
         final SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug2872");
         assertNotNull(schema);
 
-        final QNameModule bug2872module = QNameModule.create(URI.create("bug2872"), Revision.of("2016-06-08"));
+        final QNameModule bug2872module = QNameModule.create(XMLNamespace.of("bug2872"), Revision.of("2016-06-08"));
         final QName foo = QName.create(bug2872module, "bar");
 
         final DataSchemaNode dataSchemaNode = schema.getDataChildByName(foo);

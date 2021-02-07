@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import java.net.URISyntaxException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -35,7 +34,7 @@ public interface PrefixToModule extends ParserNamespace<String, QNameModule> {
      *
      * @param namespace XML Namespace
      * @return QNameModule associated with supplied namespace, or null if prefix is not defined.
-     * @throws URISyntaxException if the input string is not valid URI
+     * @throws IllegalArgumentException if the input string is not valid URI
      */
-    @Nullable QNameModule getByNamespace(String namespace) throws URISyntaxException;
+    @Nullable QNameModule getByNamespace(String namespace);
 }

@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -68,7 +69,7 @@ public class XmlStreamUtilsTest {
 
     @Test
     public void testWriteIdentityRef() throws Exception {
-        final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.of("2000-01-01"));
+        final QNameModule parent = QNameModule.create(XMLNamespace.of("parent:uri"), Revision.of("2000-01-01"));
 
         String xmlAsString = createXml(writer -> {
             writer.writeStartElement("element");

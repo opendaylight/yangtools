@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -29,8 +29,8 @@ public class Bug4610Test {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4610");
 
         Revision revision = Revision.of("2015-12-12");
-        QNameModule foo = QNameModule.create(URI.create("foo"), revision);
-        QNameModule bar = QNameModule.create(URI.create("bar"), revision);
+        QNameModule foo = QNameModule.create(XMLNamespace.of("foo"), revision);
+        QNameModule bar = QNameModule.create(XMLNamespace.of("bar"), revision);
 
         QName g1 = QName.create(bar, "g1");
         QName g2 = QName.create(bar, "g2");

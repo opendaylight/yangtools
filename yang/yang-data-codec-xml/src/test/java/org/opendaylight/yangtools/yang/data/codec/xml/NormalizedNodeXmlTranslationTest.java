@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -47,6 +46,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -226,7 +226,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static NodeIdentifier getNodeIdentifier(final String localName) {
-        return new NodeIdentifier(QName.create(URI.create(NAMESPACE), REVISION, localName));
+        return new NodeIdentifier(QName.create(XMLNamespace.of(NAMESPACE), REVISION, localName));
     }
 
     private static AugmentationIdentifier getAugmentIdentifier(final String... childNames) {

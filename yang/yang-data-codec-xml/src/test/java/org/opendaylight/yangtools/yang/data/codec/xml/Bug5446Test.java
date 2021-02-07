@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Base64;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -31,6 +30,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -47,7 +47,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class Bug5446Test extends XMLTestCase {
-    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
+    private static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2015-11-05"));
     private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
 

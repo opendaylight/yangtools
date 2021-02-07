@@ -18,7 +18,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -72,11 +72,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class YangParserTest {
-    private static final QNameModule FOO = QNameModule.create(URI.create("urn:opendaylight.foo"),
+    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("urn:opendaylight.foo"),
         Revision.of("2013-02-27"));
-    private static final QNameModule BAR = QNameModule.create(URI.create("urn:opendaylight.bar"),
+    private static final QNameModule BAR = QNameModule.create(XMLNamespace.of("urn:opendaylight.bar"),
         Revision.of("2013-07-03"));
-    private static final QNameModule BAZ = QNameModule.create(URI.create("urn:opendaylight.baz"),
+    private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("urn:opendaylight.baz"),
         Revision.of("2013-02-27"));
 
     private SchemaContext context;

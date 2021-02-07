@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +42,7 @@ import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -115,7 +115,7 @@ public class NormalizedNodesToXmlTest {
 
     @Before
     public void setup() {
-        bazModule = QNameModule.create(URI.create("baz-namespace"));
+        bazModule = QNameModule.create(XMLNamespace.of("baz-namespace"));
 
         outerContainer = QName.create(bazModule, "outer-container");
 

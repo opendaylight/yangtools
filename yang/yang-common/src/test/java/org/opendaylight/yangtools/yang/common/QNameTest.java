@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import org.junit.Test;
 
@@ -19,7 +18,7 @@ public class QNameTest {
     private static final String NAMESPACE = "urn:foo";
     private static final String REVISION = "2013-12-24";
     private static final String LOCALNAME = "bar";
-    private static final URI NS = URI.create(NAMESPACE);
+    private static final XMLNamespace NS = XMLNamespace.of(NAMESPACE);
 
     @Test
     public void testStringSerialization() throws Exception {
@@ -66,13 +65,13 @@ public class QNameTest {
         assertTrue(qb.compareTo(qa) > 0);
 
         // compare with 1 null revision
-        qa = QName.create(URI.create(A), A);
-        qb = QName.create(URI.create(A), Revision.of(REVISION), A);
+        qa = QName.create(XMLNamespace.of(A), A);
+        qb = QName.create(XMLNamespace.of(A), Revision.of(REVISION), A);
         assertTrue(qa.compareTo(qb) < 0);
         assertTrue(qb.compareTo(qa) > 0);
 
         // compare with both null revision
-        qb = QName.create(URI.create(A), A);
+        qb = QName.create(XMLNamespace.of(A), A);
         assertTrue(qa.compareTo(qb) == 0);
         assertTrue(qb.compareTo(qa) == 0);
     }

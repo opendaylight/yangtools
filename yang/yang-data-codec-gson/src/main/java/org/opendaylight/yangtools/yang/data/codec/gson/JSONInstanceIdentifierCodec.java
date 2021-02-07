@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Iterator;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -41,7 +41,7 @@ abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceI
     }
 
     @Override
-    protected final String prefixForNamespace(final URI namespace) {
+    protected final String prefixForNamespace(final XMLNamespace namespace) {
         final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }

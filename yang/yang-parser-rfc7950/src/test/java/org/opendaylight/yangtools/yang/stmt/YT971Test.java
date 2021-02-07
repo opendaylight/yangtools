@@ -13,13 +13,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class YT971Test {
-    private static final QNameModule NAMESPACE = QNameModule.create(URI.create("test"), Revision.of("2019-03-25"));
+    private static final QNameModule NAMESPACE = QNameModule.create(XMLNamespace.of("test"), Revision.of("2019-03-25"));
 
     @Test
     public void testEscapeLexer() throws URISyntaxException, IOException, YangSyntaxErrorException, ReactorException {

@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.XMLConstants;
@@ -21,6 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
 import org.slf4j.Logger;
@@ -117,7 +117,7 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    String getPrefix(final URI uri, final String str) throws XMLStreamException {
+    String getPrefix(final XMLNamespace uri, final String str) throws XMLStreamException {
         final String prefix = writer.getPrefix(str);
         if (prefix != null) {
             return prefix;

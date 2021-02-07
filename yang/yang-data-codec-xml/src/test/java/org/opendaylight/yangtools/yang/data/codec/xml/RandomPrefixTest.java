@@ -11,7 +11,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.Iterables;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 public class RandomPrefixTest {
     static final int MAX_COUNTER = 4000;
@@ -41,13 +41,13 @@ public class RandomPrefixTest {
     }
 
     @Test
-    public void testQNameWithPrefix() throws Exception {
+    public void testQNameWithPrefix() {
         final RandomPrefix a = new RandomPrefix(null);
 
         final List<String> allGenerated = new ArrayList<>();
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String prefix = RandomPrefix.encode(i);
-            final URI uri = new URI("localhost:" + prefix);
+            final XMLNamespace uri = XMLNamespace.of("localhost:" + prefix);
             final QName qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
             allGenerated.add(a.encodePrefix(qname.getNamespace()));
         }
@@ -67,7 +67,7 @@ public class RandomPrefixTest {
     public void test2QNames1Namespace() throws Exception {
         final RandomPrefix a = new RandomPrefix(null);
 
-        final URI uri = URI.create("localhost");
+        final XMLNamespace uri = XMLNamespace.of("localhost");
         final QName qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
         final QName qname2 = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
 
@@ -78,12 +78,12 @@ public class RandomPrefixTest {
     public void testQNameNoPrefix() throws Exception {
         final RandomPrefix a = new RandomPrefix(null);
 
-        final URI uri = URI.create("localhost");
+        final XMLNamespace uri = XMLNamespace.of("localhost");
         QName qname = QName.create(uri, Revision.of("2000-01-01"), "local-name");
         assertEquals("a", a.encodePrefix(qname.getNamespace()));
         qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
         assertEquals("a", a.encodePrefix(qname.getNamespace()));
-        qname = QName.create(QNameModule.create(URI.create("second"), Revision.of("2000-01-01")), "local-name");
+        qname = QName.create(QNameModule.create(XMLNamespace.of("second"), Revision.of("2000-01-01")), "local-name");
         assertEquals("b", a.encodePrefix(qname.getNamespace()));
 
     }

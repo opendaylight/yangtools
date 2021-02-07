@@ -12,10 +12,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -33,7 +33,7 @@ public class YangTypes2StmtTest {
     private static final StatementStreamSource TYPEFILE4 = sourceForResource(
             "/semantic-statement-parser/identityreftest.yang");
 
-    private static final QNameModule TYPES2_MODULE = QNameModule.create(URI.create("types2"));
+    private static final QNameModule TYPES2_MODULE = QNameModule.create(XMLNamespace.of("types2"));
 
     private static final QName LF_DECIMAL = QName.create(TYPES2_MODULE, "lf-decimal");
     private static final QName LF_MY_STRING = QName.create(TYPES2_MODULE, "lf-my-string");

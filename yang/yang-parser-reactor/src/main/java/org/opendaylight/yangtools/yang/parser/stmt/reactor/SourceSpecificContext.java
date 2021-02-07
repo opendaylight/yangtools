@@ -15,7 +15,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -27,6 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -365,7 +365,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     private PrefixToModule preLinkagePrefixes() {
         final PrefixToModuleMap preLinkagePrefixes = new PrefixToModuleMap();
-        final Map<String, URI> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
+        final Map<String, XMLNamespace> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
         if (prefixToNamespaceMap == null) {
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
             return null;
