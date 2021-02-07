@@ -81,8 +81,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     private static final Logger LOG = LoggerFactory.getLogger(InferredStatementContext.class);
 
-    // Sentinel object for 'substatements'
-    private static final Object SWEPT_SUBSTATEMENTS = new Object();
+    // Sentinel objects for 'substatements', String is a good enough type
+    private static final @NonNull String REUSED_SUBSTATEMENTS = "reused";
+    private static final @NonNull String SWEPT_SUBSTATEMENTS = "swept";
 
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
@@ -212,6 +213,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     E createEffective(final StatementFactory<A, D, E> factory) {
         // If we have not materialized we do not have a difference in effective substatements, hence we can forward
         // towards the source of the statement.
+        accessSubstatements();
         return substatements == null ? tryToReusePrototype(factory) : super.createEffective(factory);
     }
 
@@ -245,9 +247,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         if (allReused(declCopy) && allReused(effCopy)) {
             LOG.debug("Reusing after substatement check: {}", origEffective);
-            // FIXME: can we skip this if !haveRef()?
-            substatements = reusePrototypeReplicas(Streams.concat(declCopy.stream(), effCopy.stream())
-                .map(copy -> copy.toReusedChild(this)));
+            substatements = noRefs() ? REUSED_SUBSTATEMENTS
+                : reusePrototypeReplicas(Streams.concat(declCopy.stream(), effCopy.stream())
+                    .map(copy -> copy.toReusedChild(this)));
             prototype.decRef();
             return origEffective;
         }
@@ -269,8 +271,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
         if (allSubstatementsContextIndependent()) {
             LOG.debug("Reusing substatements of: {}", prototype);
-            // FIXME: can we skip this if !haveRef()?
-            substatements = reusePrototypeReplicas();
+            substatements = noRefs() ? REUSED_SUBSTATEMENTS : reusePrototypeReplicas();
             prototype.decRef();
             return factory.copyEffective(this, original);
         }
@@ -461,7 +462,9 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     private void accessSubstatements() {
-        verify(substatements != SWEPT_SUBSTATEMENTS, "Attempted to access substatements of %s", this);
+        if (substatements instanceof String) {
+            throw new VerifyException("Access to " + substatements + " substatements of " + this);
+        }
     }
 
     @Override
@@ -477,7 +480,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         final Object local = substatements;
         substatements = SWEPT_SUBSTATEMENTS;
         int count = 0;
-        if (local != null) {
+        if (local instanceof List) {
             final List<ReactorStmtCtx<?, ?, ?>> list = castEffective(local);
             sweep(list);
             count = countUnswept(list);
