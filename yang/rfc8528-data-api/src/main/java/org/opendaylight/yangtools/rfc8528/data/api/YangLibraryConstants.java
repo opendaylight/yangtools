@@ -12,10 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
  * Constants related to {@code ietf-yang-library.yang}. As schema-mount works in concert with yang-library, we need
@@ -38,7 +38,8 @@ public final class YangLibraryConstants {
      * The namespace assigned to {@code ietf-yang-library}. This constant is required for XML-like parsers, using
      * XML namespaces to reference modules.
      */
-    public static final URI MODULE_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-library");
+    public static final XMLNamespace MODULE_NAMESPACE =
+        XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-library");
     /**
      * The module name assigned to {@code ietf-yang-library}. This constant is required for JSON-like parsers, using
      * module names to reference modules.

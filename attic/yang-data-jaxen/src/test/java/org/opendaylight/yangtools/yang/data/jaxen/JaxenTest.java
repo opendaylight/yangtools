@@ -18,7 +18,6 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +33,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -213,7 +213,7 @@ public class JaxenTest {
     }
 
     private void initQNames() {
-        this.moduleQName = QNameModule.create(URI.create("urn:opendaylight.test2"), Revision.of("2015-08-08"));
+        this.moduleQName = QNameModule.create(XMLNamespace.of("urn:opendaylight.test2"), Revision.of("2015-08-08"));
         this.rootQName = QName.create(moduleQName, "root");
         this.listAQName = QName.create(moduleQName, "list-a");
         this.listBQName = QName.create(moduleQName, "list-b");

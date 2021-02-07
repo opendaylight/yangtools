@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Map;
@@ -25,6 +24,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -422,7 +422,7 @@ public class GroupingTest {
         assertNotNull(gz);
         assertNotNull(gzz);
 
-        final QNameModule expectedModule = QNameModule.create(URI.create("urn:grouping:cascade-uses"),
+        final QNameModule expectedModule = QNameModule.create(XMLNamespace.of("urn:grouping:cascade-uses"),
             Revision.of("2013-07-18"));
 
         // grouping-U

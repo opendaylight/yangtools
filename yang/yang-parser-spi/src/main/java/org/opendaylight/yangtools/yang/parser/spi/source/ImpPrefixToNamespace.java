@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import java.net.URI;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
  * Pre-linkage source-specific mapping of prefixes to module namespaces.
  */
-public interface ImpPrefixToNamespace extends ParserNamespace<String, URI> {
-    NamespaceBehaviour<String, URI, @NonNull ImpPrefixToNamespace> BEHAVIOUR =
+public interface ImpPrefixToNamespace extends ParserNamespace<String, XMLNamespace> {
+    NamespaceBehaviour<String, XMLNamespace, @NonNull ImpPrefixToNamespace> BEHAVIOUR =
             NamespaceBehaviour.rootStatementLocal(ImpPrefixToNamespace.class);
 }

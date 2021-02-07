@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.util;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Splitter;
-import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 abstract class AbstractNamespaceCodec<T> extends AbstractIllegalArgumentCodec<String, T> {
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
@@ -27,7 +27,7 @@ abstract class AbstractNamespaceCodec<T> extends AbstractIllegalArgumentCodec<St
      * @param namespace Namespace to map
      * @return Allocated unique prefix, or null if the prefix cannot be mapped.
      */
-    protected abstract @Nullable String prefixForNamespace(@NonNull URI namespace);
+    protected abstract @Nullable String prefixForNamespace(@NonNull XMLNamespace namespace);
 
     /**
      * Create a QName for a prefix and local name.

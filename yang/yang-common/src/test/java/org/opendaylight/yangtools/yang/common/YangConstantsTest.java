@@ -9,17 +9,15 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.URI;
 import org.junit.Test;
 
 public class YangConstantsTest {
-
     @Test
     public void testYangConstants() {
-        final URI uriYang = YangConstants.RFC6020_YANG_NAMESPACE;
-        final URI uriYin = YangConstants.RFC6020_YIN_NAMESPACE;
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:1"), uriYang);
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:yin:1"), uriYin);
+        final XMLNamespace uriYang = YangConstants.RFC6020_YANG_NAMESPACE;
+        final XMLNamespace uriYin = YangConstants.RFC6020_YIN_NAMESPACE;
+        assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:1"), uriYang);
+        assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:yin:1"), uriYin);
         assertEquals(QNameModule.create(uriYang).intern(), YangConstants.RFC6020_YANG_MODULE);
         assertEquals(QNameModule.create(uriYin).intern(), YangConstants.RFC6020_YIN_MODULE);
     }

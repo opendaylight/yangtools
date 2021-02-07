@@ -19,7 +19,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import java.net.URI;
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
@@ -27,6 +26,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -42,7 +42,8 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class DerivedFromXPathFunctionTest {
 
     private static final JaxenSchemaContextFactory SCHEMA_CONTEXT_FACTORY = new JaxenSchemaContextFactory();
-    private static final QNameModule BAR_MODULE = QNameModule.create(URI.create("bar-ns"), Revision.of("2017-04-03"));
+    private static final QNameModule BAR_MODULE =
+        QNameModule.create(XMLNamespace.of("bar-ns"), Revision.of("2017-04-03"));
     private static final QName MY_CONTAINER = QName.create(BAR_MODULE, "my-container");
     private static final QName MY_LIST = QName.create(BAR_MODULE, "my-list");
     private static final QName KEY_LEAF = QName.create(BAR_MODULE, "key-leaf");

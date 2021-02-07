@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
-import java.net.URI;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
 
-final class EmptyNamespaceStatement extends ArgumentToString<URI> implements NamespaceStatement {
-    EmptyNamespaceStatement(final URI argument) {
+final class EmptyNamespaceStatement extends ArgumentToString<XMLNamespace> implements NamespaceStatement {
+    EmptyNamespaceStatement(final XMLNamespace argument) {
         super(argument);
     }
 }

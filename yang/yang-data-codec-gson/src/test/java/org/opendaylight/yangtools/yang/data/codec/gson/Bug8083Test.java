@@ -23,7 +23,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URI;
 import java.net.URISyntaxException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -31,6 +30,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -50,8 +50,8 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
-    private static final QNameModule FOOMOD = QNameModule.create(URI.create("http://example.com/foomod"));
-    private static final QNameModule BARMOD = QNameModule.create(URI.create("http://example.com/barmod"));
+    private static final QNameModule FOOMOD = QNameModule.create(XMLNamespace.of("http://example.com/foomod"));
+    private static final QNameModule BARMOD = QNameModule.create(XMLNamespace.of("http://example.com/barmod"));
 
     private static final QName FOO_QNAME = QName.create(FOOMOD, "foo");
     private static final QName FOOLIST_QNAME = QName.create(FOOMOD, "foo-list");

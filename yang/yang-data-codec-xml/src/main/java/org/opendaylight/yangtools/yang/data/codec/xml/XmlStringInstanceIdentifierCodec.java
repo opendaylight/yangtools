@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -18,6 +17,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -44,12 +44,12 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     @Override
     protected Module moduleForPrefix(final String prefix) {
         final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        final Iterator<? extends Module> modules = context.findModules(URI.create(prefixedNS)).iterator();
+        final Iterator<? extends Module> modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(final XMLNamespace namespace) {
         final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }

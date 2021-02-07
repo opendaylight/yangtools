@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Collection;
@@ -23,6 +22,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -72,7 +72,7 @@ public class EffectiveSchemaContextTest {
         assertNull(schemaContext.dataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
 
         assertFalse(schemaContext.findModule("foo", Revision.of("2016-08-21")).isPresent());
-        assertFalse(schemaContext.findModule(URI.create("foo-namespace"), Revision.of("2016-08-21")).isPresent());
+        assertFalse(schemaContext.findModule(XMLNamespace.of("foo-namespace"), Revision.of("2016-08-21")).isPresent());
 
         assertFalse(schemaContext.isAugmenting());
         assertFalse(schemaContext.isAddedByUses());

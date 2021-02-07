@@ -11,11 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -27,7 +27,7 @@ public class YT1212Test {
     @Test
     public void testActiontatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/anyxml.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final AnyxmlEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -46,7 +46,7 @@ public class YT1212Test {
     @Test
     public void testLeafStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/leaf.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final LeafEffectiveStatement grpFoo = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -65,7 +65,7 @@ public class YT1212Test {
     @Test
     public void testContainerStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1212/container.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif =
             module.findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();

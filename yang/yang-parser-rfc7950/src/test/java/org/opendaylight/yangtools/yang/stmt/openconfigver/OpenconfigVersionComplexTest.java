@@ -11,10 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -40,8 +40,8 @@ public class OpenconfigVersionComplexTest {
     private static void verifySchemaContextTest1(final SchemaContext context) {
         assertNotNull(context);
 
-        final Module foo = context.findModules(URI.create("foo")).iterator().next();
-        final Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext"))
+        final Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        final Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         // check module versions
@@ -90,8 +90,8 @@ public class OpenconfigVersionComplexTest {
     private static void verifySchemaContextTest2(final SchemaContext context) {
         assertNotNull(context);
 
-        final Module foo = context.findModules(URI.create("foo")).iterator().next();
-        final Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext"))
+        final Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        final Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         // check module versions

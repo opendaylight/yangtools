@@ -14,12 +14,12 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEqual
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.FileNotFoundException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -35,7 +35,7 @@ public class EffectiveBuildTest {
 
     private static final StatementStreamSource SIMPLE_MODULE = sourceForResource(
             "/stmt-test/effective-build/simple-module.yang");
-    private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(URI.create("simple.yang"));
+    private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(XMLNamespace.of("simple.yang"));
     private static final StatementStreamSource YANG_EXT = sourceForResource(
             "/stmt-test/extensions/yang-ext.yang");
 

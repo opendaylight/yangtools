@@ -18,7 +18,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import java.net.URI;
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
@@ -26,6 +25,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -41,7 +41,8 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class EnumValueXPathFunctionTest {
 
     private static final JaxenSchemaContextFactory SCHEMA_CONTEXT_FACTORY = new JaxenSchemaContextFactory();
-    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo-ns"), Revision.of("2017-04-03"));
+    private static final QNameModule FOO_MODULE =
+        QNameModule.create(XMLNamespace.of("foo-ns"), Revision.of("2017-04-03"));
     private static final QName MY_CONTAINER = QName.create(FOO_MODULE, "my-container");
     private static final QName ALARM = QName.create(FOO_MODULE, "alarm");
     private static final QName SEVERITY = QName.create(FOO_MODULE, "severity");

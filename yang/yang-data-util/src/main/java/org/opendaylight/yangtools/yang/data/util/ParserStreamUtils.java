@@ -8,13 +8,13 @@
 
 package org.opendaylight.yangtools.yang.data.util;
 
-import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -34,7 +34,7 @@ public final class ParserStreamUtils {
      *         (where n is number of choices through it was passed)
      */
     public static Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
-                                                                   final String childName, final URI namespace) {
+            final String childName, final XMLNamespace namespace) {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
         final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
         DataSchemaNode potentialChildNode = null;

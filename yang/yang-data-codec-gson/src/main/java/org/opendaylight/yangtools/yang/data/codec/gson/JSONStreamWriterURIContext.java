@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.net.URI;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
@@ -17,19 +17,20 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * recursion. It only tracks the namespace associated with this node.
  */
 abstract class JSONStreamWriterURIContext extends JSONStreamWriterContext {
-    private final URI namespace;
+    private final XMLNamespace namespace;
 
-    JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final URI namespace) {
+    JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final XMLNamespace namespace) {
         this(parent, namespace, false);
     }
 
-    JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final URI namespace, final boolean mandatory) {
+    JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final XMLNamespace namespace,
+            final boolean mandatory) {
         super(parent, mandatory);
         this.namespace = namespace;
     }
 
     @Override
-    protected final URI getNamespace() {
+    protected final XMLNamespace getNamespace() {
         return namespace;
     }
 

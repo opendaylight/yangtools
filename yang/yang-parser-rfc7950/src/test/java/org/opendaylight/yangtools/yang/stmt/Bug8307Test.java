@@ -15,11 +15,11 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
@@ -39,9 +39,9 @@ public class Bug8307Test {
     private static final StatementStreamSource BAR_INVALID_MODULE = sourceForResource("/bugs/bug8307/bar-invalid.yang");
     private static final StatementStreamSource BAZ_INVALID_MODULE = sourceForResource("/bugs/bug8307/baz-invalid.yang");
 
-    private static final URI FOO_NS = URI.create("foo-ns");
-    private static final URI BAR_NS = URI.create("bar-ns");
-    private static final URI BAZ_NS = URI.create("baz-ns");
+    private static final XMLNamespace FOO_NS = XMLNamespace.of("foo-ns");
+    private static final XMLNamespace BAR_NS = XMLNamespace.of("bar-ns");
+    private static final XMLNamespace BAZ_NS = XMLNamespace.of("baz-ns");
 
     private static final Revision REVISION = Revision.of("2017-05-16");
     private static final QNameModule FOO = QNameModule.create(FOO_NS, REVISION);

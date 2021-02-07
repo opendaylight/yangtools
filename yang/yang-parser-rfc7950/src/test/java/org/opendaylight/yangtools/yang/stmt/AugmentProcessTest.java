@@ -14,10 +14,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -35,8 +35,8 @@ public class AugmentProcessTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
-    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(URI.create("root"));
-    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(URI.create("aug"));
+    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(XMLNamespace.of("root"));
+    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(XMLNamespace.of("aug"));
 
     private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
             "aug-parent1");

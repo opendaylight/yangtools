@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
  * Map-based {@link PrefixToModule} namespace. This class is NOT thread-safe.
  */
 public class PrefixToModuleMap implements PrefixToModule {
     private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
-    private final Map<URI, QNameModule> namespaceToModuleMap = new HashMap<>();
+    private final Map<XMLNamespace, QNameModule> namespaceToModuleMap = new HashMap<>();
 
     public void put(final String prefix, final QNameModule module) {
         prefixToModuleMap.put(prefix, module);
@@ -31,7 +30,7 @@ public class PrefixToModuleMap implements PrefixToModule {
     }
 
     @Override
-    public QNameModule getByNamespace(final String namespace) throws URISyntaxException {
-        return namespaceToModuleMap.get(new URI(namespace));
+    public QNameModule getByNamespace(final String namespace) {
+        return namespaceToModuleMap.get(XMLNamespace.of(namespace));
     }
 }

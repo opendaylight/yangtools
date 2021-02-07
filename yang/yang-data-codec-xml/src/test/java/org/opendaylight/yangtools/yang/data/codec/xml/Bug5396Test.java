@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
-import java.net.URI;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -39,8 +39,8 @@ public class Bug5396Test {
     private EffectiveModelContext schemaContext;
 
     @Before
-    public void setUp() throws Exception {
-        fooModuleQName = QNameModule.create(new URI("foo"), Revision.of("2016-03-22"));
+    public void setUp() {
+        fooModuleQName = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2016-03-22"));
         schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
     }
 

@@ -16,11 +16,11 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -95,7 +95,7 @@ public final class ImportStatementSupport
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModuleContext = imported.resolve(ctx);
                 verify(moduleName.equals(importedModuleContext.getRawArgument()));
-                final URI importedModuleNamespace = verifyNotNull(
+                final XMLNamespace importedModuleNamespace = verifyNotNull(
                     importedModuleContext.getFromNamespace(ModuleNameToNamespace.class, moduleName));
                 final String impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
