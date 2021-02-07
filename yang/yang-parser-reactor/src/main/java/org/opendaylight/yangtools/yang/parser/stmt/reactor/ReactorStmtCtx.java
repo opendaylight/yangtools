@@ -246,9 +246,30 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
     }
 
+    //
+    // In the next two methods we are looking for an effective statement. If we already have an effective instance,
+    // defer to it's implementation of the equivalent search. Otherwise we search our substatement contexts.
+    //
+    // Note that the search function is split, so as to allow InferredStatementContext to do its own thing first.
+    //
+
     @Override
-    // Non-final due to InferredStatementContext's override
-    public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+    public final <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+            final @NonNull Class<Z> type) {
+        final E local = effectiveInstance;
+        return local != null ? local.findFirstEffectiveSubstatementArgument(type)
+            : findSubstatementArgumentImpl(type);
+    }
+
+    @Override
+    public final boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        final E local = effectiveInstance;
+        return local != null ? local.findFirstEffectiveSubstatement(type).isPresent()
+            : hasSubstatementImpl(type);
+    }
+
+    // Visible due to InferredStatementContext's override. At this point we do not have an effective instance available.
+    <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgumentImpl(
             final @NonNull Class<Z> type) {
         return allSubstatementsStream()
             .filter(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type))
@@ -256,9 +277,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
             .map(ctx -> (X) ctx.getArgument());
     }
 
-    @Override
-    // Non-final due to InferredStatementContext's override
-    public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+    // Visible due to InferredStatementContext's override. At this point we do not have an effective instance available.
+    boolean hasSubstatementImpl(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
         return allSubstatementsStream()
             .anyMatch(ctx -> ctx.isSupportedToBuildEffective() && ctx.producesEffective(type));
     }

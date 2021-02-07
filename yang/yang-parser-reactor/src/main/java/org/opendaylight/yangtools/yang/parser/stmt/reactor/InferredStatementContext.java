@@ -359,10 +359,10 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
+    <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgumentImpl(
             final @NonNull Class<Z> type) {
         if (substatements instanceof List) {
-            return super.findSubstatementArgument(type);
+            return super.findSubstatementArgumentImpl(type);
         }
 
         final Optional<X> templateArg = prototype.findSubstatementArgument(type);
@@ -377,8 +377,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     }
 
     @Override
-    public boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        return substatements instanceof List ? super.hasSubstatement(type)
+    boolean hasSubstatementImpl(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
+        return substatements instanceof List ? super.hasSubstatementImpl(type)
             // We do not allow deletion of partially-materialized statements, hence this is accurate
             : prototype.hasSubstatement(type);
     }
