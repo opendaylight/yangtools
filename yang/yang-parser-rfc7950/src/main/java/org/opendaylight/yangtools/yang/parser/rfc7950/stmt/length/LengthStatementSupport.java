@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -110,10 +110,18 @@ public final class LengthStatementSupport
             return UnresolvedNumber.min();
         }
 
+        // As per RFC6020/RFC7950 section 9.4.4:
+        //
+        //   An implementation is not required to support a length value larger than 18446744073709551615.
+        //
+        // We could support bigger precision at the cost of additional memory and/or potential ValueRange upper/lower
+        // bound inconsistency. We also take advantage of Uint64's interning facilities.
         try {
-            return new BigInteger(value);
-        } catch (final NumberFormatException e) {
-            throw new SourceException(ctx, e, "Value %s is not a valid integer", value);
+            return Uint64.valueOf(value).intern();
+        } catch (NumberFormatException e) {
+            throw new SourceException(ctx, e, "Value %s is not a valid unsigned integer", value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx, e, "Value %s exceeds maximum supported value %s", value, Uint64.MAX_VALUE);
         }
     }
 }
