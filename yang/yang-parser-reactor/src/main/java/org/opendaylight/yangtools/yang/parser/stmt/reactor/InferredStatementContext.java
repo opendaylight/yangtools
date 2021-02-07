@@ -457,7 +457,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective() {
-        accessSubstatements();
         return ensureEffectiveSubstatements().stream().filter(StmtContext::isSupportedToBuildEffective);
     }
 
