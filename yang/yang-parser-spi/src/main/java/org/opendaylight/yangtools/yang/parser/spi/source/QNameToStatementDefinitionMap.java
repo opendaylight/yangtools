@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
@@ -65,7 +65,7 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
     }
 
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(final URI namespace, final String localName) {
+    public StatementDefinition getByNamespaceAndLocalName(final XMLNamespace namespace, final String localName) {
         return noRevQNameToSupport.get(QName.create(namespace, localName));
     }
 }

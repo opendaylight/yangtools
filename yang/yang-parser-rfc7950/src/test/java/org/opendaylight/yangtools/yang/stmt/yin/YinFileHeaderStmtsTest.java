@@ -9,21 +9,21 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.junit.Assert.assertEquals;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileHeaderStmtsTest extends AbstractYinModulesTest {
-
     @Test
     public void testYinFileHeader() throws URISyntaxException {
         Module testModule = TestUtils.findModule(context, "config").get();
 
         assertEquals(YangVersion.VERSION_1, testModule.getYangVersion());
-        assertEquals(new URI("urn:opendaylight:params:xml:ns:yang:controller:config"), testModule.getNamespace());
+        assertEquals(XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:config"),
+            testModule.getNamespace());
         assertEquals("config", testModule.getPrefix());
     }
 }

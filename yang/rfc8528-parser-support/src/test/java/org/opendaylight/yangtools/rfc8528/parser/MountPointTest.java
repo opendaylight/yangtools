@@ -12,7 +12,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.AfterClass;
@@ -21,6 +20,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -34,7 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class MountPointTest {
-    private static final QNameModule EXAMPLE_USES = QNameModule.create(URI.create("http://example.org/example-uses"));
+    private static final QNameModule EXAMPLE_USES =
+        QNameModule.create(XMLNamespace.of("http://example.org/example-uses"));
     private static final QName EXAMPLE_CONT = QName.create(EXAMPLE_USES, "cont");
     private static final QName EXAMPLE_GRP = QName.create(EXAMPLE_USES, "grp");
     private static final QName EXAMPLE_GRP_CONT = QName.create(EXAMPLE_USES, "grp-cont");

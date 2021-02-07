@@ -12,10 +12,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.net.URI;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
@@ -31,18 +31,18 @@ public class Bug7480Test {
         final Collection<? extends Module> modules = context.getModules();
         assertEquals(8, modules.size());
 
-        assertNotNull(context.findModule(new URI("foo-imp"), Revision.of("2017-01-23")));
-        assertEquals(1, context.findModules(new URI("foo-imp-2")).size());
-        assertEquals(1, context.findModules(new URI("foo-imp-imp")).size());
-        assertEquals(1, context.findModules(new URI("bar")).size());
-        assertEquals(1, context.findModules(new URI("baz")).size());
-        assertTrue(context.findModule(new URI("baz-imp"), Revision.of("2002-01-01")).isPresent());
-        final Collection<? extends Module> foo = context.findModules(new URI("foo"));
+        assertNotNull(context.findModule(XMLNamespace.of("foo-imp"), Revision.of("2017-01-23")));
+        assertEquals(1, context.findModules(XMLNamespace.of("foo-imp-2")).size());
+        assertEquals(1, context.findModules(XMLNamespace.of("foo-imp-imp")).size());
+        assertEquals(1, context.findModules(XMLNamespace.of("bar")).size());
+        assertEquals(1, context.findModules(XMLNamespace.of("baz")).size());
+        assertTrue(context.findModule(XMLNamespace.of("baz-imp"), Revision.of("2002-01-01")).isPresent());
+        final Collection<? extends Module> foo = context.findModules(XMLNamespace.of("foo"));
         assertEquals(1, foo.size());
         final Collection<? extends Submodule> subFoos = foo.iterator().next().getSubmodules();
         assertEquals(1, subFoos.size());
 
-        final Module parentMod = context.findModule(new URI("parent-mod-ns"), Revision.of("2017-09-07")).get();
+        final Module parentMod = context.findModule(XMLNamespace.of("parent-mod-ns"), Revision.of("2017-09-07")).get();
         assertEquals(1, parentMod.getSubmodules().size());
     }
 

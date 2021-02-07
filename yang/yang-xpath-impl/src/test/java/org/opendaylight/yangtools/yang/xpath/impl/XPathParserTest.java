@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.ImmutableBiMap;
-import java.net.URI;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
@@ -20,6 +19,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
@@ -31,11 +31,11 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 @SuppressWarnings("null")
 public class XPathParserTest {
-    private static final QNameModule DEFNS = QNameModule.create(URI.create("defaultns"));
+    private static final QNameModule DEFNS = QNameModule.create(XMLNamespace.of("defaultns"));
     private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
         "def", DEFNS,
-        "foo", QNameModule.create(URI.create("foo")),
-        "bar", QNameModule.create(URI.create("bar"))));
+        "foo", QNameModule.create(XMLNamespace.of("foo")),
+        "bar", QNameModule.create(XMLNamespace.of("bar"))));
 
     private @Nullable AntlrXPathParser parser;
 

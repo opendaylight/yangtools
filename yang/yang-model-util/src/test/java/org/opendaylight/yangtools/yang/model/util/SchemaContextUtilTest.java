@@ -16,7 +16,6 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaContextUtilTest {
     public static final Splitter SPACE_SPLITTER = Splitter.on(' ');
-    public static final URI NAMESPACE = URI.create("abc");
+    public static final XMLNamespace NAMESPACE = XMLNamespace.of("abc");
 
     @Mock
     public SchemaContext mockSchemaContext;
@@ -138,7 +138,7 @@ public class SchemaContextUtilTest {
     @Test
     public void findDataSchemaNodeIllegalArgumentTest2() {
         assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(null,
-            SchemaPath.create(true, QName.create(URI.create("uri:my-module"), Revision.of("2014-10-07"), "foo"))));
+            SchemaPath.create(true, QName.create(XMLNamespace.of("uri:my-module"), Revision.of("2014-10-07"), "foo"))));
     }
 
     @Test

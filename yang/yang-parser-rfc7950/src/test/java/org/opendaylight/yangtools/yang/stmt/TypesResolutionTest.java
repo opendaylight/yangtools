@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -291,7 +291,7 @@ public class TypesResolutionTest {
         assertEquals(Status.CURRENT, testedType.getStatus());
 
         QName testedTypeQName = testedType.getQName();
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:iana-timezones"), testedTypeQName.getNamespace());
+        assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:iana-timezones"), testedTypeQName.getNamespace());
         assertEquals(Revision.ofNullable("2012-07-09"), testedTypeQName.getRevision());
         assertEquals("iana-timezone", testedTypeQName.getLocalName());
 
@@ -324,7 +324,7 @@ public class TypesResolutionTest {
         assertEquals("^(?:\\d*(\\.\\d*){1,127})$", pattern.getJavaPatternString());
 
         QName testedTypeQName = testedType.getQName();
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeQName.getNamespace());
+        assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeQName.getNamespace());
         assertEquals(Revision.ofNullable("2010-09-24"), testedTypeQName.getRevision());
         assertEquals("object-identifier-128", testedTypeQName.getLocalName());
 
@@ -337,7 +337,8 @@ public class TypesResolutionTest {
                 pattern.getJavaPatternString());
 
         QName testedTypeBaseQName = testedTypeBase.getQName();
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeBaseQName.getNamespace());
+        assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types"),
+            testedTypeBaseQName.getNamespace());
         assertEquals(Revision.ofNullable("2010-09-24"), testedTypeBaseQName.getRevision());
         assertEquals("object-identifier", testedTypeBaseQName.getLocalName());
     }
@@ -349,7 +350,7 @@ public class TypesResolutionTest {
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
         IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();
         QName identity = baseType.getIdentities().iterator().next().getQName();
-        assertEquals(URI.create("urn:custom.types.demo"), identity.getNamespace());
+        assertEquals(XMLNamespace.of("urn:custom.types.demo"), identity.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), identity.getRevision());
         assertEquals("service-type", identity.getLocalName());
 

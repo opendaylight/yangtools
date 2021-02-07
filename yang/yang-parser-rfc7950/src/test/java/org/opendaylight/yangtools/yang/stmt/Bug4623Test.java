@@ -13,11 +13,11 @@ import static org.junit.Assert.assertNotNull;
 
 import com.google.common.collect.Range;
 import java.io.File;
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -40,7 +40,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-            QName.create(URI.create("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
+            QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
 
         // then
         final TypeDefinition<?> type = leaf.getType();
@@ -76,7 +76,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-                QName.create(URI.create("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
+                QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
 
         // then
         assertNotNull(leaf);
@@ -112,7 +112,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-                QName.create(URI.create("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
+                QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
         assertNotNull(leaf);

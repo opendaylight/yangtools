@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
@@ -21,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -28,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleDependencySortTest {
-    public static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"));
-    public static final QNameModule BAR_MODULE = QNameModule.create(URI.create("bar"));
+    public static final QNameModule FOO_MODULE = QNameModule.create(XMLNamespace.of("foo"));
+    public static final QNameModule BAR_MODULE = QNameModule.create(XMLNamespace.of("bar"));
 
     @Mock
     public Module fooNoRev;
