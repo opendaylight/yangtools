@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -102,18 +103,30 @@ public final class RangeStatementSupport
         return SUBSTATEMENT_VALIDATOR;
     }
 
-    private static Number parseDecimalConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    private static @NonNull Number parseDecimalConstraintValue(final @NonNull StmtContext<?, ?, ?> ctx,
+            final @NonNull String value) {
         if ("max".equals(value)) {
             return UnresolvedNumber.max();
         }
         if ("min".equals(value)) {
             return UnresolvedNumber.min();
         }
+        // Deal with decimal64, i.e. 'decimal-value' production of the RFC6020 ABNF
+        if (value.indexOf('.') != -1) {
+            try {
+                // FIXME: YANGTOOLS-556: Use Decimal64 here
+                return new BigDecimal(value);
+            } catch (NumberFormatException e) {
+                throw new SourceException(ctx, e, "Value %s is not a valid decimal number", value);
+            }
+        }
 
+        // This has to be an 'integer-value' production of the RFC6020 ABNF. We also clamp allowed range to Long/Uint,
+        // as that is the effectively-valid range of allowed values. For Uint64 we also try to intern the value.
         try {
-            return value.indexOf('.') != -1 ? new BigDecimal(value) : new BigInteger(value);
-        } catch (final NumberFormatException e) {
-            throw new SourceException(ctx, e, "Value %s is not a valid decimal number", value);
+            return value.startsWith("-") ? Long.valueOf(value) : Uint64.valueOf(value).intern();
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx, e, "Value %s is not a valid integral range number", value);
         }
     }
 }
