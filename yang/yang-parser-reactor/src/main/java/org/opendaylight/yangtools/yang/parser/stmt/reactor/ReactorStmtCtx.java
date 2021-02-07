@@ -698,7 +698,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * @return True if this context has an outstanding reference.
      */
     final boolean haveRef() {
-        return refcount > REFCOUNT_NONE;
+        return refcount > REFCOUNT_NONE || parentRefcount() == PARENTREF_PRESENT;
     }
 
     private void lastDecRef() {
