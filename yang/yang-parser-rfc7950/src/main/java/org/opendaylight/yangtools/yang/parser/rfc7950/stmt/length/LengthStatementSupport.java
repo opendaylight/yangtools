@@ -13,6 +13,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -101,7 +102,7 @@ public final class LengthStatementSupport
             : new RegularLengthEffectiveStatement(stmt.declared(), substatements);
     }
 
-    private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    private static @NonNull Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
         if ("max".equals(value)) {
             return UnresolvedNumber.max();
         }

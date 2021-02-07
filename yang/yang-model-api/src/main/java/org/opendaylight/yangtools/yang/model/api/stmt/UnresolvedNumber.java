@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 
 @Beta
 public abstract class UnresolvedNumber extends Number implements Immutable {
-    private static final long serialVersionUID = 1L;
-    private static final UnresolvedNumber MAX = new UnresolvedNumber() {
+    private static final @NonNull UnresolvedNumber MAX = new UnresolvedNumber() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -41,7 +40,7 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         }
     };
 
-    private static final UnresolvedNumber MIN = new UnresolvedNumber() {
+    private static final @NonNull UnresolvedNumber MIN = new UnresolvedNumber() {
         private static final long serialVersionUID = 1L;
 
         @Override
@@ -64,11 +63,17 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         }
     };
 
-    public static UnresolvedNumber min() {
+    private static final long serialVersionUID = 1L;
+
+    UnresolvedNumber() {
+        // Hidden on purpose
+    }
+
+    public static @NonNull UnresolvedNumber min() {
         return MIN;
     }
 
-    public static UnresolvedNumber max() {
+    public static @NonNull UnresolvedNumber max() {
         return MAX;
     }
 
