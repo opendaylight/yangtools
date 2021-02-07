@@ -12,7 +12,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -41,7 +40,7 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
     private final LoadingCache<D, E> effectiveCache = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<D, E>() {
                 @Override
-                public E load(final D key) throws ExecutionException {
+                public E load(final D key) {
                     return createEmptyEffective(key);
                 }
             });
