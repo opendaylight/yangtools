@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 public final class OpenDaylightExtensionsConstants {
     private static final String MODULE_NAME = "yang-ext";
-    private static final URI MODULE_NAMESPACE = URI.create("urn:opendaylight:yang:extension:yang-ext");
+    private static final XMLNamespace MODULE_NAMESPACE =
+        XMLNamespace.of("urn:opendaylight:yang:extension:yang-ext").intern();
     private static final Revision ORIGINAL_REVISION = Revision.of("2013-07-09");
 
     /**

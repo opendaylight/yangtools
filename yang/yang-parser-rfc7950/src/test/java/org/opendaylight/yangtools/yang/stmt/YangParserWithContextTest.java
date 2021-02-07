@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint8;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -51,9 +51,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class YangParserWithContextTest {
-    private static final URI T1_NS = URI.create("urn:simple.demo.test1");
-    private static final URI T2_NS = URI.create("urn:simple.demo.test2");
-    private static final URI T3_NS = URI.create("urn:simple.demo.test3");
+    private static final XMLNamespace T1_NS = XMLNamespace.of("urn:simple.demo.test1");
+    private static final XMLNamespace T2_NS = XMLNamespace.of("urn:simple.demo.test2");
+    private static final XMLNamespace T3_NS = XMLNamespace.of("urn:simple.demo.test3");
     private static final Revision REV = Revision.of("2013-06-18");
 
     private static final StatementStreamSource BAR = sourceForResource("/model/bar.yang");
@@ -85,13 +85,13 @@ public class YangParserWithContextTest {
         assertTrue(leaf.getType() instanceof Uint16TypeDefinition);
         final Uint16TypeDefinition leafType = (Uint16TypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
-        assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
+        assertEquals(XMLNamespace.of("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final Uint16TypeDefinition leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
-        assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
+        assertEquals(XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
@@ -111,7 +111,7 @@ public class YangParserWithContextTest {
                 .buildEffective();
 
         final Module testModule = context.findModule("test2", Revision.of("2013-06-18")).get();
-        final Module contextModule = context.findModules(URI.create("urn:opendaylight.baz")).iterator().next();
+        final Module contextModule = context.findModules(XMLNamespace.of("urn:opendaylight.baz")).iterator().next();
         assertNotNull(contextModule);
         final Collection<? extends GroupingDefinition> groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());
@@ -210,7 +210,7 @@ public class YangParserWithContextTest {
         final UsesNode usesNode = usesNodes.iterator().next();
 
         // test grouping path
-        assertEquals(QName.create(URI.create("urn:opendaylight.baz"), Revision.of("2013-02-27"), "target"),
+        assertEquals(QName.create(XMLNamespace.of("urn:opendaylight.baz"), Revision.of("2013-02-27"), "target"),
             usesNode.getSourceGrouping().getQName());
 
         // test refine
@@ -276,13 +276,13 @@ public class YangParserWithContextTest {
 
         final IdentitySchemaNode identity = identities.iterator().next();
         final QName idQName = identity.getQName();
-        assertEquals(URI.create("urn:simple.demo.test3"), idQName.getNamespace());
+        assertEquals(XMLNamespace.of("urn:simple.demo.test3"), idQName.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
         final IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(identity.getBaseIdentities());
         final QName idBaseQName = baseIdentity.getQName();
-        assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
+        assertEquals(XMLNamespace.of("urn:custom.types.demo"), idBaseQName.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), idBaseQName.getRevision());
         assertEquals("service-type", idBaseQName.getLocalName());
     }
@@ -304,7 +304,7 @@ public class YangParserWithContextTest {
 
         final UnrecognizedStatement un = unknownNodes.iterator().next();
         final QName unType = un.statementDefinition().getStatementName();
-        assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
+        assertEquals(XMLNamespace.of("urn:custom.types.demo"), unType.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), unType.getRevision());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.argument());
@@ -360,7 +360,7 @@ public class YangParserWithContextTest {
 
         assertEquals(Optional.of("system/user ref"), dev.getReference());
 
-        final URI expectedNS = URI.create("urn:opendaylight.bar");
+        final XMLNamespace expectedNS = XMLNamespace.of("urn:opendaylight.bar");
         final Revision expectedRev = Revision.of("2013-07-03");
 
         assertEquals(Absolute.of(

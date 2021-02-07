@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class YT841Test {
-    private static final QNameModule FOO = QNameModule.create(URI.create("foo"), Revision.of("2018-01-02"));
+    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2018-01-02"));
 
     @Test
     public void testFindDataSchemaNode() throws Exception {

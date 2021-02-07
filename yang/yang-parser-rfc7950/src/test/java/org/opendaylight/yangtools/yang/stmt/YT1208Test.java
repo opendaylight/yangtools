@@ -12,11 +12,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -34,7 +34,7 @@ public class YT1208Test {
     @Test
     public void testAugmentStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/augment.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -54,7 +54,7 @@ public class YT1208Test {
     @Test
     public void testCaseStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/case.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -74,7 +74,7 @@ public class YT1208Test {
     @Test
     public void testChoiceStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/choice.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -92,7 +92,7 @@ public class YT1208Test {
     @Test
     public void testGroupingStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/grouping.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -112,7 +112,7 @@ public class YT1208Test {
     @Test
     public void testLeafStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/leaf.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
         assertNotNull(module);
 
         final NotificationEffectiveStatement notif = module
@@ -131,7 +131,7 @@ public class YT1208Test {
     @Test
     public void testLeafListStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/leaflist.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -149,7 +149,7 @@ public class YT1208Test {
     @Test
     public void testListStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/list.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final NotificationEffectiveStatement notif = module
             .findFirstEffectiveSubstatement(NotificationEffectiveStatement.class).orElseThrow();
@@ -167,7 +167,7 @@ public class YT1208Test {
     @Test
     public void testTypedefStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/typedef.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
 
         final TypedefEffectiveStatement grpBar = module
             .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
@@ -183,7 +183,7 @@ public class YT1208Test {
     @Test
     public void testUsesStatementReuse() throws Exception {
         final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/YT1208/uses.yang")
-            .getModuleStatement(QNameModule.create(URI.create("foo")));
+            .getModuleStatement(QNameModule.create(XMLNamespace.of("foo")));
         assertNotNull(module);
         final List<GroupingEffectiveStatement> groupings = module
             .streamEffectiveSubstatements(GroupingEffectiveStatement.class).collect(Collectors.toList());

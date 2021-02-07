@@ -17,11 +17,11 @@ import com.google.common.collect.ImmutableSet;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.net.URI;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.WritableObject;
 import org.opendaylight.yangtools.util.AbstractIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 
 /**
  * Identifier of a RFC8342 (NMDA) datastore. This class is backed by the QName of the datastore, i.e.
@@ -33,7 +33,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 public final class DatastoreIdentifier extends AbstractIdentifier<QName> implements WritableObject {
     private static final long serialVersionUID = 1L;
 
-    private static final URI IETF_DATASTORES_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-datastores");
+    private static final XMLNamespace IETF_DATASTORES_NAMESPACE =
+        XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-datastores").intern();
     private static final ImmutableSet<String> KNOWN_ABSTRACTS = ImmutableSet.of("datastore", "conventional", "dynamic");
 
     private static final LoadingCache<QName, DatastoreIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()

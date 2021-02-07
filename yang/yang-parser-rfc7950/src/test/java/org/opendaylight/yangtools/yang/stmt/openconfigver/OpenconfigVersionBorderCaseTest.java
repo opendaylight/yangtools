@@ -12,9 +12,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -29,8 +29,9 @@ public class OpenconfigVersionBorderCaseTest {
             "/openconfig-version/border-case/border-case-valid-major", StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModules(URI.create("foo")).iterator().next();
-        Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
+            .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -44,8 +45,9 @@ public class OpenconfigVersionBorderCaseTest {
             "/openconfig-version/border-case/border-case-valid-minor", StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModules(URI.create("foo")).iterator().next();
-        Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
+            .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -59,8 +61,9 @@ public class OpenconfigVersionBorderCaseTest {
             "/openconfig-version/border-case/border-case-valid-patch", StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModules(URI.create("foo")).iterator().next();
-        Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
+        Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
+            .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());

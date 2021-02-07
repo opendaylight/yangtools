@@ -11,13 +11,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-import java.net.URI;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -48,8 +48,8 @@ public class CaseStmtTest {
         rootBar = schema.findModule("bar", rev).get();
         assertNotNull(rootFoo);
         assertNotNull(rootBar);
-        qnameFoo = QNameModule.create(URI.create("foo"), rev);
-        qnameBar = QNameModule.create(URI.create("bar"), rev);
+        qnameFoo = QNameModule.create(XMLNamespace.of("foo"), rev);
+        qnameBar = QNameModule.create(XMLNamespace.of("bar"), rev);
         assertNotNull(qnameFoo);
         assertNotNull(qnameBar);
     }
