@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -325,8 +326,8 @@ public class AugmentTest {
     @Test
     public void testAugmentRpc() throws Exception {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
-        final URI NS_BAR = URI.create("urn:opendaylight:bar");
-        final URI NS_FOO = URI.create("urn:opendaylight:foo");
+        final XMLNamespace NS_BAR = XMLNamespace.of("urn:opendaylight:bar");
+        final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
         final Revision revision = Revision.of("2013-10-11");
         final Module bar = TestUtils.findModule(context, "bar").get();
         final Collection<? extends RpcDefinition> rpcs = bar.getRpcs();

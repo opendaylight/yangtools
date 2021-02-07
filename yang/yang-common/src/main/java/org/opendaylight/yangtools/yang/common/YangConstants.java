@@ -39,7 +39,7 @@ public final class YangConstants {
     /**
      * YANG namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in URI format.
      */
-    public static final URI RFC6020_YANG_NAMESPACE = URI.create(RFC6020_YANG_NAMESPACE_STRING);
+    public static final XMLNamespace RFC6020_YANG_NAMESPACE = XMLNamespace.of(RFC6020_YANG_NAMESPACE_STRING).intern();
 
     /**
      * Base QNameModule for all YANG statements.
@@ -69,7 +69,7 @@ public final class YangConstants {
     /**
      * YIN namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14, in URI format.
      */
-    public static final URI RFC6020_YIN_NAMESPACE = URI.create(RFC6020_YIN_NAMESPACE_STRING);
+    public static final XMLNamespace RFC6020_YIN_NAMESPACE = XMLNamespace.of(RFC6020_YIN_NAMESPACE_STRING).intern();
 
     /**
      * Base QNameModule for all YIN statements.

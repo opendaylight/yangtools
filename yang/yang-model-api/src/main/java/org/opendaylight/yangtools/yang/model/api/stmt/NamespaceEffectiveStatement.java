@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.net.URI;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
-public interface NamespaceEffectiveStatement extends EffectiveStatement<URI, NamespaceStatement> {
+public interface NamespaceEffectiveStatement extends EffectiveStatement<XMLNamespace, NamespaceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.NAMESPACE;

@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -221,7 +222,7 @@ public class YangParserSimpleTest {
     }
 
 
-    private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
+    private static final XMLNamespace NS = XMLNamespace.of("urn:opendaylight:simple-nodes");
 
     private static SchemaPath createPath(final String... names) {
         final Revision rev = Revision.of("2013-07-30");

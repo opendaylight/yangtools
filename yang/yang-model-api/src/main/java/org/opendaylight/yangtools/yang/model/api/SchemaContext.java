@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -40,7 +40,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * QName of NETCONF top-level data node.
      */
     // FIXME: YANGTOOLS-1074: we do not want this name
-    @NonNull QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), "data").intern();
+    @NonNull QName NAME = QName.create(XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0"), "data").intern();
 
     /**
      * Returns data schema node instances which represents direct subnodes (like
@@ -94,7 +94,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and no revision.
      */
-    default Optional<Module> findModule(final @NonNull URI namespace) {
+    default Optional<Module> findModule(final @NonNull XMLNamespace namespace) {
         return findModule(QNameModule.create(namespace));
     }
 
@@ -106,7 +106,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final @NonNull URI namespace, final @Nullable Revision revision) {
+    default Optional<Module> findModule(final @NonNull XMLNamespace namespace, final @Nullable Revision revision) {
         return findModule(QNameModule.create(namespace, revision));
     }
 
@@ -118,7 +118,8 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final @NonNull URI namespace, final @NonNull Optional<Revision> revision) {
+    default Optional<Module> findModule(final @NonNull XMLNamespace namespace,
+            final @NonNull Optional<Revision> revision) {
         return findModule(QNameModule.create(namespace, revision));
     }
 
@@ -166,8 +167,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * Returns module instances (from the context) with a concrete name. Returned Set is required to have its iteration
      * order guarantee that the latest revision is encountered first.
      *
-     * @param name
-     *            string with the module name
+     * @param name string with the module name
      * @return set of module instances with specified name.
      */
     default @NonNull Collection<? extends @NonNull Module> findModules(final String name) {
@@ -178,12 +178,10 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * Returns module instance (from the context) with concrete namespace. Returned Set is required to have its
      * iteration order guarantee that the latest revision is encountered first.
      *
-     * @param namespace
-     *            URI instance with specified namespace
-     * @return module instance which has namespace equal to the
-     *         <code>namespace</code> or <code>null</code> in other cases
+     * @param namespace XMLNamespace instance with specified namespace
+     * @return module instance which has namespace equal to the {@code namespace} or {@code null} in other cases
      */
-    default @NonNull Collection<? extends @NonNull Module> findModules(final URI namespace) {
+    default @NonNull Collection<? extends @NonNull Module> findModules(final XMLNamespace namespace) {
         return Collections2.filter(getModules(), m -> namespace.equals(m.getNamespace()));
     }
 

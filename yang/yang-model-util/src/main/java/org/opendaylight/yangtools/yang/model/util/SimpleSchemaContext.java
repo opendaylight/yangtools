@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +30,7 @@ import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNodeAwareSchemaContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  */
 @Beta
 public class SimpleSchemaContext extends AbstractSchemaContext implements AnnotationSchemaNodeAwareSchemaContext {
-    private final ImmutableSetMultimap<URI, Module> namespaceToModules;
+    private final ImmutableSetMultimap<XMLNamespace, Module> namespaceToModules;
     private final ImmutableSetMultimap<String, Module> nameToModules;
     private final ImmutableMap<QNameModule, Module> moduleMap;
     private final ImmutableSet<Module> modules;
@@ -66,7 +66,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
          *
          * Invest some quality time in building up lookup tables for both.
          */
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+        final SetMultimap<XMLNamespace, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
@@ -107,7 +107,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
     }
 
     @Override
-    protected final SetMultimap<URI, Module> getNamespaceToModules() {
+    protected final SetMultimap<XMLNamespace, Module> getNamespaceToModules() {
         return namespaceToModules;
     }
 

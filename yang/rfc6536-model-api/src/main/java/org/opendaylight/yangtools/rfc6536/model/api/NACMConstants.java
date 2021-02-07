@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.rfc6536.model.api;
 
 import com.google.common.collect.ImmutableList;
-import java.net.URI;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 @NonNullByDefault
 public final class NACMConstants {
     private static final String MODULE_NAME = "ietf-netconf-acm";
-    private static final URI MODULE_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-acm");
+    private static final XMLNamespace MODULE_NAMESPACE =
+        XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-netconf-acm").intern();
     private static final Revision RFC6536_REVISION = Revision.of("2012-02-22");
     private static final Revision RFC8341_REVISION = Revision.of("2018-02-14");
 
