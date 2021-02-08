@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,12 +18,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +52,11 @@ abstract class XMLStreamWriterUtils {
      * @return String characters to be written
      * @throws XMLStreamException if an encoding problem occurs
      */
-    String encodeValue(final @NonNull ValueWriter writer,final @NonNull SchemaNode schemaNode,
+    String encodeValue(final @NonNull ValueWriter writer, final @NonNull SchemaInferenceStack stack,
             final TypeDefinition<?> type, final @NonNull Object value, final QNameModule parent)
                     throws XMLStreamException {
         return type instanceof LeafrefTypeDefinition
-                ? encodeValue(writer, getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type), value, parent)
+                ? encodeValue(writer, getBaseTypeForLeafRef(stack, (LeafrefTypeDefinition) type), value, parent)
                         : encodeValue(writer, type, value, parent);
     }
 
@@ -161,8 +165,12 @@ abstract class XMLStreamWriterUtils {
         return value.toString();
     }
 
-    abstract @NonNull TypeDefinition<?> getBaseTypeForLeafRef(SchemaNode schemaNode,
-            @NonNull LeafrefTypeDefinition type);
+    private static @NonNull TypeDefinition<?> getBaseTypeForLeafRef(final SchemaInferenceStack stack,
+            final LeafrefTypeDefinition type) {
+        final EffectiveStatement<?, ?> stmt = stack.resolvePathExpression(type.getPathStatement());
+        verify(stmt instanceof TypeAware);
+        return ((TypeAware) stmt).getType();
+    }
 
     abstract String encodeInstanceIdentifier(@NonNull ValueWriter writer, YangInstanceIdentifier value)
             throws XMLStreamException;
