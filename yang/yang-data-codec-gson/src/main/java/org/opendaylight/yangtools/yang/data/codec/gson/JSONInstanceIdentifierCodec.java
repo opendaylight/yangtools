@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
@@ -52,10 +53,11 @@ abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceI
     }
 
     @Override
-    protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
+    protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
+            final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
+        final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver);
         return objectJSONCodec.parseValue(null, value);
     }
 

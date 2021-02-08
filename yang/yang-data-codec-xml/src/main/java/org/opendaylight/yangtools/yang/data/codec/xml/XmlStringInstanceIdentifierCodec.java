@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 
 final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements XmlCodec<YangInstanceIdentifier> {
@@ -60,10 +61,11 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     @Override
-    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final LeafrefResolver resolver,
+            final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
+        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode, resolver);
         return objectXmlCodec.parseValue(getNamespaceContext(), value);
     }
 
