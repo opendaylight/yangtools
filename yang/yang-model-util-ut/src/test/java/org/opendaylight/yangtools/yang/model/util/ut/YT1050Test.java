@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1050Test {
@@ -53,8 +53,12 @@ public class YT1050Test {
         final TypeDefinition<?> typeNodeType = secondaryType.getType();
         assertThat(typeNodeType, isA(LeafrefTypeDefinition.class));
 
-        final SchemaNode found =  SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, secondaryType,
-            ((LeafrefTypeDefinition) typeNodeType).getPathStatement());
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterGrouping(QName.create(module.getQNameModule(), "grp"));
+        stack.enterSchemaTree(QName.create(module.getQNameModule(), "secondary"));
+        stack.enterSchemaTree(secondaryType.getQName());
+        final EffectiveStatement<QName, ?> found = stack.resolvePathExpression(((LeafrefTypeDefinition) typeNodeType)
+                .getPathStatement());
         assertSame(primaryType, found);
     }
 }

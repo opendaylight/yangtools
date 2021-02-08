@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
@@ -59,7 +58,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -80,7 +78,6 @@ public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
-    private static final Pattern GROUPS_PATTERN = Pattern.compile("\\[(.*?)\\]");
 
     private SchemaContextUtil() {
         // Hidden on purpose
@@ -214,66 +211,6 @@ public final class SchemaContextUtil {
 
         // We are missing proper API alignment, if this ever triggers
         throw new IllegalStateException("Unsupported path " + pathSteps);
-    }
-
-    /**
-     * Method attempts to find DataSchemaNode inside of provided Schema Context
-     * and Yang Module accordingly to Non-conditional relative Revision Aware
-     * XPath. The specified Module MUST be present in Schema Context otherwise
-     * the operation would fail and return <code>null</code>. <br>
-     * The relative Revision Aware XPath MUST be specified WITHOUT the
-     * conditional statement (i.e. without [cond]) in path, because in this
-     * state the Schema Context is completely unaware of data state and will be
-     * not able to properly resolve XPath. If the XPath contains condition the
-     * method will return IllegalArgumentException. <br>
-     * The Actual Schema Node MUST be specified correctly because from this
-     * Schema Node will search starts. If the Actual Schema Node is not correct
-     * the operation will simply fail, because it will be unable to find desired
-     * DataSchemaNode. <br>
-     * If the Revision Aware XPath doesn't have flag
-     * <code>isAbsolute == false</code> the method will throw
-     * IllegalArgumentException. <br>
-     * If the relative Revision Aware XPath is correct and desired Data Schema
-     * Node is present in Yang module or in depending module in Schema Context
-     * the method will return specified Data Schema Node, otherwise the
-     * operation will fail and method will return <code>null</code>.
-     *
-     * @param context
-     *            Schema Context
-     * @param module
-     *            Yang Module
-     * @param actualSchemaNode
-     *            Actual Schema Node
-     * @param relativeXPath
-     *            Relative Non Conditional Revision Aware XPath
-     * @return DataSchemaNode if is present in specified Schema Context for
-     *         given relative Revision Aware XPath, otherwise will return
-     *         <code>null</code>.
-     * @throws NullPointerException if any argument is null
-     */
-    // FIXME: This entire method is ill-defined, as the resolution process depends on  where the XPath is defined --
-    //        notably RPCs, actions and notifications modify the data tree temporarily. See sections 6.4.1 and 9.9.2
-    //        of RFC7950.
-    //
-    //        Most notably we need to understand whether the XPath is being resolved in the data tree, or as part of
-    //        a notification/action/RPC, as then the SchemaContext grows tentative nodes ... which could be addressed
-    //        via a derived SchemaContext (i.e. this class would have to have a
-    //
-    //            SchemaContext notificationSchemaContext(SchemaContext delegate, NotificationDefinition notif)
-    //
-    //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
-    //        that feels like an overkill.
-    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to a dedicated class
-    public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
-            final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
-        checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
-                + "for non relative Revision Aware XPath use findDataSchemaNode method");
-        return resolveRelativeXPath(context, module, removePredicatesFromXpath(relativeXPath.getOriginalString()),
-                actualSchemaNode);
-    }
-
-    private static String removePredicatesFromXpath(final String xpath) {
-        return GROUPS_PATTERN.matcher(xpath).replaceAll("");
     }
 
     /**
@@ -714,7 +651,7 @@ public final class SchemaContextUtil {
     private static SchemaNode resolveDerefPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final String xpath) {
         final int paren = xpath.indexOf(')', 6);
-        checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
+       /* checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
 
         final String derefArg = xpath.substring(6, paren).strip();
         // Look up the node which we need to reference
@@ -751,7 +688,8 @@ public final class SchemaContextUtil {
         checkArgument(deref instanceof LeafSchemaNode, "Unexpected %s reference in %s", deref, targetPath);
 
         final List<String> qnames = doSplitXPath(xpath.substring(paren + 1).stripLeading());
-        return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
+        return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));*/
+        return null;
     }
 
     private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule localNamespace,
