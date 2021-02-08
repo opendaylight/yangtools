@@ -20,19 +20,19 @@ module bar {
 
     typedef ref1-2 {
         type leafref {
-            path "/root/l1";
+            path "/bar:root/bar:l1";
         }
     }
 
     typedef ref2-2 {
         type leafref {
-            path "/root/l2";
+            path "/bar:root/bar:l2";
         }
     }
 
     typedef ref3-2 {
         type leafref {
-            path "/root/l3";
+            path "/bar:root/bar:l3";
         }
     }
 
