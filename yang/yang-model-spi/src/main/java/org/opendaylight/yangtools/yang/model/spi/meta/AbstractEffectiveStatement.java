@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractModelStatement;
 
 /**
  * Baseline stateless implementation of an EffectiveStatement. This class adds a few default implementations and
@@ -86,7 +85,7 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
 
     // TODO: below methods need to find a better place, this is just a temporary hideout as their public class is on
     //       its way out
-    static @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
+    protected static @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
         substatements.stream().filter(SchemaTreeEffectiveStatement.class::isInstance)
@@ -94,7 +93,7 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
         return schemaChildren;
     }
 
-    static @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
+    protected static @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
             final Collection<SchemaTreeEffectiveStatement<?>> schemaTreeStatements,
             // Note: this dance is needed to not retain ImmutableMap$Values
             final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {

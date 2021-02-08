@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 
 /**
- * Exception thrown when indexing of substatements of a {@link AbstractDeclaredEffectiveStatement} fails.
+ * Exception thrown when indexing of substatements of a {@link AbstractEffectiveStatement} fails.
  */
 @Beta
 public final class SubstatementIndexingException extends IllegalArgumentException {

@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveStatement;
 
 @Beta
 public abstract class AbstractUndeclaredEffectiveStatement<A, D extends DeclaredStatement<A>>

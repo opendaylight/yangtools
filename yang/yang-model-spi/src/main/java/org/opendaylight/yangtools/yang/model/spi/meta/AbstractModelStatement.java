@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
@@ -20,9 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
-// FIXME: 7.0.0: hide this class if possible
-@Beta
-public abstract class AbstractModelStatement<A> implements ModelStatement<A> {
+abstract class AbstractModelStatement<A> implements ModelStatement<A> {
     /**
      * Utility method for squashing singleton lists into single objects. This is a CPU/mem trade-off, which we are
      * usually willing to make: for the cost of an instanceof check we can save one object and re-create it when needed.

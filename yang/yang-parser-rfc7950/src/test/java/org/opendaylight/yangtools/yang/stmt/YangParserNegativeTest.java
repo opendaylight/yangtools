@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThrows;
 
 import com.google.common.base.Throwables;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
