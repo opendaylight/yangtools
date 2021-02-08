@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
 final class DeviateEffectiveStatementImpl extends WithSubstatements<DeviateKind, DeviateStatement>
         implements DeviateDefinition, DeviateEffectiveStatement {
