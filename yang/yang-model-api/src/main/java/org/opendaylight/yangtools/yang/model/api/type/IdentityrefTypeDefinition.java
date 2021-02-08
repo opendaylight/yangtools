@@ -11,6 +11,8 @@ import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -18,6 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Contains method for getting data from <code>identityref</code> built-in YANG type.
  */
 public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
+    /**
+     * Well-known QName of the {@code identityref} built-in type.
+     */
+    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "identityref").intern();
+
     /**
      * Returns the set of identities this reference points to.
      *

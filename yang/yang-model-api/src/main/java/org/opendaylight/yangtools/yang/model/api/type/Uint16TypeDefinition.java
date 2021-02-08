@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Type definition derived from uint16 type.
@@ -17,6 +19,10 @@ import org.opendaylight.yangtools.yang.common.Uint16;
  * @author Robert Varga
  */
 public interface Uint16TypeDefinition extends RangeRestrictedTypeDefinition<Uint16TypeDefinition, Uint16> {
+    /**
+     * Well-known QName of the {@code uint16} built-in type.
+     */
+    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "uint16").intern();
 
     static int hashCode(final @NonNull Uint16TypeDefinition type) {
         return TypeDefinitions.hashCode(type);

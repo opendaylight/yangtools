@@ -9,17 +9,22 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains the method which access union item in the union type.
  */
 public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition> {
+    /**
+     * Well-known QName of the {@code union} built-in type.
+     */
+    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "union").intern();
 
     /**
-     * Returns type definitions which represent the values of the arguments for
-     * all YANG <code>type</code> substatement in the main <code>union</code>
-     * statement.
+     * Returns type definitions which represent the values of the arguments for all YANG {@code type} substatement in
+     * the main {@code union} statement.
      *
      * @return list of the type definition which contains the union items.
      */

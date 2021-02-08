@@ -23,7 +23,7 @@ public class EmptyTypeTest {
     public void canCreateEmptyType() {
         EmptyTypeDefinition emptyType = emptyType();
 
-        assertEquals("QName", BaseTypes.EMPTY_QNAME, emptyType.getQName());
+        assertEquals("QName", EmptyTypeDefinition.QNAME, emptyType.getQName());
         assertEquals("BaseType", null, emptyType.getBaseType());
         assertEquals("DefaultValue", Optional.empty(), emptyType.getDefaultValue());
         assertEquals("Status", Status.CURRENT, emptyType.getStatus());

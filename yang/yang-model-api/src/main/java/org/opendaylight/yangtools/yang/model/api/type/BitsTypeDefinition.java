@@ -11,7 +11,9 @@ import java.util.Collection;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -20,10 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     /**
+     * Well-known QName of the {@code bits} built-in type.
+     */
+    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "bits").intern();
+
+    /**
      * Returns all bit values.
      *
-     * @return list of <code>Bit</code> type instastances with data about all
-     *         individual bits of <code>bits</code> YANG built-in type
+     * @return list of {@code Bit} type instances with data about all individual bits of {@code bits} YANG built-in type
      */
     @NonNull Collection<? extends Bit> getBits();
 

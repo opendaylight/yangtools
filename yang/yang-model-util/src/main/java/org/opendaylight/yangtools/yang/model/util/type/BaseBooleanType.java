@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 final class BaseBooleanType extends AbstractBaseType<BooleanTypeDefinition> implements BooleanTypeDefinition {
     static final @NonNull BaseBooleanType INSTANCE = new BaseBooleanType();
 
     private BaseBooleanType() {
-        super(BaseTypes.BOOLEAN_QNAME);
+        super(QNAME);
     }
 
     @Override
