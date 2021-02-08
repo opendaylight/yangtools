@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements XmlCodec<YangInstanceIdentifier> {
@@ -63,7 +65,10 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
+        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode,
+            type -> verifyNotNull(
+                    SchemaContextUtil.getBaseTypeForLeafRef(type, codecFactory.getEffectiveModelContext(), schemaNode),
+                    "Unable to find base type for leafref node %s type %s.", schemaNode, type));
         return objectXmlCodec.parseValue(getNamespaceContext(), value);
     }
 

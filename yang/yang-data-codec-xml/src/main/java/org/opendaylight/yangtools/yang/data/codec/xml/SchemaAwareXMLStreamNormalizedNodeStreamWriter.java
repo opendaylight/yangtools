@@ -17,6 +17,7 @@ import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -33,7 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
@@ -50,7 +53,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode)
             throws XMLStreamException {
-        return streamUtils.encodeValue(xmlWriter, schemaNode, schemaNode.getType(), value,
+        return streamUtils.encodeValue(xmlWriter, resolveType(schemaNode.getType()), value,
             schemaNode.getQName().getModule());
     }
 
@@ -60,8 +63,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         final Optional<AnnotationSchemaNode> optAnnotation =
             AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
         if (optAnnotation.isPresent()) {
-            final AnnotationSchemaNode schema = optAnnotation.get();
-            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule());
+            return streamUtils.encodeValue(xmlWriter, resolveType(optAnnotation.get().getType()), value,
+                qname.getModule());
         }
 
         checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
@@ -170,5 +173,16 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     void startAnydata(final NodeIdentifier name) {
         tracker.startAnydataNode(name);
+    }
+
+    private @NonNull TypeDefinition<?> resolveType(final @NonNull TypeDefinition<?> type) throws XMLStreamException {
+        if (type instanceof LeafrefTypeDefinition) {
+            try {
+                return tracker.resolveLeafref((LeafrefTypeDefinition) type);
+            } catch (IllegalArgumentException e) {
+                throw new XMLStreamException("Cannot resolved type " + type, e);
+            }
+        }
+        return type;
     }
 }
