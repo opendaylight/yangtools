@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -30,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataNodeContainerMixin;
 
 /**
  * Base stateless superclass for statements which (logically) always have an associated {@link DeclaredStatement}. This
@@ -134,48 +131,6 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         @Override
         public final D getDeclared() {
             return declared;
-        }
-    }
-
-    /**
-     * Utility class for implementing DataNodeContainer-type statements.
-     */
-    public abstract static class DefaultDataNodeContainer<A, D extends DeclaredStatement<A>> extends Default<A, D>
-            implements DataNodeContainerMixin<A, D> {
-        private final @NonNull ImmutableMap<QName, DataSchemaNode> dataChildren;
-        private final @NonNull Object substatements;
-
-        protected DefaultDataNodeContainer(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(declared);
-            this.substatements = maskList(substatements);
-
-            // Note: we do not leak this map, so iteration order does not matter
-            final Map<QName, DataSchemaNode> tmp = new HashMap<>();
-
-            for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-                if (stmt instanceof DataSchemaNode) {
-                    final DataSchemaNode node = (DataSchemaNode) stmt;
-                    final QName id = node.getQName();
-                    final DataSchemaNode prev = tmp.put(id, node);
-                    if (prev != null) {
-                        throw new SubstatementIndexingException(
-                            "Cannot add child with name " + id + ", a conflicting child already exists");
-                    }
-                }
-            }
-
-            dataChildren = ImmutableMap.copyOf(tmp);
-        }
-
-        @Override
-        public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-            return unmaskList(substatements);
-        }
-
-        @Override
-        public final DataSchemaNode dataChildByName(final QName name) {
-            return dataChildren.get(requireNonNull(name));
         }
     }
 
