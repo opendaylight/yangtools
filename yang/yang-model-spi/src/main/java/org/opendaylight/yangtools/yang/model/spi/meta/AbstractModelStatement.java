@@ -5,15 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 
-abstract class AbstractModelStatement<A> implements ModelStatement<A> {
-
+/**
+ * Abstract base class for {@link ModelStatement} implementations. It mostly provides static methods for efficiently
+ * storing lists.
+ *
+ * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+ */
+// FIXME: 7.0.0: hide this class if possible
+@Beta
+public abstract class AbstractModelStatement<A> implements ModelStatement<A> {
     /**
      * Utility method for squashing singleton lists into single objects. This is a CPU/mem trade-off, which we are
      * usually willing to make: for the cost of an instanceof check we can save one object and re-create it when needed.
@@ -40,9 +49,9 @@ abstract class AbstractModelStatement<A> implements ModelStatement<A> {
     protected static final <T> @NonNull ImmutableList<T> unmaskList(final @NonNull Object masked,
             final @NonNull Class<T> type) {
         return masked instanceof ImmutableList ? (ImmutableList<T>) masked
-                // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort
-                // of exception we throw. ClassCastException is as good as VerifyException.
-                : ImmutableList.of(type.cast(masked));
+            // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort
+            // of exception we throw. ClassCastException is as good as VerifyException.
+            : ImmutableList.of(type.cast(masked));
     }
 
     protected static final @NonNull Object maskSet(final ImmutableSet<?> set) {
@@ -52,9 +61,8 @@ abstract class AbstractModelStatement<A> implements ModelStatement<A> {
     protected static final <T> @NonNull ImmutableSet<? extends T> unmaskSet(final @NonNull Object masked,
             final @NonNull Class<T> type) {
         return masked instanceof ImmutableSet ? (ImmutableSet<T>) masked
-                // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort
-                // of exception we throw. ClassCastException is as good as VerifyException.
-                : ImmutableSet.of(type.cast(masked));
+            // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort
+            // of exception we throw. ClassCastException is as good as VerifyException.
+            : ImmutableSet.of(type.cast(masked));
     }
-
 }

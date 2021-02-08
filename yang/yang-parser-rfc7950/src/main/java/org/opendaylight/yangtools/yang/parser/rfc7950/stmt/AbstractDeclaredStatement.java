@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractModelStatement;
 
 /**
  * An abstract base class for {@link DeclaredStatement} implementations. This is a direct competition to
@@ -27,9 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 @Beta
 // FIXME: 7.0.0: we should be able to promote this to model.spi.meta package.
 public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
-    protected AbstractDeclaredStatement() {
-    }
-
     @Override
     public StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
