@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -26,12 +27,22 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -42,8 +53,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
@@ -423,6 +441,102 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull SchemaTreeInference toSchemaTreeInference() {
         return DefaultSchemaTreeInference.of(getEffectiveModelContext(), toSchemaNodeIdentifier());
+    }
+
+    /**
+     * Resolve a {@link PathExpression}.
+     *
+     * <p>
+     * Note if this method throws, this stack may be in an undefined state.
+     *
+     * @param path Requested path
+     * @return Resolved schema tree child
+     * @throws NullPointerException if {@code path} is null
+     * @throws IllegalArgumentException if the target node cannot be found
+     * @throws VerifyException if path expression is invalid
+     */
+    public @NonNull EffectiveStatement<?, ?> resolvePathExpression(final PathExpression path) {
+        final Steps steps = path.getSteps();
+        if (steps instanceof LocationPathSteps) {
+            return resolveLocationPath(((LocationPathSteps) steps).getLocationPath());
+        } else if (steps instanceof DerefSteps) {
+            return resolveDeref((DerefSteps) steps);
+        } else {
+            throw new VerifyException("Unhandled steps " + steps);
+        }
+    }
+
+    private @NonNull EffectiveStatement<?, ?> resolveDeref(final DerefSteps deref) {
+        final EffectiveStatement<?, ?> leafRefSchemaNode = currentStatement();
+        final YangLocationPath.Relative derefArg = deref.getDerefArgument();
+        final EffectiveStatement<?, ?> derefStmt = resolveLocationPath(derefArg);
+        checkArgument(derefStmt != null, "Cannot find deref(%s) target node %s in context of %s",
+                derefArg, leafRefSchemaNode);
+        checkArgument(derefStmt instanceof TypedDataSchemaNode, "deref(%s) resolved to non-typed %s", derefArg,
+                derefStmt);
+
+        // We have a deref() target, decide what to do about it
+        final TypeDefinition<?> targetType = ((TypedDataSchemaNode) derefStmt).getType();
+        if (targetType instanceof InstanceIdentifierTypeDefinition) {
+            // Static inference breaks down, we cannot determine where this points to
+            // FIXME: dedicated exception, users can recover from it, derive from IAE
+            throw new UnsupportedOperationException("Cannot infer instance-identifier reference " + targetType);
+        }
+
+        // deref() is define only for instance-identifier and leafref types, handle the latter
+        checkArgument(targetType instanceof LeafrefTypeDefinition, "Illegal target type %s", targetType);
+
+        final PathExpression dereferencedLeafRefPath = ((LeafrefTypeDefinition) targetType).getPathStatement();
+        EffectiveStatement<?, ?> derefNode = resolvePathExpression(dereferencedLeafRefPath);
+        checkArgument(derefStmt != null, "Can not find target node of dereferenced node %s", derefStmt);
+        checkArgument(derefNode instanceof LeafSchemaNode, "Unexpected %s reference in %s", deref,
+                dereferencedLeafRefPath);
+        return resolveLocationPath(deref.getRelativePath());
+    }
+
+    private @NonNull EffectiveStatement<?, ?> resolveLocationPath(final YangLocationPath path) {
+        // get module QName before we clear and loose our deque
+        final QNameModule module = deque.isEmpty() ? null : ((QName) deque.peek().argument()).getModule();
+        if (path.isAbsolute()) {
+            clear();
+        }
+
+        EffectiveStatement<?, ?> current = null;
+        for (Step step : path.getSteps()) {
+            final YangXPathAxis axis = step.getAxis();
+            switch (axis) {
+                case CHILD:
+                    current = enterChild(step, module);
+                    break;
+                case PARENT:
+                    verify(step instanceof AxisStep, "Unexpected parent step %s", step);
+                    try {
+                        current = exitToDataTree();
+                    } catch (IllegalStateException e) {
+                        throw new IllegalArgumentException("Illegal parent access in " + path, e);
+                    }
+                    break;
+                default:
+                    throw new VerifyException("Unexpected step " + step);
+            }
+        }
+
+        return verifyNotNull(current);
+    }
+
+    private @NonNull EffectiveStatement<?, ?> enterChild(final Step step, final QNameModule module) {
+        verify(step instanceof QNameStep, "Unexpected child step %s", step);
+        final AbstractQName toResolve = ((QNameStep) step).getQName();
+        final QName qname;
+        if (toResolve instanceof QName) {
+            qname = (QName) toResolve;
+        } else if (toResolve instanceof UnqualifiedQName) {
+            checkArgument(module != null, "Can not find target module of step %s", step);
+            qname = ((UnqualifiedQName) toResolve).bindTo(module);
+        } else {
+            throw new VerifyException("Unexpected child step QName " + toResolve);
+        }
+        return enterDataTree(qname);
     }
 
     /**
