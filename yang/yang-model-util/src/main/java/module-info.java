@@ -11,6 +11,7 @@ module org.opendaylight.yangtools.yang.model.util {
     exports org.opendaylight.yangtools.yang.model.repo.util;
 
     requires transitive org.opendaylight.yangtools.rfc7952.model.api;
+    requires transitive org.opendaylight.yangtools.yang.xpath.api;
 
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
