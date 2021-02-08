@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
@@ -33,7 +34,12 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
@@ -50,8 +56,16 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     String encodeValue(final ValueWriter xmlWriter, final Object value, final TypedDataSchemaNode schemaNode)
             throws XMLStreamException {
-        return streamUtils.encodeValue(xmlWriter, schemaNode, schemaNode.getType(), value,
-            schemaNode.getQName().getModule());
+        TypeDefinition<? extends TypeDefinition<?>> type = schemaNode.getType();
+        if (type instanceof LeafrefTypeDefinition) {
+            final SchemaInferenceStack stack = tracker.toInferenceStack();
+            final EffectiveStatement<?, ?> stmt =
+                stack.resolvePathExpression(((LeafrefTypeDefinition) type).getPathStatement());
+            verify(stmt instanceof TypeAware, "Unexpected statement %s", stmt);
+            type = ((TypeAware) stmt).getType();
+        }
+
+        return streamUtils.encodeValue(xmlWriter, type, value, schemaNode.getQName().getModule());
     }
 
     @Override
@@ -61,7 +75,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             AnnotationSchemaNode.find(streamUtils.getEffectiveModelContext(), qname);
         if (optAnnotation.isPresent()) {
             final AnnotationSchemaNode schema = optAnnotation.get();
-            return streamUtils.encodeValue(xmlWriter, schema, schema.getType(), value, qname.getModule());
+            // FIXME: deal with leafrefs!
+
+            return streamUtils.encodeValue(xmlWriter, schema.getType(), value, qname.getModule());
         }
 
         checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
