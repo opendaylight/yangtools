@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
@@ -38,8 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
-@Beta
-public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
+abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         extends AbstractModelStatement<A> implements EffectiveStatement<A, D> {
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
