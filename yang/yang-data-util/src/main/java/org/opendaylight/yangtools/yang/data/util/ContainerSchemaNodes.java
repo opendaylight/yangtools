@@ -69,6 +69,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
+        @Deprecated
         public boolean isAugmenting() {
             return false;
         }

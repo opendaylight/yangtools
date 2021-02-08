@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,21 +53,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         extends AbstractEffectiveModelContextProvider {
-    /**
-     * Helper interface aiding resolution of leafref chains.
-     */
-    @Beta
-    @FunctionalInterface
-    public interface LeafrefResolver {
-        /**
-         * Resolve specified {@link LeafrefTypeDefinition}.
-         *
-         * @param type leafref definition
-         * @return Resolved type
-         */
-        @NonNull TypeDefinition<?> resolveLeafref(@NonNull LeafrefTypeDefinition type);
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 
     private final @NonNull CodecCache<T> cache;
