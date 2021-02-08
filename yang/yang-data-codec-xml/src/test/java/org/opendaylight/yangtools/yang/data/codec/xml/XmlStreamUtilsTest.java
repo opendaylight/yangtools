@@ -15,10 +15,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
@@ -153,24 +149,6 @@ public class XmlStreamUtilsTest {
                 schemaNode);
         assertTrue("Wrong class found.", clas.isInstance(targetBaseType));
         return targetBaseType;
-    }
-
-    private static Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {
-        final Map<String, String> mappedPrefixes = new HashMap<>();
-        for (final Map.Entry<URI, String> prefix : prefixes) {
-            mappedPrefixes.put(prefix.getKey().toString(), prefix.getValue());
-        }
-        return mappedPrefixes;
-    }
-
-    private static QName getAttrQName(final String namespace, final String revision, final String localName,
-            final Optional<String> prefix) {
-        if (prefix.isPresent()) {
-            final QName moduleQName = QName.create(namespace, revision, "module");
-            final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
-            return QName.create(module, localName);
-        }
-        return QName.create(namespace, revision, localName);
     }
 
     private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
