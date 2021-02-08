@@ -16,4 +16,5 @@ module org.opendaylight.yangtools.yang.xpath.api {
 
     // Annotations
     requires static org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
 }
