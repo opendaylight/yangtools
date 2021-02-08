@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Contains methods for getting data from the YANG <code>type</code> substatement for <code>decimal64</code> built-in
@@ -16,13 +18,17 @@ import java.util.Objects;
  */
 public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<DecimalTypeDefinition, BigDecimal> {
     /**
+     * Well-known QName of the {@code decimal64} built-in type.
+     */
+    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "decimal64").intern();
+
+    /**
      * Returns integer between 1 and 18 inclusively.
      *
      * <p>
-     * The "fraction-digits" statement controls the size of the minimum
-     * difference between values of a decimal64 type, by restricting the value
-     * space to numbers that are expressible as "i x 10^-n" where n is the
-     * fraction-digits argument.
+     * The "fraction-digits" statement controls the size of the minimum difference between values of a decimal64 type,
+     * by restricting the value space to numbers that are expressible as "i x 10^-n" where n is the fraction-digits
+     * argument.
      *
      * @return number of fraction digits
      */

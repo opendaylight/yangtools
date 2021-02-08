@@ -24,7 +24,7 @@ public class BooleanTypeTest {
     public void canCreateBooleanType() {
         final BooleanTypeDefinition boolType = booleanType();
 
-        assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
+        assertEquals("getQName gives BOOLEAN_QNAME", BooleanTypeDefinition.QNAME, boolType.getQName());
         assertFalse(boolType.getDescription().isPresent());
 
         assertThat(boolType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)boolean"));

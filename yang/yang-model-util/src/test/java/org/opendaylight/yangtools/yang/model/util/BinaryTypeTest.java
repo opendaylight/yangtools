@@ -27,7 +27,7 @@ public class BinaryTypeTest {
         assertEquals(Optional.empty(), binType.getDefaultValue());
         assertEquals("CURRENT", Status.CURRENT, binType.getStatus());
         assertEquals("Base type is null", null, binType.getBaseType());
-        assertEquals("getQName gives BINARY_QNAME", BaseTypes.BINARY_QNAME, binType.getQName());
+        assertEquals("getQName gives BINARY_QNAME", BinaryTypeDefinition.QNAME, binType.getQName());
         assertEquals(Optional.empty(), binType.getUnits());
 
         assertTrue("binType1 should equal to binType", binType.equals(binType1) && binType1.equals(binType));

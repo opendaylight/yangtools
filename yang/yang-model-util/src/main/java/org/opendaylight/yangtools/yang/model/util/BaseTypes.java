@@ -12,6 +12,25 @@ import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 /**
  * Utility methods and constants to work with built-in YANG types.
@@ -21,46 +40,26 @@ public final class BaseTypes {
     private BaseTypes() {
     }
 
-    public static final QName BINARY_QNAME = constructQName("binary");
-    public static final QName BITS_QNAME = constructQName("bits");
-    public static final QName BOOLEAN_QNAME = constructQName("boolean");
-    public static final QName DECIMAL64_QNAME = constructQName("decimal64");
-    public static final QName EMPTY_QNAME = constructQName("empty");
-    public static final QName ENUMERATION_QNAME = constructQName("enumeration");
-    public static final QName IDENTITYREF_QNAME = constructQName("identityref");
-    public static final QName INSTANCE_IDENTIFIER_QNAME = constructQName("instance-identifier");
-    public static final QName INT8_QNAME = constructQName("int8");
-    public static final QName INT16_QNAME = constructQName("int16");
-    public static final QName INT32_QNAME = constructQName("int32");
-    public static final QName INT64_QNAME = constructQName("int64");
-    public static final QName LEAFREF_QNAME = constructQName("leafref");
-    public static final QName STRING_QNAME = constructQName("string");
-    public static final QName UINT8_QNAME = constructQName("uint8");
-    public static final QName UINT16_QNAME = constructQName("uint16");
-    public static final QName UINT32_QNAME = constructQName("uint32");
-    public static final QName UINT64_QNAME = constructQName("uint64");
-    public static final QName UNION_QNAME = constructQName("union");
-
     private static final ImmutableSet<QName> BUILT_IN_TYPES = ImmutableSet.<QName>builder()
-            .add(BINARY_QNAME)
-            .add(BITS_QNAME)
-            .add(BOOLEAN_QNAME)
-            .add(DECIMAL64_QNAME)
-            .add(EMPTY_QNAME)
-            .add(ENUMERATION_QNAME)
-            .add(IDENTITYREF_QNAME)
-            .add(INSTANCE_IDENTIFIER_QNAME)
-            .add(INT8_QNAME)
-            .add(INT16_QNAME)
-            .add(INT32_QNAME)
-            .add(INT64_QNAME)
-            .add(LEAFREF_QNAME)
-            .add(STRING_QNAME)
-            .add(UINT8_QNAME)
-            .add(UINT16_QNAME)
-            .add(UINT32_QNAME)
-            .add(UINT64_QNAME)
-            .add(UNION_QNAME)
+            .add(BinaryTypeDefinition.QNAME)
+            .add(BitsTypeDefinition.QNAME)
+            .add(BooleanTypeDefinition.QNAME)
+            .add(DecimalTypeDefinition.QNAME)
+            .add(EmptyTypeDefinition.QNAME)
+            .add(EnumTypeDefinition.QNAME)
+            .add(IdentityrefTypeDefinition.QNAME)
+            .add(InstanceIdentifierTypeDefinition.QNAME)
+            .add(Int8TypeDefinition.QNAME)
+            .add(Int16TypeDefinition.QNAME)
+            .add(Int32TypeDefinition.QNAME)
+            .add(Int64TypeDefinition.QNAME)
+            .add(LeafrefTypeDefinition.QNAME)
+            .add(StringTypeDefinition.QNAME)
+            .add(Uint8TypeDefinition.QNAME)
+            .add(Uint16TypeDefinition.QNAME)
+            .add(Uint32TypeDefinition.QNAME)
+            .add(Uint64TypeDefinition.QNAME)
+            .add(UnionTypeDefinition.QNAME)
             .build();
 
     /**
