@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -40,12 +41,12 @@ public final class DescriptionStatementSupport
     @Override
     protected DescriptionStatement createDeclared(final StmtContext<String, DescriptionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularDescriptionStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createDescription(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected DescriptionStatement createEmptyDeclared(final StmtContext<String, DescriptionStatement, ?> ctx) {
-        return new EmptyDescriptionStatement(ctx.getRawArgument());
+        return DeclaredStatements.createDescription(ctx.getRawArgument());
     }
 
     @Override

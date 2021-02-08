@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementSupport;
@@ -114,12 +115,12 @@ public final class ChoiceStatementSupport
     @Override
     protected ChoiceStatement createDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularChoiceStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createChoice(ctx.getArgument(), substatements);
     }
 
     @Override
     protected ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
-        return new EmptyChoiceStatement(ctx.getArgument());
+        return DeclaredStatements.createChoice(ctx.getArgument());
     }
 
     @Override

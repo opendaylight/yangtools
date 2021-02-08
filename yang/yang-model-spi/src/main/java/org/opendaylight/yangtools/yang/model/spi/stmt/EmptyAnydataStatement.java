@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
-final class EmptyContainerStatement extends WithQNameArgument implements ContainerStatement {
-    EmptyContainerStatement(final QName argument) {
+final class EmptyAnydataStatement extends WithQNameArgument implements AnydataStatement {
+    EmptyAnydataStatement(final QName argument) {
         super(argument);
     }
 }

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -32,18 +33,17 @@ public final class StatusStatementSupport
      * status has low argument cardinality, hence we can reuse them in case declaration does not have any
      * substatements (which is the usual case). Yeah, we could consider an EnumMap, but this is not too bad, either.
      */
-    private static final @NonNull EmptyStatusStatement EMPTY_CURRENT_DECL =
-            new EmptyStatusStatement(Status.CURRENT);
-    private static final @NonNull EmptyStatusStatement EMPTY_DEPRECATED_DECL =
-            new EmptyStatusStatement(Status.DEPRECATED);
-    private static final @NonNull EmptyStatusStatement EMPTY_OBSOLETE_DECL =
-            new EmptyStatusStatement(Status.OBSOLETE);
+    private static final @NonNull StatusStatement EMPTY_CURRENT_DECL = DeclaredStatements.createStatus(Status.CURRENT);
+    private static final @NonNull StatusStatement EMPTY_DEPRECATED_DECL =
+        DeclaredStatements.createStatus(Status.DEPRECATED);
+    private static final @NonNull StatusStatement EMPTY_OBSOLETE_DECL =
+        DeclaredStatements.createStatus(Status.OBSOLETE);
     private static final @NonNull EmptyStatusEffectiveStatement EMPTY_CURRENT_EFF =
-            new EmptyStatusEffectiveStatement(EMPTY_CURRENT_DECL);
+        new EmptyStatusEffectiveStatement(EMPTY_CURRENT_DECL);
     private static final @NonNull EmptyStatusEffectiveStatement EMPTY_DEPRECATED_EFF =
-            new EmptyStatusEffectiveStatement(EMPTY_DEPRECATED_DECL);
+        new EmptyStatusEffectiveStatement(EMPTY_DEPRECATED_DECL);
     private static final @NonNull EmptyStatusEffectiveStatement EMPTY_OBSOLETE_EFF =
-            new EmptyStatusEffectiveStatement(EMPTY_OBSOLETE_DECL);
+        new EmptyStatusEffectiveStatement(EMPTY_OBSOLETE_DECL);
 
     private StatusStatementSupport() {
         super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent());
@@ -89,7 +89,7 @@ public final class StatusStatementSupport
     @Override
     protected StatusStatement createDeclared(final StmtContext<Status, StatusStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularStatusStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createStatus(ctx.getArgument(), substatements);
     }
 
     @Override

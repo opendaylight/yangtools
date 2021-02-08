@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -49,12 +50,12 @@ public final class ArgumentStatementSupport
     @Override
     protected ArgumentStatement createDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularArgumentStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createArgument(ctx.getArgument(), substatements);
     }
 
     @Override
     protected ArgumentStatement createEmptyDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx) {
-        return new EmptyArgumentStatement(ctx.getArgument());
+        return DeclaredStatements.createArgument(ctx.getArgument());
     }
 
     @Override

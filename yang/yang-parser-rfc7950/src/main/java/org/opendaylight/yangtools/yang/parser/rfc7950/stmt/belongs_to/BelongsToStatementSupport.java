@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -85,12 +86,12 @@ public final class BelongsToStatementSupport
     @Override
     protected BelongsToStatement createDeclared(final StmtContext<String, BelongsToStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularBelongsToStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createBelongsTo(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected BelongsToStatement createEmptyDeclared(final StmtContext<String, BelongsToStatement, ?> ctx) {
-        return new EmptyBelongsToStatement(ctx.getRawArgument());
+        return DeclaredStatements.createBelongsTo(ctx.getRawArgument());
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -57,12 +58,12 @@ public final class AnyxmlStatementSupport
     @Override
     protected AnyxmlStatement createDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularAnyxmlStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createAnyxml(ctx.getArgument(), substatements);
     }
 
     @Override
     protected AnyxmlStatement createEmptyDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx) {
-        return new EmptyAnyxmlStatement(ctx.getArgument());
+        return DeclaredStatements.createAnyxml(ctx.getArgument());
     }
 
     @Override

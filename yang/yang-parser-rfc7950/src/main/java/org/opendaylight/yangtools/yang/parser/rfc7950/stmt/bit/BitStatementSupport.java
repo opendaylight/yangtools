@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -70,12 +71,12 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
     @Override
     protected BitStatement createDeclared(final StmtContext<String, BitStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularBitStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createBit(ctx.getArgument(), substatements);
     }
 
     @Override
     protected BitStatement createEmptyDeclared(final StmtContext<String, BitStatement, ?> ctx) {
-        return new EmptyBitStatement(ctx.getArgument());
+        return DeclaredStatements.createBit(ctx.getArgument());
     }
 
     @Override

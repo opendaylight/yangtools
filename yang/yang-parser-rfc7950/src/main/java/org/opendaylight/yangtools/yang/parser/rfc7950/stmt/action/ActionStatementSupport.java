@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
@@ -98,12 +99,12 @@ public final class ActionStatementSupport extends
     @Override
     protected ActionStatement createDeclared(final StmtContext<QName, ActionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularActionStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createAction(ctx.getArgument(), substatements);
     }
 
     @Override
     protected ActionStatement createEmptyDeclared(final StmtContext<QName, ActionStatement, ?> ctx) {
-        return new EmptyActionStatement(ctx.getArgument());
+        return DeclaredStatements.createAction(ctx.getArgument());
     }
 
     @Override

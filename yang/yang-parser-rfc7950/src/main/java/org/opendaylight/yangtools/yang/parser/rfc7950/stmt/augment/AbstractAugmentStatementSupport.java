@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
@@ -107,13 +108,13 @@ abstract class AbstractAugmentStatementSupport
     @Override
     protected final AugmentStatement createDeclared(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularAugmentStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createAugment(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected final AugmentStatement createEmptyDeclared(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
-        return new EmptyAugmentStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createAugment(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override
