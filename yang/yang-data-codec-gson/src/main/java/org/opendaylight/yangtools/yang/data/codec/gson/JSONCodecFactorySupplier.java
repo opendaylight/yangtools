@@ -15,18 +15,23 @@ import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.util.StackLeafrefResolver;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.PrecomputedCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +76,14 @@ public enum JSONCodecFactorySupplier {
             final Stopwatch sw = Stopwatch.createStarted();
             final LazyCodecCache<JSONCodec<?>> lazyCache = new LazyCodecCache<>();
             final JSONCodecFactory lazy = factorySupplier.apply(key, lazyCache);
-            final int visitedLeaves = requestCodecsForChildren(lazy, key);
+            final SchemaInferenceStack stack = SchemaInferenceStack.of(key);
+            final StackLeafrefResolver resolver = new StackLeafrefResolver(stack);
+
+            int visitedLeaves = 0;
+            for (ModuleEffectiveStatement module : key.getModuleStatements().values()) {
+                visitedLeaves += codecsForChildren(lazy, stack, resolver, module);
+                stack.clear();
+            }
             sw.stop();
 
             final PrecomputedCodecCache<JSONCodec<?>> cache = lazyCache.toPrecomputed();
@@ -80,14 +92,19 @@ public enum JSONCodecFactorySupplier {
             return factorySupplier.apply(key, cache);
         }
 
-        private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent) {
+        private static int codecsForChildren(final JSONCodecFactory lazy, final SchemaInferenceStack stack,
+                final StackLeafrefResolver resolver, final DataTreeAwareEffectiveStatement<?, ?> parent) {
             int ret = 0;
-            for (DataSchemaNode child : parent.getChildNodes()) {
-                if (child instanceof TypedDataSchemaNode) {
-                    lazy.codecFor((TypedDataSchemaNode) child);
+            final Map<QName, DataTreeEffectiveStatement<?>> dataTree =
+                parent.getAll(DataTreeAwareEffectiveStatement.Namespace.class);
+            for (DataTreeEffectiveStatement<?> child : dataTree.values()) {
+                if (child instanceof DataTreeAwareEffectiveStatement) {
+                    stack.enterDataTree(child.argument());
+                    ret += codecsForChildren(lazy, stack, resolver, (DataTreeAwareEffectiveStatement<?, ?>) child);
+                    stack.exit();
+                } else if (child instanceof TypedDataSchemaNode) {
+                    lazy.codecFor((TypedDataSchemaNode) child, resolver);
                     ++ret;
-                } else if (child instanceof DataNodeContainer) {
-                    ret += requestCodecsForChildren(lazy, (DataNodeContainer) child);
                 }
             }
 

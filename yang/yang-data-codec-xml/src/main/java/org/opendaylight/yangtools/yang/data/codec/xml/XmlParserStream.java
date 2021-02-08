@@ -70,6 +70,7 @@ import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.StackLeafrefResolver;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -140,6 +141,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     // Cache of nsUri Strings to QNameModules, as inferred from document
     private final Map<String, QNameModule> rawNamespaces = new HashMap<>();
     private final NormalizedNodeStreamWriter writer;
+    private final StackLeafrefResolver resolver;
     private final SchemaInferenceStack stack;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
@@ -150,6 +152,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
         this.stack = requireNonNull(stack);
+        this.resolver = new StackLeafrefResolver(stack);
         this.strictParsing = strictParsing;
 
         if (!stack.isEmpty()) {
@@ -362,7 +365,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                     codecs.getEffectiveModelContext(), qname);
                 if (optAnnotation.isPresent()) {
                     final AnnotationSchemaNode schema = optAnnotation.get();
-                    final Object value = codecs.codecFor(schema).parseValue(in.getNamespaceContext(), attrValue);
+                    final Object value = codecs.codecFor(schema, resolver)
+                        .parseValue(in.getNamespaceContext(), attrValue);
                     attributes.put(schema.getQName(), value);
                     continue;
                 }
@@ -670,7 +674,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         checkArgument(node instanceof TypedDataSchemaNode);
         checkArgument(value instanceof String);
-        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(namespaceCtx, (String) value);
+        return codecs.codecFor((TypedDataSchemaNode) node, resolver).parseValue(namespaceCtx, (String) value);
     }
 
     private static AbstractNodeDataWithSchema<?> newEntryNode(final AbstractNodeDataWithSchema<?> parent) {

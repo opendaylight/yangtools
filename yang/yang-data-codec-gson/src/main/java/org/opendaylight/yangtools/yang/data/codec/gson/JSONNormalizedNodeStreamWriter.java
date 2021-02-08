@@ -406,7 +406,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode) {
-            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
+            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current, tracker));
         } else if (current instanceof AnydataSchemaNode) {
             writeAnydataValue(value);
         } else {

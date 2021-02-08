@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Map.Entry;
@@ -17,22 +16,12 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements EffectiveModelContextProvider {
     private final @NonNull EffectiveModelContext schemaContext;
 
     SchemaAwareXMLStreamWriterUtils(final EffectiveModelContext schemaContext) {
         this.schemaContext = requireNonNull(schemaContext);
-    }
-
-    @Override
-    TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type) {
-        final TypeDefinition<?> ret = SchemaContextUtil.getBaseTypeForLeafRef(type, schemaContext, schemaNode);
-        return verifyNotNull(ret, "Unable to find base type for leafref node '%s'.", schemaNode);
     }
 
     @Override
