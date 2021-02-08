@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2021 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -20,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -46,13 +46,16 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
+import org.opendaylight.yangtools.yang.model.util.LeafrefResolver;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.slf4j.Logger;
@@ -62,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * Utility class for tracking schema state underlying a {@link NormalizedNode} structure.
  */
 @Beta
-public final class NormalizedNodeStreamWriterStack implements Mutable {
+public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeStreamWriterStack.class);
 
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
@@ -70,8 +73,8 @@ public final class NormalizedNodeStreamWriterStack implements Mutable {
     private final DataNodeContainer root;
 
     private NormalizedNodeStreamWriterStack(final EffectiveModelContext context) {
-        root = requireNonNull(context);
         dataTree = SchemaInferenceStack.of(context);
+        root = requireNonNull(context);
     }
 
     private NormalizedNodeStreamWriterStack(final SchemaInferenceStack dataTree) {
@@ -169,13 +172,9 @@ public final class NormalizedNodeStreamWriterStack implements Mutable {
         return new NormalizedNodeStreamWriterStack(stack);
     }
 
-    /**
-     * Return a copy of this tracker's state as an {@link SchemaInferenceStack}.
-     *
-     * @return A SchemaInferenceStack
-     */
-    public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
-        return dataTree.copy();
+    @Override
+    public TypeDefinition<?> resolveLeafref(final LeafrefTypeDefinition type) {
+        return dataTree.resolveLeafref(type);
     }
 
     public Object getParent() {

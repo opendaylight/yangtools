@@ -362,7 +362,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                     codecs.getEffectiveModelContext(), qname);
                 if (optAnnotation.isPresent()) {
                     final AnnotationSchemaNode schema = optAnnotation.get();
-                    final Object value = codecs.codecFor(schema).parseValue(in.getNamespaceContext(), attrValue);
+                    final Object value = codecs.codecFor(schema, stack)
+                        .parseValue(in.getNamespaceContext(), attrValue);
                     attributes.put(schema.getQName(), value);
                     continue;
                 }
@@ -670,7 +671,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         checkArgument(node instanceof TypedDataSchemaNode);
         checkArgument(value instanceof String);
-        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(namespaceCtx, (String) value);
+        return codecs.codecFor((TypedDataSchemaNode) node, stack).parseValue(namespaceCtx, (String) value);
     }
 
     private static AbstractNodeDataWithSchema<?> newEntryNode(final AbstractNodeDataWithSchema<?> parent) {
