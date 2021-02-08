@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2021 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory.LeafrefResolver;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -46,12 +48,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
@@ -62,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * Utility class for tracking schema state underlying a {@link NormalizedNode} structure.
  */
 @Beta
-public final class NormalizedNodeInferenceStack implements Mutable {
+public final class NormalizedNodeInferenceStack implements Mutable, LeafrefResolver {
     private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeInferenceStack.class);
 
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
@@ -165,6 +170,13 @@ public final class NormalizedNodeInferenceStack implements Mutable {
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
         return new NormalizedNodeInferenceStack(stack);
+    }
+
+    @Override
+    public TypeDefinition<?> resolveLeafref(final LeafrefTypeDefinition type) {
+        final EffectiveStatement<?, ?> stmt = toSchemaInferenceStack().resolvePathExpression(type.getPathStatement());
+        checkArgument(stmt instanceof TypeAware, "Unexpected result %s", stmt);
+        return ((TypeAware) stmt).getType();
     }
 
     /**
