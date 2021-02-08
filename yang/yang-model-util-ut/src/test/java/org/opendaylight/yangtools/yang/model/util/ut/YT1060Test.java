@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.model.util.ut;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -23,10 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
@@ -59,10 +60,17 @@ public class YT1060Test {
     }
 
     @Test
-    public void testFindDataSchemaNode() {
-        final SchemaNode found = SchemaContextUtil.findDataTreeSchemaNode(context, CONT.getModule(), path);
-        assertThat(found, isA(LeafSchemaNode.class));
-        assertEquals(SchemaPath.create(true, QName.create("imported", "root"), QName.create("imported", "leaf1")),
-            found.getPath());
+    public void testFindDataSchemaNodeAbsolutePathImportedModule(){
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterDataTree(CONT);
+        stack.enterDataTree(LEAF1);
+        final EffectiveStatement<QName, ?> foundStmt = stack.resolvePathExpression(path);
+        assertThat(foundStmt, isA(LeafSchemaNode.class));
+        assertEquals(QName.create(XMLNamespace.of("imported"), "leaf1"), ((LeafSchemaNode) foundStmt).getQName());
+
+        // since this is absolute path with prefixes stack should be able to resolve it from any state
+        stack.clear();
+        final EffectiveStatement<QName, ?> foundStmtSecond = stack.resolvePathExpression(path);
+        assertSame(foundStmt, foundStmtSecond);
     }
 }

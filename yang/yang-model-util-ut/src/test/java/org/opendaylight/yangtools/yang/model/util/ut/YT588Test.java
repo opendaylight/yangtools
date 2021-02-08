@@ -12,14 +12,15 @@ import static org.hamcrest.Matchers.isA;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT588Test {
@@ -27,8 +28,8 @@ public class YT588Test {
     private static final String REV = "2016-03-01";
 
     @Test
-    public void test() throws Exception {
-        SchemaContext context = YangParserTestUtils.parseYangResource("/yt588.yang");
+    public void test() {
+        EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt588.yang");
 
         QName root = QName.create(NS, REV, "root");
         QName leafRef2 = QName.create(NS, REV, "leaf-ref-2");
@@ -46,12 +47,18 @@ public class YT588Test {
         assertThat(leafRefNode.getType(), isA(LeafrefTypeDefinition.class));
         assertThat(leafRefNode2.getType(), isA(LeafrefTypeDefinition.class));
 
-        TypeDefinition<?> baseTypeForLeafRef = SchemaContextUtil.getBaseTypeForLeafRef(
-                (LeafrefTypeDefinition) leafRefNode.getType(), context, leafRefNode);
-        TypeDefinition<?> baseTypeForLeafRef2 = SchemaContextUtil.getBaseTypeForLeafRef(
-                (LeafrefTypeDefinition) leafRefNode2.getType(), context, leafRefNode2);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterDataTree(root);
+        stack.enterDataTree(conGrp);
+        stack.enterDataTree(leafRef);
+        EffectiveStatement<QName, ?> found = stack
+                .resolvePathExpression(((LeafrefTypeDefinition) leafRefNode.getType()).getPathStatement());
+        assertThat(((TypedDataSchemaNode)found).getType(), isA(BinaryTypeDefinition.class));
 
-        assertThat(baseTypeForLeafRef, isA(BinaryTypeDefinition.class));
-        assertThat(baseTypeForLeafRef2, isA(Int16TypeDefinition.class));
+        stack.clear();
+        stack.enterDataTree(root);
+        stack.enterDataTree(leafRef2);
+        found = stack.resolvePathExpression(((LeafrefTypeDefinition) leafRefNode2.getType()).getPathStatement());
+        assertThat(((TypedDataSchemaNode)found).getType(), isA(Int16TypeDefinition.class));
     }
 }
