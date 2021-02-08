@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1100Test {
@@ -32,18 +32,28 @@ public class YT1100Test {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1100.yang");
         final Module module = context.findModule("yt1100").orElseThrow();
         final QNameModule qnm = module.getQNameModule();
-        final DataSchemaNode leaf = module.findDataTreeChild(
-            QName.create(qnm, "foo"), QName.create(qnm, "scheduler-node"), QName.create(qnm, "child-scheduler-nodes"),
-            QName.create(qnm, "name")).orElseThrow();
+        final QName foo = QName.create(qnm, "foo");
+        final QName schedulerNode = QName.create(qnm, "scheduler-node");
+        final QName childSchedulerNodes = QName.create(qnm, "child-scheduler-nodes");
+        final QName name = QName.create(qnm, "name");
+        final DataSchemaNode leaf = module.findDataTreeChild(foo, schedulerNode, childSchedulerNodes, name)
+                .orElseThrow();
         assertThat(leaf, instanceOf(LeafSchemaNode.class));
 
         final TypeDefinition<?> type = ((LeafSchemaNode) leaf).getType();
         assertThat(type, instanceOf(LeafrefTypeDefinition.class));
         final PathExpression leafref = ((LeafrefTypeDefinition) type).getPathStatement();
 
-        final SchemaNode ref = SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, leaf, leafref);
-        assertThat(ref, instanceOf(LeafSchemaNode.class));
-        final LeafSchemaNode targetLeaf = (LeafSchemaNode) ref;
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        stack.enterDataTree(foo);
+        stack.enterDataTree(schedulerNode);
+        stack.enterDataTree(childSchedulerNodes);
+        stack.enterDataTree(name);
+
+        final EffectiveStatement<QName, ?> resolvedLeafRef = stack.resolvePathExpression(leafref);
+
+        assertThat(resolvedLeafRef, instanceOf(LeafSchemaNode.class));
+        final LeafSchemaNode targetLeaf = (LeafSchemaNode) resolvedLeafRef;
         assertEquals(QName.create(qnm, "name"), targetLeaf.getQName());
         assertThat(targetLeaf.getType(), instanceOf(StringTypeDefinition.class));
     }

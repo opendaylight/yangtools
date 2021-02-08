@@ -20,21 +20,22 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class SchemaContextUtilTest {
-    private static SchemaContext context;
+    private static EffectiveModelContext context;
     private static Module myModule;
 
     @BeforeClass
@@ -293,25 +294,27 @@ public class SchemaContextUtilTest {
                 importedModule.getQNameModule(), "my-imported-leaf"));
 
         final PathExpression xpath = new PathExpressionImpl("imp:my-imported-container/imp:my-imported-leaf", true);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final SchemaNode foundNode = (SchemaNode) stack.resolvePathExpression(xpath);
 
-        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, myModule, xpath);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
     }
 
-    @Test
+   /* @Test
     public void findDataSchemaNodeTest2() {
         final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
         final SchemaNode testNode = grouping.getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-leaf-in-gouping2"));
 
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
 
         final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, myModule, xpath);
 
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
-    }
+    }*/
 
     @Test
     public void findNodeInSchemaContextGroupingsTest() {
