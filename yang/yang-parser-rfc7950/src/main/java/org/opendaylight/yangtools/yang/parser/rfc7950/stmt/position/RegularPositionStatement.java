@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularPositionStatement extends WithSubstatements<Uint32> implements PositionStatement {
     RegularPositionStatement(final Uint32 argument,

@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
 final class RegularIdentityStatement extends WithSubstatements implements IdentityStatement {
     RegularIdentityStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {

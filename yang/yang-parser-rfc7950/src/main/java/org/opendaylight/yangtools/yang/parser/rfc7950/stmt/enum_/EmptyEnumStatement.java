@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
 final class EmptyEnumStatement extends WithArgument<String> implements EnumStatement {
     EmptyEnumStatement(final String rawArgument, final String argument) {

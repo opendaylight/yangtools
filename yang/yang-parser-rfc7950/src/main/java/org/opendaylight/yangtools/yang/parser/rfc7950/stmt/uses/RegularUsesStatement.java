@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 final class RegularUsesStatement extends WithSubstatements<QName> implements UsesStatement {
     RegularUsesStatement(final String rawArgument, final QName argument,

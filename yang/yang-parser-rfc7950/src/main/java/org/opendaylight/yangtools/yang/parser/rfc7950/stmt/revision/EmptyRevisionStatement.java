@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
 
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyRevisionStatement extends ArgumentToString<Revision> implements RevisionStatement {
     EmptyRevisionStatement(final Revision argument) {

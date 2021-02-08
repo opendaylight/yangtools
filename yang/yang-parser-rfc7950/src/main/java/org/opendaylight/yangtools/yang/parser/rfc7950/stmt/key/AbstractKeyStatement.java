@@ -11,7 +11,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawArgument;
 
 abstract class AbstractKeyStatement extends WithRawArgument<Set<QName>> implements KeyStatement {
     final @NonNull Object argument;

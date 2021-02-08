@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyOrganizationStatement extends WithRawStringArgument implements OrganizationStatement {
     EmptyOrganizationStatement(final @NonNull String rawArgument) {

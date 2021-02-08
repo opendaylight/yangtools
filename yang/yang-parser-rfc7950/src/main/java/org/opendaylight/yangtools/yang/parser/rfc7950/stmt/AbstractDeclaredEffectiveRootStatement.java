@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BodyDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LinkageDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MetaDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionAwareDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 @Beta
 public abstract class AbstractDeclaredEffectiveRootStatement<D extends DeclaredStatement<UnqualifiedQName>>

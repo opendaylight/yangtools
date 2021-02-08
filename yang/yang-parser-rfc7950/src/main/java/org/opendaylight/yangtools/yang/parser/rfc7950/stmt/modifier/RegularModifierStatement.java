@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 final class RegularModifierStatement extends WithSubstatements<ModifierKind> implements ModifierStatement {
     RegularModifierStatement(final String rawArgument, final ModifierKind argument,

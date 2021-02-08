@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
 final class EmptyLeafStatement extends WithQNameArgument implements LeafStatement {
     EmptyLeafStatement(final QName argument) {

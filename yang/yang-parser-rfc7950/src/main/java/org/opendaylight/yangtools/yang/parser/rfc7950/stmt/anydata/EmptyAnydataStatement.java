@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithQNameArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
 final class EmptyAnydataStatement extends WithQNameArgument implements AnydataStatement {
     EmptyAnydataStatement(final QName argument) {

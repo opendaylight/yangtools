@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
 class EmptyPathStatement extends AbstractDeclaredStatement<PathExpression> implements PathStatement {
     private final @NonNull PathExpression argument;

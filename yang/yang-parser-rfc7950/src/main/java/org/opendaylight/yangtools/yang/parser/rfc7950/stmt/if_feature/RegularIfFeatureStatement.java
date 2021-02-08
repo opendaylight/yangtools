@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 final class RegularIfFeatureStatement extends WithSubstatements<IfFeatureExpr> implements IfFeatureStatement {
     RegularIfFeatureStatement(final @NonNull String rawArgument, final @NonNull IfFeatureExpr argument,

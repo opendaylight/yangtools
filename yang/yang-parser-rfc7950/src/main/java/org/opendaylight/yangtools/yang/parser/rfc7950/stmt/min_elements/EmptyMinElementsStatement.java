@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
 final class EmptyMinElementsStatement extends ArgumentToString<Integer> implements MinElementsStatement {
     EmptyMinElementsStatement(final Integer argument) {

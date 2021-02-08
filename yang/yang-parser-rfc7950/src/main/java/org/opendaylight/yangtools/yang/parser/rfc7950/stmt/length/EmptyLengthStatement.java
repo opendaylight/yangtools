@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
 final class EmptyLengthStatement extends WithArgument<List<ValueRange>> implements LengthStatement {
     EmptyLengthStatement(final String rawArgument, final List<ValueRange> argument) {

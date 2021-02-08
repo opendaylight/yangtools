@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 /**
  * Private implementation of {@link ThirdPartyExtensionStatement}. This class can rely on parser internals and should

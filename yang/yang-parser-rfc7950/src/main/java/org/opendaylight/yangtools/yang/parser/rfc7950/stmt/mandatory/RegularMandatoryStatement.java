@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularMandatoryStatement extends WithSubstatements<Boolean> implements MandatoryStatement {
     RegularMandatoryStatement(final Boolean argument,

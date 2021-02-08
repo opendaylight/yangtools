@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
 final class RegularYinElementStatement extends WithSubstatements<Boolean> implements YinElementStatement {
     RegularYinElementStatement(final Boolean argument,

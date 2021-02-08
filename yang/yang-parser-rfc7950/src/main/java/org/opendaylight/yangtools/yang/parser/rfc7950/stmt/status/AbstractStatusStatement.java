@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
 abstract class AbstractStatusStatement extends AbstractDeclaredStatement<Status> implements StatusStatement {
     private final @NonNull Status argument;

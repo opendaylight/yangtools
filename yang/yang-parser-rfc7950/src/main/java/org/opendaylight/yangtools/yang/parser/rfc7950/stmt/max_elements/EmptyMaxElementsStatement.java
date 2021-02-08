@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.max_elements;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
 final class EmptyMaxElementsStatement extends WithArgument<String> implements MaxElementsStatement {
     EmptyMaxElementsStatement(final String rawArgument, final String argument) {

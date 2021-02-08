@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
 
 final class EmptyErrorAppTagStatement extends WithRawStringArgument implements ErrorAppTagStatement {
     EmptyErrorAppTagStatement(final @NonNull String rawArgument) {

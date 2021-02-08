@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.rfc6643.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
 final class ImpliedStatementImpl extends WithSubstatements implements ImpliedStatement {
     ImpliedStatementImpl(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {

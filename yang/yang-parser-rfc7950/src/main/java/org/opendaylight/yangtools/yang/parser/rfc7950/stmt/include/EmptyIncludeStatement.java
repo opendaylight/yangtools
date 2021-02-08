@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
 final class EmptyIncludeStatement extends WithArgument<String> implements IncludeStatement {
     EmptyIncludeStatement(final String rawArgument, final String argument) {

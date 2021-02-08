@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement;
 
 abstract class AbstractOrderedByStatement extends AbstractDeclaredStatement<Ordering>
         implements OrderedByStatement {

@@ -12,7 +12,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredStatement.WithArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 final class RegularUniqueStatement extends WithSubstatements<Set<Descendant>> implements UniqueStatement {
     RegularUniqueStatement(final String rawArgument, final Set<Descendant> argument,

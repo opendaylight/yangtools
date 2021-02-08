@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
@@ -18,15 +18,12 @@ import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractModelStatement;
 
 /**
- * An abstract base class for {@link DeclaredStatement} implementations. This is a direct competition to
- * {@link org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement}, providing lower-footprint
- * implementations.
+ * An abstract base class for {@link DeclaredStatement} implementations. It provides various further stateless and
+ * stateful subclasses.
  */
 @Beta
-// FIXME: 7.0.0: we should be able to promote this to model.spi.meta package.
 public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
     @Override
     public StatementSource getStatementSource() {
