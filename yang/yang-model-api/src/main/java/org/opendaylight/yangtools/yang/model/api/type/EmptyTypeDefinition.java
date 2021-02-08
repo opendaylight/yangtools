@@ -9,9 +9,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition> {
+    /**
+     * Well-known QName of the {@code empty} built-in type.
+     */
+    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "empty").intern();
 
     static int hashCode(final @NonNull EmptyTypeDefinition type) {
         return TypeDefinitions.basicHashCode(type);
