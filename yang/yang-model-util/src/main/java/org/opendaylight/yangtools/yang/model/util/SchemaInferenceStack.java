@@ -9,10 +9,13 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import java.util.ArrayDeque;
@@ -21,15 +24,26 @@ import java.util.NoSuchElementException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
@@ -169,6 +183,76 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             currentModule = null;
         }
         return prev;
+    }
+
+    /**
+     * Resolve a {@link PathExpression}.
+     *
+     * <p>
+     * Note if this method throws, this stack may be in an undefined state.
+     *
+     * @param path Requested path
+     * @return Resolved schema tree child
+     * @throws NullPointerException if {@code path} is null
+     * @throws IllegalArgumentException if the target node cannot be found
+     * @throws VerifyException if path expression is invalid
+     */
+    public @NonNull EffectiveStatement<QName, ?> resolvePathExpression(final PathExpression path) {
+        final Steps steps = path.getSteps();
+        if (steps instanceof LocationPathSteps) {
+            return resolveLocationPath(((LocationPathSteps) steps).getLocationPath());
+        } else if (steps instanceof DerefSteps) {
+            return resolveDeref((DerefSteps) steps);
+        } else {
+            throw new VerifyException("Unhandled steps " + steps);
+        }
+    }
+
+    private @NonNull EffectiveStatement<QName, ?> resolveDeref(final DerefSteps deref) {
+        // FIXME: implement this
+        throw new UnsupportedOperationException("deref() not implemented yet");
+    }
+
+    private @NonNull EffectiveStatement<QName, ?> resolveLocationPath(final YangLocationPath path) {
+        if (path.isAbsolute()) {
+            clear();
+        }
+
+        EffectiveStatement<QName, ?> current = null;
+        for (Step step : path.getSteps()) {
+            final YangXPathAxis axis = step.getAxis();
+            switch (axis) {
+                case CHILD:
+                    current = enterChild(step);
+                    break;
+                case PARENT:
+                    current = enterParent(step);
+                    break;
+                default:
+                    throw new VerifyException("Unexpected step " + step);
+            }
+        }
+
+        return verifyNotNull(current);
+    }
+
+    private @NonNull EffectiveStatement<QName, ?> enterChild(final Step step) {
+        verify(step instanceof QNameStep, "Unexpected child step %s", step);
+        final AbstractQName toResolve = ((QNameStep) step).getQName();
+        final QName qname;
+        if (toResolve instanceof QName) {
+            qname = (QName) toResolve;
+        } else if (toResolve instanceof UnqualifiedQName) {
+            qname = ((UnqualifiedQName) toResolve).bindTo(deque.peek().argument().getModule());
+        } else {
+            throw new VerifyException("Unexpected child step QName " + toResolve);
+        }
+        return enterSchemaTree(qname);
+    }
+
+    private @NonNull EffectiveStatement<QName, ?> enterParent(final Step step) {
+        verify(step instanceof AxisStep, "Unexpected parent step %s", step);
+        return exit();
     }
 
     /**
