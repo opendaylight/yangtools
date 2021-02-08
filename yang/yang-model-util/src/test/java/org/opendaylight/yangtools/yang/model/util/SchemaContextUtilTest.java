@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,12 +14,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,11 +25,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaContextUtilTest {
@@ -49,72 +42,16 @@ public class SchemaContextUtilTest {
     public SchemaNode schemaNode;
 
     @Test
-    @Ignore
-    // FIXME: YANGTOOLS-1127: rewrite this test in terms of a real PathExpression
     public void testFindDummyData() {
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
-        doReturn(Optional.empty()).when(mockSchemaContext).findDataTreeChild(any(Iterable.class));
-
-        doReturn("test").when(mockModule).getName();
-        doReturn("test").when(mockModule).getPrefix();
-        doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();
 
         QName qname = QName.create("namespace", "localname");
         SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
         assertNull("Should be null. Module TestQName not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        PathExpression xpath = new PathExpressionImpl("/test:bookstore/test:book/test:title", true);
-        assertNull("Should be null. Module bookstore not found",
-                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
-
-
-        final PathExpression xPath = new PathExpressionImpl("/bookstore/book/title", true);
-        assertEquals("Should be null. Module bookstore not found", null,
-                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
-
-        SchemaNode int32node = BaseTypes.int32Type();
-        PathExpression xpathRelative = new PathExpressionImpl("../prefix", false);
-        assertNull("Should be null, Module prefix not found",
-                SchemaContextUtil.findDataSchemaNodeForRelativeXPath(
-                        mockSchemaContext, mockModule, int32node, xpathRelative));
-
         assertNull("Should be null. Module TestQName not found",
                 SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qname)));
-
-        assertNull("Should be null.", SchemaContextUtil.findParentModule(mockSchemaContext, int32node));
-    }
-
-    @Test
-    public void findDataSchemaNodeFromXPathIllegalArgumentTest() {
-        assertThrows(NullPointerException.class,
-            () -> SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), mock(Module.class), null));
-    }
-
-    @Test
-    public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
-
-        assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath));
-    }
-
-    @Test
-    public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
-        final Module module = mock(Module.class);
-        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
-
-        assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(null, module, xpath));
-    }
-
-    @Test
-    public void findDataSchemaNodeFromXPathIllegalArgumentTest4() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        final Module module = mock(Module.class);
-        final PathExpression xpath = new PathExpressionImpl("my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
-
-        assertThrows(IllegalArgumentException.class,
-            () -> SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
     }
 
     @Test
@@ -139,33 +76,5 @@ public class SchemaContextUtilTest {
     public void findDataSchemaNodeIllegalArgumentTest2() {
         assertThrows(NullPointerException.class, () -> SchemaContextUtil.findDataSchemaNode(null,
             SchemaPath.create(true, QName.create(XMLNamespace.of("uri:my-module"), Revision.of("2014-10-07"), "foo"))));
-    }
-
-    @Test
-    public void findDataSchemaNodeFromXPathNullTest2() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        final Module module = mock(Module.class);
-        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
-
-        assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
-    }
-
-    @Test
-    public void testNormalizeXPath() {
-        assertNormalizedPath(0, ImmutableList.of(""), "");
-        assertNormalizedPath(0, ImmutableList.of("a"), "a");
-        assertNormalizedPath(0, ImmutableList.of("a", "b"), "a b");
-        assertNormalizedPath(1, ImmutableList.of("..", "b"), ".. b");
-        assertNormalizedPath(0, ImmutableList.of(), "a ..");
-        assertNormalizedPath(0, ImmutableList.of("b"), "a .. b");
-        assertNormalizedPath(2, ImmutableList.of("..", "..", "a", "c"), ".. .. a b .. c");
-        assertNormalizedPath(3, ImmutableList.of("..", "..", "..", "b"), ".. .. a .. .. b");
-    }
-
-    private static void assertNormalizedPath(final int expectedLead, final List<String> expectedList,
-            final String input) {
-        final List<String> list = new ArrayList<>(SPACE_SPLITTER.splitToList(input));
-        assertEquals(expectedLead, SchemaContextUtil.normalizeXPath(list));
-        assertEquals(expectedList, list);
     }
 }
