@@ -16,11 +16,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,26 +35,6 @@ abstract class XMLStreamWriterUtils {
     private static final Set<QName> IDENTITYREF_WARNED = ConcurrentHashMap.newKeySet();
 
     /**
-     * Encode a value into a String in the context of a XML stream writer. This method assumes the start and end of
-     * element is emitted by the caller.
-     *
-     * @param writer XML Stream writer
-     * @param schemaNode Schema node that describes the value
-     * @param type Schema type definition
-     * @param value data value
-     * @param parent module QName owning the leaf definition
-     * @return String characters to be written
-     * @throws XMLStreamException if an encoding problem occurs
-     */
-    String encodeValue(final @NonNull ValueWriter writer,final @NonNull SchemaNode schemaNode,
-            final TypeDefinition<?> type, final @NonNull Object value, final QNameModule parent)
-                    throws XMLStreamException {
-        return type instanceof LeafrefTypeDefinition
-                ? encodeValue(writer, getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type), value, parent)
-                        : encodeValue(writer, type, value, parent);
-    }
-
-    /**
      * Write a value into a XML stream writer. This method assumes the start and end of element is
      * emitted by the caller.
      *
@@ -67,7 +45,7 @@ abstract class XMLStreamWriterUtils {
      * @return String characters to be written
      * @throws XMLStreamException if an encoding problem occurs
      */
-    private String encodeValue(final @NonNull ValueWriter writer, final @NonNull TypeDefinition<?> type,
+    String encodeValue(final @NonNull ValueWriter writer, final @NonNull TypeDefinition<?> type,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
         if (type instanceof IdentityrefTypeDefinition) {
             return encode(writer, (IdentityrefTypeDefinition) type, value, parent);
@@ -160,9 +138,6 @@ abstract class XMLStreamWriterUtils {
             value.getClass());
         return value.toString();
     }
-
-    abstract @NonNull TypeDefinition<?> getBaseTypeForLeafRef(SchemaNode schemaNode,
-            @NonNull LeafrefTypeDefinition type);
 
     abstract String encodeInstanceIdentifier(@NonNull ValueWriter writer, YangInstanceIdentifier value)
             throws XMLStreamException;

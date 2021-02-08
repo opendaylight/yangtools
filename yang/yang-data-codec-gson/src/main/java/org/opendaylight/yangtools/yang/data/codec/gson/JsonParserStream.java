@@ -44,6 +44,8 @@ import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.StackLeafrefResolver;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory.LeafrefResolver;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -52,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -72,6 +75,9 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
 
+    private final SchemaInferenceStack stack;
+    private final LeafrefResolver resolver;
+
     // TODO: consider class specialization to remove this field
     private final boolean lenient;
 
@@ -81,6 +87,9 @@ public final class JsonParserStream implements Closeable, Flushable {
         this.codecs = requireNonNull(codecs);
         this.parentNode = parentNode;
         this.lenient = lenient;
+
+        stack = null;
+        resolver = new StackLeafrefResolver(stack);
     }
 
     /**
@@ -343,7 +352,7 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {
         checkArgument(node instanceof TypedDataSchemaNode);
-        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(null, value);
+        return codecs.codecFor((TypedDataSchemaNode) node, resolver).parseValue(null, value);
     }
 
     private void removeNamespace() {

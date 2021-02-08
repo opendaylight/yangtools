@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.CharMatcher;
@@ -14,12 +15,18 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Iterator which lazily parses {@link PathArgument} from string representation.
@@ -60,6 +67,7 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
 
     private final List<PathArgument> product = new ArrayList<>();
     private final AbstractStringInstanceIdentifierCodec codec;
+    private final SchemaInferenceStack stack;
     private final String data;
 
     private DataSchemaContextNode<?> current;
@@ -69,8 +77,11 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
     XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
         this.codec = requireNonNull(codec);
         this.data = requireNonNull(data);
-        this.current = codec.getDataContextTree().getRoot();
         this.offset = 0;
+
+        final DataSchemaContextTree tree = codec.getDataContextTree();
+        this.stack = SchemaInferenceStack.of(tree.getEffectiveModelContext());
+        this.current = tree.getRoot();
     }
 
     @Override
@@ -98,11 +109,12 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
 
     private DataSchemaContextNode<?> nextContextNode(final QName name) {
         current = current.getChild(name);
-        checkValid(current != null, "%s is not correct schema node identifier.",name);
+        checkValid(current != null, "%s is not correct schema node identifier.", name);
         while (current.isMixin()) {
             product.add(current.getIdentifier());
             current = current.getChild(name);
         }
+        stack.enterDataTree(name);
         return current;
     }
 
@@ -122,10 +134,10 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
      * @return PathArgument representing node selection with predictes
      */
     private PathArgument computeIdentifierWithPredicate(final QName name) {
-        DataSchemaContextNode<?> currentNode = nextContextNode(name);
+        final DataSchemaContextNode<?> currentNode = nextContextNode(name);
         checkValid(currentNode.isKeyedEntry(), "Entry %s does not allow specifying predicates.", name);
 
-        ImmutableMap.Builder<QName,Object> keyValues = ImmutableMap.builder();
+        ImmutableMap.Builder<QName, Object> keyValues = ImmutableMap.builder();
         while (!allCharactersConsumed() && PRECONDITION_START == currentChar()) {
             skipCurrentChar();
             skipWhitespaces();
@@ -150,12 +162,20 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
             }
             final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
             checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
-            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), keyValue);
+            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(),
+                type -> resolveLeafref(key, type), keyValue);
             keyValues.put(key, value);
         }
         return NodeIdentifierWithPredicates.of(name, keyValues.build());
     }
 
+    private @NonNull TypeDefinition<?> resolveLeafref(final QName qname, final LeafrefTypeDefinition type) {
+        final SchemaInferenceStack tmp = stack.copy();
+        tmp.enterDataTree(qname);
+        final EffectiveStatement<?, ?> stmt = tmp.resolvePathExpression(type.getPathStatement());
+        verify(stmt instanceof TypeAware, "Unsupported result %s", stmt);
+        return ((TypeAware) stmt).getType();
+    }
 
     private PathArgument computeIdentifier(final QName name) {
         DataSchemaContextNode<?> currentNode = nextContextNode(name);
