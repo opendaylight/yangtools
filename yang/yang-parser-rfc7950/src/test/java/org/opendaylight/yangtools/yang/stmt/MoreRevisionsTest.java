@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
@@ -22,14 +23,11 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -68,27 +66,22 @@ public class MoreRevisionsTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(REVFILE).buildEffective();
-        assertNotNull(result);
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(REVFILE).buildEffective();
         final Module moduleByName = result.getModules().iterator().next();
         assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().get().toString());
     }
 
     @Test
     public void twoRevisionsTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(TED_20130712, TED_20131021, IETF_TYPES)
-                .buildEffective();
-        assertNotNull(result);
+        RFC7950Reactors.defaultReactor().newBuild().addSources(TED_20130712, TED_20131021, IETF_TYPES).buildEffective();
     }
 
     @Test
     public void twoRevisionsTest2() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+        Collection<? extends Module> modules = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES)
-                .buildEffective();
-        assertNotNull(result);
-        Collection<? extends Module> modules = result.getModules();
+                .buildEffective()
+                .getModules();
 
         assertEquals(3, modules.size());
         assertEquals(2, StmtTestUtils.findModules(modules, "network-topology").size());
@@ -96,34 +89,30 @@ public class MoreRevisionsTest {
 
     @Test
     public void moreRevisionsListKeyTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
+        RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TED_20130712, TED_20131021, ISIS_20130712, ISIS_20131021, L3_20130712, L3_20131021)
                 .addSources(IETF_TYPES,NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021)
                 .buildEffective();
-        assertNotNull(result);
     }
 
     @Test
     public void multipleRevisionsTest() throws Exception {
         for (int i = 0; i < 100; i++) {
-            SchemaContext context = StmtTestUtils
-                    .parseYangSources("/semantic-statement-parser/multiple-revisions");
-            assertNotNull(context);
+            assertNotNull(StmtTestUtils.parseYangSources("/semantic-statement-parser/multiple-revisions"));
         }
     }
 
     @Test
     public void multipleRevisionsFullTest() throws Exception {
         for (int i = 0; i < 100; i++) {
-            SchemaContext context = StmtTestUtils
-                    .parseYangSources("/semantic-statement-parser/multiple-revisions/full");
-            assertNotNull(context);
+            EffectiveModelContext context =
+                StmtTestUtils.parseYangSources("/semantic-statement-parser/multiple-revisions/full");
             assertEquals(6, context.getModules().size());
             checkContentFullTest(context);
         }
     }
 
-    private static void checkContentFullTest(final SchemaContext context) {
+    private static void checkContentFullTest(final EffectiveModelContext context) {
         final XMLNamespace yangTypesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
         final Revision rev20100924 = Revision.of("2010-09-24");
@@ -149,7 +138,7 @@ public class MoreRevisionsTest {
         checkInterfacesModuleFullTest(context, rev20100924, dateTimeTypeDef20100924);
     }
 
-    private static void checkInterfacesModuleFullTest(final SchemaContext context, final Revision rev20100924,
+    private static void checkInterfacesModuleFullTest(final EffectiveModelContext context, final Revision rev20100924,
             final QName dateTimeTypeDef20100924) {
         Revision rev20121115 = Revision.of("2012-11-15");
 
@@ -161,7 +150,7 @@ public class MoreRevisionsTest {
         assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
-    private static void checkNetconfMonitoringModuleFullTest(final SchemaContext context,
+    private static void checkNetconfMonitoringModuleFullTest(final EffectiveModelContext context,
             final Revision rev20130715, final QName dateTimeTypeDef20130715) {
         Revision rev20101004 = Revision.of("2010-10-04");
 
@@ -178,15 +167,14 @@ public class MoreRevisionsTest {
     @Test
     public void multipleRevisionsSimpleTest() throws Exception {
         for (int i = 0; i < 1000; i++) {
-            SchemaContext context = StmtTestUtils.parseYangSources(
+            EffectiveModelContext context = StmtTestUtils.parseYangSources(
                 "/semantic-statement-parser/multiple-revisions/simple");
-            assertNotNull(context);
             assertEquals(5, context.getModules().size());
             checkContentSimpleTest(context);
         }
     }
 
-    private static void checkContentSimpleTest(final SchemaContext context) {
+    private static void checkContentSimpleTest(final EffectiveModelContext context) {
         final XMLNamespace yangTypesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
         final Revision rev20100924 = Revision.of("2010-09-24");
@@ -212,7 +200,7 @@ public class MoreRevisionsTest {
         checkInterfacesModuleSimpleTest(context, rev20100924, dateTimeTypeDef20100924);
     }
 
-    private static void checkInterfacesModuleSimpleTest(final SchemaContext context,
+    private static void checkInterfacesModuleSimpleTest(final EffectiveModelContext context,
             final Revision rev20100924, final QName dateTimeTypeDef20100924) {
         XMLNamespace interfacesNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-interfaces");
         Revision rev20121115 = Revision.of("2012-11-15");
@@ -221,9 +209,7 @@ public class MoreRevisionsTest {
 
         Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
         DataSchemaNode leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
-        assertNotNull(leafLastChange);
-
-        assertTrue(leafLastChange instanceof LeafSchemaNode);
+        assertThat(leafLastChange, instanceOf(LeafSchemaNode.class));
         QName lastChangeTypeQName = ((LeafSchemaNode) leafLastChange).getType().getQName();
         assertEquals(dateTimeTypeDef20100924, lastChangeTypeQName);
 
@@ -234,7 +220,7 @@ public class MoreRevisionsTest {
         assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
-    private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
+    private static void checkNetconfMonitoringModuleSimpleTest(final EffectiveModelContext context,
             final Revision rev20130715, final QName dateTimeTypeDef20130715) {
         final XMLNamespace monitoringNS = XMLNamespace.of("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
         final QNameModule monitoring19700101 = QNameModule.create(monitoringNS);
@@ -242,9 +228,7 @@ public class MoreRevisionsTest {
 
         Module monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").get();
         DataSchemaNode leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
-        assertNotNull(leafLockedTime);
-
-        assertTrue(leafLockedTime instanceof LeafSchemaNode);
+        assertThat(leafLockedTime, instanceOf(LeafSchemaNode.class));
         QName lockedTimeTypeQName = ((LeafSchemaNode) leafLockedTime).getType().getQName();
         assertEquals(dateTimeTypeDef20130715, lockedTimeTypeQName);
 
@@ -266,24 +250,19 @@ public class MoreRevisionsTest {
 
     @Test
     public void nodeTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources(
+        EffectiveModelContext context = StmtTestUtils.parseYangSources(
             "/semantic-statement-parser/multiple-revisions/node-test");
-        assertNotNull(context);
 
         QName root = QName.create("foo", "2016-04-06", "foo-root");
         QName container20160404 = QName.create("foo", "2016-04-06", "con20160404");
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root,
-            container20160404));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        DataSchemaNode findDataSchemaNode = context.findDataTreeChild(root, container20160404).orElse(null);
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
 
         QName container20160405 = QName.create("foo", "2016-04-06", "con20160405");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root,
-            container20160405));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        findDataSchemaNode = context.findDataTreeChild(root, container20160405).orElse(null);
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
 
         QName container20160406 = QName.create("foo", "2016-04-06", "con20160406");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root,
-            container20160406));
-        assertNull(findDataSchemaNode);
+        assertEquals(Optional.empty(), context.findDataTreeChild(root, container20160406));
     }
 }
