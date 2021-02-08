@@ -8,26 +8,20 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 
 /**
  * An 'implementation' of an effective UnrecognizedStatement. This class is actually never instantiated and exists
  * only as an implementation-private marker for {@link StatementDefinition#getEffectiveRepresentationClass()}.
  */
-final class UnrecognizedEffectiveStatement extends AbstractEffectiveStatement<Object, UnrecognizedStatement> {
+final class UnrecognizedEffectiveStatement extends AbstractDeclaredEffectiveStatement<Object, UnrecognizedStatement> {
     private UnrecognizedEffectiveStatement() {
         // This should never be called
     }
 
     @Override
     public StatementDefinition statementDefinition() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
         throw new UnsupportedOperationException();
     }
 
