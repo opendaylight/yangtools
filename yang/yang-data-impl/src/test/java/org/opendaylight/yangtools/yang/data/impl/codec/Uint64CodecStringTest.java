@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
 
 /**
  * Unit tests for Uint64CodecString.

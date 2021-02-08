@@ -25,6 +25,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires org.opendaylight.yangtools.openconfig.model.api;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
+    requires org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.yang.parser.antlr;
     requires org.opendaylight.yangtools.util;

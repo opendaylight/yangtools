@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
+import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.spi.type.BitsTypeBuilder;
 
 /**
  * Unit tests for BitsCodecString.

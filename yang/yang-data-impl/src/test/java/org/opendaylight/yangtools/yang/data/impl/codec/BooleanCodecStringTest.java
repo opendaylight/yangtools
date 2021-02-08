@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
 
 /**
  * Unit tests for BooleanCodecString.

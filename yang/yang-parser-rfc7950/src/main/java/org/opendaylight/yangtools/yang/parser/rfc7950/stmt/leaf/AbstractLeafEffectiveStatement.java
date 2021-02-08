@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
-import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.model.spi.type.ConcreteTypeBuilder;
+import org.opendaylight.yangtools.yang.model.spi.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;

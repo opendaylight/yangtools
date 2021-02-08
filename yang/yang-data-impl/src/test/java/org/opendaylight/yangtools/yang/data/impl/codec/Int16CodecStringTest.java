@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwar
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
 
 /**
  * Unit tests for Int8CodecString.

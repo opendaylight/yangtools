@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
 
 /**
  * Unit tests for EmptyCodecString.

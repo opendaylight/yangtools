@@ -7,13 +7,13 @@
  */
 module org.opendaylight.yangtools.yang.model.util {
     exports org.opendaylight.yangtools.yang.model.util;
-    exports org.opendaylight.yangtools.yang.model.util.type;
     exports org.opendaylight.yangtools.yang.model.repo.util;
 
     requires transitive org.opendaylight.yangtools.rfc7952.model.api;
 
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.spi;
     requires org.slf4j;
 
     // Annotations
