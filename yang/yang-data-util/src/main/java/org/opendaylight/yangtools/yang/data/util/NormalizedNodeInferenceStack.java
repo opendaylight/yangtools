@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2021 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -20,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -62,20 +62,19 @@ import org.slf4j.LoggerFactory;
  * Utility class for tracking schema state underlying a {@link NormalizedNode} structure.
  */
 @Beta
-public final class NormalizedNodeInferenceStack implements Mutable {
+public final class NormalizedNodeInferenceStack extends AbstractLeafrefResolver {
     private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeInferenceStack.class);
 
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
-    private final SchemaInferenceStack dataTree;
     private final DataNodeContainer root;
 
     private NormalizedNodeInferenceStack(final EffectiveModelContext context) {
+        super(SchemaInferenceStack.of(context));
         root = requireNonNull(context);
-        dataTree = SchemaInferenceStack.of(context);
     }
 
     private NormalizedNodeInferenceStack(final SchemaInferenceStack dataTree) {
-        this.dataTree = requireNonNull(dataTree);
+        super(dataTree);
         if (!dataTree.isEmpty()) {
             final EffectiveStatement<?, ?> current = dataTree.currentStatement();
             checkArgument(current instanceof DataNodeContainer, "Cannot instantiate on %s", current);
@@ -165,15 +164,6 @@ public final class NormalizedNodeInferenceStack implements Mutable {
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
         return new NormalizedNodeInferenceStack(stack);
-    }
-
-    /**
-     * Return a copy of this tracker's state as an {@link SchemaInferenceStack}.
-     *
-     * @return A SchemaInferenceStack
-     */
-    public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
-        return dataTree.copy();
     }
 
     public Object getParent() {

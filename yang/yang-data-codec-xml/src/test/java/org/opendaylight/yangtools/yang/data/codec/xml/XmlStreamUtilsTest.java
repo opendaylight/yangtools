@@ -8,17 +8,15 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
@@ -31,16 +29,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class XmlStreamUtilsTest {
@@ -49,7 +47,7 @@ public class XmlStreamUtilsTest {
         void accept(XMLStreamWriter writer) throws XMLStreamException;
     }
 
-    private static SchemaContext schemaContext;
+    private static EffectiveModelContext schemaContext;
     private static Module leafRefModule;
 
     @BeforeClass
@@ -141,61 +139,24 @@ public class XmlStreamUtilsTest {
             InstanceIdentifierTypeDefinition.class);
         final TypeDefinition<?> targetNodeForRelname = getTargetNodeForLeafRef("relname",
             InstanceIdentifierTypeDefinition.class);
-        assertEquals(targetNodeForAbsname, targetNodeForRelname);
+        assertSame(targetNodeForAbsname, targetNodeForRelname);
     }
 
-    private TypeDefinition<?> getTargetNodeForLeafRef(final String nodeName, final Class<?> clas) {
-        final LeafSchemaNode schemaNode = findSchemaNodeWithLeafrefType(leafRefModule, nodeName);
-        assertNotNull(schemaNode);
-        final LeafrefTypeDefinition leafrefTypedef = findLeafrefType(schemaNode);
-        assertNotNull(leafrefTypedef);
-        final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext,
-                schemaNode);
-        assertTrue("Wrong class found.", clas.isInstance(targetBaseType));
-        return targetBaseType;
-    }
+    private static TypeDefinition<?> getTargetNodeForLeafRef(final String nodeName, final Class<?> clas) {
+        final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(schemaContext,
+            QName.create(leafRefModule.getQNameModule(), "cont2"),
+            QName.create(leafRefModule.getQNameModule(), nodeName));
 
-    private static Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {
-        final Map<String, String> mappedPrefixes = new HashMap<>();
-        for (final Map.Entry<URI, String> prefix : prefixes) {
-            mappedPrefixes.put(prefix.getKey().toString(), prefix.getValue());
-        }
-        return mappedPrefixes;
-    }
+        final EffectiveStatement<?, ?> leaf = stack.currentStatement();
+        assertThat(leaf, instanceOf(LeafSchemaNode.class));
+        final TypeDefinition<? extends TypeDefinition<?>> type = ((TypedDataSchemaNode) leaf).getType();
+        assertThat(type, instanceOf(LeafrefTypeDefinition.class));
 
-    private static QName getAttrQName(final String namespace, final String revision, final String localName,
-            final Optional<String> prefix) {
-        if (prefix.isPresent()) {
-            final QName moduleQName = QName.create(namespace, revision, "module");
-            final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
-            return QName.create(module, localName);
-        }
-        return QName.create(namespace, revision, localName);
-    }
-
-    private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
-        for (final DataSchemaNode childNode : module.getChildNodes()) {
-            if (childNode instanceof DataNodeContainer) {
-                LeafSchemaNode leafrefFromRecursion = findSchemaNodeWithLeafrefType((DataNodeContainer) childNode,
-                        nodeName);
-                if (leafrefFromRecursion != null) {
-                    return leafrefFromRecursion;
-                }
-            } else if (childNode.getQName().getLocalName().equals(nodeName) && childNode instanceof LeafSchemaNode) {
-                final TypeDefinition<?> leafSchemaNodeType = ((LeafSchemaNode) childNode).getType();
-                if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {
-                    return (LeafSchemaNode) childNode;
-                }
-            }
-        }
-        return null;
-    }
-
-    private static LeafrefTypeDefinition findLeafrefType(final LeafSchemaNode schemaNode) {
-        final TypeDefinition<?> type = schemaNode.getType();
-        if (type instanceof LeafrefTypeDefinition) {
-            return (LeafrefTypeDefinition) type;
-        }
-        return null;
+        final EffectiveStatement<?, ?> stmt = stack.resolvePathExpression(
+            ((LeafrefTypeDefinition) type).getPathStatement());
+        assertThat(stmt, instanceOf(LeafSchemaNode.class));
+        final TypeDefinition<? extends TypeDefinition<?>> resolved = ((TypedDataSchemaNode) stmt).getType();
+        assertThat(resolved, instanceOf(clas));
+        return resolved;
     }
 }

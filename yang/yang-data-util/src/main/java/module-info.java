@@ -15,11 +15,11 @@ module org.opendaylight.yangtools.yang.data.util {
     requires transitive org.opendaylight.yangtools.yang.model.util;
 
     requires com.google.common;
+    requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations
     requires static org.eclipse.jdt.annotation;
-    requires org.opendaylight.yangtools.concepts;
 }
