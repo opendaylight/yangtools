@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -53,12 +54,12 @@ public final class ModifierStatementSupport
     @Override
     protected ModifierStatement createDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularModifierStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createModifier(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected ModifierStatement createEmptyDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx) {
-        return new EmptyModifierStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createModifier(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -30,12 +31,12 @@ abstract class AbstractNotificationStatementSupport
     @Override
     protected final NotificationStatement createDeclared(final StmtContext<QName, NotificationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularNotificationStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createNotification(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final NotificationStatement createEmptyDeclared(final StmtContext<QName, NotificationStatement, ?> ctx) {
-        return new EmptyNotificationStatement(ctx.getArgument());
+        return DeclaredStatements.createNotification(ctx.getArgument());
     }
 
     @Override

@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -135,12 +136,12 @@ public final class ListStatementSupport
     @Override
     protected ListStatement createDeclared(final StmtContext<QName, ListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularListStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createList(ctx.getArgument(), substatements);
     }
 
     @Override
     protected ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
-        return new EmptyListStatement(ctx.getArgument());
+        return DeclaredStatements.createList(ctx.getArgument());
     }
 
     @Override

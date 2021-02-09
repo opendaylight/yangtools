@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;
@@ -94,12 +95,12 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
     @Override
     protected RpcStatement createDeclared(final StmtContext<QName, RpcStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRpcStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createRpc(ctx.getArgument(), substatements);
     }
 
     @Override
     protected RpcStatement createEmptyDeclared(final StmtContext<QName, RpcStatement, ?> ctx) {
-        return new EmptyRpcStatement(ctx.getArgument());
+        return DeclaredStatements.createRpc(ctx.getArgument());
     }
 
     @Override

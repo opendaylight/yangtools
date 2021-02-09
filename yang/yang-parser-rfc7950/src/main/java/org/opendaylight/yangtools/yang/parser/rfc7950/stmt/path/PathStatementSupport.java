@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -59,12 +60,12 @@ public final class PathStatementSupport
     @Override
     protected PathStatement createDeclared(final StmtContext<PathExpression, PathStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPathStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createPath(ctx.getArgument(), substatements);
     }
 
     @Override
     protected PathStatement createEmptyDeclared(final StmtContext<PathExpression, PathStatement, ?> ctx) {
-        return new EmptyPathStatement(ctx.getArgument());
+        return DeclaredStatements.createPath(ctx.getArgument());
     }
 
     @Override

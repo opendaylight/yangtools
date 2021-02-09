@@ -55,6 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.spi.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.model.spi.type.InstanceIdentifierTypeBuilder;
@@ -215,14 +216,14 @@ abstract class AbstractTypeStatementSupport
     @Override
     protected final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularTypeStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createType(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected final TypeStatement createEmptyDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
         final TypeStatement builtin;
         return (builtin = BuiltinTypeStatement.lookup(ctx)) != null ? builtin
-            : new EmptyTypeStatement(ctx.getRawArgument());
+            : DeclaredStatements.createType(ctx.getRawArgument());
     }
 
     @Override

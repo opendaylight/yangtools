@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -29,14 +30,14 @@ public final class YangVersionStatementSupport
         .build();
     private static final YangVersionStatementSupport INSTANCE = new YangVersionStatementSupport();
 
-    private static final @NonNull EmptyYangVersionStatement EMPTY_VER1_DECL =
-            new EmptyYangVersionStatement(YangVersion.VERSION_1);
-    private static final @NonNull EmptyYangVersionStatement EMPTY_VER1_1_DECL =
-            new EmptyYangVersionStatement(YangVersion.VERSION_1_1);
+    private static final @NonNull YangVersionStatement EMPTY_VER1_DECL =
+        DeclaredStatements.createYangVersion(YangVersion.VERSION_1);
+    private static final @NonNull YangVersionStatement EMPTY_VER1_1_DECL =
+        DeclaredStatements.createYangVersion(YangVersion.VERSION_1_1);
     private static final @NonNull EmptyYangVersionEffectiveStatement EMPTY_VER1_EFF =
-            new EmptyYangVersionEffectiveStatement(EMPTY_VER1_DECL);
+        new EmptyYangVersionEffectiveStatement(EMPTY_VER1_DECL);
     private static final @NonNull EmptyYangVersionEffectiveStatement EMPTY_VER1_1_EFF =
-            new EmptyYangVersionEffectiveStatement(EMPTY_VER1_1_DECL);
+        new EmptyYangVersionEffectiveStatement(EMPTY_VER1_1_DECL);
 
     private YangVersionStatementSupport() {
         super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject());
@@ -65,7 +66,7 @@ public final class YangVersionStatementSupport
     @Override
     protected YangVersionStatement createDeclared(final StmtContext<YangVersion, YangVersionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularYangVersionStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createYangVersion(ctx.getArgument(), substatements);
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -96,12 +97,12 @@ public final class LeafListStatementSupport
     @Override
     protected LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularLeafListStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createLeafList(ctx.getArgument(), substatements);
     }
 
     @Override
     protected LeafListStatement createEmptyDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
-        return new EmptyLeafListStatement(ctx.getArgument());
+        return DeclaredStatements.createLeafList(ctx.getArgument());
     }
 
     @Override

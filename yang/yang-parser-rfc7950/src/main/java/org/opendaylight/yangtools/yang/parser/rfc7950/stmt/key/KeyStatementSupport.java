@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -110,12 +111,12 @@ public final class KeyStatementSupport
     @Override
     protected KeyStatement createDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularKeyStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected KeyStatement createEmptyDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx) {
-        return new EmptyKeyStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -31,14 +32,14 @@ public final class OrderedByStatementSupport
      * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
      * substatements (which is the usual case).
      */
-    private static final @NonNull EmptyOrderedByStatement EMPTY_SYSTEM_DECL =
-            new EmptyOrderedByStatement(Ordering.SYSTEM);
-    private static final @NonNull EmptyOrderedByStatement EMPTY_USER_DECL =
-            new EmptyOrderedByStatement(Ordering.USER);
+    private static final @NonNull OrderedByStatement EMPTY_SYSTEM_DECL =
+        DeclaredStatements.createOrderedBy(Ordering.SYSTEM);
+    private static final @NonNull OrderedByStatement EMPTY_USER_DECL =
+        DeclaredStatements.createOrderedBy(Ordering.USER);
     private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_SYSTEM_EFF =
-            new EmptyOrderedByEffectiveStatement(EMPTY_SYSTEM_DECL);
+        new EmptyOrderedByEffectiveStatement(EMPTY_SYSTEM_DECL);
     private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_USER_EFF =
-            new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
+        new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
 
     private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent());
@@ -76,7 +77,7 @@ public final class OrderedByStatementSupport
     @Override
     protected OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularOrderedByStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createOrderedBy(ctx.getArgument(), substatements);
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -83,12 +84,12 @@ public final class RangeStatementSupport
     @Override
     protected RangeStatement createDeclared(final StmtContext<List<ValueRange>, RangeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRangeStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createRange(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected RangeStatement createEmptyDeclared(final StmtContext<List<ValueRange>, RangeStatement, ?> ctx) {
-        return new EmptyRangeStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createRange(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override
