@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.AbstractSchemaContext;
 import org.opendaylight.yangtools.yang.model.util.FilteringSchemaContextProxy.ModuleId;
 
 public class SchemaContextProxyTest {

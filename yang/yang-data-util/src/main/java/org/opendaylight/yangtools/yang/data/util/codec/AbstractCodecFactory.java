@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
