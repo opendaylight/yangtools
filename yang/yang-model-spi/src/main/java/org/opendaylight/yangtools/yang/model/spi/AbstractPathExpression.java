@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.model.spi;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,6 +15,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 
+/**
+ * Convenience base class for {@link PathExpression} implementations.
+ */
 @Beta
 @NonNullByDefault
 public abstract class AbstractPathExpression implements PathExpression {

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
+import org.opendaylight.yangtools.yang.model.spi.AbstractPathExpression;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 
 final class UnparsedPathExpression extends AbstractPathExpression {
