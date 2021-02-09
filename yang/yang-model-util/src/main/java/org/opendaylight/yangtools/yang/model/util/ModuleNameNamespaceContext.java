@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * Utility {@link YangNamespaceContext} backed by a SchemaContext, resolving namespaces to their module names. This

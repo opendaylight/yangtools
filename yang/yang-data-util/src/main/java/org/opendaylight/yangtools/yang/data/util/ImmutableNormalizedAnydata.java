@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 @Beta
 @NonNullByDefault
