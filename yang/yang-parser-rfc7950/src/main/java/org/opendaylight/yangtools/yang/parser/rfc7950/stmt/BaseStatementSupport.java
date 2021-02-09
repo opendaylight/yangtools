@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -31,6 +32,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
+/**
+ * Support for {@code base} statement.
+ */
 public final class BaseStatementSupport extends AbstractQNameStatementSupport<BaseStatement, BaseEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BASE).build();
@@ -94,7 +98,6 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     @Override
     protected BaseEffectiveStatement createEffective(final Current<QName, BaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyBaseEffectiveStatement(stmt.declared())
-            : new RegularBaseEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createBase(stmt.declared(), substatements);
     }
 }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -15,12 +15,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
+/**
+ * Support for {@code argument} statement.
+ */
 public final class ArgumentStatementSupport
         extends AbstractQNameStatementSupport<ArgumentStatement, ArgumentEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
@@ -61,7 +65,6 @@ public final class ArgumentStatementSupport
     @Override
     protected ArgumentEffectiveStatement createEffective(final Current<QName, ArgumentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyArgumentEffectiveStatement(stmt.declared())
-            : new RegularArgumentEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createArgument(stmt.declared(), substatements);
     }
 }
