@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier;
+package org.opendaylight.yangtools.yang.model.spi.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyModifierEffectiveStatement extends DefaultArgument<ModifierKind, ModifierStatement>
+public final class EmptyModifierEffectiveStatement extends DefaultArgument<ModifierKind, ModifierStatement>
         implements ModifierEffectiveStatement {
-    EmptyModifierEffectiveStatement(final ModifierStatement declared) {
+    public EmptyModifierEffectiveStatement(final ModifierStatement declared) {
         super(declared);
     }
 }
