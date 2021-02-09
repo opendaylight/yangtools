@@ -40,9 +40,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
@@ -102,7 +100,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
     // FIXME: this needs to be renamed to match parser-support naming convention
