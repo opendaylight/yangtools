@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.UndeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -83,9 +85,9 @@ public final class InputStatementSupport
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
-                return new RegularUndeclaredInputStatement(ctx.getArgument(), substatements);
+                return UndeclaredStatements.createInput(ctx.getArgument(), substatements);
             case DECLARATION:
-                return new RegularInputStatement(ctx.getArgument(), substatements);
+                return DeclaredStatements.createInput(ctx.getArgument(), substatements);
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }
@@ -96,9 +98,9 @@ public final class InputStatementSupport
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
-                return new EmptyUndeclaredInputStatement(ctx.getArgument());
+                return UndeclaredStatements.createInput(ctx.getArgument());
             case DECLARATION:
-                return new EmptyInputStatement(ctx.getArgument());
+                return DeclaredStatements.createInput(ctx.getArgument());
             default:
                 throw new IllegalStateException("Unhandled statement source " + source);
         }

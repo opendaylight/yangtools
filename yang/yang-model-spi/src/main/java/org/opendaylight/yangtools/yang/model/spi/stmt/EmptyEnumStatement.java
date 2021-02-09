@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument;
 
-final class EmptyIncludeStatement extends WithArgument<String> implements IncludeStatement {
-    EmptyIncludeStatement(final String rawArgument, final String argument) {
+final class EmptyEnumStatement extends WithArgument<String> implements EnumStatement {
+    EmptyEnumStatement(final String rawArgument, final String argument) {
         super(rawArgument, argument);
     }
 }

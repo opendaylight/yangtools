@@ -5,21 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
-final class RegularUndeclaredInputStatement extends RegularInputStatement {
-    RegularUndeclaredInputStatement(final QName argument,
+final class RegularErrorAppTagStatement extends WithSubstatements implements ErrorAppTagStatement {
+    RegularErrorAppTagStatement(final @NonNull String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        return StatementSource.CONTEXT;
+        super(rawArgument, substatements);
     }
 }

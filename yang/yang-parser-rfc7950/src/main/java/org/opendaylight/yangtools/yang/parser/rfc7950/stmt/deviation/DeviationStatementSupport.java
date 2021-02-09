@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -68,12 +69,12 @@ public final class DeviationStatementSupport
     @Override
     protected DeviationStatement createDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new DeviationStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createDeviation(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected DeviationStatement createEmptyDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
+        return DeclaredStatements.createDeviation(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

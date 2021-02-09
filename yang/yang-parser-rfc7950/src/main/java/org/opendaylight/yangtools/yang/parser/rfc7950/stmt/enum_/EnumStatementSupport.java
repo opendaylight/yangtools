@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -70,12 +71,12 @@ public final class EnumStatementSupport
     @Override
     protected EnumStatement createDeclared(final StmtContext<String, EnumStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularEnumStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createEnum(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected EnumStatement createEmptyDeclared(final StmtContext<String, EnumStatement, ?> ctx) {
-        return new EmptyEnumStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createEnum(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

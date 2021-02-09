@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -87,13 +88,13 @@ abstract class AbstractIfFeatureStatementSupport
     @Override
     protected final IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularIfFeatureStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createIfFeature(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected final IfFeatureStatement createEmptyDeclared(
             final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
-        return new EmptyIfFeatureStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createIfFeature(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

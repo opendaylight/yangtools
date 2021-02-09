@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.fraction_digits;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class RegularFractionDigitsStatement extends WithSubstatements<Integer> implements FractionDigitsStatement {
-    RegularFractionDigitsStatement(final Integer argument,
+final class RegularIncludeStatement extends WithSubstatements<String> implements IncludeStatement {
+    RegularIncludeStatement(final String rawArgument, final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

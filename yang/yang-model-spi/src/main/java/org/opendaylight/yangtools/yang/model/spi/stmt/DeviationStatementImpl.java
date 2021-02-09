@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class DeviateStatementImpl extends WithSubstatements<DeviateKind> implements DeviateStatement {
-    DeviateStatementImpl(final String rawArgument, final DeviateKind argument,
+final class DeviationStatementImpl extends WithSubstatements<Absolute> implements DeviationStatement {
+    DeviationStatementImpl(final String rawArgument, final Absolute argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, argument, substatements);
     }

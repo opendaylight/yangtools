@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -191,13 +192,12 @@ abstract class AbstractDeviateStatementSupport
     @Override
     protected final DeviateStatement createDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new DeviateStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createDeviate(ctx.getArgument(), substatements);
     }
 
     @Override
     protected final DeviateStatement createEmptyDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
-        // This is exceedingly unlikely, just reuse the implementation
-        return createDeclared(ctx, ImmutableList.of());
+        return DeclaredStatements.createDeviate(ctx.getArgument());
     }
 
     @Override

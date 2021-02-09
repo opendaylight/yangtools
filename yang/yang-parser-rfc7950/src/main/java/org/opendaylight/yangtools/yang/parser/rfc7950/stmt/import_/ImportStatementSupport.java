@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -129,12 +130,12 @@ public final class ImportStatementSupport
     @Override
     protected ImportStatement createDeclared(final StmtContext<String, ImportStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ImportStatementImpl(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createImport(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected ImportStatement createEmptyDeclared(final StmtContext<String, ImportStatement, ?> ctx) {
-        throw new IllegalStateException("Unexpected empty declared import statement");
+        return DeclaredStatements.createImport(ctx.getRawArgument());
     }
 
     @Override

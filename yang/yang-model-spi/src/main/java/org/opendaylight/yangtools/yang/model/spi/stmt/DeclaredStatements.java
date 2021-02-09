@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -26,7 +27,23 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 
 /**
@@ -159,6 +176,145 @@ public final class DeclaredStatements {
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? createDescription(argument)
             : new RegularDescriptionStatement(argument, substatements);
+    }
+
+    public static DeviateStatement createDeviate(final DeviateKind argument) {
+        // This is exceedingly unlikely, just reuse the implementation
+        return createDeviate(argument, ImmutableList.of());
+    }
+
+    public static DeviateStatement createDeviate(final DeviateKind argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new DeviateStatementImpl(argument, substatements);
+    }
+
+    public static DeviationStatement createDeviation(final String rawArgument, final Absolute argument) {
+        // This does not make really sense
+        return createDeviation(rawArgument, argument, ImmutableList.of());
+    }
+
+    public static DeviationStatement createDeviation(final String rawArgument, final Absolute argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new DeviationStatementImpl(rawArgument, argument, substatements);
+    }
+
+    // FIXME: what is the distinction between rawArgument and argument?
+    public static EnumStatement createEnum(final String rawArgument, final String argument) {
+        return new EmptyEnumStatement(rawArgument, argument);
+    }
+
+    public static EnumStatement createEnum(final String rawArgument, final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createEnum(rawArgument, argument)
+            : new RegularEnumStatement(rawArgument, argument, substatements);
+    }
+
+    public static ErrorAppTagStatement createErrorAppTag(final String argument) {
+        return new EmptyErrorAppTagStatement(argument);
+    }
+
+    public static ErrorAppTagStatement createErrorAppTag(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createErrorAppTag(argument)
+            : new RegularErrorAppTagStatement(argument, substatements);
+    }
+
+    public static ErrorMessageStatement createErrorMessage(final String argument) {
+        return new EmptyErrorMessageStatement(argument);
+    }
+
+    public static ErrorMessageStatement createErrorMessage(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createErrorMessage(argument)
+            : new RegularErrorMessageStatement(argument, substatements);
+    }
+
+    public static ExtensionStatement createExtension(final QName argument) {
+        return new EmptyExtensionStatement(argument);
+    }
+
+    public static ExtensionStatement createExtension(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createExtension(argument)
+            : new RegularExtensionStatement(argument, substatements);
+    }
+
+    public static FeatureStatement createFeature(final QName argument) {
+        return new EmptyFeatureStatement(argument);
+    }
+
+    public static FeatureStatement createFeature(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createFeature(argument) : new RegularFeatureStatement(argument, substatements);
+    }
+
+    public static FractionDigitsStatement createFractionDigits(final Integer argument) {
+        return new EmptyFractionDigitsStatement(argument);
+    }
+
+    public static FractionDigitsStatement createFractionDigits(final Integer argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createFractionDigits(argument)
+            : new RegularFractionDigitsStatement(argument, substatements);
+    }
+
+    public static GroupingStatement createGrouping(final QName argument) {
+        return new EmptyGroupingStatement(argument);
+    }
+
+    public static GroupingStatement createGrouping(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createGrouping(argument)
+            : new RegularGroupingStatement(argument, substatements);
+    }
+
+    public static IdentityStatement createIdentity(final QName argument) {
+        return new EmptyIdentityStatement(argument);
+    }
+
+    public static IdentityStatement createIdentity(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createIdentity(argument)
+            : new RegularIdentityStatement(argument, substatements);
+    }
+
+    public static IfFeatureStatement createIfFeature(final String rawArgument, final IfFeatureExpr argument) {
+        return new EmptyIfFeatureStatement(rawArgument, argument);
+    }
+
+    public static IfFeatureStatement createIfFeature(final String rawArgument, final IfFeatureExpr argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createIfFeature(rawArgument, argument)
+            : new RegularIfFeatureStatement(rawArgument, argument, substatements);
+    }
+
+    public static ImportStatement createImport(final String argument) {
+        // This should never happen
+        return createImport(argument, ImmutableList.of());
+    }
+
+    public static ImportStatement createImport(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new ImportStatementImpl(argument, substatements);
+    }
+
+    public static IncludeStatement createInclude(final String rawArgument, final String argument) {
+        return new EmptyIncludeStatement(rawArgument, argument);
+    }
+
+    public static IncludeStatement createInclude(final String rawArgument, final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createInclude(rawArgument, argument)
+            : new RegularIncludeStatement(rawArgument, argument, substatements);
+    }
+
+    public static InputStatement createInput(final QName argument) {
+        return new EmptyInputStatement(argument);
+    }
+
+    public static InputStatement createInput(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createInput(argument) : new RegularInputStatement(argument, substatements);
     }
 
     public static StatusStatement createStatus(final Status argument) {

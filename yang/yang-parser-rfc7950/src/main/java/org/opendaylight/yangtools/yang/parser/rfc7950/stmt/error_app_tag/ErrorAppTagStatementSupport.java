@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -40,12 +41,12 @@ public final class ErrorAppTagStatementSupport
     @Override
     protected ErrorAppTagStatement createDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularErrorAppTagStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createErrorAppTag(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected ErrorAppTagStatement createEmptyDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
-        return new EmptyErrorAppTagStatement(ctx.getRawArgument());
+        return DeclaredStatements.createErrorAppTag(ctx.getRawArgument());
     }
 
     @Override

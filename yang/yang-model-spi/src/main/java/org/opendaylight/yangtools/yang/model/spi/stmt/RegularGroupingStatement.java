@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
 
-final class RegularFeatureStatement extends WithSubstatements implements FeatureStatement {
-    RegularFeatureStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+final class RegularGroupingStatement extends WithSubstatements implements GroupingStatement {
+    RegularGroupingStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
     }
 }

@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
+package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument;
 
-final class EmptyErrorMessageStatement extends WithRawStringArgument implements ErrorMessageStatement {
-    EmptyErrorMessageStatement(final @NonNull String rawArgument) {
+final class EmptyErrorAppTagStatement extends WithRawStringArgument implements ErrorAppTagStatement {
+    EmptyErrorAppTagStatement(final @NonNull String rawArgument) {
         super(rawArgument);
     }
 }

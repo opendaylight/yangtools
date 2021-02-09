@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -138,12 +139,12 @@ public final class GroupingStatementSupport
     @Override
     protected GroupingStatement createDeclared(final StmtContext<QName, GroupingStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularGroupingStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createGrouping(ctx.getArgument(), substatements);
     }
 
     @Override
     protected GroupingStatement createEmptyDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
-        return new EmptyGroupingStatement(ctx.getArgument());
+        return DeclaredStatements.createGrouping(ctx.getArgument());
     }
 
     @Override

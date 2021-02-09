@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -30,17 +31,17 @@ public final class FractionDigitsStatementSupport
             SubstatementValidator.builder(YangStmtMapping.FRACTION_DIGITS).build();
     private static final FractionDigitsStatementSupport INSTANCE = new FractionDigitsStatementSupport();
 
-    private static final ImmutableMap<Integer, EmptyFractionDigitsStatement> EMPTY_DECLS;
-    private static final ImmutableMap<EmptyFractionDigitsStatement, EmptyFractionDigitsEffectiveStatement> EMPTY_EFF;
+    private static final ImmutableMap<Integer, FractionDigitsStatement> EMPTY_DECLS;
+    private static final ImmutableMap<FractionDigitsStatement, EmptyFractionDigitsEffectiveStatement> EMPTY_EFF;
 
     static {
-        final Builder<Integer, EmptyFractionDigitsStatement> declBuilder = ImmutableMap.builder();
-        final Builder<EmptyFractionDigitsStatement, EmptyFractionDigitsEffectiveStatement> effBuilder =
+        final Builder<Integer, FractionDigitsStatement> declBuilder = ImmutableMap.builder();
+        final Builder<FractionDigitsStatement, EmptyFractionDigitsEffectiveStatement> effBuilder =
                 ImmutableMap.builder();
 
         for (int i = 1; i <= 18; ++i) {
             final Integer argument = i;
-            final EmptyFractionDigitsStatement decl = new EmptyFractionDigitsStatement(argument);
+            final FractionDigitsStatement decl = DeclaredStatements.createFractionDigits(argument);
             declBuilder.put(argument, decl);
             effBuilder.put(decl, new EmptyFractionDigitsEffectiveStatement(decl));
         }
@@ -79,7 +80,7 @@ public final class FractionDigitsStatementSupport
     @Override
     protected FractionDigitsStatement createDeclared(final StmtContext<Integer, FractionDigitsStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularFractionDigitsStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createFractionDigits(ctx.getArgument(), substatements);
     }
 
     @Override
