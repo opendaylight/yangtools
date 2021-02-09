@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveModelContextProvider;
 
 /**
  * A simple {@link MountPointContext} which does not contain any mount points.

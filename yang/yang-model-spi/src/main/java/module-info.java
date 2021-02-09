@@ -6,6 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 module org.opendaylight.yangtools.yang.model.spi {
+    exports org.opendaylight.yangtools.yang.model.spi;
     exports org.opendaylight.yangtools.yang.model.spi.meta;
     exports org.opendaylight.yangtools.yang.model.spi.stmt;
     exports org.opendaylight.yangtools.yang.model.spi.type;

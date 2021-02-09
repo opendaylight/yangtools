@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.model.spi;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -50,7 +50,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
      * comparator does not take into account module name and so two modules with different names but same revisions
      * compare as equal.
      */
-    protected static final Comparator<Module> REVISION_COMPARATOR =
+    public static final Comparator<Module> REVISION_COMPARATOR =
         (first, second) -> Revision.compare(second.getRevision(), first.getRevision());
 
     /**
@@ -58,7 +58,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
      * lexicographically by their name and then in order of descending revision. This comparator assumes that
      * the combination of these two attributes is sufficient to be consistent with hashCode/equals.
      */
-    protected static final Comparator<Module> NAME_REVISION_COMPARATOR = (first, second) -> {
+    public static final Comparator<Module> NAME_REVISION_COMPARATOR = (first, second) -> {
         final int cmp = first.getName().compareTo(second.getName());
         return cmp != 0 ? cmp : REVISION_COMPARATOR.compare(first, second);
     };
