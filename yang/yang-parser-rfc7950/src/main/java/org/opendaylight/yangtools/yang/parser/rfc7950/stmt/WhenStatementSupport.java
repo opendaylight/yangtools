@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import static java.util.Objects.requireNonNull;
 
@@ -17,13 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
+/**
+ * Support for {@code when} statement.
+ */
 public final class WhenStatementSupport
         extends AbstractStatementSupport<QualifiedBound, WhenStatement, WhenEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
@@ -68,7 +71,6 @@ public final class WhenStatementSupport
     @Override
     protected WhenEffectiveStatement createEffective(final Current<QualifiedBound, WhenStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyWhenEffectiveStatement(stmt.declared())
-            : new RegularWhenEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createWhen(stmt.declared(), substatements);
     }
 }
