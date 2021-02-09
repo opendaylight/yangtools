@@ -5,8 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.regex.Matcher;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Utilities for converting YANG XSD regexes into Java-compatible regexes.
  */
-public final class RegexUtils {
+final class RegexUtils {
     private static final Logger LOG = LoggerFactory.getLogger(RegexUtils.class);
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
     private static final ImmutableSet<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
@@ -244,7 +243,7 @@ public final class RegexUtils {
      * @param xsdRegex XSD regex pattern as it is defined in a YANG source
      * @return Java-compatible regex
      */
-    public static String getJavaRegexFromXSD(final String xsdRegex) {
+    static String getJavaRegexFromXSD(final String xsdRegex) {
         // Note: we are using a non-capturing group to deal with internal structure issues, like branches and similar.
         return "^(?:" + fixUnicodeScriptPattern(escapeChars(xsdRegex)) + ")$";
     }
