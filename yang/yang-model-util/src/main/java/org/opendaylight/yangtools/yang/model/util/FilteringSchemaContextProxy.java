@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
+import org.opendaylight.yangtools.yang.model.spi.AbstractSchemaContext;
 
 public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private final ImmutableMap<QNameModule, Module> moduleMap;

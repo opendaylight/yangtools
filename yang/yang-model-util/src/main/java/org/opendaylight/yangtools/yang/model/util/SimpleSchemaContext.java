@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.spi.AbstractSchemaContext;
 
 /**
  * Simple subclass of {@link AbstractSchemaContext} which performs some amount of indexing to speed up common
