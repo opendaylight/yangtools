@@ -7,64 +7,65 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6869Test {
-    private static final String FOO_NS = "foo";
+    private static final QName ROOT = QName.create("foo", "root");
+    private static final QName GRP_LEAF = QName.create("foo", "grp-leaf");
 
     @Test
     public void identityNoFeaureTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
                 ImmutableSet.of());
         assertNotNull(schemaContext);
 
         final Collection<? extends IdentitySchemaNode> identities = getIdentities(schemaContext);
         assertEquals(0, identities.size());
 
-        final SchemaNode findNode = findNode(schemaContext, ImmutableList.of("root", "grp-leaf"));
-        assertTrue(findNode instanceof LeafSchemaNode);
+        final DataSchemaNode findNode = schemaContext.findDataTreeChild(ROOT, GRP_LEAF).orElse(null);
+        assertThat(findNode, instanceOf(LeafSchemaNode.class));
         final LeafSchemaNode grpLeaf = (LeafSchemaNode) findNode;
         assertFalse(grpLeaf.isMandatory());
     }
 
     @Test
     public void identityAllFeauresTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
                 createFeaturesSet("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
         assertNotNull(schemaContext);
 
         final Collection<? extends IdentitySchemaNode> identities = getIdentities(schemaContext);
         assertEquals(1, identities.size());
 
-        final SchemaNode findNode = findNode(schemaContext, ImmutableList.of("root", "grp-leaf"));
-        assertTrue(findNode instanceof LeafSchemaNode);
+        final DataSchemaNode findNode = schemaContext.findDataTreeChild(ROOT, GRP_LEAF).orElse(null);
+        assertThat(findNode, instanceOf(LeafSchemaNode.class));
         final LeafSchemaNode grpLeaf = (LeafSchemaNode) findNode;
         assertTrue(grpLeaf.isMandatory());
     }
 
-    private static Collection<? extends IdentitySchemaNode> getIdentities(final SchemaContext schemaContext) {
+    private static Collection<? extends IdentitySchemaNode> getIdentities(final EffectiveModelContext schemaContext) {
         final Collection<? extends Module> modules = schemaContext.getModules();
         assertEquals(1, modules.size());
         final Module module = modules.iterator().next();
@@ -74,25 +75,18 @@ public class Bug6869Test {
     private static Set<QName> createFeaturesSet(final String... featureNames) {
         final Set<QName> supportedFeatures = new HashSet<>();
         for (final String featureName : featureNames) {
-            supportedFeatures.add(QName.create(FOO_NS, featureName));
+            supportedFeatures.add(QName.create("foo", featureName));
         }
 
         return ImmutableSet.copyOf(supportedFeatures);
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
-        final Iterable<QName> qNames = Iterables.transform(localNamesPath,
-            localName -> QName.create(FOO_NS, localName));
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
-    }
-
     @Test
-    public void invalidYang10Test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6869/invalid10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("IF_FEATURE is not valid for IDENTITY"));
-        }
+    public void invalidYang10Test() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6869/invalid10.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("IF_FEATURE is not valid for IDENTITY"));
     }
 }

@@ -5,36 +5,35 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6880Test {
-    private static final String FOO_NS = "foo";
-
     @Test
     public void valid10Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6880/foo.yang");
+        final EffectiveModelContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6880/foo.yang");
         assertNotNull(schemaContext);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext,
-                SchemaPath.create(true, QName.create(FOO_NS, "my-leaf-list")));
-        assertTrue(findDataSchemaNode instanceof LeafListSchemaNode);
+        final DataSchemaNode findDataSchemaNode = schemaContext.findDataTreeChild(QName.create("foo", "my-leaf-list"))
+            .orElse(null);
+        assertThat(findDataSchemaNode, instanceOf(LeafListSchemaNode.class));
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) findDataSchemaNode;
 
         final Collection<? extends Object> defaults = myLeafList.getDefaults();
@@ -43,12 +42,11 @@ public class Bug6880Test {
     }
 
     @Test
-    public void invalid10Test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6880/invalid10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("DEFAULT is not valid for LEAF_LIST"));
-        }
+    public void invalid10Test() {
+        final ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6880/invalid10.yang"));
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("DEFAULT is not valid for LEAF_LIST"));
     }
 }
