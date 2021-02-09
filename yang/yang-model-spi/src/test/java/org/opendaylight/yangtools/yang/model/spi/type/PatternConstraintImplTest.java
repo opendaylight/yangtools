@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.model.spi.type;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -21,12 +21,12 @@ public class PatternConstraintImplTest {
     @Test
     public void testMethodsOfPatternConstraintImpl() {
         final String regexExp = "\\D";
-        final Optional<String> description = Optional.of("test description");
-        final Optional<String> reference = Optional.of("RFC 6020");
+        final String description = "test description";
+        final String reference = "RFC 6020";
         final PatternConstraintImpl patternConstraint = new PatternConstraintImpl(regexExp, description, reference);
         final String regexExp2 = "\\s";
-        final Optional<String> description2 = Optional.of("test description2");
-        final Optional<String> reference2 = Optional.of("RFC 6020 http://tools.ietf.org/html/rfc6020#page-23");
+        final String description2 = "test description2";
+        final String reference2 = "RFC 6020 http://tools.ietf.org/html/rfc6020#page-23";
         final PatternConstraintImpl patternConstraint2 = new PatternConstraintImpl(regexExp2, description2, reference2);
         final PatternConstraintImpl patternConstraint3 = patternConstraint;
         final PatternConstraintImpl patternConstraint4 = new PatternConstraintImpl(regexExp, description2, reference);
