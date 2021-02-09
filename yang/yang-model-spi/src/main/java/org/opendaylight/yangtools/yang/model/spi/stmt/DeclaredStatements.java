@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -108,6 +109,7 @@ import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyBelongsToSt
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyBitStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyChoiceStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyConfigStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyContainerStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyDefaultStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyDescriptionStatement;
@@ -171,6 +173,7 @@ import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularBelongsTo
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularBitStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularChoiceStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularConfigStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularContainerStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularDefaultStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularDescriptionStatement;
@@ -325,6 +328,15 @@ public final class DeclaredStatements {
     public static ConfigStatement createConfig(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? createConfig(argument) : new RegularConfigStatement(argument, substatements);
+    }
+
+    public static ContactStatement createContact(final String argument) {
+        return new EmptyContactStatement(argument);
+    }
+
+    public static ContactStatement createContact(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createContact(argument) : new RegularContactStatement(argument, substatements);
     }
 
     public static ContainerStatement createContainer(final QName argument) {

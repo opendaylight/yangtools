@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -38,12 +39,12 @@ public final class ContactStatementSupport
     @Override
     protected ContactStatement createDeclared(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularContactStatement(argument, substatements);
+        return DeclaredStatements.createContact(argument, substatements);
     }
 
     @Override
     protected ContactStatement createEmptyDeclared(final String argument) {
-        return new EmptyContactStatement(argument);
+        return DeclaredStatements.createContact(argument);
     }
 
     @Override

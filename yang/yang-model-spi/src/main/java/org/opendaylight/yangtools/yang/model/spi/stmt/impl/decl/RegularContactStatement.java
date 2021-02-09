@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
+package org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -13,8 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 
-final class RegularContactStatement extends WithSubstatements implements ContactStatement {
-    RegularContactStatement(final @NonNull String rawArgument,
+public final class RegularContactStatement extends WithSubstatements implements ContactStatement {
+    public RegularContactStatement(final @NonNull String rawArgument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(rawArgument, substatements);
     }
