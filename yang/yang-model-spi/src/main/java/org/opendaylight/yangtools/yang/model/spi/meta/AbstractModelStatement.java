@@ -55,7 +55,7 @@ abstract class AbstractModelStatement<A> implements ModelStatement<A> {
         return set.size() == 1 ? set.iterator().next() : set;
     }
 
-    protected static final <T> @NonNull ImmutableSet<? extends T> unmaskSet(final @NonNull Object masked,
+    protected static final <T> @NonNull ImmutableSet<T> unmaskSet(final @NonNull Object masked,
             final @NonNull Class<T> type) {
         return masked instanceof ImmutableSet ? (ImmutableSet<T>) masked
             // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort

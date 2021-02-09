@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -46,12 +47,12 @@ public final class MaxElementsStatementSupport
     @Override
     protected MaxElementsStatement createDeclared(final StmtContext<String, MaxElementsStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMaxElementsStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createMaxElements(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected MaxElementsStatement createEmptyDeclared(final StmtContext<String, MaxElementsStatement, ?> ctx) {
-        return new EmptyMaxElementsStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createMaxElements(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

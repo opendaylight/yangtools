@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -53,12 +54,12 @@ public final class NamespaceStatementSupport
     @Override
     protected NamespaceStatement createDeclared(@NonNull final StmtContext<XMLNamespace, NamespaceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularNamespaceStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createNamespace(ctx.getArgument(), substatements);
     }
 
     @Override
     protected NamespaceStatement createEmptyDeclared(final StmtContext<XMLNamespace, NamespaceStatement, ?> ctx) {
-        return new EmptyNamespaceStatement(ctx.getArgument());
+        return DeclaredStatements.createNamespace(ctx.getArgument());
     }
 
     @Override

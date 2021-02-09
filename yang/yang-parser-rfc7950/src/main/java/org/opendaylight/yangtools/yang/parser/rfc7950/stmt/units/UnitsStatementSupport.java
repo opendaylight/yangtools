@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -41,12 +42,12 @@ public final class UnitsStatementSupport
     @Override
     protected UnitsStatement createDeclared(final StmtContext<String, UnitsStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularUnitsStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createUnits(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected UnitsStatement createEmptyDeclared(final StmtContext<String, UnitsStatement, ?> ctx) {
-        return new EmptyUnitsStatement(ctx.getRawArgument());
+        return DeclaredStatements.createUnits(ctx.getRawArgument());
     }
 
     @Override

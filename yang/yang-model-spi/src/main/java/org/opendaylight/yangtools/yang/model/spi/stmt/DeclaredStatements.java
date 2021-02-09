@@ -9,9 +9,18 @@ package org.opendaylight.yangtools.yang.model.spi.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -42,9 +51,52 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
  * Static entry point to instantiating {@link DeclaredStatement} covered in the {@code RFC7950} metamodel.
@@ -317,6 +369,274 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createInput(argument) : new RegularInputStatement(argument, substatements);
     }
 
+    public static KeyStatement createKey(final String rawArgument, final Set<QName> argument) {
+        return new EmptyKeyStatement(rawArgument, argument);
+    }
+
+    public static KeyStatement createKey(final String rawArgument, final Set<QName> argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createKey(rawArgument, argument)
+            : new RegularKeyStatement(rawArgument, argument, substatements);
+    }
+
+    public static LeafStatement createLeaf(final QName argument) {
+        return new EmptyLeafStatement(argument);
+    }
+
+    public static LeafStatement createLeaf(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createLeaf(argument) : new RegularLeafStatement(argument, substatements);
+    }
+
+    public static LeafListStatement createLeafList(final QName argument) {
+        return new EmptyLeafListStatement(argument);
+    }
+
+    public static LeafListStatement createLeafList(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createLeafList(argument)
+            : new RegularLeafListStatement(argument, substatements);
+    }
+
+    public static LengthStatement createLength(final String rawArgument, final List<ValueRange> argument) {
+        return new EmptyLengthStatement(rawArgument, argument);
+    }
+
+    public static LengthStatement createLength(final String rawArgument, final List<ValueRange> argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createLength(rawArgument, argument)
+            : new RegularLengthStatement(rawArgument, argument, substatements);
+    }
+
+    public static ListStatement createList(final QName argument) {
+        return new EmptyListStatement(argument);
+    }
+
+    public static ListStatement createList(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createList(argument) : new RegularListStatement(argument, substatements);
+    }
+
+    public static MandatoryStatement createMandatory(final Boolean argument) {
+        return new EmptyMandatoryStatement(argument);
+    }
+
+    public static MandatoryStatement createMandatory(final Boolean argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createMandatory(argument)
+            : new RegularMandatoryStatement(argument, substatements);
+    }
+
+    public static MaxElementsStatement createMaxElements(final String rawArgument, final String argument) {
+        return new EmptyMaxElementsStatement(rawArgument, argument);
+    }
+
+    public static MaxElementsStatement createMaxElements(final String rawArgument, final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createMaxElements(rawArgument, argument)
+            : new RegularMaxElementsStatement(rawArgument, argument, substatements);
+    }
+
+    public static MinElementsStatement createMinElements(final Integer argument) {
+        return new EmptyMinElementsStatement(argument);
+    }
+
+    public static MinElementsStatement createMinElements(final Integer argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createMinElements(argument)
+            : new RegularMinElementsStatement(argument, substatements);
+    }
+
+    public static ModifierStatement createModifier(final ModifierKind argument) {
+        return new EmptyModifierStatement(argument);
+    }
+
+    public static ModifierStatement createModifier(final ModifierKind argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createModifier(argument)
+            : new RegularModifierStatement(argument, substatements);
+    }
+
+    public static ModuleStatement createModule(final String rawArgument, final UnqualifiedQName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new ModuleStatementImpl(rawArgument, argument, substatements);
+    }
+
+    public static MustStatement createMust(final String rawArgument, final QualifiedBound argument) {
+        return new EmptyMustStatement(rawArgument, argument);
+    }
+
+    public static MustStatement createMust(final String rawArgument, final QualifiedBound argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createMust(rawArgument, argument)
+            : new RegularMustStatement(rawArgument, argument, substatements);
+    }
+
+    public static NamespaceStatement createNamespace(final XMLNamespace argument) {
+        return new EmptyNamespaceStatement(argument);
+    }
+
+    public static NamespaceStatement createNamespace(final XMLNamespace argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createNamespace(argument)
+            : new RegularNamespaceStatement(argument, substatements);
+    }
+
+    public static NotificationStatement createNotification(final QName argument) {
+        return new EmptyNotificationStatement(argument);
+    }
+
+    public static NotificationStatement createNotification(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createNotification(argument)
+            : new RegularNotificationStatement(argument, substatements);
+    }
+
+    public static OrganizationStatement createOrganization(final String argument) {
+        return new EmptyOrganizationStatement(argument);
+    }
+
+    public static OrganizationStatement createOrganization(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createOrganization(argument)
+            : new RegularOrganizationStatement(argument, substatements);
+    }
+
+    public static OutputStatement createOutput(final QName argument) {
+        return new EmptyOutputStatement(argument);
+    }
+
+    public static OutputStatement createOutput(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createOutput(argument) : new RegularOutputStatement(argument, substatements);
+    }
+
+    public static OrderedByStatement createOrderedBy(final Ordering argument) {
+        return new EmptyOrderedByStatement(argument);
+    }
+
+    public static OrderedByStatement createOrderedBy(final Ordering argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createOrderedBy(argument)
+            : new RegularOrderedByStatement(argument, substatements);
+    }
+
+    public static PathStatement createPath(final PathExpression argument) {
+        return new EmptyPathStatement(argument);
+    }
+
+    public static PathStatement createPath(final PathExpression argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createPath(argument) : new RegularPathStatement(argument, substatements);
+    }
+
+    public static PatternStatement createPattern(final PatternExpression argument) {
+        return new EmptyPatternStatement(argument);
+    }
+
+    public static PatternStatement createPattern(final PatternExpression argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createPattern(argument)
+            : new RegularPatternStatement(argument, substatements);
+    }
+
+    public static PositionStatement createPosition(final Uint32 argument) {
+        return new EmptyPositionStatement(argument);
+    }
+
+    public static PositionStatement createPosition(final Uint32 argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createPosition(argument)
+            : new RegularPositionStatement(argument, substatements);
+    }
+
+    public static PrefixStatement createPrefix(final String argument) {
+        return new EmptyPrefixStatement(argument);
+    }
+
+    public static PrefixStatement createPrefix(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createPrefix(argument) : new RegularPrefixStatement(argument, substatements);
+    }
+
+    public static PresenceStatement createPresence(final String argument) {
+        return new EmptyPresenceStatement(argument);
+    }
+
+    public static PresenceStatement createPresence(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createPresence(argument)
+            : new RegularPresenceStatement(argument, substatements);
+    }
+
+    public static ReferenceStatement createReference(final String argument) {
+        return new EmptyReferenceStatement(argument);
+    }
+
+    public static ReferenceStatement createReference(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createReference(argument)
+            : new RegularReferenceStatement(argument, substatements);
+    }
+
+    public static RangeStatement createRange(final String rawArgument, final List<ValueRange> argument) {
+        return new EmptyRangeStatement(rawArgument, argument);
+    }
+
+    public static RangeStatement createRange(final String rawArgument, final List<ValueRange> argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createRange(rawArgument, argument)
+            : new RegularRangeStatement(rawArgument, argument, substatements);
+    }
+
+    public static RefineStatement createRefine(final String rawArgument, final Descendant argument) {
+        return createRefine(rawArgument, argument, ImmutableList.of());
+    }
+
+    public static RefineStatement createRefine(final String rawArgument, final Descendant argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RefineStatementImpl(rawArgument, argument, substatements);
+    }
+
+    public static RequireInstanceStatement createRequireInstance(final Boolean argument) {
+        return new EmptyRequireInstanceStatement(argument);
+    }
+
+    public static RequireInstanceStatement createRequireInstance(final Boolean argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createRequireInstance(argument)
+            : new RegularRequireInstanceStatement(argument, substatements);
+    }
+
+    public static RevisionStatement createRevision(final Revision argument) {
+        return new EmptyRevisionStatement(argument);
+    }
+
+    public static RevisionStatement createRevision(final Revision argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createRevision(argument)
+            : new RegularRevisionStatement(argument, substatements);
+    }
+
+    public static RevisionDateStatement createRevisionDate(final Revision argument) {
+        return new EmptyRevisionDateStatement(argument);
+    }
+
+    public static RevisionDateStatement createRevisionDate(final Revision argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createRevisionDate(argument)
+            : new RegularRevisionDateStatement(argument, substatements);
+    }
+
+    public static RpcStatement createRpc(final QName argument) {
+        return new EmptyRpcStatement(argument);
+    }
+
+    public static RpcStatement createRpc(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createRpc(argument) : new RegularRpcStatement(argument, substatements);
+    }
+
     public static StatusStatement createStatus(final Status argument) {
         return new EmptyStatusStatement(argument);
     }
@@ -324,5 +644,96 @@ public final class DeclaredStatements {
     public static StatusStatement createStatus(final Status argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? createStatus(argument) : new RegularStatusStatement(argument, substatements);
+    }
+
+    public static SubmoduleStatement createSubmodule(final String rawArgument, final UnqualifiedQName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new SubmoduleStatementImpl(rawArgument, argument, substatements);
+    }
+
+    public static TypeStatement createType(final String argument) {
+        return new EmptyTypeStatement(argument);
+    }
+
+    public static TypeStatement createType(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createType(argument) : new RegularTypeStatement(argument, substatements);
+    }
+
+    public static TypedefStatement createTypedef(final QName argument) {
+        return new EmptyTypedefStatement(argument);
+    }
+
+    public static TypedefStatement createTypedef(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createTypedef(argument) : new RegularTypedefStatement(argument, substatements);
+    }
+
+    public static UniqueStatement createUnique(final String rawArgument, final Set<Descendant> argument) {
+        return new EmptyUniqueStatement(rawArgument, argument);
+    }
+
+    public static UniqueStatement createUnique(final String rawArgument, final Set<Descendant> argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createUnique(rawArgument, argument)
+            : new RegularUniqueStatement(rawArgument, argument, substatements);
+    }
+
+    public static UnitsStatement createUnits(final String argument) {
+        return new EmptyUnitsStatement(argument);
+    }
+
+    public static UnitsStatement createUnits(final String argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createUnits(argument) : new RegularUnitsStatement(argument, substatements);
+    }
+
+    public static UsesStatement createUses(final String rawArgument, final QName argument) {
+        return new EmptyUsesStatement(rawArgument, argument);
+    }
+
+    public static UsesStatement createUses(final String rawArgument, final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createUses(rawArgument, argument)
+            : new RegularUsesStatement(rawArgument, argument, substatements);
+    }
+
+    public static ValueStatement createValue(final Integer argument) {
+        return new EmptyValueStatement(argument);
+    }
+
+    public static ValueStatement createValue(final Integer argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createValue(argument) : new RegularValueStatement(argument, substatements);
+    }
+
+    public static WhenStatement createWhen(final String rawArgument, final QualifiedBound argument) {
+        return new EmptyWhenStatement(rawArgument, argument);
+    }
+
+    public static WhenStatement createWhen(final String rawArgument, final QualifiedBound argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createWhen(rawArgument, argument)
+            : new RegularWhenStatement(rawArgument, argument, substatements);
+    }
+
+    public static YangVersionStatement createYangVersion(final YangVersion argument) {
+        return new EmptyYangVersionStatement(argument);
+    }
+
+    public static YangVersionStatement createYangVersion(final YangVersion argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createYangVersion(argument)
+            : new RegularYangVersionStatement(argument, substatements);
+    }
+
+    public static YinElementStatement createYinElement(final Boolean argument) {
+        return new EmptyYinElementStatement(argument);
+    }
+
+    public static YinElementStatement createYinElement(final Boolean argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createYinElement(argument)
+            : new RegularYinElementStatement(argument, substatements);
     }
 }

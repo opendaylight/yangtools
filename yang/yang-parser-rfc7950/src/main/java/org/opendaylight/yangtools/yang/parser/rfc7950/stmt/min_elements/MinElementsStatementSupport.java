@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -50,12 +51,12 @@ public final class MinElementsStatementSupport
     @Override
     protected MinElementsStatement createDeclared(final Integer argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMinElementsStatement(argument, substatements);
+        return DeclaredStatements.createMinElements(argument, substatements);
     }
 
     @Override
     protected MinElementsStatement createEmptyDeclared(final Integer argument) {
-        return new EmptyMinElementsStatement(argument);
+        return DeclaredStatements.createMinElements(argument);
     }
 
     @Override

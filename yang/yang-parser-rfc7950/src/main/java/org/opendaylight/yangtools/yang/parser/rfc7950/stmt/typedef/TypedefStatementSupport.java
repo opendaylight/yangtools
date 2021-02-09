@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
@@ -105,12 +106,12 @@ public final class TypedefStatementSupport extends
     @Override
     protected TypedefStatement createDeclared(final StmtContext<QName, TypedefStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularTypedefStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createTypedef(ctx.getArgument(), substatements);
     }
 
     @Override
     protected TypedefStatement createEmptyDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {
-        return new EmptyTypedefStatement(ctx.getArgument());
+        return DeclaredStatements.createTypedef(ctx.getArgument());
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -52,12 +53,12 @@ public final class RevisionDateStatementSupport
     @Override
     protected RevisionDateStatement createDeclared(final StmtContext<Revision, RevisionDateStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularRevisionDateStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createRevisionDate(ctx.getArgument(), substatements);
     }
 
     @Override
     protected RevisionDateStatement createEmptyDeclared(final StmtContext<Revision, RevisionDateStatement, ?> ctx) {
-        return new EmptyRevisionDateStatement(ctx.getArgument());
+        return DeclaredStatements.createRevisionDate(ctx.getArgument());
     }
 
     @Override

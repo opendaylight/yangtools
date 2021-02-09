@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
@@ -138,12 +139,12 @@ public final class UsesStatementSupport
     @Override
     protected UsesStatement createDeclared(final StmtContext<QName, UsesStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularUsesStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createUses(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected UsesStatement createEmptyDeclared(final StmtContext<QName, UsesStatement, ?> ctx) {
-        return new EmptyUsesStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createUses(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

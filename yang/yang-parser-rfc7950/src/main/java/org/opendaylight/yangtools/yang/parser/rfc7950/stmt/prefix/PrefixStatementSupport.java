@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -40,12 +41,12 @@ public final class PrefixStatementSupport
     @Override
     protected PrefixStatement createDeclared(final StmtContext<String, PrefixStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPrefixStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createPrefix(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected PrefixStatement createEmptyDeclared(final StmtContext<String, PrefixStatement, ?> ctx) {
-        return new EmptyPrefixStatement(ctx.getRawArgument());
+        return DeclaredStatements.createPrefix(ctx.getRawArgument());
     }
 
     @Override

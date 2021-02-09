@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -80,13 +81,13 @@ public final class PatternStatementSupport
     @Override
     protected PatternStatement createDeclared(final StmtContext<PatternExpression, PatternStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPatternStatement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createPattern(ctx.getArgument(), substatements);
     }
 
     @Override
     protected PatternStatement createEmptyDeclared(
             final StmtContext<PatternExpression, PatternStatement, ?> ctx) {
-        return new EmptyPatternStatement(ctx.getArgument());
+        return DeclaredStatements.createPattern(ctx.getArgument());
     }
 
     @Override

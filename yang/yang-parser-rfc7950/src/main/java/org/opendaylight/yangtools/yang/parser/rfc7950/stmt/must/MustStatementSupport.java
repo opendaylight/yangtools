@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -58,12 +59,12 @@ public final class MustStatementSupport
     @Override
     protected MustStatement createDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularMustStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createMust(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected MustStatement createEmptyDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx) {
-        return new EmptyMustStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createMust(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

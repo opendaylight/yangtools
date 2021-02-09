@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -56,12 +57,12 @@ public final class WhenStatementSupport
     @Override
     protected WhenStatement createDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularWhenStatement(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createWhen(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected WhenStatement createEmptyDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx) {
-        return new EmptyWhenStatement(ctx.getRawArgument(), ctx.getArgument());
+        return DeclaredStatements.createWhen(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

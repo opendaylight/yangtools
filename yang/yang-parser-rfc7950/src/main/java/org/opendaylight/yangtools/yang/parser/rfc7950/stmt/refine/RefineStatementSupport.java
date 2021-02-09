@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -84,13 +85,13 @@ public final class RefineStatementSupport
     @Override
     protected RefineStatement createDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RefineStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+        return DeclaredStatements.createRefine(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
     protected RefineStatement createEmptyDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return createDeclared(ctx, ImmutableList.of());
+        return DeclaredStatements.createRefine(ctx.getRawArgument(), ctx.getArgument());
     }
 
     @Override

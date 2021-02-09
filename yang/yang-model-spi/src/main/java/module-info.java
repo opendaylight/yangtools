@@ -11,6 +11,8 @@ module org.opendaylight.yangtools.yang.model.spi {
     exports org.opendaylight.yangtools.yang.model.spi.type;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.xpath.api;
+    requires com.google.common;
     requires org.opendaylight.yangtools.yang.common;
 
     // Annotations

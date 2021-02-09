@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -40,12 +41,12 @@ public final class PresenceStatementSupport
     @Override
     protected PresenceStatement createDeclared(final StmtContext<String, PresenceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularPresenceStatement(ctx.getRawArgument(), substatements);
+        return DeclaredStatements.createPresence(ctx.getRawArgument(), substatements);
     }
 
     @Override
     protected PresenceStatement createEmptyDeclared(final StmtContext<String, PresenceStatement, ?> ctx) {
-        return new EmptyPresenceStatement(ctx.getRawArgument());
+        return DeclaredStatements.createPresence(ctx.getRawArgument());
     }
 
     @Override

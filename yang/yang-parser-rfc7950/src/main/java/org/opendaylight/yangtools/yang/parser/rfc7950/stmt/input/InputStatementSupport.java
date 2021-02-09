@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
-import org.opendaylight.yangtools.yang.model.spi.stmt.UndeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.ImplicitStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -85,7 +85,7 @@ public final class InputStatementSupport
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
-                return UndeclaredStatements.createInput(ctx.getArgument(), substatements);
+                return ImplicitStatements.createInput(ctx.getArgument(), substatements);
             case DECLARATION:
                 return DeclaredStatements.createInput(ctx.getArgument(), substatements);
             default:
@@ -98,7 +98,7 @@ public final class InputStatementSupport
         final StatementSource source = ctx.source();
         switch (source) {
             case CONTEXT:
-                return UndeclaredStatements.createInput(ctx.getArgument());
+                return ImplicitStatements.createInput(ctx.getArgument());
             case DECLARATION:
                 return DeclaredStatements.createInput(ctx.getArgument());
             default:
