@@ -14,6 +14,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyUndeclaredInputStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.EmptyUndeclaredOutputStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularUndeclaredInputStatement;
+import org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl.RegularUndeclaredOutputStatement;
 
 /**
  * Static entry point to instantiating {@link DeclaredStatements} covered in the {@code RFC7950} metamodel which are
