@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
+package org.opendaylight.yangtools.yang.model.spi.stmt.impl.eff;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyPresenceEffectiveStatement extends DefaultArgument<String, PresenceStatement>
-        implements PresenceEffectiveStatement {
-    EmptyPresenceEffectiveStatement(final PresenceStatement declared) {
+public final class EmptyUnitsEffectiveStatement extends DefaultArgument<String, UnitsStatement>
+        implements UnitsEffectiveStatement {
+    public EmptyUnitsEffectiveStatement(final UnitsStatement declared) {
         super(declared);
     }
 }

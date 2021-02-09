@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
+package org.opendaylight.yangtools.yang.model.spi.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyDescriptionEffectiveStatement extends DefaultArgument<String, DescriptionStatement>
+public final class EmptyDescriptionEffectiveStatement extends DefaultArgument<String, DescriptionStatement>
         implements DescriptionEffectiveStatement {
-    EmptyDescriptionEffectiveStatement(final DescriptionStatement declared) {
+    public EmptyDescriptionEffectiveStatement(final DescriptionStatement declared) {
         super(declared);
     }
 }

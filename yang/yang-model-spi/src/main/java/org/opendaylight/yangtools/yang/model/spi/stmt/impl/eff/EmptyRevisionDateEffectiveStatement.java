@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date;
+package org.opendaylight.yangtools.yang.model.spi.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyRevisionDateEffectiveStatement extends DefaultArgument<Revision, RevisionDateStatement>
+public final class EmptyRevisionDateEffectiveStatement extends DefaultArgument<Revision, RevisionDateStatement>
         implements RevisionDateEffectiveStatement {
-    EmptyRevisionDateEffectiveStatement(final RevisionDateStatement declared) {
+    public EmptyRevisionDateEffectiveStatement(final RevisionDateStatement declared) {
         super(declared);
     }
 }
