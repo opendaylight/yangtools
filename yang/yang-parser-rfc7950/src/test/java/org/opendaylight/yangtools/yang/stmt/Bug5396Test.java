@@ -8,10 +8,11 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Test;
@@ -19,12 +20,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class Bug5396Test {
     @Test
@@ -35,13 +34,12 @@ public class Bug5396Test {
         QName root = QName.create("foo", "root");
         QName myLeaf2 = QName.create("foo", "my-leaf2");
 
-        SchemaPath schemaPath = SchemaPath.create(true, root, myLeaf2);
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
-        assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
+        SchemaNode findDataSchemaNode = context.findDataTreeChild(root, myLeaf2).get();
+        assertThat(findDataSchemaNode, instanceOf(LeafSchemaNode.class));
 
         LeafSchemaNode leaf2 = (LeafSchemaNode) findDataSchemaNode;
         TypeDefinition<?> type = leaf2.getType();
-        assertTrue(type instanceof UnionTypeDefinition);
+        assertThat(type, instanceOf(UnionTypeDefinition.class));
 
         UnionTypeDefinition union = (UnionTypeDefinition) type;
         List<TypeDefinition<?>> types = union.getTypes();
@@ -53,14 +51,14 @@ public class Bug5396Test {
         TypeDefinition<?> type2 = types.get(2);
         TypeDefinition<?> type3 = types.get(3);
 
-        assertFalse(type0.equals(type1));
-        assertFalse(type0.equals(type2));
-        assertFalse(type0.equals(type3));
+        assertNotEquals(type0, type1);
+        assertNotEquals(type0, type2);
+        assertNotEquals(type0, type3);
 
-        assertTrue(type0 instanceof StringTypeDefinition);
-        assertTrue(type1 instanceof StringTypeDefinition);
-        assertTrue(type2 instanceof StringTypeDefinition);
-        assertTrue(type3 instanceof StringTypeDefinition);
+        assertThat(type0, instanceOf(StringTypeDefinition.class));
+        assertThat(type1, instanceOf(StringTypeDefinition.class));
+        assertThat(type2, instanceOf(StringTypeDefinition.class));
+        assertThat(type3, instanceOf(StringTypeDefinition.class));
 
         StringTypeDefinition stringType0 = (StringTypeDefinition) type0;
         StringTypeDefinition stringType1 = (StringTypeDefinition) type1;

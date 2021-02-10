@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +19,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug5200Test {
@@ -41,17 +40,17 @@ public class Bug5200Test {
         QName myLeaf = QName.create(NS, REV, "my-leaf");
         QName myLeaf2 = QName.create(NS, REV, "my-leaf-2");
 
-        SchemaNode myLeafNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, myLeaf));
-        SchemaNode myLeaf2Node = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, myLeaf2));
+        SchemaNode myLeafNode = context.findDataTreeChild(root, myLeaf).get();
+        SchemaNode myLeaf2Node = context.findDataTreeChild(root, myLeaf2).get();
 
-        assertTrue(myLeafNode instanceof LeafSchemaNode);
-        assertTrue(myLeaf2Node instanceof LeafSchemaNode);
+        assertThat(myLeafNode, instanceOf(LeafSchemaNode.class));
+        assertThat(myLeaf2Node, instanceOf(LeafSchemaNode.class));
 
         TypeDefinition<?> myLeafType = ((LeafSchemaNode) myLeafNode).getType();
         TypeDefinition<?> myLeaf2Type = ((LeafSchemaNode) myLeaf2Node).getType();
 
-        assertTrue(myLeafType instanceof StringTypeDefinition);
-        assertTrue(myLeaf2Type instanceof Int32TypeDefinition);
+        assertThat(myLeafType, instanceOf(StringTypeDefinition.class));
+        assertThat(myLeaf2Type, instanceOf(Int32TypeDefinition.class));
 
         final LengthConstraint lengthConstraint =
                 ((StringTypeDefinition) myLeafType).getLengthConstraint().get();

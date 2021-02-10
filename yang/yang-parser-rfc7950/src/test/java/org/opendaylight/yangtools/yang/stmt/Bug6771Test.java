@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,10 +32,8 @@ public class Bug6771Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/augment");
         assertNotNull(context);
 
-        verifyLeafType(SchemaContextUtil
-                .findDataSchemaNode(context, SchemaPath.create(true, ROOT, CONT_B, LEAF_CONT_B)));
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B)));
+        verifyLeafType(context.findDataTreeChild(ROOT, CONT_B, LEAF_CONT_B).get());
+        verifyLeafType(context.findDataTreeChild(ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B).get());
     }
 
     @Test
@@ -62,12 +61,11 @@ public class Bug6771Test {
     public void groupingTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/grouping");
         assertNotNull(context);
-        verifyLeafType(SchemaContextUtil
-                .findDataSchemaNode(context, SchemaPath.create(true, ROOT, CONT_B, LEAF_CONT_B)));
+        verifyLeafType(context.findDataTreeChild(ROOT, CONT_B, LEAF_CONT_B).get());
     }
 
     private static void verifyLeafType(final SchemaNode schemaNode) {
-        assertTrue(schemaNode instanceof LeafSchemaNode);
-        assertTrue(((LeafSchemaNode) schemaNode).getType() instanceof Uint32TypeDefinition);
+        assertThat(schemaNode, instanceOf(LeafSchemaNode.class));
+        assertThat(((LeafSchemaNode) schemaNode).getType(), instanceOf(Uint32TypeDefinition.class));
     }
 }
