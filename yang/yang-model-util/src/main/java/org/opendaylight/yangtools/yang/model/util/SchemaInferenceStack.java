@@ -26,6 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -188,6 +190,18 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
+     * Lookup a {@code schema tree} child by its node identifier and push it to the stack.
+     *
+     * @param nodeIdentifier Node identifier of the date tree child to enter
+     * @return Resolved date tree child
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding child cannot be found
+     */
+    public @NonNull EffectiveStatement<QName, ?> enterDataTree(final QName nodeIdentifier) {
+        return pushData(requireNonNull(nodeIdentifier));
+    }
+
+    /**
      * Pop the current statement from the stack.
      *
      * @return Previous statement
@@ -296,6 +310,32 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private @NonNull SchemaTreeEffectiveStatement<?> pushFirstSchema(final @NonNull QName nodeIdentifier) {
         final ModuleEffectiveStatement module = getModule(nodeIdentifier);
         final SchemaTreeEffectiveStatement<?> ret = pushSchema(module, nodeIdentifier);
+        currentModule = module;
+        return ret;
+    }
+
+    private @NonNull DataTreeEffectiveStatement<?> pushData(final @NonNull QName nodeIdentifier) {
+        final EffectiveStatement<QName, ?> parent = deque.peekFirst();
+        return parent != null ? pushData(parent, nodeIdentifier) : pushFirstData(nodeIdentifier);
+    }
+
+    private @NonNull DataTreeEffectiveStatement<?> pushData(final EffectiveStatement<QName, ?> parent,
+            final @NonNull QName nodeIdentifier) {
+        checkState(parent instanceof DataTreeAwareEffectiveStatement, "Cannot descend data tree at %s", parent);
+        return pushData((DataTreeAwareEffectiveStatement<?, ?>) parent, nodeIdentifier);
+    }
+
+    private @NonNull DataTreeEffectiveStatement<?> pushData(final @NonNull DataTreeAwareEffectiveStatement<?, ?> parent,
+            final @NonNull QName nodeIdentifier) {
+        final DataTreeEffectiveStatement<?> ret = parent.findDataTreeNode(nodeIdentifier).orElseThrow(
+            () -> new IllegalArgumentException("Schema tree child " + nodeIdentifier + " not present"));
+        deque.push(ret);
+        return ret;
+    }
+
+    private @NonNull DataTreeEffectiveStatement<?> pushFirstData(final @NonNull QName nodeIdentifier) {
+        final ModuleEffectiveStatement module = getModule(nodeIdentifier);
+        final DataTreeEffectiveStatement<?> ret = pushData(module, nodeIdentifier);
         currentModule = module;
         return ret;
     }
