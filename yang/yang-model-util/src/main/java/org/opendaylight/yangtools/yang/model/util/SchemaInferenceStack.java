@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
@@ -130,7 +131,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
-     * Lookup a grouping by its node identifier and push it to the stack.
+     * Lookup a {@code grouping} by its node identifier and push it to the stack.
      *
      * @param nodeIdentifier Node identifier of the grouping to enter
      * @return Resolved grouping
@@ -142,14 +143,14 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
-     * Lookup a schema tree child by its node identifier and push it to the stack.
+     * Lookup a {@code schema tree} child by its node identifier and push it to the stack.
      *
      * @param nodeIdentifier Node identifier of the schema tree child to enter
      * @return Resolved schema tree child
      * @throws NullPointerException if {@code nodeIdentifier} is null
-     * @throws IllegalArgumentException if the corresponding grouping cannot be found
+     * @throws IllegalArgumentException if the corresponding child cannot be found
      */
-    public @NonNull EffectiveStatement<QName, ?> enterSchemaTree(final QName nodeIdentifier) {
+    public @NonNull SchemaTreeEffectiveStatement<?> enterSchemaTree(final QName nodeIdentifier) {
         return pushSchema(requireNonNull(nodeIdentifier));
     }
 
@@ -228,28 +229,28 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return ret;
     }
 
-    private @NonNull EffectiveStatement<QName, ?> pushSchema(final @NonNull QName nodeIdentifier) {
+    private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(final @NonNull QName nodeIdentifier) {
         final EffectiveStatement<QName, ?> parent = deque.peekFirst();
         return parent != null ? pushSchema(parent, nodeIdentifier) : pushFirstSchema(nodeIdentifier);
     }
 
-    private @NonNull EffectiveStatement<QName, ?> pushSchema(final EffectiveStatement<QName, ?> parent,
+    private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(final EffectiveStatement<QName, ?> parent,
             final @NonNull QName nodeIdentifier) {
         checkState(parent instanceof SchemaTreeAwareEffectiveStatement, "Cannot descend schema tree at %s", parent);
         return pushSchema((SchemaTreeAwareEffectiveStatement<?, ?>) parent, nodeIdentifier);
     }
 
-    private @NonNull EffectiveStatement<QName, ?> pushSchema(
+    private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(
             final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent, final @NonNull QName nodeIdentifier) {
-        final EffectiveStatement<QName, ?> ret = parent.findSchemaTreeNode(nodeIdentifier).orElseThrow(
+        final SchemaTreeEffectiveStatement<?> ret = parent.findSchemaTreeNode(nodeIdentifier).orElseThrow(
             () -> new IllegalArgumentException("Schema tree child " + nodeIdentifier + " not present"));
         deque.push(ret);
         return ret;
     }
 
-    private @NonNull EffectiveStatement<QName, ?> pushFirstSchema(final @NonNull QName nodeIdentifier) {
+    private @NonNull SchemaTreeEffectiveStatement<?> pushFirstSchema(final @NonNull QName nodeIdentifier) {
         final ModuleEffectiveStatement module = getModule(nodeIdentifier);
-        final EffectiveStatement<QName, ?> ret = pushSchema(module, nodeIdentifier);
+        final SchemaTreeEffectiveStatement<?> ret = pushSchema(module, nodeIdentifier);
         currentModule = module;
         return ret;
     }
