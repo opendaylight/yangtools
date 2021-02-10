@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -70,9 +67,8 @@ public class Bug6669Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test1");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, M));
-        assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
+        final SchemaNode findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, M).get();
+        assertThat(findDataSchemaNode, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
@@ -80,9 +76,8 @@ public class Bug6669Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test2");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, M));
-        assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
+        final SchemaNode findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2, M).get();
+        assertThat(findDataSchemaNode, instanceOf(LeafSchemaNode.class));
     }
 
     @Test
@@ -90,8 +85,8 @@ public class Bug6669Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test3");
         assertNotNull(context);
 
-        final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, BAR, BAR_1, BAR_2, QName.create(BAR_NS, REV, "l")));
-        assertTrue(findDataSchemaNode instanceof ListSchemaNode);
+        final SchemaNode findDataSchemaNode = context.findDataTreeChild(ROOT, BAR, BAR_1, BAR_2,
+                QName.create(BAR_NS, REV, "l")).get();
+        assertThat(findDataSchemaNode, instanceOf(ListSchemaNode.class));
     }
 }

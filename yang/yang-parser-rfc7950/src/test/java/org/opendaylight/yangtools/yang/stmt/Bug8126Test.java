@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -31,13 +33,13 @@ public class Bug8126Test {
     public void testValidAugments() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8126/valid");
         assertThat(findNode(context, foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"),
-            bar("mandatory-leaf")), instanceOf(LeafSchemaNode.class));
-        assertThat(findNode(context, foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2")),
+                bar("mandatory-leaf")), instanceOf(LeafSchemaNode.class));
+        assertThat(context.findDataTreeChild(foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2")).get(),
             instanceOf(LeafSchemaNode.class));
-
-        assertNull(findNode(context, foo("root"), bar("mandatory-list")));
+        assertEquals(Optional.empty(), context.findDataTreeChild(foo("root"), bar("mandatory-list")));
         assertNull(findNode(context, foo("root"), bar("mandatory-container"), bar("mandatory-choice")));
-        assertNull(findNode(context, foo("root"), bar("mandatory-container-2"), bar("one"), bar("mandatory-leaf-3")));
+        assertEquals(Optional.empty(), context.findDataTreeChild(foo("root"), bar("mandatory-container-2"), bar("one"),
+                bar("mandatory-leaf-3")));
     }
 
     @Test
@@ -69,7 +71,6 @@ public class Bug8126Test {
         assertThat(cause.getMessage(), startsWith(
             "An augment cannot add node 'mandatory-leaf-3' because it is mandatory and in module different than "));
     }
-
 
     private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
         return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));

@@ -8,23 +8,23 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -60,14 +60,15 @@ public class Bug6868Test {
         assertNotNull(schemaContext);
 
         for (final String expectedContainer : expectedContainers) {
-            assertTrue(String.format("Expected container %s not found.", expectedContainer),
-                    findNode(schemaContext, expectedContainer) instanceof ContainerSchemaNode);
+            assertThat(String.format("Expected container %s not found.", expectedContainer),
+                    schemaContext.findDataTreeChild(QName.create(FOO_NS, expectedContainer)).get(),
+                    instanceOf(ContainerSchemaNode.class));
         }
 
         final Set<String> unexpectedContainers = Sets.difference(ALL_CONTAINERS, expectedContainers);
         for (final String unexpectedContainer : unexpectedContainers) {
-            assertNull(String.format("Unexpected container %s.", unexpectedContainer),
-                    findNode(schemaContext, unexpectedContainer));
+            assertEquals(String.format("Unexpected container %s.", unexpectedContainer), Optional.empty(),
+                    schemaContext.findDataTreeChild(QName.create(FOO_NS, unexpectedContainer)));
         }
     }
 
@@ -83,11 +84,6 @@ public class Bug6868Test {
         }
 
         return ImmutableSet.copyOf(supportedFeatures);
-    }
-
-    private static SchemaNode findNode(final SchemaContext context, final String localName) {
-        return SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, QName.create(FOO_NS, localName)));
     }
 
     @Test

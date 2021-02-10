@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -69,11 +68,11 @@ public class Bug8307Test {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_A));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_B));
+        assertNotNull(schemaContext.findDataTreeChild(MY_FOO_CONT_C).orElse(null));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_BAR_CONT_A));
+        assertNotNull(schemaContext.findDataTreeChild(MY_BAR_CONT_B).orElse(null));
     }
 
     @Test
@@ -83,11 +82,11 @@ public class Bug8307Test {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_A));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_B));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_FOO_CONT_C));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_BAR_CONT_A));
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(MY_BAR_CONT_B));
     }
 
     @Test
@@ -98,11 +97,11 @@ public class Bug8307Test {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        assertNotNull(schemaContext.findDataTreeChild(MY_FOO_CONT_A).orElse(null));
+        assertNotNull(schemaContext.findDataTreeChild(MY_FOO_CONT_B).orElse(null));
+        assertNotNull(schemaContext.findDataTreeChild(MY_FOO_CONT_C).orElse(null));
+        assertNotNull(schemaContext.findDataTreeChild(MY_BAR_CONT_A).orElse(null));
+        assertNotNull(schemaContext.findDataTreeChild(MY_BAR_CONT_B).orElse(null));
     }
 
     @Test

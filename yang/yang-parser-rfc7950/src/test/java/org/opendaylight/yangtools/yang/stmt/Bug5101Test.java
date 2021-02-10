@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -35,22 +36,22 @@ public class Bug5101Test {
 
         SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
                 SchemaPath.create(true, grp, myContainer));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
         ContainerSchemaNode myContainerInGrouping = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.DEPRECATED, myContainerInGrouping.getStatus());
 
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, myContainer));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        findDataSchemaNode = context.findDataTreeChild(root, myContainer).get();
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
         ContainerSchemaNode myContainerInRoot = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.DEPRECATED, myContainerInRoot.getStatus());
 
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, myContainer));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        findDataSchemaNode = context.findDataTreeChild(myContainer).get();
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
         ContainerSchemaNode myContainerInModule = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.DEPRECATED, myContainerInModule.getStatus());
 
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        findDataSchemaNode = context.findDataTreeChild(root).get();
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
         ContainerSchemaNode rootContainer = (ContainerSchemaNode) findDataSchemaNode;
         assertEquals(Status.CURRENT, rootContainer.getStatus());
     }

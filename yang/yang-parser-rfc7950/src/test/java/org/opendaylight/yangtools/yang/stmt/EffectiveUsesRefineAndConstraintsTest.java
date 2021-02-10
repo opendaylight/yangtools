@@ -52,7 +52,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         SchemaPath listInContainerPath = SchemaPath.create(true, rootContainer, containerFromGrouping, listInContainer);
         SchemaPath choiceFromGrpPath = SchemaPath.create(true, rootContainer, containerFromGrouping, choiceFromGrp);
         SchemaPath presenceContainerPath = SchemaPath.create(true, rootContainer, containerFromGrouping2,
-            presenceContainer);
+                presenceContainer);
 
         checkRefinedList(result, listInContainerPath);
         checkRefinedChoice(result, choiceFromGrpPath);
@@ -61,7 +61,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         SchemaPath originalListInContainerPath = SchemaPath.create(true, grp1, containerFromGrouping, listInContainer);
         SchemaPath originalChoiceFromGrpPath = SchemaPath.create(true, grp1, containerFromGrouping, choiceFromGrp);
         SchemaPath originalPresenceContainerPath = SchemaPath.create(true, grp1, containerFromGrouping2,
-            presenceContainer);
+                presenceContainer);
 
         checkOriginalList(result, originalListInContainerPath);
         checkOriginalChoice(result, originalChoiceFromGrpPath);

@@ -29,10 +29,10 @@ public class YT841Test {
         final Module foo = context.findModule(FOO).get();
 
         final SchemaNode target = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true,
-            QName.create(FOO, "foo"),
-            QName.create(FOO, "foo"),
-            QName.create(FOO, "foo"),
-            QName.create(FOO, "input")));
+                QName.create(FOO, "foo"),
+                QName.create(FOO, "foo"),
+                QName.create(FOO, "foo"),
+                QName.create(FOO, "input")));
         assertNotNull(target);
 
     }
