@@ -9,11 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -26,9 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.xml.sax.SAXException;
 
 public class YT1107Test {
     private static final QName PARENT = QName.create("yt1107", "parent");
@@ -37,7 +31,7 @@ public class YT1107Test {
     private static final QName USER = QName.create(PARENT, "user");
 
     @Test
-    public void testInterleavingLists() throws XMLStreamException, URISyntaxException, IOException, SAXException {
+    public void testInterleavingLists() throws Exception {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/yt1107/yt1107.yang");
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/yt1107/yt1107.xml");
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -45,7 +39,7 @@ public class YT1107Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext,
-            SchemaContextUtil.findNodeInSchemaContext(schemaContext, Arrays.asList(PARENT)));
+            schemaContext.findDataTreeChild(PARENT).orElseThrow());
         xmlParser.parse(reader);
 
         assertEquals(Builders.containerBuilder()

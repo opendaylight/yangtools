@@ -7,17 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -26,24 +23,17 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.xml.sax.SAXException;
 
 public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
-
     @Test
-    public void testAnydataNormalizeToContainer()
-            throws XMLStreamException, SAXException, IOException, URISyntaxException, AnydataNormalizationException {
+    public void testAnydataNormalizeToContainer() throws Exception {
         //Create Data Scheme from yang file
-        SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
-        final SchemaNode fooSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
-        assertTrue(fooSchemaNode instanceof AnydataSchemaNode);
+        final SchemaNode fooSchemaNode = SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME).orElse(null);
+        assertThat(fooSchemaNode, instanceOf(AnydataSchemaNode.class));
         final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) fooSchemaNode;
 
-        SchemaPath containerPath = SchemaPath.create(true, CONT_QNAME);
-        final SchemaNode barSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, containerPath);
-        assertTrue(barSchemaNode instanceof ContainerSchemaNode);
+        final SchemaNode barSchemaNode = SCHEMA_CONTEXT.findDataTreeChild(CONT_QNAME).orElse(null);
+        assertThat(barSchemaNode, instanceOf(ContainerSchemaNode.class));
         final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) barSchemaNode;
 
         // deserialization
@@ -60,8 +50,7 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
-        assertNotNull(transformedInput);
-        assertTrue(transformedInput instanceof AnydataNode);
+        assertThat(transformedInput, instanceOf(AnydataNode.class));
         AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
 
         //Normalize anydata content to specific container element

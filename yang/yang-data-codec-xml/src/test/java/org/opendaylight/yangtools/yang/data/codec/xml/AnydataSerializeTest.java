@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -44,8 +44,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -85,9 +83,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             throws IOException, SAXException, XMLStreamException, URISyntaxException, TransformerException {
 
         //Create Data Scheme from yang file
-        SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
-        final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
-        assertTrue(dataSchemaNode instanceof AnydataSchemaNode);
+        final SchemaNode dataSchemaNode = SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME).orElse(null);
+        assertThat(dataSchemaNode, instanceOf(AnydataSchemaNode.class));
         final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) dataSchemaNode;
 
         // deserialization
@@ -100,8 +97,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
-        assertNotNull(transformedInput);
-        assertTrue(transformedInput instanceof AnydataNode);
+        assertThat(transformedInput, instanceOf(AnydataNode.class));
         AnydataNode<?> anydataNode = (AnydataNode<?>) transformedInput;
 
         // serialization
@@ -137,8 +133,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         //Load XML from file and write it with xmlParseStream
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
-        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) SchemaContextUtil.findDataSchemaNode(
-                SCHEMA_CONTEXT, SchemaPath.create(true, FOO_QNAME));
+        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME)
+            .orElseThrow();
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, SCHEMA_CONTEXT);
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
@@ -169,8 +165,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
         //Get specific attribute from Yang file.
-        final AnydataSchemaNode contWithAttr = (AnydataSchemaNode) SchemaContextUtil.findDataSchemaNode(
-                SCHEMA_CONTEXT, SchemaPath.create(true, FOO_QNAME));
+        final AnydataSchemaNode contWithAttr = (AnydataSchemaNode) SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME)
+            .orElseThrow();
 
         //Create NormalizedNodeResult
         NormalizedNodeResult normalizedResult = new NormalizedNodeResult();
@@ -184,11 +180,11 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
 
         //Get Result
         final NormalizedNode node = normalizedResult.getResult();
-        assertTrue(node instanceof AnydataNode);
+        assertThat(node, instanceOf(AnydataNode.class));
         final AnydataNode<?> anydataResult = (AnydataNode<?>) node;
 
         //Get Result in formatted String
-        assertTrue(anydataResult.body() instanceof DOMSourceAnydata);
+        assertThat(anydataResult.body(), instanceOf(DOMSourceAnydata.class));
         final String serializedXml = getXmlFromDOMSource(((DOMSourceAnydata)anydataResult.body()).getSource());
         final String expectedXml = toString(doc.getDocumentElement());
 

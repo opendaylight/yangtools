@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -32,8 +33,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @RunWith(Parameterized.class)
@@ -63,9 +62,9 @@ public class Bug8803Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaPath topContPath = SchemaPath.create(true, QName.create("foo-ns", "top-cont"));
-        final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, topContPath);
-        assertTrue(dataSchemaNode instanceof ContainerSchemaNode);
+        final SchemaNode dataSchemaNode = SCHEMA_CONTEXT.findDataTreeChild(QName.create("foo-ns", "top-cont"))
+            .orElse(null);
+        assertThat(dataSchemaNode, instanceOf(ContainerSchemaNode.class));
         final ContainerSchemaNode topContSchema = (ContainerSchemaNode) dataSchemaNode;
 
         final InputStream resourceAsStream = Bug8803Test.class.getResourceAsStream("/bug8803/foo.xml");

@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +46,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
@@ -87,10 +85,8 @@ public class XmlToNormalizedNodesTest {
     @BeforeClass
     public static void setup() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/");
-        parentContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
-                ImmutableList.of(PARENT_CONTAINER));
-        outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
-                ImmutableList.of(OUTER_CONTAINER));
+        parentContainerSchema = (ContainerSchemaNode) schemaContext.findDataTreeChild(PARENT_CONTAINER).orElseThrow();
+        outerContainerSchema = (ContainerSchemaNode) schemaContext.findDataTreeChild(OUTER_CONTAINER).orElseThrow();
     }
 
     @AfterClass
