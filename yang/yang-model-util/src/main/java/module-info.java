@@ -13,6 +13,7 @@ module org.opendaylight.yangtools.yang.model.util {
 
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
     requires org.slf4j;
 
