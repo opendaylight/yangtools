@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
@@ -37,10 +36,8 @@ public class Bug5437Test {
         QName conGrp = QName.create(NS, REV, "con-grp");
         QName leafRef = QName.create(NS, REV, "leaf-ref");
 
-        SchemaPath leafRefPath = SchemaPath.create(true, root, conGrp, leafRef);
-        SchemaPath leafRef2Path = SchemaPath.create(true, root, leafRef2);
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, leafRefPath);
-        SchemaNode findDataSchemaNode2 = SchemaContextUtil.findDataSchemaNode(context, leafRef2Path);
+        SchemaNode findDataSchemaNode = context.findDataTreeChild(root, conGrp, leafRef).get();
+        SchemaNode findDataSchemaNode2 = context.findDataTreeChild(root, leafRef2).get();
         assertThat(findDataSchemaNode, isA(LeafSchemaNode.class));
         assertThat(findDataSchemaNode2, isA(LeafSchemaNode.class));
 

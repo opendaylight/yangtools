@@ -30,7 +30,7 @@ public class Bug7879Test {
         assertNotNull(context);
 
         assertTrue(findNode(context, qN("my-alarm"), qN("my-content"), qN("my-event-container"))
-            instanceof ContainerSchemaNode);
+                instanceof ContainerSchemaNode);
         final SchemaNode myEventValueLeaf = findNode(context, qN("my-alarm"), qN("my-content"), qN("my-event-value"));
         assertTrue(myEventValueLeaf instanceof LeafSchemaNode);
         assertEquals(Optional.of("new description"), myEventValueLeaf.getDescription());

@@ -53,7 +53,7 @@ public class Bug6883Test {
 
     private static AnydataSchemaNode assertAnyData(final SchemaContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
-            localName -> QName.create(FOO_NS, localName));
+                localName -> QName.create(FOO_NS, localName));
         final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
                 SchemaPath.create(qNames, true));
         assertTrue(findDataSchemaNode instanceof AnydataSchemaNode);
