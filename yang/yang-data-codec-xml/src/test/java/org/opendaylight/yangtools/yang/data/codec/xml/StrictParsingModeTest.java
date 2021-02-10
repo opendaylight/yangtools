@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.io.InputStream;
 import javax.xml.stream.XMLStreamException;
@@ -72,12 +72,9 @@ public class StrictParsingModeTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, true);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of an unknown child node.");
-        } catch (XMLStreamException ex) {
-            assertEquals("Schema for node with name unknown-container-a and namespace foo does not exist at "
-                    + "AbsoluteSchemaPath{path=[(foo)top-level-container]}", ex.getMessage());
-        }
+
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString("Schema for node with name unknown-container-a and namespace foo "
+            + "does not exist at AbsoluteSchemaPath{path=[(foo)top-level-container]}"));
     }
 }
