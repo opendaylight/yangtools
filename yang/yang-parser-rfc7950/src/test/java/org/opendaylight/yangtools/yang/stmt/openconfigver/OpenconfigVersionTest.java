@@ -7,23 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.stmt.openconfigver;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -147,23 +148,19 @@ public class OpenconfigVersionTest {
 
         QName root = QName.create("foo", "2016-01-01", "foo-root");
         QName container20160404 = QName.create("foo", "2016-01-01", "con20160404");
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20160404));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        SchemaNode findDataSchemaNode = context.findDataTreeChild(root, container20160404).orElseThrow();
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
 
         QName container20160405 = QName.create("foo", "2016-01-01", "con20160405");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20160405));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        findDataSchemaNode = context.findDataTreeChild(root, container20160405).orElseThrow();
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
 
         QName container20160406 = QName.create("foo", "2016-01-01", "con20160406");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20160406));
-        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+        findDataSchemaNode = context.findDataTreeChild(root, container20160406).orElseThrow();
+        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
 
         QName container20170406 = QName.create("foo", "2016-01-01", "con20170406");
-        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, container20170406));
-        assertNull(findDataSchemaNode);
+        final Optional<DataSchemaNode> dataTreeChild = context.findDataTreeChild(root, container20170406);
+        assertEquals(Optional.empty(), dataTreeChild);
     }
 }
