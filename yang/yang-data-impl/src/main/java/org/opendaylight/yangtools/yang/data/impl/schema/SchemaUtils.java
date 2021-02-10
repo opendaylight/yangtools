@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkState;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -39,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class SchemaUtils {
     private SchemaUtils() {
@@ -393,26 +391,6 @@ public final class SchemaUtils {
     }
 
     /**
-     * Finds schema node for given path in schema context. This method performs
-     * lookup in the namespace of all leafs, leaf-lists, lists, containers,
-     * choices, rpcs, actions, notifications, anydatas, and anyxmls according to
-     * Rfc6050/Rfc7950 section 6.2.1.
-     *
-     * @param schemaContext
-     *            schema context
-     * @param path
-     *            path
-     * @return schema node on path
-     */
-    public static SchemaNode findDataParentSchemaOnPath(final SchemaContext schemaContext, final SchemaPath path) {
-        SchemaNode current = requireNonNull(schemaContext);
-        for (final QName qname : path.getPathFromRoot()) {
-            current = findDataChildSchemaByQName(current, qname);
-        }
-        return current;
-    }
-
-    /**
      * Find child data schema node identified by its QName within a provided schema node. This method performs lookup
      * in the namespace of all leafs, leaf-lists, lists, containers, choices, rpcs, actions, notifications, anydatas
      * and anyxmls according to RFC6050/RFC7950 section 6.2.1.
@@ -455,58 +433,6 @@ public final class SchemaUtils {
         }
 
         throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", node));
-    }
-
-    /**
-     * Finds schema node for given path in schema context. This method performs lookup in both the namespace
-     * of groupings and the namespace of all leafs, leaf-lists, lists, containers, choices, rpcs, actions,
-     * notifications, anydatas and anyxmls according to Rfc6050/Rfc7950 section 6.2.1.
-     *
-     * <p>
-     * This method returns collection of SchemaNodes, because name conflicts can occur between the namespace
-     * of groupings and namespace of data nodes. This method finds and collects all schema nodes that matches supplied
-     * SchemaPath and returns them all as collection of schema nodes.
-     *
-     * @param schemaContext
-     *            schema context
-     * @param path
-     *            path
-     * @return collection of schema nodes on path
-     */
-    public static Collection<SchemaNode> findParentSchemaNodesOnPath(final SchemaContext schemaContext,
-            final SchemaPath path) {
-        return findParentSchemaNodesOnPath(schemaContext, path.getPathFromRoot());
-    }
-
-    /**
-     * Finds schema node for given path in schema context. This method performs lookup in both the namespace
-     * of groupings and the namespace of all leafs, leaf-lists, lists, containers, choices, rpcs, actions,
-     * notifications, anydatas and anyxmls according to Rfc6050/Rfc7950 section 6.2.1.
-     *
-     * <p>
-     * This method returns collection of SchemaNodes, because name conflicts can occur between the namespace
-     * of groupings and namespace of data nodes. This method finds and collects all schema nodes that matches supplied
-     * SchemaPath and returns them all as collection of schema nodes.
-     *
-     * @param schemaContext schema context
-     * @param path path
-     * @return collection of schema nodes on path
-     */
-    public static Collection<SchemaNode> findParentSchemaNodesOnPath(final SchemaContext schemaContext,
-            final Iterable<QName> path) {
-        final Collection<SchemaNode> currentNodes = new ArrayList<>();
-        final Collection<SchemaNode> childNodes = new ArrayList<>();
-        currentNodes.add(requireNonNull(schemaContext));
-        for (final QName qname : path) {
-            for (final SchemaNode current : currentNodes) {
-                childNodes.addAll(findChildSchemaNodesByQName(current, qname));
-            }
-            currentNodes.clear();
-            currentNodes.addAll(childNodes);
-            childNodes.clear();
-        }
-
-        return currentNodes;
     }
 
     /**
