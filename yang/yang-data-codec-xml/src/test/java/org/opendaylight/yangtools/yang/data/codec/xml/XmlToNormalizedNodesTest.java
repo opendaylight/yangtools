@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -153,13 +153,9 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of duplicate leaf.");
-        } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace"
-                    + " \"foo-namespace\" with parent \"container leaf-container\" in XML input"));
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace"
+            + " \"foo-namespace\" with parent \"container leaf-container\" in XML input"));
     }
 
     @Test
@@ -173,13 +169,9 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of duplicate anyxml");
-        } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace"
-                    + " \"foo-namespace\" with parent \"container anyxml-container\" in XML input"));
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace"
+            + " \"foo-namespace\" with parent \"container anyxml-container\" in XML input"));
     }
 
     @Test
@@ -193,13 +185,9 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of duplicate container");
-        } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("Duplicate element \"leaf-container\" in namespace"
-                    + " \"foo-namespace\" with parent \"container parent-container\" in XML input"));
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString("Duplicate element \"leaf-container\" in namespace"
+            + " \"foo-namespace\" with parent \"container parent-container\" in XML input"));
     }
 
     @Test
@@ -213,12 +201,8 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of unterminated leaf element.");
-        } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
     }
 
     @Test
@@ -232,12 +216,8 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of unterminated leaf element.");
-        } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
     }
 
     @Test
@@ -251,12 +231,8 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of unterminated container element.");
-        } catch (XMLStreamException ex) {
-            assertThat(ex.getMessage(), containsString("</my-container-1>"));
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+        assertThat(ex.getMessage(), containsString("</my-container-1>"));
     }
 
     @Test
@@ -270,14 +246,11 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
-        try {
-            xmlParser.parse(reader);
-            fail("XMLStreamException should have been thrown because of an unknown child node.");
-        } catch (XMLStreamException ex) {
-            assertEquals("Schema for node with name my-container-1 and namespace baz-namespace does not exist at "
-                    + "AbsoluteSchemaPath{path=[(baz-namespace)outer-container, (baz-namespace)my-container-1]}",
-                    ex.getMessage());
-        }
+        final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
+
+        assertThat(ex.getMessage(), containsString("Schema for node with name my-container-1 and namespace "
+            + "baz-namespace does not exist at "
+            + "AbsoluteSchemaPath{path=[(baz-namespace)outer-container, (baz-namespace)my-container-1]}"));
     }
 
     private static NormalizedNode<?, ?> buildOuterContainerNode() {

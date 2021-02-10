@@ -487,7 +487,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                         if (!added && !elementList) {
                             throw new XMLStreamException(String.format(
                                 "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input",
-                                xmlElementName, elementNS, parent.getSchema()), in.getLocation());
+                                xmlElementName, elementNS, parentSchema), in.getLocation());
                         }
 
                         // We have a match, proceed with it
@@ -504,7 +504,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                         } else if (parentSchema instanceof ListSchemaNode) {
                             optMount = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema).findFirst();
                         } else {
-                            throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema);
+                            throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema,
+                                in.getLocation());
                         }
 
                         if (optMount.isPresent()) {
@@ -530,7 +531,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     if (strictParsing) {
                         throw new XMLStreamException(String.format(
                             "Schema for node with name %s and namespace %s does not exist at %s", xmlElementName,
-                            elementNS, parentSchema.getPath(), in.getLocation()));
+                            elementNS, parentSchema.getPath()), in.getLocation());
                     }
 
                     LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS, xmlElementName,
