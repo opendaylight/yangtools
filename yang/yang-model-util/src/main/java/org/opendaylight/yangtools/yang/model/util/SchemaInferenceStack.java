@@ -68,6 +68,38 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         this.effectiveModel = requireNonNull(effectiveModel);
     }
 
+    /**
+     * Create a new stack backed by an effective model, pointing to specified schema node identified by
+     * {@link Absolute}.
+     *
+     * @param effectiveModel EffectiveModelContext to which this stack is attached
+     * @throws NullPointerException {@code effectiveModel} is null
+     * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model
+     */
+    public static @NonNull SchemaInferenceStack of(final EffectiveModelContext effectiveModel, final Absolute path) {
+        final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
+        path.getNodeIdentifiers().forEach(ret::enterSchemaTree);
+        return ret;
+    }
+
+    /**
+     * Create a new stack backed by an effective model, pointing to specified schema node identified by an absolute
+     * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()}.
+     *
+     * @param effectiveModel EffectiveModelContext to which this stack is attached
+     * @throws NullPointerException {@code effectiveModel} is null
+     * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
+     *                                  absolute path.
+     */
+    // FIXME: 7.0.0: consider deprecating this method
+    public static @NonNull SchemaInferenceStack ofInstantiatedPath(final EffectiveModelContext effectiveModel,
+            final SchemaPath path) {
+        checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
+        final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
+        path.getPathFromRoot().forEach(ret::enterSchemaTree);
+        return ret;
+    }
+
     @Override
     public EffectiveModelContext getEffectiveModelContext() {
         return effectiveModel;
