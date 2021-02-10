@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b7a8913_c2eb46b7",
+        "filename": "yang/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/openconfigver/OpenconfigVersionComplexTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-02-10T10:29:38Z",
+      "side": 1,
+      "message": "this is always true due to Optional return -- add an .orElse(null)",
+      "range": {
+        "startLine": 57,
+        "startChar": 14,
+        "endLine": 57,
+        "endChar": 21
+      },
+      "revId": "14ba1a311ac33c1b32699aff106c40f022c674e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "782f4208_24114399",
+        "filename": "yang/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/openconfigver/OpenconfigVersionComplexTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-02-10T10:29:38Z",
+      "side": 1,
+      "message": "use assertEquals(Optional.empty(), ) instead",
+      "range": {
+        "startLine": 66,
+        "startChar": 14,
+        "endLine": 66,
+        "endChar": 18
+      },
+      "revId": "14ba1a311ac33c1b32699aff106c40f022c674e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
