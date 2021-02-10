@@ -22,15 +22,6 @@ final class RestrictedBinaryType extends AbstractLengthRestrictedType<BinaryType
         super(baseType, qname, unknownSchemaNodes, lengthConstraint);
     }
 
-    private RestrictedBinaryType(final RestrictedBinaryType original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedBinaryType bindTo(final QName newQName) {
-        return new RestrictedBinaryType(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return BinaryTypeDefinition.hashCode(this);

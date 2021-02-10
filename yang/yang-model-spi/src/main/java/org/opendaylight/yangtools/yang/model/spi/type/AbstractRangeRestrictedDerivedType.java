@@ -25,10 +25,6 @@ abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeD
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
-    AbstractRangeRestrictedDerivedType(final AbstractRangeRestrictedDerivedType<T, N> original, final QName qname) {
-        super(original, qname);
-    }
-
     @Override
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return baseType().getRangeConstraint();

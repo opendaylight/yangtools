@@ -83,16 +83,6 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         this.fractionDigits = fractionDigits;
     }
 
-    private BaseDecimalType(final BaseDecimalType original, final QName qname) {
-        super(original, qname);
-        this.fractionDigits = original.fractionDigits;
-    }
-
-    @Override
-    BaseDecimalType bindTo(final QName newQName) {
-        return new BaseDecimalType(this, newQName);
-    }
-
     @Override
     public int getFractionDigits() {
         return fractionDigits;

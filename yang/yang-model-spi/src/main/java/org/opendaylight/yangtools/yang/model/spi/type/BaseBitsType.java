@@ -23,16 +23,6 @@ final class BaseBitsType extends AbstractBaseType<BitsTypeDefinition> implements
         this.bits = ImmutableList.copyOf(bits);
     }
 
-    private BaseBitsType(final BaseBitsType original, final QName qname) {
-        super(original, qname);
-        this.bits = original.bits;
-    }
-
-    @Override
-    BaseBitsType bindTo(final QName newQName) {
-        return new BaseBitsType(this, newQName);
-    }
-
     @Override
     public Collection<? extends Bit> getBits() {
         return bits;

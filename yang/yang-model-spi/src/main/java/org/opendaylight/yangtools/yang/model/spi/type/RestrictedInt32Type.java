@@ -22,15 +22,6 @@ final class RestrictedInt32Type extends AbstractRangeRestrictedType<Int32TypeDef
         super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
-    private RestrictedInt32Type(final RestrictedInt32Type original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedInt32Type bindTo(final QName newQName) {
-        return new RestrictedInt32Type(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return Int32TypeDefinition.hashCode(this);

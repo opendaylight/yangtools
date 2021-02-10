@@ -22,15 +22,6 @@ final class RestrictedInt8Type extends AbstractRangeRestrictedType<Int8TypeDefin
         super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
-    private RestrictedInt8Type(final RestrictedInt8Type original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedInt8Type bindTo(final QName newQName) {
-        return new RestrictedInt8Type(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return Int8TypeDefinition.hashCode(this);

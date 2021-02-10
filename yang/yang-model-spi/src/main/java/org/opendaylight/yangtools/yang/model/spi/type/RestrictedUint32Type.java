@@ -23,15 +23,6 @@ final class RestrictedUint32Type extends AbstractRangeRestrictedType<Uint32TypeD
         super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
-    private RestrictedUint32Type(final RestrictedUint32Type original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedUint32Type bindTo(final QName newQName) {
-        return new RestrictedUint32Type(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return Uint32TypeDefinition.hashCode(this);

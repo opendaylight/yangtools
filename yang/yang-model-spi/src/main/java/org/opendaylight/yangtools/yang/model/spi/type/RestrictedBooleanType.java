@@ -19,15 +19,6 @@ final class RestrictedBooleanType extends AbstractRestrictedType<BooleanTypeDefi
         super(baseType, qname, unknownSchemaNodes);
     }
 
-    private RestrictedBooleanType(final RestrictedBooleanType original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedBooleanType bindTo(final QName newQName) {
-        return new RestrictedBooleanType(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return BooleanTypeDefinition.hashCode(this);

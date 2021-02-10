@@ -32,4 +32,5 @@ final class BaseInt32Type extends AbstractRangeRestrictedBaseType<Int32TypeDefin
     public String toString() {
         return Int32TypeDefinition.toString(this);
     }
+
 }

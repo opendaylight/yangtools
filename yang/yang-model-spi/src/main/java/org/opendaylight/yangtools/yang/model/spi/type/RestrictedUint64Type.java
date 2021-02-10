@@ -23,15 +23,6 @@ final class RestrictedUint64Type extends AbstractRangeRestrictedType<Uint64TypeD
         super(baseType, qname, unknownSchemaNodes, rangeConstraint);
     }
 
-    private RestrictedUint64Type(final RestrictedUint64Type original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedUint64Type bindTo(final QName newQName) {
-        return new RestrictedUint64Type(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return Uint64TypeDefinition.hashCode(this);

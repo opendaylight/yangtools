@@ -23,15 +23,6 @@ final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDe
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
-    private DerivedIdentityrefType(final DerivedIdentityrefType original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    DerivedIdentityrefType bindTo(final QName newQName) {
-        return new DerivedIdentityrefType(this, newQName);
-    }
-
     @Override
     public Set<? extends IdentitySchemaNode> getIdentities() {
         return baseType().getIdentities();

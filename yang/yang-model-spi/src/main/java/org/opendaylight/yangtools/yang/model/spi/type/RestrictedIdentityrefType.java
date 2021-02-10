@@ -21,15 +21,6 @@ final class RestrictedIdentityrefType extends AbstractRestrictedType<Identityref
         super(baseType, qname, unknownSchemaNodes);
     }
 
-    private RestrictedIdentityrefType(final RestrictedIdentityrefType original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    RestrictedIdentityrefType bindTo(final QName newQName) {
-        return new RestrictedIdentityrefType(this, newQName);
-    }
-
     @Override
     public Set<? extends IdentitySchemaNode> getIdentities() {
         return getBaseType().getIdentities();

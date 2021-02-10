@@ -24,10 +24,6 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
         super(qname, unknownSchemaNodes);
     }
 
-    AbstractBaseType(final AbstractBaseType<T> original, final QName qname) {
-        super(original, qname);
-    }
-
     @Override
     public final T getBaseType() {
         return null;
@@ -56,12 +52,5 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
     @Override
     public final Status getStatus() {
         return Status.CURRENT;
-    }
-
-    @Override
-    T bindTo(final QName newName) {
-        // Most implementations just return self
-        // FIXME: or do we want to assert?
-        return (T) this;
     }
 }

@@ -60,7 +60,7 @@ abstract class AbstractLeafListEffectiveStatement
         this.path = requireNonNull(path);
         this.substatements = original.substatements;
         this.flags = flags;
-        // FIXME: share with original?
+        // TODO: lazy instantiation?
         this.type = buildType();
     }
 

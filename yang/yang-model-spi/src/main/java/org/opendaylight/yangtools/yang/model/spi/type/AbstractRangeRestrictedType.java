@@ -27,11 +27,6 @@ abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefiniti
         this.rangeConstraint = rangeConstraint;
     }
 
-    AbstractRangeRestrictedType(final AbstractRangeRestrictedType<T, N> original, final QName qname) {
-        super(original, qname);
-        this.rangeConstraint = original.rangeConstraint;
-    }
-
     @Override
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return Optional.ofNullable(rangeConstraint);

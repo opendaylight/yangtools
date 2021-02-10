@@ -21,15 +21,6 @@ final class DerivedBinaryType extends AbstractLengthRestrictedDerivedType<Binary
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
-    private DerivedBinaryType(final DerivedBinaryType original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    DerivedBinaryType bindTo(final QName newQName) {
-        return new DerivedBinaryType(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return BinaryTypeDefinition.hashCode(this);

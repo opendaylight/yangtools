@@ -22,15 +22,6 @@ final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32T
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
-    private DerivedUint32Type(final DerivedUint32Type original, final QName newQName) {
-        super(original, newQName);
-    }
-
-    @Override
-    DerivedUint32Type bindTo(final QName newQName) {
-        return new DerivedUint32Type(this, newQName);
-    }
-
     @Override
     public int hashCode() {
         return Uint32TypeDefinition.hashCode(this);

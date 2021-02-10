@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.type;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -26,24 +25,6 @@ public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Builde
     TypeBuilder(final T baseType, final QName qname) {
         this.qname = requireNonNull(qname);
         this.baseType = baseType;
-    }
-
-    /**
-     * Create a copy of specified {@link TypeDefinition} with specified {@link QName}.
-     *
-     * @param <T> Type definition type
-     * @param type Original type definition
-     * @param qname QName for the copy
-     * @return A copy of type definition
-     * @throws NullPointerException if any argument is null
-     * @throws IllegalArgumentException if {@code type} is not a recognised implementation
-     */
-    public static <T extends TypeDefinition<?>> @NonNull T copyTypeDefinition(final T type, final QName qname) {
-        if (qname.equals(type.getQName())) {
-            return type;
-        }
-        checkArgument(type instanceof AbstractTypeDefinition, "Unsupported type %s", type);
-        return (T) ((AbstractTypeDefinition<?>) type).bindTo(requireNonNull(qname));
     }
 
     final T getBaseType() {

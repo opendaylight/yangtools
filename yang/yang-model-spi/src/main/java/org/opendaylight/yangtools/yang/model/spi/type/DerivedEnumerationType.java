@@ -21,15 +21,6 @@ final class DerivedEnumerationType extends AbstractDerivedType<EnumTypeDefinitio
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
-    private DerivedEnumerationType(final DerivedEnumerationType original, final QName qname) {
-        super(original, qname);
-    }
-
-    @Override
-    DerivedEnumerationType bindTo(final QName newQName) {
-        return new DerivedEnumerationType(this, newQName);
-    }
-
     @Override
     public List<EnumPair> getValues() {
         return baseType().getValues();

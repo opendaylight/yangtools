@@ -23,10 +23,6 @@ abstract class AbstractLengthRestrictedDerivedType<T extends LengthRestrictedTyp
         super(baseType, qname, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
-    AbstractLengthRestrictedDerivedType(final AbstractLengthRestrictedDerivedType<T> original, final QName qname) {
-        super(original, qname);
-    }
-
     @Override
     public final Optional<LengthConstraint> getLengthConstraint() {
         return baseType().getLengthConstraint();
