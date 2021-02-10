@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import org.junit.AfterClass;
@@ -23,11 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -63,18 +62,17 @@ public class Bug3874ExtensionTest {
         QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
         DataSchemaNode dataChildByName = context.findDataChildByName(myAnyXmlDataQName).get();
-        assertTrue(dataChildByName instanceof AnyxmlSchemaNode);
+        assertThat(dataChildByName, instanceOf(AnyxmlSchemaNode.class));
         AnyxmlSchemaNode anyxml = (AnyxmlSchemaNode) dataChildByName;
 
-        SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
-            SchemaPath.create(true, myContainer2QName));
-        assertTrue(myContainer2 instanceof ContainerSchemaNode);
+        SchemaNode myContainer2 = context.findDataTreeChild(myContainer2QName).orElse(null);
+        assertThat(myContainer2, instanceOf(ContainerSchemaNode.class));
 
         Collection<? extends UnknownSchemaNode> unknownSchemaNodes = anyxml.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
-        assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
+        assertThat(next, instanceOf(AnyxmlSchemaLocationEffectiveStatementImpl.class));
         AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
                 (AnyxmlSchemaLocationEffectiveStatementImpl) next;
         assertEquals(Absolute.of(myContainer2QName), anyxmlSchemaLocationUnknownNode.argument());
