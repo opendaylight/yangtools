@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Deque;
-import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,32 +41,44 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for tracking the underlying state of the underlying
- * schema node.
+ * Utility class for tracking the underlying state of the underlying schema node.
  */
 @Beta
 public final class SchemaTracker {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaTracker.class);
+
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
     private final DataNodeContainer root;
 
-    private SchemaTracker(final DataNodeContainer root) {
-        this.root = requireNonNull(root);
+    private SchemaTracker(final SchemaInferenceStack rootContext) {
+        if (!rootContext.isEmpty()) {
+            final EffectiveStatement<QName, ?> current = rootContext.currentStatement();
+            checkArgument(current instanceof DataNodeContainer, "Cannot instantiate on %s", current);
+            root = (DataNodeContainer) current;
+        } else {
+            root = rootContext.getEffectiveModelContext();
+        }
     }
 
     /**
-     * Create a new writer with the specified node as its root.
+     * Create a new writer with the specified stack as its root.
      *
      * @param root Root node
-     * @return A new {@link NormalizedNodeStreamWriter}
+     * @return A new {@link SchemaTracker}
+     * @throws NullPointerException if {@code root} is null
+     * @throws IllegalArgumentException if {@code root} is not a valid root
      */
-    public static @NonNull SchemaTracker create(final DataNodeContainer root) {
+    public static @NonNull SchemaTracker create(final SchemaInferenceStack root) {
         return new SchemaTracker(root);
     }
 
@@ -78,10 +87,12 @@ public final class SchemaTracker {
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
-     * @return A new {@link NormalizedNodeStreamWriter}
+     * @return A new {@link SchemaTracker}
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
     public static @NonNull SchemaTracker create(final EffectiveModelContext context, final Absolute path) {
-        return create(context, path.getNodeIdentifiers());
+        return new SchemaTracker(SchemaInferenceStack.of(context, path));
     }
 
     /**
@@ -89,25 +100,12 @@ public final class SchemaTracker {
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
-     * @return A new {@link NormalizedNodeStreamWriter}
+     * @return A new {@link SchemaTracker}
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
     public static @NonNull SchemaTracker create(final EffectiveModelContext context, final SchemaPath path) {
-        return create(context, path.getPathFromRoot());
-    }
-
-    private static @NonNull SchemaTracker create(final EffectiveModelContext context, final Iterable<QName> path) {
-        final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
-        checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
-        if (schemaNodes.size() > 1) {
-            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
-        }
-        final Optional<DataNodeContainer> current = schemaNodes.stream()
-                .filter(node -> node instanceof DataNodeContainer).map(DataNodeContainer.class::cast)
-                .findFirst();
-        checkArgument(current.isPresent(),
-                "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
-                path, current);
-        return new SchemaTracker(current.get());
+        return create(SchemaInferenceStack.ofInstantiatedPath(context, path));
     }
 
     /**
@@ -117,10 +115,18 @@ public final class SchemaTracker {
      * @param operation Operation schema path
      * @param qname Input/Output container QName
      * @return A new {@link NormalizedNodeStreamWriter}
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if {@code operation} does not point to an actual operation or if {@code qname}
+     *                                  does not identify a valid root underneath it.
      */
     public static @NonNull SchemaTracker forOperation(final EffectiveModelContext context, final Absolute operation,
             final QName qname) {
-        return create(context, Iterables.concat(operation.getNodeIdentifiers(), List.of(qname)));
+        final SchemaInferenceStack stack = SchemaInferenceStack.of(context, operation);
+        final EffectiveStatement<QName, ?> current = stack.currentStatement();
+        checkArgument(current instanceof RpcEffectiveStatement || current instanceof ActionEffectiveStatement,
+            "Path %s resolved into non-operation %s", operation, current);
+        stack.enterSchemaTree(qname);
+        return new SchemaTracker(stack);
     }
 
     public Object getParent() {
