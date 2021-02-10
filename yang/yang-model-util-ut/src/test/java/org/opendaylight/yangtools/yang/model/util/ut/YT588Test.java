@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.stmt;
+package org.opendaylight.yangtools.yang.model.util.ut;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,15 +20,15 @@ import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug5437Test {
+public class YT588Test {
     private static final String NS = "foo";
     private static final String REV = "2016-03-01";
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5437");
-        assertNotNull(context);
+        SchemaContext context = YangParserTestUtils.parseYangResource("/yt588.yang");
 
         QName root = QName.create(NS, REV, "root");
         QName leafRef2 = QName.create(NS, REV, "leaf-ref-2");
