@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -21,6 +22,7 @@ import com.google.common.collect.SetMultimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,12 +30,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -70,28 +69,28 @@ public class SchemaContextFactoryDeviationsTest {
         final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(modulesWithSupportedDeviations, FOO, BAR,
             BAZ, FOOBAR);
         assertTrue(lf.isDone());
-        final SchemaContext schemaContext = lf.get();
+        final EffectiveModelContext schemaContext = lf.get();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        assertAbsent(schemaContext, MY_FOO_CONT_A);
+        assertAbsent(schemaContext, MY_FOO_CONT_B);
+        assertPresent(schemaContext, MY_FOO_CONT_C);
+        assertAbsent(schemaContext, MY_BAR_CONT_A);
+        assertPresent(schemaContext, MY_BAR_CONT_B);
     }
 
     @Test
     public void testDeviationsSupportedInAllModules() throws Exception {
         final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(null, FOO, BAR, BAZ, FOOBAR);
         assertTrue(lf.isDone());
-        final SchemaContext schemaContext = lf.get();
+        final EffectiveModelContext schemaContext = lf.get();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        assertAbsent(schemaContext, MY_FOO_CONT_A);
+        assertAbsent(schemaContext, MY_FOO_CONT_B);
+        assertAbsent(schemaContext, MY_FOO_CONT_C);
+        assertAbsent(schemaContext, MY_BAR_CONT_A);
+        assertAbsent(schemaContext, MY_BAR_CONT_B);
     }
 
     @Test
@@ -99,14 +98,14 @@ public class SchemaContextFactoryDeviationsTest {
         final ListenableFuture<EffectiveModelContext> lf = createSchemaContext(ImmutableSetMultimap.of(), FOO, BAR, BAZ,
             FOOBAR);
         assertTrue(lf.isDone());
-        final SchemaContext schemaContext = lf.get();
+        final EffectiveModelContext schemaContext = lf.get();
         assertNotNull(schemaContext);
 
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
+        assertPresent(schemaContext, MY_FOO_CONT_A);
+        assertPresent(schemaContext, MY_FOO_CONT_B);
+        assertPresent(schemaContext, MY_FOO_CONT_C);
+        assertPresent(schemaContext, MY_BAR_CONT_A);
+        assertPresent(schemaContext, MY_BAR_CONT_B);
     }
 
     @Test
@@ -119,6 +118,14 @@ public class SchemaContextFactoryDeviationsTest {
         assertThat(cause, instanceOf(InferenceException.class));
         assertThat(cause.getMessage(),
             startsWith("Deviation must not target the same module as the one it is defined in"));
+    }
+
+    private static void assertAbsent(final EffectiveModelContext schemaContext, final QName qname) {
+        assertEquals(Optional.empty(), schemaContext.findDataTreeChild(qname));
+    }
+
+    private static void assertPresent(final EffectiveModelContext schemaContext, final QName qname) {
+        assertNotEquals(Optional.empty(), schemaContext.findDataTreeChild(qname));
     }
 
     private static SettableSchemaProvider<IRSchemaSource> getImmediateYangSourceProviderFromResource(
