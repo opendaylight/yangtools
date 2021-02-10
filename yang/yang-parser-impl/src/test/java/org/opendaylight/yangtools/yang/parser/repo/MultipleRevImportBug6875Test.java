@@ -7,23 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -61,21 +60,21 @@ public class MultipleRevImportBug6875Test {
         final SchemaContext context = schemaContextFuture.get();
         assertEquals(context.getModules().size(), 4);
 
-        assertTrue(findNode(context, ImmutableList.of(foo("root"), foo("my-container-1")))
-            instanceof ContainerSchemaNode);
-        assertTrue(findNode(context, ImmutableList.of(foo("root"), foo("my-container-2")))
-            instanceof ContainerSchemaNode);
+        assertThat(context.findDataTreeChild(foo("root"), foo("my-container-1")).orElse(null),
+            instanceOf(ContainerSchemaNode.class));
+        assertThat(context.findDataTreeChild(foo("root"), foo("my-container-2")).orElse(null),
+            instanceOf(ContainerSchemaNode.class));
 
-        assertTrue(findNode(context, ImmutableList.of(bar3("root"), foo("my-container-1")))
-            instanceof ContainerSchemaNode);
-        assertTrue(findNode(context, ImmutableList.of(bar3("root"), foo("my-container-2")))
-            instanceof ContainerSchemaNode);
+        assertThat(context.findDataTreeChild(bar3("root"), foo("my-container-1")).orElse(null),
+            instanceOf(ContainerSchemaNode.class));
+        assertThat(context.findDataTreeChild(bar3("root"), foo("my-container-2")).orElse(null),
+            instanceOf(ContainerSchemaNode.class));
 
-        assertNull(findNode(context, ImmutableList.of(bar2("root"), foo("my-container-1"))));
-        assertNull(findNode(context, ImmutableList.of(bar2("root"), foo("my-container-2"))));
+        assertEquals(Optional.empty(), context.findDataTreeChild(bar2("root"), foo("my-container-1")));
+        assertEquals(Optional.empty(), context.findDataTreeChild(bar2("root"), foo("my-container-2")));
 
-        assertNull(findNode(context, ImmutableList.of(bar1("root"), foo("my-container-1"))));
-        assertNull(findNode(context, ImmutableList.of(bar1("root"), foo("my-container-2"))));
+        assertEquals(Optional.empty(), context.findDataTreeChild(bar1("root"), foo("my-container-1")));
+        assertEquals(Optional.empty(), context.findDataTreeChild(bar1("root"), foo("my-container-2")));
     }
 
     @Test
@@ -99,13 +98,10 @@ public class MultipleRevImportBug6875Test {
                     foo.getId(), bar1.getId(), bar2.getId());
         assertTrue(schemaContextFuture.isDone());
 
-        try {
-            schemaContextFuture.get();
-            fail("Test should fail due to invalid imports of yang source.");
-        } catch (final ExecutionException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                "Module:bar imported twice with different revisions"));
-        }
+        final ExecutionException ex = assertThrows(ExecutionException.class, schemaContextFuture::get);
+        final Throwable cause = ex.getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertThat(cause.getMessage(), startsWith("Module:bar imported twice with different revisions"));
     }
 
     private static void setAndRegister(final SharedSchemaRepository sharedSchemaRepository,
@@ -119,10 +115,6 @@ public class MultipleRevImportBug6875Test {
         final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
         return SettableSchemaProvider.createImmediate(TextToIRTransformer.transformText(yangSource),
             IRSchemaSource.class);
-    }
-
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qnames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qnames, true));
     }
 
     private static QName foo(final String localName) {
