@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.stmt.openconfigver;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class OpenconfigVersionComplexTest {
@@ -55,22 +54,22 @@ public class OpenconfigVersionComplexTest {
         assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion().get());
 
         // check imported components
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertNotNull("This component should be present", context.findDataTreeChild(
             QName.create(bar.getQNameModule(), "root"),
             QName.create(bar.getQNameModule(), "test-container"),
             QName.create(bar.getQNameModule(), "number")));
 
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertNotNull("This component should be present", context.findDataTreeChild(
             QName.create(bar.getQNameModule(), "should-present")));
 
         // check not imported components
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertTrue("This component should not be present", context.findDataTreeChild(
             QName.create(bar.getQNameModule(), "root"),
             QName.create(bar.getQNameModule(), "test-container"),
-            QName.create(bar.getQNameModule(), "oldnumber")));
+            QName.create(bar.getQNameModule(), "oldnumber")).isEmpty());
 
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
-            QName.create(bar.getQNameModule(), "should-not-be-present")));
+        assertTrue("This component should not be present", context.findDataTreeChild(
+            QName.create(bar.getQNameModule(), "should-not-be-present")).isEmpty());
     }
 
     @Test
@@ -105,33 +104,33 @@ public class OpenconfigVersionComplexTest {
         assertEquals(SemVer.valueOf("7.13.99"), foobar.getSemanticVersion().get());
 
         // check used augmentations
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertNotNull("This component should be present", context.findDataTreeChild(
             QName.create(foobar.getQNameModule(), "root"),
             QName.create(foobar.getQNameModule(), "test-container"),
             QName.create(bar.getQNameModule(), "should-present-leaf-1")));
 
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertNotNull("This component should be present", context.findDataTreeChild(
             QName.create(foobar.getQNameModule(), "root"),
             QName.create(foobar.getQNameModule(), "test-container"),
             QName.create(bar.getQNameModule(), "should-present-leaf-2")));
 
         // check not used augmentations
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertTrue("This component should not be present", context.findDataTreeChild(
             QName.create(foobar.getQNameModule(), "root"),
             QName.create(foobar.getQNameModule(), "test-container"),
-            QName.create(bar.getQNameModule(), "should-not-be-present-leaf-1")));
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(bar.getQNameModule(), "should-not-be-present-leaf-1")).isEmpty());
+        assertTrue("This component should not be present", context.findDataTreeChild(
             QName.create(foobar.getQNameModule(), "root"),
             QName.create(foobar.getQNameModule(), "test-container"),
-            QName.create(bar.getQNameModule(), "should-not-be-present-leaf-2")));
+            QName.create(bar.getQNameModule(), "should-not-be-present-leaf-2")).isEmpty());
 
         // check if correct foobar module was included
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertNotNull("This component should be present", context.findDataTreeChild(
             QName.create(foobar.getQNameModule(), "root"),
             QName.create(foobar.getQNameModule(), "included-correct-mark")));
 
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+        assertTrue("This component should not be present", context.findDataTreeChild(
             QName.create(foobar.getQNameModule(), "root"),
-            QName.create(foobar.getQNameModule(), "included-not-correct-mark")));
+            QName.create(foobar.getQNameModule(), "included-not-correct-mark")).isEmpty());
     }
 }
