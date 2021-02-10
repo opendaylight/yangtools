@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ArrayListMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -27,15 +28,14 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * This is an iterator over a {@link NormalizedNode}. Unlike {@link NormalizedNodeWriter}, this iterates over elements
  * in the order as they are defined in YANG file.
  */
 public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
-    private static final Logger LOG = LoggerFactory.getLogger(SchemaOrderedNormalizedNodeWriter.class);
     private final EffectiveModelContext schemaContext;
     private final SchemaNode root;
 
@@ -44,29 +44,41 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     /**
      * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
      *
-     * @param writer
-     *            Back-end writer
-     * @param schemaContext
-     *            Schema context
-     * @param path
-     *            path
+     * @param writer Back-end writer
+     * @param schemaContext Associated {@link EffectiveModelContext}
+     */
+    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
+            final EffectiveModelContext schemaContext) {
+        super(writer);
+        this.root = this.schemaContext = requireNonNull(schemaContext);
+    }
+
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
+     *
+     * @param writer Back-end writer
+     * @param schemaContext Associated {@link EffectiveModelContext}
+     * @param path root path
      */
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
             final EffectiveModelContext schemaContext, final SchemaPath path) {
         super(writer);
-        this.schemaContext = schemaContext;
-        final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(schemaContext, path);
-        Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s",
-                path);
-        if (schemaNodes.size() > 1) {
-            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
+        this.schemaContext = requireNonNull(schemaContext);
+
+        final SchemaInferenceStack stack = SchemaInferenceStack.ofInstantiatedPath(schemaContext, path);
+        if (!stack.isEmpty()) {
+            final EffectiveStatement<QName, ?> current = stack.currentStatement();
+            // FIXME: this should be one of NormalizedNodeContainer/NotificationDefinition/OperationDefinition
+            checkArgument(current instanceof SchemaNode, "Instantiating at %s is not supported", current);
+            root = (SchemaNode) current;
+        } else {
+            root = schemaContext;
         }
-        this.root = schemaNodes.iterator().next();
     }
 
     @Override
     public SchemaOrderedNormalizedNodeWriter write(final NormalizedNode node) throws IOException {
-        if (Objects.equals(root, schemaContext)) {
+        if (schemaContext.equals(root)) {
             currentSchemaNode = schemaContext.dataChildByName(node.getNodeType());
         } else {
             currentSchemaNode = root;
