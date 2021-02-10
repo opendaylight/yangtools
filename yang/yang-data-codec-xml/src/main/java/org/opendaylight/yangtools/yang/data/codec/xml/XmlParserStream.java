@@ -517,12 +517,12 @@ public final class XmlParserStream implements Closeable, Flushable {
                     // We have not handled the node -- let's decide what to do about that
                     if (strictParsing) {
                         throw new XMLStreamException(String.format(
-                            "Schema for node with name %s and namespace %s does not exist at %s", xmlElementName,
-                            elementNS, parentSchema.getPath()), in.getLocation());
+                            "Schema for node with name %s and namespace %s does not exist in parent %s", xmlElementName,
+                            elementNS, parentSchema), in.getLocation());
                     }
 
-                    LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS, xmlElementName,
-                        parentSchema.getPath());
+                    LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" in parent {}", elementNS,
+                        xmlElementName, parentSchema);
                     skipUnknownNode(in);
                 }
                 break;
