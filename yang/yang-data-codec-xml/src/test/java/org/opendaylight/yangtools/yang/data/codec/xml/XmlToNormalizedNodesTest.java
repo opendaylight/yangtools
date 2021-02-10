@@ -249,8 +249,7 @@ public class XmlToNormalizedNodesTest {
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
 
         assertThat(ex.getMessage(), containsString("Schema for node with name my-container-1 and namespace "
-            + "baz-namespace does not exist at "
-            + "AbsoluteSchemaPath{path=[(baz-namespace)outer-container, (baz-namespace)my-container-1]}"));
+            + "baz-namespace does not exist in parent container my-container-1"));
     }
 
     private static NormalizedNode buildOuterContainerNode() {
