@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
-public interface GroupingEffectiveStatement extends SchemaTreeAwareEffectiveStatement<QName, GroupingStatement> {
+public interface GroupingEffectiveStatement extends DataTreeAwareEffectiveStatement<QName, GroupingStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.GROUPING;
