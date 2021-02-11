@@ -26,9 +26,7 @@ public class LeafrefTest {
     @Test
     public void testMethodsOfLeafrefTest() {
         final QName qname = QName.create("test", "List1");
-        // PathExpressionImpl("/test:Cont1/test:List1", false);
         final PathExpression revision = mock(PathExpression.class);
-        //  PathExpressionImpl("/test:Cont1/test:List2", false);
         final PathExpression revision2 = mock(PathExpression.class);
 
         final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(revision).build();
@@ -61,7 +59,6 @@ public class LeafrefTest {
     @Test
     public void testRequireInstanceSubstatement() {
         final QName qname = QName.create("test", "my-leafref");
-        // new PathExpressionImpl("../my-leaf", false)
         final PathExpression path = mock(PathExpression.class);
         final LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(qname).setPathStatement(path);
 
