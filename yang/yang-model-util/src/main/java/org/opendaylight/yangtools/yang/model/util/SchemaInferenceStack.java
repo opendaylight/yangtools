@@ -125,16 +125,21 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         this.clean = clean;
     }
 
+    private SchemaInferenceStack(final EffectiveModelContext effectiveModel) {
+        this.effectiveModel = requireNonNull(effectiveModel);
+        this.deque = new ArrayDeque<>();
+        this.clean = true;
+    }
+
     /**
      * Create a new empty stack backed by an effective model.
      *
      * @param effectiveModel EffectiveModelContext to which this stack is attached
+     * @return A new stack
      * @throws NullPointerException if {@code effectiveModel} is null
      */
-    public SchemaInferenceStack(final EffectiveModelContext effectiveModel) {
-        this.deque = new ArrayDeque<>();
-        this.effectiveModel = requireNonNull(effectiveModel);
-        this.clean = true;
+    public static @NonNull SchemaInferenceStack of(final EffectiveModelContext effectiveModel) {
+        return new SchemaInferenceStack(effectiveModel);
     }
 
     /**
@@ -194,7 +199,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
      *                                  absolute path.
      */
-    // FIXME: 7.0.0: consider deprecating this method
+    @Deprecated
     public static @NonNull SchemaInferenceStack ofInstantiatedPath(final EffectiveModelContext effectiveModel,
             final SchemaPath path) {
         checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
@@ -363,6 +368,23 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             clean = true;
         }
         return prev;
+    }
+
+    /**
+     * Pop the current statement from the stack, asserting it is a {@link DataTreeEffectiveStatement} and that
+     * subsequent {@link #enterDataTree(QName)} will find it again.
+     *
+     * @return Previous statement
+     * @throws NoSuchElementException if this stack is empty
+     * @throws IllegalStateException if current statement is not a DataTreeEffectiveStatement or if its parent is not
+     *                               a {@link DataTreeAwareEffectiveStatement}
+     */
+    public @NonNull DataTreeEffectiveStatement<?> exitToDataTree() {
+        final EffectiveStatement<?, ?> child = exit();
+        checkState(child instanceof DataTreeEffectiveStatement, "Unexpected current %s", child);
+        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        checkState(parent == null || parent instanceof DataTreeAwareEffectiveStatement, "Unexpected parent %s", parent);
+        return (DataTreeEffectiveStatement<?>) child;
     }
 
     /**
