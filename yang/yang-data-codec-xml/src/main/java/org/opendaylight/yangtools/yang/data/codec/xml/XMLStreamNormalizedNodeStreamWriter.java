@@ -30,10 +30,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -71,20 +71,21 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context) {
-        return create(writer, context, context);
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+            SchemaTracker.create(new SchemaInferenceStack(context)));
     }
 
     /**
      * Create a new writer with the specified context and rooted at the specified node.
      *
      * @param writer Output {@link XMLStreamWriter}
-     * @param context Associated {@link EffectiveModelContext}.
-     * @param rootNode Root node
+     * @param inference root node inference
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
-            final EffectiveModelContext context, final DataNodeContainer rootNode) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(rootNode));
+            final SchemaInferenceStack inference) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, inference.getEffectiveModelContext(),
+            SchemaTracker.create(inference));
     }
 
     /**
