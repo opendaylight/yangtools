@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -35,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -44,8 +44,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
@@ -59,20 +61,37 @@ public final class SchemaTracker {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaTracker.class);
 
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
+    private final SchemaInferenceStack dataTree;
     private final DataNodeContainer root;
 
-    private SchemaTracker(final DataNodeContainer root) {
+    private SchemaTracker(final SchemaInferenceStack dataTree) {
+        this.dataTree = requireNonNull(dataTree);
+        if (!dataTree.isEmpty()) {
+            final EffectiveStatement<QName, ?> current = dataTree.currentStatement();
+            checkArgument(current instanceof DataNodeContainer, "Cannot instantiate on %s", current);
+
+            root = (DataNodeContainer) current;
+        } else {
+            root = dataTree.getEffectiveModelContext();
+        }
+    }
+
+    // FIXME: this is quite broken!
+    @Deprecated
+    private SchemaTracker(final EffectiveModelContext context, final DataNodeContainer root) {
+        this.dataTree = new SchemaInferenceStack(context);
         this.root = requireNonNull(root);
     }
 
-    private static @NonNull SchemaTracker create(final SchemaInferenceStack root) {
-        if (root.isEmpty()) {
-            return new SchemaTracker(root.getEffectiveModelContext());
-        }
-
-        final EffectiveStatement<QName, ?> current = root.currentStatement();
-        checkArgument(current instanceof DataNodeContainer, "Cannot instantiate on %s", current);
-        return new SchemaTracker((DataNodeContainer) current);
+    /**
+     * Create a new writer with the specified inference state as its root.
+     *
+     * @param root Root inference state
+     * @return A new {@link NormalizedNodeStreamWriter}
+     * @throws NullPointerException if {@code root} is null
+     */
+    public static @NonNull SchemaTracker create(final SchemaInferenceStack root) {
+        return new SchemaTracker(root.copy());
     }
 
     /**
@@ -82,8 +101,21 @@ public final class SchemaTracker {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code root} is null
      */
+    @Deprecated
+    // FIXME: this is quite broken!
     public static @NonNull SchemaTracker create(final DataNodeContainer root) {
-        return new SchemaTracker(root);
+        return new SchemaTracker(null, root);
+    }
+
+    /**
+     * Create a new writer at the root of specified {@link EffectiveModelContext}.
+     *
+     * @param context effective model context
+     * @return A new {@link NormalizedNodeStreamWriter}
+     * @throws NullPointerException if {@code context} is null
+     */
+    public static @NonNull SchemaTracker create(final EffectiveModelContext context) {
+        return new SchemaTracker(new SchemaInferenceStack(context));
     }
 
     /**
@@ -96,7 +128,7 @@ public final class SchemaTracker {
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
     public static @NonNull SchemaTracker create(final EffectiveModelContext context, final Absolute path) {
-        return create(SchemaInferenceStack.of(context, path));
+        return new SchemaTracker(SchemaInferenceStack.of(context, path));
     }
 
     /**
@@ -109,7 +141,7 @@ public final class SchemaTracker {
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
     public static @NonNull SchemaTracker create(final EffectiveModelContext context, final SchemaPath path) {
-        return create(SchemaInferenceStack.ofInstantiatedPath(context, path));
+        return new SchemaTracker(SchemaInferenceStack.ofInstantiatedPath(context, path));
     }
 
     /**
@@ -130,61 +162,29 @@ public final class SchemaTracker {
         checkArgument(current instanceof RpcEffectiveStatement || current instanceof ActionEffectiveStatement,
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
-        return create(stack);
+        return new SchemaTracker(stack);
     }
 
     public Object getParent() {
-        if (schemaStack.isEmpty()) {
-            return root;
-        }
-        return schemaStack.peek();
+        final WithStatus schema = schemaStack.peek();
+        return schema == null ? root : schema;
     }
 
-    private SchemaNode getSchema(final PathArgument name) {
-        final Object parent = getParent();
-        SchemaNode schema = null;
+    private SchemaNode enterDataTree(final PathArgument name) {
         final QName qname = name.getNodeType();
-        if (parent instanceof DataNodeContainer) {
-            schema = ((DataNodeContainer)parent).dataChildByName(qname);
-            if (schema == null) {
-                if (parent instanceof GroupingDefinition) {
-                    schema = (GroupingDefinition) parent;
-                } else if (parent instanceof NotificationDefinition) {
-                    schema = (NotificationDefinition) parent;
-                }
-            }
-        } else if (parent instanceof ChoiceSchemaNode) {
-            schema = findChildInCases((ChoiceSchemaNode) parent, qname);
-        } else {
-            throw new IllegalStateException("Unsupported schema type " + parent.getClass() + " on stack.");
+        final DataTreeEffectiveStatement<?> stmt = dataTree.enterDataTree(qname);
+        verify(stmt instanceof SchemaNode, "Unexpected result %s", stmt);
+        final SchemaNode ret = (SchemaNode) stmt;
+        final Object parent = getParent();
+        if (parent instanceof ChoiceSchemaNode) {
+            final DataSchemaNode check = ((ChoiceSchemaNode) parent).findDataSchemaChild(qname).orElse(null);
+            verify(check == ret, "Data tree result %s does not match choice result %s", ret, check);
         }
-
-        checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
-        return schema;
-    }
-
-    private static SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
-        for (final CaseSchemaNode caze : parent.getCases()) {
-            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
-            if (potential.isPresent()) {
-                return potential.get();
-            }
-        }
-        return null;
-    }
-
-    private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
-        for (final CaseSchemaNode caze : parent.getCases()) {
-            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
-            if (potential.isPresent()) {
-                return caze;
-            }
-        }
-        return null;
+        return ret;
     }
 
     public void startList(final PathArgument name) {
-        final SchemaNode schema = getSchema(name);
+        final SchemaNode schema = enterDataTree(name);
         checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema);
         schemaStack.push(schema);
     }
@@ -195,18 +195,14 @@ public final class SchemaTracker {
         schemaStack.push((ListSchemaNode) schema);
     }
 
-    public LeafSchemaNode leafNode(final NodeIdentifier name) throws IOException {
-        final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema);
-        return (LeafSchemaNode) schema;
-    }
-
     public void startLeafNode(final NodeIdentifier name) throws IOException {
-        schemaStack.push(leafNode(name));
+        final SchemaNode schema = enterDataTree(name);
+        checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema);
+        schemaStack.push(schema);
     }
 
     public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
-        final SchemaNode schema = getSchema(name);
+        final SchemaNode schema = enterDataTree(name);
         checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema);
         schemaStack.push(schema);
         return (LeafListSchemaNode) schema;
@@ -218,6 +214,7 @@ public final class SchemaTracker {
             return (LeafListSchemaNode) parent;
         }
 
+        // FIXME: when would this trigger?
         final SchemaNode child = SchemaUtils.findDataChildSchemaByQName((SchemaNode) parent, qname);
         checkArgument(child instanceof LeafListSchemaNode,
             "Node %s is neither a leaf-list nor currently in a leaf-list", child);
@@ -230,19 +227,18 @@ public final class SchemaTracker {
 
     public ChoiceSchemaNode startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
-        final SchemaNode schema = getSchema(name);
-
-        checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema);
-        schemaStack.push(schema);
-        return (ChoiceSchemaNode)schema;
+        final SchemaTreeEffectiveStatement<?> stmt = dataTree.enterSchemaTree(name.getNodeType());
+        checkArgument(stmt instanceof ChoiceSchemaNode, "Node %s is not a choice", stmt);
+        final ChoiceSchemaNode ret = (ChoiceSchemaNode)stmt;
+        schemaStack.push(ret);
+        return ret;
     }
 
     public SchemaNode startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
-        final SchemaNode schema = getSchema(name);
-        final boolean isAllowed = schema instanceof ContainerLike || schema instanceof NotificationDefinition;
-
-        checkArgument(isAllowed, "Node %s is not a container nor a notification", schema);
+        final SchemaNode schema = enterDataTree(name);
+        checkArgument(schema instanceof ContainerLike || schema instanceof NotificationDefinition,
+            "Node %s is not a container nor a notification", schema);
         schemaStack.push(schema);
         return schema;
     }
@@ -265,27 +261,35 @@ public final class SchemaTracker {
         return resolvedSchema;
     }
 
-    public AnyxmlSchemaNode anyxmlNode(final NodeIdentifier name) {
-        final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema);
-        return (AnyxmlSchemaNode)schema;
+    private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
+        for (final CaseSchemaNode caze : parent.getCases()) {
+            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
+            if (potential.isPresent()) {
+                return caze;
+            }
+        }
+        return null;
     }
 
     public void startAnyxmlNode(final NodeIdentifier name) {
-        schemaStack.push(anyxmlNode(name));
-    }
-
-    public AnydataSchemaNode anydataNode(final NodeIdentifier name) {
-        final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof AnydataSchemaNode, "Node %s is not anydata", schema);
-        return (AnydataSchemaNode)schema;
+        final SchemaNode schema = enterDataTree(name);
+        checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema);
+        schemaStack.push(schema);
     }
 
     public void startAnydataNode(final NodeIdentifier name) {
-        schemaStack.push(anydataNode(name));
+        final SchemaNode schema = enterDataTree(name);
+        checkArgument(schema instanceof AnydataSchemaNode, "Node %s is not anydata", schema);
+        schemaStack.push(schema);
     }
 
     public Object endNode() {
-        return schemaStack.pop();
+        final Object ret = schemaStack.pop();
+        // If this is a data tree node, make sure it is updated. Before that, though, we need to check if this is not
+        // actually listEntry -> list or leafListEntry -> leafList exit.
+        if (!(ret instanceof AugmentationSchemaNode) && getParent() != ret) {
+            dataTree.exit();
+        }
+        return ret;
     }
 }
