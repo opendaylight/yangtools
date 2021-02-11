@@ -29,7 +29,7 @@ public class YT1231Test {
     @Test
     public void testEnterDataTree() {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1231.yang");
-        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
         // Trivial
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
@@ -51,7 +51,7 @@ public class YT1231Test {
     @Test
     public void testEnterChoice() {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1231.yang");
-        final SchemaInferenceStack stack = new SchemaInferenceStack(context);
+        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
 
         // Simple
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));

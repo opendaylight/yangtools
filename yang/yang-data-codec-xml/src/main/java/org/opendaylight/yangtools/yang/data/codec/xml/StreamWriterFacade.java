@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
 import java.io.IOException;
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.XMLConstants;
@@ -24,9 +23,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -288,20 +285,18 @@ final class StreamWriterFacade extends ValueWriter {
     void emitNormalizedAnydata(final NormalizedAnydata anydata) throws XMLStreamException {
         flushElement();
 
-        final EffectiveStatementInference inference = anydata.getInference();
-        final List<? extends EffectiveStatement<?, ?>> path = inference.statementPath();
-        final DataNodeContainer parent;
-        if (path.size() > 1) {
-            final EffectiveStatement<?, ?> stmt = path.get(path.size() - 2);
-            verify(stmt instanceof DataNodeContainer, "Unexpected statement %s", stmt);
-            parent = (DataNodeContainer) stmt;
-        } else {
-            parent = inference.getEffectiveModelContext();
+        // Adjust state to point to parent node and ensure it can handle data tree nodes
+        final SchemaInferenceStack.Inference inference;
+        try {
+            final SchemaInferenceStack stack = SchemaInferenceStack.ofInference(anydata.getInference());
+            stack.exitToDataTree();
+            inference = stack.toInference();
+        } catch (IllegalArgumentException | IllegalStateException | NoSuchElementException e) {
+            throw new XMLStreamException("Cannot emit " + anydata, e);
         }
 
         try {
-            anydata.writeTo(XMLStreamNormalizedNodeStreamWriter.create(writer, inference.getEffectiveModelContext(),
-                parent));
+            anydata.writeTo(XMLStreamNormalizedNodeStreamWriter.create(writer, inference));
         } catch (IOException e) {
             throw new XMLStreamException("Failed to emit anydata " + anydata, e);
         }

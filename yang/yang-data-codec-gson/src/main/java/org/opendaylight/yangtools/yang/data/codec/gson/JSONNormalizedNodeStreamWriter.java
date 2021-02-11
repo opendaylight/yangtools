@@ -8,16 +8,13 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.w3c.dom.Node.ELEMENT_NODE;
-import static org.w3c.dom.Node.TEXT_NODE;
 
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -36,14 +33,13 @@ import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -153,15 +149,15 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * the writer too.
      *
      * @param codecFactory JSON codec factory
-     * @param path Schema Path
+     * @param rootNode Root node inference
      * @param initialNs Initial namespace
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
-            final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Exclusive(codecFactory, SchemaTracker.create(codecFactory.getEffectiveModelContext(), path),
-            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+            final EffectiveStatementInference rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+        return new Exclusive(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -180,15 +176,15 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * the writer too.
      *
      * @param codecFactory JSON codec factory
-     * @param rootNode Root node
+     * @param path Schema Path
      * @param initialNs Initial namespace
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
-            final DataNodeContainer rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Exclusive(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
-            new JSONStreamWriterExclusiveRootContext(initialNs));
+            final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+        return new Exclusive(codecFactory, SchemaTracker.create(codecFactory.getEffectiveModelContext(), path),
+            jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -255,13 +251,13 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * close the wrapped writer; the caller must take care of that.
      *
      * @param codecFactory JSON codec factory
-     * @param rootNode Root node
+     * @param rootNode Root node inference
      * @param initialNs Initial namespace
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
-            final DataNodeContainer rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
+            final EffectiveStatementInference rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
         return new Nested(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
             new JSONStreamWriterSharedRootContext(initialNs));
     }
@@ -436,19 +432,18 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeNormalizedAnydata(final NormalizedAnydata anydata) throws IOException {
-        final EffectiveStatementInference inference = anydata.getInference();
-        final List<? extends EffectiveStatement<?, ?>> path = inference.statementPath();
-        final DataNodeContainer parent;
-        if (path.size() > 1) {
-            final EffectiveStatement<?, ?> stmt = path.get(path.size() - 2);
-            verify(stmt instanceof DataNodeContainer, "Unexpected statement %s", stmt);
-            parent = (DataNodeContainer) stmt;
-        } else {
-            parent = inference.getEffectiveModelContext();
+        // Adjust state to point to parent node and ensure it can handle data tree nodes
+        final SchemaInferenceStack.Inference inference;
+        try {
+            final SchemaInferenceStack stack = SchemaInferenceStack.ofInference(anydata.getInference());
+            stack.exitToDataTree();
+            inference = stack.toInference();
+        } catch (IllegalArgumentException | IllegalStateException | NoSuchElementException e) {
+            throw new IOException("Cannot emit " + anydata, e);
         }
 
         anydata.writeTo(JSONNormalizedNodeStreamWriter.createNestedWriter(
-            codecs.rebaseTo(inference.getEffectiveModelContext()), parent, context.getNamespace(), writer));
+            codecs.rebaseTo(inference.getEffectiveModelContext()), inference, context.getNamespace(), writer));
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
@@ -481,10 +476,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private static boolean isArrayElement(final Node node) {
-        if (ELEMENT_NODE == node.getNodeType()) {
+        if (Node.ELEMENT_NODE == node.getNodeType()) {
             final String nodeName = node.getNodeName();
             for (Node nextNode = node.getNextSibling(); nextNode != null; nextNode = nextNode.getNextSibling()) {
-                if (ELEMENT_NODE == nextNode.getNodeType() && nodeName.equals(nextNode.getNodeName())) {
+                if (Node.ELEMENT_NODE == nextNode.getNodeType() && nodeName.equals(nextNode.getNodeName())) {
                     return true;
                 }
             }
@@ -513,7 +508,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private void writeObject(Node node) throws IOException {
         String previousNodeName = "";
         while (node != null) {
-            if (ELEMENT_NODE == node.getNodeType()) {
+            if (Node.ELEMENT_NODE == node.getNodeType()) {
                 if (!node.getNodeName().equals(previousNodeName)) {
                     previousNodeName = node.getNodeName();
                     writer.name(node.getNodeName());
@@ -552,7 +547,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         final NodeList children = node.getChildNodes();
         for (int i = 0, length = children.getLength(); i < length; i++) {
             final Node childNode = children.item(i);
-            if (ELEMENT_NODE == childNode.getNodeType()) {
+            if (Node.ELEMENT_NODE == childNode.getNodeType()) {
                 return (Element) childNode;
             }
         }
@@ -563,7 +558,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         final NodeList children = node.getChildNodes();
         for (int i = 0, length = children.getLength(); i < length; i++) {
             final Node childNode = children.item(i);
-            if (TEXT_NODE == childNode.getNodeType()) {
+            if (Node.TEXT_NODE == childNode.getNodeType()) {
                 return (Text) childNode;
             }
         }
