@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public interface ChoiceEffectiveStatement extends SchemaTreeEffectiveStatement<ChoiceStatement>,
-        SchemaTreeAwareEffectiveStatement<QName, ChoiceStatement> {
+        DataTreeAwareEffectiveStatement<QName, ChoiceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.CHOICE;

@@ -99,17 +99,38 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         boolean sameAsSchema = true;
 
         for (SchemaTreeEffectiveStatement<?> child : schemaTreeStatements) {
-            if (child instanceof DataTreeEffectiveStatement) {
-                putChild(dataChildren, (DataTreeEffectiveStatement<?>) child, "data");
-            } else {
-                sameAsSchema = false;
-                putChoiceDataChildren(dataChildren, child);
-            }
+            sameAsSchema = indexDataTree(dataChildren, child);
         }
 
         // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
         // the two maps are equal and hence we can share the instance.
         return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
+    }
+
+    private static boolean indexDataTree(final Map<QName, DataTreeEffectiveStatement<?>> map,
+            final EffectiveStatement<?, ?> stmt) {
+        if (stmt instanceof DataTreeEffectiveStatement) {
+            putChild(map, (DataTreeEffectiveStatement<?>) stmt, "data");
+            return true;
+        } else if (stmt instanceof ChoiceEffectiveStatement) {
+            // For choice statements go through all their cases and fetch their data children
+            for (EffectiveStatement<?, ?> choiceChild : stmt.effectiveSubstatements()) {
+                if (choiceChild instanceof CaseEffectiveStatement) {
+                    for (EffectiveStatement<?, ?> caseChild : choiceChild.effectiveSubstatements()) {
+                        indexDataTree(map, caseChild);
+                    }
+                }
+            }
+            return false;
+        } else if (stmt instanceof CaseEffectiveStatement) {
+            // For case statements go through all their statements
+            for (EffectiveStatement<?, ?> child : stmt.effectiveSubstatements()) {
+                indexDataTree(map, child);
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map, final T child,
@@ -119,21 +140,6 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         if (prev != null) {
             throw new SubstatementIndexingException(
                 "Cannot add " + tree + " tree child with name " + id + ", a conflicting child already exists");
-        }
-    }
-
-    private static void putChoiceDataChildren(final Map<QName, DataTreeEffectiveStatement<?>> map,
-            final SchemaTreeEffectiveStatement<?> child) {
-        // For choice statements go through all their cases and fetch their data children
-        if (child instanceof ChoiceEffectiveStatement) {
-            child.streamEffectiveSubstatements(CaseEffectiveStatement.class).forEach(
-                caseStmt -> caseStmt.streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class).forEach(stmt -> {
-                    if (stmt instanceof DataTreeEffectiveStatement) {
-                        putChild(map, (DataTreeEffectiveStatement<?>) stmt, "data");
-                    } else {
-                        putChoiceDataChildren(map, stmt);
-                    }
-                }));
         }
     }
 }

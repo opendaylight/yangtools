@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public interface CaseEffectiveStatement extends SchemaTreeEffectiveStatement<CaseStatement>,
-        SchemaTreeAwareEffectiveStatement<QName, CaseStatement> {
+        DataTreeAwareEffectiveStatement<QName, CaseStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.CASE;
