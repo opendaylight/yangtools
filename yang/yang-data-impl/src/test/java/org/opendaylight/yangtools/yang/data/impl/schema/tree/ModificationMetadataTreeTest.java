@@ -213,7 +213,39 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
         modificationTree.delete(TWO_TWO_PATH);
         final Optional<NormalizedNode> potentialAfterDelete = modificationTree.readNode(TWO_TWO_PATH);
         assertFalse(potentialAfterDelete.isPresent());
+    }
 
+    @Test
+    @SuppressWarnings("checkstyle:LineLength")
+    public void testPrettyPrint() {
+        final InMemoryDataTreeModification modificationTree = new InMemoryDataTreeModification(
+            new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
+                TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper), rootOper);
+        final Optional<NormalizedNode> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
+        assertTrue(originalBarNode.isPresent());
+        assertSame(BAR_NODE, originalBarNode.get());
+
+        // writes node to /outer-list/1/inner_list/two/value
+        modificationTree.write(TWO_TWO_VALUE_PATH, ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "test"));
+
+        final String expectedString = String.join("\n",
+                "MutableDataTree [",
+                "    modification=ModifiedNode{",
+                "        identifier=(urn:ietf:params:xml:ns:netconf:base:1.0)data, operation=TOUCH, childModification={",
+                "            (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)test=ModifiedNode{",
+                "                identifier=(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)test, operation=TOUCH, childModification={",
+                "                    outer-list=ModifiedNode{",
+                "                        identifier=outer-list, operation=TOUCH, childModification={",
+                "                            outer-list[{id=2}]=ModifiedNode{",
+                "                                identifier=outer-list[{id=2}], operation=TOUCH, childModification={",
+                "                                    inner-list=ModifiedNode{",
+                "                                        identifier=inner-list, operation=TOUCH, childModification={",
+                "                                            inner-list[{name=two}]=ModifiedNode{",
+                "                                                identifier=inner-list[{name=two}], operation=TOUCH, childModification={",
+                "                                                    value=ModifiedNode{",
+                "                                                        identifier=value, operation=WRITE}}}}}}}}}}}}}]");
+
+        assertEquals(expectedString, modificationTree.prettyTree().get());
     }
 
     private static <T> T assertPresentAndType(final Optional<?> potential, final Class<T> type) {

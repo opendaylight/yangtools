@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
@@ -525,6 +526,10 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public String toRelativeString(final PathArgument previous) {
+            // augmented node has the same namespace as module it is declared in
+            if (previous instanceof AugmentationIdentifier) {
+                return getNodeType().getLocalName();
+            }
             if (previous instanceof AbstractPathArgument) {
                 final QNameModule mod = previous.getNodeType().getModule();
                 if (getNodeType().getModule().equals(mod)) {
@@ -532,7 +537,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
                 }
             }
 
-            return getNodeType().toString();
+            return toString();
         }
 
         abstract Object writeReplace();
@@ -824,7 +829,14 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public final String toRelativeString(final PathArgument previous) {
-            return super.toRelativeString(previous) + '[' + asMap() + ']';
+            if (previous instanceof AbstractPathArgument) {
+                final Map<String, Object> keys = entrySet().stream().collect(Collectors.toMap(
+                        p -> p.getKey().toRelativeString(previous.getNodeType()),
+                        Entry::getValue));
+                return super.toRelativeString(previous) + '[' + keys + ']';
+            }
+
+            return toString();
         }
 
         @Override
@@ -976,6 +988,13 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public String toRelativeString(final PathArgument previous) {
+            if (previous instanceof AbstractPathArgument) {
+                final Set<String> relativeChildNames = childNames.stream()
+                        .map(p -> p.toRelativeString(previous.getNodeType()))
+                        .collect(Collectors.toSet());
+                return "AugmentationIdentifier{" + "childNames=" + relativeChildNames + '}';
+            }
+
             return toString();
         }
 
