@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.spi.node;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -57,4 +58,14 @@ public abstract class AbstractNormalizedNode<I extends PathArgument, T extends N
     protected abstract int valueHashCode();
 
     protected abstract boolean valueEquals(@NonNull T other);
+
+    @Override
+    public @NonNull Supplier<String> prettyTree() {
+        return new NormalizedNodePrettyTree(this, implementedType());
+    }
+
+    @Override
+    public @NonNull Supplier<String> prettyTree(final @NonNull PathArgument parentIdentifier, final int initialOffset) {
+        return new NormalizedNodePrettyTree(this, implementedType(), parentIdentifier, initialOffset);
+    }
 }
