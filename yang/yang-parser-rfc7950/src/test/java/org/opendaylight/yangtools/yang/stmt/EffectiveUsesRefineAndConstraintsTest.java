@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
 import java.util.Optional;
@@ -20,27 +19,21 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 public class EffectiveUsesRefineAndConstraintsTest {
-
     @Test
-    public void refineTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/stmt-test/uses/refine-test.yang"))
-                .buildEffective();
-        assertNotNull(result);
+    public void refineTest() throws Exception {
+        final EffectiveModelContext result = StmtTestUtils.parseYangSource("/stmt-test/uses/refine-test.yang");
 
-        final QNameModule qnameModule = Iterables.getOnlyElement(result.getModules()).getQNameModule();
+        final ModuleEffectiveStatement module = Iterables.getOnlyElement(result.getModuleStatements().values());
+        final QNameModule qnameModule = module.localQNameModule();
         final QName rootContainer = QName.create(qnameModule, "root-container");
-        final QName grp1 = QName.create(qnameModule, "grp-1");
 
         final QName containerFromGrouping = QName.create(qnameModule, "container-from-grouping");
         final QName listInContainer = QName.create(qnameModule, "list-in-container");
@@ -49,27 +42,21 @@ public class EffectiveUsesRefineAndConstraintsTest {
         final QName containerFromGrouping2 = QName.create(qnameModule, "container-from-grouping2");
         final QName presenceContainer = QName.create(qnameModule, "presence-container");
 
-        SchemaPath listInContainerPath = SchemaPath.create(true, rootContainer, containerFromGrouping, listInContainer);
-        SchemaPath choiceFromGrpPath = SchemaPath.create(true, rootContainer, containerFromGrouping, choiceFromGrp);
-        SchemaPath presenceContainerPath = SchemaPath.create(true, rootContainer, containerFromGrouping2,
-                presenceContainer);
+        checkRefinedList(module, rootContainer, containerFromGrouping, listInContainer);
+        checkRefinedChoice(module, rootContainer, containerFromGrouping, choiceFromGrp);
+        checkRefinedContainer(module, rootContainer, containerFromGrouping2, presenceContainer);
 
-        checkRefinedList(result, listInContainerPath);
-        checkRefinedChoice(result, choiceFromGrpPath);
-        checkRefinedContainer(result, presenceContainerPath);
+        final GroupingEffectiveStatement grp = module.findFirstEffectiveSubstatement(GroupingEffectiveStatement.class)
+            .orElseThrow();
+        assertEquals(QName.create(qnameModule, "grp-1"), grp.argument());
 
-        SchemaPath originalListInContainerPath = SchemaPath.create(true, grp1, containerFromGrouping, listInContainer);
-        SchemaPath originalChoiceFromGrpPath = SchemaPath.create(true, grp1, containerFromGrouping, choiceFromGrp);
-        SchemaPath originalPresenceContainerPath = SchemaPath.create(true, grp1, containerFromGrouping2,
-                presenceContainer);
-
-        checkOriginalList(result, originalListInContainerPath);
-        checkOriginalChoice(result, originalChoiceFromGrpPath);
-        checkOriginalContainer(result, originalPresenceContainerPath);
+        checkOriginalList(grp, containerFromGrouping, listInContainer);
+        checkOriginalChoice(grp, containerFromGrouping, choiceFromGrp);
+        checkOriginalContainer(grp, containerFromGrouping2, presenceContainer);
     }
 
-    private static void checkOriginalContainer(final SchemaContext result, final SchemaPath path) {
-        SchemaNode containerInContainerNode = SchemaContextUtil.findDataSchemaNode(result, path);
+    private static void checkOriginalContainer(final GroupingEffectiveStatement grp, final QName... qnames) {
+        SchemaNode containerInContainerNode = (SchemaNode) grp.findSchemaTreeNode(qnames).orElse(null);
         assertNotNull(containerInContainerNode);
 
         ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
@@ -81,16 +68,16 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(0, containerSchemaNode.getMustConstraints().size());
     }
 
-    private static void checkOriginalChoice(final SchemaContext result, final SchemaPath path) {
-        SchemaNode choiceInContainerNode = SchemaContextUtil.findDataSchemaNode(result, path);
+    private static void checkOriginalChoice(final GroupingEffectiveStatement grp, final QName... qnames) {
+        SchemaNode choiceInContainerNode = (SchemaNode) grp.findSchemaTreeNode(qnames).orElse(null);
         assertNotNull(choiceInContainerNode);
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
         assertFalse(choiceSchemaNode.isMandatory());
     }
 
-    private static void checkOriginalList(final SchemaContext result, final SchemaPath path) {
-        SchemaNode listInContainerNode = SchemaContextUtil.findDataSchemaNode(result, path);
+    private static void checkOriginalList(final GroupingEffectiveStatement grp, final QName... qnames) {
+        SchemaNode listInContainerNode = (SchemaNode) grp.findSchemaTreeNode(qnames).orElse(null);
         assertNotNull(listInContainerNode);
 
         ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
@@ -104,8 +91,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
-    private static void checkRefinedContainer(final SchemaContext result, final SchemaPath path) {
-        SchemaNode containerInContainerNode = SchemaContextUtil.findDataSchemaNode(result, path);
+    private static void checkRefinedContainer(final ModuleEffectiveStatement module, final QName... qnames) {
+        final SchemaNode containerInContainerNode = (SchemaNode) module.findSchemaTreeNode(qnames).orElse(null);
         assertNotNull(containerInContainerNode);
 
         ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
@@ -116,24 +103,24 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(1, containerSchemaNode.getMustConstraints().size());
     }
 
-    private static void checkRefinedChoice(final SchemaContext result, final SchemaPath path) {
-        SchemaNode choiceInContainerNode = SchemaContextUtil.findDataSchemaNode(result, path);
+    private static void checkRefinedChoice(final ModuleEffectiveStatement module, final QName... qnames) {
+        final SchemaNode choiceInContainerNode = (SchemaNode) module.findSchemaTreeNode(qnames).orElse(null);
         assertNotNull(choiceInContainerNode);
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
         assertTrue(choiceSchemaNode.isMandatory());
     }
 
-    private static void checkRefinedList(final SchemaContext result, final SchemaPath path) {
-        SchemaNode listInContainerNode = SchemaContextUtil.findDataSchemaNode(result, path);
+    private static void checkRefinedList(final ModuleEffectiveStatement module, final QName... qnames) {
+        final SchemaNode listInContainerNode = (SchemaNode) module.findSchemaTreeNode(qnames).orElse(null);
         assertNotNull(listInContainerNode);
 
-        ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
+        final ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
         assertEquals(Optional.of("new reference"), listSchemaNode.getReference());
         assertEquals(Optional.of("new description"), listSchemaNode.getDescription());
         assertEquals(Optional.of(Boolean.TRUE), listSchemaNode.effectiveConfig());
 
-        ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
+        final ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
         assertEquals((Object) 5, listConstraints.getMinElements());
         assertEquals((Object) 7, listConstraints.getMaxElements());
         assertEquals(2, listSchemaNode.getMustConstraints().size());

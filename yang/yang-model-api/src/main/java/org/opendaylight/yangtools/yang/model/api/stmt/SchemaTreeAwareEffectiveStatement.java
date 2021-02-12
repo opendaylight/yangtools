@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -52,5 +56,46 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
     default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
             final @NonNull QName qname) {
         return get(Namespace.class, requireNonNull(qname));
+    }
+
+    /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
+     *
+     * @param <E> Effective substatement type
+     * @param qnames Child identifiers
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if {@code qnames} is null or contains a null element
+     * @throws NoSuchElementException if {@code qnames} is empty
+     */
+    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
+            final @NonNull QName... qnames) {
+        return findSchemaTreeNode(Arrays.asList(qnames));
+    }
+
+    /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
+     *
+     * @param <E> Effective substatement type
+     * @param qnames Child identifiers
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if {@code qnames} is null or contains a null element
+     * @throws NoSuchElementException if {@code qnames} is empty
+     */
+    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
+            final @NonNull List<QName> qnames) {
+        final Iterator<QName> it = qnames.iterator();
+        SchemaTreeAwareEffectiveStatement<?, ?> parent = this;
+        while (true) {
+            final Optional<E> found = parent.findSchemaTreeNode(it.next());
+            if (!it.hasNext() || found.isEmpty()) {
+                return found;
+            }
+            final E node = found.orElseThrow();
+            if (node instanceof SchemaTreeAwareEffectiveStatement) {
+                parent = (SchemaTreeAwareEffectiveStatement<?, ?>) node;
+            } else {
+                return Optional.empty();
+            }
+        }
     }
 }

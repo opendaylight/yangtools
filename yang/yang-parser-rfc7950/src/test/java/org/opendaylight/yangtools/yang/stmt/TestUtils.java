@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -52,7 +53,7 @@ public final class TestUtils {
     private TestUtils() {
     }
 
-    public static SchemaContext loadModules(final URI resourceDirectory)
+    public static EffectiveModelContext loadModules(final URI resourceDirectory)
             throws ReactorException, IOException, YangSyntaxErrorException {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
         File[] files = new File(resourceDirectory).listFiles();
@@ -68,7 +69,7 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static SchemaContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
+    public static EffectiveModelContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
             throws IOException, ReactorException, YangSyntaxErrorException {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
 
@@ -80,8 +81,8 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static SchemaContext loadYinModules(final URI resourceDirectory) throws ReactorException, SAXException,
-            IOException {
+    public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
+            throws ReactorException, SAXException, IOException {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         for (File file : new File(resourceDirectory).listFiles()) {
@@ -94,12 +95,13 @@ public final class TestUtils {
 
     public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, SAXException,
             IOException {
-        final SchemaContext ctx = RFC7950Reactors.defaultReactor().newBuild()
+        return RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)))
-                .buildEffective();
-        return ctx.getModules().iterator().next();
+                .buildEffective()
+                .getModules().iterator().next();
     }
 
+    @Deprecated(forRemoval = true)
     public static Optional<? extends @NonNull Module> findModule(final SchemaContext context, final String moduleName) {
         return context.getModules().stream().filter(module -> moduleName.equals(module.getName())).findAny();
     }
@@ -194,11 +196,12 @@ public final class TestUtils {
         return result;
     }
 
-    public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws ReactorException {
+    public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
+            throws ReactorException {
         return RFC7950Reactors.defaultReactor().newBuild().addSources(sources).buildEffective();
     }
 
-    public static SchemaContext parseYangSources(final File... files)
+    public static EffectiveModelContext parseYangSources(final File... files)
             throws ReactorException, IOException, YangSyntaxErrorException {
 
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
@@ -210,21 +213,22 @@ public final class TestUtils {
         return parseYangSources(sources);
     }
 
-    public static SchemaContext parseYangSources(final Collection<File> files)
+    public static EffectiveModelContext parseYangSources(final Collection<File> files)
             throws ReactorException, IOException, YangSyntaxErrorException {
         return parseYangSources(files.toArray(new File[files.size()]));
     }
 
-    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath)
+    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
         URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
         File testSourcesDir = new File(resourceDir.toURI());
 
-        return parseYangSources(testSourcesDir.listFiles());
+        return parseYangSources(testSourcesDir.listFiles(
+            (dir, name) -> name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)));
     }
 
-    public static SchemaContext parseYangSource(final String yangSourceFilePath)
+    public static EffectiveModelContext parseYangSource(final String yangSourceFilePath)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
         URL resourceFile = StmtTestUtils.class.getResource(yangSourceFilePath);
