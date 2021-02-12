@@ -18,14 +18,12 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -34,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
@@ -89,14 +86,9 @@ public class EffectiveSchemaContextTest {
         assertNotNull(schemaContext.getAvailableAugmentations());
         assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
 
-        Module fooModule = schemaContext.findModule("foo", Revision.of("2016-09-21")).get();
+        assertTrue(schemaContext.findModule("foo", Revision.of("2016-09-21")).isPresent());
         assertEquals(3, schemaContext.getModules().size());
         assertEquals(3, schemaContext.getRootDeclaredStatements().size());
         assertEquals(3, schemaContext.getModuleStatements().size());
-
-        final Set<Module> modules = schemaContext.getModules();
-        final SchemaContext copiedSchemaContext =  SimpleSchemaContext.forModules(modules);
-        assertNotNull(copiedSchemaContext);
-        assertEquals(modules, copiedSchemaContext.getModules());
     }
 }
