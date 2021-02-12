@@ -36,11 +36,11 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-api</artifactId>
+            <artifactId>yang-model-spi</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-reactor</artifactId>
+            <artifactId>yang-parser-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-util</artifactId>
+            <artifactId>yang-parser-reactor</artifactId>
         </dependency>
 
         <!-- Base RFC6020/RFC7950 reactor support -->
