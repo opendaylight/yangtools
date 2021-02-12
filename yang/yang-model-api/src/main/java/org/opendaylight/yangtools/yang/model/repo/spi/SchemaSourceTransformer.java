@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.util;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,11 +18,6 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
         implements SchemaSourceListener, SchemaSourceProvider<D> {
@@ -51,7 +46,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     }
 
     @Override
-    public ListenableFuture<D> getSource(final SourceIdentifier sourceIdentifier) {
+    public final ListenableFuture<D> getSource(final SourceIdentifier sourceIdentifier) {
         return Futures.transformAsync(provider.getSchemaSource(sourceIdentifier, srcClass), function,
             MoreExecutors.directExecutor());
     }

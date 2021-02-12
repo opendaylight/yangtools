@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 @Beta
 public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
+    // FIXME: 7.0.0: use a java.util.Cleaner?
     private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
     private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
     private final Cache<SourceIdentifier, T> cache;
@@ -65,7 +67,7 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
             cache.put(source.getIdentifier(), source);
 
             final SchemaSourceRegistration<T> reg = register(source.getIdentifier());
-            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<T>(source, queue) {
+            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
                 @Override
                 public void finalizeReferent() {
                     reg.close();

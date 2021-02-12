@@ -29,7 +29,9 @@ public class PotentialSchemaSourceTest {
 
     @Mock
     public SourceIdentifier sourceIdentifier;
+    @SuppressWarnings("exports")
     public PotentialSchemaSource<TestSchemaSourceRepresentation> source;
+    @SuppressWarnings("exports")
     public PotentialSchemaSource<TestSchemaSourceRepresentation> same;
 
     @Before
