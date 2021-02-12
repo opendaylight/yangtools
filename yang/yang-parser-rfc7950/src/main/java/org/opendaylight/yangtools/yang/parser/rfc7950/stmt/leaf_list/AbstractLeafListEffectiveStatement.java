@@ -30,15 +30,12 @@ import org.opendaylight.yangtools.yang.model.spi.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.UserOrderedMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 abstract class AbstractLeafListEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode,
             UserOrderedMixin<QName, LeafListStatement>, DataSchemaNodeMixin<QName, LeafListStatement>,
-            MustConstraintMixin<QName, LeafListStatement>, EffectiveStatementStateAware {
+            MustConstraintMixin<QName, LeafListStatement> {
     private final @NonNull Object substatements;
     private final @NonNull Immutable path;
     private final @NonNull TypeDefinition<?> type;
@@ -97,11 +94,6 @@ abstract class AbstractLeafListEffectiveStatement
     @Override
     public final LeafListEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public final EffectiveStatementState toEffectiveStatementState() {
-        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override

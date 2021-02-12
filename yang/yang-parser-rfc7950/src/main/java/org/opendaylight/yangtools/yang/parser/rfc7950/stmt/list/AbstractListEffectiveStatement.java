@@ -33,9 +33,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.UserOrderedMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.WhenConditionMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 abstract class AbstractListEffectiveStatement
         extends DefaultWithDataTree<QName, ListStatement, ListEffectiveStatement>
@@ -45,8 +42,7 @@ abstract class AbstractListEffectiveStatement
             DataSchemaNodeMixin<QName, ListStatement>, UserOrderedMixin<QName, ListStatement>,
             DataNodeContainerMixin<QName, ListStatement>, WhenConditionMixin<QName, ListStatement>,
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
-            ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement>,
-            EffectiveStatementStateAware {
+            ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
     private final @NonNull Object substatements;
     private final @NonNull Immutable path;
@@ -117,11 +113,6 @@ abstract class AbstractListEffectiveStatement
     @Override
     public final ListEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public final EffectiveStatementState toEffectiveStatementState() {
-        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override
