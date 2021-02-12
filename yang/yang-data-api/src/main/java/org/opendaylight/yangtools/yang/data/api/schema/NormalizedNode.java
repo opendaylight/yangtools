@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -70,4 +71,6 @@ public interface NormalizedNode extends Identifiable<PathArgument> {
      * @return Returned value of this node.
      */
     @NonNull Object body();
+
+    Supplier<String> prettyTree();
 }
