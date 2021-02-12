@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -58,5 +59,17 @@ public final class ImmutableMountPointNode extends AbstractIdentifiable<PathArgu
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return super.addToStringAttributes(helper).add("delegate", delegate);
+    }
+
+    @Override
+    public @NonNull Supplier<String> prettyTree() {
+        // not implemented for ImmutableMountPointNode
+        return this::toString;
+    }
+
+    @Override
+    public @NonNull Supplier<String> prettyTree(final PathArgument parentIdentifier, final int initialOffset) {
+        // not implemented for ImmutableMountPointNode
+        return this::toString;
     }
 }
