@@ -13,6 +13,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.PrettyTree;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -27,6 +28,11 @@ public abstract class AbstractNormalizedNode<I extends PathArgument, T extends N
         extends AbstractIdentifiable<PathArgument, I> implements NormalizedNode, Immutable {
     protected AbstractNormalizedNode(final I identifier) {
         super(identifier);
+    }
+
+    @Override
+    public final PrettyTree prettyTree() {
+        return new NormalizedNodePrettyTree(this);
     }
 
     @Override
