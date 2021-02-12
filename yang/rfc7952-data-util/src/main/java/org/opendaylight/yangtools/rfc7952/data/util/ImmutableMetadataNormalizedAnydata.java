@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 @Beta
 @NonNullByDefault
@@ -27,18 +26,17 @@ public final class ImmutableMetadataNormalizedAnydata extends ImmutableNormalize
         implements MetadataNormalizedAnydata {
     private final NormalizedMetadata metadata;
 
-    public ImmutableMetadataNormalizedAnydata(final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode, final NormalizedNode data, final NormalizedMetadata metadata) {
-        super(schemaContext, contextNode, data);
+    public ImmutableMetadataNormalizedAnydata(final EffectiveStatementInference inference, final NormalizedNode data,
+            final NormalizedMetadata metadata) {
+        super(inference, data);
         this.metadata = requireNonNull(metadata);
     }
 
-    public static ImmutableNormalizedAnydata ofOptional(final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode, final NormalizedNode data,
-            final Optional<NormalizedMetadata> metadata) {
+    public static ImmutableNormalizedAnydata ofOptional(final EffectiveStatementInference inference,
+            final NormalizedNode data, final Optional<NormalizedMetadata> metadata) {
         return metadata.isPresent()
-                ? new ImmutableMetadataNormalizedAnydata(schemaContext, contextNode, data, metadata.get())
-                        : new ImmutableNormalizedAnydata(schemaContext, contextNode, data);
+                ? new ImmutableMetadataNormalizedAnydata(inference, data, metadata.get())
+                        : new ImmutableNormalizedAnydata(inference, data);
     }
 
     @Override

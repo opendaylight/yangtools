@@ -19,8 +19,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractNormalizableAnydata;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.xml.sax.SAXException;
 
 /**
@@ -49,11 +48,11 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
     }
 
     @Override
-    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode) throws IOException {
+    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final EffectiveStatementInference inference)
+            throws IOException {
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(streamWriter, schemaContext, contextNode);
+            xmlParser = XmlParserStream.create(streamWriter, inference);
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }

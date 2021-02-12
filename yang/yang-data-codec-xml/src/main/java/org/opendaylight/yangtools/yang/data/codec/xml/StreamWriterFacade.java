@@ -22,7 +22,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -284,9 +283,7 @@ final class StreamWriterFacade extends ValueWriter {
     void emitNormalizedAnydata(final NormalizedAnydata anydata) throws XMLStreamException {
         flushElement();
         try {
-            // FIXME: we need a proper SchemaInferenceStack for this
-            anydata.writeTo(XMLStreamNormalizedNodeStreamWriter.create(writer, anydata.getEffectiveModelContext(),
-                new SingleChildDataNodeContainer(anydata.getContextNode())));
+            anydata.writeTo(XMLStreamNormalizedNodeStreamWriter.create(writer, anydata.getInference()));
         } catch (IOException e) {
             throw new XMLStreamException("Failed to emit anydata " + anydata, e);
         }

@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationExcep
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 /**
  * Abstract base class for implementing the NormalizableAnydata interface. This class provides the binding to
@@ -28,18 +27,17 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 @NonNullByDefault
 public abstract class AbstractNormalizableAnydata implements NormalizableAnydata {
     @Override
-    public final ImmutableNormalizedAnydata normalizeTo(final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode) throws AnydataNormalizationException {
+    public final ImmutableNormalizedAnydata normalizeTo(final EffectiveStatementInference inference)
+            throws AnydataNormalizationException {
         final NormalizedNodeMetadataResult result = new NormalizedNodeMetadataResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         try {
-            writeTo(streamWriter, schemaContext, contextNode);
+            writeTo(streamWriter, inference);
         } catch (IOException e) {
             throw new AnydataNormalizationException("Failed to normalize anydata", e);
         }
 
-        return ImmutableMetadataNormalizedAnydata.ofOptional(schemaContext, contextNode, result.getResult(),
-            result.getMetadata());
+        return ImmutableMetadataNormalizedAnydata.ofOptional(inference, result.getResult(), result.getMetadata());
     }
 
     @Override
@@ -49,6 +47,6 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
 
     protected abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 
-    protected abstract void writeTo(NormalizedNodeStreamWriter streamWriter, EffectiveModelContext schemaContext,
-            DataSchemaNode contextNode) throws IOException;
+    protected abstract void writeTo(NormalizedNodeStreamWriter streamWriter, EffectiveStatementInference inference)
+        throws IOException;
 }
