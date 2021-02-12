@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -44,6 +45,7 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      *
      * @param sourceIdentifier source identifier
      * @return future source representation, if supplied YANG module is available
+     * @throws NullPointerException if {@code sourceIdentifier} is null
      */
-    ListenableFuture<? extends T> getSource(SourceIdentifier sourceIdentifier);
+    @NonNull ListenableFuture<? extends T> getSource(@NonNull SourceIdentifier sourceIdentifier);
 }

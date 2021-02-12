@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
-import org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.AntlrSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;

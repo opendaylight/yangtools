@@ -5,16 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.util;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 
 public abstract class AbstractSchemaSourceRegistration<T extends SchemaSourceRepresentation>
         extends AbstractObjectRegistration<PotentialSchemaSource<T>> implements SchemaSourceRegistration<T> {
