@@ -126,8 +126,8 @@ public class YangParserTest {
         // test SchemaNode args
         assertEquals(QName.create(BAR, "ifEntry"), ifEntry.getQName());
 
-        final SchemaPath expectedPath = TestUtils.createPath(true, BAR, "interfaces", "ifEntry");
-        assertPathEquals(expectedPath, ifEntry);
+        assertPathEquals(SchemaPath.create(true, QName.create(BAR, "interfaces"), QName.create(BAR, "ifEntry")),
+            ifEntry);
         assertFalse(ifEntry.getDescription().isPresent());
         assertFalse(ifEntry.getReference().isPresent());
         assertEquals(Status.CURRENT, ifEntry.getStatus());
