@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.collect.UnmodifiableIterator;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -473,7 +474,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param previous Previous path argument
          * @return String representation
          */
-        @NonNull String toRelativeString(PathArgument previous);
+        @NonNull String toRelativeString(@Nullable PathArgument previous);
     }
 
     private abstract static class AbstractPathArgument implements PathArgument {
@@ -524,7 +525,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
+        public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
+            // augmented node has the same namespace as module it is declared in
+            if (previous instanceof AugmentationIdentifier) {
+                return getNodeType().getLocalName();
+            }
             if (previous instanceof AbstractPathArgument) {
                 final QNameModule mod = previous.getNodeType().getModule();
                 if (getNodeType().getModule().equals(mod)) {
@@ -532,7 +537,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
                 }
             }
 
-            return getNodeType().toString();
+            return toString();
         }
 
         abstract Object writeReplace();
@@ -823,8 +828,23 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public final String toRelativeString(final PathArgument previous) {
-            return super.toRelativeString(previous) + '[' + asMap() + ']';
+        public final @NonNull String toRelativeString(final @Nullable PathArgument previous) {
+            if (previous instanceof AbstractPathArgument) {
+                final StringBuilder sb = new StringBuilder(super.toRelativeString(previous)).append('[').append('{');
+                final Iterator<Entry<QName, Object>> it = entrySet().iterator();
+                while (it.hasNext()) {
+                    final Entry<QName, Object> entry = it.next();
+                    sb.append(entry.getKey().toRelativeString(previous.getNodeType()))
+                            .append('=').append(entry.getValue());
+                    if (it.hasNext()) {
+                        sb.append(',').append(' ');
+                    }
+                }
+                sb.append('}').append(']');
+                return sb.toString();
+            }
+
+            return toString();
         }
 
         @Override
@@ -872,7 +892,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
+        public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
             return super.toRelativeString(previous) + '[' + value + ']';
         }
 
@@ -975,7 +995,20 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
+        public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
+            if (previous instanceof AbstractPathArgument) {
+                final StringBuilder sb = new StringBuilder("AugmentationIdentifier{childNames=").append('[');
+                final UnmodifiableIterator<QName> it = childNames.iterator();
+                while (it.hasNext()) {
+                    sb.append(it.next().toRelativeString(((AbstractPathArgument) previous).nodeType));
+                    if (it.hasNext()) {
+                        sb.append(',').append(' ');
+                    }
+                }
+                sb.append(']').append('}');
+                return sb.toString();
+            }
+
             return toString();
         }
 
