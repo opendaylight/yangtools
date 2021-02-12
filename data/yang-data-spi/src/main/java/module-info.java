@@ -13,6 +13,7 @@ module org.opendaylight.yangtools.yang.data.spi {
     requires transitive org.opendaylight.yangtools.yang.data.api;
     requires transitive org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.slf4j;
 
     // Annotations
