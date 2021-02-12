@@ -21,9 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 @Beta
 public interface EffectiveStatementInference extends EffectiveModelContextProvider, Immutable {
     /**
-     * An {@code Unmodifiable} {@link List} of {@link EffectiveStatement}s, ordered in some meaningful way.
+     * An {@code Unmodifiable} {@link List} of {@link EffectiveStatement}s, ordered in some meaningful way. Precise
+     * semantics of the statement order is clarified by individual {@link EffectiveStatementInference} specializations.
      *
+     * @see SchemaTreeInference
      * @return A List of EffectiveStatements
      */
-    @NonNull List<@NonNull EffectiveStatement<?, ?>> statementPath();
+    @NonNull List<? extends @NonNull EffectiveStatement<?, ?>> statementPath();
 }
