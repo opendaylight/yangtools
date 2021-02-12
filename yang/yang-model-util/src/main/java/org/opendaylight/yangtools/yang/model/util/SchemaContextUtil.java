@@ -20,11 +20,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -44,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
@@ -56,13 +53,10 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
@@ -347,30 +341,6 @@ public final class SchemaContextUtil {
             }
         }
         return null;
-    }
-
-    /**
-     * Extract the identifiers of all modules and submodules which were used to create a particular SchemaContext.
-     *
-     * @param context SchemaContext to be examined
-     * @return Set of ModuleIdentifiers.
-     */
-    public static Set<SourceIdentifier> getConstituentModuleIdentifiers(final SchemaContext context) {
-        final Set<SourceIdentifier> ret = new HashSet<>();
-
-        for (Module module : context.getModules()) {
-            ret.add(moduleToIdentifier(module));
-
-            for (Submodule submodule : module.getSubmodules()) {
-                ret.add(moduleToIdentifier(submodule));
-            }
-        }
-
-        return ret;
-    }
-
-    private static SourceIdentifier moduleToIdentifier(final ModuleLike module) {
-        return RevisionSourceIdentifier.create(module.getName(), module.getRevision());
     }
 
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
