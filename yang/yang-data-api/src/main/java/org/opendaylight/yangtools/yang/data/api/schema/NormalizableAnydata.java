@@ -9,8 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 /**
  * An {@link AnydataNode#bodyObjectModel() anydata value object model} which can be normalized to
@@ -20,14 +19,12 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 @NonNullByDefault
 public interface NormalizableAnydata {
     /**
-     * Attempt to interpret this anydata content in the context of specified tree and node.
+     * Attempt to interpret this anydata content in the context of specified {@link EffectiveStatementInference}.
      *
-     * @param schemaContext Schema context
-     * @param contextNode Corresponding schema node
+     * @param inference effective statement inference
      * @return Normalized anydata instance
-     * @throws NullPointerException if any argument is null
+     * @throws NullPointerException if {@code inference} is null
      * @throws AnydataNormalizationException if this data cannot be interpreted in the requested context
      */
-    NormalizedAnydata normalizeTo(EffectiveModelContext schemaContext, DataSchemaNode contextNode)
-            throws AnydataNormalizationException;
+    NormalizedAnydata normalizeTo(EffectiveStatementInference inference) throws AnydataNormalizationException;
 }

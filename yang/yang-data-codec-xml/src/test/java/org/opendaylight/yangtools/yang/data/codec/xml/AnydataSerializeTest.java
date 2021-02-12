@@ -44,6 +44,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -226,11 +228,14 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             xmlStreamWriter, SCHEMA_CONTEXT);
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
             xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(ImmutableContainerNodeBuilder.create().withNodeIdentifier(CONT_NODEID)
-            .withChild(ImmutableAnydataNodeBuilder.create(NormalizedAnydata.class).withNodeIdentifier(CONT_ANY_NODEID)
-                .withValue(new ImmutableNormalizedAnydata(SCHEMA_CONTEXT,
-                    SCHEMA_CONTEXT.findDataChildByName(CONT_QNAME).get(), ImmutableContainerNodeBuilder.create()
-                    .withNodeIdentifier(CONT_NODEID).build())).build())
+        normalizedNodeWriter.write(ImmutableContainerNodeBuilder.create()
+            .withNodeIdentifier(CONT_NODEID)
+            .withChild(ImmutableAnydataNodeBuilder.create(NormalizedAnydata.class)
+                .withNodeIdentifier(CONT_ANY_NODEID)
+                .withValue(new ImmutableNormalizedAnydata(
+                    DefaultSchemaTreeInference.of(SCHEMA_CONTEXT, Absolute.of(CONT_QNAME)),
+                    ImmutableContainerNodeBuilder.create().withNodeIdentifier(CONT_NODEID).build()))
+                .build())
             .build());
         normalizedNodeWriter.flush();
 

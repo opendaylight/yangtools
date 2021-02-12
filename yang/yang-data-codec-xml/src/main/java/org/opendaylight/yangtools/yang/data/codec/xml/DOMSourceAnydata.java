@@ -13,14 +13,16 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractNormalizableAnydata;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.xml.sax.SAXException;
 
 /**
@@ -49,11 +51,20 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
     }
 
     @Override
-    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final EffectiveModelContext schemaContext,
-            final DataSchemaNode contextNode) throws IOException {
+    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final EffectiveStatementInference inference)
+            throws IOException {
+        final List<? extends EffectiveStatement<?, ?>> path = inference.statementPath();
+        if (path.isEmpty()) {
+            throw new IOException("Cannot handle empty inference " + inference);
+        }
+        final EffectiveStatement<?, ?> stmt = path.get(path.size() - 1);
+        if (!(stmt instanceof SchemaNode)) {
+            throw new IOException("Unhandled statement " + stmt);
+        }
+
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(streamWriter, schemaContext, contextNode);
+            xmlParser = XmlParserStream.create(streamWriter, inference.getEffectiveModelContext(), (SchemaNode) stmt);
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }
