@@ -14,6 +14,7 @@ import com.google.common.cache.LoadingCache;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -85,7 +86,7 @@ public final class MountPointIdentifier extends AbstractIdentifier<QName> implem
     }
 
     @Override
-    public String toRelativeString(final @Nullable PathArgument previous) {
+    public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
         return toString();
     }
 }
