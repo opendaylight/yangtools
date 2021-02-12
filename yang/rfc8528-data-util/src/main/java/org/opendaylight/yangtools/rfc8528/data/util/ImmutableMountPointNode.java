@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.spi.node.NormalizedNodePrettyTree;
 
 @Beta
 public final class ImmutableMountPointNode extends AbstractIdentifiable<PathArgument, MountPointIdentifier>
@@ -53,6 +55,11 @@ public final class ImmutableMountPointNode extends AbstractIdentifiable<PathArgu
     @Override
     public DataContainerChild childByArg(final PathArgument child) {
         return delegate.childByArg(child);
+    }
+
+    @Override
+    public Supplier<String> prettyTree() {
+        return new NormalizedNodePrettyTree(this);
     }
 
     @Override
