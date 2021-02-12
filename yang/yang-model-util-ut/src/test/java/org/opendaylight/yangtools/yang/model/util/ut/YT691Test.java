@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.stmt;
+package org.opendaylight.yangtools.yang.model.util.ut;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
@@ -16,16 +15,16 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug6961Test {
-
+public class YT691Test {
     @Test
-    public void testBug6961SchemaContext() throws Exception {
+    public void testGetAllModuleIdentifiers() {
         final Optional<Revision> revision = Revision.ofNullable("2016-01-01");
         final SourceIdentifier foo = RevisionSourceIdentifier.create("foo", revision);
         final SourceIdentifier sub1Foo = RevisionSourceIdentifier.create("sub1-foo", revision);
@@ -34,16 +33,11 @@ public class Bug6961Test {
         final SourceIdentifier sub1Bar = RevisionSourceIdentifier.create("sub1-bar", revision);
         final SourceIdentifier baz = RevisionSourceIdentifier.create("baz", revision);
         final Set<SourceIdentifier> testSet = ImmutableSet.of(foo, sub1Foo, sub2Foo, bar, sub1Bar, baz);
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6961/");
-        assertNotNull(context);
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/yt691");
         final Set<SourceIdentifier> allModuleIdentifiers = SchemaContextUtil.getConstituentModuleIdentifiers(context);
-        assertNotNull(allModuleIdentifiers);
         assertEquals(6, allModuleIdentifiers.size());
-        final SchemaContext schemaContext = SimpleSchemaContext.forModules(context.getModules());
-        assertNotNull(schemaContext);
         final Set<SourceIdentifier> allModuleIdentifiersResolved = SchemaContextUtil.getConstituentModuleIdentifiers(
-            schemaContext);
-        assertNotNull(allModuleIdentifiersResolved);
+            SimpleSchemaContext.forModules(context.getModules()));
         assertEquals(6, allModuleIdentifiersResolved.size());
         assertEquals(allModuleIdentifiersResolved, allModuleIdentifiers);
         assertEquals(allModuleIdentifiers, testSet);
