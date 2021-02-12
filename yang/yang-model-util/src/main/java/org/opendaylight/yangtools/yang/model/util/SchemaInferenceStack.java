@@ -21,6 +21,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -181,6 +182,51 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         currentModule = null;
         groupingDepth = 0;
         clean = true;
+    }
+
+    /**
+     * Lookup a {@code choice} by its node identifier and push it to the stack. This step is very similar to
+     * {@link #enterSchemaTree(QName)}, except it handles the use case where traversal ignores actual {@code case}
+     * intermediate schema tree children.
+     *
+     * @param nodeIdentifier Node identifier of the grouping to enter
+     * @return Resolved choice
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding choice cannot be found
+     */
+    public @NonNull ChoiceEffectiveStatement enterChoice(final QName nodeIdentifier) {
+        final EffectiveStatement<QName, ?> parent = deque.peek();
+        if (parent instanceof ChoiceEffectiveStatement) {
+            return enterChoice((ChoiceEffectiveStatement) parent, nodeIdentifier);
+        }
+
+        // Fall back to schema tree lookup. Note if it results in non-choice, we rewind before reporting an error
+        final SchemaTreeEffectiveStatement<?> result = enterSchemaTree(nodeIdentifier);
+        if (result instanceof ChoiceEffectiveStatement) {
+            return (ChoiceEffectiveStatement) result;
+        }
+        exit();
+        throw new IllegalArgumentException("Choice " + nodeIdentifier + " not present");
+    }
+
+    // choice -> choice transition, we have to deal with intermediate case nodes
+    private @NonNull ChoiceEffectiveStatement enterChoice(final ChoiceEffectiveStatement parent,
+            final QName nodeIdentifier) {
+        for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
+            if (stmt instanceof CaseEffectiveStatement) {
+                final Optional<ChoiceEffectiveStatement> optMatch = ((CaseEffectiveStatement) stmt)
+                    .findSchemaTreeNode(nodeIdentifier)
+                    .filter(ChoiceEffectiveStatement.class::isInstance)
+                    .map(ChoiceEffectiveStatement.class::cast);
+                if (optMatch.isPresent()) {
+                    final SchemaTreeEffectiveStatement<?> match = optMatch.orElseThrow();
+                    deque.push(match);
+                    clean = false;
+                    return (ChoiceEffectiveStatement) match;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Choice " + nodeIdentifier + " not present");
     }
 
     /**
