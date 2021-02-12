@@ -21,6 +21,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -181,6 +182,51 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         currentModule = null;
         groupingDepth = 0;
         clean = true;
+    }
+
+    /**
+     * Lookup a {@code choice} by its node identifier and push it to the stack. This step is very similar to
+     * {@link #enterSchemaTree(QName)}, except it handles the use case where traversal ignores actual {@code case}
+     * intermediate schema tree children.
+     *
+     * @param nodeIdentifier Node identifier of the grouping to enter
+     * @return Resolved choice
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding choice cannot be found
+     */
+    public @NonNull ChoiceEffectiveStatement enterChoice(final QName nodeIdentifier) {
+        final EffectiveStatement<QName, ?> parent = deque.peek();
+        if (parent instanceof ChoiceEffectiveStatement) {
+            return enterChoice((ChoiceEffectiveStatement) parent, nodeIdentifier);
+        }
+
+        // Fall back to schema tree lookup. Note if it results in non-choice, we rewind before reporting an error
+        final SchemaTreeEffectiveStatement<?> result = enterSchemaTree(nodeIdentifier);
+        if (result instanceof ChoiceEffectiveStatement) {
+            return (ChoiceEffectiveStatement) result;
+        }
+        exit();
+        throw new IllegalArgumentException("Choice " + nodeIdentifier + " not present");
+    }
+
+    // choice -> choice transition, we have to deal with intermediate case nodes
+    private @NonNull ChoiceEffectiveStatement enterChoice(final ChoiceEffectiveStatement parent,
+            final QName nodeIdentifier) {
+        for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
+            if (stmt instanceof CaseEffectiveStatement) {
+                final Optional<ChoiceEffectiveStatement> optMatch = ((CaseEffectiveStatement) stmt)
+                    .findSchemaTreeNode(nodeIdentifier)
+                    .filter(ChoiceEffectiveStatement.class::isInstance)
+                    .map(ChoiceEffectiveStatement.class::cast);
+                if (optMatch.isPresent()) {
+                    final SchemaTreeEffectiveStatement<?> match = optMatch.orElseThrow();
+                    deque.push(match);
+                    clean = false;
+                    return (ChoiceEffectiveStatement) match;
+                }
+            }
+        }
+        throw new IllegalArgumentException("Choice " + nodeIdentifier + " not present");
     }
 
     /**
@@ -383,7 +429,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final EffectiveStatement<QName, ?> stmt = it.next();
             // Order of checks is significant
             if (stmt instanceof DataTreeEffectiveStatement) {
-                tmp.resolveSchemaTreeSteps(stmt.argument());
+                tmp.resolveDataTreeSteps(stmt.argument());
+            } else if (stmt instanceof ChoiceEffectiveStatement) {
+                tmp.resolveChoiceSteps(stmt.argument());
             } else if (stmt instanceof SchemaTreeEffectiveStatement) {
                 tmp.enterSchemaTree(stmt.argument());
             } else if (stmt instanceof GroupingEffectiveStatement) {
@@ -398,20 +446,45 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return tmp.deque.descendingIterator();
     }
 
-    private void resolveSchemaTreeSteps(final @NonNull QName nodeIdentifier) {
+    private void resolveChoiceSteps(final @NonNull QName nodeIdentifier) {
+        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        if (parent instanceof ChoiceEffectiveStatement) {
+            resolveChoiceSteps((ChoiceEffectiveStatement) parent, nodeIdentifier);
+        } else {
+            enterSchemaTree(nodeIdentifier);
+        }
+    }
+
+    private void resolveChoiceSteps(final @NonNull ChoiceEffectiveStatement parent,
+            final @NonNull QName nodeIdentifier) {
+        for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
+            if (stmt instanceof CaseEffectiveStatement) {
+                final CaseEffectiveStatement caze = (CaseEffectiveStatement) stmt;
+                final SchemaTreeEffectiveStatement<?> found = caze.findSchemaTreeNode(nodeIdentifier).orElse(null);
+                if (found instanceof ChoiceEffectiveStatement) {
+                    deque.push(caze);
+                    deque.push(found);
+                    return;
+                }
+            }
+        }
+        throw new VerifyException("Failed to resolve " + nodeIdentifier + " in " + parent);
+    }
+
+    private void resolveDataTreeSteps(final @NonNull QName nodeIdentifier) {
         final EffectiveStatement<?, ?> parent = deque.peekFirst();
         if (parent != null) {
             verify(parent instanceof SchemaTreeAwareEffectiveStatement, "Unexpected parent %s", parent);
-            resolveSchemaTreeSteps((SchemaTreeAwareEffectiveStatement<?, ?>)parent, nodeIdentifier);
+            resolveDataTreeSteps((SchemaTreeAwareEffectiveStatement<?, ?>) parent, nodeIdentifier);
             return;
         }
 
         final ModuleEffectiveStatement module = getModule(nodeIdentifier);
-        resolveSchemaTreeSteps(module, nodeIdentifier);
+        resolveDataTreeSteps(module, nodeIdentifier);
         currentModule = module;
     }
 
-    private void resolveSchemaTreeSteps(final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent,
+    private void resolveDataTreeSteps(final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
         // The algebra of identifiers in 'schema tree versus data tree':
         // - data tree parents are always schema tree parents
