@@ -67,7 +67,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
 
         final SchemaInferenceStack stack = SchemaInferenceStack.ofInstantiatedPath(schemaContext, path);
         if (!stack.isEmpty()) {
-            final EffectiveStatement<QName, ?> current = stack.currentStatement();
+            final EffectiveStatement<?, ?> current = stack.currentStatement();
             // FIXME: this should be one of NormalizedNodeContainer/NotificationDefinition/OperationDefinition
             checkArgument(current instanceof SchemaNode, "Instantiating at %s is not supported", current);
             root = (SchemaNode) current;
