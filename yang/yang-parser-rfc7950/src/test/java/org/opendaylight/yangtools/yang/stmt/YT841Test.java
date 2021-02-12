@@ -7,33 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 public class YT841Test {
-    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2018-01-02"));
+    private static final QName FOO = QName.create("foo", "2018-01-02", "foo");
 
     @Test
     public void testFindDataSchemaNode() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/YT841/");
-        final Module foo = context.findModule(FOO).get();
-
-        final SchemaNode target = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true,
-                QName.create(FOO, "foo"),
-                QName.create(FOO, "foo"),
-                QName.create(FOO, "foo"),
-                QName.create(FOO, "input")));
-        assertNotNull(target);
-
+        final SchemaTreeEffectiveStatement<?> input = StmtTestUtils.parseYangSources("/bugs/YT841/")
+            .getModuleStatement(FOO)
+            .findSchemaTreeNode(FOO, FOO, FOO, QName.create(FOO, "input"))
+            .orElse(null);
+        assertThat(input, instanceOf(InputEffectiveStatement.class));
     }
 }
