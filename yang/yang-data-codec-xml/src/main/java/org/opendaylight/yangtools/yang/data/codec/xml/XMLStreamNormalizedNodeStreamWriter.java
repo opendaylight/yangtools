@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -75,6 +76,21 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
             SchemaTracker.create(new SchemaInferenceStack(context)));
     }
+
+    /**
+     * Create a new writer with the specified context and rooted at the specified node.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link EffectiveModelContext}.
+     * @param rootNode Root node
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final EffectiveStatementInference inference) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, inference.getEffectiveModelContext(),
+            SchemaTracker.create(SchemaInferenceStack.ofInference(inference)));
+    }
+
 
     /**
      * Create a new writer with the specified context and rooted at the specified node.
