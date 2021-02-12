@@ -19,19 +19,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -125,14 +121,6 @@ public final class TestUtils {
         return null;
     }
 
-    public static SchemaPath createPath(final boolean absolute, final QNameModule module, final String... names) {
-        List<QName> path = new ArrayList<>(names.length);
-        for (String name : names) {
-            path.add(QName.create(module, name));
-        }
-        return SchemaPath.create(path, absolute);
-    }
-
     /**
      * Test if node has augmenting flag set to expected value. In case this is
      * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
@@ -153,36 +141,6 @@ public final class TestUtils {
             for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
                 checkIsAugmenting(caseNode, expected);
             }
-        }
-    }
-
-    /**
-     * Check if node has addedByUses flag set to expected value. In case this is
-     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
-     *
-     * @param node
-     *            node to check
-     * @param expected
-     *            expected value
-     */
-    public static void checkIsAddedByUses(final DataSchemaNode node, final boolean expected) {
-        assertEquals(expected, node.isAddedByUses());
-        if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node)
-                    .getChildNodes()) {
-                checkIsAddedByUses(child, expected);
-            }
-        } else if (node instanceof ChoiceSchemaNode) {
-            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
-                checkIsAddedByUses(caseNode, expected);
-            }
-        }
-    }
-
-    public static void checkIsAddedByUses(final GroupingDefinition node, final boolean expected) {
-        assertEquals(expected, node.isAddedByUses());
-        for (DataSchemaNode child : node.getChildNodes()) {
-            checkIsAddedByUses(child, expected);
         }
     }
 
