@@ -357,6 +357,24 @@
 
                         <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/8.1.0/</link>
                     </links>
+                    <!-- FIXME: remove this when odlparent provides this -->
+                    <tags>
+                        <tag>
+                            <name>apiNote</name>
+                            <placement>a</placement>
+                            <head>API Note:</head>
+                        </tag>
+                        <tag>
+                            <name>implSpec</name>
+                            <placement>a</placement>
+                            <head>Implementation Requirements:</head>
+                        </tag>
+                        <tag>
+                            <name>implNote</name>
+                            <placement>a</placement>
+                            <head>Implementation Note:</head>
+                        </tag>
+                    </tags>
                     <groups>
                         <group>
                             <title>Common concepts</title>
