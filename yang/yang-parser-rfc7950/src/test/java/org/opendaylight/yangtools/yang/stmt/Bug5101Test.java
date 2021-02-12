@@ -10,49 +10,49 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 
+import java.util.Iterator;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 public class Bug5101Test {
-    private static final String NS = "foo";
-    private static final String REV = "2016-01-29";
-
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5101");
-        assertNotNull(context);
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/bug5101.yang")
+            .getModuleStatement(QName.create("foo", "2016-01-29", "foo"));
 
-        QName grp = QName.create(NS, REV, "my-grouping");
-        QName myContainer = QName.create(NS, REV, "my-container");
-        QName root = QName.create(NS, REV, "root");
+        final ContainerEffectiveStatement myContainerInGrouping = module
+            .findFirstEffectiveSubstatement(GroupingEffectiveStatement.class).orElseThrow()
+            .findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).orElse(null);
+        assertThat(myContainerInGrouping, instanceOf(ContainerSchemaNode.class));
+        assertEquals(Status.DEPRECATED, ((ContainerSchemaNode) myContainerInGrouping).getStatus());
 
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, grp, myContainer));
-        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
-        ContainerSchemaNode myContainerInGrouping = (ContainerSchemaNode) findDataSchemaNode;
-        assertEquals(Status.DEPRECATED, myContainerInGrouping.getStatus());
+        // This relies on schema definition order
+        final Iterator<ContainerEffectiveStatement> containers =
+            module.streamEffectiveSubstatements(ContainerEffectiveStatement.class)
+            .collect(Collectors.toList()).iterator();
 
-        findDataSchemaNode = context.findDataTreeChild(root, myContainer).get();
-        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
-        ContainerSchemaNode myContainerInRoot = (ContainerSchemaNode) findDataSchemaNode;
-        assertEquals(Status.DEPRECATED, myContainerInRoot.getStatus());
+        final ContainerEffectiveStatement root = containers.next();
+        assertThat(root, instanceOf(ContainerSchemaNode.class));
+        assertEquals(Status.CURRENT, ((ContainerSchemaNode) root).getStatus());
 
-        findDataSchemaNode = context.findDataTreeChild(myContainer).get();
-        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
-        ContainerSchemaNode myContainerInModule = (ContainerSchemaNode) findDataSchemaNode;
-        assertEquals(Status.DEPRECATED, myContainerInModule.getStatus());
+        final ContainerEffectiveStatement rootMyContainer = root
+            .streamEffectiveSubstatements(ContainerEffectiveStatement.class)
+            .findAny().orElse(null);
+        assertThat(rootMyContainer, instanceOf(ContainerSchemaNode.class));
+        assertEquals(Status.DEPRECATED, ((ContainerSchemaNode) rootMyContainer).getStatus());
 
-        findDataSchemaNode = context.findDataTreeChild(root).get();
-        assertThat(findDataSchemaNode, instanceOf(ContainerSchemaNode.class));
-        ContainerSchemaNode rootContainer = (ContainerSchemaNode) findDataSchemaNode;
-        assertEquals(Status.CURRENT, rootContainer.getStatus());
+        final ContainerEffectiveStatement myContainer = containers.next();
+        assertFalse(containers.hasNext());
+        assertThat(myContainer, instanceOf(ContainerSchemaNode.class));
+        assertEquals(Status.DEPRECATED, ((ContainerSchemaNode) myContainer).getStatus());
+
     }
 }

@@ -9,19 +9,18 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class Bug6771Test {
-    private static final String NS = "http://www.example.com/typedef-bug";
+    private static final QNameModule NS = QNameModule.create(XMLNamespace.of("http://www.example.com/typedef-bug"));
     private static final QName ROOT = QName.create(NS, "root");
     private static final QName CONT_B = QName.create(NS, "container-b");
     private static final QName LEAF_CONT_B = QName.create(NS, "leaf-container-b");
@@ -29,17 +28,17 @@ public class Bug6771Test {
 
     @Test
     public void augmentTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/augment");
-        assertNotNull(context);
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/bug6771/augment.yang")
+            .getModuleStatement(NS);
 
-        verifyLeafType(context.findDataTreeChild(ROOT, CONT_B, LEAF_CONT_B).get());
-        verifyLeafType(context.findDataTreeChild(ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B).get());
+        verifyLeafType(module, ROOT, CONT_B, LEAF_CONT_B);
+        verifyLeafType(module, ROOT, CONT_B, INNER_CONTAINER, LEAF_CONT_B);
     }
 
     @Test
     public void choiceCaseTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/choice-case");
-        assertNotNull(context);
+        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/bug6771/choice-case.yang")
+            .getModuleStatement(NS);
 
         final QName myChoice = QName.create(NS, "my-choice");
         final QName caseOne = QName.create(NS, "one");
@@ -49,23 +48,20 @@ public class Bug6771Test {
         final QName containerTwo = QName.create(NS, "container-two");
         final QName containerThree = QName.create(NS, "container-three");
 
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, myChoice, caseOne, containerOne, LEAF_CONT_B)));
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, myChoice, caseTwo, containerTwo, LEAF_CONT_B)));
-        verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, ROOT, myChoice, caseThree, containerThree, INNER_CONTAINER, LEAF_CONT_B)));
+        verifyLeafType(module, ROOT, myChoice, caseOne, containerOne, LEAF_CONT_B);
+        verifyLeafType(module, ROOT, myChoice, caseTwo, containerTwo, LEAF_CONT_B);
+        verifyLeafType(module, ROOT, myChoice, caseThree, containerThree, INNER_CONTAINER, LEAF_CONT_B);
     }
 
     @Test
     public void groupingTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/grouping");
-        assertNotNull(context);
-        verifyLeafType(context.findDataTreeChild(ROOT, CONT_B, LEAF_CONT_B).get());
+        verifyLeafType(StmtTestUtils.parseYangSource("/bugs/bug6771/grouping.yang").getModuleStatement(NS),
+            ROOT, CONT_B, LEAF_CONT_B);
     }
 
-    private static void verifyLeafType(final SchemaNode schemaNode) {
-        assertThat(schemaNode, instanceOf(LeafSchemaNode.class));
-        assertThat(((LeafSchemaNode) schemaNode).getType(), instanceOf(Uint32TypeDefinition.class));
+    private static void verifyLeafType(final ModuleEffectiveStatement module, final QName... qnames) {
+        final SchemaTreeEffectiveStatement<?> stmt = module.findSchemaTreeNode(qnames).orElse(null);
+        assertThat(stmt, instanceOf(LeafSchemaNode.class));
+        assertThat(((LeafSchemaNode) stmt).getType(), instanceOf(Uint32TypeDefinition.class));
     }
 }
