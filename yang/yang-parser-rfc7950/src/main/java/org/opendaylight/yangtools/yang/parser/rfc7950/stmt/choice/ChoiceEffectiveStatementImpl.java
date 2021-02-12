@@ -27,14 +27,11 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,
                    DataSchemaNodeMixin<QName, ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
-                   MandatoryMixin<QName, ChoiceStatement>, EffectiveStatementStateAware {
+                   MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
     private final @NonNull Immutable path;
@@ -99,11 +96,6 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     @Override
     public ChoiceEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public EffectiveStatementState toEffectiveStatementState() {
-        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override

@@ -22,11 +22,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationContainerMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
-        implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement>,
-                   EffectiveStatementStateAware {
+        implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
     private final @NonNull Immutable path;
     private final int flags;
 

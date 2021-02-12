@@ -23,11 +23,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
-        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement>,
-                   EffectiveStatementStateAware {
+        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
     private final @NonNull Immutable path;
     private final AnydataSchemaNode original;
     private final int flags;

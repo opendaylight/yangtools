@@ -20,13 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveSchemaTreeStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 
 class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
-        implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, OpaqueDataSchemaNodeMixin<AnyxmlStatement>,
-                   EffectiveStatementStateAware {
+        implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, OpaqueDataSchemaNodeMixin<AnyxmlStatement> {
     private final @NonNull Immutable path;
     private final AnyxmlSchemaNode original;
     private final int flags;
@@ -57,11 +53,6 @@ class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
     @Override
     public final AnyxmlEffectiveStatement asEffectiveStatement() {
         return this;
-    }
-
-    @Override
-    public final EffectiveStatementState toEffectiveStatementState() {
-        return new EffectiveSchemaTreeStatementState(path, flags);
     }
 
     @Override
