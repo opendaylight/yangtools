@@ -1,0 +1,111 @@
+/*
+ * Copyright (c) 2021 PANTHEON.tech s.r.o. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.spi.node;
+
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
+import java.util.Base64;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.function.Supplier;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
+
+@Beta
+public final class NormalizedNodePrettyTree implements Supplier<String> {
+    private final @NonNull NormalizedNode node;
+
+    public NormalizedNodePrettyTree(final @NonNull NormalizedNode node) {
+        this.node = requireNonNull(node);
+    }
+
+    @Override
+    public String get() {
+        return appendNode(new StringBuilder(), 0, null, node).toString();
+    }
+
+    @Override
+    public String toString() {
+        return get();
+    }
+
+    private static StringBuilder appendNode(final StringBuilder sb, final int indent, final QNameModule parentNamespace,
+            final NormalizedNode node) {
+        final String simpleName = node.contract().getSimpleName();
+        PrettyIndent.indent(sb, indent)
+            .append(simpleName.toLowerCase(Locale.ROOT).charAt(0))
+            .append(simpleName, 1, simpleName.length())
+            .append(' ');
+
+        final QNameModule currentNamespace;
+        if (node instanceof AugmentationNode) {
+            // Add identifier, but augmentations are special enough
+            currentNamespace = ((AugmentationNode) node).getIdentifier().getPossibleChildNames().iterator().next()
+                .getModule();
+            appendNamespace(sb, parentNamespace, currentNamespace);
+        } else {
+            final QName qname = node.getIdentifier().getNodeType();
+            currentNamespace = qname.getModule();
+            appendNamespace(sb, parentNamespace, currentNamespace);
+            sb.append(qname.getLocalName());
+        }
+
+        if (node instanceof NormalizedNodeContainer) {
+            final NormalizedNodeContainer<?> container = (NormalizedNodeContainer<?>) node;
+            sb.append(" {");
+
+            final Iterator<? extends NormalizedNode> it = container.body().iterator();
+            if (it.hasNext()) {
+                final int childIndent = indent + 1;
+                do {
+                    sb.append('\n');
+                    appendNode(sb, childIndent, currentNamespace, it.next());
+                } while (it.hasNext());
+
+                PrettyIndent.indent(sb.append('\n'), indent);
+            }
+            sb.append('}');
+        } else if (node instanceof ValueNode) {
+            sb.append('=');
+            final Object value = node.body();
+            if (value instanceof byte[]) {
+                sb.append("(byte[])").append(Base64.getEncoder().encodeToString((byte[]) value));
+            } else if (value instanceof String) {
+                appendString(sb, (String) value);
+            } else {
+                sb.append(value);
+            }
+        }
+
+        return sb;
+    }
+
+    private static void appendNamespace(final StringBuilder sb, final QNameModule parent, final QNameModule current) {
+        if (!current.equals(parent)) {
+            sb.append('(').append(current.getNamespace());
+            final Optional<Revision> rev = current.getRevision();
+            if (rev.isPresent()) {
+                sb.append('@').append(rev.orElseThrow());
+            }
+            sb.append(')');
+        }
+    }
+
+    private static void appendString(final StringBuilder sb, final String str) {
+        // TODO: do some escaping: '\r' '\n' '"' '\\' to make things even more zazzy
+        sb.append('"').append(str).append('"');
+    }
+}
