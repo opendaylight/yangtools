@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference;
+import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 
 /**
  * A state tracking utility for walking {@link EffectiveModelContext}'s contents along schema/grouping namespaces. This
@@ -61,7 +63,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * {@link #statementPath()} is implementation-specific.
      */
     @Beta
-    public static final class Inference extends AbstractEffectiveStatementInference {
+    public static final class Inference extends AbstractEffectiveStatementInference<EffectiveStatement<?, ?>> {
         private final ModuleEffectiveStatement currentModule;
         private final int groupingDepth;
         private final boolean clean;
@@ -162,8 +164,23 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         if (inference.statementPath().isEmpty()) {
             return new SchemaInferenceStack(inference.getEffectiveModelContext());
         }
+        if (inference instanceof SchemaTreeInference) {
+            return ofInference((SchemaTreeInference) inference);
+        }
         checkArgument(inference instanceof Inference, "Inference %s not supported", inference);
         return ((Inference) inference).toSchemaInferenceStack();
+    }
+
+    /**
+     * Create a new stack from an {@link SchemaTreeInference}.
+     *
+     * @param inference SchemaTreeInference to use for initialization
+     * @return A new stack
+     * @throws NullPointerException if {@code inference} is null
+     * @throws IllegalArgumentException if {@code inference} cannot be resolved to a valid stack
+     */
+    public static @NonNull SchemaInferenceStack ofInference(final SchemaTreeInference inference) {
+        return of(inference.getEffectiveModelContext(), inference.toSchemaNodeIdentifier());
     }
 
     /**
@@ -354,6 +371,16 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull Inference toInference() {
         return new Inference(effectiveModel, deque.descendingIterator(), currentModule, groupingDepth, clean);
+    }
+
+    /**
+     * Return an {@link SchemaTreeInference} equivalent of current state.
+     *
+     * @return An {@link SchemaTreeInference}
+     * @throws IllegalStateException if current state cannot be converted to a {@link SchemaTreeInference}
+     */
+    public @NonNull SchemaTreeInference toSchemaTreeInference() {
+        return DefaultSchemaTreeInference.of(getEffectiveModelContext(), toSchemaNodeIdentifier());
     }
 
     /**
