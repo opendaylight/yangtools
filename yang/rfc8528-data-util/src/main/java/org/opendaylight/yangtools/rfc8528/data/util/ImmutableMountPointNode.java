@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -53,6 +54,16 @@ public final class ImmutableMountPointNode extends AbstractIdentifiable<PathArgu
     @Override
     public DataContainerChild childByArg(final PathArgument child) {
         return delegate.childByArg(child);
+    }
+
+    @Override
+    public Supplier<String> prettyTree() {
+        return delegate.prettyTree();
+    }
+
+    @Override
+    public Supplier<String> prettyTree(final PathArgument parentIdentifier, final int initialOffset) {
+        return delegate.prettyTree(parentIdentifier, initialOffset);
     }
 
     @Override

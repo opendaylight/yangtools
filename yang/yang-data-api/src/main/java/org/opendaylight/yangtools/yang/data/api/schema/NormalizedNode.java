@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -69,4 +70,21 @@ public interface NormalizedNode extends Identifiable<PathArgument> {
      * @return Returned value of this node.
      */
     @NonNull Object body();
+
+    /**
+     * Return lazily generated pretty tree of {@code NormalizedNode} instance.
+     *
+     * @return Pretty tree {@code Supplier}
+     */
+    @NonNull Supplier<String> prettyTree();
+
+    /**
+     * Return lazily generated pretty tree of {@code NormalizedNode} instance relative to its parent
+     * identified by parentIdentifier indented by initialOffset.
+     *
+     * @param parentIdentifier {@code PathArgument} of this {@code NormalizedNode} parent
+     * @param initialOffset Initial indent used to write pretty tree
+     * @return Pretty tree {@code Supplier}
+     */
+    @NonNull Supplier<String> prettyTree(@NonNull PathArgument parentIdentifier, int initialOffset);
 }
