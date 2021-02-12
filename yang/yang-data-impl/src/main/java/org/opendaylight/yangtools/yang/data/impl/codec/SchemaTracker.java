@@ -70,7 +70,7 @@ public final class SchemaTracker {
             return new SchemaTracker(root.getEffectiveModelContext());
         }
 
-        final EffectiveStatement<QName, ?> current = root.currentStatement();
+        final EffectiveStatement<?, ?> current = root.currentStatement();
         checkArgument(current instanceof DataNodeContainer, "Cannot instantiate on %s", current);
         return new SchemaTracker((DataNodeContainer) current);
     }
@@ -126,7 +126,7 @@ public final class SchemaTracker {
     public static @NonNull SchemaTracker forOperation(final EffectiveModelContext context, final Absolute operation,
             final QName qname) {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context, operation);
-        final EffectiveStatement<QName, ?> current = stack.currentStatement();
+        final EffectiveStatement<?, ?> current = stack.currentStatement();
         checkArgument(current instanceof RpcEffectiveStatement || current instanceof ActionEffectiveStatement,
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
