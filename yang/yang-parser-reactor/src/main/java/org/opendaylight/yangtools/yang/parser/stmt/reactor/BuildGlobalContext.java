@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -277,18 +276,14 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 
-        try {
-            for (final SourceSpecificContext source : sources) {
-                final RootStatementContext<?, ?, ?> root = source.getRoot();
-                try {
-                    rootStatements.add(root.declared());
-                    rootEffectiveStatements.add(root.buildEffective());
-                } catch (final RuntimeException ex) {
-                    throw propagateException(source, ex);
-                }
+        for (final SourceSpecificContext source : sources) {
+            final RootStatementContext<?, ?, ?> root = source.getRoot();
+            try {
+                rootStatements.add(root.declared());
+                rootEffectiveStatements.add(root.buildEffective());
+            } catch (final RuntimeException ex) {
+                throw propagateException(source, ex);
             }
-        } finally {
-            RecursiveObjectLeaker.cleanup();
         }
 
         sealMutableStatements();
