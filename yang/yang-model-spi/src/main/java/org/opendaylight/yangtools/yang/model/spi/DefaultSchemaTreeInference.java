@@ -56,6 +56,8 @@ public final class DefaultSchemaTreeInference
             final QName qname = it.next();
             final SchemaTreeEffectiveStatement<?> found = parent.findSchemaTreeNode(qname).orElseThrow(
                 () -> new IllegalArgumentException("Cannot resolve step " + qname + " in " + builder.build()));
+            builder.add(found);
+
             if (it.hasNext()) {
                 checkArgument(found instanceof SchemaTreeAwareEffectiveStatement, "Cannot resolve steps %s past %s",
                     steps, found);

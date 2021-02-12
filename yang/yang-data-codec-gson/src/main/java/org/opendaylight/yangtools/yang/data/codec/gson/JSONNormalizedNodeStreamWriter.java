@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
@@ -16,6 +17,7 @@ import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -31,15 +33,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -433,9 +436,19 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeNormalizedAnydata(final NormalizedAnydata anydata) throws IOException {
+        final EffectiveStatementInference inference = anydata.getInference();
+        final List<? extends EffectiveStatement<?, ?>> path = inference.statementPath();
+        final DataNodeContainer parent;
+        if (path.size() > 1) {
+            final EffectiveStatement<?, ?> stmt = path.get(path.size() - 2);
+            verify(stmt instanceof DataNodeContainer, "Unexpected statement %s", stmt);
+            parent = (DataNodeContainer) stmt;
+        } else {
+            parent = inference.getEffectiveModelContext();
+        }
+
         anydata.writeTo(JSONNormalizedNodeStreamWriter.createNestedWriter(
-            codecs.rebaseTo(anydata.getEffectiveModelContext()),
-            new SingleChildDataNodeContainer(anydata.getContextNode()), context.getNamespace(), writer));
+            codecs.rebaseTo(inference.getEffectiveModelContext()), parent, context.getNamespace(), writer));
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {

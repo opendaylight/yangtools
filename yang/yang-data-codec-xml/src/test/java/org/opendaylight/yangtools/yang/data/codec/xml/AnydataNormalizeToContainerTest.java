@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
 
 public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
     @Test
@@ -55,7 +57,8 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
 
         //Normalize anydata content to specific container element
         DOMSourceAnydata domSourceAnydata = (DOMSourceAnydata) anydataNode.body();
-        NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(SCHEMA_CONTEXT, containerSchemaNode);
+        NormalizedAnydata normalizedAnydata = domSourceAnydata.normalizeTo(
+            DefaultSchemaTreeInference.of(SCHEMA_CONTEXT, Absolute.of(CONT_QNAME)));
         assertNotNull(normalizedAnydata);
     }
 }

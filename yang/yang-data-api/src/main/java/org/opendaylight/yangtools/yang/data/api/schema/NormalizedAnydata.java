@@ -13,8 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 
 /**
  * The contents of an {@code anydata} node in a normalized format. This representation acts as a schema-bound bridge
@@ -27,10 +26,20 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
  */
 @Beta
 @NonNullByDefault
-public interface NormalizedAnydata extends Immutable, EffectiveModelContextProvider {
+public interface NormalizedAnydata extends Immutable {
+    /**
+     * Return the {@link EffectiveStatementInference} which describes the structure returned by {@link #getData()}.
+     *
+     * @return An {@link EffectiveStatementInference}
+     */
+    EffectiveStatementInference getInference();
 
-    DataSchemaNode getContextNode();
-
+    /**
+     * Return the {@link NormalizedNode} representation of this node's data. Information about the corresponding schema
+     * is available via {@link #getInference()}.
+     *
+     * @return A {@link NormalizedNode}
+     */
     NormalizedNode getData();
 
     default void writeTo(final NormalizedNodeStreamWriter writer) throws IOException {
