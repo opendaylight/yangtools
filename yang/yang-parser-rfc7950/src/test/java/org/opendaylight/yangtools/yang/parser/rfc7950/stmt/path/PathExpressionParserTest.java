@@ -48,6 +48,7 @@ public class PathExpressionParserTest {
     @Mock
     public StatementSourceReference ref;
 
+    @SuppressWarnings("exports")
     public final PathExpressionParser parser = new PathExpressionParser();
 
     @Before

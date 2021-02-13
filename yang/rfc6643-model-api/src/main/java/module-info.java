@@ -11,4 +11,5 @@ module org.opendaylight.yangtools.rfc6643.model.api {
     exports org.opendaylight.yangtools.rfc6643.model.api;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.repo.api;
 }
