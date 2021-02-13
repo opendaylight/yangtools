@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
@@ -18,14 +21,26 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
  * Reasons for introduction of statement could be various, but most obvious one is explicit declaration in model source
  * text such as {@link DeclarationInTextSource}.
  */
-public interface StatementSourceReference {
+public abstract class StatementSourceReference implements Immutable {
     /**
-     * Returns source type.
+     * Returns the {@link StatementOrigin} associated with this reference.
      *
      * @return {@link StatementOrigin#DECLARATION} if statement was explicitly declared in YANG model source,
      *         {@link StatementOrigin#CONTEXT} if statement was inferred.
      */
-    @NonNull StatementOrigin statementOrigin();
+    public abstract @NonNull StatementOrigin statementOrigin();
+
+    /**
+     * Returns the {@link DeclarationReference} associated with this reference, if available.
+     *
+     * @implSpec
+     *     Default implementation returns null.
+     *
+     * @return A {@link DeclarationReference} or null.
+     */
+    public @Nullable DeclarationReference declarationReference() {
+        return null;
+    }
 
     /**
      * Returns human readable representation of statement source.
@@ -37,5 +52,5 @@ public interface StatementSourceReference {
      * @return human readable representation of statement source.
      */
     @Override
-    String toString();
+    public abstract @NonNull String toString();
 }

@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
  *       unable to create / derive from source.</li>
  * </ul>
  */
-public abstract class DeclarationInTextSource implements StatementSourceReference {
+public abstract class DeclarationInTextSource extends StatementSourceReference {
     private static class InSource extends DeclarationInTextSource {
         InSource(final String sourceName) {
             super(sourceName);
