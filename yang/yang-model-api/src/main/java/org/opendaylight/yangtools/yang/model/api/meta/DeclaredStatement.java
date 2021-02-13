@@ -54,6 +54,23 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     }
 
     /**
+     * Returns a {@link DeclarationReference} associated with this statement, if available.
+     *
+     * @apiNote
+     *     This method does not contribute any semantic information and is provided purely as a conduit for
+     *     implementation-specific information where a statement instance came from.
+     *
+     * @implSpec
+     *     The default implementation returns {@link Optional#empty()}.
+     *
+     * @return A {@link DeclarationReference} associated with this statement or {@link Optional#empty()}.
+     */
+    @Beta
+    default @NonNull Optional<DeclarationReference> declarationReference() {
+        return Optional.empty();
+    }
+
+    /**
      * Find the first effective substatement of specified type.
      *
      * @param <T> substatement type
