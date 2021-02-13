@@ -11,7 +11,6 @@ module org.opendaylight.yangtools.yang.model.api {
     exports org.opendaylight.yangtools.yang.model.api.stmt;
     exports org.opendaylight.yangtools.yang.model.api.stmt.compat;
     exports org.opendaylight.yangtools.yang.model.api.type;
-    exports org.opendaylight.yangtools.yang.model.repo.api;
     exports org.opendaylight.yangtools.yang.model.repo.spi;
 
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
