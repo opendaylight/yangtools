@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -51,11 +52,11 @@ public final class OrganizationStatementSupport
     @Override
     protected OrganizationEffectiveStatement createEffective(final OrganizationStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularOrganizationEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createOrganization(declared, substatements);
     }
 
     @Override
     protected OrganizationEffectiveStatement createEmptyEffective(final OrganizationStatement declared) {
-        return new EmptyOrganizationEffectiveStatement(declared);
+        return EffectiveStatements.createOrganization(declared);
     }
 }

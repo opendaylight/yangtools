@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -128,7 +129,6 @@ public final class IncludeStatementSupport
     @Override
     protected IncludeEffectiveStatement createEffective(final Current<String, IncludeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(stmt.declared())
-            : new RegularIncludeEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createInclude(stmt.declared(), substatements);
     }
 }

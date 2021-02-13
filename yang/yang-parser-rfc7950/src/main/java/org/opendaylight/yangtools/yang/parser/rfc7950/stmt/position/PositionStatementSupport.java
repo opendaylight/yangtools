@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -62,11 +63,11 @@ public final class PositionStatementSupport
     @Override
     protected PositionEffectiveStatement createEffective(final PositionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularPositionEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createPosition(declared, substatements);
     }
 
     @Override
     protected PositionEffectiveStatement createEmptyEffective(final PositionStatement declared) {
-        return new EmptyPositionEffectiveStatement(declared);
+        return EffectiveStatements.createPosition(declared);
     }
 }

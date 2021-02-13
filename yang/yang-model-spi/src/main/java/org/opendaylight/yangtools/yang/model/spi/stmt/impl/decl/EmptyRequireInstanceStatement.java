@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
 public final class EmptyRequireInstanceStatement extends ArgumentToString<Boolean> implements RequireInstanceStatement {
-    public EmptyRequireInstanceStatement(final Boolean argument) {
+    public static final @NonNull EmptyRequireInstanceStatement FALSE = new EmptyRequireInstanceStatement(false);
+    public static final @NonNull EmptyRequireInstanceStatement TRUE = new EmptyRequireInstanceStatement(true);
+
+    private EmptyRequireInstanceStatement(final boolean argument) {
         super(argument);
     }
 }

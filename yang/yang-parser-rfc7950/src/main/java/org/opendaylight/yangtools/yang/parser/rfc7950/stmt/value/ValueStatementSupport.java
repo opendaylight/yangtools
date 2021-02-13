@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -63,11 +64,11 @@ public final class ValueStatementSupport
     @Override
     protected ValueEffectiveStatement createEffective(final ValueStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularValueEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createValue(declared, substatements);
     }
 
     @Override
     protected ValueEffectiveStatement createEmptyEffective(@NonNull final ValueStatement declared) {
-        return new EmptyValueEffectiveStatement(declared);
+        return EffectiveStatements.createValue(declared);
     }
 }

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -26,8 +27,7 @@ public final class RequireInstanceStatementSupport
 
     private RequireInstanceStatementSupport() {
         super(YangStmtMapping.REQUIRE_INSTANCE,
-            new EmptyRequireInstanceEffectiveStatement(DeclaredStatements.createRequireInstance(Boolean.FALSE)),
-            new EmptyRequireInstanceEffectiveStatement(DeclaredStatements.createRequireInstance(Boolean.TRUE)),
+            EffectiveStatements.createRequireInstance(false), EffectiveStatements.createRequireInstance(true),
             StatementPolicy.contextIndependent());
     }
 
@@ -49,11 +49,11 @@ public final class RequireInstanceStatementSupport
     @Override
     protected RequireInstanceEffectiveStatement createEffective(final RequireInstanceStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularRequireInstanceEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createRequireInstance(declared, substatements);
     }
 
     @Override
-    protected EmptyRequireInstanceEffectiveStatement createEmptyEffective(final RequireInstanceStatement declared) {
-        return new EmptyRequireInstanceEffectiveStatement(declared);
+    protected RequireInstanceEffectiveStatement createEmptyEffective(final RequireInstanceStatement declared) {
+        return EffectiveStatements.createRequireInstance(declared);
     }
 }

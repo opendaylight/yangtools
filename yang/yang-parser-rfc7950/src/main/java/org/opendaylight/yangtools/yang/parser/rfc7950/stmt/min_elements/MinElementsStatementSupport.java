@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -62,11 +63,11 @@ public final class MinElementsStatementSupport
     @Override
     protected MinElementsEffectiveStatement createEffective(final MinElementsStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularMinElementsEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createMinElements(declared, substatements);
     }
 
     @Override
     protected MinElementsEffectiveStatement createEmptyEffective(final MinElementsStatement declared) {
-        return new EmptyMinElementsEffectiveStatement(declared);
+        return EffectiveStatements.createMinElements(declared);
     }
 }

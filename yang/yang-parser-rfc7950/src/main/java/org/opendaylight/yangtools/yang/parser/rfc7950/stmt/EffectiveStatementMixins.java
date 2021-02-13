@@ -473,7 +473,7 @@ public final class EffectiveStatementMixins {
      */
     public interface EffectiveStatementWithFlags<A, D extends DeclaredStatement<A>> extends Mixin<A, D> {
         /**
-         * Return flags assicated with this statements. Flags can be built using {@link FlagsBuilder}.
+         * Return flags associated with this statements. Flags can be built using {@link FlagsBuilder}.
          *
          * @return Flag field value (32 bits).
          */

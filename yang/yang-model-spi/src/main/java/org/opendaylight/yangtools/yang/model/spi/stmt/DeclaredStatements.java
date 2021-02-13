@@ -438,8 +438,8 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createFeature(argument) : new RegularFeatureStatement(argument, substatements);
     }
 
-    public static FractionDigitsStatement createFractionDigits(final Integer argument) {
-        return new EmptyFractionDigitsStatement(argument);
+    public static FractionDigitsStatement createFractionDigits(final int argument) {
+        return EmptyFractionDigitsStatement.of(argument);
     }
 
     public static FractionDigitsStatement createFractionDigits(final Integer argument,
@@ -736,8 +736,8 @@ public final class DeclaredStatements {
         return new RefineStatementImpl(rawArgument, argument, substatements);
     }
 
-    public static RequireInstanceStatement createRequireInstance(final Boolean argument) {
-        return new EmptyRequireInstanceStatement(argument);
+    public static RequireInstanceStatement createRequireInstance(final boolean argument) {
+        return argument ? EmptyRequireInstanceStatement.TRUE : EmptyRequireInstanceStatement.FALSE;
     }
 
     public static RequireInstanceStatement createRequireInstance(final Boolean argument,
@@ -776,7 +776,16 @@ public final class DeclaredStatements {
     }
 
     public static StatusStatement createStatus(final Status argument) {
-        return new EmptyStatusStatement(argument);
+        switch (argument) {
+            case CURRENT:
+                return EmptyStatusStatement.CURRENT;
+            case DEPRECATED:
+                return EmptyStatusStatement.DEPRECATED;
+            case OBSOLETE:
+                return EmptyStatusStatement.OBSOLETE;
+            default:
+                throw new IllegalStateException("Unhandled argument " + argument);
+        }
     }
 
     public static StatusStatement createStatus(final Status argument,
@@ -856,7 +865,14 @@ public final class DeclaredStatements {
     }
 
     public static YangVersionStatement createYangVersion(final YangVersion argument) {
-        return new EmptyYangVersionStatement(argument);
+        switch (argument) {
+            case VERSION_1:
+                return EmptyYangVersionStatement.VERSION_1;
+            case VERSION_1_1:
+                return EmptyYangVersionStatement.VERSION_1_1;
+            default:
+                throw new IllegalStateException("Unhandled version " + argument);
+        }
     }
 
     public static YangVersionStatement createYangVersion(final YangVersion argument,
@@ -865,8 +881,8 @@ public final class DeclaredStatements {
             : new RegularYangVersionStatement(argument, substatements);
     }
 
-    public static YinElementStatement createYinElement(final Boolean argument) {
-        return new EmptyYinElementStatement(argument);
+    public static YinElementStatement createYinElement(final boolean argument) {
+        return argument ? EmptyYinElementStatement.TRUE : EmptyYinElementStatement.FALSE;
     }
 
     public static YinElementStatement createYinElement(final Boolean argument,

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -16,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,19 +25,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class YangVersionStatementSupport
         extends AbstractStatementSupport<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .YANG_VERSION)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.YANG_VERSION).build();
     private static final YangVersionStatementSupport INSTANCE = new YangVersionStatementSupport();
-
-    private static final @NonNull YangVersionStatement EMPTY_VER1_DECL =
-        DeclaredStatements.createYangVersion(YangVersion.VERSION_1);
-    private static final @NonNull YangVersionStatement EMPTY_VER1_1_DECL =
-        DeclaredStatements.createYangVersion(YangVersion.VERSION_1_1);
-    private static final @NonNull EmptyYangVersionEffectiveStatement EMPTY_VER1_EFF =
-        new EmptyYangVersionEffectiveStatement(EMPTY_VER1_DECL);
-    private static final @NonNull EmptyYangVersionEffectiveStatement EMPTY_VER1_1_EFF =
-        new EmptyYangVersionEffectiveStatement(EMPTY_VER1_1_DECL);
 
     private YangVersionStatementSupport() {
         super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject());
@@ -71,31 +61,12 @@ public final class YangVersionStatementSupport
 
     @Override
     protected YangVersionStatement createEmptyDeclared(final StmtContext<YangVersion, YangVersionStatement, ?> ctx) {
-        final YangVersion argument = ctx.getArgument();
-        switch (argument) {
-            case VERSION_1:
-                return EMPTY_VER1_DECL;
-            case VERSION_1_1:
-                return EMPTY_VER1_1_DECL;
-            default:
-                throw new IllegalStateException("Unhandled version " + argument);
-        }
+        return DeclaredStatements.createYangVersion(ctx.getArgument());
     }
 
     @Override
     protected YangVersionEffectiveStatement createEffective(final Current<YangVersion, YangVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
-            : new RegularYangVersionEffectiveStatement(stmt.declared(), substatements);
-    }
-
-    private static @NonNull YangVersionEffectiveStatement createEmptyEffective(final YangVersionStatement declared) {
-        if (EMPTY_VER1_DECL.equals(declared)) {
-            return EMPTY_VER1_EFF;
-        } else if (EMPTY_VER1_1_DECL.equals(declared)) {
-            return EMPTY_VER1_1_EFF;
-        } else {
-            return new EmptyYangVersionEffectiveStatement(declared);
-        }
+        return EffectiveStatements.createYangVersion(stmt.declared(), substatements);
     }
 }

@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -97,8 +98,7 @@ public final class BelongsToStatementSupport
     @Override
     protected BelongsToEffectiveStatement createEffective(final Current<String, BelongsToStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyBelongsToEffectiveStatement(stmt.declared())
-            : new RegularBelongsToEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createBelongsTo(stmt.declared(), substatements);
     }
 
     private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,

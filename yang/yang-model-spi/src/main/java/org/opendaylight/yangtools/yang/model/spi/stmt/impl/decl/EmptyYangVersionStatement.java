@@ -7,12 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
 public final class EmptyYangVersionStatement extends ArgumentToString<YangVersion> implements YangVersionStatement {
-    public EmptyYangVersionStatement(final YangVersion argument) {
+    public static final @NonNull EmptyYangVersionStatement VERSION_1 =
+        new EmptyYangVersionStatement(YangVersion.VERSION_1);
+    public static final @NonNull EmptyYangVersionStatement VERSION_1_1 =
+        new EmptyYangVersionStatement(YangVersion.VERSION_1_1);
+
+    private EmptyYangVersionStatement(final @NonNull YangVersion argument) {
         super(argument);
     }
 }
