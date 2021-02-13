@@ -121,6 +121,16 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-repo-api</artifactId>
+                <version>7.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-repo-spi</artifactId>
+                <version>7.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-repo-fs</artifactId>
                 <version>7.0.0-SNAPSHOT</version>
             </dependency>

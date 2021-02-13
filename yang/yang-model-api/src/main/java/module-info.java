@@ -11,8 +11,6 @@ module org.opendaylight.yangtools.yang.model.api {
     exports org.opendaylight.yangtools.yang.model.api.stmt;
     exports org.opendaylight.yangtools.yang.model.api.stmt.compat;
     exports org.opendaylight.yangtools.yang.model.api.type;
-    exports org.opendaylight.yangtools.yang.model.repo.api;
-    exports org.opendaylight.yangtools.yang.model.repo.spi;
 
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
     requires org.opendaylight.yangtools.concepts;
@@ -23,5 +21,4 @@ module org.opendaylight.yangtools.yang.model.api {
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
-    requires static org.checkerframework.checker.qual;
 }

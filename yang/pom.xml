@@ -50,6 +50,8 @@
         <module>yang-parser-impl</module>
 
         <!-- YANG repository API and implementions -->
+        <module>yang-repo-api</module>
+        <module>yang-repo-spi</module>
         <module>yang-repo-fs</module>
 
         <!-- Metamodel statement reactor -->
