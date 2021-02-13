@@ -8,10 +8,7 @@
 module org.opendaylight.yangtools.yang.model.util {
     exports org.opendaylight.yangtools.yang.model.util;
 
-    requires transitive org.opendaylight.yangtools.rfc7952.model.api;
-
     requires com.google.common;
-    requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;

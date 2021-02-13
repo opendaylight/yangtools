@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
+import org.opendaylight.yangtools.yang.model.spi.SimpleSchemaContext;
 
 @VisibleForTesting
 public final class EffectiveSchemaContext extends SimpleSchemaContext implements EffectiveModelContext {
