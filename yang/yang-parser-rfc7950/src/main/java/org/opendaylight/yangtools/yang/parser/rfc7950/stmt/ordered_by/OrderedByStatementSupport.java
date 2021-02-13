@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -32,14 +33,15 @@ public final class OrderedByStatementSupport
      * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
      * substatements (which is the usual case).
      */
+    // FIXME: move this to yang-model-spi
     private static final @NonNull OrderedByStatement EMPTY_SYSTEM_DECL =
         DeclaredStatements.createOrderedBy(Ordering.SYSTEM);
     private static final @NonNull OrderedByStatement EMPTY_USER_DECL =
         DeclaredStatements.createOrderedBy(Ordering.USER);
-    private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_SYSTEM_EFF =
-        new EmptyOrderedByEffectiveStatement(EMPTY_SYSTEM_DECL);
-    private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_USER_EFF =
-        new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
+    private static final @NonNull OrderedByEffectiveStatement EMPTY_SYSTEM_EFF =
+        EffectiveStatements.createOrderedBy(EMPTY_SYSTEM_DECL);
+    private static final @NonNull OrderedByEffectiveStatement EMPTY_USER_EFF =
+        EffectiveStatements.createOrderedBy(EMPTY_USER_DECL);
 
     private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent());
@@ -97,7 +99,7 @@ public final class OrderedByStatementSupport
     protected OrderedByEffectiveStatement createEffective(final Current<Ordering, OrderedByStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
-            : new RegularOrderedByEffectiveStatement(stmt.declared(), substatements);
+            : EffectiveStatements.createOrderedBy(stmt.declared(), substatements);
     }
 
     private static @NonNull OrderedByEffectiveStatement createEmptyEffective(final OrderedByStatement declared) {
@@ -109,7 +111,7 @@ public final class OrderedByStatementSupport
         } else if (EMPTY_SYSTEM_DECL.equals(declared)) {
             return EMPTY_SYSTEM_EFF;
         } else {
-            return new EmptyOrderedByEffectiveStatement(declared);
+            return EffectiveStatements.createOrderedBy(declared);
         }
     }
 }

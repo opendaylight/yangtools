@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -26,8 +27,8 @@ public final class YinElementStatementSupport
 
     private YinElementStatementSupport() {
         super(YangStmtMapping.YIN_ELEMENT,
-            new EmptyYinElementEffectiveStatement(DeclaredStatements.createYinElement(Boolean.FALSE)),
-            new EmptyYinElementEffectiveStatement(DeclaredStatements.createYinElement(Boolean.TRUE)),
+            EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(false)),
+            EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(true)),
             StatementPolicy.reject());
     }
 
@@ -49,11 +50,11 @@ public final class YinElementStatementSupport
     @Override
     protected YinElementEffectiveStatement createEffective(final YinElementStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularYinElementEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createYinElement(declared, substatements);
     }
 
     @Override
     protected YinElementEffectiveStatement createEmptyEffective(final YinElementStatement declared) {
-        return new EmptyYinElementEffectiveStatement(declared);
+        return EffectiveStatements.createYinElement(declared);
     }
 }

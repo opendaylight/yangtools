@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.spi.stmt.impl.decl;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
 public final class EmptyYinElementStatement extends ArgumentToString<Boolean> implements YinElementStatement {
-    public EmptyYinElementStatement(final Boolean argument) {
+    public static final @NonNull EmptyYinElementStatement FALSE = new EmptyYinElementStatement(false);
+    public static final @NonNull EmptyYinElementStatement TRUE = new EmptyYinElementStatement(true);
+
+    private EmptyYinElementStatement(final boolean argument) {
         super(argument);
     }
 }

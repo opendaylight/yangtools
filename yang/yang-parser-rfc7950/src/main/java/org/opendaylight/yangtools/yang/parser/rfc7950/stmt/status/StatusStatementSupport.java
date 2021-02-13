@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.status;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -16,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.spi.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -24,26 +24,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class StatusStatementSupport
         extends AbstractStatementSupport<Status, StatusStatement, StatusEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .STATUS)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.STATUS).build();
     private static final StatusStatementSupport INSTANCE = new StatusStatementSupport();
-
-    /*
-     * status has low argument cardinality, hence we can reuse them in case declaration does not have any
-     * substatements (which is the usual case). Yeah, we could consider an EnumMap, but this is not too bad, either.
-     */
-    private static final @NonNull StatusStatement EMPTY_CURRENT_DECL = DeclaredStatements.createStatus(Status.CURRENT);
-    private static final @NonNull StatusStatement EMPTY_DEPRECATED_DECL =
-        DeclaredStatements.createStatus(Status.DEPRECATED);
-    private static final @NonNull StatusStatement EMPTY_OBSOLETE_DECL =
-        DeclaredStatements.createStatus(Status.OBSOLETE);
-    private static final @NonNull EmptyStatusEffectiveStatement EMPTY_CURRENT_EFF =
-        new EmptyStatusEffectiveStatement(EMPTY_CURRENT_DECL);
-    private static final @NonNull EmptyStatusEffectiveStatement EMPTY_DEPRECATED_EFF =
-        new EmptyStatusEffectiveStatement(EMPTY_DEPRECATED_DECL);
-    private static final @NonNull EmptyStatusEffectiveStatement EMPTY_OBSOLETE_EFF =
-        new EmptyStatusEffectiveStatement(EMPTY_OBSOLETE_DECL);
 
     private StatusStatementSupport() {
         super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent());
@@ -94,40 +77,12 @@ public final class StatusStatementSupport
 
     @Override
     protected StatusStatement createEmptyDeclared(final StmtContext<Status, StatusStatement, ?> ctx) {
-        final Status argument = ctx.getArgument();
-        switch (argument) {
-            case CURRENT:
-                return EMPTY_CURRENT_DECL;
-            case DEPRECATED:
-                return EMPTY_DEPRECATED_DECL;
-            case OBSOLETE:
-                return EMPTY_OBSOLETE_DECL;
-            default:
-                throw new IllegalStateException("Unhandled argument " + argument);
-        }
+        return DeclaredStatements.createStatus(ctx.getArgument());
     }
 
     @Override
     protected StatusEffectiveStatement createEffective(final Current<Status, StatusStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? createEmptyEffective(stmt.declared())
-            : new RegularStatusEffectiveStatement(stmt.declared(), substatements);
-    }
-
-    private static @NonNull StatusEffectiveStatement createEmptyEffective(final StatusStatement declared) {
-        // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
-        // is the case unless there is a weird extension in use.
-        if (EMPTY_DEPRECATED_DECL.equals(declared)) {
-            // Most likely to be seen (as current is the default)
-            return EMPTY_DEPRECATED_EFF;
-        } else if (EMPTY_OBSOLETE_DECL.equals(declared)) {
-            // less likely
-            return EMPTY_OBSOLETE_EFF;
-        } else if (EMPTY_CURRENT_DECL.equals(declared)) {
-            // ... okay, why is this there? :)
-            return EMPTY_CURRENT_EFF;
-        } else {
-            return new EmptyStatusEffectiveStatement(declared);
-        }
+        return EffectiveStatements.createStatus(stmt.declared(), substatements);
     }
 }
