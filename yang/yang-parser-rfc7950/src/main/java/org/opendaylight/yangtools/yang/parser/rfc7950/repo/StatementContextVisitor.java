@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRArgument;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Qualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -98,8 +98,8 @@ class StatementContextVisitor {
 
     // Slow-path allocation of a new statement
     private boolean processNewStatement(final int myOffset, final IRStatement stmt) {
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, stmt.startLine(),
-            stmt.startColumn());
+        final StatementSourceReference ref = ExplicitStatement.atPosition(sourceName, stmt.startLine(),
+            stmt.startColumn() + 1);
         final QName def = getValidStatementDefinition(stmt.keyword(), ref);
         if (def == null) {
             return false;

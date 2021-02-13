@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
             el.setAttributeNS(attributes.getURI(i), attributes.getQName(i), attributes.getValue(i));
         }
 
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(file, documentLocator.getLineNumber(),
+        final StatementSourceReference ref = ExplicitStatement.atPosition(file, documentLocator.getLineNumber(),
             documentLocator.getColumnNumber());
         el.setUserData(USER_DATA_KEY, ref, null);
         stack.push(el);
