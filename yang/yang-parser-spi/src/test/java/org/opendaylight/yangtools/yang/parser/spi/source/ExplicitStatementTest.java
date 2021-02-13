@@ -12,16 +12,16 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
-public class DeclarationInTextSourceTest {
+public class ExplicitStatementTest {
     @Test
     public void testStatementSource() {
-        assertEquals(StatementOrigin.DECLARATION, DeclarationInTextSource.atLine("foo", 5).statementOrigin());
+        assertEquals(StatementOrigin.DECLARATION, ExplicitStatement.inFile("foo").statementOrigin());
     }
 
     @Test
     public void testToString() {
-        assertEquals("foo", DeclarationInTextSource.inSource("foo").toString());
-        assertEquals("foo:5", DeclarationInTextSource.atLine("foo", 5).toString());
-        assertEquals("foo:5:10", DeclarationInTextSource.atPosition("foo", 5, 10).toString());
+        assertEquals("foo", ExplicitStatement.inFile("foo").toString());
+        assertEquals("<UNKNOWN>:5:10", ExplicitStatement.atPosition(5, 10).toString());
+        assertEquals("foo:5:10", ExplicitStatement.atPosition("foo", 5, 10).toString());
     }
 }
