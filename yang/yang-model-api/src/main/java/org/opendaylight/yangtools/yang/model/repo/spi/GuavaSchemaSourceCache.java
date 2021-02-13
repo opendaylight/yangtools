@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.util;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.FinalizablePhantomReference;
@@ -13,43 +13,52 @@ import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.FluentFuture;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaSourceCache;
-import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
+/**
+ * A simple {@link AbstractSchemaSourceCache} based on {@link Cache Guava Cache}.
+ *
+ * @param <T> {@link SchemaSourceRepresentation} type stored in this cache
+ */
 @Beta
-public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
+public final class GuavaSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
         implements AutoCloseable {
     // FIXME: 7.0.0: use a java.util.Cleaner?
     private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
     private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
     private final Cache<SourceIdentifier, T> cache;
 
-    protected InMemorySchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
-            final CacheBuilder<Object, Object> builder) {
-        super(consumer, representation, Costs.IMMEDIATE);
-        cache = builder.build();
+    private GuavaSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
+            final CacheBuilder<Object, Object> cacheBuilder) {
+        super(consumer, representation, PotentialSchemaSource.Costs.IMMEDIATE);
+        cache = cacheBuilder.build();
     }
 
-    public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(
+    public static <R extends SchemaSourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
             final SchemaSourceRegistry consumer, final Class<R> representation) {
-        return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues());
+        return new GuavaSchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues());
     }
 
-    public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(
+    public static <R extends SchemaSourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
             final SchemaSourceRegistry consumer, final Class<R> representation, final long lifetime,
             final TimeUnit units) {
-        return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
-                .expireAfterAccess(lifetime, units));
+        return new GuavaSchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
+            .expireAfterAccess(lifetime, units));
+    }
+
+    public static <R extends SchemaSourceRepresentation> @NonNull GuavaSchemaSourceCache<R> createSoftCache(
+            final SchemaSourceRegistry consumer, final Class<R> representation, final Duration duration) {
+        return new GuavaSchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
+            .expireAfterAccess(duration));
     }
 
     @Override

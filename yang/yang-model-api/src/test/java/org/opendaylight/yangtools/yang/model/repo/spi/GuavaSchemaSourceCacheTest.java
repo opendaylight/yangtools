@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.util;
+package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -33,13 +33,9 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class InMemorySchemaSourceCacheTest {
+public class GuavaSchemaSourceCacheTest {
     public static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
     public static final long LIFETIME = 1000L;
     public static final TimeUnit UNITS = TimeUnit.MILLISECONDS;
@@ -58,24 +54,24 @@ public class InMemorySchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCacheTest1() {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
-            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
+        final GuavaSchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            GuavaSchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         assertNotNull(inMemorySchemaSourceCache);
         inMemorySchemaSourceCache.close();
     }
 
     @Test
     public void inMemorySchemaSourceCacheTest2() {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
-            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
+        final GuavaSchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            GuavaSchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
         assertNotNull(inMemorySchemaSourceCache);
         inMemorySchemaSourceCache.close();
     }
 
     @Test
     public void inMemorySchemaSourceCacheOfferAndGetSourcestest() throws Exception {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
-            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
+        final GuavaSchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            GuavaSchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final String content = "content";
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
         inMemorySchemaSourceCache.offer(source);
@@ -91,8 +87,8 @@ public class InMemorySchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
-            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
+        final GuavaSchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            GuavaSchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
         final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource =
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
@@ -105,10 +101,10 @@ public class InMemorySchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCache3test() throws InterruptedException, ExecutionException {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
-            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache2 =
-            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
+        final GuavaSchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            GuavaSchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
+        final GuavaSchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache2 =
+            GuavaSchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
 
         final String content = "content";
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);

@@ -23,12 +23,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -45,13 +45,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.spi.GuavaSchemaSourceCache;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
-import org.opendaylight.yangtools.yang.model.repo.util.InMemorySchemaSourceCache;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.slf4j.Logger;
@@ -59,13 +59,13 @@ import org.slf4j.LoggerFactory;
 
 public final class YangTextSchemaContextResolver implements AutoCloseable, SchemaSourceProvider<YangTextSchemaSource> {
     private static final Logger LOG = LoggerFactory.getLogger(YangTextSchemaContextResolver.class);
-    private static final long SOURCE_LIFETIME_SECONDS = 60;
+    private static final Duration SOURCE_LIFETIME = Duration.ofSeconds(60);
 
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
-    private final InMemorySchemaSourceCache<IRSchemaSource> cache;
+    private final GuavaSchemaSourceCache<IRSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
     private final SchemaRepository repository;
@@ -79,8 +79,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         final TextToIRTransformer t = TextToIRTransformer.create(repository, registry);
         transReg = registry.registerSchemaSourceListener(t);
 
-        cache = InMemorySchemaSourceCache.createSoftCache(registry, IRSchemaSource.class, SOURCE_LIFETIME_SECONDS,
-            TimeUnit.SECONDS);
+        cache = GuavaSchemaSourceCache.createSoftCache(registry, IRSchemaSource.class, SOURCE_LIFETIME);
     }
 
     public static @NonNull YangTextSchemaContextResolver create(final String name) {
