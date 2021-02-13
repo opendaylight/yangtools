@@ -49,6 +49,9 @@
         <!-- YANG parser reference implementation -->
         <module>yang-parser-impl</module>
 
+        <!-- YANG repository API and implementions -->
+        <module>yang-repo-fs</module>
+
         <!-- Metamodel statement reactor -->
         <module>yang-parser-spi</module>
         <module>yang-parser-reactor</module>
