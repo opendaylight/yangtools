@@ -9,4 +9,5 @@ module org.opendaylight.yangtools.odlext.model.api {
     exports org.opendaylight.yangtools.odlext.model.api;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.repo.api;
 }

@@ -10,4 +10,5 @@ module org.opendaylight.yangtools.yang.parser.api {
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.repo.api;
 }
