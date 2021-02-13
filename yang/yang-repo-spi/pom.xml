@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- vi: set et smarttab sw=4 tabstop=4: -->
 <!--
- Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ Copyright (c) 2021 PANTHEON.tech, s.r.o.. and others.  All rights reserved.
 
  This program and the accompanying materials are made available under the
  terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -16,16 +16,12 @@
         <relativePath>../../bundle-parent</relativePath>
     </parent>
 
-    <artifactId>yang-parser-api</artifactId>
+    <artifactId>yang-repo-spi</artifactId>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>YANG parser API</description>
+    <description>YANG Schema Repository SPI</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-api</artifactId>
