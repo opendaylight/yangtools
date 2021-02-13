@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRKeyword.Unqualified;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRStatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.ExplicitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
@@ -347,7 +347,7 @@ public abstract class YangModelDependencyInfo {
     }
 
     private static StatementSourceReference getReference(final SourceIdentifier source, final IRStatement stmt) {
-        return DeclarationInTextSource.atPosition(source.getName(), stmt.startLine(), stmt.startColumn());
+        return ExplicitStatement.atPosition(source.getName(), stmt.startLine(), stmt.startColumn() + 1);
     }
 
     /**
