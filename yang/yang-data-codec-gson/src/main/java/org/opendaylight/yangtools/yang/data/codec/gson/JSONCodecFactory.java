@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -163,4 +164,8 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
     abstract JSONCodec<?> wrapDecimalCodec(DecimalStringCodec decimalCodec);
 
     abstract JSONCodec<?> wrapIntegerCodec(AbstractIntegerStringCodec<?, ?> integerCodec);
+
+    final JSONCodec<?> codecFor(final TypedDataSchemaNode schemaNode) {
+        return codecFor(schemaNode, LeafrefResolver.of(getEffectiveModelContext(), schemaNode));
+    }
 }
