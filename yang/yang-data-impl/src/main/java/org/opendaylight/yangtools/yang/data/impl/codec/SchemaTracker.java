@@ -163,6 +163,15 @@ public final class SchemaTracker {
         return new SchemaTracker(stack);
     }
 
+    /**
+     * Return a copy of this tracker's state as an {@link SchemaInferenceStack}.
+     *
+     * @return A SchemaInferenceStack
+     */
+    public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
+        return dataTree.copy();
+    }
+
     public Object getParent() {
         final WithStatus schema = schemaStack.peek();
         return schema == null ? root : schema;
