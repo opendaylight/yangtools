@@ -61,7 +61,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
@@ -514,7 +513,7 @@ public final class EffectiveStatementMixins {
                 return this;
             }
 
-            public FlagsBuilder setHistory(final CopyHistory history) {
+            public FlagsBuilder setHistory(final CopyableNode history) {
                 flags = flags & ~MASK_HISTORY
                     | (history.isAugmenting() ? AUGMENTING : 0) | (history.isAddedByUses() ? ADDED_BY_USES : 0);
                 return this;
@@ -586,7 +585,7 @@ public final class EffectiveStatementMixins {
             TypedefEffectiveStatement::getTypeDefinition);
     }
 
-    public static int historyAndStatusFlags(final CopyHistory history,
+    public static int historyAndStatusFlags(final CopyableNode history,
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setHistory(history)

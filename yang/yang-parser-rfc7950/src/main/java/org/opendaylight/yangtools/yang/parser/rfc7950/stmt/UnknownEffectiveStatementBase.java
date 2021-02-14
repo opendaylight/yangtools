@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -18,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -51,7 +51,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         }
 
         // initCopyType
-        final CopyHistory copyTypesFromOriginal = stmt.history();
+        final CopyableNode copyTypesFromOriginal = stmt.history();
         this.augmenting = copyTypesFromOriginal.isAugmenting();
         this.addedByUses = copyTypesFromOriginal.isAddedByUses();
 
