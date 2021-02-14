@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.data.util.NormalizedNodeInferenceStack;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -71,7 +71,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context));
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+            NormalizedNodeInferenceStack.of(context));
     }
 
     /**
@@ -84,7 +85,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveStatementInference inference) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, inference.getEffectiveModelContext(),
-            SchemaTracker.create(inference));
+            NormalizedNodeInferenceStack.of(inference));
     }
 
     /**
@@ -97,7 +98,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final SchemaPath path) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context, path));
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+            NormalizedNodeInferenceStack.of(context, path));
     }
 
     /**
@@ -110,7 +112,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
             final EffectiveModelContext context, final Absolute path) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context, path));
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
+            NormalizedNodeInferenceStack.of(context, path));
     }
 
     /**
@@ -144,7 +147,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     private static @NonNull NormalizedNodeStreamWriter forOperation(final XMLStreamWriter writer,
             final EffectiveModelContext context, final Absolute operationPath, final QName qname) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context,
-            SchemaTracker.forOperation(context, operationPath, qname));
+            NormalizedNodeInferenceStack.ofOperation(context, operationPath, qname));
     }
 
     /**

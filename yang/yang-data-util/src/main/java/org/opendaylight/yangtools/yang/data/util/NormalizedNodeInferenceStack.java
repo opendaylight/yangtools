@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.codec;
+package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
@@ -17,14 +17,17 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -56,22 +59,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for tracking the underlying state of the underlying schema node.
+ * Utility class for tracking schema state underlying a {@link NormalizedNode} structure.
  */
 @Beta
-public final class SchemaTracker {
-    private static final Logger LOG = LoggerFactory.getLogger(SchemaTracker.class);
+public final class NormalizedNodeInferenceStack implements Mutable {
+    private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeInferenceStack.class);
 
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
     private final SchemaInferenceStack dataTree;
     private final DataNodeContainer root;
 
-    private SchemaTracker(final EffectiveModelContext context) {
+    private NormalizedNodeInferenceStack(final EffectiveModelContext context) {
         root = requireNonNull(context);
         dataTree = SchemaInferenceStack.of(context);
     }
 
-    private SchemaTracker(final SchemaInferenceStack dataTree) {
+    private NormalizedNodeInferenceStack(final SchemaInferenceStack dataTree) {
         this.dataTree = requireNonNull(dataTree);
         if (!dataTree.isEmpty()) {
             final EffectiveStatement<?, ?> current = dataTree.currentStatement();
@@ -90,8 +93,8 @@ public final class SchemaTracker {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code root} is null
      */
-    public static @NonNull SchemaTracker create(final EffectiveStatementInference root) {
-        return new SchemaTracker(SchemaInferenceStack.ofInference(root));
+    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveStatementInference root) {
+        return new NormalizedNodeInferenceStack(SchemaInferenceStack.ofInference(root));
     }
 
     /**
@@ -101,8 +104,8 @@ public final class SchemaTracker {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code root} is null
      */
-    public static @NonNull SchemaTracker create(final Inference root) {
-        return new SchemaTracker(root.toSchemaInferenceStack());
+    public static @NonNull NormalizedNodeInferenceStack of(final Inference root) {
+        return new NormalizedNodeInferenceStack(root.toSchemaInferenceStack());
     }
 
     /**
@@ -112,8 +115,8 @@ public final class SchemaTracker {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code context} is null
      */
-    public static @NonNull SchemaTracker create(final EffectiveModelContext context) {
-        return new SchemaTracker(context);
+    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveModelContext context) {
+        return new NormalizedNodeInferenceStack(context);
     }
 
     /**
@@ -121,12 +124,12 @@ public final class SchemaTracker {
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
-     * @return A new {@link SchemaTracker}
+     * @return A new {@link NormalizedNodeInferenceStack}
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
-    public static @NonNull SchemaTracker create(final EffectiveModelContext context, final Absolute path) {
-        return new SchemaTracker(SchemaInferenceStack.of(context, path));
+    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveModelContext context, final Absolute path) {
+        return new NormalizedNodeInferenceStack(SchemaInferenceStack.of(context, path));
     }
 
     /**
@@ -134,12 +137,13 @@ public final class SchemaTracker {
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
-     * @return A new {@link SchemaTracker}
+     * @return A new {@link NormalizedNodeInferenceStack}
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
-    public static @NonNull SchemaTracker create(final EffectiveModelContext context, final SchemaPath path) {
-        return new SchemaTracker(SchemaInferenceStack.ofInstantiatedPath(context, path));
+    @Deprecated
+    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveModelContext context, final SchemaPath path) {
+        return new NormalizedNodeInferenceStack(SchemaInferenceStack.ofInstantiatedPath(context, path));
     }
 
     /**
@@ -153,14 +157,14 @@ public final class SchemaTracker {
      * @throws IllegalArgumentException if {@code operation} does not point to an actual operation or if {@code qname}
      *                                  does not identify a valid root underneath it.
      */
-    public static @NonNull SchemaTracker forOperation(final EffectiveModelContext context, final Absolute operation,
-            final QName qname) {
+    public static @NonNull NormalizedNodeInferenceStack ofOperation(final EffectiveModelContext context,
+            final Absolute operation, final QName qname) {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context, operation);
         final EffectiveStatement<?, ?> current = stack.currentStatement();
         checkArgument(current instanceof RpcEffectiveStatement || current instanceof ActionEffectiveStatement,
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
-        return new SchemaTracker(stack);
+        return new NormalizedNodeInferenceStack(stack);
     }
 
     /**
@@ -220,9 +224,8 @@ public final class SchemaTracker {
         if (parent instanceof LeafListSchemaNode) {
             return (LeafListSchemaNode) parent;
         }
-
-        // FIXME: when would this trigger?
-        final SchemaNode child = SchemaUtils.findDataChildSchemaByQName((SchemaNode) parent, qname);
+        checkArgument(parent instanceof DataNodeContainer, "Cannot lookup %s in parent %s", qname, parent);
+        final DataSchemaNode child = ((DataNodeContainer) parent).dataChildByName(qname);
         checkArgument(child instanceof LeafListSchemaNode,
             "Node %s is neither a leaf-list nor currently in a leaf-list", child);
         return (LeafListSchemaNode) child;
@@ -250,34 +253,6 @@ public final class SchemaTracker {
         return schema;
     }
 
-    public AugmentationSchemaNode startAugmentationNode(final AugmentationIdentifier identifier) {
-        LOG.debug("Enter augmentation {}", identifier);
-        Object parent = getParent();
-
-        checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
-        if (parent instanceof ChoiceSchemaNode) {
-            final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
-            parent = findCaseByChild((ChoiceSchemaNode) parent, name);
-        }
-        checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
-        final AugmentationSchemaNode schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
-            identifier.getPossibleChildNames());
-        final AugmentationSchemaNode resolvedSchema = EffectiveAugmentationSchema.create(schema,
-            (DataNodeContainer) parent);
-        schemaStack.push(resolvedSchema);
-        return resolvedSchema;
-    }
-
-    private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
-        for (final CaseSchemaNode caze : parent.getCases()) {
-            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
-            if (potential.isPresent()) {
-                return caze;
-            }
-        }
-        return null;
-    }
-
     public void startAnyxmlNode(final NodeIdentifier name) {
         final SchemaNode schema = enterDataTree(name);
         checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema);
@@ -298,5 +273,49 @@ public final class SchemaTracker {
             dataTree.exit();
         }
         return ret;
+    }
+
+    public AugmentationSchemaNode startAugmentationNode(final AugmentationIdentifier identifier) {
+        LOG.debug("Enter augmentation {}", identifier);
+        Object parent = getParent();
+
+        checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
+        if (parent instanceof ChoiceSchemaNode) {
+            final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
+            parent = findCaseByChild((ChoiceSchemaNode) parent, name);
+        }
+        checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
+        final AugmentationSchemaNode schema = findSchemaForAugment((AugmentationTarget) parent,
+            identifier.getPossibleChildNames());
+        final AugmentationSchemaNode resolvedSchema = EffectiveAugmentationSchema.create(schema,
+            (DataNodeContainer) parent);
+        schemaStack.push(resolvedSchema);
+        return resolvedSchema;
+    }
+
+    // FIXME: 7.0.0: can we get rid of this?
+    private static @NonNull AugmentationSchemaNode findSchemaForAugment(final AugmentationTarget schema,
+            final Set<QName> qnames) {
+        for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
+            if (qnames.equals(augment.getChildNodes().stream()
+                .map(DataSchemaNode::getQName)
+                .collect(Collectors.toUnmodifiableSet()))) {
+                return augment;
+            }
+        }
+
+        throw new IllegalStateException(
+            "Unknown augmentation node detected, identified by: " + qnames + ", in: " + schema);
+    }
+
+    // FIXME: 7.0.0: can we get rid of this?
+    private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
+        for (final CaseSchemaNode caze : parent.getCases()) {
+            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
+            if (potential.isPresent()) {
+                return caze;
+            }
+        }
+        return null;
     }
 }
