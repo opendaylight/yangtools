@@ -27,27 +27,36 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 @Beta
 public abstract class AbstractEffectiveStatementInference<T extends EffectiveStatement<?, ?>>
         extends AbstractEffectiveModelContextProvider implements EffectiveStatementInference {
-    private final @NonNull List<T> path;
-
-    protected AbstractEffectiveStatementInference(final @NonNull EffectiveModelContext modelContext,
-            final @NonNull ImmutableList<T> path) {
+    protected AbstractEffectiveStatementInference(final @NonNull EffectiveModelContext modelContext) {
         super(modelContext);
-        this.path = requireNonNull(path);
-    }
-
-    protected AbstractEffectiveStatementInference(final @NonNull EffectiveModelContext modelContext,
-            final @NonNull List<? extends T> path) {
-        super(modelContext);
-        this.path = ImmutableList.copyOf(path);
     }
 
     @Override
-    public final List<T> statementPath() {
-        return path;
-    }
+    public abstract List<T> statementPath();
 
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("statements", path);
+    @Beta
+    public static abstract class WithPath<T extends EffectiveStatement<?, ?>>
+            extends AbstractEffectiveStatementInference<T> {
+        private final @NonNull List<T> path;
+
+        protected WithPath(final @NonNull EffectiveModelContext modelContext, final @NonNull ImmutableList<T> path) {
+            super(modelContext);
+            this.path = requireNonNull(path);
+        }
+
+        protected WithPath(final @NonNull EffectiveModelContext modelContext, final @NonNull List<? extends T> path) {
+            super(modelContext);
+            this.path = ImmutableList.copyOf(path);
+        }
+
+        @Override
+        public final List<T> statementPath() {
+            return path;
+        }
+
+        @Override
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper).add("statements", path);
+        }
     }
 }
