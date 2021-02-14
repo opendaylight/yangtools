@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.model.spi.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementSupport;

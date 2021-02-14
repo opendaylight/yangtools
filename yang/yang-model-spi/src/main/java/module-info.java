@@ -8,8 +8,6 @@
 module org.opendaylight.yangtools.yang.model.spi {
     exports org.opendaylight.yangtools.yang.model.spi;
     exports org.opendaylight.yangtools.yang.model.spi.meta;
-    exports org.opendaylight.yangtools.yang.model.spi.stmt;
-    exports org.opendaylight.yangtools.yang.model.spi.type;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires transitive org.opendaylight.yangtools.rfc7952.model.api;
