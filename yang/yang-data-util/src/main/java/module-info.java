@@ -13,8 +13,12 @@ module org.opendaylight.yangtools.yang.data.util {
     requires transitive org.opendaylight.yangtools.rfc7952.data.api;
     requires transitive org.opendaylight.yangtools.rfc8528.data.api;
 
+    requires com.google.common;
     requires org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
+
+    // Annotations
+    requires static org.eclipse.jdt.annotation;
 }

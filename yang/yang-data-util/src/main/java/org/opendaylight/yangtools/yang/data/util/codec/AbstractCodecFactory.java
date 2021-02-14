@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -53,6 +54,27 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         extends AbstractEffectiveModelContextProvider {
+    /**
+     * Helper interface aiding resolution of leafref chains.
+     */
+    @Beta
+    @FunctionalInterface
+    public interface LeafrefResolver {
+        /**
+         * Resolve specified {@link LeafrefTypeDefinition}.
+         *
+         * @param type leafref definition
+         * @return Resolved type
+         */
+        @NonNull TypeDefinition<?> resolveLeafref(@NonNull LeafrefTypeDefinition type);
+
+        // FIXME: 7.0.0: remove this method
+        static LeafrefResolver of(final EffectiveModelContext context, final SchemaNode schema) {
+            return type -> verifyNotNull(SchemaContextUtil.getBaseTypeForLeafRef(type, context, schema),
+                "Unable to find base type for leafref node %s type %s.", schema, type);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 
     private final @NonNull CodecCache<T> cache;
@@ -63,7 +85,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         this.cache = requireNonNull(cache);
     }
 
-    public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema) {
+    public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema,
+            final LeafrefResolver resolver) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -96,7 +119,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         }
 
         // ... and complex types afterwards
-        ret = createComplexCodecFor(schema, type);
+        ret = createComplexCodecFor(schema, type, resolver);
         LOG.trace("Type {} miss complex {}", type, ret);
         return cache.getComplex(schema, ret);
     }
@@ -208,16 +231,14 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         return true;
     }
 
-    private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type) {
+    private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type,
+            final LeafrefResolver resolver) {
         if (type instanceof UnionTypeDefinition) {
-            return createComplexUnion(schema, (UnionTypeDefinition) type);
+            return createComplexUnion(schema, (UnionTypeDefinition) type, resolver);
         } else if (type instanceof LeafrefTypeDefinition) {
-            final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
-                getEffectiveModelContext(), schema);
-            verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema, target);
-
+            final TypeDefinition<?> target = resolver.resolveLeafref((LeafrefTypeDefinition) type);
             final T ret = getSimpleCodecFor(target);
-            return ret != null ? ret : createComplexCodecFor(schema, target);
+            return ret != null ? ret : createComplexCodecFor(schema, target, resolver);
         } else if (type instanceof IdentityrefTypeDefinition) {
             return identityRefCodec((IdentityrefTypeDefinition) type, schema.getQName().getModule());
         } else {
@@ -241,7 +262,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
         return unionCodec(union, codecs);
     }
 
-    private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union) {
+    private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union,
+            final LeafrefResolver resolver) {
         final List<TypeDefinition<?>> types = union.getTypes();
         final List<T> codecs = new ArrayList<>(types.size());
 
@@ -250,7 +272,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>>
             if (codec == null) {
                 codec = getSimpleCodecFor(type);
                 if (codec == null) {
-                    codec = createComplexCodecFor(schema, type);
+                    codec = createComplexCodecFor(schema, type, resolver);
                 }
             }
 

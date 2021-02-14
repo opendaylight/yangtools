@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -174,5 +176,9 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     @Override
     protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullXmlCodec.INSTANCE;
+    }
+
+    <T extends SchemaNode & TypeAware> XmlCodec<?> codecFor(final T currentNode) {
+        return codecFor(currentNode, LeafrefResolver.of(getEffectiveModelContext(), currentNode));
     }
 }
