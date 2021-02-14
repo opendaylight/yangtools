@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.model.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -59,9 +59,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -589,8 +587,11 @@ public final class EffectiveStatementMixins {
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         return new FlagsBuilder()
                 .setHistory(history)
-                .setStatus(AbstractStatementSupport.findFirstArgument(substatements,
-                    StatusEffectiveStatement.class, Status.CURRENT))
+                .setStatus(substatements.stream()
+                    .filter(StatusEffectiveStatement.class::isInstance)
+                    .findAny()
+                    .map(stmt -> ((StatusEffectiveStatement) stmt).argument())
+                    .orElse(Status.CURRENT))
                 .toFlags();
     }
 }

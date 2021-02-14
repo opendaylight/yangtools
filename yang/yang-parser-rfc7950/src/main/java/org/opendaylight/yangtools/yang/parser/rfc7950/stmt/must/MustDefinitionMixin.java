@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 interface MustDefinitionMixin extends MustDefinition, ConstraintMetaDefinitionMixin<QualifiedBound, MustStatement>,

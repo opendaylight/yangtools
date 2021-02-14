@@ -28,9 +28,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MustConstraintMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
 abstract class AbstractLeafEffectiveStatement extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode,
