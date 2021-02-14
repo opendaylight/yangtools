@@ -192,6 +192,23 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
+     * Create a new stack backed by an effective model and set up to point and specified data tree node.
+     *
+     * @param effectiveModel EffectiveModelContext to which this stack is attached
+     * @return A new stack
+     * @throws NullPointerException if any argument is null or path contains a null element
+     * @throws IllegalArgumentException if a path element cannot be found
+     */
+    public static @NonNull SchemaInferenceStack ofDataTreePath(final EffectiveModelContext effectiveModel,
+            final QName... path) {
+        final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
+        for (QName qname : path) {
+            ret.enterDataTree(qname);
+        }
+        return ret;
+    }
+
+    /**
      * Create a new stack backed by an effective model, pointing to specified schema node identified by an absolute
      * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()}.
      *
@@ -517,7 +534,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private @NonNull DataTreeEffectiveStatement<?> pushData(final @NonNull DataTreeAwareEffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
         final DataTreeEffectiveStatement<?> ret = parent.findDataTreeNode(nodeIdentifier).orElseThrow(
-            () -> new IllegalArgumentException("Schema tree child " + nodeIdentifier + " not present"));
+            () -> new IllegalArgumentException("Data tree child " + nodeIdentifier + " not present"));
         deque.push(ret);
         clean = false;
         return ret;
