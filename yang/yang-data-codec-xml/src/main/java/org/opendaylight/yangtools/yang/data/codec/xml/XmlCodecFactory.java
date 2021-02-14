@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -25,6 +26,8 @@ import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -44,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 /**
  * A thread-safe factory for instantiating {@link XmlCodec}s.
@@ -174,5 +178,11 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     @Override
     protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullXmlCodec.INSTANCE;
+    }
+
+    <T extends SchemaNode & TypeAware> XmlCodec<?> codecFor(final T currentNode) {
+        return codecFor(currentNode, type -> verifyNotNull(
+            SchemaContextUtil.getBaseTypeForLeafRef(type, getEffectiveModelContext(), currentNode),
+            "Unable to find base type for leafref node %s type %s.", currentNode, type));
     }
 }

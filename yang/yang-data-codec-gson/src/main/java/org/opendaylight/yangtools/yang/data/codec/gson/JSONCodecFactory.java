@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -41,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 /**
  * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
@@ -163,4 +167,10 @@ public abstract class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>
     abstract JSONCodec<?> wrapDecimalCodec(DecimalStringCodec decimalCodec);
 
     abstract JSONCodec<?> wrapIntegerCodec(AbstractIntegerStringCodec<?, ?> integerCodec);
+
+    final JSONCodec<?> codecFor(final TypedDataSchemaNode currentNode) {
+        return codecFor(currentNode, type -> verifyNotNull(
+            SchemaContextUtil.getBaseTypeForLeafRef(type, getEffectiveModelContext(), currentNode),
+            "Unable to find base type for leafref node %s type %s.", currentNode, type));
+    }
 }
