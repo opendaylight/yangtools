@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.spi.type.EnumerationTypeBuilder;
+import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
 
 public final class TypeDefinitionAwareCodecTestHelper {
     private TypeDefinitionAwareCodecTestHelper() {

@@ -14,7 +14,7 @@ import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwar
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
-import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
 /**
  * Unit tests for Uint32CodecString.

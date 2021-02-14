@@ -14,7 +14,7 @@ import static org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwar
 import java.util.Base64;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
-import org.opendaylight.yangtools.yang.model.spi.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
 /**
  * Unit tests for BinaryCodecString.
