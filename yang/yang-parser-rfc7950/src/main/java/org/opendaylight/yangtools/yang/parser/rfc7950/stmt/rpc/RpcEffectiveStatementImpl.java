@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.OperationDefinitionMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationDefinitionMixin;
 
 final class RpcEffectiveStatementImpl extends WithSubstatements<QName, RpcStatement, RpcEffectiveStatement>
         implements RpcDefinition, RpcEffectiveStatement, OperationDefinitionMixin<RpcStatement> {

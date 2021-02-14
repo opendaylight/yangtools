@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
 abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName, IdentityStatement>
         implements IdentityEffectiveStatement, IdentitySchemaNode, SchemaNodeMixin<QName, IdentityStatement> {

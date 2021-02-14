@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 final class EmptyRevisionEffectiveStatement extends DefaultArgument<Revision, RevisionStatement>
         implements RevisionEffectiveStatement, DocumentedNodeMixin<Revision, RevisionStatement> {

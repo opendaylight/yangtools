@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.AugmentationTargetMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DataSchemaNodeMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.MandatoryMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 
 final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,

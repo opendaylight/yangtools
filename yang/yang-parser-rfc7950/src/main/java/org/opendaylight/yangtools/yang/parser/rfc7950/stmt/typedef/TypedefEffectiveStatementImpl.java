@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

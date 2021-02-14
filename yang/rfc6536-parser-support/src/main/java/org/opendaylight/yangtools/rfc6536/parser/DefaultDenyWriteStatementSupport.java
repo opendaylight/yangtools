@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -51,13 +52,13 @@ public final class DefaultDenyWriteStatementSupport
 
         @Override
         public QName getQName() {
-            return SchemaPathSupport.extractQName(path);
+            return SchemaNodeDefaults.extractQName(path);
         }
 
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return SchemaPathSupport.extractPath(this, path);
+            return SchemaNodeDefaults.extractPath(this, path);
         }
 
         @Override

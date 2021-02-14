@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 final class RegularEnumEffectiveStatement extends WithSubstatements<String, EnumStatement>
         implements EnumEffectiveStatement, DocumentedNodeMixin<String, EnumStatement>, WithStatus {

@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 final class EmptyPatternEffectiveStatement extends DefaultArgument<PatternExpression, PatternStatement>
         implements PatternEffectiveStatement, ConstraintMetaDefinitionMixin<PatternExpression, PatternStatement> {

@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.DocumentedNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 class EmptyBitEffectiveStatement extends DefaultArgument<String, BitStatement> implements
         BitEffectiveStatement, DocumentedNodeMixin<String, BitStatement>, WithStatus {

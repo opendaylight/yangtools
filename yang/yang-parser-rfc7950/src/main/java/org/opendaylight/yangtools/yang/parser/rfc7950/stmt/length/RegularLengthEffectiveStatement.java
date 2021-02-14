@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
 final class RegularLengthEffectiveStatement extends WithSubstatements<List<ValueRange>, LengthStatement>
         implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<List<ValueRange>, LengthStatement> {

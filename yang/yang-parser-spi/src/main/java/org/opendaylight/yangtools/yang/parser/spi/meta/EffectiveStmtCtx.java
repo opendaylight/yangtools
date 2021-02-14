@@ -107,8 +107,8 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
          *
          * <p>
          * Returned object conforms to {@link SchemaPathSupport}'s view of how these are to be handled. Users of this
-         * method are expected to consult {@link SchemaPathSupport#extractQName(Immutable)} and
-         * {@link SchemaPathSupport#extractPath(Object, Immutable)} to ensure correct implementation behaviour with
+         * method are expected to consult {@link SchemaNodeDefaults#extractQName(Immutable)} and
+         * {@link SchemaNodeDefaults#extractPath(Object, Immutable)} to ensure correct implementation behaviour with
          * respect to {@link SchemaNode#getQName()} and {@link SchemaNode#getPath()} respectively.
          *
          * @return An {@link Immutable} effective path object

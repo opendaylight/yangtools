@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSt
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -59,13 +60,13 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
 
         @Override
         public QName getQName() {
-            return SchemaPathSupport.extractQName(path);
+            return SchemaNodeDefaults.extractQName(path);
         }
 
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return SchemaPathSupport.extractPath(this, path);
+            return SchemaNodeDefaults.extractPath(this, path);
         }
 
         @Override

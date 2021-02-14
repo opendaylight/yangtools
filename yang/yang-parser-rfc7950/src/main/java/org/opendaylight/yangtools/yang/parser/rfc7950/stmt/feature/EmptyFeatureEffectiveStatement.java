@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
 class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
         implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<QName, FeatureStatement> {

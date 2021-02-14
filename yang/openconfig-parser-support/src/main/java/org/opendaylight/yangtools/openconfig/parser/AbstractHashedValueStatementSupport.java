@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffe
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveState
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.StatementPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -62,13 +64,13 @@ abstract class AbstractHashedValueStatementSupport
 
         @Override
         public QName getQName() {
-            return SchemaPathSupport.extractQName(path);
+            return SchemaNodeDefaults.extractQName(path);
         }
 
         @Override
         @Deprecated
         public SchemaPath getPath() {
-            return SchemaPathSupport.extractPath(this, path);
+            return SchemaNodeDefaults.extractPath(this, path);
         }
 
         @Override
