@@ -19,35 +19,49 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * A simple capture of an {@link EffectiveModelContext} and a list of {@link EffectiveStatement}s. No further guarantees
- * are made.
+ * A simple capture of an {@link AbstractEffectiveModelContextProvider} and {@link EffectiveStatementInference}s.
  *
  * @param T constituent {@link EffectiveStatement} type
  */
 @Beta
 public abstract class AbstractEffectiveStatementInference<T extends EffectiveStatement<?, ?>>
         extends AbstractEffectiveModelContextProvider implements EffectiveStatementInference {
-    private final @NonNull List<T> path;
-
-    protected AbstractEffectiveStatementInference(final @NonNull EffectiveModelContext modelContext,
-            final @NonNull ImmutableList<T> path) {
+    protected AbstractEffectiveStatementInference(final @NonNull EffectiveModelContext modelContext) {
         super(modelContext);
-        this.path = requireNonNull(path);
-    }
-
-    protected AbstractEffectiveStatementInference(final @NonNull EffectiveModelContext modelContext,
-            final @NonNull List<? extends T> path) {
-        super(modelContext);
-        this.path = ImmutableList.copyOf(path);
     }
 
     @Override
-    public final List<T> statementPath() {
-        return path;
-    }
+    public abstract List<T> statementPath();
 
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("statements", path);
+    /**
+     * A simple capture of an {@link AbstractEffectiveStatementInference} and a list of {@link EffectiveStatement}s. No
+     * further guarantees are made.
+     *
+     * @param T constituent {@link EffectiveStatement} type
+     */
+    @Beta
+    public abstract static class WithPath<T extends EffectiveStatement<?, ?>>
+            extends AbstractEffectiveStatementInference<T> {
+        private final @NonNull List<T> path;
+
+        protected WithPath(final @NonNull EffectiveModelContext modelContext, final @NonNull ImmutableList<T> path) {
+            super(modelContext);
+            this.path = requireNonNull(path);
+        }
+
+        protected WithPath(final @NonNull EffectiveModelContext modelContext, final @NonNull List<? extends T> path) {
+            super(modelContext);
+            this.path = ImmutableList.copyOf(path);
+        }
+
+        @Override
+        public final List<T> statementPath() {
+            return path;
+        }
+
+        @Override
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper).add("path", path);
+        }
     }
 }

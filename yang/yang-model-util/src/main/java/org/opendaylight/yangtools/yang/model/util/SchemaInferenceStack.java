@@ -64,17 +64,23 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     @Beta
     public static final class Inference extends AbstractEffectiveStatementInference<EffectiveStatement<?, ?>> {
+        private final ArrayDeque<EffectiveStatement<?, ?>> deque;
         private final ModuleEffectiveStatement currentModule;
         private final int groupingDepth;
         private final boolean clean;
 
-        Inference(final @NonNull EffectiveModelContext modelContext,
-                final Iterator<? extends EffectiveStatement<?, ?>> path,
+        Inference(final @NonNull EffectiveModelContext modelContext, final ArrayDeque<EffectiveStatement<?, ?>> deque,
                 final ModuleEffectiveStatement currentModule, final int groupingDepth, final boolean clean) {
-            super(modelContext, ImmutableList.copyOf(path));
+            super(modelContext);
+            this.deque = requireNonNull(deque);
             this.currentModule = currentModule;
             this.groupingDepth = groupingDepth;
             this.clean = clean;
+        }
+
+        @Override
+        public List<EffectiveStatement<?, ?>> statementPath() {
+            return ImmutableList.copyOf(deque.descendingIterator());
         }
 
         /**
@@ -83,10 +89,6 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
          * @return A new stack
          */
         public @NonNull SchemaInferenceStack toSchemaInferenceStack() {
-            final List<EffectiveStatement<?, ?>> path = statementPath();
-            final ArrayDeque<EffectiveStatement<?, ?>> deque = new ArrayDeque<>(path.size());
-            path.forEach(deque::push);
-
             return new SchemaInferenceStack(getEffectiveModelContext(), deque, currentModule, groupingDepth, clean);
         }
     }
@@ -119,7 +121,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             final ArrayDeque<EffectiveStatement<?, ?>> deque, final ModuleEffectiveStatement currentModule,
             final int groupingDepth, final boolean clean) {
         this.effectiveModel = requireNonNull(effectiveModel);
-        this.deque = requireNonNull(deque);
+        this.deque = deque.clone();
         this.currentModule = currentModule;
         this.groupingDepth = groupingDepth;
         this.clean = clean;
@@ -393,7 +395,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @return An {@link Inference}
      */
     public @NonNull Inference toInference() {
-        return new Inference(effectiveModel, deque.descendingIterator(), currentModule, groupingDepth, clean);
+        return new Inference(effectiveModel, deque.clone(), currentModule, groupingDepth, clean);
     }
 
     /**

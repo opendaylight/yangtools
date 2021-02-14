@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference.WithPath;
 
 /**
  * Default implementation of a a {@link SchemaTreeInference}. Guaranteed to be consistent with its
@@ -28,8 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
  */
 @Beta
 @NonNullByDefault
-public final class DefaultSchemaTreeInference
-        extends AbstractEffectiveStatementInference<SchemaTreeEffectiveStatement<?>> implements SchemaTreeInference {
+public final class DefaultSchemaTreeInference extends WithPath<SchemaTreeEffectiveStatement<?>>
+        implements SchemaTreeInference {
     private DefaultSchemaTreeInference(final EffectiveModelContext modelContext,
             final ImmutableList<SchemaTreeEffectiveStatement<?>> path) {
         super(modelContext, path);
