@@ -99,7 +99,9 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         boolean sameAsSchema = true;
 
         for (SchemaTreeEffectiveStatement<?> child : schemaTreeStatements) {
-            sameAsSchema = indexDataTree(dataChildren, child);
+            if (!indexDataTree(dataChildren, child)) {
+                sameAsSchema = false;
+            }
         }
 
         // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
