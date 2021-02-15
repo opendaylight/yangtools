@@ -14,7 +14,6 @@ import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import javax.xml.stream.XMLStreamReader;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,21 +27,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5396Test {
+    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2016-03-22"));
 
-    private QNameModule fooModuleQName;
-    private EffectiveModelContext schemaContext;
-
-    @Before
-    public void setUp() {
-        fooModuleQName = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2016-03-22"));
-        schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
-    }
+    private final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
 
     @Test
     public void test() throws Exception {
@@ -62,9 +54,6 @@ public class Bug5396Test {
 
     private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
-        final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode rootCont = (ContainerSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "root")).get();
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
@@ -72,7 +61,8 @@ public class Bug5396Test {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, rootCont);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "root")));
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());
@@ -80,7 +70,7 @@ public class Bug5396Test {
         final ContainerNode rootContainer = (ContainerNode) result.getResult();
 
         DataContainerChild myLeaf = rootContainer.childByArg(new NodeIdentifier(
-                QName.create(fooModuleQName, "my-leaf")));
+                QName.create(FOO, "my-leaf")));
         assertTrue(myLeaf instanceof LeafNode);
         assertEquals(expectedValue, myLeaf.body());
     }
