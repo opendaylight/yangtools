@@ -321,8 +321,8 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createChoice(argument) : new RegularChoiceStatement(argument, substatements);
     }
 
-    public static ConfigStatement createConfig(final Boolean argument) {
-        return new EmptyConfigStatement(argument);
+    public static ConfigStatement createConfig(final boolean argument) {
+        return argument ? EmptyConfigStatement.TRUE : EmptyConfigStatement.FALSE;
     }
 
     public static ConfigStatement createConfig(final Boolean argument,

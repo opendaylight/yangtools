@@ -13,6 +13,10 @@ module org.opendaylight.yangtools.yang.model.ri {
     exports org.opendaylight.yangtools.yang.model.ri.type;
 
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.model.spi;
     requires com.google.common;
+    requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.concepts;
+
+    // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
 }

@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBitEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -26,8 +27,7 @@ public final class ConfigStatementSupport
 
     private ConfigStatementSupport() {
         super(YangStmtMapping.CONFIG,
-            new EmptyConfigEffectiveStatement(DeclaredStatements.createConfig(Boolean.FALSE)),
-            new EmptyConfigEffectiveStatement(DeclaredStatements.createConfig(Boolean.TRUE)),
+            EffectiveStatements.createConfig(false), EffectiveStatements.createConfig(true),
             // FIXME: This is not quite true. If we are instantiated in a context which ignores config, which should
             //        really fizzle. This needs some more analysis.
             StatementPolicy.contextIndependent());
@@ -51,11 +51,11 @@ public final class ConfigStatementSupport
     @Override
     protected ConfigEffectiveStatement createEffective(final ConfigStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new RegularConfigEffectiveStatement(declared, substatements);
+        return EffectiveStatements.createConfig(declared, substatements);
     }
 
     @Override
-    protected EmptyConfigEffectiveStatement createEmptyEffective(final ConfigStatement declared) {
-        return new EmptyConfigEffectiveStatement(declared);
+    protected ConfigEffectiveStatement createEmptyEffective(final ConfigStatement declared) {
+        return EffectiveStatements.createConfig(declared);
     }
 }
