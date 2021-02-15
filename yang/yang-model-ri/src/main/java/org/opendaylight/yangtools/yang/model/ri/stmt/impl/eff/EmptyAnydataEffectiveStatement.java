@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,20 +15,21 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 
-class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
-        implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, OpaqueDataSchemaNodeMixin<AnyxmlStatement> {
+public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
+        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
     private final @NonNull Immutable path;
-    private final AnyxmlSchemaNode original;
+    private final AnydataSchemaNode original;
     private final int flags;
 
-    EmptyAnyxmlEffectiveStatement(final AnyxmlStatement declared, final Immutable path, final int flags,
-            final @Nullable AnyxmlSchemaNode original) {
+    public EmptyAnydataEffectiveStatement(final AnydataStatement declared, final Immutable path, final int flags,
+            final @Nullable AnydataSchemaNode original) {
         super(declared);
         this.path = requireNonNull(path);
         this.flags = flags;
@@ -46,12 +47,20 @@ class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
     }
 
     @Override
-    public final Optional<AnyxmlSchemaNode> getOriginal() {
+    public final Optional<AnydataSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }
 
     @Override
-    public final AnyxmlEffectiveStatement asEffectiveStatement() {
+    public final Optional<ContainerSchemaNode> getDataSchema() {
+        /*
+         * :TODO we need to determine a way how to set schema of AnyData
+         */
+        return Optional.empty();
+    }
+
+    @Override
+    public final AnydataEffectiveStatement asEffectiveStatement() {
         return this;
     }
 
