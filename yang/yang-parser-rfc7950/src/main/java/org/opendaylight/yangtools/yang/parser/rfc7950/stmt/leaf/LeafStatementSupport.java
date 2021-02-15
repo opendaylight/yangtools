@@ -84,7 +84,7 @@ public final class LeafStatementSupport
     public LeafEffectiveStatement copyEffective(final Current<QName, LeafStatement> stmt,
             final LeafEffectiveStatement original) {
         return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, stmt.effectivePath(),
-            computeFlags(stmt, original.effectiveSubstatements()), (LeafSchemaNode) stmt.original());
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(LeafSchemaNode.class));
     }
 
     @Override
@@ -98,7 +98,7 @@ public final class LeafStatementSupport
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt), stmt,
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
-        final LeafSchemaNode original = (LeafSchemaNode) stmt.original();
+        final LeafSchemaNode original = stmt.original(LeafSchemaNode.class);
         final int flags = computeFlags(stmt, substatements);
         final LeafStatement declared = stmt.declared();
         return original == null ? new EmptyLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.A
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDataNodeContainer;
 
-final class AugmentEffectiveStatementImpl extends AbstractDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
+public final class AugmentEffectiveStatementImpl
+        extends AbstractDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
         implements AugmentEffectiveStatement, AugmentationSchemaNode, QNameModuleAware,
             DocumentedNodeMixin.WithStatus<SchemaNodeIdentifier, AugmentStatement>,
             ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
@@ -37,8 +37,9 @@ final class AugmentEffectiveStatementImpl extends AbstractDataNodeContainer<Sche
     private final @NonNull QNameModule rootModuleQName;
     private final int flags;
 
-    AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument, final int flags,
-            final QNameModule rootModuleQName, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    public AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument,
+            final int flags, final QNameModule rootModuleQName,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable AugmentationSchemaNode original) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);

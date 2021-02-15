@@ -7,16 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
@@ -55,6 +86,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
@@ -70,9 +102,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AugmentEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ChoiceEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ContainerEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyAnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBelongsToEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorMessageEffectiveStatement;
@@ -98,9 +140,15 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyValueEffectiv
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBelongsToEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBitEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorMessageEffectiveStatement;
@@ -126,6 +174,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularValueEffect
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 
 /**
  * Static entry point to instantiating {@link EffectiveStatement} covered in the {@code RFC7950} metamodel.
@@ -137,10 +186,69 @@ public final class EffectiveStatements {
         // Hidden on purpose
     }
 
+    public static ActionEffectiveStatement copyAction(final ActionEffectiveStatement original, final Immutable path,
+            final int flags) {
+        checkArgument(original instanceof ActionEffectiveStatementImpl, "Unsupported original %s", original);
+        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, path, flags);
+    }
+
+    public static ActionEffectiveStatement createAction(final ActionStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+                throws SubstatementIndexingException {
+        return new ActionEffectiveStatementImpl(declared, path, flags, substatements);
+    }
+
+    public static AnydataEffectiveStatement copyAnydata(final AnydataEffectiveStatement original, final Immutable path,
+            final int flags, final @Nullable AnydataSchemaNode newOriginal) {
+        if (original instanceof RegularAnydataEffectiveStatement) {
+            return new RegularAnydataEffectiveStatement((RegularAnydataEffectiveStatement) original, path, flags,
+                newOriginal);
+        } else if (original instanceof EmptyAnydataEffectiveStatement) {
+            return new EmptyAnydataEffectiveStatement((EmptyAnydataEffectiveStatement) original, path, flags,
+                newOriginal);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static AnydataEffectiveStatement createAnydata(final AnydataStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable AnydataSchemaNode original) {
+        return substatements.isEmpty() ? new EmptyAnydataEffectiveStatement(declared, path, flags, original)
+            : new RegularAnydataEffectiveStatement(declared, path, flags, original, substatements);
+    }
+
+    public static AnyxmlEffectiveStatement copyAnyxml(final AnyxmlEffectiveStatement original, final Immutable path,
+            final int flags, final @Nullable AnyxmlSchemaNode newOriginal) {
+        if (original instanceof RegularAnyxmlEffectiveStatement) {
+            return new RegularAnyxmlEffectiveStatement((RegularAnyxmlEffectiveStatement) original, path, flags,
+                newOriginal);
+        } else if (original instanceof EmptyAnyxmlEffectiveStatement) {
+            return new EmptyAnyxmlEffectiveStatement((EmptyAnyxmlEffectiveStatement) original, path, flags,
+                newOriginal);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static AnyxmlEffectiveStatement createAnyxml(final AnyxmlStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable AnyxmlSchemaNode original) {
+        return substatements.isEmpty() ? new EmptyAnyxmlEffectiveStatement(declared, path, flags, original)
+            : new RegularAnyxmlEffectiveStatement(declared, path, flags, original, substatements);
+    }
+
     public static ArgumentEffectiveStatement createArgument(final ArgumentStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyArgumentEffectiveStatement(declared)
             : new RegularArgumentEffectiveStatement(declared, substatements);
+    }
+
+    public static AugmentEffectiveStatement createAugment(final AugmentStatement declared,
+            final SchemaNodeIdentifier argument, final int flags, final QNameModule rootModuleQName,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable AugmentationSchemaNode original) throws SubstatementIndexingException {
+        return new AugmentEffectiveStatementImpl(declared, argument, flags, rootModuleQName, substatements, original);
     }
 
     public static BaseEffectiveStatement createBase(final BaseStatement declared,
@@ -153,6 +261,66 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyBelongsToEffectiveStatement(declared)
             : new RegularBelongsToEffectiveStatement(declared, substatements);
+    }
+
+    public static BitEffectiveStatement createBit(final BitStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyBitEffectiveStatement(declared)
+            : new RegularBitEffectiveStatement(declared, substatements);
+    }
+
+    public static ChoiceEffectiveStatement copyChoice(final ChoiceEffectiveStatement original,
+            final Immutable path, final int flags, final @Nullable ChoiceSchemaNode orig) {
+        checkArgument(original instanceof ChoiceEffectiveStatementImpl, "Unsupported original %s", original);
+        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original, path, flags, orig);
+    }
+
+    public static ChoiceEffectiveStatement createChoice(final ChoiceStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable CaseSchemaNode defaultCase, final @Nullable ChoiceSchemaNode original) {
+        return new ChoiceEffectiveStatementImpl(declared, substatements, path, flags, defaultCase, original);
+    }
+
+    public static ConfigEffectiveStatement createConfig(final boolean argument) {
+        return argument ? EmptyConfigEffectiveStatement.TRUE : EmptyConfigEffectiveStatement.FALSE;
+    }
+
+    public static ConfigEffectiveStatement createConfig(final ConfigStatement declared) {
+        return new EmptyConfigEffectiveStatement(declared);
+    }
+
+    public static ConfigEffectiveStatement createConfig(final ConfigStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? createConfig(declared)
+            : new RegularConfigEffectiveStatement(declared, substatements);
+    }
+
+    public static ContactEffectiveStatement createContact(final ContactStatement declared) {
+        return new EmptyContactEffectiveStatement(declared);
+    }
+
+    public static ContactEffectiveStatement createContact(final ContactStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? createContact(declared)
+            : new RegularContactEffectiveStatement(declared, substatements);
+    }
+
+    public static ContainerEffectiveStatement copyContainer(final ContainerEffectiveStatement original,
+            final Immutable path, final int flags, final @Nullable ContainerSchemaNode orig) {
+        checkArgument(original instanceof ContainerEffectiveStatementImpl, "Unsupported original %s", original);
+        return new ContainerEffectiveStatementImpl((ContainerEffectiveStatementImpl) original, path, flags, orig);
+    }
+
+    public static ContainerEffectiveStatement createContainer(final ContainerStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable ContainerSchemaNode original) {
+        return new ContainerEffectiveStatementImpl(declared, substatements, path, flags, original);
+    }
+
+    public static DefaultEffectiveStatement createDefault(final DefaultStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyDefaultEffectiveStatement(declared)
+            : new RegularDefaultEffectiveStatement(declared, substatements);
     }
 
     public static DescriptionEffectiveStatement createDescription(final DescriptionStatement declared,

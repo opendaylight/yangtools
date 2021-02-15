@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString;
 
 public final class EmptyConfigStatement extends ArgumentToString<Boolean> implements ConfigStatement {
-    public EmptyConfigStatement(final Boolean argument) {
+    public static final @NonNull EmptyConfigStatement FALSE = new EmptyConfigStatement(false);
+    public static final @NonNull EmptyConfigStatement TRUE = new EmptyConfigStatement(true);
+
+    private EmptyConfigStatement(final boolean argument) {
         super(argument);
     }
 }

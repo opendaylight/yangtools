@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementSupport;
@@ -114,7 +115,7 @@ public final class ActionStatementSupport extends
         verify(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
 
         try {
-            return new ActionEffectiveStatementImpl(stmt.declared(), stmt.effectivePath(),
+            return EffectiveStatements.createAction(stmt.declared(), stmt.effectivePath(),
                 EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
@@ -124,7 +125,7 @@ public final class ActionStatementSupport extends
     @Override
     public ActionEffectiveStatement copyEffective(final Current<QName, ActionStatement> stmt,
             final ActionEffectiveStatement original) {
-        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, stmt.effectivePath(),
+        return EffectiveStatements.copyAction(original, stmt.effectivePath(),
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
     }
 }
