@@ -35,8 +35,8 @@ import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -69,9 +69,6 @@ public class Bug8745Test {
 
     @Test
     public void testParsingAttributes() throws Exception {
-        final ContainerSchemaNode contWithAttr = (ContainerSchemaNode) SCHEMA_CONTEXT.findDataTreeChild(
-            QName.create("foo", "cont-with-attributes")).orElseThrow();
-
         final Document doc = loadDocument("/bug8745/foo.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
@@ -83,7 +80,8 @@ public class Bug8745Test {
                 xmlStreamWriter, SCHEMA_CONTEXT);
 
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, contWithAttr);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(SCHEMA_CONTEXT, QName.create("foo", "cont-with-attributes")));
         xmlParser.parse(reader);
 
         XMLUnit.setIgnoreWhitespace(true);

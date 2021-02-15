@@ -5,10 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
@@ -44,6 +42,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -67,14 +66,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -97,8 +90,8 @@ public class NormalizedNodeXmlTranslationTest {
         });
     }
 
-    private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
-    private static final Revision REVISION = Revision.of("2014-03-13");
+    private static final QNameModule MODULE = QNameModule.create(
+        XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:test"), Revision.of("2014-03-13"));
 
     private static ContainerNode augmentChoiceHell2() {
         final NodeIdentifier container = getNodeIdentifier("container");
@@ -226,7 +219,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static NodeIdentifier getNodeIdentifier(final String localName) {
-        return new NodeIdentifier(QName.create(XMLNamespace.of(NAMESPACE), REVISION, localName));
+        return new NodeIdentifier(QName.create(MODULE, localName));
     }
 
     private static AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
@@ -239,17 +232,15 @@ public class NormalizedNodeXmlTranslationTest {
         return new AugmentationIdentifier(qn);
     }
 
+    private final ContainerNode expectedNode;
+    private final String xmlPath;
+
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath,
             final ContainerNode expectedNode) {
         this.schema = YangParserTestUtils.parseYangResource(yangPath);
         this.xmlPath = xmlPath;
-        this.containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
         this.expectedNode = expectedNode;
     }
-
-    private final ContainerNode expectedNode;
-    private final ContainerSchemaNode containerNode;
-    private final String xmlPath;
 
     @Test
     public void testTranslationRepairing() throws Exception {
@@ -269,7 +260,8 @@ public class NormalizedNodeXmlTranslationTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, containerNode);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schema, QName.create(MODULE, "container")));
         xmlParser.parse(reader);
 
         final NormalizedNode built = result.getResult();
@@ -341,40 +333,4 @@ public class NormalizedNodeXmlTranslationTest {
             throw new RuntimeException("Unable to serialize xml element " + xml, e);
         }
     }
-
-    private static DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName,
-                                               final String childNodeName) {
-        for (Module module : context.getModules()) {
-            if (module.getName().equals(moduleName)) {
-                DataSchemaNode found = findChildNode(module, childNodeName);
-                checkState(found != null, "Unable to find %s", childNodeName);
-                return found;
-            }
-        }
-        throw new IllegalStateException("Unable to find child node " + childNodeName);
-    }
-
-    // FIXME: duplicate of NormalizedDataBuilderTest.findChildNode()
-    private static DataSchemaNode findChildNode(final DataNodeContainer container, final String name) {
-        for (DataSchemaNode dataSchemaNode : container.getChildNodes()) {
-            if (dataSchemaNode.getQName().getLocalName().equals(name)) {
-                return dataSchemaNode;
-            }
-            if (dataSchemaNode instanceof DataNodeContainer) {
-                DataSchemaNode retVal = findChildNode((DataNodeContainer) dataSchemaNode, name);
-                if (retVal != null) {
-                    return retVal;
-                }
-            } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
-                for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases()) {
-                    DataSchemaNode retVal = findChildNode(caseNode, name);
-                    if (retVal != null) {
-                        return retVal;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
 }
