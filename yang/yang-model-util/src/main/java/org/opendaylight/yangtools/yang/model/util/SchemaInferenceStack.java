@@ -78,6 +78,20 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             this.clean = clean;
         }
 
+        /**
+         * Create a new stack backed by an effective model and set up to point and specified data tree node.
+         *
+         * @param effectiveModel EffectiveModelContext to which this stack is attached
+         * @param qnames Data tree path qnames
+         * @return A new stack
+         * @throws NullPointerException if any argument is null or path contains a null element
+         * @throws IllegalArgumentException if a path element cannot be found
+         */
+        public static @NonNull Inference ofDataTreePath(final EffectiveModelContext effectiveModel,
+                final QName... qnames) {
+            return SchemaInferenceStack.ofDataTreePath(effectiveModel, qnames).toInference();
+        }
+
         @Override
         public List<EffectiveStatement<?, ?>> statementPath() {
             return ImmutableList.copyOf(deque.descendingIterator());
