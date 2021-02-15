@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.A
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataSchemaNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 
-final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
+public final class ChoiceEffectiveStatementImpl
+        extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,
                    DataSchemaNodeMixin<QName, ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
                    MandatoryMixin<QName, ChoiceStatement> {
@@ -37,9 +38,9 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     private final @NonNull Immutable path;
     private final int flags;
 
-    ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final int flags,
-            final Immutable path, final @Nullable CaseSchemaNode defaultCase,
+    public ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags, final @Nullable CaseSchemaNode defaultCase,
             final @Nullable ChoiceSchemaNode original) {
         super(declared, substatements);
         this.path = requireNonNull(path);
@@ -48,8 +49,8 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
         this.original = original;
     }
 
-    ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final int flags,
-            final Immutable path, final ChoiceSchemaNode original) {
+    public ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final Immutable path,
+            final int flags, final ChoiceSchemaNode original) {
         super(origEffective);
         this.path = requireNonNull(path);
         this.flags = flags;

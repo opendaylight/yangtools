@@ -8,8 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -69,20 +69,24 @@ public final class AnydataStatementSupport
     @Override
     protected AnydataEffectiveStatement createEffective(final Current<QName, AnydataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final int flags = new FlagsBuilder()
+        return EffectiveStatements.createAnydata(stmt.declared(), stmt.effectivePath(),
+            createFlags(stmt, substatements), substatements, stmt.original(AnydataSchemaNode.class));
+    }
+
+    @Override
+    public AnydataEffectiveStatement copyEffective(final Current<QName, AnydataStatement> stmt,
+            final AnydataEffectiveStatement original) {
+        return EffectiveStatements.copyAnydata(original, stmt.effectivePath(),
+            createFlags(stmt, original.effectiveSubstatements()));
+    }
+
+    private static int createFlags(final Current<?, ?> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
-        final Immutable path = stmt.effectivePath();
-
-        return substatements.isEmpty()
-            ? new EmptyAnydataEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))
-                : new RegularAnydataEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt), substatements);
-    }
-
-    private static @Nullable AnydataSchemaNode findOriginal(final Current<?, ?> stmt) {
-        return (AnydataSchemaNode) stmt.original();
     }
 }

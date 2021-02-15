@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-final class EmptyContactEffectiveStatement extends DefaultArgument<String, ContactStatement>
+public final class EmptyContactEffectiveStatement extends DefaultArgument<String, ContactStatement>
         implements ContactEffectiveStatement {
-    EmptyContactEffectiveStatement(final ContactStatement declared) {
+    public EmptyContactEffectiveStatement(final ContactStatement declared) {
         super(declared);
     }
 }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-class EmptyBitEffectiveStatement extends DefaultArgument<String, BitStatement> implements
+public class EmptyBitEffectiveStatement extends DefaultArgument<String, BitStatement> implements
         BitEffectiveStatement, DocumentedNodeMixin<String, BitStatement>, WithStatus {
-    EmptyBitEffectiveStatement(final BitStatement declared) {
+    public EmptyBitEffectiveStatement(final BitStatement declared) {
         super(declared);
     }
 

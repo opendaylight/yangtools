@@ -150,10 +150,10 @@ public final class ListStatementSupport
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
         if (original instanceof RegularListEffectiveStatement) {
             return new RegularListEffectiveStatement((RegularListEffectiveStatement) original,
-                (ListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
+                stmt.original(ListSchemaNode.class), stmt.effectivePath(), flags);
         } else if (original instanceof EmptyListEffectiveStatement) {
             return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original,
-                (ListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
+                stmt.original(ListSchemaNode.class), stmt.effectivePath(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
@@ -198,7 +198,7 @@ public final class ListStatementSupport
         final Optional<ElementCountConstraint> elementCountConstraint =
             EffectiveStmtUtils.createElementCountConstraint(substatements);
         final Immutable path = stmt.effectivePath();
-        final ListSchemaNode original = (ListSchemaNode) stmt.original();
+        final ListSchemaNode original = stmt.original(ListSchemaNode.class);
         try {
             return original == null && !elementCountConstraint.isPresent()
                 ? new EmptyListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition)
