@@ -7,16 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
@@ -70,9 +81,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyAnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyBelongsToEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorMessageEffectiveStatement;
@@ -98,9 +112,11 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyValueEffectiv
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularBelongsToEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorMessageEffectiveStatement;
@@ -126,6 +142,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularValueEffect
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 
 /**
  * Static entry point to instantiating {@link EffectiveStatement} covered in the {@code RFC7950} metamodel.
@@ -135,6 +152,36 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYinElementE
 public final class EffectiveStatements {
     private EffectiveStatements() {
         // Hidden on purpose
+    }
+
+    public static ActionEffectiveStatement copyAction(final ActionEffectiveStatement original, final Immutable path,
+            final int flags) {
+        checkArgument(original instanceof ActionEffectiveStatementImpl, "Unsupported original %s", original);
+        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, path, flags);
+    }
+
+    public static ActionEffectiveStatement createAction(final ActionStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+                throws SubstatementIndexingException {
+        return new ActionEffectiveStatementImpl(declared, path, flags, substatements);
+    }
+
+    public static AnydataEffectiveStatement copyAnydata(final AnydataEffectiveStatement original, final Immutable path,
+            final int flags) {
+        if (original instanceof RegularAnydataEffectiveStatement) {
+            return new RegularAnydataEffectiveStatement((RegularAnydataEffectiveStatement) original, path, flags);
+        } else if (original instanceof EmptyAnydataEffectiveStatement) {
+            return new EmptyAnydataEffectiveStatement((EmptyAnydataEffectiveStatement) original, path, flags);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static AnydataEffectiveStatement createAnydata(final AnydataStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable AnydataSchemaNode original) {
+        return substatements.isEmpty() ? new EmptyAnydataEffectiveStatement(declared, path, flags, original)
+            : new RegularAnydataEffectiveStatement(declared, path, flags, original, substatements);
     }
 
     public static ArgumentEffectiveStatement createArgument(final ArgumentStatement declared,
@@ -153,6 +200,20 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyBelongsToEffectiveStatement(declared)
             : new RegularBelongsToEffectiveStatement(declared, substatements);
+    }
+
+    public static ConfigEffectiveStatement createConfig(final boolean argument) {
+        return argument ? EmptyConfigEffectiveStatement.TRUE : EmptyConfigEffectiveStatement.FALSE;
+    }
+
+    public static ConfigEffectiveStatement createConfig(final ConfigStatement declared) {
+        return new EmptyConfigEffectiveStatement(declared);
+    }
+
+    public static ConfigEffectiveStatement createConfig(final ConfigStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? createConfig(declared)
+            : new RegularConfigEffectiveStatement(declared, substatements);
     }
 
     public static DescriptionEffectiveStatement createDescription(final DescriptionStatement declared,
