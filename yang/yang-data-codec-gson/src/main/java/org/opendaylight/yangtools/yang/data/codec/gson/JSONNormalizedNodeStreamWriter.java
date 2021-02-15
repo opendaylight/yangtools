@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.util.NormalizedNodeInferenceStack;
+import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -54,7 +54,7 @@ import org.w3c.dom.Text;
 public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter,
         StreamWriterMountPointExtension {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
-        Exclusive(final JSONCodecFactory codecFactory, final NormalizedNodeInferenceStack tracker,
+        Exclusive(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
                 final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
             super(codecFactory, tracker, writer, rootContext);
         }
@@ -67,8 +67,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private static final class Nested extends JSONNormalizedNodeStreamWriter {
-        Nested(final JSONCodecFactory codecFactory, final NormalizedNodeInferenceStack tracker, final JsonWriter writer,
-                final JSONStreamWriterRootContext rootContext) {
+        Nested(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
+                final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
             super(codecFactory, tracker, writer, rootContext);
         }
 
@@ -93,12 +93,12 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private static final String NOT_DECIMAL_NUMBER_STRING = "-?\\d+";
     private static final Pattern NOT_DECIMAL_NUMBER_PATTERN = Pattern.compile(NOT_DECIMAL_NUMBER_STRING);
 
-    private final NormalizedNodeInferenceStack tracker;
+    private final NormalizedNodeStreamWriterStack tracker;
     private final JSONCodecFactory codecs;
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeInferenceStack tracker,
+    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
             final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecFactory);
@@ -130,7 +130,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
         return new Exclusive(codecFactory,
-            NormalizedNodeInferenceStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
+            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
@@ -157,7 +157,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final EffectiveStatementInference rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Exclusive(codecFactory, NormalizedNodeInferenceStack.of(rootNode), jsonWriter,
+        return new Exclusive(codecFactory, NormalizedNodeStreamWriterStack.of(rootNode), jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
@@ -185,7 +185,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
         return new Exclusive(codecFactory,
-            NormalizedNodeInferenceStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
+            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
@@ -210,8 +210,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Nested(codecFactory, NormalizedNodeInferenceStack.of(codecFactory.getEffectiveModelContext(), path),
-            jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory,
+            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     /**
@@ -235,8 +236,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final Absolute path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Nested(codecFactory, NormalizedNodeInferenceStack.of(codecFactory.getEffectiveModelContext(), path),
-            jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory,
+            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     /**
@@ -260,7 +262,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final EffectiveStatementInference rootNode, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Nested(codecFactory, NormalizedNodeInferenceStack.of(rootNode), jsonWriter,
+        return new Nested(codecFactory, NormalizedNodeStreamWriterStack.of(rootNode), jsonWriter,
             new JSONStreamWriterSharedRootContext(initialNs));
     }
 
@@ -365,7 +367,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final NormalizedNodeStreamWriter startMountPoint(final MountPointIdentifier mountId,
             final MountPointContext mountCtx) throws IOException {
         final EffectiveModelContext ctx = mountCtx.getEffectiveModelContext();
-        return new Nested(codecs.rebaseTo(ctx), NormalizedNodeInferenceStack.of(ctx), writer,
+        return new Nested(codecs.rebaseTo(ctx), NormalizedNodeStreamWriterStack.of(ctx), writer,
             new JSONStreamWriterSharedRootContext(context.getNamespace()));
     }
 
