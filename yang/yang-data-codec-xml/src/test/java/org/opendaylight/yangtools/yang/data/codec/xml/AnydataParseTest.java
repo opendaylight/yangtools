@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,14 +17,13 @@ import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.xml.sax.SAXException;
 
 public class AnydataParseTest extends AbstractAnydataTest {
-
     @Test
     public void testAnydata() throws XMLStreamException, IOException, URISyntaxException, SAXException {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(
@@ -31,11 +31,10 @@ public class AnydataParseTest extends AbstractAnydataTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT,
-            SCHEMA_CONTEXT.findDataChildByName(FOO_QNAME).get(), true);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME), true);
         xmlParser.parse(reader);
 
-        final NormalizedNode parsed = result.getResult();
-        assertTrue(parsed instanceof AnydataNode);
+        assertThat(result.getResult(), instanceOf(AnydataNode.class));
     }
 }

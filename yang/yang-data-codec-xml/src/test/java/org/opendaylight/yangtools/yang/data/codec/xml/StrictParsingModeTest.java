@@ -15,6 +15,8 @@ import static org.junit.Assert.assertThrows;
 import java.io.InputStream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,22 +24,26 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class StrictParsingModeTest {
+    private static EffectiveModelContext schemaContext;
+
+    @BeforeClass
+    public static void beforeClass() {
+        schemaContext = YangParserTestUtils.parseYangResource("/strict-parsing-mode-test/foo.yang");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        schemaContext = null;
+    }
 
     @Test
+    // unknown child nodes in the top-level-container node will be skipped when the strictParsing is set to false
     public void testLenientParsing() throws Exception {
-        // unknown child nodes in the top-level-container node will be skipped when the strictParsing is set to false
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource(
-                "/strict-parsing-mode-test/foo.yang");
-        final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
-
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
 
@@ -46,7 +52,8 @@ public class StrictParsingModeTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, false);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create("foo", "top-level-container")), false);
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -54,15 +61,9 @@ public class StrictParsingModeTest {
     }
 
     @Test
+    // should fail because strictParsing is switched on and the top-level-container node contains child nodes
+    // which are not defined in the provided YANG model
     public void testStrictParsing() throws Exception {
-        // should fail because strictParsing is switched on and the top-level-container node contains child nodes
-        // which are not defined in the provided YANG model
-        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource(
-                "/strict-parsing-mode-test/foo.yang");
-        final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
-
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
 
@@ -71,7 +72,8 @@ public class StrictParsingModeTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, true);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create("foo", "top-level-container")), true);
 
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("Schema for node with name unknown-container-a and namespace foo "
