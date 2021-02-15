@@ -111,14 +111,14 @@ public final class LeafListStatementSupport
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
         if (original instanceof RegularLeafListEffectiveStatement) {
             return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
-                (LeafListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
+                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
         } else if (original instanceof SlimLeafListEffectiveStatement) {
             return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original,
-                (LeafListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
+                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
         } else if (original instanceof EmptyLeafListEffectiveStatement) {
             // Promote to slim
             return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
-                (LeafListSchemaNode) stmt.original(), stmt.effectivePath(), flags);
+                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
@@ -150,7 +150,7 @@ public final class LeafListStatementSupport
         final Optional<ElementCountConstraint> elementCountConstraint =
                 EffectiveStmtUtils.createElementCountConstraint(substatements);
 
-        final LeafListSchemaNode original = (LeafListSchemaNode) stmt.original();
+        final LeafListSchemaNode original = stmt.original(LeafListSchemaNode.class);
         final LeafListStatement declared = stmt.declared();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()

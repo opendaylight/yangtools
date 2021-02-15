@@ -8,8 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -69,20 +69,24 @@ public final class AnyxmlStatementSupport
     @Override
     protected AnyxmlEffectiveStatement createEffective(final Current<QName, AnyxmlStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final int flags = new FlagsBuilder()
+        return EffectiveStatements.createAnyxml(stmt.declared(), stmt.effectivePath(), createFlags(stmt, substatements),
+            substatements, stmt.original(AnyxmlSchemaNode.class));
+    }
+
+    @Override
+    public AnyxmlEffectiveStatement copyEffective(final Current<QName, AnyxmlStatement> stmt,
+            final AnyxmlEffectiveStatement original) {
+        return EffectiveStatements.copyAnyxml(original, stmt.effectivePath(),
+            createFlags(stmt, original.effectiveSubstatements()), stmt.original(AnyxmlSchemaNode.class));
+    }
+
+    private static int createFlags(final Current<QName, AnyxmlStatement> stmt,
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        return new FlagsBuilder()
             .setHistory(stmt.history())
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .setConfiguration(stmt.effectiveConfig().asNullable())
             .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
             .toFlags();
-        final Immutable path = stmt.effectivePath();
-
-        return substatements.isEmpty()
-            ? new EmptyAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt))
-                : new RegularAnyxmlEffectiveStatement(stmt.declared(), path, flags, findOriginal(stmt), substatements);
-    }
-
-    private static @Nullable AnyxmlSchemaNode findOriginal(final Current<?, ?> stmt) {
-        return (AnyxmlSchemaNode) stmt.original();
     }
 }
