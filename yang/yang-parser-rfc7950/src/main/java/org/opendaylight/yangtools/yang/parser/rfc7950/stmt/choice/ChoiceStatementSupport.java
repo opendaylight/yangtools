@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
@@ -126,9 +127,8 @@ public final class ChoiceStatementSupport
     @Override
     public ChoiceEffectiveStatement copyEffective(final Current<QName, ChoiceStatement> stmt,
             final ChoiceEffectiveStatement original) {
-        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original,
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.effectivePath(),
-            (ChoiceSchemaNode) stmt.original());
+        return EffectiveStatements.copyChoice(original, stmt.effectivePath(),
+            computeFlags(stmt, original.effectiveSubstatements()), (ChoiceSchemaNode) stmt.original());
     }
 
     @Override
@@ -152,8 +152,8 @@ public final class ChoiceStatementSupport
         }
 
         try {
-            return new ChoiceEffectiveStatementImpl(stmt.declared(), substatements, computeFlags(stmt, substatements),
-                stmt.effectivePath(), defaultCase, (ChoiceSchemaNode) stmt.original());
+            return EffectiveStatements.createChoice(stmt.declared(), stmt.effectivePath(),
+                computeFlags(stmt, substatements), substatements, defaultCase, (ChoiceSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

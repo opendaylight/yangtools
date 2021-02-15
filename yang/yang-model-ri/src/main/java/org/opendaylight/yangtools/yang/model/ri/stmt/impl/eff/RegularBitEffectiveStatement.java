@@ -5,16 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 
-final class RegularBitEffectiveStatement extends EmptyBitEffectiveStatement {
+public final class RegularBitEffectiveStatement extends EmptyBitEffectiveStatement {
     private final Object substatements;
 
-    RegularBitEffectiveStatement(final BitStatement declared,
+    public RegularBitEffectiveStatement(final BitStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.substatements = maskList(substatements);

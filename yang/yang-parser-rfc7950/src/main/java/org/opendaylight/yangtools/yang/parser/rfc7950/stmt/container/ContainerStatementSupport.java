@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
@@ -120,8 +121,8 @@ public final class ContainerStatementSupport
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
         try {
-            return new ContainerEffectiveStatementImpl(stmt.declared(), substatements, stmt.effectivePath(),
-                createFlags(stmt, substatements), (ContainerSchemaNode) stmt.original());
+            return EffectiveStatements.createContainer(stmt.declared(), stmt.effectivePath(),
+                createFlags(stmt, substatements), substatements, (ContainerSchemaNode) stmt.original());
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -130,7 +131,7 @@ public final class ContainerStatementSupport
     @Override
     public ContainerEffectiveStatement copyEffective(final Current<QName, ContainerStatement> stmt,
             final ContainerEffectiveStatement original) {
-        return new ContainerEffectiveStatementImpl((ContainerEffectiveStatementImpl) original, stmt.effectivePath(),
+        return EffectiveStatements.copyContainer(original, stmt.effectivePath(),
             createFlags(stmt, original.effectiveSubstatements()), (ContainerSchemaNode) stmt.original());
     }
 
