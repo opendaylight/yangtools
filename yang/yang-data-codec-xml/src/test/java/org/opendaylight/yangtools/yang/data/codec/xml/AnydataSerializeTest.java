@@ -42,10 +42,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.DefaultSchemaTreeInference;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -83,19 +82,14 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     @Test
     public void testXmlParseAnydata()
             throws IOException, SAXException, XMLStreamException, URISyntaxException, TransformerException {
-
-        //Create Data Scheme from yang file
-        final SchemaNode dataSchemaNode = SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME).orElse(null);
-        assertThat(dataSchemaNode, instanceOf(AnydataSchemaNode.class));
-        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) dataSchemaNode;
-
         // deserialization
         final XMLStreamReader reader
                 = UntrustedXML.createXMLStreamReader(loadResourcesAsInputStream("/test-anydata.xml"));
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, anyDataSchemaNode);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -135,12 +129,11 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         //Load XML from file and write it with xmlParseStream
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
-        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME)
-            .orElseThrow();
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, SCHEMA_CONTEXT);
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, anyDataSchemaNode);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
 
         xmlParser.parse(reader);
         xmlParser.flush();
@@ -166,17 +159,14 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         Document doc = loadXmlDocument("/test-anydata.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
-        //Get specific attribute from Yang file.
-        final AnydataSchemaNode contWithAttr = (AnydataSchemaNode) SCHEMA_CONTEXT.findDataTreeChild(FOO_QNAME)
-            .orElseThrow();
-
         //Create NormalizedNodeResult
         NormalizedNodeResult normalizedResult = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(normalizedResult);
 
         //Initialize Reader with XML file
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, contWithAttr);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(SCHEMA_CONTEXT, FOO_QNAME));
         xmlParser.parse(reader);
         xmlParser.flush();
 

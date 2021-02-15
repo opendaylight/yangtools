@@ -22,6 +22,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -32,33 +36,30 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 
 public class AnyXmlWithParamsParsingTest {
-
     private static final InputStream EDIT_CONFIG = XmlToNormalizedNodesTest.class.getResourceAsStream(
             "/anyxml-support/params/edit.xml");
 
-    private static final EffectiveModelContext SCHEMA = YangParserTestUtils.parseYangResourceDirectory(
-            "/anyxml-support/params/");
-
-    private static final SchemaNode SCHEMA_NODE = SCHEMA.getOperations().stream()
-            .filter(o -> o.getQName().getLocalName().equals("edit-config"))
-            .findFirst()
-            .map(OperationDefinition::getInput)
-            .get();
+    private static final QNameModule IETF_NETCONF = QNameModule.create(
+        XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0"), Revision.of("2011-06-01"));
 
     @Test
     public void testAnyXmlWithParams() throws Exception {
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResourceDirectory("/anyxml-support/params/");
+
         final Document doc = UntrustedXML.newDocumentBuilder().parse(EDIT_CONFIG);
 
         final NormalizedNodeResult resultHolder = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter writer = ImmutableNormalizedNodeStreamWriter.from(resultHolder);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(writer, SCHEMA, SCHEMA_NODE);
+        final XmlParserStream xmlParser = XmlParserStream.create(writer, SchemaInferenceStack.of(context,
+            Absolute.of(QName.create(IETF_NETCONF, "edit-config"), YangConstants.operationInputQName(IETF_NETCONF)))
+            .toInference());
         xmlParser.traverse(new DOMSource(doc.getDocumentElement()));
         final NormalizedNode parsed = resultHolder.getResult();
 

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YT1107Test {
@@ -38,8 +39,8 @@ public class YT1107Test {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext,
-            schemaContext.findDataTreeChild(PARENT).orElseThrow());
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, PARENT));
         xmlParser.parse(reader);
 
         assertEquals(Builders.containerBuilder()

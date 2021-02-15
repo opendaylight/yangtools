@@ -44,8 +44,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
@@ -79,14 +79,14 @@ public class XmlToNormalizedNodesTest {
     private static final QName MY_LEAF_IN_LIST_3 = QName.create(BAZ_MODULE, "my-leaf-in-list-3");
 
     private static EffectiveModelContext schemaContext;
-    private static ContainerSchemaNode outerContainerSchema;
-    private static ContainerSchemaNode parentContainerSchema;
+    private static Inference outerContainerSchema;
+    private static Inference parentContainerSchema;
 
     @BeforeClass
     public static void setup() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/");
-        parentContainerSchema = (ContainerSchemaNode) schemaContext.findDataTreeChild(PARENT_CONTAINER).orElseThrow();
-        outerContainerSchema = (ContainerSchemaNode) schemaContext.findDataTreeChild(OUTER_CONTAINER).orElseThrow();
+        parentContainerSchema = Inference.ofDataTreePath(schemaContext, PARENT_CONTAINER);
+        outerContainerSchema = Inference.ofDataTreePath(schemaContext, OUTER_CONTAINER);
     }
 
     @AfterClass
@@ -106,7 +106,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         xmlParser.parse(reader);
 
         xmlParser.flush();
@@ -131,7 +131,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -148,7 +148,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("Duplicate element \"decimal64-leaf\" in namespace"
             + " \"foo-namespace\" with parent \"container leaf-container\" in XML input"));
@@ -164,7 +164,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("Duplicate element \"my-anyxml\" in namespace"
             + " \"foo-namespace\" with parent \"container anyxml-container\" in XML input"));
@@ -180,7 +180,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, parentContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("Duplicate element \"leaf-container\" in namespace"
             + " \"foo-namespace\" with parent \"container parent-container\" in XML input"));
@@ -196,7 +196,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
     }
@@ -211,7 +211,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
     }
@@ -226,7 +226,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
         assertThat(ex.getMessage(), containsString("</my-container-1>"));
     }
@@ -241,7 +241,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, outerContainerSchema);
         final XMLStreamException ex = assertThrows(XMLStreamException.class, () -> xmlParser.parse(reader));
 
         assertThat(ex.getMessage(), containsString("Schema for node with name my-container-1 and namespace "

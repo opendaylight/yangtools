@@ -33,10 +33,9 @@ final class DOMSourceMountPointChild extends AbstractMountPointChild {
 
     @Override
     public void writeTo(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx) throws IOException {
-
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(writer, mountCtx, mountCtx.getEffectiveModelContext());
+            xmlParser = XmlParserStream.create(writer, mountCtx);
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }
