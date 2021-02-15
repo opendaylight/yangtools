@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;

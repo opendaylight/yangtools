@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.A
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDataNodeContainer;
 
 final class AugmentEffectiveStatementImpl extends AbstractDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
         implements AugmentEffectiveStatement, AugmentationSchemaNode, QNameModuleAware,

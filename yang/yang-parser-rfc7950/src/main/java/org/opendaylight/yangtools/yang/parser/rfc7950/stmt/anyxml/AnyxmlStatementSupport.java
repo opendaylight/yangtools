@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyAnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
