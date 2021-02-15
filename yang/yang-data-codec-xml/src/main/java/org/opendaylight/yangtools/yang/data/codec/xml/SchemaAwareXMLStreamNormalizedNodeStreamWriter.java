@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.util.NormalizedNodeInferenceStack;
+import org.opendaylight.yangtools.yang.data.util.NormalizedNodeStreamWriterStack;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
@@ -37,11 +37,11 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
         extends XMLStreamNormalizedNodeStreamWriter<TypedDataSchemaNode> implements EffectiveModelContextProvider {
-    private final NormalizedNodeInferenceStack tracker;
+    private final NormalizedNodeStreamWriterStack tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
     SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final EffectiveModelContext context,
-            final NormalizedNodeInferenceStack tracker) {
+            final NormalizedNodeStreamWriterStack tracker) {
         super(writer);
         this.tracker = requireNonNull(tracker);
         this.streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
