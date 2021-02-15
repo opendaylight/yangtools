@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.util.AbstractEffectiveModelContextProvider;
 
 /**
  * Semantic tree binding a {@link EffectiveModelContext} to a {@link NormalizedNode} tree. Since the layout of the
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  *
  * @author Robert Varga
  */
-public final class DataSchemaContextTree {
+public final class DataSchemaContextTree extends AbstractEffectiveModelContextProvider {
     private static final LoadingCache<EffectiveModelContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys().weakValues().build(new CacheLoader<EffectiveModelContext, DataSchemaContextTree>() {
                 @Override
@@ -34,6 +35,7 @@ public final class DataSchemaContextTree {
     private final DataSchemaContextNode<?> root;
 
     private DataSchemaContextTree(final EffectiveModelContext ctx) {
+        super(ctx);
         root = DataSchemaContextNode.from(ctx);
     }
 
