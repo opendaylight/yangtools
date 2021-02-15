@@ -76,13 +76,15 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -138,16 +140,30 @@ public final class XmlParserStream implements Closeable, Flushable {
     // Cache of nsUri Strings to QNameModules, as inferred from document
     private final Map<String, QNameModule> rawNamespaces = new HashMap<>();
     private final NormalizedNodeStreamWriter writer;
+    private final SchemaInferenceStack stack;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
     private final boolean strictParsing;
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final DataSchemaNode parentNode, final boolean strictParsing) {
+            final SchemaInferenceStack stack, final boolean strictParsing) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
-        this.parentNode = parentNode;
+        this.stack = requireNonNull(stack);
         this.strictParsing = strictParsing;
+
+        if (!stack.isEmpty()) {
+            final EffectiveStatement<?, ?> stmt = stack.currentStatement();
+            if (stmt instanceof DataSchemaNode) {
+                parentNode = (DataSchemaNode) stmt;
+            } else if (stmt instanceof OperationDefinition) {
+                parentNode = OperationAsContainer.of((OperationDefinition) stmt);
+            } else {
+                throw new IllegalArgumentException("Illegal parent node " + stmt);
+            }
+        } else {
+            parentNode = stack.getEffectiveModelContext();
+        }
     }
 
     /**
@@ -159,7 +175,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      * @return A new stream instance
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final SchemaNode parentNode) {
+            final EffectiveStatementInference parentNode) {
         return create(writer, codecs, parentNode, true);
     }
 
@@ -176,55 +192,77 @@ public final class XmlParserStream implements Closeable, Flushable {
      * @return A new stream instance
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final SchemaNode parentNode, final boolean strictParsing) {
-        final DataSchemaNode parent;
-        if (parentNode instanceof DataSchemaNode) {
-            parent = (DataSchemaNode) parentNode;
-        } else if (parentNode instanceof OperationDefinition) {
-            parent = OperationAsContainer.of((OperationDefinition) parentNode);
-        } else {
-            throw new IllegalArgumentException("Illegal parent node " + parentNode);
-        }
-        return new XmlParserStream(writer, codecs, parent, strictParsing);
+            final EffectiveStatementInference parentNode, final boolean strictParsing) {
+        return new XmlParserStream(writer, codecs, SchemaInferenceStack.ofInference(parentNode), strictParsing);
     }
 
     /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
-     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
-     * maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
-            final EffectiveModelContext schemaContext, final SchemaNode parentNode) {
-        return create(writer, schemaContext, parentNode, true);
+            final EffectiveModelContext context) {
+        return create(writer, context, true);
     }
 
     /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
-     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
-     * maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
-            final EffectiveModelContext schemaContext, final SchemaNode parentNode, final boolean strictParsing) {
-        return create(writer, XmlCodecFactory.create(schemaContext), parentNode, strictParsing);
+            final EffectiveModelContext context, final boolean strictParsing) {
+        return create(writer, SchemaInferenceStack.of(context).toInference(), strictParsing);
     }
 
     /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
-     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
-     * maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
+            final EffectiveStatementInference parentNode) {
+        return create(writer, parentNode, true);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link EffectiveModelContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer,
+            final EffectiveStatementInference parentNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(parentNode.getEffectiveModelContext()), parentNode, strictParsing);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx) {
+        return create(writer, mountCtx, SchemaInferenceStack.of(mountCtx.getEffectiveModelContext()).toInference(),
+            true);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final SchemaNode parentNode) {
+            final EffectiveStatementInference parentNode) {
         return create(writer, mountCtx, parentNode, true);
     }
 
     /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
-     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
-     * maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
+     * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
-            final SchemaNode parentNode, final boolean strictParsing) {
+            final EffectiveStatementInference parentNode, final boolean strictParsing) {
         return create(writer, XmlCodecFactory.create(mountCtx), parentNode, strictParsing);
     }
 
@@ -478,8 +516,12 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         // We have a match, proceed with it
-                        read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes,
-                            elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP), rootElement);
+                        final QName qname = childDataSchemaNodes.peekLast().getQName();
+                        final AbstractNodeDataWithSchema<?> child = ((CompositeNodeDataWithSchema<?>) parent).addChild(
+                            childDataSchemaNodes, elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP);
+                        stack.enterDataTree(qname);
+                        read(in, child, rootElement);
+                        stack.exit();
                         continue;
                     }
 

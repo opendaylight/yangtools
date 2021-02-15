@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertNotNull;
@@ -17,41 +16,34 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8675Test {
+    private static final QNameModule FOO = QNameModule.create(XMLNamespace.of("foo"), Revision.of("2017-06-13"));
 
     private static EffectiveModelContext schemaContext;
-    private static Module fooModule;
 
     @BeforeClass
     public static void setup() {
         schemaContext = YangParserTestUtils.parseYangResource("/bug8675/foo.yang");
-        fooModule = schemaContext.getModules().iterator().next();
     }
 
     @AfterClass
     public static void cleanup() {
-        fooModule = null;
         schemaContext = null;
     }
 
     @Test
     public void testParsingEmptyElements() throws Exception {
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/bug8675/foo.xml");
 
@@ -60,7 +52,8 @@ public class Bug8675Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-container")));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -69,9 +62,6 @@ public class Bug8675Test {
 
     @Test
     public void testParsingEmptyRootElement() throws Exception {
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/bug8675/foo-2.xml");
 
@@ -80,7 +70,8 @@ public class Bug8675Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-container")));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -89,9 +80,6 @@ public class Bug8675Test {
 
     @Test
     public void testListAsRootElement() throws Exception {
-        final ListSchemaNode topLevelList = (ListSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-list")).get();
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-3.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -99,7 +87,8 @@ public class Bug8675Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelList);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-list")));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -108,9 +97,6 @@ public class Bug8675Test {
 
     @Test
     public void testAnyXmlAsRootElement() throws Exception {
-        final AnyxmlSchemaNode topLevelAnyXml = (AnyxmlSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-anyxml")).get();
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-4.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -118,7 +104,8 @@ public class Bug8675Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelAnyXml);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-anyxml")));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -127,9 +114,6 @@ public class Bug8675Test {
 
     @Test
     public void testLeafAsRootElement() throws Exception {
-        final LeafSchemaNode topLevelLeaf = (LeafSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-leaf")).get();
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-5.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -137,7 +121,8 @@ public class Bug8675Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelLeaf);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-leaf")));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();
@@ -146,9 +131,6 @@ public class Bug8675Test {
 
     @Test
     public void testLeafListAsRootElement() throws Exception {
-        final LeafListSchemaNode topLevelLeafList = (LeafListSchemaNode) fooModule.findDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-leaf-list")).get();
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-6.xml");
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -156,7 +138,8 @@ public class Bug8675Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelLeafList);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(schemaContext, QName.create(FOO, "top-level-leaf-list")));
         xmlParser.parse(reader);
 
         final NormalizedNode transformedInput = result.getResult();

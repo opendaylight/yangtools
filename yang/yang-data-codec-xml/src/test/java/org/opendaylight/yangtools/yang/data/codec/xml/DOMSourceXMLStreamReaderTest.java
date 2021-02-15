@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -39,9 +38,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack.Inference;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -74,9 +72,6 @@ public class DOMSourceXMLStreamReaderTest {
 
     @Test
     public void test() throws Exception {
-        final ContainerSchemaNode outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil
-                .findNodeInSchemaContext(SCHEMA_CONTEXT, ImmutableList.of(QName.create("foo-ns", "top-cont")));
-        assertNotNull(outerContainerSchema);
 
         // deserialization
         final Document doc = loadDocument("/dom-reader-test/foo.xml");
@@ -85,7 +80,8 @@ public class DOMSourceXMLStreamReaderTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter,
+            Inference.ofDataTreePath(SCHEMA_CONTEXT, QName.create("foo-ns", "top-cont")));
         xmlParser.parse(domXMLReader);
         final NormalizedNode transformedInput = result.getResult();
         assertNotNull(transformedInput);

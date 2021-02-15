@@ -60,7 +60,7 @@ public final class TestUtils {
             final EffectiveModelContext schemaContext) throws Exception {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(xmlInputStream);
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         xmlParser.parse(reader);
     }
 
