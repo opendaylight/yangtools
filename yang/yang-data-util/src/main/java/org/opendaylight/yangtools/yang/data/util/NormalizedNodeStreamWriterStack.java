@@ -62,19 +62,19 @@ import org.slf4j.LoggerFactory;
  * Utility class for tracking schema state underlying a {@link NormalizedNode} structure.
  */
 @Beta
-public final class NormalizedNodeInferenceStack implements Mutable {
-    private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeInferenceStack.class);
+public final class NormalizedNodeStreamWriterStack implements Mutable {
+    private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeStreamWriterStack.class);
 
     private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
     private final SchemaInferenceStack dataTree;
     private final DataNodeContainer root;
 
-    private NormalizedNodeInferenceStack(final EffectiveModelContext context) {
+    private NormalizedNodeStreamWriterStack(final EffectiveModelContext context) {
         root = requireNonNull(context);
         dataTree = SchemaInferenceStack.of(context);
     }
 
-    private NormalizedNodeInferenceStack(final SchemaInferenceStack dataTree) {
+    private NormalizedNodeStreamWriterStack(final SchemaInferenceStack dataTree) {
         this.dataTree = requireNonNull(dataTree);
         if (!dataTree.isEmpty()) {
             final EffectiveStatement<?, ?> current = dataTree.currentStatement();
@@ -93,8 +93,8 @@ public final class NormalizedNodeInferenceStack implements Mutable {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code root} is null
      */
-    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveStatementInference root) {
-        return new NormalizedNodeInferenceStack(SchemaInferenceStack.ofInference(root));
+    public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveStatementInference root) {
+        return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.ofInference(root));
     }
 
     /**
@@ -104,8 +104,8 @@ public final class NormalizedNodeInferenceStack implements Mutable {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code root} is null
      */
-    public static @NonNull NormalizedNodeInferenceStack of(final Inference root) {
-        return new NormalizedNodeInferenceStack(root.toSchemaInferenceStack());
+    public static @NonNull NormalizedNodeStreamWriterStack of(final Inference root) {
+        return new NormalizedNodeStreamWriterStack(root.toSchemaInferenceStack());
     }
 
     /**
@@ -115,8 +115,8 @@ public final class NormalizedNodeInferenceStack implements Mutable {
      * @return A new {@link NormalizedNodeStreamWriter}
      * @throws NullPointerException if {@code context} is null
      */
-    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveModelContext context) {
-        return new NormalizedNodeInferenceStack(context);
+    public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context) {
+        return new NormalizedNodeStreamWriterStack(context);
     }
 
     /**
@@ -124,12 +124,13 @@ public final class NormalizedNodeInferenceStack implements Mutable {
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
-     * @return A new {@link NormalizedNodeInferenceStack}
+     * @return A new {@link NormalizedNodeStreamWriterStack}
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
-    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveModelContext context, final Absolute path) {
-        return new NormalizedNodeInferenceStack(SchemaInferenceStack.of(context, path));
+    public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
+            final Absolute path) {
+        return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.of(context, path));
     }
 
     /**
@@ -137,13 +138,14 @@ public final class NormalizedNodeInferenceStack implements Mutable {
      *
      * @param context Associated {@link EffectiveModelContext}
      * @param path schema path
-     * @return A new {@link NormalizedNodeInferenceStack}
+     * @return A new {@link NormalizedNodeStreamWriterStack}
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if {@code path} does not point to a valid root
      */
     @Deprecated
-    public static @NonNull NormalizedNodeInferenceStack of(final EffectiveModelContext context, final SchemaPath path) {
-        return new NormalizedNodeInferenceStack(SchemaInferenceStack.ofInstantiatedPath(context, path));
+    public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
+            final SchemaPath path) {
+        return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.ofInstantiatedPath(context, path));
     }
 
     /**
@@ -157,14 +159,14 @@ public final class NormalizedNodeInferenceStack implements Mutable {
      * @throws IllegalArgumentException if {@code operation} does not point to an actual operation or if {@code qname}
      *                                  does not identify a valid root underneath it.
      */
-    public static @NonNull NormalizedNodeInferenceStack ofOperation(final EffectiveModelContext context,
+    public static @NonNull NormalizedNodeStreamWriterStack ofOperation(final EffectiveModelContext context,
             final Absolute operation, final QName qname) {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context, operation);
         final EffectiveStatement<?, ?> current = stack.currentStatement();
         checkArgument(current instanceof RpcEffectiveStatement || current instanceof ActionEffectiveStatement,
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
-        return new NormalizedNodeInferenceStack(stack);
+        return new NormalizedNodeStreamWriterStack(stack);
     }
 
     /**
