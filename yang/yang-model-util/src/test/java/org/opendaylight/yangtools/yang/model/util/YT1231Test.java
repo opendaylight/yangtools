@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,6 +34,7 @@ public class YT1231Test {
 
         // Trivial
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+        assertSame(context.getModuleStatement(FOO.getModule()), stack.currentModule());
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
         assertEquals(Absolute.of(FOO, FOO), stack.toSchemaNodeIdentifier());
