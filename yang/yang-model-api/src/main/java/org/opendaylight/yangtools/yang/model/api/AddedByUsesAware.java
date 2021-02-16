@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Trait interface for {@link SchemaNode}s, which have the {@link #isAddedByUses()} method.
- *
- * @deprecated This interface relates to declared model rather than to effective mode and as such should not
- *             exist. It is provided to provide common method definition and eash migration of users.
  */
-@Deprecated
+@Beta
+//FIXME: 8.0.0: refactor this interface to take into account DerivableSchemaNode
 public interface AddedByUsesAware {
     /**
      * Returns <code>true</code> if this node was added by uses statement,
