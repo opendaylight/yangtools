@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -20,11 +16,9 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -32,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -41,38 +34,10 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
+@Deprecated
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaNodeUtilsTest {
-    @Mock
-    public DerivableSchemaNode derivableNode;
-
-    @Test
-    public void testHandleNullGetOriginalIfPossible() {
-        Optional<SchemaNode> originalIfPossible = SchemaNodeUtils
-                .getOriginalIfPossible(null);
-        assertNotNull(originalIfPossible);
-        assertThat(originalIfPossible, instanceOf(Optional.class));
-    }
-
-    @Test
-    public void testHandleNodeGetOriginalIfPossible() {
-        Optional<DerivableSchemaNode> of = Optional.of(derivableNode);
-        doReturn(of).when(derivableNode).getOriginal();
-        Optional<SchemaNode> originalIfPossible = SchemaNodeUtils
-                .getOriginalIfPossible(derivableNode);
-        assertNotNull(originalIfPossible);
-        assertThat(originalIfPossible, instanceOf(Optional.class));
-    }
-
-    @Test
-    public void testHandleNullGetRootOriginalIfPossible() {
-        SchemaNode rootOriginalIfPossible = SchemaNodeUtils
-                .getRootOriginalIfPossible(null);
-        assertNull(rootOriginalIfPossible);
-    }
-
     @Test
     public void testTraversal() {
         final Module mockedModule = mockDataNodeContainer(Module.class);

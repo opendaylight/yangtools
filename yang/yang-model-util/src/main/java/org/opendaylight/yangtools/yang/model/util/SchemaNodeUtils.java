@@ -13,17 +13,12 @@ import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -31,52 +26,12 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
+@Deprecated
 public final class SchemaNodeUtils {
     private SchemaNodeUtils() {
         // Hidden on purpose
-    }
-
-    public static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
-        if (node instanceof DerivableSchemaNode) {
-            @SuppressWarnings("unchecked")
-            final Optional<SchemaNode> ret  = (Optional<SchemaNode>) ((DerivableSchemaNode) node).getOriginal();
-            return ret;
-        }
-        return Optional.empty();
-    }
-
-    public static SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
-        Optional<SchemaNode> previous = Optional.empty();
-        Optional<SchemaNode> next = getOriginalIfPossible(data);
-        while (next.isPresent()) {
-            previous = next;
-            next = getOriginalIfPossible(next.get());
-        }
-        return previous.orElse(null);
-    }
-
-    /**
-     * Returns RPC input or output schema based on supplied QName.
-     *
-     * @param rpc RPC Definition
-     * @param qname input or output QName with namespace same as RPC
-     * @return input or output schema. Returns null if RPC does not have input/output specified.
-     */
-    public static @Nullable ContainerLike getRpcDataSchema(final @NonNull RpcDefinition rpc,
-            final @NonNull QName qname) {
-        requireNonNull(rpc, "Rpc Schema must not be null");
-        switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
-            case "input":
-                return rpc.getInput();
-            case "output":
-                return rpc.getOutput();
-            default:
-                throw new IllegalArgumentException("Supplied qname " + qname
-                        + " does not represent rpc input or output.");
-        }
     }
 
     @Beta
