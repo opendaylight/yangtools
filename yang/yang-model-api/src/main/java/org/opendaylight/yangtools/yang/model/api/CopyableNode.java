@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import com.google.common.annotations.Beta;
 
 /**
  * Represents a node that can be added by uses or by augmentation.
- *
- * @deprecated Aside from the deprecated {@link AddedByUsesAware} contract, this interface adds only a trait related
- *             to now how we arrived at this effective node. Users who need to know this information should really be
- *             looking at the {@link DeclaredStatement} world, which holds the original node definition.
  */
-@Deprecated
+@Beta
+// FIXME: 8.0.0: refactor this interface to take into account DerivableSchemaNode
 public interface CopyableNode extends AddedByUsesAware {
     /**
      * Returns <code>true</code> if this node was added by augmentation,
