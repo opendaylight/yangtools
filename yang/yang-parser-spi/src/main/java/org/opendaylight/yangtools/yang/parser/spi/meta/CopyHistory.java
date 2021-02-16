@@ -93,13 +93,11 @@ public final class CopyHistory implements Immutable, CopyableNode {
     }
 
     @Override
-    @Deprecated
     public boolean isAugmenting() {
         return (operations & IS_AUGMENTING_BITS) != 0;
     }
 
     @Override
-    @Deprecated
     public boolean isAddedByUses() {
         return (operations & IS_ADDED_BY_USES_BITS) != 0;
     }

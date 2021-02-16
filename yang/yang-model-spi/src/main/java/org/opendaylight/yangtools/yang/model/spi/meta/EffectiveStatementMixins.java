@@ -101,7 +101,6 @@ public final class EffectiveStatementMixins {
     public interface AddedByUsesMixin<A, D extends DeclaredStatement<A>>
             extends EffectiveStatementWithFlags<A, D>, AddedByUsesAware {
         @Override
-        @Deprecated
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
         }
@@ -156,7 +155,6 @@ public final class EffectiveStatementMixins {
      */
     public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends AddedByUsesMixin<A, D>, CopyableNode {
         @Override
-        @Deprecated
         default boolean isAugmenting() {
             return (flags() & FlagsBuilder.AUGMENTING) != 0;
         }
