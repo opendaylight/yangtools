@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.HashMultimap;
@@ -66,6 +67,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
 
+    // TODO: consider keying by Byte equivalent of ExecutionOrder
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
@@ -80,9 +82,10 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
      * - parent module, declared via 'belongs-to' statement
      */
     private Collection<RootStatementContext<?, ?, ?>> importedNamespaces = ImmutableList.of();
+    private RootStatementContext<?, ?, ?> root;
+    // TODO: consider using ExecutionOrder byte for these two
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase inProgressPhase;
-    private RootStatementContext<?, ?, ?> root;
 
     SourceSpecificContext(final BuildGlobalContext globalContext, final StatementStreamSource source) {
         this.globalContext = requireNonNull(globalContext);
@@ -268,15 +271,17 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return globalContext;
     }
 
-    PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) {
+    PhaseCompletionProgress tryToCompletePhase(final byte executionOrder) {
+        final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
         final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
         final boolean phaseCompleted = requireNonNull(root, "Malformed source. Valid root element is missing.")
-                .tryToCompletePhase(phase);
+                .tryToCompletePhase(executionOrder);
 
         hasProgressed |= tryToProgress(currentPhaseModifiers);
 
+        // TODO: use executionOrder instead?
         if (phaseCompleted && currentPhaseModifiers.isEmpty()) {
             finishedPhase = phase;
             LOG.debug("Source {} finished phase {}", source, phase);
