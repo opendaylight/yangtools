@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Effective view of a {@link ModuleStatement}.
@@ -73,7 +72,7 @@ public interface ModuleEffectiveStatement
      *     Default implementation defers to {@link #findSchemaTreeNode(java.util.List)}.
      */
     @Override
-    default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final Absolute path) {
+    default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final SchemaNodeIdentifier path) {
         return findSchemaTreeNode(path.getNodeIdentifiers());
     }
 }

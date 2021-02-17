@@ -18,14 +18,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeRoot;
 
 /**
  * {@link EffectiveStatement}-based result of YANG parser compilation. Unlike a SchemaContext, which it extends,
  * it gives access to individual {@link ModuleEffectiveStatement}s that comprise it. It also supports resolution of
- * {@link Absolute} schema node identifiers via {@link #findSchemaTreeNode(Absolute)}.
+ * schema node identifiers via {@link #findSchemaTreeNode(SchemaNodeIdentifier)}.
  *
  * @author Robert Varga
  */
@@ -56,10 +56,10 @@ public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
      *
      * @implSpec
      *     Default implementation defers locates the module corresponding to the first element of path and then defers
-     *     to {@link ModuleEffectiveStatement#findSchemaTreeNode(Absolute)}.
+     *     to {@link ModuleEffectiveStatement#findSchemaTreeNode(SchemaNodeIdentifier)}.
      */
     @Override
-    default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final Absolute path) {
+    default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final SchemaNodeIdentifier path) {
         return findModuleStatement(path.firstNodeIdentifier().getModule())
             .flatMap(module -> module.findSchemaTreeNode(path));
     }
