@@ -21,6 +21,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     // FIXME: remote this as we reduce our exports
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
 
+    requires org.antlr.antlr4.runtime;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.openconfig.model.api;
     requires org.opendaylight.yangtools.yang.common;
