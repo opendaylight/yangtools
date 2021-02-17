@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -83,7 +84,7 @@ public final class LeafStatementSupport
     @Override
     public LeafEffectiveStatement copyEffective(final Current<QName, LeafStatement> stmt,
             final LeafEffectiveStatement original) {
-        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, stmt.effectivePath(),
+        return EffectiveStatements.copyLeaf(original, stmt.effectivePath(),
             computeFlags(stmt, original.effectiveSubstatements()), stmt.original(LeafSchemaNode.class));
     }
 
@@ -98,11 +99,8 @@ public final class LeafStatementSupport
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt), stmt,
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
-        final LeafSchemaNode original = stmt.original(LeafSchemaNode.class);
-        final int flags = computeFlags(stmt, substatements);
-        final LeafStatement declared = stmt.declared();
-        return original == null ? new EmptyLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
-                : new RegularLeafEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original);
+        return EffectiveStatements.createLeaf(stmt.declared(), stmt.effectivePath(), computeFlags(stmt, substatements),
+            substatements, stmt.original(LeafSchemaNode.class));
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

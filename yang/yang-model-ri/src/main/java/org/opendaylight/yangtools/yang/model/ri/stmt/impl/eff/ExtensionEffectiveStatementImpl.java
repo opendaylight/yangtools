@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStateme
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, ExtensionStatement>
+public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, ExtensionStatement>
         implements ExtensionDefinition, ExtensionEffectiveStatement, DocumentedNodeMixin<QName, ExtensionStatement> {
     private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
         boolean check(final ExtensionEffectiveStatementImpl current) {
@@ -66,7 +66,7 @@ final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, Exten
     private final @Nullable SchemaPath path;
     private final Object substatements;
 
-    ExtensionEffectiveStatementImpl(final ExtensionStatement declared,
+    public ExtensionEffectiveStatementImpl(final ExtensionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
         super(declared);
         this.substatements = maskList(substatements);

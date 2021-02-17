@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
@@ -15,16 +15,16 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 
-final class RegularLeafEffectiveStatement extends AbstractLeafEffectiveStatement {
+public final class RegularLeafEffectiveStatement extends AbstractLeafEffectiveStatement {
     private final @Nullable LeafSchemaNode original;
 
-    RegularLeafEffectiveStatement(final LeafStatement declared, final Immutable path, final int flags,
+    public RegularLeafEffectiveStatement(final LeafStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final LeafSchemaNode original) {
         super(declared, path, flags, substatements);
         this.original = original;
     }
 
-    RegularLeafEffectiveStatement(final AbstractLeafEffectiveStatement originalEffective, final Immutable path,
+    public RegularLeafEffectiveStatement(final AbstractLeafEffectiveStatement originalEffective, final Immutable path,
             final int flags, final LeafSchemaNode original) {
         super(originalEffective, path, flags);
         this.original = original;

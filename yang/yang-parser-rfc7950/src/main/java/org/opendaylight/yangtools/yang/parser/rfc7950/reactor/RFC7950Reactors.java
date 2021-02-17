@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UniqueStatementSupport;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -96,7 +97,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.BaseTypeNamespac
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef.TypedefStatementSupport;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique.UniqueStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.SourceGroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.UsesStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
