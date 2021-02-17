@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
 
 import com.google.common.annotations.Beta;
 import java.util.Arrays;
@@ -49,13 +50,11 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
     /**
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
      *
-     * @param <E> Effective substatement type
      * @param qname Child identifier
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code qname} is null
      */
-    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
-            final @NonNull QName qname) {
+    default @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final @NonNull QName qname) {
         return get(Namespace.class, requireNonNull(qname));
     }
 
@@ -63,13 +62,24 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
      *
      * @param <E> Effective substatement type
+     * @param type Effective substatement class
+     * @param qname Child identifier
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if any argument is null
+     */
+    default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type, final @NonNull QName qname) {
+        return filterOptional(type, findSchemaTreeNode(qname));
+    }
+
+    /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
+     *
      * @param qnames Child identifiers
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code qnames} is null or contains a null element
      * @throws NoSuchElementException if {@code qnames} is empty
      */
-    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
-            final @NonNull QName... qnames) {
+    default @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final @NonNull QName... qnames) {
         return findSchemaTreeNode(Arrays.asList(qnames));
     }
 
@@ -77,21 +87,33 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
      *
      * @param <E> Effective substatement type
+     * @param type Effective substatement class
+     * @param qnames Child identifiers
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if any argument is null or if {@code qnames} contains a null element
+     * @throws NoSuchElementException if {@code qnames} is empty
+     */
+    default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type, final @NonNull QName... qnames) {
+        return filterOptional(type, findSchemaTreeNode(Arrays.asList(qnames)));
+    }
+
+    /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
+     *
      * @param qnames Child identifiers
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code qnames} is null or contains a null element
      * @throws NoSuchElementException if {@code qnames} is empty
      */
-    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
-            final @NonNull List<QName> qnames) {
+    default @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final @NonNull List<QName> qnames) {
         final Iterator<QName> it = qnames.iterator();
         SchemaTreeAwareEffectiveStatement<?, ?> parent = this;
         while (true) {
-            final Optional<E> found = parent.findSchemaTreeNode(it.next());
+            final Optional<SchemaTreeEffectiveStatement<?>> found = parent.findSchemaTreeNode(it.next());
             if (!it.hasNext() || found.isEmpty()) {
                 return found;
             }
-            final E node = found.orElseThrow();
+            final SchemaTreeEffectiveStatement<?> node = found.orElseThrow();
             if (node instanceof SchemaTreeAwareEffectiveStatement) {
                 parent = (SchemaTreeAwareEffectiveStatement<?, ?>) node;
             } else {
@@ -101,19 +123,51 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
     }
 
     /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its QName argument.
+     *
+     * @param <E> Effective substatement type
+     * @param type Effective substatement class
+     * @param qnames Child identifiers
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if {@code qnames} is null or contains a null element
+     * @throws NoSuchElementException if {@code qnames} is empty
+     */
+    default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type,
+            final @NonNull List<QName> qnames) {
+        return filterOptional(type, findSchemaTreeNode(qnames));
+    }
+
+    /**
      * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its
      * {@link Descendant descendant schema node identifier}.
      *
      * @implSpec
      *     Default implementation defers to {@link #findSchemaTreeNode(List)}.
      *
-     * @param <E> Effective substatement type
      * @param descendant Descendant schema node identifier
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code descendant} is null
      */
-    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
+    default @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(
             final @NonNull Descendant descendant) {
         return findSchemaTreeNode(descendant.getNodeIdentifiers());
+    }
+
+    /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its
+     * {@link Descendant descendant schema node identifier}.
+     *
+     * @implSpec
+     *     Default implementation defers to {@link #findSchemaTreeNode(Class, List)}.
+     *
+     * @param <E> Effective substatement type
+     * @param type Effective substatement class
+     * @param descendant Descendant schema node identifier
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if {@code descendant} is null
+     */
+    default <E> @NonNull Optional<E> findSchemaTreeNode(final @NonNull Class<E> type,
+            final @NonNull Descendant descendant) {
+        return findSchemaTreeNode(type, descendant.getNodeIdentifiers());
     }
 }
