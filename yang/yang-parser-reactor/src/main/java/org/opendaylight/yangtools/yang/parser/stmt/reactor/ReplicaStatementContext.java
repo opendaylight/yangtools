@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -95,8 +94,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public ModelProcessingPhase getCompletedPhase() {
-        return source.getCompletedPhase();
+    byte executionOrder() {
+        return source.executionOrder();
     }
 
     @Override
@@ -173,7 +172,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         throw new UnsupportedOperationException();
     }
 
-    @Override boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
+    @Override
+    boolean doTryToCompletePhase(final byte executionOrder) {
         throw new UnsupportedOperationException();
     }
 
