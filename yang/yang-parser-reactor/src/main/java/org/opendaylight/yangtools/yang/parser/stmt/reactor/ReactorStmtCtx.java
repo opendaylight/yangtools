@@ -445,10 +445,12 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * @return true if phase was successfully completed
      * @throws SourceException when an error occurred in source parsing
      */
+    // FIXME: operate on ExecutionOrder byte
     final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
         return phase.isCompletedBy(getCompletedPhase()) || doTryToCompletePhase(phase);
     }
 
+    // FIXME: operate on ExecutionOrder byte
     abstract boolean doTryToCompletePhase(ModelProcessingPhase phase);
 
     //

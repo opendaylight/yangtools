@@ -30,7 +30,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
@@ -105,14 +105,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
-    private @Nullable ModelProcessingPhase completedPhase;
+    /**
+     * {@link ModelProcessingPhase.ExecutionOrder} value of current {@link ModelProcessingPhase} of this statement.
+     */
+    private byte executionOrder;
 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
         this.copyHistory = original.copyHistory;
         this.definition = original.definition;
-        this.completedPhase = original.completedPhase;
+        this.executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
@@ -149,13 +152,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final ModelProcessingPhase getCompletedPhase() {
-        return completedPhase;
+        return ModelProcessingPhase.ofExecutionOrder(executionOrder);
     }
 
     // FIXME: this should be propagated through a correct constructor
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.completedPhase = completedPhase;
+        this.executionOrder = completedPhase.executionOrder();
     }
 
     @Override
@@ -257,9 +260,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, 1);
         final ReactorStmtCtx<?, ?, ?> stmt = (ReactorStmtCtx<?, ?, ?>) substatement;
-        final ModelProcessingPhase phase = completedPhase;
-        if (phase != null) {
-            ensureCompletedPhase(stmt, phase);
+        if (executionOrder != ExecutionOrder.NULL) {
+            ensureCompletedPhase(stmt, ModelProcessingPhase.ofExecutionOrder(executionOrder));
         }
         resized.add(stmt);
         return resized;
@@ -288,8 +290,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, statements.size());
         final Collection<? extends ReactorStmtCtx<?, ?, ?>> casted =
             (Collection<? extends ReactorStmtCtx<?, ?, ?>>) statements;
-        final ModelProcessingPhase phase = completedPhase;
-        if (phase != null) {
+        if (executionOrder != ExecutionOrder.NULL) {
+            final ModelProcessingPhase phase = ModelProcessingPhase.ofExecutionOrder(executionOrder);
             for (ReactorStmtCtx<?, ?, ?> stmt : casted) {
                 ensureCompletedPhase(stmt, phase);
             }
@@ -304,8 +306,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
         verifyStatement(stmt);
-        final ModelProcessingPhase phase = completedPhase;
-        if (phase != null) {
+        if (executionOrder != ExecutionOrder.NULL) {
+            final ModelProcessingPhase phase = ModelProcessingPhase.ofExecutionOrder(executionOrder);
             ensureCompletedPhase((ReactorStmtCtx<?, ?, ?>) stmt, phase);
         }
     }
@@ -313,6 +315,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Make sure target statement has transitioned at least to specified phase. This method is just before we take
     // allow a statement to become our substatement. This is needed to ensure that every statement tree does not contain
     // any statements which did not complete the same phase as the root statement.
+    // FIXME: operate on ExecutionOrder byte
     private static void ensureCompletedPhase(final ReactorStmtCtx<?, ?, ?> stmt, final ModelProcessingPhase phase) {
         verify(stmt.tryToCompletePhase(phase), "Statement %s cannot complete phase %s", stmt, phase);
     }
@@ -323,8 +326,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final int toAdd) {
-        // We cannot allow statement to be further mutated
-        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
+        // We cannot allow statement to be further mutated.
+        // FIXME: we really want to say 'not NULL and not at or after EFFECTIVE_MODEL here. This will matter if we have
+        //        a phase after EFFECTIVE_MODEL
+        verify(executionOrder != ExecutionOrder.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
             sourceReference());
         return beforeAddEffectiveStatementUnsafe(effective, toAdd);
     }
@@ -436,8 +441,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             when an error occurred in source parsing
      */
     private void onPhaseCompleted(final ModelProcessingPhase phase) {
-        completedPhase = phase;
-        if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
+        executionOrder = phase == null ? ExecutionOrder.NULL : phase.executionOrder();
+        if (executionOrder == ExecutionOrder.EFFECTIVE_MODEL) {
+            // We have completed effective model, substatements are guaranteed not to change
             summarizeSubstatementPolicy();
         }
 
@@ -610,7 +616,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkNotNull(phase, "Statement context processing phase cannot be null at: %s", sourceReference());
         checkNotNull(listener, "Statement context phase listener cannot be null at: %s", sourceReference());
 
-        ModelProcessingPhase finishedPhase = completedPhase;
+        // TODO: make this work on execution order?
+        ModelProcessingPhase finishedPhase = ModelProcessingPhase.ofExecutionOrder(executionOrder);
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
                 listener.phaseFinished(this, finishedPhase);
@@ -631,7 +638,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws IllegalStateException when the mutation was registered after phase was completed
      */
     final void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
-        ModelProcessingPhase finishedPhase = completedPhase;
+        // TODO: make this work on execution order?
+        ModelProcessingPhase finishedPhase = ModelProcessingPhase.ofExecutionOrder(executionOrder);
         while (finishedPhase != null) {
             checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
                 sourceReference());
