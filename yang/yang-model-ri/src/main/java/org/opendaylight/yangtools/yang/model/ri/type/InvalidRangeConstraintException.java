@@ -7,20 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.RangeSet;
 
 @Beta
 public class InvalidRangeConstraintException extends IllegalArgumentException {
     private static final long serialVersionUID = 1L;
 
-    private final RangeSet<?> offendingRangeConstraint;
+    private final ImmutableRangeSet<?> offendingRangeConstraint;
 
     protected InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String message) {
         super(message);
-        this.offendingRangeConstraint = requireNonNull(offendingConstraint);
+        this.offendingRangeConstraint = ImmutableRangeSet.copyOf(offendingConstraint);
     }
 
     public InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String format,
@@ -28,7 +27,7 @@ public class InvalidRangeConstraintException extends IllegalArgumentException {
         this(offendingConstraint, String.format(format, args));
     }
 
-    public RangeSet<?> getOffendingRanges() {
+    public final RangeSet<?> getOffendingRanges() {
         return offendingRangeConstraint;
     }
 }
