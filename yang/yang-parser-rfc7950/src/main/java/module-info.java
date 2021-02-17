@@ -44,8 +44,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
@@ -53,7 +51,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,12 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
-class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
+public class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
         implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<QName, FeatureStatement> {
     private final @NonNull Immutable path;
     private final int flags;
 
-    EmptyFeatureEffectiveStatement(final FeatureStatement declared, final Immutable path, final int flags) {
+    public EmptyFeatureEffectiveStatement(final FeatureStatement declared, final Immutable path, final int flags) {
         super(declared);
         this.path = requireNonNull(path);
         this.flags = flags;

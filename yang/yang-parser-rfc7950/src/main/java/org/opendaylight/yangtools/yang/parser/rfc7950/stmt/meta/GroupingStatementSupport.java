@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -151,7 +152,7 @@ public final class GroupingStatementSupport
     protected GroupingEffectiveStatement createEffective(final Current<QName, GroupingStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new GroupingEffectiveStatementImpl(stmt.declared(), substatements, stmt.effectivePath(),
+            return EffectiveStatements.createGrouping(stmt.declared(), substatements, stmt.effectivePath(),
                 EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
