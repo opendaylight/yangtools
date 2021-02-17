@@ -8,18 +8,21 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 
 /**
  * Effective view of a {@link ModuleStatement}.
  */
 @Beta
-public interface ModuleEffectiveStatement extends DataTreeAwareEffectiveStatement<UnqualifiedQName, ModuleStatement> {
+public interface ModuleEffectiveStatement
+        extends DataTreeAwareEffectiveStatement<UnqualifiedQName, ModuleStatement>, SchemaTreeRoot {
     /**
      * Namespace mapping all known prefixes in a module to their modules. Note this namespace includes the module
      * in which it is instantiated.
@@ -62,4 +65,15 @@ public interface ModuleEffectiveStatement extends DataTreeAwareEffectiveStatemen
      * @return Local QNameModule
      */
     @NonNull QNameModule localQNameModule();
+
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec
+     *     Default implementation defers to {@link #findSchemaTreeNode(java.util.List)}.
+     */
+    @Override
+    default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final Absolute path) {
+        return findSchemaTreeNode(path.getNodeIdentifiers());
+    }
 }

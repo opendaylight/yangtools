@@ -18,24 +18,28 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeRoot;
 
 /**
  * {@link EffectiveStatement}-based result of YANG parser compilation. Unlike a SchemaContext, which it extends,
- * it gives access to individual {@link ModuleEffectiveStatement}s that comprise it.
+ * it gives access to individual {@link ModuleEffectiveStatement}s that comprise it. It also supports resolution of
+ * {@link Absolute} schema node identifiers via {@link #findSchemaTreeNode(Absolute)}.
  *
  * @author Robert Varga
  */
 @Beta
-// FIXME: 7.0.0: evaluate if we still need to extend SchemaContext here
-public interface EffectiveModelContext extends SchemaContext {
+// FIXME: 8.0.0: evaluate if we still need to extend SchemaContext here
+public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
 
-    Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();
+    @NonNull Map<QNameModule, ModuleEffectiveStatement> getModuleStatements();
 
-    default Optional<ModuleEffectiveStatement> findModuleStatement(final QNameModule moduleName) {
+    default @NonNull Optional<ModuleEffectiveStatement> findModuleStatement(final QNameModule moduleName) {
         return Optional.ofNullable(getModuleStatements().get(requireNonNull(moduleName)));
     }
 
-    default Optional<ModuleEffectiveStatement> findModuleStatement(final QName moduleName) {
+    default @NonNull Optional<ModuleEffectiveStatement> findModuleStatement(final QName moduleName) {
         return findModuleStatement(moduleName.getModule());
     }
 
@@ -45,5 +49,18 @@ public interface EffectiveModelContext extends SchemaContext {
 
     default @NonNull ModuleEffectiveStatement getModuleStatement(final QName moduleName) {
         return getModuleStatement(moduleName.getModule());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec
+     *     Default implementation defers locates the module corresponding to the first element of path and then defers
+     *     to {@link ModuleEffectiveStatement#findSchemaTreeNode(Absolute)}.
+     */
+    @Override
+    default Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(final Absolute path) {
+        return findModuleStatement(path.firstNodeIdentifier().getModule())
+            .flatMap(module -> module.findSchemaTreeNode(path));
     }
 }
