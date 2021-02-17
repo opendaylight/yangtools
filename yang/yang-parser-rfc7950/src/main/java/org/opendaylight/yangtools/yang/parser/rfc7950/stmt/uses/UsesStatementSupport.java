@@ -150,8 +150,11 @@ public final class UsesStatementSupport
     @Override
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final GroupingDefinition sourceGrouping = (GroupingDefinition)
+        final EffectiveStatement<?, ?> source =
             verifyNotNull(stmt.getFromNamespace(SourceGroupingNamespace.class, Empty.getInstance())).buildEffective();
+        verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
+        final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
+
         final int flags = EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements);
         final QName argument = stmt.getArgument();
         final UsesStatement declared = stmt.declared();

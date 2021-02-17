@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
-final class EmptyLengthEffectiveStatement extends DefaultArgument<List<ValueRange>, LengthStatement>
+public final class EmptyLengthEffectiveStatement extends DefaultArgument<List<ValueRange>, LengthStatement>
         implements LengthEffectiveStatement, ConstraintMetaDefinitionMixin<List<ValueRange>, LengthStatement> {
-    EmptyLengthEffectiveStatement(final LengthStatement declared) {
+    public EmptyLengthEffectiveStatement(final LengthStatement declared) {
         super(declared);
     }
 }

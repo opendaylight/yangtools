@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -99,8 +100,7 @@ public final class LengthStatementSupport
     @Override
     protected LengthEffectiveStatement createEffective(final Current<List<ValueRange>, LengthStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyLengthEffectiveStatement(stmt.declared())
-            : new RegularLengthEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createLength(stmt.declared(), substatements);
     }
 
     private static @NonNull Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
