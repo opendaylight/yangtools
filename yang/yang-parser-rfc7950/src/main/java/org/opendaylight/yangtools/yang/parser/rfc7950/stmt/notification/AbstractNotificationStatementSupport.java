@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -43,18 +44,18 @@ abstract class AbstractNotificationStatementSupport
     protected final NotificationEffectiveStatement createEffective(final Current<QName, NotificationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new NotificationEffectiveStatementImpl(stmt.declared(), substatements, stmt.effectivePath(),
-                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements));
+            return EffectiveStatements.createNotification(stmt.declared(), stmt.effectivePath(),
+                EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
     }
 
     @Override
+    // FIXME: propagate original?
     public final NotificationEffectiveStatement copyEffective(final Current<QName, NotificationStatement> stmt,
             final NotificationEffectiveStatement original) {
-        return new NotificationEffectiveStatementImpl((NotificationEffectiveStatementImpl) original,
-            stmt.effectivePath(),
+        return EffectiveStatements.copyNotification(original, stmt.effectivePath(),
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
     }
 }

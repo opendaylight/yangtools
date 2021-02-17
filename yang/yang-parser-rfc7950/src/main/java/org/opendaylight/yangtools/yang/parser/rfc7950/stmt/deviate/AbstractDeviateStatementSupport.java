@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -201,9 +202,9 @@ abstract class AbstractDeviateStatementSupport
     }
 
     @Override
-    protected DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
+    protected final DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new DeviateEffectiveStatementImpl(stmt.declared(), substatements);
+        return EffectiveStatements.createDeviate(stmt.declared(), substatements);
     }
 
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
