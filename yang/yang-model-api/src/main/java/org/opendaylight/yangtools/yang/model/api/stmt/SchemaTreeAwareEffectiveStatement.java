@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Interface implemented by all {@link EffectiveStatement}s which can contain a {@code schema tree} child. This tree
@@ -97,5 +98,22 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
                 return Optional.empty();
             }
         }
+    }
+
+    /**
+     * Find a {@code schema tree} child {@link SchemaTreeEffectiveStatement}, as identified by its
+     * {@link Descendant descendant schema node identifier}.
+     *
+     * @implSpec
+     *     Default implementation defers to {@link #findSchemaTreeNode(List)}.
+     *
+     * @param <E> Effective substatement type
+     * @param descendant Descendant schema node identifier
+     * @return Schema tree child, or empty
+     * @throws NullPointerException if {@code descendant} is null
+     */
+    default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
+            final @NonNull Descendant descendant) {
+        return findSchemaTreeNode(descendant.getNodeIdentifiers());
     }
 }
