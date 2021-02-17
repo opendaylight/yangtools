@@ -382,7 +382,8 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
             while (currentSource.hasNext()) {
                 final SourceSpecificContext nextSourceCtx = currentSource.next();
                 try {
-                    final PhaseCompletionProgress sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase);
+                    final PhaseCompletionProgress sourceProgress =
+                        nextSourceCtx.tryToCompletePhase(currentPhase.executionOrder());
                     switch (sourceProgress) {
                         case FINISHED:
                             currentSource.remove();
