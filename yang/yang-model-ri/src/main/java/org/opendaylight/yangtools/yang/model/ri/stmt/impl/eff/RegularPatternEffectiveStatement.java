@@ -5,17 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ConstraintMetaDefinitionMixin;
 
-final class EmptyPatternEffectiveStatement extends DefaultArgument<PatternExpression, PatternStatement>
+final class RegularPatternEffectiveStatement extends WithSubstatements<PatternExpression, PatternStatement>
         implements PatternEffectiveStatement, ConstraintMetaDefinitionMixin<PatternExpression, PatternStatement> {
-    EmptyPatternEffectiveStatement(final PatternStatement declared) {
-        super(declared);
+    RegularPatternEffectiveStatement(final PatternStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        super(declared, substatements);
     }
 }

@@ -5,17 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 
-final class RegularUniqueEffectiveStatement extends EmptyUniqueEffectiveStatement {
+public final class RegularUniqueEffectiveStatement extends EmptyUniqueEffectiveStatement {
     private final @NonNull Object substatements;
 
-    RegularUniqueEffectiveStatement(final UniqueStatement declared,
+    public RegularUniqueEffectiveStatement(final UniqueStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.substatements = maskList(substatements);
