@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -92,7 +93,6 @@ public final class PatternStatementSupport
     @Override
     protected PatternEffectiveStatement createEffective(final Current<PatternExpression, PatternStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyPatternEffectiveStatement(stmt.declared())
-            : new RegularPatternEffectiveStatement(stmt.declared(), substatements);
+        return EffectiveStatements.createPattern(stmt.declared(), substatements);
     }
 }

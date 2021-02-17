@@ -22,6 +22,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires transitive org.opendaylight.yangtools.yang.repo.spi;
 
     requires com.google.common;
+    requires org.antlr.antlr4.runtime;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.openconfig.model.api;
     requires org.opendaylight.yangtools.yang.common;
@@ -38,35 +39,16 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires static org.eclipse.jdt.annotation;
 
     // FIXME: hide these
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
     // FIXME: this needs to be renamed to match parser-support naming convention
     exports org.opendaylight.yangtools.yang.parser.openconfig.stmt;
