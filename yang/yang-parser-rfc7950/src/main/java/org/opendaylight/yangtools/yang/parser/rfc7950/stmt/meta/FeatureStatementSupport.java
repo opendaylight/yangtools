@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -37,7 +38,6 @@ public final class FeatureStatementSupport
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
     private static final FeatureStatementSupport INSTANCE = new FeatureStatementSupport();
-    private static final int EMPTY_EFFECTIVE_FLAGS = new FlagsBuilder().setStatus(Status.CURRENT).toFlags();
 
     private FeatureStatementSupport() {
         super(YangStmtMapping.FEATURE, StatementPolicy.reject());
@@ -77,10 +77,8 @@ public final class FeatureStatementSupport
     @Override
     protected FeatureEffectiveStatement createEffective(final Current<QName, FeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty()
-            ? new EmptyFeatureEffectiveStatement(stmt.declared(), stmt.effectivePath(), EMPTY_EFFECTIVE_FLAGS)
-                : new RegularFeatureEffectiveStatement(stmt.declared(), stmt.effectivePath(),
-                    computeFlags(substatements), substatements);
+        return EffectiveStatements.createFeature(stmt.declared(), stmt.effectivePath(), computeFlags(substatements),
+            substatements);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

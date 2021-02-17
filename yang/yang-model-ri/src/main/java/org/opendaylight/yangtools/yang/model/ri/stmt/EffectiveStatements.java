@@ -54,12 +54,18 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
@@ -118,9 +124,11 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDefaultEffect
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorMessageEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIncludeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMinElementsEffectiveStatement;
@@ -140,6 +148,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyValueEffectiv
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.GroupingEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularArgumentEffectiveStatement;
@@ -152,9 +161,11 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDefaultEffe
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorMessageEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIncludeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMinElementsEffectiveStatement;
@@ -341,6 +352,12 @@ public final class EffectiveStatements {
             : new RegularErrorMessageEffectiveStatement(declared, substatements);
     }
 
+    public static FeatureEffectiveStatement createFeature(final FeatureStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyFeatureEffectiveStatement(declared, path, flags)
+            : new RegularFeatureEffectiveStatement(declared, path, flags, substatements);
+    }
+
     public static FractionDigitsEffectiveStatement createFractionDigits(final FractionDigitsStatement declared) {
         return new EmptyFractionDigitsEffectiveStatement(declared);
     }
@@ -349,6 +366,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? createFractionDigits(declared)
             : new RegularFractionDigitsEffectiveStatement(declared, substatements);
+    }
+
+    public static GroupingEffectiveStatement createGrouping(final GroupingStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags) throws SubstatementIndexingException {
+        return new GroupingEffectiveStatementImpl(declared, substatements, path, flags);
     }
 
     public static IfFeatureEffectiveStatement createIfFeature(final IfFeatureStatement declared,
@@ -361,6 +384,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(declared)
             : new RegularIncludeEffectiveStatement(declared, substatements);
+    }
+
+    public static LengthEffectiveStatement createLength(final LengthStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyLengthEffectiveStatement(declared)
+            : new RegularLengthEffectiveStatement(declared, substatements);
     }
 
     public static MandatoryEffectiveStatement createMandatory(final MandatoryStatement declared) {
