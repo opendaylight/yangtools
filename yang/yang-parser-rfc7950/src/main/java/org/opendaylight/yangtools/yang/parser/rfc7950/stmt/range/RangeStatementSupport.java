@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyRangeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularRangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;

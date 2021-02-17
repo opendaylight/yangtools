@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,23 +18,23 @@ import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
-final class DeclaredInputEffectiveStatement extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
+final class UndeclaredInputEffectiveStatement
+        extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
         implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
     private final @NonNull Immutable path;
     private final int flags;
 
-    DeclaredInputEffectiveStatement(final InputStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
-            final int flags) {
-        super(declared, substatements);
+    UndeclaredInputEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final Immutable path, final int flags) {
+        super(substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
     }
 
-    DeclaredInputEffectiveStatement(final DeclaredInputEffectiveStatement original, final Immutable path,
+    UndeclaredInputEffectiveStatement(final UndeclaredInputEffectiveStatement original, final Immutable path,
             final int flags) {
         super(original);
         this.path = requireNonNull(path);
