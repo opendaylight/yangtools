@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -14,27 +14,27 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
-final class UndeclaredInputEffectiveStatement
-        extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
-        implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
+final class DeclaredOutputEffectiveStatement extends WithSubstatements<QName, OutputStatement, OutputEffectiveStatement>
+        implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
     private final @NonNull Immutable path;
     private final int flags;
 
-    UndeclaredInputEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Immutable path, final int flags) {
-        super(substatements);
+    DeclaredOutputEffectiveStatement(final OutputStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags) {
+        super(declared, substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
     }
 
-    UndeclaredInputEffectiveStatement(final UndeclaredInputEffectiveStatement original, final Immutable path,
+    DeclaredOutputEffectiveStatement(final DeclaredOutputEffectiveStatement original, final Immutable path,
             final int flags) {
         super(original);
         this.path = requireNonNull(path);
@@ -57,7 +57,7 @@ final class UndeclaredInputEffectiveStatement
     }
 
     @Override
-    public InputEffectiveStatement asEffectiveStatement() {
+    public OutputEffectiveStatement asEffectiveStatement() {
         return this;
     }
 

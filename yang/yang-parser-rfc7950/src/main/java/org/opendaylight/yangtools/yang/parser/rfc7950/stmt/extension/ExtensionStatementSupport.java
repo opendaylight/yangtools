@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -92,6 +93,6 @@ public final class ExtensionStatementSupport
     @Override
     protected ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ExtensionEffectiveStatementImpl(stmt.declared(), substatements, stmt.optionalPath());
+        return EffectiveStatements.createExtension(stmt.declared(), substatements, stmt.optionalPath());
     }
 }

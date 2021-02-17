@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
-import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -141,9 +141,8 @@ public final class ImportStatementSupport
     @Override
     protected ImportEffectiveStatement createEffective(final Current<String, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        checkState(!substatements.isEmpty(), "Unexpected empty effective import statement");
-
-        return new ImportEffectiveStatementImpl(stmt.declared(), substatements,
+        InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");
+        return EffectiveStatements.createImport(stmt.declared(), substatements,
             verifyNotNull(stmt.getFromNamespace(ImportedVersionNamespace.class, Empty.getInstance())));
     }
 }

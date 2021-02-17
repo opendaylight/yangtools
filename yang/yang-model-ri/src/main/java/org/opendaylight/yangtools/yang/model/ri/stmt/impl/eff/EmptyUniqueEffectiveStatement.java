@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
@@ -13,9 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
 
-class EmptyUniqueEffectiveStatement extends DefaultArgument<Set<Descendant>, UniqueStatement>
+public class EmptyUniqueEffectiveStatement extends DefaultArgument<Set<Descendant>, UniqueStatement>
         implements UniqueEffectiveStatement {
-    EmptyUniqueEffectiveStatement(final UniqueStatement declared) {
+    public EmptyUniqueEffectiveStatement(final UniqueStatement declared) {
         super(declared);
     }
 }
