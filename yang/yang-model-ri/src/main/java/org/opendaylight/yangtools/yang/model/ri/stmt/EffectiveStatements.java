@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -21,6 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -50,20 +54,36 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
@@ -76,25 +96,41 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
@@ -105,13 +141,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyRequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyStatusStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyYangVersionStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AbstractLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AugmentEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ChoiceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ContainerEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredInputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredOutputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeviateEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeviationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyAnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyArgumentEffectiveStatement;
@@ -122,12 +164,15 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyConfigEffecti
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyDescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyEnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFractionDigitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIncludeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMaxElementsEffectiveStatement;
@@ -137,18 +182,26 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyNamespaceEffe
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyOrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyOrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyPathEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyPatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyPositionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyPrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyPresenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyRangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyRequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyRevisionDateEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyRevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyStatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyUniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyUnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ExtensionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.GroupingEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ImportEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.NotificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularAnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularArgumentEffectiveStatement;
@@ -159,12 +212,15 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularConfigEffec
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularDescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularEnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFractionDigitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIncludeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMaxElementsEffectiveStatement;
@@ -174,17 +230,25 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularNamespaceEf
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularOrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularOrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularPathEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularPatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularPositionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularPrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularPresenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularRangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularRequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularRevisionDateEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularRevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularStatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularUniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularUnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularWhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RpcEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredInputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredOutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 
 /**
@@ -340,6 +404,22 @@ public final class EffectiveStatements {
             : new RegularDescriptionEffectiveStatement(declared, substatements);
     }
 
+    public static DeviateEffectiveStatement createDeviate(final DeviateStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeviateEffectiveStatementImpl(declared, substatements);
+    }
+
+    public static DeviationEffectiveStatement createDeviation(final DeviationStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new DeviationEffectiveStatementImpl(declared, substatements);
+    }
+
+    public static EnumEffectiveStatement createEnum(final EnumStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyEnumEffectiveStatement(declared)
+            : new RegularEnumEffectiveStatement(declared, substatements);
+    }
+
     public static ErrorAppTagEffectiveStatement createErrorAppTag(final ErrorAppTagStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyErrorAppTagEffectiveStatement(declared)
@@ -350,6 +430,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyErrorMessageEffectiveStatement(declared)
             : new RegularErrorMessageEffectiveStatement(declared, substatements);
+    }
+
+    public static ExtensionEffectiveStatement createExtension(final ExtensionStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable SchemaPath schemaPath) {
+        return new ExtensionEffectiveStatementImpl(declared, substatements, schemaPath);
     }
 
     public static FeatureEffectiveStatement createFeature(final FeatureStatement declared, final Immutable path,
@@ -380,10 +466,62 @@ public final class EffectiveStatements {
             : new RegularIfFeatureEffectiveStatement(declared, substatements);
     }
 
+    public static IdentityEffectiveStatement createIdentity(final IdentityStatement declared, final Immutable path) {
+        return new EmptyIdentityEffectiveStatement(declared, path);
+    }
+
+    public static IdentityEffectiveStatement createIdentity(final IdentityStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final ImmutableSet<IdentitySchemaNode> baseIdentities) {
+        return new RegularIdentityEffectiveStatement(declared, path, flags, substatements, baseIdentities);
+    }
+
+    public static ImportEffectiveStatement createImport(final ImportStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final SourceIdentifier importedSource) {
+        return new ImportEffectiveStatementImpl(declared, substatements, importedSource);
+    }
+
     public static IncludeEffectiveStatement createInclude(final IncludeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyIncludeEffectiveStatement(declared)
             : new RegularIncludeEffectiveStatement(declared, substatements);
+    }
+
+    public static InputEffectiveStatement copyInput(final InputEffectiveStatement original, final Immutable path,
+            final int flags) {
+        if (original instanceof DeclaredInputEffectiveStatement) {
+            return new DeclaredInputEffectiveStatement((DeclaredInputEffectiveStatement) original, path, flags);
+        } else if (original instanceof UndeclaredInputEffectiveStatement) {
+            return new UndeclaredInputEffectiveStatement((UndeclaredInputEffectiveStatement) original, path, flags);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static InputEffectiveStatement createInput(final Immutable path, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+            throws SubstatementIndexingException {
+        return new UndeclaredInputEffectiveStatement(substatements, path, flags);
+    }
+
+    public static InputEffectiveStatement createInput(final InputStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+                throws SubstatementIndexingException {
+        return new DeclaredInputEffectiveStatement(declared, substatements, path, flags);
+    }
+
+    public static LeafEffectiveStatement copyLeaf(final LeafEffectiveStatement original, final Immutable path,
+            final int flags, final @Nullable LeafSchemaNode newOriginal) {
+        checkArgument(original instanceof AbstractLeafEffectiveStatement, "Unsupported original %s", original);
+        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, path, flags, newOriginal);
+    }
+
+    public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable LeafSchemaNode original)  throws SubstatementIndexingException {
+        return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
+            : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
     }
 
     public static LengthEffectiveStatement createLength(final LengthStatement declared,
@@ -430,6 +568,42 @@ public final class EffectiveStatements {
             : new RegularNamespaceEffectiveStatement(declared, substatements);
     }
 
+    public static NotificationEffectiveStatement copyNotification(final NotificationEffectiveStatement original,
+            final Immutable path, final int flags) {
+        checkArgument(original instanceof NotificationEffectiveStatementImpl, "Unsupported original %s", original);
+        return new NotificationEffectiveStatementImpl((NotificationEffectiveStatementImpl) original, path, flags);
+    }
+
+    public static NotificationEffectiveStatement createNotification(final NotificationStatement declared,
+            final Immutable path, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+                throws SubstatementIndexingException {
+        return new NotificationEffectiveStatementImpl(declared, substatements, path, flags);
+    }
+
+    public static OutputEffectiveStatement copyOutput(final OutputEffectiveStatement original, final Immutable path,
+            final int flags) {
+        if (original instanceof DeclaredOutputEffectiveStatement) {
+            return new DeclaredOutputEffectiveStatement((DeclaredOutputEffectiveStatement) original, path, flags);
+        } else if (original instanceof UndeclaredOutputEffectiveStatement) {
+            return new UndeclaredOutputEffectiveStatement((UndeclaredOutputEffectiveStatement) original, path, flags);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static OutputEffectiveStatement createOutput(final Immutable path, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+            throws SubstatementIndexingException {
+        return new UndeclaredOutputEffectiveStatement(substatements, path, flags);
+    }
+
+    public static OutputEffectiveStatement createOutput(final OutputStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+                throws SubstatementIndexingException {
+        return new DeclaredOutputEffectiveStatement(declared, substatements, path, flags);
+    }
+
     public static OrderedByEffectiveStatement createOrderedBy(final OrderedByStatement declared) {
         return new EmptyOrderedByEffectiveStatement(declared);
     }
@@ -456,6 +630,12 @@ public final class EffectiveStatements {
             : new RegularPathEffectiveStatement(declared, substatements);
     }
 
+    public static PatternEffectiveStatement createPattern(final PatternStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyPatternEffectiveStatement(declared)
+            : new RegularPatternEffectiveStatement(declared, substatements);
+    }
+
     public static PositionEffectiveStatement createPosition(final PositionStatement declared) {
         return new EmptyPositionEffectiveStatement(declared);
     }
@@ -464,6 +644,24 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? createPosition(declared)
             : new RegularPositionEffectiveStatement(declared, substatements);
+    }
+
+    public static PrefixEffectiveStatement createPrefix(final PrefixStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyPrefixEffectiveStatement(declared)
+            : new RegularPrefixEffectiveStatement(declared, substatements);
+    }
+
+    public static PresenceEffectiveStatement createPresence(final PresenceStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyPresenceEffectiveStatement(declared)
+            : new RegularPresenceEffectiveStatement(declared, substatements);
+    }
+
+    public static RangeEffectiveStatement createRange(final RangeStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyRangeEffectiveStatement(declared)
+            : new RegularRangeEffectiveStatement(declared, substatements);
     }
 
     public static ReferenceEffectiveStatement createReference(final ReferenceStatement declared) {
@@ -476,10 +674,10 @@ public final class EffectiveStatements {
             : new RegularReferenceEffectiveStatement(declared, substatements);
     }
 
-    public static PresenceEffectiveStatement createPresence(final PresenceStatement declared,
+    public static RevisionEffectiveStatement createRevision(final RevisionStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyPresenceEffectiveStatement(declared)
-            : new RegularPresenceEffectiveStatement(declared, substatements);
+        return substatements.isEmpty() ? new EmptyRevisionEffectiveStatement(declared)
+            : new RegularRevisionEffectiveStatement(declared, substatements);
     }
 
     public static RequireInstanceEffectiveStatement createRequireInstance(final boolean argument) {
@@ -506,6 +704,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyRevisionDateEffectiveStatement(declared)
             : new RegularRevisionDateEffectiveStatement(declared, substatements);
+    }
+
+    public static RpcEffectiveStatement createRpc(final RpcStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+                final int flags) throws SubstatementIndexingException {
+        return new RpcEffectiveStatementImpl(declared, substatements, path, flags);
     }
 
     public static StatusEffectiveStatement createStatus(final StatusStatement declared) {
@@ -535,6 +739,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyUnitsEffectiveStatement(declared)
             : new RegularUnitsEffectiveStatement(declared, substatements);
+    }
+
+    public static UniqueEffectiveStatement createUnique(final UniqueStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyUniqueEffectiveStatement(declared)
+            : new RegularUniqueEffectiveStatement(declared, substatements);
     }
 
     public static ValueEffectiveStatement createValue(final ValueStatement declared) {
