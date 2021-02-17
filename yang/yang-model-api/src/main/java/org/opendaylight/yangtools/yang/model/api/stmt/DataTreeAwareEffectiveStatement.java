@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 @Beta
 public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<A>>
         extends SchemaTreeAwareEffectiveStatement<A, D> {
-
     /**
      * Namespace of {@code data node}s. This is a subtree of {@link SchemaTreeAwareEffectiveStatement.Namespace} in that
      * all data nodes are also schema nodes. The structure of the tree is different, though, as {@code choice}
@@ -48,13 +48,24 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
     /**
      * Find a {@code data tree} child {@link DataTreeEffectiveStatement}, as identified by its QName argument.
      *
-     * @param <E> Effective substatement type
      * @param qname Child identifier
      * @return Data tree child, or empty
      * @throws NullPointerException if {@code qname} is null
      */
-    default <E extends DataTreeEffectiveStatement<?>> @NonNull Optional<E> findDataTreeNode(
-            final @NonNull QName qname) {
+    default @NonNull Optional<DataTreeEffectiveStatement<?>> findDataTreeNode(final @NonNull QName qname) {
         return get(Namespace.class, requireNonNull(qname));
+    }
+
+    /**
+     * Find a {@code data tree} child {@link DataTreeEffectiveStatement}, as identified by its QName argument.
+     *
+     * @param <E> Effective substatement type
+     * @param type Effective substatement class
+     * @param qname Child identifier
+     * @return Data tree child, or empty
+     * @throws NullPointerException if any argument is null
+     */
+    default <E> @NonNull Optional<E> findDataTreeNode(final Class<E> type, final @NonNull QName qname) {
+        return filterOptional(type, findDataTreeNode(qname));
     }
 }

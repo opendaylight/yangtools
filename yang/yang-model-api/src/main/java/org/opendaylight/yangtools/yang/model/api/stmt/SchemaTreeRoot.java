@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelpers.filterOptional;
+
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -25,4 +27,22 @@ public interface SchemaTreeRoot {
      * @throws NullPointerException if {@code path} is null
      */
     @NonNull Optional<SchemaTreeEffectiveStatement<?>> findSchemaTreeNode(@NonNull SchemaNodeIdentifier path);
+
+    /**
+     * Find a {@code schema tree} node based on its schema node identifier.
+     *
+     * @implSpec
+     *     Default implementation defers to {@link #findSchemaTreeNode(SchemaNodeIdentifier)} and filters the result
+     *     using provided class.
+     *
+     * @param <T> requested node type
+     * @param type Request node class
+     * @param path Absolute schema node identifier
+     * @return Found node, or empty
+     * @throws NullPointerException if any argument is null
+     */
+    default <T> @NonNull Optional<T> findSchemaTreeNode(final @NonNull Class<T> type,
+            final @NonNull SchemaNodeIdentifier path) {
+        return filterOptional(type, findSchemaTreeNode(path));
+    }
 }
