@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -607,8 +606,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException if any of the arguments is null
      */
     void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
-        checkNotNull(phase, "Statement context processing phase cannot be null at: %s", sourceReference());
-        checkNotNull(listener, "Statement context phase listener cannot be null at: %s", sourceReference());
+        requireNonNull(phase, "Statement context processing phase cannot be null");
+        requireNonNull(listener, "Statement context phase listener cannot be null");
 
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
