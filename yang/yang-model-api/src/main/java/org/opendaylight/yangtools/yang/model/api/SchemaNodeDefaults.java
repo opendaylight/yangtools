@@ -23,12 +23,13 @@ public final class SchemaNodeDefaults {
     }
 
     /**
-     * Report unsupported {@link SchemaNode#getPath()} implementation. This method is guaranteed to throw a
-     * RuntimeException.
+     * Report unsupported {@link SchemaNode#getPath()} implementation. This method is guaranteed to throw an
+     * {@link UnsupportedOperationException}.
      *
      * @param impl {@code this} object of invoking implementation
-     * @throws NullPointerException if impl is null
-     * @throws UnsupportedOperationException if impl is not null
+     * @return Nothing
+     * @throws NullPointerException if {@code impl} is null
+     * @throws UnsupportedOperationException always
      * @see SchemaNode#getPath()
      */
     // FIXME: 8.0.0: consider deprecating this method
@@ -40,8 +41,10 @@ public final class SchemaNodeDefaults {
      * Report unsupported {@link SchemaNode#getPath()} implementation if provided path is null.
      *
      * @param impl {@code this} object of invoking implementation
-     * @throws NullPointerException if impl is null
-     * @throws UnsupportedOperationException if path is null
+     * @param path A schema path
+     * @return {@code path} if non-null
+     * @throws NullPointerException if {@code impl} is null
+     * @throws UnsupportedOperationException if @{code path} is null
      * @see SchemaNode#getPath()
      */
     // FIXME: 8.0.0: consider deprecating this method
