@@ -173,7 +173,8 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
         throw new UnsupportedOperationException();
     }
 
-    @Override boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
+    @Override
+    boolean doTryToCompletePhase(final byte executionOrder) {
         throw new UnsupportedOperationException();
     }
 

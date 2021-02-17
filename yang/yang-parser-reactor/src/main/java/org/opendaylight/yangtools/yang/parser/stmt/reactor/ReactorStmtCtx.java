@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -439,17 +440,19 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     /**
      * Try to execute current {@link ModelProcessingPhase} of source parsing. If the phase has already been executed,
-     * this method does nothing.
+     * this method does nothing. This must not be called with {@link ExecutionOrder#NULL}.
      *
      * @param phase to be executed (completed)
      * @return true if phase was successfully completed
      * @throws SourceException when an error occurred in source parsing
      */
-    final boolean tryToCompletePhase(final ModelProcessingPhase phase) {
-        return phase.isCompletedBy(getCompletedPhase()) || doTryToCompletePhase(phase);
+    final boolean tryToCompletePhase(final byte executionOrder) {
+        // FIXME: operate on ExecutionOrder byte
+        final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
+        return phase.isCompletedBy(getCompletedPhase()) || doTryToCompletePhase(executionOrder);
     }
 
-    abstract boolean doTryToCompletePhase(ModelProcessingPhase phase);
+    abstract boolean doTryToCompletePhase(byte executionOrder);
 
     //
     //

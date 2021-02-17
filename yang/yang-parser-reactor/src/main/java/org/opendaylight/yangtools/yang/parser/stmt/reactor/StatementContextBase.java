@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -30,7 +31,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
@@ -105,14 +106,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
-    private @Nullable ModelProcessingPhase completedPhase;
+    /**
+     * {@link ModelProcessingPhase.ExecutionOrder} value of current {@link ModelProcessingPhase} of this statement.
+     */
+    private byte executionOrder;
 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
         this.copyHistory = original.copyHistory;
         this.definition = original.definition;
-        this.completedPhase = original.completedPhase;
+        this.executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
@@ -149,13 +153,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final ModelProcessingPhase getCompletedPhase() {
-        return completedPhase;
+        return ModelProcessingPhase.ofExecutionOrder(executionOrder);
     }
 
     // FIXME: this should be propagated through a correct constructor
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.completedPhase = completedPhase;
+        this.executionOrder = completedPhase.executionOrder();
     }
 
     @Override
@@ -257,10 +261,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, 1);
         final ReactorStmtCtx<?, ?, ?> stmt = (ReactorStmtCtx<?, ?, ?>) substatement;
-        final ModelProcessingPhase phase = completedPhase;
-        if (phase != null) {
-            ensureCompletedPhase(stmt, phase);
-        }
+        ensureCompletedExecution(stmt);
         resized.add(stmt);
         return resized;
     }
@@ -288,10 +289,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, statements.size());
         final Collection<? extends ReactorStmtCtx<?, ?, ?>> casted =
             (Collection<? extends ReactorStmtCtx<?, ?, ?>>) statements;
-        final ModelProcessingPhase phase = completedPhase;
-        if (phase != null) {
+        if (executionOrder != ExecutionOrder.NULL) {
             for (ReactorStmtCtx<?, ?, ?> stmt : casted) {
-                ensureCompletedPhase(stmt, phase);
+                ensureCompletedExecution(stmt);
             }
         }
 
@@ -304,17 +304,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // exposed for InferredStatementContext only
     final void ensureCompletedPhase(final Mutable<?, ?, ?> stmt) {
         verifyStatement(stmt);
-        final ModelProcessingPhase phase = completedPhase;
-        if (phase != null) {
-            ensureCompletedPhase((ReactorStmtCtx<?, ?, ?>) stmt, phase);
-        }
+        ensureCompletedExecution((ReactorStmtCtx<?, ?, ?>) stmt);
     }
 
-    // Make sure target statement has transitioned at least to specified phase. This method is just before we take
-    // allow a statement to become our substatement. This is needed to ensure that every statement tree does not contain
-    // any statements which did not complete the same phase as the root statement.
-    private static void ensureCompletedPhase(final ReactorStmtCtx<?, ?, ?> stmt, final ModelProcessingPhase phase) {
-        verify(stmt.tryToCompletePhase(phase), "Statement %s cannot complete phase %s", stmt, phase);
+    // Make sure target statement has transitioned at least to our phase (if we have one). This method is just before we
+    // take allow a statement to become our substatement. This is needed to ensure that every statement tree does not
+    // contain any statements which did not complete the same phase as the root statement.
+    private void ensureCompletedExecution(final ReactorStmtCtx<?, ?, ?> stmt) {
+        if (executionOrder != ExecutionOrder.NULL) {
+            verify(stmt.tryToCompletePhase(executionOrder),
+                "Statement %s cannot complete phase %s", stmt, executionOrder);
+        }
     }
 
     private static void verifyStatement(final Mutable<?, ?, ?> stmt) {
@@ -323,8 +323,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final int toAdd) {
-        // We cannot allow statement to be further mutated
-        verify(completedPhase != ModelProcessingPhase.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
+        // We cannot allow statement to be further mutated.
+        // FIXME: we really want to say 'not NULL and not at or after EFFECTIVE_MODEL here. This will matter if we have
+        //        a phase after EFFECTIVE_MODEL
+        verify(executionOrder != ExecutionOrder.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
             sourceReference());
         return beforeAddEffectiveStatementUnsafe(effective, toAdd);
     }
@@ -377,22 +379,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     abstract Stream<? extends @NonNull StmtContext<?, ?, ?>> streamEffective();
 
     @Override
-    final boolean doTryToCompletePhase(final ModelProcessingPhase phase) {
+    final boolean doTryToCompletePhase(final byte executionOrder) {
+        final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
         final boolean finished = phaseMutation.isEmpty() ? true : runMutations(phase);
-        if (completeChildren(phase) && finished) {
-            onPhaseCompleted(phase);
+        if (completeChildren(executionOrder) && finished) {
+            onPhaseCompleted(executionOrder);
             return true;
         }
         return false;
     }
 
-    private boolean completeChildren(final ModelProcessingPhase phase) {
+    private boolean completeChildren(final byte exectionOrder) {
         boolean finished = true;
         for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
-            finished &= child.tryToCompletePhase(phase);
+            finished &= child.tryToCompletePhase(exectionOrder);
         }
         for (final ReactorStmtCtx<?, ?, ?> child : effectiveChildrenToComplete()) {
-            finished &= child.tryToCompletePhase(phase);
+            finished &= child.tryToCompletePhase(exectionOrder);
         }
         return finished;
     }
@@ -435,12 +438,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException
      *             when an error occurred in source parsing
      */
-    private void onPhaseCompleted(final ModelProcessingPhase phase) {
-        completedPhase = phase;
-        if (phase == ModelProcessingPhase.EFFECTIVE_MODEL) {
+    private void onPhaseCompleted(final byte executionOrder) {
+        if (executionOrder == ExecutionOrder.EFFECTIVE_MODEL) {
+            // We have completed effective model, substatements are guaranteed not to change
             summarizeSubstatementPolicy();
         }
 
+        final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
         final Collection<OnPhaseFinished> listeners = phaseListeners.get(phase);
         if (!listeners.isEmpty()) {
             runPhaseListeners(phase, listeners);
@@ -610,7 +614,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkNotNull(phase, "Statement context processing phase cannot be null at: %s", sourceReference());
         checkNotNull(listener, "Statement context phase listener cannot be null at: %s", sourceReference());
 
-        ModelProcessingPhase finishedPhase = completedPhase;
+        // FIXME: YANGTOOLS-1254: push executionOrder down
+        ModelProcessingPhase finishedPhase = ModelProcessingPhase.ofExecutionOrder(executionOrder);
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
                 listener.phaseFinished(this, finishedPhase);
@@ -631,7 +636,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws IllegalStateException when the mutation was registered after phase was completed
      */
     final void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
-        ModelProcessingPhase finishedPhase = completedPhase;
+        // FIXME: YANGTOOLS-1254: push executionOrder down
+        ModelProcessingPhase finishedPhase = ModelProcessingPhase.ofExecutionOrder(executionOrder);
         while (finishedPhase != null) {
             checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
                 sourceReference());

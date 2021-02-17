@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.HashMultimap;
@@ -268,12 +269,14 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
         return globalContext;
     }
 
-    PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) {
+    PhaseCompletionProgress tryToCompletePhase(final byte executionOrder) {
+        // FIXME: YANGTOOLS-1254: push executionOrder down
+        final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(executionOrder));
         final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
         final boolean phaseCompleted = requireNonNull(root, "Malformed source. Valid root element is missing.")
-                .tryToCompletePhase(phase);
+                .tryToCompletePhase(executionOrder);
 
         hasProgressed |= tryToProgress(currentPhaseModifiers);
 
