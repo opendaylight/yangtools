@@ -96,21 +96,47 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
-    //
-    // {@link CopyHistory} encoded as a single byte. We still have 4 bits unused.
-    //
+    // Bottom 4 bits, encoding a CopyHistory, aight?
+    private static final byte COPY_ORIGINAL              = 0x00;
     private static final byte COPY_LAST_TYPE_MASK        = 0x03;
     private static final byte COPY_ADDED_BY_USES         = 0x04;
     private static final byte COPY_ADDED_BY_AUGMENTATION = 0x08;
-    private static final byte COPY_ORIGINAL              = 0x00;
 
-    private final byte copyHistory;
+    // Top four bits, of which we define the topmost two to 0. We use the bottom two to encode last CopyType, aight?
+    private static final int COPY_CHILD_TYPE_SHIFT       = 4;
 
     static {
         final int copyTypes = CopyType.values().length;
         // This implies CopyType.ordinal() is <= COPY_TYPE_MASK
         verify(copyTypes == COPY_LAST_TYPE_MASK + 1, "Unexpected %s CopyType values", copyTypes);
+        // All of CopyHistory fits into bottom four bits
+        final int bottomFour = COPY_ADDED_BY_USES + COPY_ADDED_BY_USES + COPY_ADDED_BY_AUGMENTATION;
+        verify(0x0F == bottomFour);
+        // Top four bits are split to two significant bits and two which are unused, but are implementation-defined to
+        // be zero.
+        verify(0xF0 == bottomFour << COPY_CHILD_TYPE_SHIFT);
     }
+
+    /**
+     * 8 bits worth of instance storage. This is treated as a constant bit field with following structure:
+     * <pre>
+     *   <code>
+     * |7|6|5|4|3|2|1|0|
+     * |0 0|cct|a|u|lst|
+     *   </code>
+     * <pre>
+     *
+     * <p>
+     * The four allocated fields are:
+     * <ul>
+     *   <li>{@code lst}, encoding the four states corresponding to {@link CopyHistory#getLastOperation()}</li>
+     *   <li>{@code u}, encoding {@link #isAddedByUses()</li>
+     *   <li>{@code a}, encoding {@link #isAugmenting()</li>
+     *   <li>{@code cct} encoding {@link #childCopyType()}</li>
+     * <ul>
+     * We still have two unused bits.
+     */
+    private final byte bitsAight;
 
     // Note: this field can strictly be derived in InferredStatementContext, but it forms the basis of many of our
     //       operations, hence we want to keep it close by.
@@ -130,24 +156,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Copy constructor used by subclasses to implement reparent()
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         super(original);
-        this.copyHistory = original.copyHistory;
+        this.bitsAight = original.bitsAight;
         this.definition = original.definition;
         this.executionOrder = original.executionOrder;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
         this.definition = requireNonNull(def);
-        this.copyHistory = COPY_ORIGINAL;
+        this.bitsAight = COPY_ORIGINAL;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
         this.definition = requireNonNull(def);
-        this.copyHistory = (byte) copyFlags(copyType);
+        this.bitsAight = (byte) copyFlags(copyType);
     }
 
-    StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType) {
+    StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
+            final CopyType childCopyType) {
         this.definition = prototype.definition;
-        this.copyHistory = (byte) (copyFlags(copyType) | prototype.copyHistory & ~COPY_LAST_TYPE_MASK);
+        this.bitsAight = (byte) (copyFlags(copyType)
+            | prototype.bitsAight & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
     }
 
     private static int copyFlags(final CopyType copyType) {
@@ -197,17 +225,22 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final boolean isAddedByUses() {
-        return (copyHistory & COPY_ADDED_BY_USES) != 0;
+        return (bitsAight & COPY_ADDED_BY_USES) != 0;
     }
 
     @Override
     public final boolean isAugmenting() {
-        return (copyHistory & COPY_ADDED_BY_AUGMENTATION) != 0;
+        return (bitsAight & COPY_ADDED_BY_AUGMENTATION) != 0;
     }
 
     @Override
     public final CopyType getLastOperation() {
-        return CopyType.values()[copyHistory & COPY_LAST_TYPE_MASK];
+        return CopyType.values()[bitsAight & COPY_LAST_TYPE_MASK];
+    }
+
+    // This method exists only for space optimization of InferredStatementContext
+    final CopyType childCopyType() {
+        return CopyType.values()[bitsAight >> COPY_CHILD_TYPE_SHIFT & COPY_LAST_TYPE_MASK];
     }
 
     //
