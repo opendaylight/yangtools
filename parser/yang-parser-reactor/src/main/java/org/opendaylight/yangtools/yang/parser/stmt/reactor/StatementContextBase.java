@@ -97,12 +97,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
     //
-    // {@link CopyHistory} encoded as a single byte. We still have 4 bits unused.
+    // {@link CopyHistory} encoded as a single byte. We still have 2 bits unused, as 0x30 is used for childCopyType()
     //
     private static final byte COPY_LAST_TYPE_MASK        = 0x03;
     private static final byte COPY_ADDED_BY_USES         = 0x04;
     private static final byte COPY_ADDED_BY_AUGMENTATION = 0x08;
     private static final byte COPY_ORIGINAL              = 0x00;
+    private static final int COPY_CHILD_TYPE_SHIFT       = 4;
 
     private final byte copyHistory;
 
@@ -145,9 +146,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.copyHistory = (byte) copyFlags(copyType);
     }
 
-    StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType) {
+    StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType,
+            final CopyType childCopyType) {
         this.definition = prototype.definition;
-        this.copyHistory = (byte) (copyFlags(copyType) | prototype.copyHistory & ~COPY_LAST_TYPE_MASK);
+        this.copyHistory = (byte) (copyFlags(copyType)
+            | prototype.copyHistory & ~COPY_LAST_TYPE_MASK | childCopyType.ordinal() << COPY_CHILD_TYPE_SHIFT);
     }
 
     private static int copyFlags(final CopyType copyType) {
@@ -208,6 +211,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public final CopyType getLastOperation() {
         return CopyType.values()[copyHistory & COPY_LAST_TYPE_MASK];
+    }
+
+    // This method exists only for space optimization of InferredStatementContext
+    final CopyType childCopyType() {
+        return CopyType.values()[copyHistory >> COPY_CHILD_TYPE_SHIFT & COPY_LAST_TYPE_MASK];
     }
 
     //
