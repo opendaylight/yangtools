@@ -15,4 +15,5 @@ module org.opendaylight.yangtools.yang.parser.reactor {
 
     // Annotations
     requires static org.eclipse.jdt.annotation;
+    requires com.google.common;
 }
