@@ -14,6 +14,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -64,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * @param <E> Effective Statement representation
  */
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends ReactorStmtCtx<A, D, E> {
+        extends ReactorStmtCtx<A, D, E> implements CopyHistory {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -95,7 +96,22 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
-    private final CopyHistory copyHistory;
+    //
+    // {@link CopyHistory} encoded as a single byte. We still have 4 bits unused.
+    //
+    private static final byte COPY_LAST_TYPE_MASK        = 0x03;
+    private static final byte COPY_ADDED_BY_USES         = 0x04;
+    private static final byte COPY_ADDED_BY_AUGMENTATION = 0x08;
+    private static final byte COPY_ORIGINAL              = 0x00;
+
+    private final byte copyHistory;
+
+    static {
+        final int copyTypes = CopyType.values().length;
+        // This implies CopyType.ordinal() is <= COPY_TYPE_MASK
+        verify(copyTypes == COPY_LAST_TYPE_MASK + 1, "Unexpected %s CopyType values", copyTypes);
+    }
+
     // Note: this field can strictly be derived in InferredStatementContext, but it forms the basis of many of our
     //       operations, hence we want to keep it close by.
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
@@ -121,12 +137,41 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
         this.definition = requireNonNull(def);
-        this.copyHistory = CopyHistory.original();
+        this.copyHistory = COPY_ORIGINAL;
     }
 
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyHistory copyHistory) {
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final byte copyHistory) {
         this.definition = requireNonNull(def);
-        this.copyHistory = requireNonNull(copyHistory);
+        this.copyHistory = copyHistory;
+    }
+
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
+        this.definition = requireNonNull(def);
+        this.copyHistory = (byte) copyFlags(copyType);
+    }
+
+    StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType) {
+        this.definition = prototype.definition;
+        this.copyHistory = (byte) (copyFlags(copyType) | prototype.copyHistory & ~COPY_LAST_TYPE_MASK);
+    }
+
+    private static int copyFlags(final CopyType copyType) {
+        return historyFlags(copyType) | copyType.ordinal();
+    }
+
+    private static byte historyFlags(final CopyType copyType) {
+        switch (copyType) {
+            case ADDED_BY_AUGMENTATION:
+                return COPY_ADDED_BY_AUGMENTATION;
+            case ADDED_BY_USES:
+                return COPY_ADDED_BY_USES;
+            case ADDED_BY_USES_AUGMENTATION:
+                return COPY_ADDED_BY_AUGMENTATION | COPY_ADDED_BY_USES;
+            case ORIGINAL:
+                return COPY_ORIGINAL;
+            default:
+                throw new VerifyException("Unhandled type " + copyType);
+        }
     }
 
     @Override
@@ -146,10 +191,33 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         effectOfStatement.addAll(ctxs);
     }
 
+    //
+    // CopyHistory integration
+    //
+
     @Override
     public final CopyHistory history() {
-        return copyHistory;
+        return this;
     }
+
+    @Override
+    public final boolean isAddedByUses() {
+        return (copyHistory & COPY_ADDED_BY_USES) != 0;
+    }
+
+    @Override
+    public final boolean isAugmenting() {
+        return (copyHistory & COPY_ADDED_BY_AUGMENTATION) != 0;
+    }
+
+    @Override
+    public final CopyType getLastOperation() {
+        return CopyType.values()[copyHistory & COPY_LAST_TYPE_MASK];
+    }
+
+    //
+    // Inference completion tracking
+    //
 
     @Override
     final byte executionOrder() {
