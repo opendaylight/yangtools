@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class YinElementStatementSupport
@@ -42,9 +41,9 @@ public final class YinElementStatementSupport
     }
 
     @Override
-    protected YinElementStatement createDeclared(final StmtContext<Boolean, YinElementStatement, ?> ctx,
+    protected YinElementStatement createDeclared(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createYinElement(ctx.getArgument(), substatements);
+        return DeclaredStatements.createYinElement(argument, substatements);
     }
 
     @Override

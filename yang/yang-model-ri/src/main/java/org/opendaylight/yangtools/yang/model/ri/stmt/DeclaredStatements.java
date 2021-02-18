@@ -237,88 +237,58 @@ public final class DeclaredStatements {
         // Hidden on purpose
     }
 
-    public static ActionStatement createAction(final QName argument) {
-        return new EmptyActionStatement(argument);
-    }
-
     public static ActionStatement createAction(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createAction(argument) : new RegularActionStatement(argument, substatements);
-    }
-
-    public static AnydataStatement createAnydata(final QName argument) {
-        return new EmptyAnydataStatement(argument);
+        return substatements.isEmpty() ? new EmptyActionStatement(argument)
+            : new RegularActionStatement(argument, substatements);
     }
 
     public static AnydataStatement createAnydata(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createAnydata(argument) : new RegularAnydataStatement(argument, substatements);
-    }
-
-    public static AnyxmlStatement createAnyxml(final QName argument) {
-        return new EmptyAnyxmlStatement(argument);
+        return substatements.isEmpty() ? new EmptyAnydataStatement(argument)
+            : new RegularAnydataStatement(argument, substatements);
     }
 
     public static AnyxmlStatement createAnyxml(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createAnyxml(argument) : new RegularAnyxmlStatement(argument, substatements);
-    }
-
-    public static ArgumentStatement createArgument(final QName argument) {
-        return new EmptyArgumentStatement(argument);
+        return substatements.isEmpty() ? new EmptyAnyxmlStatement(argument)
+            : new RegularAnyxmlStatement(argument, substatements);
     }
 
     public static ArgumentStatement createArgument(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createArgument(argument)
+        return substatements.isEmpty() ? new EmptyArgumentStatement(argument)
             : new RegularArgumentStatement(argument, substatements);
-    }
-
-    public static AugmentStatement createAugment(final String rawArgument, final SchemaNodeIdentifier argument) {
-        return new EmptyAugmentStatement(rawArgument, argument);
     }
 
     public static AugmentStatement createAugment(final String rawArgument, final SchemaNodeIdentifier argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createAugment(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyAugmentStatement(rawArgument, argument)
             : new RegularAugmentStatement(rawArgument, argument, substatements);
-    }
-
-    public static BaseStatement createBase(final QName argument) {
-        return new EmptyBaseStatement(argument);
     }
 
     public static BaseStatement createBase(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createBase(argument) : new RegularBaseStatement(argument, substatements);
-    }
-
-    public static BelongsToStatement createBelongsTo(final String argument) {
-        return new EmptyBelongsToStatement(argument);
+        return substatements.isEmpty() ? new EmptyBaseStatement(argument)
+            : new RegularBaseStatement(argument, substatements);
     }
 
     public static BelongsToStatement createBelongsTo(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createBelongsTo(argument)
+        return substatements.isEmpty() ? new EmptyBelongsToStatement(argument)
             : new RegularBelongsToStatement(argument, substatements);
-    }
-
-    public static BitStatement createBit(final String argument) {
-        return new EmptyBitStatement(argument);
     }
 
     public static BitStatement createBit(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createBit(argument) : new RegularBitStatement(argument, substatements);
-    }
-
-    public static ChoiceStatement createChoice(final QName argument) {
-        return new EmptyChoiceStatement(argument);
+        return substatements.isEmpty() ? new EmptyBitStatement(argument)
+            : new RegularBitStatement(argument, substatements);
     }
 
     public static ChoiceStatement createChoice(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createChoice(argument) : new RegularChoiceStatement(argument, substatements);
+        return substatements.isEmpty() ? new EmptyChoiceStatement(argument)
+            : new RegularChoiceStatement(argument, substatements);
     }
 
     public static ConfigStatement createConfig(final boolean argument) {
@@ -339,48 +309,27 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createContact(argument) : new RegularContactStatement(argument, substatements);
     }
 
-    public static ContainerStatement createContainer(final QName argument) {
-        return new EmptyContainerStatement(argument);
-    }
-
     public static ContainerStatement createContainer(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createContainer(argument)
+        return substatements.isEmpty() ? new EmptyContainerStatement(argument)
             : new RegularContainerStatement(argument, substatements);
-    }
-
-    public static DefaultStatement createDefault(final String argument) {
-        return new EmptyDefaultStatement(argument);
     }
 
     public static DefaultStatement createDefault(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createDefault(argument) : new RegularDefaultStatement(argument, substatements);
-    }
-
-    public static DescriptionStatement createDescription(final String argument) {
-        return new EmptyDescriptionStatement(argument);
+        return substatements.isEmpty() ? new EmptyDefaultStatement(argument)
+            : new RegularDefaultStatement(argument, substatements);
     }
 
     public static DescriptionStatement createDescription(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createDescription(argument)
+        return substatements.isEmpty() ? new EmptyDescriptionStatement(argument)
             : new RegularDescriptionStatement(argument, substatements);
-    }
-
-    public static DeviateStatement createDeviate(final DeviateKind argument) {
-        // This is exceedingly unlikely, just reuse the implementation
-        return createDeviate(argument, ImmutableList.of());
     }
 
     public static DeviateStatement createDeviate(final DeviateKind argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new DeviateStatementImpl(argument, substatements);
-    }
-
-    public static DeviationStatement createDeviation(final String rawArgument, final Absolute argument) {
-        // This does not make really sense
-        return createDeviation(rawArgument, argument, ImmutableList.of());
     }
 
     public static DeviationStatement createDeviation(final String rawArgument, final Absolute argument,
@@ -389,53 +338,34 @@ public final class DeclaredStatements {
     }
 
     // FIXME: what is the distinction between rawArgument and argument?
-    public static EnumStatement createEnum(final String rawArgument, final String argument) {
-        return new EmptyEnumStatement(rawArgument, argument);
-    }
-
     public static EnumStatement createEnum(final String rawArgument, final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createEnum(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyEnumStatement(rawArgument, argument)
             : new RegularEnumStatement(rawArgument, argument, substatements);
-    }
-
-    public static ErrorAppTagStatement createErrorAppTag(final String argument) {
-        return new EmptyErrorAppTagStatement(argument);
     }
 
     public static ErrorAppTagStatement createErrorAppTag(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createErrorAppTag(argument)
+        return substatements.isEmpty() ? new EmptyErrorAppTagStatement(argument)
             : new RegularErrorAppTagStatement(argument, substatements);
-    }
-
-    public static ErrorMessageStatement createErrorMessage(final String argument) {
-        return new EmptyErrorMessageStatement(argument);
     }
 
     public static ErrorMessageStatement createErrorMessage(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createErrorMessage(argument)
+        return substatements.isEmpty() ? new EmptyErrorMessageStatement(argument)
             : new RegularErrorMessageStatement(argument, substatements);
-    }
-
-    public static ExtensionStatement createExtension(final QName argument) {
-        return new EmptyExtensionStatement(argument);
     }
 
     public static ExtensionStatement createExtension(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createExtension(argument)
+        return substatements.isEmpty() ? new EmptyExtensionStatement(argument)
             : new RegularExtensionStatement(argument, substatements);
-    }
-
-    public static FeatureStatement createFeature(final QName argument) {
-        return new EmptyFeatureStatement(argument);
     }
 
     public static FeatureStatement createFeature(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createFeature(argument) : new RegularFeatureStatement(argument, substatements);
+        return substatements.isEmpty() ? new EmptyFeatureStatement(argument)
+            : new RegularFeatureStatement(argument, substatements);
     }
 
     public static FractionDigitsStatement createFractionDigits(final int argument) {
@@ -448,39 +378,22 @@ public final class DeclaredStatements {
             : new RegularFractionDigitsStatement(argument, substatements);
     }
 
-    public static GroupingStatement createGrouping(final QName argument) {
-        return new EmptyGroupingStatement(argument);
-    }
-
     public static GroupingStatement createGrouping(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createGrouping(argument)
+        return substatements.isEmpty() ? new EmptyGroupingStatement(argument)
             : new RegularGroupingStatement(argument, substatements);
-    }
-
-    public static IdentityStatement createIdentity(final QName argument) {
-        return new EmptyIdentityStatement(argument);
     }
 
     public static IdentityStatement createIdentity(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createIdentity(argument)
+        return substatements.isEmpty() ? new EmptyIdentityStatement(argument)
             : new RegularIdentityStatement(argument, substatements);
-    }
-
-    public static IfFeatureStatement createIfFeature(final String rawArgument, final IfFeatureExpr argument) {
-        return new EmptyIfFeatureStatement(rawArgument, argument);
     }
 
     public static IfFeatureStatement createIfFeature(final String rawArgument, final IfFeatureExpr argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createIfFeature(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyIfFeatureStatement(rawArgument, argument)
             : new RegularIfFeatureStatement(rawArgument, argument, substatements);
-    }
-
-    public static ImportStatement createImport(final String argument) {
-        // This should never happen
-        return createImport(argument, ImmutableList.of());
     }
 
     public static ImportStatement createImport(final String argument,
@@ -488,13 +401,9 @@ public final class DeclaredStatements {
         return new ImportStatementImpl(argument, substatements);
     }
 
-    public static IncludeStatement createInclude(final String rawArgument, final String argument) {
-        return new EmptyIncludeStatement(rawArgument, argument);
-    }
-
     public static IncludeStatement createInclude(final String rawArgument, final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createInclude(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyIncludeStatement(rawArgument, argument)
             : new RegularIncludeStatement(rawArgument, argument, substatements);
     }
 
@@ -507,52 +416,34 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createInput(argument) : new RegularInputStatement(argument, substatements);
     }
 
-    public static KeyStatement createKey(final String rawArgument, final Set<QName> argument) {
-        return new EmptyKeyStatement(rawArgument, argument);
-    }
-
     public static KeyStatement createKey(final String rawArgument, final Set<QName> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createKey(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyKeyStatement(rawArgument, argument)
             : new RegularKeyStatement(rawArgument, argument, substatements);
-    }
-
-    public static LeafStatement createLeaf(final QName argument) {
-        return new EmptyLeafStatement(argument);
     }
 
     public static LeafStatement createLeaf(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createLeaf(argument) : new RegularLeafStatement(argument, substatements);
-    }
-
-    public static LeafListStatement createLeafList(final QName argument) {
-        return new EmptyLeafListStatement(argument);
+        return substatements.isEmpty() ? new EmptyLeafStatement(argument)
+            : new RegularLeafStatement(argument, substatements);
     }
 
     public static LeafListStatement createLeafList(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createLeafList(argument)
+        return substatements.isEmpty() ? new EmptyLeafListStatement(argument)
             : new RegularLeafListStatement(argument, substatements);
-    }
-
-    public static LengthStatement createLength(final String rawArgument, final List<ValueRange> argument) {
-        return new EmptyLengthStatement(rawArgument, argument);
     }
 
     public static LengthStatement createLength(final String rawArgument, final List<ValueRange> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createLength(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyLengthStatement(rawArgument, argument)
             : new RegularLengthStatement(rawArgument, argument, substatements);
-    }
-
-    public static ListStatement createList(final QName argument) {
-        return new EmptyListStatement(argument);
     }
 
     public static ListStatement createList(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createList(argument) : new RegularListStatement(argument, substatements);
+        return substatements.isEmpty() ? new EmptyListStatement(argument)
+            : new RegularListStatement(argument, substatements);
     }
 
     public static MandatoryStatement createMandatory(final Boolean argument) {
@@ -565,13 +456,9 @@ public final class DeclaredStatements {
             : new RegularMandatoryStatement(argument, substatements);
     }
 
-    public static MaxElementsStatement createMaxElements(final String rawArgument, final String argument) {
-        return new EmptyMaxElementsStatement(rawArgument, argument);
-    }
-
     public static MaxElementsStatement createMaxElements(final String rawArgument, final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createMaxElements(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyMaxElementsStatement(rawArgument, argument)
             : new RegularMaxElementsStatement(rawArgument, argument, substatements);
     }
 
@@ -585,13 +472,9 @@ public final class DeclaredStatements {
             : new RegularMinElementsStatement(argument, substatements);
     }
 
-    public static ModifierStatement createModifier(final ModifierKind argument) {
-        return new EmptyModifierStatement(argument);
-    }
-
     public static ModifierStatement createModifier(final ModifierKind argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createModifier(argument)
+        return substatements.isEmpty() ? new EmptyModifierStatement(argument)
             : new RegularModifierStatement(argument, substatements);
     }
 
@@ -600,33 +483,21 @@ public final class DeclaredStatements {
         return new ModuleStatementImpl(rawArgument, argument, substatements);
     }
 
-    public static MustStatement createMust(final String rawArgument, final QualifiedBound argument) {
-        return new EmptyMustStatement(rawArgument, argument);
-    }
-
     public static MustStatement createMust(final String rawArgument, final QualifiedBound argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createMust(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyMustStatement(rawArgument, argument)
             : new RegularMustStatement(rawArgument, argument, substatements);
-    }
-
-    public static NamespaceStatement createNamespace(final XMLNamespace argument) {
-        return new EmptyNamespaceStatement(argument);
     }
 
     public static NamespaceStatement createNamespace(final XMLNamespace argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createNamespace(argument)
+        return substatements.isEmpty() ? new EmptyNamespaceStatement(argument)
             : new RegularNamespaceStatement(argument, substatements);
-    }
-
-    public static NotificationStatement createNotification(final QName argument) {
-        return new EmptyNotificationStatement(argument);
     }
 
     public static NotificationStatement createNotification(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createNotification(argument)
+        return substatements.isEmpty() ? new EmptyNotificationStatement(argument)
             : new RegularNotificationStatement(argument, substatements);
     }
 
@@ -659,51 +530,33 @@ public final class DeclaredStatements {
             : new RegularOrderedByStatement(argument, substatements);
     }
 
-    public static PathStatement createPath(final PathExpression argument) {
-        return new EmptyPathStatement(argument);
-    }
-
     public static PathStatement createPath(final PathExpression argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createPath(argument) : new RegularPathStatement(argument, substatements);
-    }
-
-    public static PatternStatement createPattern(final PatternExpression argument) {
-        return new EmptyPatternStatement(argument);
+        return substatements.isEmpty() ? new EmptyPathStatement(argument)
+            : new RegularPathStatement(argument, substatements);
     }
 
     public static PatternStatement createPattern(final PatternExpression argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createPattern(argument)
+        return substatements.isEmpty() ? new EmptyPatternStatement(argument)
             : new RegularPatternStatement(argument, substatements);
-    }
-
-    public static PositionStatement createPosition(final Uint32 argument) {
-        return new EmptyPositionStatement(argument);
     }
 
     public static PositionStatement createPosition(final Uint32 argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createPosition(argument)
+        return substatements.isEmpty() ? new EmptyPositionStatement(argument)
             : new RegularPositionStatement(argument, substatements);
-    }
-
-    public static PrefixStatement createPrefix(final String argument) {
-        return new EmptyPrefixStatement(argument);
     }
 
     public static PrefixStatement createPrefix(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createPrefix(argument) : new RegularPrefixStatement(argument, substatements);
-    }
-
-    public static PresenceStatement createPresence(final String argument) {
-        return new EmptyPresenceStatement(argument);
+        return substatements.isEmpty() ? new EmptyPrefixStatement(argument)
+            : new RegularPrefixStatement(argument, substatements);
     }
 
     public static PresenceStatement createPresence(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createPresence(argument)
+        return substatements.isEmpty() ? new EmptyPresenceStatement(argument)
             : new RegularPresenceStatement(argument, substatements);
     }
 
@@ -717,18 +570,10 @@ public final class DeclaredStatements {
             : new RegularReferenceStatement(argument, substatements);
     }
 
-    public static RangeStatement createRange(final String rawArgument, final List<ValueRange> argument) {
-        return new EmptyRangeStatement(rawArgument, argument);
-    }
-
     public static RangeStatement createRange(final String rawArgument, final List<ValueRange> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createRange(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyRangeStatement(rawArgument, argument)
             : new RegularRangeStatement(rawArgument, argument, substatements);
-    }
-
-    public static RefineStatement createRefine(final String rawArgument, final Descendant argument) {
-        return createRefine(rawArgument, argument, ImmutableList.of());
     }
 
     public static RefineStatement createRefine(final String rawArgument, final Descendant argument,
@@ -736,46 +581,38 @@ public final class DeclaredStatements {
         return new RefineStatementImpl(rawArgument, argument, substatements);
     }
 
-    public static RequireInstanceStatement createRequireInstance(final boolean argument) {
-        return argument ? EmptyRequireInstanceStatement.TRUE : EmptyRequireInstanceStatement.FALSE;
-    }
-
     public static RequireInstanceStatement createRequireInstance(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createRequireInstance(argument)
-            : new RegularRequireInstanceStatement(argument, substatements);
-    }
-
-    public static RevisionStatement createRevision(final Revision argument) {
-        return new EmptyRevisionStatement(argument);
+        if (substatements.isEmpty()) {
+            return argument ? EmptyRequireInstanceStatement.TRUE : EmptyRequireInstanceStatement.FALSE;
+        }
+        return new RegularRequireInstanceStatement(argument, substatements);
     }
 
     public static RevisionStatement createRevision(final Revision argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createRevision(argument)
+        return substatements.isEmpty() ? new EmptyRevisionStatement(argument)
             : new RegularRevisionStatement(argument, substatements);
-    }
-
-    public static RevisionDateStatement createRevisionDate(final Revision argument) {
-        return new EmptyRevisionDateStatement(argument);
     }
 
     public static RevisionDateStatement createRevisionDate(final Revision argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createRevisionDate(argument)
+        return substatements.isEmpty() ? new EmptyRevisionDateStatement(argument)
             : new RegularRevisionDateStatement(argument, substatements);
-    }
-
-    public static RpcStatement createRpc(final QName argument) {
-        return new EmptyRpcStatement(argument);
     }
 
     public static RpcStatement createRpc(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createRpc(argument) : new RegularRpcStatement(argument, substatements);
+        return substatements.isEmpty() ? new EmptyRpcStatement(argument)
+            : new RegularRpcStatement(argument, substatements);
     }
 
-    public static StatusStatement createStatus(final Status argument) {
+    public static StatusStatement createStatus(final Status argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createStatus(argument) : new RegularStatusStatement(argument, substatements);
+    }
+
+    private static StatusStatement createStatus(final Status argument) {
         switch (argument) {
             case CURRENT:
                 return EmptyStatusStatement.CURRENT;
@@ -788,60 +625,38 @@ public final class DeclaredStatements {
         }
     }
 
-    public static StatusStatement createStatus(final Status argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createStatus(argument) : new RegularStatusStatement(argument, substatements);
-    }
-
     public static SubmoduleStatement createSubmodule(final String rawArgument, final UnqualifiedQName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new SubmoduleStatementImpl(rawArgument, argument, substatements);
     }
 
-    public static TypeStatement createType(final String argument) {
-        return new EmptyTypeStatement(argument);
-    }
-
     public static TypeStatement createType(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createType(argument) : new RegularTypeStatement(argument, substatements);
-    }
-
-    public static TypedefStatement createTypedef(final QName argument) {
-        return new EmptyTypedefStatement(argument);
+        return substatements.isEmpty() ? new EmptyTypeStatement(argument)
+            : new RegularTypeStatement(argument, substatements);
     }
 
     public static TypedefStatement createTypedef(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createTypedef(argument) : new RegularTypedefStatement(argument, substatements);
-    }
-
-    public static UniqueStatement createUnique(final String rawArgument, final Set<Descendant> argument) {
-        return new EmptyUniqueStatement(rawArgument, argument);
+        return substatements.isEmpty() ? new EmptyTypedefStatement(argument)
+            : new RegularTypedefStatement(argument, substatements);
     }
 
     public static UniqueStatement createUnique(final String rawArgument, final Set<Descendant> argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createUnique(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyUniqueStatement(rawArgument, argument)
             : new RegularUniqueStatement(rawArgument, argument, substatements);
-    }
-
-    public static UnitsStatement createUnits(final String argument) {
-        return new EmptyUnitsStatement(argument);
     }
 
     public static UnitsStatement createUnits(final String argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createUnits(argument) : new RegularUnitsStatement(argument, substatements);
-    }
-
-    public static UsesStatement createUses(final String rawArgument, final QName argument) {
-        return new EmptyUsesStatement(rawArgument, argument);
+        return substatements.isEmpty() ? new EmptyUnitsStatement(argument)
+            : new RegularUnitsStatement(argument, substatements);
     }
 
     public static UsesStatement createUses(final String rawArgument, final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createUses(rawArgument, argument)
+        return substatements.isEmpty() ?  new EmptyUsesStatement(rawArgument, argument)
             : new RegularUsesStatement(rawArgument, argument, substatements);
     }
 
@@ -854,17 +669,19 @@ public final class DeclaredStatements {
         return substatements.isEmpty() ? createValue(argument) : new RegularValueStatement(argument, substatements);
     }
 
-    public static WhenStatement createWhen(final String rawArgument, final QualifiedBound argument) {
-        return new EmptyWhenStatement(rawArgument, argument);
-    }
-
     public static WhenStatement createWhen(final String rawArgument, final QualifiedBound argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createWhen(rawArgument, argument)
+        return substatements.isEmpty() ? new EmptyWhenStatement(rawArgument, argument)
             : new RegularWhenStatement(rawArgument, argument, substatements);
     }
 
-    public static YangVersionStatement createYangVersion(final YangVersion argument) {
+    public static YangVersionStatement createYangVersion(final YangVersion argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? createYangVersion(argument)
+            : new RegularYangVersionStatement(argument, substatements);
+    }
+
+    private static YangVersionStatement createYangVersion(final YangVersion argument) {
         switch (argument) {
             case VERSION_1:
                 return EmptyYangVersionStatement.VERSION_1;
@@ -873,12 +690,6 @@ public final class DeclaredStatements {
             default:
                 throw new IllegalStateException("Unhandled version " + argument);
         }
-    }
-
-    public static YangVersionStatement createYangVersion(final YangVersion argument,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createYangVersion(argument)
-            : new RegularYangVersionStatement(argument, substatements);
     }
 
     public static YinElementStatement createYinElement(final boolean argument) {

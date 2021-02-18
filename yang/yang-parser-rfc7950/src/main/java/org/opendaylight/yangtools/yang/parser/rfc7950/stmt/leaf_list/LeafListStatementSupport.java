@@ -101,11 +101,6 @@ public final class LeafListStatementSupport
     }
 
     @Override
-    protected LeafListStatement createEmptyDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
-        return DeclaredStatements.createLeafList(ctx.getArgument());
-    }
-
-    @Override
     public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
             final LeafListEffectiveStatement original) {
         final int flags = computeFlags(stmt, original.effectiveSubstatements());

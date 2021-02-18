@@ -89,12 +89,6 @@ public final class RefineStatementSupport
     }
 
     @Override
-    protected RefineStatement createEmptyDeclared(final StmtContext<Descendant, RefineStatement, ?> ctx) {
-        // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return DeclaredStatements.createRefine(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation

@@ -95,19 +95,6 @@ public final class OutputStatementSupport
     }
 
     @Override
-    protected OutputStatement createEmptyDeclared(final StmtContext<QName, OutputStatement, ?> ctx) {
-        final StatementSource source = ctx.source();
-        switch (source) {
-            case CONTEXT:
-                return ImplicitStatements.createOutput(ctx.getArgument());
-            case DECLARATION:
-                return DeclaredStatements.createOutput(ctx.getArgument());
-            default:
-                throw new IllegalStateException("Unhandled statement source " + source);
-        }
-    }
-
-    @Override
     protected OutputEffectiveStatement copyDeclaredEffective(final int flags,
             final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
         return EffectiveStatements.copyOutput(original, stmt.effectivePath(), flags);

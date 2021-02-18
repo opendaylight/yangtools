@@ -51,9 +51,15 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
     }
 
     @Override
-    protected final D createEmptyDeclared(final StmtContext<A, D, ?> ctx) {
-        return declaredCache.getUnchecked(ctx.getArgument());
+    protected final D createDeclared(final StmtContext<A, D, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        final A argument = ctx.getArgument();
+        return substatements.isEmpty() ? declaredCache.getUnchecked(ctx.getArgument())
+            : createDeclared(argument, substatements);
     }
+
+    protected abstract @NonNull D createDeclared(@NonNull A argument,
+            @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements);
 
     protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
 
@@ -68,13 +74,4 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
         @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
-
-    @Override
-    protected final D createDeclared(final StmtContext<A, D, ?> ctx,
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return createDeclared(ctx.getArgument(), substatements);
-    }
-
-    protected abstract @NonNull D createDeclared(@NonNull A argument,
-            ImmutableList<? extends DeclaredStatement<?>> substatements);
 }

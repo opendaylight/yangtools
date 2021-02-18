@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ConfigStatementSupport
@@ -43,9 +42,9 @@ public final class ConfigStatementSupport
     }
 
     @Override
-    protected ConfigStatement createDeclared(final StmtContext<Boolean, ConfigStatement, ?> ctx,
+    protected ConfigStatement createDeclared(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createConfig(ctx.getArgument(), substatements);
+        return DeclaredStatements.createConfig(argument, substatements);
     }
 
     @Override

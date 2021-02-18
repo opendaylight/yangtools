@@ -120,11 +120,6 @@ public final class ChoiceStatementSupport
     }
 
     @Override
-    protected ChoiceStatement createEmptyDeclared(@NonNull final StmtContext<QName, ChoiceStatement, ?> ctx) {
-        return DeclaredStatements.createChoice(ctx.getArgument());
-    }
-
-    @Override
     public ChoiceEffectiveStatement copyEffective(final Current<QName, ChoiceStatement> stmt,
             final ChoiceEffectiveStatement original) {
         return EffectiveStatements.copyChoice(original, stmt.effectivePath(),

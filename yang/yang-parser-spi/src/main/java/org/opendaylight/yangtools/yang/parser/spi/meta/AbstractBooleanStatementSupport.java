@@ -66,9 +66,17 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     }
 
     @Override
-    protected final D createEmptyDeclared(final StmtContext<Boolean, D, ?> ctx) {
-        return ctx.getArgument() ? emptyDeclaredTrue : emptyDeclaredFalse;
+    protected final D createDeclared(final StmtContext<Boolean, D, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        final Boolean argument = ctx.getArgument();
+        if (substatements.isEmpty()) {
+            return argument ? emptyDeclaredTrue : emptyDeclaredFalse;
+        }
+        return createDeclared(argument, substatements);
     }
+
+    protected abstract @NonNull D createDeclared(@NonNull Boolean argument,
+        @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements);
 
     @Override
     protected final E createEffective(final Current<Boolean, D> stmt,

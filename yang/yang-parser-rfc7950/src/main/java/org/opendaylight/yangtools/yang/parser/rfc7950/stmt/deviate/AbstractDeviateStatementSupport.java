@@ -197,11 +197,6 @@ abstract class AbstractDeviateStatementSupport
     }
 
     @Override
-    protected final DeviateStatement createEmptyDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
-        return DeclaredStatements.createDeviate(ctx.getArgument());
-    }
-
-    @Override
     protected final DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviate(stmt.declared(), substatements);

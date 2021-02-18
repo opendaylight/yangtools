@@ -42,12 +42,10 @@ final class UnionSpecificationSupport
     @Override
     protected UnionSpecification createDeclared(final StmtContext<String, UnionSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noType(ctx);
+        }
         return new UnionSpecificationImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected UnionSpecification createEmptyDeclared(final StmtContext<String, UnionSpecification, ?> ctx) {
-        throw noType(ctx);
     }
 
     @Override

@@ -30,23 +30,15 @@ public final class ImplicitStatements {
         // Hidden on purpose
     }
 
-    public static InputStatement createInput(final QName argument) {
-        return new EmptyUndeclaredInputStatement(argument);
-    }
-
     public static InputStatement createInput(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createInput(argument)
+        return substatements.isEmpty() ? new EmptyUndeclaredInputStatement(argument)
             : new RegularUndeclaredInputStatement(argument, substatements);
-    }
-
-    public static OutputStatement createOutput(final QName argument) {
-        return new EmptyUndeclaredOutputStatement(argument);
     }
 
     public static OutputStatement createOutput(final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? createOutput(argument)
+        return substatements.isEmpty() ? new EmptyUndeclaredOutputStatement(argument)
             : new RegularUndeclaredOutputStatement(argument, substatements);
     }
 }

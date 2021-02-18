@@ -216,14 +216,13 @@ abstract class AbstractTypeStatementSupport
     @Override
     protected final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            final TypeStatement builtin = BuiltinTypeStatement.lookup(ctx);
+            if (builtin != null) {
+                return builtin;
+            }
+        }
         return DeclaredStatements.createType(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected final TypeStatement createEmptyDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
-        final TypeStatement builtin;
-        return (builtin = BuiltinTypeStatement.lookup(ctx)) != null ? builtin
-            : DeclaredStatements.createType(ctx.getRawArgument());
     }
 
     @Override

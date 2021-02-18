@@ -63,11 +63,6 @@ public final class MustStatementSupport
     }
 
     @Override
-    protected MustStatement createEmptyDeclared(final StmtContext<QualifiedBound, MustStatement, ?> ctx) {
-        return DeclaredStatements.createMust(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected MustEffectiveStatement createEffective(final Current<QualifiedBound, MustStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyMustEffectiveStatement(stmt.declared())

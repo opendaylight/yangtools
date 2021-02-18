@@ -47,11 +47,6 @@ public final class DefaultStatementSupport
     }
 
     @Override
-    protected DefaultStatement createEmptyDeclared(final StmtContext<String, DefaultStatement, ?> ctx) {
-        return DeclaredStatements.createDefault(ctx.getRawArgument());
-    }
-
-    @Override
     protected DefaultEffectiveStatement createEffective(final Current<String, DefaultStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDefault(stmt.declared(), substatements);

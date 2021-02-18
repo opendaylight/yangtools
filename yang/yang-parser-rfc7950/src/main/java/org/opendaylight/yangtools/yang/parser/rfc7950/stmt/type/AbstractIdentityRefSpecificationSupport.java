@@ -59,13 +59,10 @@ abstract class AbstractIdentityRefSpecificationSupport
     @Override
     protected final IdentityRefSpecification createDeclared(final StmtContext<String, IdentityRefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noBase(ctx);
+        }
         return new IdentityRefSpecificationImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected final IdentityRefSpecification createEmptyDeclared(
-            final StmtContext<String, IdentityRefSpecification, ?> ctx) {
-        throw noBase(ctx);
     }
 
     @Override

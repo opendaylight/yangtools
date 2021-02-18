@@ -86,11 +86,6 @@ public final class ExtensionStatementSupport
     }
 
     @Override
-    protected ExtensionStatement createEmptyDeclared(final StmtContext<QName, ExtensionStatement, ?> ctx) {
-        return DeclaredStatements.createExtension(ctx.getArgument());
-    }
-
-    @Override
     protected ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createExtension(stmt.declared(), substatements, stmt.optionalPath());

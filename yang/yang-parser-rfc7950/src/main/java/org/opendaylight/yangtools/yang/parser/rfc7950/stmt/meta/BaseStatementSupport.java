@@ -88,11 +88,6 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
     }
 
     @Override
-    protected BaseStatement createEmptyDeclared(final StmtContext<QName, BaseStatement, ?> ctx) {
-        return DeclaredStatements.createBase(ctx.getArgument());
-    }
-
-    @Override
     protected BaseEffectiveStatement createEffective(final Current<QName, BaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createBase(stmt.declared(), substatements);

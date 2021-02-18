@@ -65,11 +65,6 @@ final class UnrecognizedStatementSupport
         return new UnrecognizedStatementImpl(ctx.rawArgument(), ctx.publicDefinition(), substatements);
     }
 
-    @Override
-    protected UnrecognizedStatement createEmptyDeclared(final StmtContext<Object, UnrecognizedStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
     // createEffective() should never be called, ensure that for each declared statement
 
     @Override

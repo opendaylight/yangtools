@@ -79,19 +79,18 @@ public final class OrderedByStatementSupport
     @Override
     protected OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createOrderedBy(ctx.getArgument(), substatements);
-    }
-
-    @Override
-    protected OrderedByStatement createEmptyDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
-        final Ordering argument = ctx.getArgument();
-        switch (argument) {
-            case SYSTEM:
-                return EMPTY_SYSTEM_DECL;
-            case USER:
-                return EMPTY_USER_DECL;
-            default:
-                throw new IllegalStateException("Unhandled argument " + argument);
+        if (substatements.isEmpty()) {
+            final Ordering argument = ctx.getArgument();
+            switch (argument) {
+                case SYSTEM:
+                    return EMPTY_SYSTEM_DECL;
+                case USER:
+                    return EMPTY_USER_DECL;
+                default:
+                    throw new IllegalStateException("Unhandled argument " + argument);
+            }
+        } else {
+            return DeclaredStatements.createOrderedBy(ctx.getArgument(), substatements);
         }
     }
 

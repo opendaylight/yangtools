@@ -99,11 +99,6 @@ public final class IdentityStatementSupport
     }
 
     @Override
-    protected IdentityStatement createEmptyDeclared(final StmtContext<QName, IdentityStatement, ?> ctx) {
-        return DeclaredStatements.createIdentity(ctx.getArgument());
-    }
-
-    @Override
     protected IdentityEffectiveStatement createEffective(final Current<QName, IdentityStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {

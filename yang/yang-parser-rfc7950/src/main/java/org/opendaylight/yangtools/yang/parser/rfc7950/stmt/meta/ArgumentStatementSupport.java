@@ -55,11 +55,6 @@ public final class ArgumentStatementSupport
     }
 
     @Override
-    protected ArgumentStatement createEmptyDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx) {
-        return DeclaredStatements.createArgument(ctx.getArgument());
-    }
-
-    @Override
     protected ArgumentEffectiveStatement createEffective(final Current<QName, ArgumentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createArgument(stmt.declared(), substatements);

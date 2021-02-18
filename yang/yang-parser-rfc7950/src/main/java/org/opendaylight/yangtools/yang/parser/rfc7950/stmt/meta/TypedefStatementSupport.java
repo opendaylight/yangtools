@@ -111,11 +111,6 @@ public final class TypedefStatementSupport extends
     }
 
     @Override
-    protected TypedefStatement createEmptyDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {
-        return DeclaredStatements.createTypedef(ctx.getArgument());
-    }
-
-    @Override
     protected TypedefEffectiveStatement createEffective(final Current<QName, TypedefStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final TypedefStatement declared = stmt.declared();

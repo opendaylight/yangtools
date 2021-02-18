@@ -74,11 +74,6 @@ public final class DeviationStatementSupport
     }
 
     @Override
-    protected DeviationStatement createEmptyDeclared(final StmtContext<Absolute, DeviationStatement, ?> ctx) {
-        return DeclaredStatements.createDeviation(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected DeviationEffectiveStatement createEffective(final Current<Absolute, DeviationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviation(stmt.declared(), substatements);

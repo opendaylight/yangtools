@@ -85,12 +85,6 @@ public final class PatternStatementSupport
     }
 
     @Override
-    protected PatternStatement createEmptyDeclared(
-            final StmtContext<PatternExpression, PatternStatement, ?> ctx) {
-        return DeclaredStatements.createPattern(ctx.getArgument());
-    }
-
-    @Override
     protected PatternEffectiveStatement createEffective(final Current<PatternExpression, PatternStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createPattern(stmt.declared(), substatements);

@@ -46,11 +46,6 @@ public final class DescriptionStatementSupport
     }
 
     @Override
-    protected DescriptionStatement createEmptyDeclared(final StmtContext<String, DescriptionStatement, ?> ctx) {
-        return DeclaredStatements.createDescription(ctx.getRawArgument());
-    }
-
-    @Override
     protected DescriptionEffectiveStatement createEffective(final Current<String, DescriptionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDescription(stmt.declared(), substatements);

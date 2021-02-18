@@ -143,11 +143,6 @@ public final class UsesStatementSupport
     }
 
     @Override
-    protected UsesStatement createEmptyDeclared(final StmtContext<QName, UsesStatement, ?> ctx) {
-        return DeclaredStatements.createUses(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected UsesEffectiveStatement createEffective(final Current<QName, UsesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final EffectiveStatement<?, ?> source =

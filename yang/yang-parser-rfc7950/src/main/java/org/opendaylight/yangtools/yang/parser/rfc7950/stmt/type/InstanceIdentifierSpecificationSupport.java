@@ -42,13 +42,8 @@ final class InstanceIdentifierSpecificationSupport
     protected InstanceIdentifierSpecification createDeclared(
             final StmtContext<String, InstanceIdentifierSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected InstanceIdentifierSpecification createEmptyDeclared(
-            final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
-        return new EmptyIdentifierSpecification(ctx.getRawArgument());
+        return substatements.isEmpty() ? new EmptyIdentifierSpecification(ctx.getRawArgument())
+            : new RegularInstanceIdentifierSpecification(ctx.getRawArgument(), substatements);
     }
 
     @Override

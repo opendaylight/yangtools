@@ -57,7 +57,7 @@ public final class PositionStatementSupport
 
     @Override
     protected PositionStatement createEmptyDeclared(final Uint32 argument) {
-        return DeclaredStatements.createPosition(argument);
+        return DeclaredStatements.createPosition(argument, ImmutableList.of());
     }
 
     @Override

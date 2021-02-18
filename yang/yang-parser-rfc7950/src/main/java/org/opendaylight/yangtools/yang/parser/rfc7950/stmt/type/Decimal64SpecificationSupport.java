@@ -43,12 +43,10 @@ final class Decimal64SpecificationSupport extends AbstractStringStatementSupport
     @Override
     protected Decimal64Specification createDeclared(final StmtContext<String, Decimal64Specification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noFracDigits(ctx);
+        }
         return new Decimal64SpecificationImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected Decimal64Specification createEmptyDeclared(final StmtContext<String, Decimal64Specification, ?> ctx) {
-        throw noFracDigits(ctx);
     }
 
     @Override

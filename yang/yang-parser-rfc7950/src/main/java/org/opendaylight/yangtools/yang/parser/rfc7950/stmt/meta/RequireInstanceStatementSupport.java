@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class RequireInstanceStatementSupport
@@ -41,9 +40,9 @@ public final class RequireInstanceStatementSupport
     }
 
     @Override
-    protected RequireInstanceStatement createDeclared(final StmtContext<Boolean, RequireInstanceStatement, ?> ctx,
+    protected RequireInstanceStatement createDeclared(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createRequireInstance(ctx.getArgument(), substatements);
+        return DeclaredStatements.createRequireInstance(argument, substatements);
     }
 
     @Override

@@ -93,12 +93,6 @@ abstract class AbstractIfFeatureStatementSupport
     }
 
     @Override
-    protected final IfFeatureStatement createEmptyDeclared(
-            final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
-        return DeclaredStatements.createIfFeature(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected final IfFeatureEffectiveStatement createEffective(final Current<IfFeatureExpr, IfFeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createIfFeature(stmt.declared(), substatements);

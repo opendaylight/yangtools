@@ -161,13 +161,10 @@ public final class SubmoduleStatementSupport
     @Override
     protected SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noBelongsTo(ctx);
+        }
         return DeclaredStatements.createSubmodule(ctx.getRawArgument(), ctx.getArgument(), substatements);
-    }
-
-    @Override
-    protected SubmoduleStatement createEmptyDeclared(
-            final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx) {
-        throw noBelongsTo(ctx);
     }
 
     @Override

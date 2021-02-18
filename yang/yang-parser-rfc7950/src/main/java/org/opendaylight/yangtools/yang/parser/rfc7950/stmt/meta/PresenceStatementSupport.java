@@ -46,11 +46,6 @@ public final class PresenceStatementSupport
     }
 
     @Override
-    protected PresenceStatement createEmptyDeclared(final StmtContext<String, PresenceStatement, ?> ctx) {
-        return DeclaredStatements.createPresence(ctx.getRawArgument());
-    }
-
-    @Override
     protected PresenceEffectiveStatement createEffective(final Current<String, PresenceStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createPresence(stmt.declared(), substatements);

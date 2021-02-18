@@ -31,12 +31,10 @@ abstract class AbstractLeafrefSpecificationSupport extends AbstractStringStateme
     @Override
     protected final LeafrefSpecification createDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noPath(ctx);
+        }
         return new LeafrefSpecificationImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected final LeafrefSpecification createEmptyDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx) {
-        throw noPath(ctx);
     }
 
     @Override

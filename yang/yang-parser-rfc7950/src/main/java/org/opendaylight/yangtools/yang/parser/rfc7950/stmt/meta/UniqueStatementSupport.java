@@ -77,11 +77,6 @@ public final class UniqueStatementSupport
     }
 
     @Override
-    protected UniqueStatement createEmptyDeclared(final StmtContext<Set<Descendant>, UniqueStatement, ?> ctx) {
-        return DeclaredStatements.createUnique(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected UniqueEffectiveStatement createEffective(final Current<Set<Descendant>, UniqueStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createUnique(stmt.declared(), substatements);

@@ -46,11 +46,6 @@ public final class ErrorAppTagStatementSupport
     }
 
     @Override
-    protected ErrorAppTagStatement createEmptyDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
-        return DeclaredStatements.createErrorAppTag(ctx.getRawArgument());
-    }
-
-    @Override
     protected ErrorAppTagEffectiveStatement createEffective(final Current<String, ErrorAppTagStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createErrorAppTag(stmt.declared(), substatements);

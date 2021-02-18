@@ -98,11 +98,6 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
     }
 
     @Override
-    protected RpcStatement createEmptyDeclared(final StmtContext<QName, RpcStatement, ?> ctx) {
-        return DeclaredStatements.createRpc(ctx.getArgument());
-    }
-
-    @Override
     protected RpcEffectiveStatement createEffective(final Current<QName, RpcStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", stmt.sourceReference());
