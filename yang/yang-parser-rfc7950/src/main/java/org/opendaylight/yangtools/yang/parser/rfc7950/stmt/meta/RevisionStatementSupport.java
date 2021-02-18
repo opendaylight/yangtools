@@ -61,11 +61,6 @@ public final class RevisionStatementSupport
     }
 
     @Override
-    protected RevisionStatement createEmptyDeclared(final StmtContext<Revision, RevisionStatement, ?> ctx) {
-        return DeclaredStatements.createRevision(ctx.getArgument());
-    }
-
-    @Override
     protected RevisionEffectiveStatement createEffective(final Current<Revision, RevisionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createRevision(stmt.declared(), substatements);

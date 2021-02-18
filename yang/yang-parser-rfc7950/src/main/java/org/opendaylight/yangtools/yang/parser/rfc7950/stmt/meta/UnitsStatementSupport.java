@@ -47,11 +47,6 @@ public final class UnitsStatementSupport
     }
 
     @Override
-    protected UnitsStatement createEmptyDeclared(final StmtContext<String, UnitsStatement, ?> ctx) {
-        return DeclaredStatements.createUnits(ctx.getRawArgument());
-    }
-
-    @Override
     protected UnitsEffectiveStatement createEffective(final Current<String, UnitsStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createUnits(stmt.declared(), substatements);

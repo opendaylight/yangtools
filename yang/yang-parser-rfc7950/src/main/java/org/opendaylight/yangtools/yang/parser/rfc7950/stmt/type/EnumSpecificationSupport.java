@@ -42,12 +42,10 @@ final class EnumSpecificationSupport
     @Override
     protected EnumSpecification createDeclared(final StmtContext<String, EnumSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noEnum(ctx);
+        }
         return new EnumSpecificationImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected EnumSpecification createEmptyDeclared(final StmtContext<String, EnumSpecification, ?> ctx) {
-        throw noEnum(ctx);
     }
 
     @Override

@@ -65,12 +65,6 @@ public final class AnyxmlSchemaLocationStatementSupport
     }
 
     @Override
-    protected AnyxmlSchemaLocationStatement createEmptyDeclared(
-            final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected AnyxmlSchemaLocationEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

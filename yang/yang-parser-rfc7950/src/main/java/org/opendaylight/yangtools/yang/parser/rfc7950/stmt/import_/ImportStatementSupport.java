@@ -134,11 +134,6 @@ public final class ImportStatementSupport
     }
 
     @Override
-    protected ImportStatement createEmptyDeclared(final StmtContext<String, ImportStatement, ?> ctx) {
-        return DeclaredStatements.createImport(ctx.getRawArgument());
-    }
-
-    @Override
     protected ImportEffectiveStatement createEffective(final Current<String, ImportStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         InferenceException.throwIf(substatements.isEmpty(), stmt, "Unexpected empty effective import statement");

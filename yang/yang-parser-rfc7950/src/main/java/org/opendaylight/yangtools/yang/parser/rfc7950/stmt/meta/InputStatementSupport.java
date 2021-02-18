@@ -95,19 +95,6 @@ public final class InputStatementSupport
     }
 
     @Override
-    protected InputStatement createEmptyDeclared(final StmtContext<QName, InputStatement, ?> ctx) {
-        final StatementSource source = ctx.source();
-        switch (source) {
-            case CONTEXT:
-                return ImplicitStatements.createInput(ctx.getArgument());
-            case DECLARATION:
-                return DeclaredStatements.createInput(ctx.getArgument());
-            default:
-                throw new IllegalStateException("Unhandled statement source " + source);
-        }
-    }
-
-    @Override
     protected InputEffectiveStatement copyDeclaredEffective(final int flags,
             final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
         return EffectiveStatements.copyInput(original, stmt.effectivePath(),

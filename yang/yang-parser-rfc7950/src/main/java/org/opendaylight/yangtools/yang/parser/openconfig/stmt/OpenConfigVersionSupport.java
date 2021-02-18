@@ -58,12 +58,6 @@ public final class OpenConfigVersionSupport
     }
 
     @Override
-    protected OpenConfigVersionStatement createEmptyDeclared(
-            final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected OpenConfigVersionEffectiveStatement createEffective(
             final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

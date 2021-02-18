@@ -147,11 +147,6 @@ public final class AnnotationStatementSupport
     }
 
     @Override
-    protected AnnotationStatement createEmptyDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected AnnotationEffectiveStatement createEffective(final Current<QName, AnnotationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new Effective(stmt, substatements);

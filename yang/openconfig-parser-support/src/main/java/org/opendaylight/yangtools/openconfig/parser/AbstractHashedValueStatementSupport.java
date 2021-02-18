@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveState
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.StatementPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -104,16 +103,9 @@ abstract class AbstractHashedValueStatementSupport
     }
 
     @Override
-    protected final OpenConfigHashedValueStatement createEmptyDeclared(
-            final StmtContext<Empty, OpenConfigHashedValueStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected OpenConfigHashedValueEffectiveStatement createEffective(
             final Current<Empty, OpenConfigHashedValueStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new Effective(stmt, substatements);
     }
-
 }

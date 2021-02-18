@@ -106,13 +106,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     protected GetFilterElementAttributesStatement createDeclared(
             final StmtContext<Empty, GetFilterElementAttributesStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(substatements);
-    }
-
-    @Override
-    protected GetFilterElementAttributesStatement createEmptyDeclared(
-            final StmtContext<Empty, GetFilterElementAttributesStatement, ?> ctx) {
-        return Declared.EMPTY;
+        return substatements.isEmpty() ? Declared.EMPTY : new Declared(substatements);
     }
 
     @Override

@@ -97,11 +97,6 @@ public final class MountPointStatementSupport
     }
 
     @Override
-    protected MountPointStatement createEmptyDeclared(final StmtContext<QName, MountPointStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected MountPointEffectiveStatement createEffective(final Current<QName, MountPointStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new MountPointEffectiveStatementImpl(stmt, substatements, SchemaPathSupport.toOptionalPath(

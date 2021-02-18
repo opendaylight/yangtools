@@ -251,12 +251,10 @@ public final class ModuleStatementSupport
     @Override
     protected ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noNamespace(ctx);
+        }
         return DeclaredStatements.createModule(ctx.getRawArgument(), ctx.getArgument(), substatements);
-    }
-
-    @Override
-    protected ModuleStatement createEmptyDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx) {
-        throw noNamespace(ctx);
     }
 
     @Override

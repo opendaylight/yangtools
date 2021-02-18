@@ -52,11 +52,6 @@ public final class AliasStatementSupport
     }
 
     @Override
-    protected AliasStatement createEmptyDeclared(final StmtContext<String, AliasStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected AliasEffectiveStatement createEffective(final Current<String, AliasStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new AliasEffectiveStatementImpl(stmt, substatements);

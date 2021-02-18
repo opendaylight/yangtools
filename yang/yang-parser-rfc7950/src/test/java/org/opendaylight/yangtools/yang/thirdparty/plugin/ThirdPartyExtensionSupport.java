@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ThirdPartyExtensionSupport
         extends AbstractStringStatementSupport<ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> {
-
     private static final ThirdPartyExtensionSupport INSTANCE = new ThirdPartyExtensionSupport();
 
     private ThirdPartyExtensionSupport() {
@@ -47,12 +46,6 @@ public final class ThirdPartyExtensionSupport
             final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ThirdPartyExtensionStatementImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected ThirdPartyExtensionStatement createEmptyDeclared(
-            final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
     }
 
     @Override

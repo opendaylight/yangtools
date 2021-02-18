@@ -58,11 +58,6 @@ public final class RevisionDateStatementSupport
     }
 
     @Override
-    protected RevisionDateStatement createEmptyDeclared(final StmtContext<Revision, RevisionDateStatement, ?> ctx) {
-        return DeclaredStatements.createRevisionDate(ctx.getArgument());
-    }
-
-    @Override
     protected RevisionDateEffectiveStatement createEffective(final Current<Revision, RevisionDateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createRevisionDate(stmt.declared(), substatements);

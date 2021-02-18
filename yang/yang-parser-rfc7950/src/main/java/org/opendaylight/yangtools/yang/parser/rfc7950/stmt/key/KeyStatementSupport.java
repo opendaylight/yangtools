@@ -115,11 +115,6 @@ public final class KeyStatementSupport
     }
 
     @Override
-    protected KeyStatement createEmptyDeclared(final StmtContext<Set<QName>, KeyStatement, ?> ctx) {
-        return DeclaredStatements.createKey(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected KeyEffectiveStatement createEffective(final Current<Set<QName>, KeyStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final Set<QName> arg = stmt.getArgument();

@@ -46,11 +46,6 @@ public final class DisplayHintStatementSupport
     }
 
     @Override
-    protected DisplayHintStatement createEmptyDeclared(final StmtContext<String, DisplayHintStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected DisplayHintEffectiveStatement createEffective(final Current<String, DisplayHintStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new DisplayHintEffectiveStatementImpl(stmt, substatements);

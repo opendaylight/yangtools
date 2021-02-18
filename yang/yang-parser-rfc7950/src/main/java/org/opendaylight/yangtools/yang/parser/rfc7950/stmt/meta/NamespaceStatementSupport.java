@@ -59,11 +59,6 @@ public final class NamespaceStatementSupport
     }
 
     @Override
-    protected NamespaceStatement createEmptyDeclared(final StmtContext<XMLNamespace, NamespaceStatement, ?> ctx) {
-        return DeclaredStatements.createNamespace(ctx.getArgument());
-    }
-
-    @Override
     protected NamespaceEffectiveStatement createEffective(final Current<XMLNamespace, NamespaceStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createNamespace(stmt.declared(), substatements);

@@ -93,11 +93,6 @@ public final class LengthStatementSupport
     }
 
     @Override
-    protected LengthStatement createEmptyDeclared(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
-        return DeclaredStatements.createLength(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected LengthEffectiveStatement createEffective(final Current<List<ValueRange>, LengthStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createLength(stmt.declared(), substatements);

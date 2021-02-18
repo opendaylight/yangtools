@@ -63,11 +63,6 @@ public final class MaxAccessStatementSupport
     }
 
     @Override
-    protected MaxAccessStatement createEmptyDeclared(final StmtContext<MaxAccess, MaxAccessStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected MaxAccessEffectiveStatement createEffective(final Current<MaxAccess, MaxAccessStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new MaxAccessEffectiveStatementImpl(stmt, substatements);

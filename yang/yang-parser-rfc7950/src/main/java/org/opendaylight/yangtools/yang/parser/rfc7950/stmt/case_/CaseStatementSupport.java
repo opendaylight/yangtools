@@ -95,26 +95,24 @@ public final class CaseStatementSupport
     protected CaseStatement createDeclared(final StmtContext<QName, CaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         final StatementSource source = ctx.source();
-        switch (source) {
-            case CONTEXT:
-                return new RegularUndeclaredCaseStatement(ctx.getArgument(), substatements);
-            case DECLARATION:
-                return new RegularCaseStatement(ctx.getArgument(), substatements);
-            default:
-                throw new IllegalStateException("Unhandled statement source " + source);
-        }
-    }
-
-    @Override
-    protected CaseStatement createEmptyDeclared(final StmtContext<QName, CaseStatement, ?> ctx) {
-        final StatementSource source = ctx.source();
-        switch (source) {
-            case CONTEXT:
-                return new EmptyUndeclaredCaseStatement(ctx.getArgument());
-            case DECLARATION:
-                return new EmptyCaseStatement(ctx.getArgument());
-            default:
-                throw new IllegalStateException("Unhandled statement source " + source);
+        if (substatements.isEmpty()) {
+            switch (source) {
+                case CONTEXT:
+                    return new EmptyUndeclaredCaseStatement(ctx.getArgument());
+                case DECLARATION:
+                    return new EmptyCaseStatement(ctx.getArgument());
+                default:
+                    throw new IllegalStateException("Unhandled statement source " + source);
+            }
+        } else {
+            switch (source) {
+                case CONTEXT:
+                    return new RegularUndeclaredCaseStatement(ctx.getArgument(), substatements);
+                case DECLARATION:
+                    return new RegularCaseStatement(ctx.getArgument(), substatements);
+                default:
+                    throw new IllegalStateException("Unhandled statement source " + source);
+            }
         }
     }
 

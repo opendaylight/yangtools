@@ -113,12 +113,6 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    protected final AugmentStatement createEmptyDeclared(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
-        return DeclaredStatements.createAugment(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected final List<? extends StmtContext<?, ?, ?>> statementsToBuild(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final List<? extends StmtContext<?, ?, ?>> substatements) {

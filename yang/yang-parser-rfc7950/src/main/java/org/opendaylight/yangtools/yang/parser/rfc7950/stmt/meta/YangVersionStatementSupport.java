@@ -60,11 +60,6 @@ public final class YangVersionStatementSupport
     }
 
     @Override
-    protected YangVersionStatement createEmptyDeclared(final StmtContext<YangVersion, YangVersionStatement, ?> ctx) {
-        return DeclaredStatements.createYangVersion(ctx.getArgument());
-    }
-
-    @Override
     protected YangVersionEffectiveStatement createEffective(final Current<YangVersion, YangVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createYangVersion(stmt.declared(), substatements);

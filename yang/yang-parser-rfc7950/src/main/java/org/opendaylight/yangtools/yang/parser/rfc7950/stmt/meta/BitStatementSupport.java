@@ -76,11 +76,6 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
     }
 
     @Override
-    protected BitStatement createEmptyDeclared(final StmtContext<String, BitStatement, ?> ctx) {
-        return DeclaredStatements.createBit(ctx.getArgument());
-    }
-
-    @Override
     protected BitEffectiveStatement createEffective(final Current<String, BitStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createBit(stmt.declared(), substatements);

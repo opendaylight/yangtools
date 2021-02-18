@@ -44,12 +44,10 @@ final class BitsSpecificationSupport
     @Override
     protected BitsSpecification createDeclared(final StmtContext<String, BitsSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        if (substatements.isEmpty()) {
+            throw noBits(ctx);
+        }
         return new BitsSpecificationImpl(ctx.getRawArgument(), substatements);
-    }
-
-    @Override
-    protected BitsSpecification createEmptyDeclared(final StmtContext<String, BitsSpecification, ?> ctx) {
-        throw noBits(ctx);
     }
 
     @Override

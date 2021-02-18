@@ -91,11 +91,6 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    protected BelongsToStatement createEmptyDeclared(final StmtContext<String, BelongsToStatement, ?> ctx) {
-        return DeclaredStatements.createBelongsTo(ctx.getRawArgument());
-    }
-
-    @Override
     protected BelongsToEffectiveStatement createEffective(final Current<String, BelongsToStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createBelongsTo(stmt.declared(), substatements);

@@ -122,11 +122,6 @@ public final class IncludeStatementSupport
     }
 
     @Override
-    protected IncludeStatement createEmptyDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
-        return DeclaredStatements.createInclude(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected IncludeEffectiveStatement createEffective(final Current<String, IncludeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createInclude(stmt.declared(), substatements);

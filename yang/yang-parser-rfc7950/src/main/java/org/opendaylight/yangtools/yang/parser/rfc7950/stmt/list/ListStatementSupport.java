@@ -140,11 +140,6 @@ public final class ListStatementSupport
     }
 
     @Override
-    protected ListStatement createEmptyDeclared(final StmtContext<QName, ListStatement, ?> ctx) {
-        return DeclaredStatements.createList(ctx.getArgument());
-    }
-
-    @Override
     public ListEffectiveStatement copyEffective(final Current<QName, ListStatement> stmt,
             final ListEffectiveStatement original) {
         final int flags = computeFlags(stmt, original.effectiveSubstatements());

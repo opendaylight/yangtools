@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MandatoryStatementSupport extends
@@ -42,9 +41,9 @@ public final class MandatoryStatementSupport extends
     }
 
     @Override
-    protected MandatoryStatement createDeclared(final StmtContext<Boolean, MandatoryStatement, ?> ctx,
+    protected MandatoryStatement createDeclared(final Boolean argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return DeclaredStatements.createMandatory(ctx.getArgument(), substatements);
+        return DeclaredStatements.createMandatory(argument, substatements);
     }
 
     @Override

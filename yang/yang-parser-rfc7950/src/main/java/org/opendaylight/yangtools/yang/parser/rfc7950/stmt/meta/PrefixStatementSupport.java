@@ -46,11 +46,6 @@ public final class PrefixStatementSupport
     }
 
     @Override
-    protected PrefixStatement createEmptyDeclared(final StmtContext<String, PrefixStatement, ?> ctx) {
-        return DeclaredStatements.createPrefix(ctx.getRawArgument());
-    }
-
-    @Override
     protected PrefixEffectiveStatement createEffective(final Current<String, PrefixStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createPrefix(stmt.declared(), substatements);

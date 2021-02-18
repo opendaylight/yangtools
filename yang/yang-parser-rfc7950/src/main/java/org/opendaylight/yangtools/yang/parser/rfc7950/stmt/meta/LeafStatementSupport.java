@@ -77,11 +77,6 @@ public final class LeafStatementSupport
     }
 
     @Override
-    protected LeafStatement createEmptyDeclared(final StmtContext<QName, LeafStatement, ?> ctx) {
-        return DeclaredStatements.createLeaf(ctx.getArgument());
-    }
-
-    @Override
     public LeafEffectiveStatement copyEffective(final Current<QName, LeafStatement> stmt,
             final LeafEffectiveStatement original) {
         return EffectiveStatements.copyLeaf(original, stmt.effectivePath(),

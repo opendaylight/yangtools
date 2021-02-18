@@ -101,11 +101,6 @@ public final class YangDataStatementSupport
     }
 
     @Override
-    protected YangDataStatement createEmptyDeclared(final StmtContext<String, YangDataStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected YangDataEffectiveStatement createEffective(final Current<String, YangDataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // So now we need to deal with effective validation. The requirement is that:

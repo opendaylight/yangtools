@@ -65,11 +65,6 @@ public final class PathStatementSupport
     }
 
     @Override
-    protected PathStatement createEmptyDeclared(final StmtContext<PathExpression, PathStatement, ?> ctx) {
-        return DeclaredStatements.createPath(ctx.getArgument());
-    }
-
-    @Override
     protected PathEffectiveStatement createEffective(final Current<PathExpression, PathStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createPath(stmt.declared(), substatements);

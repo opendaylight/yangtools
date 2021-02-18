@@ -62,11 +62,6 @@ public final class AnydataStatementSupport
     }
 
     @Override
-    protected AnydataStatement createEmptyDeclared(final StmtContext<QName, AnydataStatement, ?> ctx) {
-        return DeclaredStatements.createAnydata(ctx.getArgument());
-    }
-
-    @Override
     protected AnydataEffectiveStatement createEffective(final Current<QName, AnydataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createAnydata(stmt.declared(), stmt.effectivePath(),

@@ -62,11 +62,6 @@ public final class AnyxmlStatementSupport
     }
 
     @Override
-    protected AnyxmlStatement createEmptyDeclared(final StmtContext<QName, AnyxmlStatement, ?> ctx) {
-        return DeclaredStatements.createAnyxml(ctx.getArgument());
-    }
-
-    @Override
     protected AnyxmlEffectiveStatement createEffective(final Current<QName, AnyxmlStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createAnyxml(stmt.declared(), stmt.effectivePath(), createFlags(stmt, substatements),

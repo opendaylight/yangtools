@@ -36,11 +36,6 @@ abstract class AbstractNotificationStatementSupport
     }
 
     @Override
-    protected final NotificationStatement createEmptyDeclared(final StmtContext<QName, NotificationStatement, ?> ctx) {
-        return DeclaredStatements.createNotification(ctx.getArgument());
-    }
-
-    @Override
     protected final NotificationEffectiveStatement createEffective(final Current<QName, NotificationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {

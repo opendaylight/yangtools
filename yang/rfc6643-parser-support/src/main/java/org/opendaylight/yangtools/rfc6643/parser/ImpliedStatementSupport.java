@@ -46,11 +46,6 @@ public final class ImpliedStatementSupport
     }
 
     @Override
-    protected ImpliedStatement createEmptyDeclared(final StmtContext<String, ImpliedStatement, ?> ctx) {
-        return createDeclared(ctx, ImmutableList.of());
-    }
-
-    @Override
     protected ImpliedEffectiveStatement createEffective(final Current<String, ImpliedStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new ImpliedEffectiveStatementImpl(stmt, substatements);

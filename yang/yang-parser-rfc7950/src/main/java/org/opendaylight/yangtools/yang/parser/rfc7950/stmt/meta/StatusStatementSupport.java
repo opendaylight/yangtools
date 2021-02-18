@@ -76,11 +76,6 @@ public final class StatusStatementSupport
     }
 
     @Override
-    protected StatusStatement createEmptyDeclared(final StmtContext<Status, StatusStatement, ?> ctx) {
-        return DeclaredStatements.createStatus(ctx.getArgument());
-    }
-
-    @Override
     protected StatusEffectiveStatement createEffective(final Current<Status, StatusStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createStatus(stmt.declared(), substatements);

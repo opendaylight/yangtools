@@ -52,11 +52,6 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
-    protected MaxElementsStatement createEmptyDeclared(final StmtContext<String, MaxElementsStatement, ?> ctx) {
-        return DeclaredStatements.createMaxElements(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected MaxElementsEffectiveStatement createEffective(final Current<String, MaxElementsStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createMaxElements(stmt.declared(), substatements);

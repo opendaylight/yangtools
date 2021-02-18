@@ -76,11 +76,6 @@ public final class FractionDigitsStatementSupport
     }
 
     @Override
-    protected FractionDigitsStatement createEmptyDeclared(final StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
-        return DeclaredStatements.createFractionDigits(ctx.getArgument());
-    }
-
-    @Override
     protected FractionDigitsEffectiveStatement createEffective(final Current<Integer, FractionDigitsStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? createEmptyEffective(stmt.declared())

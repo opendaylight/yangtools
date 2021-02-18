@@ -46,11 +46,6 @@ public final class ErrorMessageStatementSupport
     }
 
     @Override
-    protected ErrorMessageStatement createEmptyDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
-        return DeclaredStatements.createErrorMessage(ctx.getRawArgument());
-    }
-
-    @Override
     protected ErrorMessageEffectiveStatement createEffective(final Current<String, ErrorMessageStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createErrorMessage(stmt.declared(), substatements);

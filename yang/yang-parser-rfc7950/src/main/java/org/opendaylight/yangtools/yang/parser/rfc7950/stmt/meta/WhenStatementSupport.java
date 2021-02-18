@@ -62,11 +62,6 @@ public final class WhenStatementSupport
     }
 
     @Override
-    protected WhenStatement createEmptyDeclared(final StmtContext<QualifiedBound, WhenStatement, ?> ctx) {
-        return DeclaredStatements.createWhen(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected WhenEffectiveStatement createEffective(final Current<QualifiedBound, WhenStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createWhen(stmt.declared(), substatements);

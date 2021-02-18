@@ -109,11 +109,6 @@ public final class ContainerStatementSupport
     }
 
     @Override
-    protected ContainerStatement createEmptyDeclared(final StmtContext<QName, ContainerStatement, ?> ctx) {
-        return DeclaredStatements.createContainer(ctx.getArgument());
-    }
-
-    @Override
     protected ContainerEffectiveStatement createEffective(final Current<QName, ContainerStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         EffectiveStmtUtils.checkUniqueGroupings(stmt, substatements);

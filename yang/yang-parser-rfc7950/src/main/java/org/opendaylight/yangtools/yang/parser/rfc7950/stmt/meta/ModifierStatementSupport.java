@@ -59,11 +59,6 @@ public final class ModifierStatementSupport
     }
 
     @Override
-    protected ModifierStatement createEmptyDeclared(final StmtContext<ModifierKind, ModifierStatement, ?> ctx) {
-        return DeclaredStatements.createModifier(ctx.getArgument());
-    }
-
-    @Override
     protected ModifierEffectiveStatement createEffective(final Current<ModifierKind, ModifierStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createModifier(stmt.declared(), substatements);

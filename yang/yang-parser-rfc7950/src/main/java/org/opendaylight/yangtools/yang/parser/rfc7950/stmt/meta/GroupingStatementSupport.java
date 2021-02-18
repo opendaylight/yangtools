@@ -144,11 +144,6 @@ public final class GroupingStatementSupport
     }
 
     @Override
-    protected GroupingStatement createEmptyDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
-        return DeclaredStatements.createGrouping(ctx.getArgument());
-    }
-
-    @Override
     protected GroupingEffectiveStatement createEffective(final Current<QName, GroupingStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {

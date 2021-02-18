@@ -102,11 +102,6 @@ public final class ActionStatementSupport extends
     }
 
     @Override
-    protected ActionStatement createEmptyDeclared(final StmtContext<QName, ActionStatement, ?> ctx) {
-        return DeclaredStatements.createAction(ctx.getArgument());
-    }
-
-    @Override
     protected ActionEffectiveStatement createEffective(final Current<QName, ActionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final StatementSourceReference ref = stmt.sourceReference();

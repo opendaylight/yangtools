@@ -89,12 +89,7 @@ public final class DefaultDenyAllStatementSupport
     @Override
     protected DefaultDenyAllStatement createDeclared(final StmtContext<Empty, DefaultDenyAllStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(substatements);
-    }
-
-    @Override
-    protected DefaultDenyAllStatement createEmptyDeclared(final StmtContext<Empty, DefaultDenyAllStatement, ?> ctx) {
-        return Declared.EMPTY;
+        return substatements.isEmpty() ? Declared.EMPTY : new Declared(substatements);
     }
 
     @Override

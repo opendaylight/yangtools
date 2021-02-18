@@ -89,11 +89,6 @@ public final class RangeStatementSupport
     }
 
     @Override
-    protected RangeStatement createEmptyDeclared(final StmtContext<List<ValueRange>, RangeStatement, ?> ctx) {
-        return DeclaredStatements.createRange(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected RangeEffectiveStatement createEffective(final Current<List<ValueRange>, RangeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createRange(stmt.declared(), substatements);

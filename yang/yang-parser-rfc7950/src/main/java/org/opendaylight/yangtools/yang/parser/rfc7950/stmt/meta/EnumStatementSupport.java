@@ -76,11 +76,6 @@ public final class EnumStatementSupport
     }
 
     @Override
-    protected EnumStatement createEmptyDeclared(final StmtContext<String, EnumStatement, ?> ctx) {
-        return DeclaredStatements.createEnum(ctx.getRawArgument(), ctx.getArgument());
-    }
-
-    @Override
     protected EnumEffectiveStatement createEffective(final Current<String, EnumStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createEnum(stmt.declared(), substatements);
