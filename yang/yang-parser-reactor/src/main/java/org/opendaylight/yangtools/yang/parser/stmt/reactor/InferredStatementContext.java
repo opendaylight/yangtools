@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -89,6 +88,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     private final @NonNull StatementContextBase<A, D, E> prototype;
     private final @NonNull StatementContextBase<?, ?, ?> parent;
     private final @NonNull StmtContext<A, D, E> originalCtx;
+    // TODO: consider encoding this in StatementContextBase fields, there should be plenty of room
     private final @NonNull CopyType childCopyType;
     private final QNameModule targetModule;
     private final A argument;
@@ -119,7 +119,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     InferredStatementContext(final StatementContextBase<?, ?, ?> parent, final StatementContextBase<A, D, E> prototype,
             final CopyType myCopyType, final CopyType childCopyType, final QNameModule targetModule) {
-        super(prototype.definition(), CopyHistory.of(myCopyType, prototype.history()));
+        super(prototype, myCopyType);
         this.parent = requireNonNull(parent);
         this.prototype = requireNonNull(prototype);
         this.argument = targetModule == null ? prototype.argument()
