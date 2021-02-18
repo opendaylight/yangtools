@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -17,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
@@ -78,9 +80,11 @@ abstract class AbstractIdentityRefSpecificationSupport
         for (final EffectiveStatement<?, ?> subStmt : substatements) {
             if (subStmt instanceof BaseEffectiveStatement) {
                 final QName identityQName = ((BaseEffectiveStatement) subStmt).argument();
-                final StmtContext<?, IdentityStatement, IdentityEffectiveStatement> identityCtx =
-                        stmt.getFromNamespace(IdentityNamespace.class, identityQName);
-                builder.addIdentity((IdentitySchemaNode) identityCtx.buildEffective());
+                final IdentityEffectiveStatement baseIdentity =
+                    verifyNotNull(stmt.getFromNamespace(IdentityNamespace.class, identityQName)).buildEffective();
+                verify(baseIdentity instanceof IdentitySchemaNode, "Statement %s is not an IdentitySchemaNode",
+                    baseIdentity);
+                builder.addIdentity((IdentitySchemaNode) baseIdentity);
             }
         }
 
