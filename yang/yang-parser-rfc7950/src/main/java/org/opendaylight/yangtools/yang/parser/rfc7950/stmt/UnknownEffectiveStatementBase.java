@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,9 +45,9 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
             nodeType = stmt.publicDefinition().getStatementName();
         } else {
             final EffectiveStatement<QName, ExtensionStatement> effective = extensionInit.buildEffective();
-            Preconditions.checkState(effective instanceof ExtensionDefinition,
+            checkState(effective instanceof ExtensionDefinition,
                 "Statement %s is not an ExtensionDefinition", effective);
-            extension = (ExtensionDefinition) extensionInit.buildEffective();
+            extension = (ExtensionDefinition) effective;
             nodeType = null;
         }
 
