@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2021 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,132 +8,219 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
-import com.google.common.base.Function;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
-import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
+import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer;
-import org.opendaylight.yangtools.concepts.SemVer;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An almost-simple cache. EffectiveModel computation is explicitly asynchronous and we are also threadless, i.e. we
+ * hijack repository threads to do our work.
+ */
 final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
+    private static final class CacheEntry {
+        private static final Function<EffectiveModelContext, Reference<EffectiveModelContext>> REF;
+        private static final VarHandle STATE;
 
-    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> revisionCache = CacheBuilder.newBuilder()
-            .weakValues().build();
-    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> semVerCache = CacheBuilder.newBuilder()
-            .weakValues().build();
-    private final @NonNull SharedSchemaRepository repository;
-    private final @NonNull SchemaContextFactoryConfiguration config;
+        static {
+            try {
+                STATE = MethodHandles.lookup().findVarHandle(CacheEntry.class, "state", Object.class);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new ExceptionInInitializerError(e);
+            }
+
+            String prop = System.getProperty("org.opendaylight.yangtools.yang.parser.repo.shared-refs", "weak");
+            switch (prop) {
+                default:
+                    LOG.warn("Invalid shared-refs \"{}\", defaulting to weak references", prop);
+                    prop = "weak";
+                    // fall through
+                case "weak":
+                    REF = WeakReference::new;
+                    break;
+                case "soft":
+                    REF = SoftReference::new;
+                    break;
+            }
+            LOG.info("Using {} references", prop);
+        }
+
+        // This field can be in one of two states:
+        // - SettableFuture, in which case the model is being computed
+        // - Reference, in which case the model is available through the reference (unless cleared)
+        @SuppressWarnings("unused")
+        private volatile Object state = SettableFuture.create();
+
+        @SuppressWarnings("unchecked")
+        @Nullable ListenableFuture<EffectiveModelContext> future() {
+            final Object local = STATE.getAcquire(this);
+            if (local instanceof SettableFuture) {
+                return (SettableFuture<EffectiveModelContext>) local;
+            }
+            verify(local instanceof Reference, "Unexpected state %s", local);
+            final EffectiveModelContext model = ((Reference<EffectiveModelContext>) local).get();
+            return model == null ? null : Futures.immediateFuture(model);
+        }
+
+        @SuppressWarnings("unchecked")
+        @NonNull SettableFuture<EffectiveModelContext> getFuture() {
+            final Object local = STATE.getAcquire(this);
+            verify(local instanceof SettableFuture, "Unexpected state %s", local);
+            return (SettableFuture<EffectiveModelContext>) local;
+        }
+
+        void resolve(final EffectiveModelContext context) {
+            final SettableFuture<EffectiveModelContext> future = getFuture();
+            // Publish a weak reference before triggering any listeners on the future so that newcomers can see it
+            final Object witness = STATE.compareAndExchangeRelease(this, future, REF.apply(context));
+            verify(witness == future, "Unexpected witness %s", witness);
+            future.set(context);
+        }
+    }
+
+
+    private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
+    private static final Cleaner CLEANER = Cleaner.create();
+
+    private final ConcurrentMap<Set<SourceIdentifier>, CacheEntry> cache = new ConcurrentHashMap<>();
+    private final AssembleSources assembleSources;
+    private final SchemaRepository repository;
 
     SharedSchemaContextFactory(final @NonNull SharedSchemaRepository repository,
             final @NonNull SchemaContextFactoryConfiguration config) {
         this.repository = requireNonNull(repository);
-        this.config = requireNonNull(config);
+        this.assembleSources = new AssembleSources(repository.factory(), config);
+
     }
 
     @Override
     public @NonNull ListenableFuture<EffectiveModelContext> createEffectiveModelContext(
             final @NonNull Collection<SourceIdentifier> requiredSources) {
-        return createSchemaContext(requiredSources,
-                config.getStatementParserMode() == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
-                new AssembleSources(repository.factory(), config));
+        return createEffectiveModel(dedupSources(requiredSources));
     }
 
-    private @NonNull ListenableFuture<EffectiveModelContext> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources,
-            final Cache<Collection<SourceIdentifier>, EffectiveModelContext> cache,
-            final AsyncFunction<List<IRSchemaSource>, EffectiveModelContext> assembleSources) {
-        // Make sources unique
-        final List<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
+    @NonNull ListenableFuture<EffectiveModelContext> createEffectiveModel(final Set<SourceIdentifier> sources) {
+        final CacheEntry existing = cache.get(sources);
+        return existing != null ? acquireModel(sources, existing) : computeModel(sources);
+    }
 
-        final EffectiveModelContext existing = cache.getIfPresent(uniqueSourceIdentifiers);
+    // We may have an entry, but we do not know in what state it is in: it may be stable, it may be being built up
+    // or in process of being retired.
+    private @NonNull ListenableFuture<EffectiveModelContext> acquireModel(final Set<SourceIdentifier> sources,
+            final @NonNull CacheEntry entry) {
+        // Request a future from the entry, which indicates the context is either available or being constructed
+        final ListenableFuture<EffectiveModelContext> existing = entry.future();
         if (existing != null) {
-            LOG.debug("Returning cached context {}", existing);
-            return immediateFluentFuture(existing);
+            return existing;
+        }
+        // The entry cannot satisfy our request: remove it and fall back to computation
+        cache.remove(sources, entry);
+        return computeModel(sources);
+    }
+
+    private @NonNull ListenableFuture<EffectiveModelContext> computeModel(final Set<SourceIdentifier> sources) {
+        // Insert a new entry until we succeed or there is a workable entry
+        final CacheEntry ourEntry = new CacheEntry();
+        while (true) {
+            final CacheEntry prevEntry = cache.putIfAbsent(sources, ourEntry);
+            if (prevEntry == null) {
+                // successful insert
+                break;
+            }
+
+            // ... okay, we have raced, but is the entry still usable?
+            final ListenableFuture<EffectiveModelContext> existing = prevEntry.future();
+            if (existing != null) {
+                // .. yup, we are done here
+                return existing;
+            }
+
+            // ... no dice, remove the entry and retry
+            cache.remove(sources, prevEntry);
+            continue;
         }
 
+        // Acquire the future first, then kick off computation. That way we do not need to worry about races around
+        // EffectiveModelContext being garbage-collected just after have computed it and before we have acquired a
+        // reference to it.
+        final ListenableFuture<EffectiveModelContext> result = ourEntry.getFuture();
+        resolveEntry(sources, ourEntry);
+        return result;
+    }
+
+    private void resolveEntry(final Set<SourceIdentifier> sources, final CacheEntry entry) {
+        LOG.debug("Starting assembly of {} sources", sources.size());
+        final Stopwatch sw = Stopwatch.createStarted();
+
         // Request all sources be loaded
-        ListenableFuture<List<IRSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers,
-            this::requestSource));
+        ListenableFuture<List<IRSchemaSource>> sf = Futures.allAsList(Collections2.transform(sources,
+            identifier -> repository.getSchemaSource(identifier, IRSchemaSource.class)));
 
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
         // Also remove duplicates if present
         // We are relying on preserved order of uniqueSourceIdentifiers as well as sf
-        sf = Futures.transform(sf, new SourceIdMismatchDetector(uniqueSourceIdentifiers),
-            MoreExecutors.directExecutor());
+        sf = Futures.transform(sf, new SourceIdMismatchDetector(sources), MoreExecutors.directExecutor());
 
         // Assemble sources into a schema context
         final ListenableFuture<EffectiveModelContext> cf = Futures.transformAsync(sf, assembleSources,
             MoreExecutors.directExecutor());
 
-        final SettableFuture<EffectiveModelContext> rf = SettableFuture.create();
+        // FIXME: we do not deal with invalidation here. We should monitor the repository for changes in source schemas
+        //        and react appropriately:
+        //        - in case we failed certainly want to invalidate the entry
+        //        - in case of success ... that's something to consider
         Futures.addCallback(cf, new FutureCallback<EffectiveModelContext>() {
             @Override
             public void onSuccess(final EffectiveModelContext result) {
-                // Deduplicate concurrent loads
-                final EffectiveModelContext existing;
-                try {
-                    existing = cache.get(uniqueSourceIdentifiers, () -> result);
-                } catch (ExecutionException e) {
-                    LOG.warn("Failed to recheck result with cache, will use computed value", e);
-                    rf.set(result);
-                    return;
-                }
+                LOG.debug("Finished assembly of {} sources in {}", sources.size(), sw);
 
-                rf.set(existing);
+                // Remove the entry when the context is GC'd
+                final Stopwatch residence = Stopwatch.createStarted();
+                CLEANER.register(result, () -> {
+                    LOG.debug("Removing entry after {}", residence);
+                    cache.remove(sources, entry);
+                });
+
+                // Flip the entry to resolved
+                entry.resolve(result);
             }
 
             @Override
             public void onFailure(final Throwable cause) {
-                LOG.debug("Failed to assemble sources", cause);
-                rf.setException(cause);
+                LOG.debug("Failed assembly of {} in {}", sources, sw, cause);
+                entry.getFuture().setException(cause);
             }
         }, MoreExecutors.directExecutor());
-
-        return rf;
-    }
-
-    private ListenableFuture<IRSchemaSource> requestSource(final @NonNull SourceIdentifier identifier) {
-        return repository.getSchemaSource(identifier, IRSchemaSource.class);
     }
 
     /**
@@ -140,120 +228,12 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
      *
      * @return set (preserving ordering) from the input collection
      */
-    private static List<SourceIdentifier> deDuplicateSources(final Collection<SourceIdentifier> requiredSources) {
-        final Set<SourceIdentifier> uniqueSourceIdentifiers = new LinkedHashSet<>(requiredSources);
-        if (uniqueSourceIdentifiers.size() == requiredSources.size()) {
-            // Can potentially reuse input
-            return ImmutableList.copyOf(requiredSources);
+    private static ImmutableSet<SourceIdentifier> dedupSources(final Collection<SourceIdentifier> requiredSources) {
+        final ImmutableSet<SourceIdentifier> result = ImmutableSet.copyOf(requiredSources);
+        if (result.size() != requiredSources.size()) {
+            LOG.warn("Duplicate sources requested for schema context, removed duplicate sources: {}",
+                Collections2.filter(result, input -> Iterables.frequency(requiredSources, input) > 1));
         }
-
-        LOG.warn("Duplicate sources requested for schema context, removed duplicate sources: {}",
-            Collections2.filter(uniqueSourceIdentifiers, input -> Iterables.frequency(requiredSources, input) > 1));
-        return ImmutableList.copyOf(uniqueSourceIdentifiers);
-    }
-
-    @SuppressModernizer
-    private static final class SourceIdMismatchDetector implements Function<List<IRSchemaSource>,
-            List<IRSchemaSource>> {
-        private final List<SourceIdentifier> sourceIdentifiers;
-
-        SourceIdMismatchDetector(final List<SourceIdentifier> sourceIdentifiers) {
-            this.sourceIdentifiers = requireNonNull(sourceIdentifiers);
-        }
-
-        @Override
-        public List<IRSchemaSource> apply(final List<IRSchemaSource> input) {
-            final Map<SourceIdentifier, IRSchemaSource> filtered = new LinkedHashMap<>();
-
-            for (int i = 0; i < input.size(); i++) {
-
-                final SourceIdentifier expectedSId = sourceIdentifiers.get(i);
-                final IRSchemaSource irSchemaSource = input.get(i);
-                final SourceIdentifier realSId = irSchemaSource.getIdentifier();
-
-                if (!expectedSId.equals(realSId)) {
-                    LOG.warn("Source identifier mismatch for module \"{}\", requested as {} but actually is {}. "
-                        + "Using actual id", expectedSId.getName(), expectedSId, realSId);
-                }
-
-                if (filtered.containsKey(realSId)) {
-                    LOG.warn("Duplicate source for module {} detected in reactor", realSId);
-                }
-
-                filtered.put(realSId, irSchemaSource);
-
-            }
-            return ImmutableList.copyOf(filtered.values());
-        }
-    }
-
-    private static final class AssembleSources implements AsyncFunction<List<IRSchemaSource>, EffectiveModelContext> {
-        private final @NonNull YangParserFactory parserFactory;
-        private final @NonNull SchemaContextFactoryConfiguration config;
-        private final @NonNull Function<IRSchemaSource, SourceIdentifier> getIdentifier;
-
-        private AssembleSources(final @NonNull YangParserFactory parserFactory,
-                final @NonNull SchemaContextFactoryConfiguration config) {
-            this.parserFactory = parserFactory;
-            this.config = config;
-            switch (config.getStatementParserMode()) {
-                case SEMVER_MODE:
-                    this.getIdentifier = AssembleSources::getSemVerIdentifier;
-                    break;
-                default:
-                    this.getIdentifier = IRSchemaSource::getIdentifier;
-            }
-        }
-
-        @Override
-        public FluentFuture<EffectiveModelContext> apply(final List<IRSchemaSource> sources)
-                throws SchemaResolutionException, ReactorException {
-            final Map<SourceIdentifier, IRSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
-            final Map<SourceIdentifier, YangModelDependencyInfo> deps =
-                    Maps.transformValues(srcs, YangModelDependencyInfo::forIR);
-
-            LOG.debug("Resolving dependency reactor {}", deps);
-
-            final StatementParserMode statementParserMode = config.getStatementParserMode();
-            final DependencyResolver res = statementParserMode == StatementParserMode.SEMVER_MODE
-                    ? SemVerDependencyResolver.create(deps) : RevisionDependencyResolver.create(deps);
-            if (!res.getUnresolvedSources().isEmpty()) {
-                LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(),
-                    res.getUnsatisfiedImports());
-                throw new SchemaResolutionException("Failed to resolve required models",
-                        res.getResolvedSources(), res.getUnsatisfiedImports());
-            }
-
-            final YangParser parser = parserFactory.createParser(statementParserMode);
-            config.getSupportedFeatures().ifPresent(parser::setSupportedFeatures);
-            config.getModulesDeviatedByModules().ifPresent(parser::setModulesWithSupportedDeviations);
-
-            for (final Entry<SourceIdentifier, IRSchemaSource> entry : srcs.entrySet()) {
-                try {
-                    parser.addSource(entry.getValue());
-                } catch (YangSyntaxErrorException | IOException e) {
-                    throw new SchemaResolutionException("Failed to add source " + entry.getKey(), e);
-                }
-            }
-
-            final EffectiveModelContext schemaContext;
-            try {
-                schemaContext = parser.buildEffectiveModel();
-            } catch (final YangParserException e) {
-                throw new SchemaResolutionException("Failed to resolve required models", e);
-            }
-
-            return immediateFluentFuture(schemaContext);
-        }
-
-        private static SemVerSourceIdentifier getSemVerIdentifier(final IRSchemaSource source) {
-            final SourceIdentifier identifier = source.getIdentifier();
-            final SemVer semver = YangModelDependencyInfo.findSemanticVersion(source.getRootStatement(), identifier);
-            if (identifier instanceof SemVerSourceIdentifier && semver == null) {
-                return (SemVerSourceIdentifier) identifier;
-            }
-
-            return SemVerSourceIdentifier.create(identifier.getName(), identifier.getRevision(), semver);
-        }
+        return result;
     }
 }
