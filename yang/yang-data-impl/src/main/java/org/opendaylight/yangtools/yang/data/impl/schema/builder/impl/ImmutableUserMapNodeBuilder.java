@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
+import org.opendaylight.yangtools.yang.data.spi.node.AbstractImmutableNormalizedNode;
 
 public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, UserMapNode> {
     private static final int DEFAULT_CAPACITY = 4;

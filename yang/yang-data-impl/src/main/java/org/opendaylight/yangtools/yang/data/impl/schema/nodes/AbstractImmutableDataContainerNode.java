@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.spi.node.AbstractImmutableNormalizedNode;
 
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument, N extends DataContainerNode<K>>
         extends AbstractImmutableNormalizedNode<K, N> implements DataContainerNode<K> {
