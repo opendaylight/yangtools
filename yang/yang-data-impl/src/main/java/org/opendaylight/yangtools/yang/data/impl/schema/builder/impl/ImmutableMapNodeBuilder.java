@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,14 +14,13 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.MapAdaptor;
-import org.opendaylight.yangtools.util.UnmodifiableMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableMapNode;
 
 public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, SystemMapNode> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -103,49 +100,5 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     @Override
     public ImmutableMapNodeBuilder removeChild(final PathArgument key) {
         return withoutChild(key);
-    }
-
-    protected static final class ImmutableMapNode extends AbstractNormalizedNode<NodeIdentifier, SystemMapNode>
-            implements SystemMapNode {
-
-        private final @NonNull Map<NodeIdentifierWithPredicates, MapEntryNode> children;
-
-        ImmutableMapNode(final NodeIdentifier nodeIdentifier,
-                         final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
-            super(nodeIdentifier);
-            this.children = requireNonNull(children);
-        }
-
-        @Override
-        public MapEntryNode childByArg(final NodeIdentifierWithPredicates child) {
-            return children.get(child);
-        }
-
-        @Override
-        public Map<NodeIdentifierWithPredicates, MapEntryNode> asMap() {
-            return UnmodifiableMap.of(children);
-        }
-
-        @Override
-        public int size() {
-            return children.size();
-        }
-
-        @Override
-        protected Class<SystemMapNode> implementedType() {
-            return SystemMapNode.class;
-        }
-
-        @Override
-        protected int valueHashCode() {
-            return children.hashCode();
-        }
-
-        @Override
-        protected boolean valueEquals(final SystemMapNode other) {
-            final Map<NodeIdentifierWithPredicates, MapEntryNode> otherChildren =
-                other instanceof ImmutableMapNode ? ((ImmutableMapNode) other).children : other.asMap();
-            return children.equals(otherChildren);
-        }
     }
 }

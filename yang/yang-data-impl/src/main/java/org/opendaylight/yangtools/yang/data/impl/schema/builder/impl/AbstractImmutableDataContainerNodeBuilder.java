@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableMap;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.AbstractImmutableDataContainerNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

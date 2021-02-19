@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableXmlNode;
 
 public class ImmutableAnyXmlNodeBuilder
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> {
@@ -30,19 +30,5 @@ public class ImmutableAnyXmlNodeBuilder
     @Override
     public DOMSourceAnyxmlNode build() {
         return new ImmutableXmlNode(getNodeIdentifier(), getValue());
-    }
-
-    private static final class ImmutableXmlNode
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSourceAnyxmlNode, DOMSource>
-            implements DOMSourceAnyxmlNode {
-
-        ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value) {
-            super(nodeIdentifier, value);
-        }
-
-        @Override
-        protected Class<DOMSourceAnyxmlNode> implementedType() {
-            return DOMSourceAnyxmlNode.class;
-        }
     }
 }
