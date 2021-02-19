@@ -12,10 +12,13 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyUndeclaredCaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyUndeclaredInputStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyUndeclaredOutputStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularUndeclaredCaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularUndeclaredInputStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularUndeclaredOutputStatement;
 
@@ -28,6 +31,12 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularUndeclared
 public final class ImplicitStatements {
     private ImplicitStatements() {
         // Hidden on purpose
+    }
+
+    public static CaseStatement createCase(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? new EmptyUndeclaredCaseStatement(argument)
+            : new RegularUndeclaredCaseStatement(argument, substatements);
     }
 
     public static InputStatement createInput(final QName argument,

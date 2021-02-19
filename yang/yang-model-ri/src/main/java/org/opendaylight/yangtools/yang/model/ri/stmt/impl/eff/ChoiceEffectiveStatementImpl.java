@@ -50,12 +50,12 @@ public final class ChoiceEffectiveStatementImpl
     }
 
     public ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final Immutable path,
-            final int flags, final ChoiceSchemaNode original) {
+            final int flags, final ChoiceSchemaNode newOriginal) {
         super(origEffective);
         this.path = requireNonNull(path);
         this.flags = flags;
         this.defaultCase = origEffective.defaultCase;
-        this.original = original;
+        this.original = newOriginal;
     }
 
     @Override

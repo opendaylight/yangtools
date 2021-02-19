@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
@@ -41,6 +40,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ArgumentStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.BelongsToStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.BitStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.CaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ChoiceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ConfigStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ContactStatementSupport;

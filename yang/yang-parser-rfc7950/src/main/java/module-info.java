@@ -39,7 +39,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires static org.eclipse.jdt.annotation;
 
     // FIXME: hide these
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;

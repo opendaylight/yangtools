@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,6 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseImplicitStatementSupport;
@@ -95,38 +98,27 @@ public final class CaseStatementSupport
     protected CaseStatement createDeclared(final StmtContext<QName, CaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         final StatementSource source = ctx.source();
-        if (substatements.isEmpty()) {
-            switch (source) {
-                case CONTEXT:
-                    return new EmptyUndeclaredCaseStatement(ctx.getArgument());
-                case DECLARATION:
-                    return new EmptyCaseStatement(ctx.getArgument());
-                default:
-                    throw new IllegalStateException("Unhandled statement source " + source);
-            }
-        } else {
-            switch (source) {
-                case CONTEXT:
-                    return new RegularUndeclaredCaseStatement(ctx.getArgument(), substatements);
-                case DECLARATION:
-                    return new RegularCaseStatement(ctx.getArgument(), substatements);
-                default:
-                    throw new IllegalStateException("Unhandled statement source " + source);
-            }
+        switch (source) {
+            case CONTEXT:
+                return ImplicitStatements.createCase(ctx.getArgument(), substatements);
+            case DECLARATION:
+                return DeclaredStatements.createCase(ctx.getArgument(), substatements);
+            default:
+                throw new IllegalStateException("Unhandled statement source " + source);
         }
     }
 
     @Override
     protected CaseEffectiveStatement copyDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
-        return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original, stmt.effectivePath(),
+        return EffectiveStatements.copyCase(original, stmt.effectivePath(),
             computeFlags(stmt, original.effectiveSubstatements()), stmt.original(CaseSchemaNode.class));
     }
 
     @Override
     protected CaseEffectiveStatement copyUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
-        return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original, stmt.effectivePath(),
+        return EffectiveStatements.copyCase(original, stmt.effectivePath(),
             computeFlags(stmt, original.effectiveSubstatements()), stmt.original(CaseSchemaNode.class));
     }
 
@@ -134,8 +126,8 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new DeclaredCaseEffectiveStatement(stmt.declared(), substatements, stmt.effectivePath(),
-                computeFlags(stmt, substatements), stmt.original(CaseSchemaNode.class));
+            return EffectiveStatements.createCase(stmt.declared(), stmt.effectivePath(),
+                computeFlags(stmt, substatements), substatements, stmt.original(CaseSchemaNode.class));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -145,8 +137,8 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return new UndeclaredCaseEffectiveStatement(substatements, stmt.effectivePath(),
-                computeFlags(stmt, substatements), stmt.original(CaseSchemaNode.class));
+            return EffectiveStatements.createCase(stmt.effectivePath(), computeFlags(stmt, substatements),
+                substatements, stmt.original(CaseSchemaNode.class));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

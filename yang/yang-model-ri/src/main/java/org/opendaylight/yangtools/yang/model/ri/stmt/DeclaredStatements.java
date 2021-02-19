@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
@@ -107,6 +108,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyAugmentState
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyBaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyBelongsToStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyBitStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyCaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyChoiceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.EmptyContactStatement;
@@ -171,6 +173,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularAugmentSta
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularBaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularBelongsToStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularBitStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularCaseStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularChoiceStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularConfigStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularContactStatement;
@@ -283,6 +286,12 @@ public final class DeclaredStatements {
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyBitStatement(argument)
             : new RegularBitStatement(argument, substatements);
+    }
+
+    public static CaseStatement createCase(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return substatements.isEmpty() ? new EmptyCaseStatement(argument)
+            : new RegularCaseStatement(argument, substatements);
     }
 
     public static ChoiceStatement createChoice(final QName argument,

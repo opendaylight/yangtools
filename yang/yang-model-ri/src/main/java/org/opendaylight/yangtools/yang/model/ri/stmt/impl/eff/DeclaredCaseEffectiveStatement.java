@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,23 +20,24 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 
-final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement>
-        implements CaseEffectiveStatementMixin {
-    private final @Nullable CaseSchemaNode original;
+public final class DeclaredCaseEffectiveStatement
+        extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement> implements CaseEffectiveStatementMixin {
+    private final CaseSchemaNode original;
     private final @NonNull Immutable path;
     private final int flags;
 
-    UndeclaredCaseEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Immutable path, final int flags, final @Nullable CaseSchemaNode original) {
-        super(substatements);
+    public DeclaredCaseEffectiveStatement(final CaseStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final int flags, final @Nullable CaseSchemaNode original) {
+        super(declared, substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
         this.original = original;
     }
 
-    UndeclaredCaseEffectiveStatement(final UndeclaredCaseEffectiveStatement origEffective, final Immutable path,
+    public DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final Immutable path,
             final int flags, final @Nullable CaseSchemaNode original) {
         super(origEffective);
         this.path = requireNonNull(path);
@@ -71,6 +72,6 @@ final class UndeclaredCaseEffectiveStatement extends WithSubstatements<QName, Ca
 
     @Override
     public String toString() {
-        return UndeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return DeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }
 }

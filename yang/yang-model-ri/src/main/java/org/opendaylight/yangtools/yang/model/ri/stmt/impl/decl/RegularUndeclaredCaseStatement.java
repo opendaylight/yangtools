@@ -5,16 +5,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
-class RegularCaseStatement extends WithSubstatements implements CaseStatement {
-    RegularCaseStatement(final QName argument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+public final class RegularUndeclaredCaseStatement extends RegularCaseStatement {
+    public RegularUndeclaredCaseStatement(final QName argument,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
+    }
+
+    @Override
+    public StatementSource getStatementSource() {
+        return StatementSource.CONTEXT;
     }
 }

@@ -42,6 +42,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
@@ -152,6 +154,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ActionEffectiveSta
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.AugmentEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ChoiceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.ContainerEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredInputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeclaredOutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.DeviateEffectiveStatementImpl;
@@ -250,6 +253,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYangVersion
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RpcEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.TypedefEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredInputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredOutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
@@ -347,10 +351,35 @@ public final class EffectiveStatements {
             : new RegularBitEffectiveStatement(declared, substatements);
     }
 
+    public static CaseEffectiveStatement copyCase(final CaseEffectiveStatement original,
+            final Immutable path, final int flags, final @Nullable CaseSchemaNode newOriginal) {
+        if (original instanceof DeclaredCaseEffectiveStatement) {
+            return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original, path, flags,
+                newOriginal);
+        } else if (original instanceof UndeclaredCaseEffectiveStatement) {
+            return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original, path, flags,
+                newOriginal);
+        } else {
+            throw new IllegalArgumentException("Unsupported origin " + original);
+        }
+    }
+
+    public static CaseEffectiveStatement createCase(final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+                final @Nullable CaseSchemaNode original) {
+        return new UndeclaredCaseEffectiveStatement(substatements, path, flags, original);
+    }
+
+    public static CaseEffectiveStatement createCase(final CaseStatement declared, final Immutable path,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable CaseSchemaNode original) {
+        return new DeclaredCaseEffectiveStatement(declared, substatements, path, flags, original);
+    }
+
     public static ChoiceEffectiveStatement copyChoice(final ChoiceEffectiveStatement original,
-            final Immutable path, final int flags, final @Nullable ChoiceSchemaNode orig) {
+            final Immutable path, final int flags, final @Nullable ChoiceSchemaNode newOriginal) {
         checkArgument(original instanceof ChoiceEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original, path, flags, orig);
+        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original, path, flags, newOriginal);
     }
 
     public static ChoiceEffectiveStatement createChoice(final ChoiceStatement declared, final Immutable path,
