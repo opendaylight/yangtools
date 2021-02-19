@@ -12,9 +12,10 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgument, N extends NormalizedNode, V>
-        extends AbstractImmutableNormalizedNode<K, N> {
+        extends AbstractNormalizedNode<K, N> {
     private final @NonNull V value;
 
     protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, final @NonNull V value) {
