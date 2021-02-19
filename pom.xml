@@ -42,6 +42,7 @@
         <module>benchmarks</module>
         <module>bundle-parent</module>
         <module>common</module>
+        <module>data</module>
         <module>plugin</module>
         <module>tools</module>
 

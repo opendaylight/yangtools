@@ -1,12 +1,14 @@
 /*
  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
+package org.opendaylight.yangtools.yang.data.spi.node;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
@@ -14,10 +16,17 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, N extends NormalizedNode>
-        extends AbstractIdentifiable<PathArgument, K> implements NormalizedNode, Immutable {
-    protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
-        super(nodeIdentifier);
+/**
+ * Abstract base class for {@link NormalizedNode} implementations.
+ *
+ * @param <I> Identifier type
+ * @param <T> Implemented {@link NormalizedNode} specialization type
+ */
+@Beta
+public abstract class AbstractNormalizedNode<I extends PathArgument, T extends NormalizedNode>
+        extends AbstractIdentifiable<PathArgument, I> implements NormalizedNode, Immutable {
+    protected AbstractNormalizedNode(final I identifier) {
+        super(identifier);
     }
 
     @Override
@@ -25,11 +34,11 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, N 
         if (this == obj) {
             return true;
         }
-        final Class<N> clazz = implementedType();
+        final Class<T> clazz = implementedType();
         if (!clazz.isInstance(obj)) {
             return false;
         }
-        final N other = clazz.cast(obj);
+        final T other = clazz.cast(obj);
         return getIdentifier().equals(other.getIdentifier()) && valueEquals(other);
     }
 
@@ -43,9 +52,9 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, N 
         return super.addToStringAttributes(toStringHelper).add("body", body());
     }
 
-    protected abstract @NonNull Class<N> implementedType();
+    protected abstract @NonNull Class<T> implementedType();
 
     protected abstract int valueHashCode();
 
-    protected abstract boolean valueEquals(@NonNull N other);
+    protected abstract boolean valueEquals(@NonNull T other);
 }

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
+import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {
     private Map<NodeWithValue, LeafSetEntryNode<T>> value;
@@ -102,7 +102,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
     }
 
     protected static final class ImmutableUserLeafSetNode<T>
-            extends AbstractImmutableNormalizedNode<NodeIdentifier, UserLeafSetNode<?>>
+            extends AbstractNormalizedNode<NodeIdentifier, UserLeafSetNode<?>>
             implements UserLeafSetNode<T> {
         private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
 

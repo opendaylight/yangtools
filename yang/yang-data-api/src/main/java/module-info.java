@@ -11,7 +11,6 @@ module org.opendaylight.yangtools.yang.data.api {
     exports org.opendaylight.yangtools.yang.data.api.schema;
     exports org.opendaylight.yangtools.yang.data.api.schema.stream;
     exports org.opendaylight.yangtools.yang.data.api.schema.tree;
-    exports org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
