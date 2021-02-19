@@ -29,5 +29,6 @@
 
     <modules>
         <module>yang-data-spi</module>
+        <module>yang-data-tree-ri</module>
     </modules>
 </project>
