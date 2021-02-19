@@ -13,9 +13,9 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
+import org.opendaylight.yangtools.yang.data.spi.tree.TreeNodeFactory;
+import org.opendaylight.yangtools.yang.data.spi.tree.Version;
 
 /**
  * Mixin-type support class for subclasses of {@link ModificationApplyOperation} which need to provide automatic

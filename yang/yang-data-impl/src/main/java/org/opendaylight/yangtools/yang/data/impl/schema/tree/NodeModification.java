@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
 
 /**
  * Internal interface representing a modification action of a particular node.

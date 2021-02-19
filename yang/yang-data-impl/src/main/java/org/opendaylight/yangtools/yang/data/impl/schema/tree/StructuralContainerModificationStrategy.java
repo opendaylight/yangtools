@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
+import org.opendaylight.yangtools.yang.data.spi.tree.Version;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
 /**
