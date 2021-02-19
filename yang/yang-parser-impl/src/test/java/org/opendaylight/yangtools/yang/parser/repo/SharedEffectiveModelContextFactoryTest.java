@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class SharedSchemaContextFactoryTest {
+public class SharedEffectiveModelContextFactoryTest {
 
     private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
 
@@ -54,8 +54,8 @@ public class SharedSchemaContextFactoryTest {
 
     @Test
     public void testCreateSchemaContextWithDuplicateRequiredSources() throws InterruptedException, ExecutionException {
-        final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
-            config);
+        final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
+            new SharedEffectiveModelContextFactory(repository, config);
         final ListenableFuture<EffectiveModelContext> schemaContext =
                 sharedSchemaContextFactory.createEffectiveModelContext(s1, s1, s2);
         assertNotNull(schemaContext.get());
@@ -79,8 +79,8 @@ public class SharedSchemaContextFactoryTest {
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
                 sIdWithoutRevision, IRSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
-        final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
-            config);
+        final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
+            new SharedEffectiveModelContextFactory(repository, config);
         final ListenableFuture<EffectiveModelContext> schemaContext =
                 sharedSchemaContextFactory.createEffectiveModelContext(sIdWithoutRevision, provider.getId());
         assertNotNull(schemaContext.get());
