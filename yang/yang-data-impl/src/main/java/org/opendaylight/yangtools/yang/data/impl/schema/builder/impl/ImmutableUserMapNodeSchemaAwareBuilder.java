@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableUserMapNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public class ImmutableUserMapNodeSchemaAwareBuilder extends ImmutableUserMapNodeBuilder {

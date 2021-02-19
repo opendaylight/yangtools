@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
+package org.opendaylight.yangtools.yang.data.ri.node;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableLeafNode;
 
 /**
  * Support utilities for dealing with Maps which would normally hold {@link DataContainerChild} values, but are modified
@@ -40,9 +40,9 @@ public final class LazyLeafOperations {
         map.put(node.getIdentifier(), encodeExpendableChild(node));
     }
 
-    static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {
+    public static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {
         verify(key instanceof NodeIdentifier, "Unexpected value %s for child %s", value, key);
-        return ImmutableNodes.leafNode((NodeIdentifier) key, value);
+        return ImmutableLeafNode.of((NodeIdentifier) key, value);
     }
 
     private static @Nullable DataContainerChild decodeChild(final PathArgument key, final @NonNull Object value) {
