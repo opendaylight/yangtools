@@ -29,5 +29,8 @@
 
     <modules>
         <module>yang-data-spi</module>
+
+        <!-- Reference implementations -->
+        <module>yang-data-node-ri</module>
     </modules>
 </project>

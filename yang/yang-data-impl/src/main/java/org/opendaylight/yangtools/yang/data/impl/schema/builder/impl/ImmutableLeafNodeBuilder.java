@@ -12,7 +12,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableBinaryLeafNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableLeafNode;
 
 public class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
@@ -33,28 +34,5 @@ public class ImmutableLeafNodeBuilder<T>
     @Override
     public LeafNode<T> build() {
         return createNode(getNodeIdentifier(), getValue());
-    }
-
-    private static class ImmutableLeafNode<T>
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, LeafNode<?>, T> implements LeafNode<T> {
-        ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value) {
-            super(nodeIdentifier, value);
-        }
-
-        @Override
-        protected final Class<LeafNode<?>> implementedType() {
-            return (Class) LeafNode.class;
-        }
-    }
-
-    private static final class ImmutableBinaryLeafNode extends ImmutableLeafNode<byte[]> {
-        ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value) {
-            super(nodeIdentifier, value);
-        }
-
-        @Override
-        protected byte[] wrapValue(final byte[] valueToWrap) {
-            return valueToWrap.clone();
-        }
     }
 }

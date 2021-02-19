@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableLeafSetNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLeafSetNodeBuilder<T> {
