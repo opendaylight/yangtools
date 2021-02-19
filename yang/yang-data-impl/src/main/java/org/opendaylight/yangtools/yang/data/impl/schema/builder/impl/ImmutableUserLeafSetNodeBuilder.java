@@ -7,21 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.collect.Iterables;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableUserLeafSetNode;
 
 public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {
     private Map<NodeWithValue, LeafSetEntryNode<T>> value;
@@ -99,59 +95,6 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
         return withChild(ImmutableLeafSetEntryNodeBuilder.<T>create()
             .withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), childValue))
             .withValue(childValue).build());
-    }
-
-    protected static final class ImmutableUserLeafSetNode<T>
-            extends AbstractNormalizedNode<NodeIdentifier, UserLeafSetNode<?>>
-            implements UserLeafSetNode<T> {
-        private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
-
-        ImmutableUserLeafSetNode(final NodeIdentifier nodeIdentifier,
-                final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier);
-            this.children = children;
-        }
-
-        @Override
-        public LeafSetEntryNode<T> childByArg(final NodeWithValue child) {
-            return children.get(child);
-        }
-
-        @Override
-        public LeafSetEntryNode<T> getChild(final int position) {
-            return Iterables.get(children.values(), position);
-        }
-
-        @Override
-        public int size() {
-            return children.size();
-        }
-
-        @Override
-        public Collection<LeafSetEntryNode<T>> body() {
-            return UnmodifiableCollection.create(children.values());
-        }
-
-        @Override
-        protected Class<UserLeafSetNode<?>> implementedType() {
-            return (Class) UserLeafSetNode.class;
-        }
-
-        @Override
-        protected int valueHashCode() {
-            return children.hashCode();
-        }
-
-        @Override
-        protected boolean valueEquals(final UserLeafSetNode<?> other) {
-            return children.equals(((ImmutableUserLeafSetNode<?>) other).children);
-        }
-
-        @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
-        private Map<NodeWithValue, LeafSetEntryNode<T>> getChildren() {
-            return Collections.unmodifiableMap(children);
-        }
     }
 
     @Override

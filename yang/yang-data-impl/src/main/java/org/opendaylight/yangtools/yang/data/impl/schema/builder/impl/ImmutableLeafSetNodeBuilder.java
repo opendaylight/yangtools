@@ -13,14 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableLeafSetNode;
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, SystemLeafSetNode<T>> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -109,44 +108,5 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
     @Override
     public ImmutableLeafSetNodeBuilder<T> removeChild(final PathArgument key) {
         return withoutChild(key);
-    }
-
-    protected static final class ImmutableLeafSetNode<T>
-            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, SystemLeafSetNode<?>,
-                Collection<@NonNull LeafSetEntryNode<T>>>
-            implements SystemLeafSetNode<T> {
-
-        private final Map<NodeWithValue<?>, LeafSetEntryNode<T>> children;
-
-        ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier,
-                final Map<NodeWithValue<?>, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier, UnmodifiableCollection.create(children.values()));
-            this.children = children;
-        }
-
-        @Override
-        public LeafSetEntryNode<T> childByArg(final NodeWithValue<?> child) {
-            return children.get(child);
-        }
-
-        @Override
-        public int size() {
-            return children.size();
-        }
-
-        @Override
-        protected Class<SystemLeafSetNode<?>> implementedType() {
-            return (Class) SystemLeafSetNode.class;
-        }
-
-        @Override
-        protected int valueHashCode() {
-            return children.hashCode();
-        }
-
-        @Override
-        protected boolean valueEquals(final SystemLeafSetNode<?> other) {
-            return children.equals(((ImmutableLeafSetNode<?>) other).children);
-        }
     }
 }

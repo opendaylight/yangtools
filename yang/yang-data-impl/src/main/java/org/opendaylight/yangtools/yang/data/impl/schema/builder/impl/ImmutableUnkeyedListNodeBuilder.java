@@ -12,15 +12,13 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
-import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableUnkeyedListNode;
 
 public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
     private List<UnkeyedListEntryNode> value;
@@ -114,88 +112,5 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, UnkeyedListEntryNode, UnkeyedListNode>
             removeChild(final PathArgument key) {
         return withoutChild(key);
-    }
-
-    protected static final class EmptyImmutableUnkeyedListNode
-            extends AbstractNormalizedNode<NodeIdentifier, UnkeyedListNode> implements UnkeyedListNode {
-        protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
-            super(nodeIdentifier);
-        }
-
-        @Override
-        public ImmutableList<UnkeyedListEntryNode> body() {
-            return ImmutableList.of();
-        }
-
-        @Override
-        public UnkeyedListEntryNode getChild(final int position) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        protected Class<UnkeyedListNode> implementedType() {
-            return UnkeyedListNode.class;
-        }
-
-        @Override
-        protected int valueHashCode() {
-            return 1;
-        }
-
-        @Override
-        protected boolean valueEquals(final UnkeyedListNode other) {
-            return other.isEmpty();
-        }
-    }
-
-    protected static final class ImmutableUnkeyedListNode
-            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, UnkeyedListNode,
-                Collection<@NonNull UnkeyedListEntryNode>>
-            implements UnkeyedListNode {
-
-        private final ImmutableList<UnkeyedListEntryNode> children;
-
-        ImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier,
-                final ImmutableList<UnkeyedListEntryNode> children) {
-            super(nodeIdentifier, children);
-            this.children = children;
-        }
-
-        @Override
-        public UnkeyedListEntryNode getChild(final int position) {
-            return children.get(position);
-        }
-
-        @Override
-        public int size() {
-            return children.size();
-        }
-
-        @Override
-        protected Class<UnkeyedListNode> implementedType() {
-            return UnkeyedListNode.class;
-        }
-
-        @Override
-        protected int valueHashCode() {
-            return children.hashCode();
-        }
-
-        @Override
-        protected boolean valueEquals(final UnkeyedListNode other) {
-            final Collection<UnkeyedListEntryNode> otherChildren;
-            if (other instanceof ImmutableUnkeyedListNode) {
-                otherChildren = ((ImmutableUnkeyedListNode) other).children;
-            } else {
-                otherChildren = other.body();
-            }
-            return otherChildren instanceof List ? children.equals(otherChildren)
-                : Iterables.elementsEqual(children, otherChildren);
-        }
     }
 }

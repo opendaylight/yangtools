@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.ri.node.impl.ImmutableMapEntryNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,20 +116,5 @@ public class ImmutableMapEntryNodeBuilder
         }
 
         return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue());
-    }
-
-    private static final class ImmutableMapEntryNode
-            extends AbstractImmutableDataContainerNode<NodeIdentifierWithPredicates, MapEntryNode>
-            implements MapEntryNode {
-
-        ImmutableMapEntryNode(final NodeIdentifierWithPredicates nodeIdentifier,
-                final Map<PathArgument, Object> children) {
-            super(children, nodeIdentifier);
-        }
-
-        @Override
-        protected Class<MapEntryNode> implementedType() {
-            return MapEntryNode.class;
-        }
     }
 }

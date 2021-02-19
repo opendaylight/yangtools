@@ -34,6 +34,7 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires transitive org.opendaylight.yangtools.rfc8528.data.api;
 
     requires org.opendaylight.yangtools.rfc8528.data.util;
+    requires org.opendaylight.yangtools.yang.data.ri.node;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.yang.parser.api;
     requires org.opendaylight.yangtools.yang.xpath.api;
