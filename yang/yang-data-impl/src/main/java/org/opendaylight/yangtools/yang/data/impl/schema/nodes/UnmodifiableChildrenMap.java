@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.spi.node.CloneableMap;
 
 /**
  * Internal equivalent of {@link Collections}' unmodifiable Map. It does not retain
