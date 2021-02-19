@@ -39,7 +39,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
             .build(new CacheLoader<SchemaContextFactoryConfiguration, EffectiveModelContextFactory>() {
                 @Override
                 public EffectiveModelContextFactory load(final SchemaContextFactoryConfiguration key) {
-                    return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
+                    return new SharedEffectiveModelContextFactory(SharedSchemaRepository.this, key);
                 }
             });
 
