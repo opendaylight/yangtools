@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateTip
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeTip;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
 
 abstract class AbstractDataTreeTip implements DataTreeTip {
     /**

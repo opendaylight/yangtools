@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
+import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
     private List<UnkeyedListEntryNode> value;
@@ -117,7 +117,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected static final class EmptyImmutableUnkeyedListNode
-            extends AbstractImmutableNormalizedNode<NodeIdentifier, UnkeyedListNode> implements UnkeyedListNode {
+            extends AbstractNormalizedNode<NodeIdentifier, UnkeyedListNode> implements UnkeyedListNode {
         protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
             super(nodeIdentifier);
         }
