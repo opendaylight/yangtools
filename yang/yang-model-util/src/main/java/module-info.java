@@ -8,12 +8,13 @@
 module org.opendaylight.yangtools.yang.model.util {
     exports org.opendaylight.yangtools.yang.model.util;
 
+    requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.repo.api;
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
-    requires com.google.common;
-    requires org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.yang.model.spi;
+    requires transitive org.opendaylight.yangtools.yang.common;
+    requires transitive org.opendaylight.yangtools.concepts;
     requires org.slf4j;
 
     // Annotations

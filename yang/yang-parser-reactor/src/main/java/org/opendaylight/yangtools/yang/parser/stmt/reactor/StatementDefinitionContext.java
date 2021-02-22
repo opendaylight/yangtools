@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,47 +28,48 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
-public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final @NonNull StatementSupport<A, D, E> support;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
+
     private Map<StatementDefinitionContext<?, ?, ?>, StatementDefinitionContext<?,?,?>> unknownStmtDefsOfYangStmts;
 
-    public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
+    StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = requireNonNull(support);
         this.argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
-    public @NonNull StatementFactory<A, D, E> getFactory() {
+    @NonNull StatementFactory<A, D, E> getFactory() {
         return support;
     }
 
-    public A parseArgumentValue(final StmtContext<A, D, E> context, final String value) {
+    A parseArgumentValue(final StmtContext<A, D, E> context, final String value) {
         return support.parseArgumentValue(context, value);
     }
 
-    public A adaptArgumentValue(final StmtContext<A, D, E> context, final QNameModule targetModule) {
+    A adaptArgumentValue(final StmtContext<A, D, E> context, final QNameModule targetModule) {
         return support.adaptArgumentValue(context, targetModule);
     }
 
-    public void checkNamespaceAllowed(final Class<? extends ParserNamespace<?,?>> namespace) {
+    // FIXME: 7.0.0: remove this method
+    void checkNamespaceAllowed(final Class<? extends ParserNamespace<?,?>> namespace) {
         // Noop
     }
 
-    public @NonNull StatementDefinition getPublicView() {
+    @NonNull StatementDefinition getPublicView() {
         return support.getPublicView();
     }
 
-    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
         return support instanceof ImplicitParentAwareStatementSupport
                 ? ((ImplicitParentAwareStatementSupport) support).getImplicitParentFor(stmtDef) : Optional.empty();
     }
 
-    public boolean onStatementAdded(final Mutable<A, D, E> stmt) {
+    void onStatementAdded(final Mutable<A, D, E> stmt) {
         support.onStatementAdded(stmt);
-        return false;
     }
 
-    public void onDeclarationFinished(final Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
+    void onDeclarationFinished(final Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
             case SOURCE_PRE_LINKAGE:
                 support.onPreLinkageDeclared(statement);
@@ -88,28 +88,20 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         }
     }
 
-    public @NonNull Class<?> getRepresentingClass() {
-        return support.getDeclaredRepresentationClass();
-    }
-
-    public @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
+    @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
         return support.getArgumentDefinition();
     }
 
-    public @NonNull QName getStatementName() {
+    @NonNull QName getStatementName() {
         return support.getStatementName();
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("statement", getStatementName()).toString();
     }
 
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("statement", getStatementName());
-    }
-
-    final @NonNull StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
+    @NonNull StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
         if (!hasArgumentSpecificSubDefinitions()) {
             return this;
         }
@@ -125,15 +117,16 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return potential;
     }
 
-    final StatementSupport<A, D, E> support() {
+    StatementSupport<A, D, E> support() {
         return support;
     }
 
-    final boolean hasArgumentSpecificSubDefinitions() {
+    boolean hasArgumentSpecificSubDefinitions() {
         return support.hasArgumentSpecificSupports();
     }
 
-    final StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
+    // FIXME: 7.0.0: do we still need this?
+    StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
             final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
         if (unknownStmtDefsOfYangStmts != null) {
             final StatementDefinitionContext<?, ?, ?> existing = unknownStmtDefsOfYangStmts.get(yangStmtDef);

@@ -12,12 +12,13 @@ module org.opendaylight.yangtools.yang.model.ri {
     exports org.opendaylight.yangtools.yang.model.ri.stmt;
     exports org.opendaylight.yangtools.yang.model.ri.type;
 
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.repo.api;
-    requires com.google.common;
-    requires org.opendaylight.yangtools.concepts;
-    requires org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.yang.model.spi;
+    requires transitive org.opendaylight.yangtools.yang.xpath.api;
     requires org.slf4j;
 
     // Annotations
