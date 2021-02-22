@@ -11,7 +11,10 @@ module org.opendaylight.yangtools.yang.parser.reactor {
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
+    requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.yang.repo.api;
     requires org.slf4j;
 
     // Annotations
