@@ -11,11 +11,20 @@ module org.opendaylight.yangtools.rfc8528.data.util {
     // FIXME: 7.0.0: correct this typo: rcf8525.data.util -> rfc8525.data.util
     exports org.opendaylight.yangtools.rcf8528.data.util;
 
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.data.api;
+    requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
+    requires transitive org.opendaylight.yangtools.yang.parser.api;
     requires transitive org.opendaylight.yangtools.rfc8528.data.api;
+
     requires org.opendaylight.yangtools.rfc8528.model.api;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.util;
-    requires org.opendaylight.yangtools.yang.model.spi;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.slf4j;
+
+    // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
 }
