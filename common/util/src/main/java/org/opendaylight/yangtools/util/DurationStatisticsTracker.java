@@ -84,20 +84,6 @@ public abstract class DurationStatisticsTracker {
     public abstract void reset();
 
     /**
-     * Get the shortest recorded duration and the time when it was recorded.
-     *
-     * @return Duration and timestamp.
-     */
-    protected abstract DurationWithTime getShortest();
-
-    /**
-     * Get the longest recorded duration and the time when it was recorded.
-     *
-     * @return Duration and timestamp.
-     */
-    protected abstract DurationWithTime getLongest();
-
-    /**
      * Returns the longest duration in nanoseconds.
      */
     public final long getLongestDuration() {
@@ -148,6 +134,20 @@ public abstract class DurationStatisticsTracker {
     public final long getTimeOfShortestDuration() {
         return getTimeMillis(getShortest());
     }
+
+    /**
+     * Get the shortest recorded duration and the time when it was recorded.
+     *
+     * @return Duration and timestamp.
+     */
+    abstract DurationWithTime getShortest();
+
+    /**
+     * Get the longest recorded duration and the time when it was recorded.
+     *
+     * @return Duration and timestamp.
+     */
+    abstract DurationWithTime getLongest();
 
     /**
      * Returns formatted value of number, e.g. "12.34". Always is used dot as

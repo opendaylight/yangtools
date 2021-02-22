@@ -9,11 +9,11 @@ module org.opendaylight.yangtools.yang.repo.api {
     exports org.opendaylight.yangtools.yang.model.repo.api;
 
     requires transitive java.xml;
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
 
-    requires com.google.common;
-    requires org.opendaylight.yangtools.concepts;
-    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 

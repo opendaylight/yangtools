@@ -13,6 +13,8 @@ module org.opendaylight.yangtools.yang.xpath.impl {
 
     provides YangXPathParserFactory with AntlrXPathParserFactory;
 
+    requires java.xml;
+    requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.xpath.api;
     requires org.opendaylight.yangtools.yang.xpath.antlr;
     requires org.slf4j;
@@ -20,5 +22,6 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     // Annotations
     requires static javax.inject;
     requires static metainf.services;
+    requires static org.eclipse.jdt.annotation;
     requires static org.osgi.service.component.annotations;
 }

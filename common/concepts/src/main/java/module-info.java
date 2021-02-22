@@ -12,7 +12,7 @@ module org.opendaylight.yangtools.concepts {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
-    requires static org.eclipse.jdt.annotation;
     requires static org.checkerframework.checker.qual;
 }

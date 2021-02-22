@@ -27,8 +27,8 @@ module org.opendaylight.yangtools.yang.common {
         Uint32.Support,
         Uint64.Support;
 
+    requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
-    requires com.google.common;
     requires org.slf4j;
 
     // Annotations

@@ -12,10 +12,12 @@ module org.opendaylight.yangtools.yang.data.api {
     exports org.opendaylight.yangtools.yang.data.api.schema.stream;
     exports org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+    requires transitive java.xml;
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.util;
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.concepts;
-    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations

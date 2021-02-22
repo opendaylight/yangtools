@@ -8,6 +8,11 @@
 module org.opendaylight.yangtools.plugin.generator.api {
     exports org.opendaylight.yangtools.plugin.generator.api;
 
+    requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires transitive org.opendaylight.yangtools.yang.repo.api;
+    requires transitive org.opendaylight.yangtools.concepts;
+
+    // Annotations
+    requires static transitive org.eclipse.jdt.annotation;
 }

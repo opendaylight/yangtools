@@ -12,10 +12,11 @@ module org.opendaylight.yangtools.yang.model.api {
     exports org.opendaylight.yangtools.yang.model.api.stmt.compat;
     exports org.opendaylight.yangtools.yang.model.api.type;
 
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
-    requires org.opendaylight.yangtools.concepts;
+    requires com.google.common;
     requires org.opendaylight.yangtools.util;
-    requires org.opendaylight.yangtools.yang.common;
     requires org.slf4j;
 
     // Annotations

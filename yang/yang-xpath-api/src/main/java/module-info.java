@@ -10,11 +10,12 @@ module org.opendaylight.yangtools.yang.xpath.api {
 
     // FIXME: it would be nice if we could live without java.xml here
     requires transitive java.xml;
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
     requires transitive org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.concepts;
     requires org.slf4j;
 
     // Annotations
-    requires static org.eclipse.jdt.annotation;
+    requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
 }

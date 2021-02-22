@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
-import org.opendaylight.yangtools.util.SharedSingletonMap;
 import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -740,12 +739,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             return keyValues.size() == 1 ? of(keyValues, node) : new Regular(node, keyValues);
         }
 
-        @Deprecated
-        public static @NonNull NodeIdentifierWithPredicates of(final QName node,
-                final SharedSingletonMap<QName, Object> keyValues) {
-            return of(node, keyValues.getEntry());
-        }
-
         private static @NonNull NodeIdentifierWithPredicates of(final Map<QName, Object> keyValues, final QName node) {
             return of(node, keyValues.entrySet().iterator().next());
         }
@@ -801,11 +794,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * A Map-like view of this identifier's predicates. The view is expected to be stable and effectively-immutable.
          *
          * @return Map of predicates.
-         * @deprecated This method in a provisional one. It can be used in the code base, but users requiring it should
-         *             contact <a href="mailto:yangtools-dev@lists.opendaylight.org">yangtools-dev</a> for migration
-         *             guidelines. Callers are strongly encouraged to explore {@link #entrySet()}, {@link #size()},
-         *             {@link #values()} and {@link #keySet()} as an alternative.
          */
+        @Beta
         public abstract @NonNull Map<QName, Object> asMap();
 
         @Override

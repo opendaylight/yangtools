@@ -9,18 +9,22 @@ module org.opendaylight.yangtools.yang.data.util {
     exports org.opendaylight.yangtools.yang.data.util;
     exports org.opendaylight.yangtools.yang.data.util.codec;
 
-    requires transitive org.opendaylight.yangtools.odlext.model.api;
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.common;
+    requires transitive org.opendaylight.yangtools.yang.data.api;
+    requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
+    requires transitive org.opendaylight.yangtools.yang.model.util;
+    requires transitive org.opendaylight.yangtools.yang.xpath.api;
     requires transitive org.opendaylight.yangtools.rfc7952.data.api;
     requires transitive org.opendaylight.yangtools.rfc8528.data.api;
-    requires transitive org.opendaylight.yangtools.yang.model.util;
 
-    requires com.google.common;
-    requires org.opendaylight.yangtools.concepts;
-    requires org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.model.spi;
+    requires java.xml;
+    requires org.opendaylight.yangtools.yang.parser.api;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations
-    requires static org.eclipse.jdt.annotation;
+    requires static transitive org.eclipse.jdt.annotation;
 }

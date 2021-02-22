@@ -11,16 +11,16 @@ module org.opendaylight.yangtools.util {
     exports org.opendaylight.yangtools.util.xml;
 
     requires transitive java.xml;
-
-    requires org.opendaylight.yangtools.concepts;
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
     requires org.slf4j;
     requires tech.pantheon.triemap;
 
     // Annotations
+    requires static transitive java.compiler;
+    requires static transitive java.management;
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
-    requires static java.compiler;
-    requires static java.management;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;
     requires static org.immutables.value.annotations;
