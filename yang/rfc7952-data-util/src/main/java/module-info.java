@@ -11,4 +11,13 @@ module org.opendaylight.yangtools.rfc7952.data.util {
     exports org.opendaylight.yangtools.rfc7952.data.util;
 
     requires transitive org.opendaylight.yangtools.yang.data.util;
+    requires com.google.common;
+    requires org.opendaylight.yangtools.concepts;
+    requires org.opendaylight.yangtools.rfc7952.data.api;
+    requires org.opendaylight.yangtools.yang.common;
+    requires org.opendaylight.yangtools.yang.data.api;
+    requires org.opendaylight.yangtools.yang.model.api;
+
+    // Annotations
+    requires static org.eclipse.jdt.annotation;
 }

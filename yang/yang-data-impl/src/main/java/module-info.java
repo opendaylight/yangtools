@@ -25,11 +25,19 @@ module org.opendaylight.yangtools.yang.data.impl {
     requires transitive org.opendaylight.yangtools.rfc7952.data.api;
     requires transitive org.opendaylight.yangtools.rfc7952.data.util;
     requires transitive org.opendaylight.yangtools.yang.model.util;
-    requires org.opendaylight.yangtools.util;
+    requires java.xml;
+    requires com.google.common;
+    requires org.opendaylight.yangtools.concepts;
+    requires org.opendaylight.yangtools.rfc8528.data.api;
     requires org.opendaylight.yangtools.rfc8528.data.util;
+    requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.data.spi;
+    requires org.opendaylight.yangtools.yang.data.util;
+    requires org.opendaylight.yangtools.yang.model.api;
     requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.yang.parser.api;
+    requires org.opendaylight.yangtools.yang.xpath.api;
     requires org.slf4j;
 
     // Annotations
