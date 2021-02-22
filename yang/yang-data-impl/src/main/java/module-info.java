@@ -21,15 +21,24 @@ module org.opendaylight.yangtools.yang.data.impl {
 
     provides DataTreeFactory with InMemoryDataTreeFactory;
 
+    requires transitive java.xml;
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.data.api;
+    requires transitive org.opendaylight.yangtools.yang.data.spi;
+    requires transitive org.opendaylight.yangtools.yang.data.util;
+    requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.rfc7952.data.api;
     requires transitive org.opendaylight.yangtools.rfc7952.data.util;
-    requires transitive org.opendaylight.yangtools.yang.model.util;
-    requires org.opendaylight.yangtools.util;
+    requires transitive org.opendaylight.yangtools.rfc8528.data.api;
+
     requires org.opendaylight.yangtools.rfc8528.data.util;
-    requires org.opendaylight.yangtools.yang.common;
-    requires org.opendaylight.yangtools.yang.data.spi;
-    requires org.opendaylight.yangtools.yang.model.spi;
+    requires org.opendaylight.yangtools.yang.model.util;
+    requires org.opendaylight.yangtools.yang.parser.api;
+    requires org.opendaylight.yangtools.yang.xpath.api;
+    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations
