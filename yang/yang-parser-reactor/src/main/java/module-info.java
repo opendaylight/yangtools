@@ -8,12 +8,15 @@
 module org.opendaylight.yangtools.yang.parser.reactor {
     exports org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.concepts;
+    requires transitive org.opendaylight.yangtools.yang.common;
+    requires transitive org.opendaylight.yangtools.yang.model.api;
+    requires transitive org.opendaylight.yangtools.yang.model.spi;
     requires transitive org.opendaylight.yangtools.yang.parser.spi;
-    requires com.google.common;
-    requires org.opendaylight.yangtools.concepts;
-    requires org.opendaylight.yangtools.yang.model.spi;
+    requires transitive org.opendaylight.yangtools.yang.repo.api;
     requires org.slf4j;
 
     // Annotations
-    requires static org.eclipse.jdt.annotation;
+    requires static transitive org.eclipse.jdt.annotation;
 }

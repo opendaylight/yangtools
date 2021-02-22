@@ -8,12 +8,12 @@
 module org.opendaylight.yangtools.yang.model.repo.fs {
     exports org.opendaylight.yangtools.yang.model.repo.fs;
 
+    requires transitive com.google.common;
+    requires transitive org.opendaylight.yangtools.yang.repo.api;
     requires transitive org.opendaylight.yangtools.yang.repo.spi;
-    requires com.google.common;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
-    requires org.opendaylight.yangtools.yang.repo.api;
     requires org.slf4j;
 
     // Annotations
