@@ -8,5 +8,5 @@
 module org.opendaylight.yangtools.yang.parser.antlr {
     exports org.opendaylight.yangtools.yang.parser.antlr;
 
-    requires org.antlr.antlr4.runtime;
+    requires transitive org.antlr.antlr4.runtime;
 }

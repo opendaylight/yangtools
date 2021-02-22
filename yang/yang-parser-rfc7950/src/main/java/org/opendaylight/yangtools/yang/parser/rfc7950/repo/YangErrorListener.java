@@ -19,13 +19,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class YangErrorListener extends BaseErrorListener {
+final class YangErrorListener extends BaseErrorListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangErrorListener.class);
 
     private final List<YangSyntaxErrorException> exceptions = new ArrayList<>();
     private final SourceIdentifier source;
 
-    public YangErrorListener(final SourceIdentifier source) {
+    YangErrorListener(final SourceIdentifier source) {
         this.source = requireNonNull(source);
     }
 
@@ -37,7 +37,7 @@ public final class YangErrorListener extends BaseErrorListener {
         exceptions.add(new YangSyntaxErrorException(source, line, charPositionInLine, msg, e));
     }
 
-    public void validate() throws YangSyntaxErrorException {
+    void validate() throws YangSyntaxErrorException {
         if (exceptions.isEmpty()) {
             return;
         }
