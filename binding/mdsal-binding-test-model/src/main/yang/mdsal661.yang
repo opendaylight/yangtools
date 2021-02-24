@@ -1,0 +1,10 @@
+module mdsal661 {
+  namespace mdsal661;
+  prefix mdsal661;
+
+  typedef foo {
+    type string {
+      length 1;
+    }
+  }
+}
