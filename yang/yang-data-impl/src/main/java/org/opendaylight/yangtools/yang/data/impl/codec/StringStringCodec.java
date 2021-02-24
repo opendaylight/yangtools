@@ -49,7 +49,7 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
     void validate(final String str) {
         if (lengthConstraint != null) {
             final RangeSet<Integer> ranges = lengthConstraint.getAllowedRanges();
-            if (!ranges.contains(str.length())) {
+            if (!ranges.contains(str.codePointCount(0, str.length()))) {
                 throw new YangInvalidValueException(ErrorType.PROTOCOL, lengthConstraint,
                     "String " + str + " does not match allowed lengths " + ranges);
             }
