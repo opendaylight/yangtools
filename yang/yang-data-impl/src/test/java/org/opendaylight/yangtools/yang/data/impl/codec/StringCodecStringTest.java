@@ -9,10 +9,19 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
+import java.util.List;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
+import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
 
 /**
  * Unit tests for StringCodecString.
@@ -20,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
  * @author Thomas Pantelis
  */
 public class StringCodecStringTest {
-
-    @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
         StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
@@ -31,7 +38,6 @@ public class StringCodecStringTest {
         assertEquals("serialize", "", codec.serialize(""));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testDeserialize() {
         StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.stringType(),
@@ -39,5 +45,17 @@ public class StringCodecStringTest {
 
         assertEquals("deserialize", "bar", codec.deserialize("bar"));
         assertEquals("deserialize", "", codec.deserialize(""));
+    }
+
+    @Test
+    public void testDeserializeUnicode() throws InvalidLengthConstraintException {
+        final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(BaseTypes.stringType(),
+            QName.create("foo", "foo"));
+        builder.setLengthConstraint(mock(ConstraintMetaDefinition.class), List.of(ValueRange.of(1)));
+        final StringTypeDefinition type = builder.build();
+
+        StringCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(type, StringCodec.class);
+
+        assertEquals("🌞", codec.deserialize("🌞"));
     }
 }
