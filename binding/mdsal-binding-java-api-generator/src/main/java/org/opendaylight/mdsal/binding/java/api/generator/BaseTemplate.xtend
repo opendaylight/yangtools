@@ -34,7 +34,6 @@ import org.opendaylight.mdsal.binding.model.api.TypeMemberComment
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
-import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
