@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -18,23 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecific
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class BitsSpecificationSupport
-        extends AbstractStringStatementSupport<BitsSpecification, EffectiveStatement<String, BitsSpecification>> {
+final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addMultiple(YangStmtMapping.BIT)
         .build();
-
-    BitsSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
-    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
@@ -42,17 +37,17 @@ final class BitsSpecificationSupport
     }
 
     @Override
-    protected BitsSpecification createDeclared(final StmtContext<String, BitsSpecification, ?> ctx,
+    protected BitsSpecification createDeclared(final StmtContext<QName, BitsSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBits(ctx);
         }
-        return new BitsSpecificationImpl(ctx.getRawArgument(), substatements);
+        return new BitsSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected EffectiveStatement<String, BitsSpecification> createEffective(
-            final Current<String, BitsSpecification> stmt,
+    protected EffectiveStatement<QName, BitsSpecification> createEffective(
+            final Current<QName, BitsSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBits(stmt);

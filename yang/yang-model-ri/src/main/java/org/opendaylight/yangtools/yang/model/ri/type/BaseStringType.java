@@ -12,13 +12,14 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseStringType extends AbstractLengthRestrictedBaseType<StringTypeDefinition>
         implements StringTypeDefinition {
     static final @NonNull BaseStringType INSTANCE = new BaseStringType();
 
     private BaseStringType() {
-        super(QNAME);
+        super(TypeDefinitions.TYPEDEF_STRING);
     }
 
     @Override

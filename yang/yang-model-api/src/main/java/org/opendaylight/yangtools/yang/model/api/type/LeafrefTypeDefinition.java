@@ -10,17 +10,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 
 public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefinition<LeafrefTypeDefinition> {
     /**
-     * Well-known QName of the {@code leafref} built-in type.
+     * Return the {@link PathExpression} of this {@code leafref}.
+     *
+     * @return A path expression
      */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "leafref").intern();
-
-    PathExpression getPathStatement();
+    @NonNull PathExpression getPathStatement();
 
     /**
      * {@inheritDoc}
