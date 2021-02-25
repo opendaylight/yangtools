@@ -1,0 +1,62 @@
+module extensions-identifier-model {
+
+    namespace "extensions-identifier-model";
+    prefix "eim";
+    revision "2020-02-25";
+
+    extension dependency {
+        argument path {
+            eim:arg-type {
+                type string;
+            }
+        }
+    }
+
+    extension arg-type {
+        eim:use-in "argument";
+        eim:substatement "type";
+    }
+
+    extension use-in {
+        argument name {
+            eim:arg-type {
+                type string;
+            }
+        }
+        eim:use-in "extension";
+    }
+
+    extension substatement {
+        argument name {
+            eim:arg-type {
+                type string;
+            }
+        }
+        eim:use-in "extension";
+    }
+
+    container root-container {
+        container container-with-must-with-prefix {
+            must "./foo/bar = 'something'" {
+                eim:dependency "eim:foo/bar";
+            }
+            leaf leaf1 {
+                type string;
+            }
+        }
+        container container-with-must-without-prefix {
+            must "./foo/bar = 'something'" {
+                eim:dependency "foo/bar";
+            }
+            leaf leaf2 {
+                type string;
+            }
+        }
+
+        container foo {
+            leaf bar {
+                type string;
+            }
+        }
+    }
+}
