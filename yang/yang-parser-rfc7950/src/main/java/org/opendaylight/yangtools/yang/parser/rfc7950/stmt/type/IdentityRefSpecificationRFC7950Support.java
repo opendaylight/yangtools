@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 /**
  * Class providing necessary support for processing YANG 1.1 identityref statement.
  */
-final class IdentityrefSpecificationRFC7950Support extends AbstractIdentityRefSpecificationSupport {
+final class IdentityRefSpecificationRFC7950Support extends AbstractIdentityRefSpecificationSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMultiple(YangStmtMapping.BASE)

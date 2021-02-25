@@ -9,19 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Contains methods for getting data from the YANG <code>type</code> substatement for <code>decimal64</code> built-in
  * type.
  */
 public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<DecimalTypeDefinition, BigDecimal> {
-    /**
-     * Well-known QName of the {@code decimal64} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "decimal64").intern();
-
     /**
      * Returns integer between 1 and 18 inclusively.
      *

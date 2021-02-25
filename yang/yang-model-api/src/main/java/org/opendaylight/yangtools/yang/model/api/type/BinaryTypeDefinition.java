@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * The binary built-in type represents any binary data, i.e., a sequence of octets. Binary values are encoded with the
@@ -24,11 +22,6 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * <a href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary Built-In Type</a>
  */
 public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {
-    /**
-     * Well-known QName of the {@code binary} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "binary").intern();
-
     static String toString(final @NonNull BinaryTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("length", type.getLengthConstraint().orElse(null)).toString();
     }

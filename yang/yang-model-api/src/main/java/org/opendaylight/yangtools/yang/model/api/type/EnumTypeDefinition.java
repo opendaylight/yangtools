@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -20,11 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Makes is possible to access to the individual enumeration values of this type.
  */
 public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
-    /**
-     * Well-known QName of the {@code enumeration} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "enumeration").intern();
-
     /**
      * Contains the methods for accessing the data about the concrete enumeration item which represents {@code enum}
      * YANG type.

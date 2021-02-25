@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 final class BaseBinaryType extends AbstractLengthRestrictedBaseType<BinaryTypeDefinition>
         implements BinaryTypeDefinition {
     static final @NonNull BaseBinaryType INSTANCE = new BaseBinaryType();
 
     private BaseBinaryType() {
-        super(QNAME);
+        super(TypeDefinitions.BINARY);
     }
 
     @Override

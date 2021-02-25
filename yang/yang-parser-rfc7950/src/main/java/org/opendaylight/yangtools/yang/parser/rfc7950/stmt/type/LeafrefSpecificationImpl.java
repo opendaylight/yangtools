@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class LeafrefSpecificationImpl extends WithSubstatements implements LeafrefSpecification {
-    LeafrefSpecificationImpl(final String rawArgument,
+final class LeafrefSpecificationImpl extends WithSubstatements<QName> implements LeafrefSpecification {
+    LeafrefSpecificationImpl(final String rawArgument, final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

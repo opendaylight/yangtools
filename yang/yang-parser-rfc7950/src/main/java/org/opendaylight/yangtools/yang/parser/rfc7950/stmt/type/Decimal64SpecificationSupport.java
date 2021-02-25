@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -16,24 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.DecimalTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class Decimal64SpecificationSupport extends AbstractStringStatementSupport<Decimal64Specification,
-        EffectiveStatement<String, Decimal64Specification>> {
+final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64Specification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPE)
         .addMandatory(YangStmtMapping.FRACTION_DIGITS)
         .addOptional(YangStmtMapping.RANGE)
         .build();
-
-    Decimal64SpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
-    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
@@ -41,17 +36,17 @@ final class Decimal64SpecificationSupport extends AbstractStringStatementSupport
     }
 
     @Override
-    protected Decimal64Specification createDeclared(final StmtContext<String, Decimal64Specification, ?> ctx,
+    protected Decimal64Specification createDeclared(final StmtContext<QName, Decimal64Specification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noFracDigits(ctx);
         }
-        return new Decimal64SpecificationImpl(ctx.getRawArgument(), substatements);
+        return new Decimal64SpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected EffectiveStatement<String, Decimal64Specification> createEffective(
-            final Current<String, Decimal64Specification> stmt,
+    protected EffectiveStatement<QName, Decimal64Specification> createEffective(
+            final Current<QName, Decimal64Specification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noFracDigits(stmt);

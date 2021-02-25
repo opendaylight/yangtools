@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -16,23 +17,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.UnionTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class UnionSpecificationSupport
-        extends AbstractStringStatementSupport<UnionSpecification, EffectiveStatement<String, UnionSpecification>> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .TYPE)
+final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecification> {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE)
         .addMultiple(YangStmtMapping.TYPE)
         .build();
-
-    UnionSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
-    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
@@ -40,17 +35,17 @@ final class UnionSpecificationSupport
     }
 
     @Override
-    protected UnionSpecification createDeclared(final StmtContext<String, UnionSpecification, ?> ctx,
+    protected UnionSpecification createDeclared(final StmtContext<QName, UnionSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noType(ctx);
         }
-        return new UnionSpecificationImpl(ctx.getRawArgument(), substatements);
+        return new UnionSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected EffectiveStatement<String, UnionSpecification> createEffective(
-            final Current<String, UnionSpecification> stmt,
+    protected EffectiveStatement<QName, UnionSpecification> createEffective(
+            final Current<QName, UnionSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noType(stmt);

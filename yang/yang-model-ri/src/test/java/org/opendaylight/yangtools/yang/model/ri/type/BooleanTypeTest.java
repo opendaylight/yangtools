@@ -17,13 +17,14 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 public class BooleanTypeTest {
     @Test
     public void canCreateBooleanType() {
         final BooleanTypeDefinition boolType = BaseTypes.booleanType();
 
-        assertEquals("getQName gives BOOLEAN_QNAME", BooleanTypeDefinition.QNAME, boolType.getQName());
+        assertEquals("getQName gives BOOLEAN_QNAME", TypeDefinitions.BOOLEAN, boolType.getQName());
         assertFalse(boolType.getDescription().isPresent());
 
         assertThat(boolType.toString(), containsString("name=(urn:ietf:params:xml:ns:yang:1)boolean"));

@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 public class BinaryTypeTest {
     @Test
@@ -26,7 +27,7 @@ public class BinaryTypeTest {
         assertEquals(Optional.empty(), binType.getDefaultValue());
         assertEquals("CURRENT", Status.CURRENT, binType.getStatus());
         assertEquals("Base type is null", null, binType.getBaseType());
-        assertEquals("getQName gives BINARY_QNAME", BinaryTypeDefinition.QNAME, binType.getQName());
+        assertEquals("getQName gives BINARY_QNAME", TypeDefinitions.BINARY, binType.getQName());
         assertEquals(Optional.empty(), binType.getUnits());
 
         assertTrue("binType1 should equal to binType", binType.equals(binType1) && binType1.equals(binType));

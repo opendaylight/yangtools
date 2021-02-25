@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Type definition derived from int8 type.
@@ -18,11 +16,6 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * @author Robert Varga
  */
 public interface Int8TypeDefinition extends RangeRestrictedTypeDefinition<Int8TypeDefinition, Byte> {
-    /**
-     * Well-known QName of the {@code int8} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "int8").intern();
-
     static int hashCode(final @NonNull Int8TypeDefinition type) {
         return TypeDefinitions.hashCode(type);
     }

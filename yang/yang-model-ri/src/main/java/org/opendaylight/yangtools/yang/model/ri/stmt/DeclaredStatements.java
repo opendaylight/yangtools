@@ -639,10 +639,10 @@ public final class DeclaredStatements {
         return new SubmoduleStatementImpl(rawArgument, argument, substatements);
     }
 
-    public static TypeStatement createType(final String argument,
+    public static TypeStatement createType(final String rawArgument, final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? new EmptyTypeStatement(argument)
-            : new RegularTypeStatement(argument, substatements);
+        return substatements.isEmpty() ? new EmptyTypeStatement(rawArgument, argument)
+            : new RegularTypeStatement(rawArgument, argument, substatements);
     }
 
     public static TypedefStatement createTypedef(final QName argument,

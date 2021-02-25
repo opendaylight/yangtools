@@ -11,18 +11,11 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Contains method for getting data from the <code>string</code> YANG built-in type.
  */
 public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<StringTypeDefinition> {
-    /**
-     * Well-known QName of the {@code string} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "string").intern();
-
     /**
      * Returns patterns specified in the string.
      *

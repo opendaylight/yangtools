@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefS
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -34,15 +32,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractIdentityRefSpecificationSupport
-        extends AbstractStringStatementSupport<IdentityRefSpecification,
-            EffectiveStatement<String, IdentityRefSpecification>> {
-    AbstractIdentityRefSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
-    }
-
+        extends AbstractTypeSupport<IdentityRefSpecification> {
     @Override
-    public final void onFullDefinitionDeclared(final Mutable<String, IdentityRefSpecification,
-            EffectiveStatement<String, IdentityRefSpecification>> stmt) {
+    public final void onFullDefinitionDeclared(final Mutable<QName, IdentityRefSpecification,
+            EffectiveStatement<QName, IdentityRefSpecification>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
@@ -57,17 +50,17 @@ abstract class AbstractIdentityRefSpecificationSupport
     }
 
     @Override
-    protected final IdentityRefSpecification createDeclared(final StmtContext<String, IdentityRefSpecification, ?> ctx,
+    protected final IdentityRefSpecification createDeclared(final StmtContext<QName, IdentityRefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(ctx);
         }
-        return new IdentityRefSpecificationImpl(ctx.getRawArgument(), substatements);
+        return new IdentityRefSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected final EffectiveStatement<String, IdentityRefSpecification> createEffective(
-            final Current<String, IdentityRefSpecification> stmt,
+    protected final EffectiveStatement<QName, IdentityRefSpecification> createEffective(
+            final Current<QName, IdentityRefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(stmt);

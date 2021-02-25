@@ -61,6 +61,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -476,7 +477,7 @@ public class YangParserTest {
         assertEquals(BaseTypes.int32Type(), myUnionBaseTypes.get(1));
 
         final Int16TypeDefinition int16Ext = (Int16TypeDefinition) myUnionBaseTypes.get(0);
-        assertEquals(QName.create(BAR, "int16"), int16Ext.getQName());
+        assertEquals(TypeDefinitions.INT16, int16Ext.getQName());
         assertEquals(Optional.empty(), int16Ext.getUnits());
         assertEquals(Optional.empty(), int16Ext.getDefaultValue());
         final Set<? extends Range<? extends Number>> ranges = int16Ext.getRangeConstraint().get().getAllowedRanges()

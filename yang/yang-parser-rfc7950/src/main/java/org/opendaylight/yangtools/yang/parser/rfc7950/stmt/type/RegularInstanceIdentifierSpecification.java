@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class RegularInstanceIdentifierSpecification extends WithSubstatements
+final class RegularInstanceIdentifierSpecification extends WithSubstatements<QName>
         implements InstanceIdentifierSpecification {
-    RegularInstanceIdentifierSpecification(final String rawArgument,
+    RegularInstanceIdentifierSpecification(final String rawArgument, final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(rawArgument, substatements);
+        super(rawArgument, argument, substatements);
     }
 }
