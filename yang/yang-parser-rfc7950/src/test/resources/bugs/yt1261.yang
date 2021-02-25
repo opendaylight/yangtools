@@ -1,0 +1,60 @@
+module foo {
+  namespace "foo";
+  prefix "foo";
+
+  extension dependency {
+    argument path {
+      foo:arg-type {
+        type string;
+      }
+    }
+  }
+
+  extension arg-type {
+    foo:use-in "argument";
+    foo:substatement "type";
+  }
+
+  extension use-in {
+    argument name {
+      foo:arg-type {
+        type string;
+      }
+    }
+    foo:use-in "extension";
+  }
+
+  extension substatement {
+    argument name {
+      foo:arg-type {
+        type string;
+      }
+    }
+    foo:use-in "extension";
+  }
+
+  container root-container {
+    container container-with-must-with-prefix {
+      must "./foo/bar = 'something'" {
+        foo:dependency "foo:foo/bar";
+      }
+      leaf leaf1 {
+        type string;
+      }
+    }
+    container container-with-must-without-prefix {
+      must "./foo/bar = 'something'" {
+        foo:dependency "foo/bar";
+      }
+      leaf leaf2 {
+        type string;
+      }
+    }
+
+    container foo {
+      leaf bar {
+        type string;
+      }
+    }
+  }
+}
