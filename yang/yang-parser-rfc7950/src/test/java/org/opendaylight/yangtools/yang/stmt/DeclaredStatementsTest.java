@@ -329,7 +329,7 @@ public class DeclaredStatementsTest {
         assertEquals("test description", typedefStatement.getDescription().get().argument());
         assertEquals("test reference", typedefStatement.getReference().get().argument());
         assertEquals("test-typedef", typedefStatement.argument().getLocalName());
-        assertEquals("int32", typedefStatement.getType().argument());
+        assertEquals("int32", typedefStatement.getType().rawArgument());
         assertEquals("meter", typedefStatement.getUnits().get().argument());
     }
 

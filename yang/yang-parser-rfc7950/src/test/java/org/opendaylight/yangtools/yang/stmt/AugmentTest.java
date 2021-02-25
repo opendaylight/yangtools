@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 public class AugmentTest {
     private static final QNameModule FOO = QNameModule.create(
@@ -95,7 +95,7 @@ public class AugmentTest {
         assertPathEquals(expectedSchemaPath, ds0ChannelNumber);
         assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
-        assertEquals(StringTypeDefinition.QNAME, ds0ChannelNumber.getType().getQName());
+        assertEquals(TypeDefinitions.TYPEDEF_STRING, ds0ChannelNumber.getType().getQName());
 
         // leaf interface-id
         qname = QName.create(FOO, "interface-id");

@@ -10,19 +10,12 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Contains methods for getting data from the <code>instance-identifier</code> YANG built-in type.
  */
 public interface InstanceIdentifierTypeDefinition
         extends RequireInstanceRestrictedTypeDefinition<InstanceIdentifierTypeDefinition> {
-    /**
-     * Well-known QName of the {@code instance-identifier} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "instance-identifier").intern();
-
     static int hashCode(final @NonNull InstanceIdentifierTypeDefinition type) {
         return Objects.hash(type.getQName(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());

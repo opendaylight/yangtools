@@ -167,8 +167,8 @@ public final class TypedefEffectiveStatementImpl extends Default<QName, TypedefS
         }
 
         @Override
-        public String argument() {
-            return getQName().getLocalName();
+        public QName argument() {
+            return getQName();
         }
 
         @Override

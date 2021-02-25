@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -18,21 +19,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class EnumSpecificationSupport
-        extends AbstractStringStatementSupport<EnumSpecification, EffectiveStatement<String, EnumSpecification>> {
+final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.ENUM).build();
-
-    EnumSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
-    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
@@ -40,17 +35,17 @@ final class EnumSpecificationSupport
     }
 
     @Override
-    protected EnumSpecification createDeclared(final StmtContext<String, EnumSpecification, ?> ctx,
+    protected EnumSpecification createDeclared(final StmtContext<QName, EnumSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(ctx);
         }
-        return new EnumSpecificationImpl(ctx.getRawArgument(), substatements);
+        return new EnumSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected EffectiveStatement<String, EnumSpecification> createEffective(
-            final Current<String, EnumSpecification> stmt,
+    protected EffectiveStatement<QName, EnumSpecification> createEffective(
+            final Current<QName, EnumSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noEnum(stmt);

@@ -9,19 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Marker interface which marks that type definition represents the built-in YANG {@code boolean} type.
  */
 public interface BooleanTypeDefinition extends TypeDefinition<BooleanTypeDefinition> {
-    /**
-     * Well-known QName of the {@code boolean} built-in type.
-     */
-    QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "boolean").intern();
-
     static int hashCode(final @NonNull BooleanTypeDefinition type) {
         return TypeDefinitions.basicHashCode(type);
     }

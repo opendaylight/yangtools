@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -28,8 +29,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupport {
     private static final ImmutableMap<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap.of(
-        LEAF_REF, new LeafrefSpecificationRFC7950Support(),
-        IDENTITY_REF, new IdentityrefSpecificationRFC7950Support());
+        TypeDefinitions.TYPEDEF_LEAFREF.getLocalName(), new LeafrefSpecificationRFC7950Support(),
+        TypeDefinitions.TYPEDEF_IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC7950Support());
     private static final TypeStatementRFC7950Support INSTANCE = new TypeStatementRFC7950Support();
 
     private TypeStatementRFC7950Support() {

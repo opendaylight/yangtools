@@ -637,9 +637,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final QName argumentAsTypeQName() {
-        final Object argument = argument();
-        verify(argument instanceof String, "Unexpected argument %s", argument);
-        return interpretAsQName((String) argument);
+        return interpretAsQName(getRawArgument());
     }
 
     @Override

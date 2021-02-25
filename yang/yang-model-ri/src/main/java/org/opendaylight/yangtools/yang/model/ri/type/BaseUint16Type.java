@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 
 final class BaseUint16Type extends AbstractRangeRestrictedBaseType<Uint16TypeDefinition, Uint16>
@@ -16,7 +17,7 @@ final class BaseUint16Type extends AbstractRangeRestrictedBaseType<Uint16TypeDef
     static final @NonNull BaseUint16Type INSTANCE = new BaseUint16Type();
 
     private BaseUint16Type() {
-        super(QNAME, Uint16.ZERO, Uint16.MAX_VALUE);
+        super(TypeDefinitions.TYPEDEF_UINT16, Uint16.ZERO, Uint16.MAX_VALUE);
     }
 
     @Override

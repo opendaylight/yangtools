@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
@@ -16,30 +16,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveSt
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.LeafrefTypeBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractLeafrefSpecificationSupport extends AbstractStringStatementSupport<LeafrefSpecification,
-            EffectiveStatement<String, LeafrefSpecification>> {
-    AbstractLeafrefSpecificationSupport() {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica());
-    }
-
+abstract class AbstractLeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
     @Override
-    protected final LeafrefSpecification createDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx,
+    protected final LeafrefSpecification createDeclared(final StmtContext<QName, LeafrefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noPath(ctx);
         }
-        return new LeafrefSpecificationImpl(ctx.getRawArgument(), substatements);
+        return new LeafrefSpecificationImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected EffectiveStatement<String, LeafrefSpecification> createEffective(
-            final Current<String, LeafrefSpecification> stmt,
+    protected EffectiveStatement<QName, LeafrefSpecification> createEffective(
+            final Current<QName, LeafrefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noPath(stmt);
