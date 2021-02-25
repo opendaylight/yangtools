@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference;
@@ -456,6 +457,19 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                 return result;
             }
         }
+    }
+
+    /**
+     * Resolve a reference to a {@link TypedefEffectiveStatement}, starting at current stack position. Internal state
+     * is adjusted to point to the statement.
+     *
+     * @param name typedef's name
+     * @throws NullPointerException if {@code typedef} is null
+     * @throws IllegalArgumentException if the {@code name} cannot be resolved
+     */
+    public @NonNull TypedefEffectiveStatement resolveTypedef(final QName name) {
+        // FIXME: walk stack upwards, each time searching all children
+        return null;
     }
 
     /**
