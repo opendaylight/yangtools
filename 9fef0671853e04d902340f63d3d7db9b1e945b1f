@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73375ea3_3ef34d89",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/AbstractNormalizedNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-02-26T19:42:17Z",
+      "side": 1,
+      "message": "this is just *way* too slow, as we are undoing toString() -- we should treat getIdentifier() as a structured type and emit its relevant properties",
+      "range": {
+        "startLine": 99,
+        "startChar": 30,
+        "endLine": 99,
+        "endChar": 104
+      },
+      "revId": "9fef0671853e04d902340f63d3d7db9b1e945b1f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d42f412_123e9873",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/AbstractNormalizedNode.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-02-26T19:42:17Z",
+      "side": 1,
+      "message": "no, this has to be an abstract method filled in by the concrete class",
+      "range": {
+        "startLine": 117,
+        "startChar": 35,
+        "endLine": 117,
+        "endChar": 93
+      },
+      "revId": "9fef0671853e04d902340f63d3d7db9b1e945b1f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
