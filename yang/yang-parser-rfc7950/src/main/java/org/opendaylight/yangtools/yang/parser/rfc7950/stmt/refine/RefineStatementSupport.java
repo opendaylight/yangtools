@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -91,8 +92,7 @@ public final class RefineStatementSupport
     @Override
     protected RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.optionalPath(),
+        return EffectiveStatements.createRefine(stmt.declared(), substatements, stmt.optionalPath(),
             (SchemaNode) verifyNotNull(stmt.namespaceItem(RefineTargetNamespace.class, Empty.getInstance()))
                 .buildEffective());
     }

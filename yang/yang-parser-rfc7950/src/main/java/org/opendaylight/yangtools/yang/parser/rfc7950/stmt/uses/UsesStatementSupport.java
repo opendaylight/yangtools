@@ -11,35 +11,28 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineTargetNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
@@ -150,37 +143,9 @@ public final class UsesStatementSupport
         verify(source instanceof GroupingDefinition, "Unexpected source %s", source);
         final GroupingDefinition sourceGrouping = (GroupingDefinition) source;
 
-        final int flags = EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements);
-        final QName argument = stmt.getArgument();
-        final UsesStatement declared = stmt.declared();
-
-        if (substatements.isEmpty()) {
-            return argument.equals(declared.argument())
-                ? new EmptyLocalUsesEffectiveStatement(declared, sourceGrouping, flags)
-                        : new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags);
-        }
-
-        if (declared.argument().equals(argument)) {
-            return new RegularLocalUsesEffectiveStatement(declared, sourceGrouping, flags, substatements);
-        }
-        if (findFirstStatement(substatements, RefineEffectiveStatement.class) == null) {
-            return new SimpleCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags, substatements);
-        }
-        return new FullCopiedUsesEffectiveStatement(declared, argument, sourceGrouping, flags, substatements);
-    }
-
-    static @NonNull ImmutableMap<Descendant, SchemaNode> indexRefines(
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final Map<Descendant, SchemaNode> refines = new LinkedHashMap<>();
-
-        for (EffectiveStatement<?, ?> effectiveStatement : substatements) {
-            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
-                final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
-                refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
-            }
-        }
-
-        return ImmutableMap.copyOf(refines);
+        return EffectiveStatements.createUses(stmt.declared(), stmt.getArgument(),
+            EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), substatements,
+            sourceGrouping);
     }
 
     /**

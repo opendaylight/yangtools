@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -38,13 +38,13 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  * also substatements here. We do not handle further refines, though, as that requires yet another field, further
  * growing instance size. That case is handled by {@link FullCopiedUsesEffectiveStatement}.
  */
-class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstatements<QName, UsesStatement>
+public class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstatements<QName, UsesStatement>
         implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, UsesStatement>,
             WhenConditionMixin<QName, UsesStatement>, WithStatus<QName, UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 
-    SimpleCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
+    public SimpleCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
             final GroupingDefinition sourceGrouping, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, argument, substatements);
@@ -52,7 +52,7 @@ class SimpleCopiedUsesEffectiveStatement extends DefaultWithArgument.WithSubstat
         this.flags = flags;
     }
 
-    SimpleCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
+    public SimpleCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
             final GroupingDefinition sourceGrouping, final int flags) {
         this(declared, argument, sourceGrouping, flags, ImmutableList.of());
     }

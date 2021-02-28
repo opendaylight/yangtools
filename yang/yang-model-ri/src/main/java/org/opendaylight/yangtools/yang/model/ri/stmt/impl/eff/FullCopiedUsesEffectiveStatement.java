@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
  * and we also have a refine substatement.
  *
  */
-final class FullCopiedUsesEffectiveStatement extends SimpleCopiedUsesEffectiveStatement {
+public final class FullCopiedUsesEffectiveStatement extends SimpleCopiedUsesEffectiveStatement {
     private volatile Map<Descendant, SchemaNode> refines;
 
-    FullCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
+    public FullCopiedUsesEffectiveStatement(final UsesStatement declared, final QName argument,
             final GroupingDefinition sourceGrouping, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, argument, sourceGrouping, flags, substatements);
@@ -41,7 +41,7 @@ final class FullCopiedUsesEffectiveStatement extends SimpleCopiedUsesEffectiveSt
     private synchronized @NonNull Map<Descendant, SchemaNode> loadRefines() {
         Map<Descendant, SchemaNode> local = refines;
         if (local == null) {
-            refines = local = UsesStatementSupport.indexRefines(effectiveSubstatements());
+            refines = local = RegularLocalUsesEffectiveStatement.indexRefines(effectiveSubstatements());
         }
         return local;
     }

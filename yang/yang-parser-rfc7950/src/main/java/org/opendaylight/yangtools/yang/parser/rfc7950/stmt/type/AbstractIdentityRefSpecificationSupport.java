@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.TypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;

@@ -5,9 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -20,12 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
  * An extension of {@link EmptyLocalUsesEffectiveStatement}, which adds substatements to the mix. Since this means we
  * can also have refine statements, we keep a lazily-populated map of those.
  */
-final class RegularLocalUsesEffectiveStatement extends EmptyLocalUsesEffectiveStatement {
+public final class RegularLocalUsesEffectiveStatement extends EmptyLocalUsesEffectiveStatement {
     private final Object substatements;
 
     private volatile Map<Descendant, SchemaNode> refines;
 
-    RegularLocalUsesEffectiveStatement(final UsesStatement declared, final GroupingDefinition sourceGrouping,
+    public RegularLocalUsesEffectiveStatement(final UsesStatement declared, final GroupingDefinition sourceGrouping,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, sourceGrouping, flags);
         this.substatements = maskList(substatements);
@@ -45,8 +47,22 @@ final class RegularLocalUsesEffectiveStatement extends EmptyLocalUsesEffectiveSt
     private synchronized @NonNull Map<Descendant, SchemaNode> loadRefines() {
         Map<Descendant, SchemaNode> local = refines;
         if (local == null) {
-            refines = local = UsesStatementSupport.indexRefines(effectiveSubstatements());
+            refines = local = indexRefines(effectiveSubstatements());
         }
         return local;
+    }
+
+    static @NonNull ImmutableMap<Descendant, SchemaNode> indexRefines(
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final Map<Descendant, SchemaNode> refines = new LinkedHashMap<>();
+
+        for (EffectiveStatement<?, ?> effectiveStatement : substatements) {
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
+                final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+                refines.put(refineStmt.argument(), refineStmt.getRefineTargetNode());
+            }
+        }
+
+        return ImmutableMap.copyOf(refines);
     }
 }

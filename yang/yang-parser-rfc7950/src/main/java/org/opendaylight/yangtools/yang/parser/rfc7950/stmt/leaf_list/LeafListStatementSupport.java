@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
@@ -103,21 +104,8 @@ public final class LeafListStatementSupport
     @Override
     public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
             final LeafListEffectiveStatement original) {
-        final int flags = computeFlags(stmt, original.effectiveSubstatements());
-        if (original instanceof RegularLeafListEffectiveStatement) {
-            return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
-        } else if (original instanceof SlimLeafListEffectiveStatement) {
-            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
-        } else if (original instanceof EmptyLeafListEffectiveStatement) {
-            // Promote to slim
-            return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
-        } else {
-            // Safe fallback
-            return super.copyEffective(stmt, original);
-        }
+        return EffectiveStatements.copyLeafList(original, stmt, computeFlags(stmt, original.effectiveSubstatements()),
+            stmt.original(LeafListSchemaNode.class));
     }
 
     @Override
@@ -141,21 +129,11 @@ public final class LeafListStatementSupport
                 stmt.argument(), defaultValues);
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
-
         final Optional<ElementCountConstraint> elementCountConstraint =
-                EffectiveStmtUtils.createElementCountConstraint(substatements);
+            EffectiveStmtUtils.createElementCountConstraint(substatements);
 
-        final LeafListSchemaNode original = stmt.original(LeafListSchemaNode.class);
-        final LeafListStatement declared = stmt.declared();
-        if (defaultValues.isEmpty()) {
-            return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
-                        elementCountConstraint.orElse(null));
-        }
-
-        return new RegularLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
-            defaultValues, elementCountConstraint.orElse(null));
+        return EffectiveStatements.createLeafList(stmt.declared(), stmt.effectivePath(), flags, substatements,
+            elementCountConstraint, defaultValues, stmt.original(LeafListSchemaNode.class));
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
