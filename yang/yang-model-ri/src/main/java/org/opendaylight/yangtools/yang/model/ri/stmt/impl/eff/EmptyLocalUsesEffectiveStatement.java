@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import static java.util.Objects.requireNonNull;
 
@@ -37,13 +37,13 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
  * This provides minimum footprint, as we share the argument from the declared instance and just keep the flags and
  * source grouping pointer.
  */
-class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, UsesStatement>
+public class EmptyLocalUsesEffectiveStatement extends DefaultArgument<QName, UsesStatement>
         implements UsesEffectiveStatement, UsesNode, CopyableMixin<QName, UsesStatement>,
             WhenConditionMixin<QName, UsesStatement>, WithStatus<QName, UsesStatement> {
     private final @NonNull GroupingDefinition sourceGrouping;
     private final int flags;
 
-    EmptyLocalUsesEffectiveStatement(final UsesStatement declared, final GroupingDefinition sourceGrouping,
+    public EmptyLocalUsesEffectiveStatement(final UsesStatement declared, final GroupingDefinition sourceGrouping,
             final int flags) {
         super(declared);
         this.sourceGrouping = requireNonNull(sourceGrouping);

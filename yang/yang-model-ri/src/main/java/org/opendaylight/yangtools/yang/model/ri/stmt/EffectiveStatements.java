@@ -12,9 +12,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -84,6 +86,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
@@ -96,6 +100,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -173,16 +179,19 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyEnumEffective
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFeatureEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyForeignKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyFractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLocalKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyModifierEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyNamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyOrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyOrganizationEffectiveStatement;
@@ -221,16 +230,19 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularEnumEffecti
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFeatureEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularForeignKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularFractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLocalKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularModifierEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularNamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularOrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularOrganizationEffectiveStatement;
@@ -549,6 +561,17 @@ public final class EffectiveStatements {
         return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, path, flags, newOriginal);
     }
 
+    public static KeyEffectiveStatement createKey(final KeyStatement declared, final Set<QName> argument,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            return argument.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
+                : new EmptyForeignKeyEffectiveStatement(declared, argument);
+        }
+
+        return argument.equals(declared.argument()) ? new RegularLocalKeyEffectiveStatement(declared, substatements)
+                : new RegularForeignKeyEffectiveStatement(declared, argument, substatements);
+    }
+
     public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final Immutable path,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable LeafSchemaNode original)  throws SubstatementIndexingException {
@@ -592,6 +615,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyModifierEffectiveStatement(declared)
             : new RegularModifierEffectiveStatement(declared, substatements);
+    }
+
+    public static MustEffectiveStatement createMust(final MustStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyMustEffectiveStatement(declared)
+            : new RegularMustEffectiveStatement(declared, substatements);
     }
 
     public static NamespaceEffectiveStatement createNamespace(final NamespaceStatement declared,

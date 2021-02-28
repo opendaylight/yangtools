@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
@@ -16,11 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
-final class RegularListEffectiveStatement extends AbstractListEffectiveStatement {
+public final class RegularListEffectiveStatement extends AbstractListEffectiveStatement {
     private final ElementCountConstraint elementCountConstraint;
     private final ListSchemaNode original;
 
-    RegularListEffectiveStatement(final ListStatement declared, final Immutable path, final int flags,
+    public RegularListEffectiveStatement(final ListStatement declared, final Immutable path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition, final ElementCountConstraint elementCountConstraint,
             final ListSchemaNode original) {
@@ -29,15 +29,15 @@ final class RegularListEffectiveStatement extends AbstractListEffectiveStatement
         this.original = original;
     }
 
-    RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective, final ListSchemaNode original,
-            final Immutable path, final int flags) {
+    public RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective,
+            final ListSchemaNode original, final Immutable path, final int flags) {
         super(originalEffective, path, flags);
         this.elementCountConstraint = originalEffective.elementCountConstraint;
         this.original = original;
     }
 
-    RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective, final ListSchemaNode original,
-            final Immutable path, final int flags) {
+    public RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective,
+            final ListSchemaNode original, final Immutable path, final int flags) {
         super(originalEffective, path, flags);
         this.elementCountConstraint = null;
         this.original = original;

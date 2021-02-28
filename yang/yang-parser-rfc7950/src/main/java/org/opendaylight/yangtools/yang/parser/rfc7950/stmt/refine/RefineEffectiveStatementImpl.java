@@ -26,14 +26,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-// FIXME: 7.0.0: hide this class
 // FIXME: 7.0.0: do not implement SchemaNode
 public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode, DocumentedNodeMixin<Descendant, RefineStatement> {
     private final @NonNull SchemaNode refineTargetNode;
     private final @Nullable SchemaPath path;
 
-    RefineEffectiveStatementImpl(final RefineStatement declared,
+    public RefineEffectiveStatementImpl(final RefineStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path,
             final SchemaNode refineTargetNode) {
         super(declared, substatements);
