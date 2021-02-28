@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * A simple capture of an {@link AbstractEffectiveModelContextProvider} and {@link EffectiveStatementInference}s.
  *
- * @param T constituent {@link EffectiveStatement} type
+ * @param <T> constituent {@link EffectiveStatement} type
  */
 @Beta
 public abstract class AbstractEffectiveStatementInference<T extends EffectiveStatement<?, ?>>
@@ -37,7 +37,7 @@ public abstract class AbstractEffectiveStatementInference<T extends EffectiveSta
      * A simple capture of an {@link AbstractEffectiveStatementInference} and a list of {@link EffectiveStatement}s. No
      * further guarantees are made.
      *
-     * @param T constituent {@link EffectiveStatement} type
+     * @param <T> constituent {@link EffectiveStatement} type
      */
     @Beta
     public abstract static class WithPath<T extends EffectiveStatement<?, ?>>
