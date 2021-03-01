@@ -23,8 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     // FIXME: this extension is not present in yang-ext.yang as published by mdsal
     ANYXML_SCHEMA_LOCATION(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "anyxml-schema-location"),
-        "target-node", AnyxmlSchemaLocationStatement.class, AnyxmlSchemaLocationEffectiveStatement.class);
-    // FIXME: add augment-identifier
+        "target-node", AnyxmlSchemaLocationStatement.class, AnyxmlSchemaLocationEffectiveStatement.class),
+    AUGMENT_IDENTIFIER(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier"),
+        "identifier", AugmentIdentifierStatement.class, AugmentIdentifierEffectiveStatement.class);
+
     // FIXME: add rpc-context-instance
     // FIXME: add context-reference
     // FIXME: add context-instance

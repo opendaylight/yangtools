@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.AugmentIdentifierStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
@@ -95,6 +96,9 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlSchemaLocationStatementSupport.getInstance())
                 .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
+
+                // augment-identifier support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AugmentIdentifierStatementSupport.INSTANCE)
 
                 // RFC6241 get-filter-element-attributes support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
