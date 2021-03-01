@@ -11,6 +11,11 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.AugmentIdentifierStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.ContextInstanceStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.ContextReferenceStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
+import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
@@ -91,10 +96,16 @@ public final class DefaultReactors {
     private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
             final @NonNull CustomCrossSourceStatementReactorBuilder builder) {
         return builder
-                // AnyxmlSchemaLocation support
+                // OpenDaylight extensions
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlSchemaLocationStatementSupport.getInstance())
                 .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AugmentIdentifierStatementSupport.INSTANCE)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextInstanceStatementSupport.INSTANCE)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextReferenceStatementSupport.INSTANCE)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, InstanceTargetStatementSupport.INSTANCE)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    RpcContextReferenceStatementSupport.INSTANCE)
 
                 // RFC6241 get-filter-element-attributes support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,

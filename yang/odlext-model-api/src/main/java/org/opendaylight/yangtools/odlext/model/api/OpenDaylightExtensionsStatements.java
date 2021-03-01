@@ -23,12 +23,20 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     // FIXME: this extension is not present in yang-ext.yang as published by mdsal
     ANYXML_SCHEMA_LOCATION(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "anyxml-schema-location"),
-        "target-node", AnyxmlSchemaLocationStatement.class, AnyxmlSchemaLocationEffectiveStatement.class);
-    // FIXME: add augment-identifier
-    // FIXME: add rpc-context-instance
-    // FIXME: add context-reference
-    // FIXME: add context-instance
-    // FIXME: add instance-target
+        "target-node", AnyxmlSchemaLocationStatement.class, AnyxmlSchemaLocationEffectiveStatement.class),
+    // Binding codegen support
+    AUGMENT_IDENTIFIER(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier"),
+        "identifier", AugmentIdentifierStatement.class, AugmentIdentifierEffectiveStatement.class),
+
+    // Context-aware RPCs
+    CONTEXT_INSTANCE(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-instance"),
+        "context-type", ContextInstanceStatement.class, ContextInstanceEffectiveStatement.class),
+    CONTEXT_REFERENCE(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-reference"),
+        "context-type", ContextReferenceStatement.class, ContextReferenceEffectiveStatement.class),
+    INSTANCE_TARGET(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "instance-target"),
+        "path", InstanceTargetStatement.class, InstanceTargetEffectiveStatement.class),
+    RPC_CONTEXT_REFERENCE(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "rpc-context-reference"),
+        "context-type", RpcContextReferenceStatement.class, RpcContextReferenceEffectiveStatement.class);
 
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
     private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
