@@ -1,15 +1,16 @@
 = Developer Guide
 :rfc6020: https://tools.ietf.org/html/rfc6020
+:RFC7950: https://tools.ietf.org/html/rfc7950
 :lhotka-yang-json: https://tools.ietf.org/html/draft-lhotka-netmod-yang-json-01
 
 == Overview
-YANG Tools is set of libraries and tooling providing support for use {rfc6020}[YANG] for Java (or other JVM-based language) projects and applications.
+YANG Tools is set of libraries and tooling providing support for use {rfc6020}[YANG] and {RFC7950}[YANG](YANG 1.1) for Java (or other JVM-based language) projects and applications.
 
 YANG Tools provides following features in OpenDaylight:
 
 - parsing of YANG sources and
 semantic inference of relationship across YANG models as defined in
-{rfc6020}[RFC6020]
+{rfc6020}[RFC6020] and {RFC7950}[RFC7950]
 - representation of YANG-modeled data in Java
 ** *Normalized Node* representation - DOM-like tree model, which uses conceptual
   meta-model more tailored to YANG and OpenDaylight use-cases than a standard XML
@@ -26,7 +27,7 @@ YANG Tools project consists of following logical subsystems:
 - *Commons* - Set of general purpose code, which is not specific to YANG, but
   is also useful outside YANG Tools implementation.
 - *YANG Model and Parser* - YANG semantic model and lexical and semantic parser
-  of YANG models, which creates in-memory cross-referenced represenation of
+  of YANG models, which creates in-memory cross-referenced representation of
   YANG models, which is used by other components to determine their behaviour
   based on the model.
 - *YANG Data* - Definition of Normalized Node APIs and Data Tree APIs, reference
@@ -58,14 +59,9 @@ Project defines base concepts and helper classes which are project-agnostic and 
 - yang-parser-api
 - yang-parser-impl
 
-==== YANG Model API
-Class diagram of yang model API
-
-image:models/yang-model-api.png[]
-
 ==== YANG Parser
 
-Yang Statement Parser works on the idea of statement concepts as defined in RFC6020, section 6.3. We come up here with basic ModelStatement and StatementDefinition, following RFC6020 idea of having sequence of statements, where
+Yang Statement Parser works on the idea of statement concepts as defined in RFC6020 and RFC7950, section 6.3. We come up here with basic ModelStatement and StatementDefinition, following RFC6020 idea of having sequence of statements, where
 every statement contains keyword and zero or one argument. ModelStatement is extended by DeclaredStatement (as it comes from source, e.g. YANG source)
 and EffectiveStatement, which contains other substatements and tends to represent result of semantic processing of other statements (uses, augment for YANG).
 IdentifierNamespace represents common superclass for YANG model namespaces.
@@ -80,8 +76,8 @@ in order to map relations during declaration phase process.
 
 Currently, there are two implementations of StatementStreamSource in Yangtools:
 
- - YangStatementSourceImpl - intended for yang sources
- - YinStatementSourceImpl - intended for yin sources
+ - YangStatementStreamSource - intended for yang sources
+ - YinStatementStreamSource - intended for yin sources
 
 ==== YANG Data API
 Class diagram of yang data API
@@ -103,24 +99,24 @@ First thing you need to do if you want to work with YANG models is to instantiat
 
 In order to create it you need to utilize YANG statement parser which takes one or more StatementStreamSource objects as input and then produces the SchemaContext object.
 
-StatementStreamSource object contains the source file information. It has two implementations, one for YANG sources - YangStatementSourceImpl, and one for YIN sources - YinStatementSourceImpl.
+StatementStreamSource object contains the source file information. It has two implementations, one for YANG sources - YangStatementStreamSource, and one for YIN sources - YinStatementStreamSource.
 
 Here is an example of creating StatementStreamSource objects for YANG files, providing them to the YANG statement parser and building the SchemaContext:
 
 [source,java]
 ----
-StatementStreamSource yangModuleSource = new YangStatementSourceImpl("/example.yang", false);
-StatementStreamSource yangModuleSource2 = new YangStatementSourceImpl("/example2.yang", false);
+//
+StatementStreamSource yangModuleSource = YangStatementStreamSource.create(YangTextSchemaSource.forResource("/example.yang"));
+StatementStreamSource yangModuleSource2 = YangStatementStreamSource.create(YangTextSchemaSource.forResource("/example2.yang"));
 
-CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+CrossSourceStatementReactor.BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
 reactor.addSources(yangModuleSource, yangModuleSource2);
-
-SchemaContext schemaContext = reactor.buildEffective();
+EffectiveSchemaContext schemaContext = reactor.buildEffective();
 ----
 
-First, StatementStreamSource objects with two constructor arguments should be instantiated: path to the yang source file (which is a regular String object) and a boolean which determines if the path is absolute or relative.
+First, StatementStreamSource objects should be instantiated: path to the yang source file (which is a regular String object).
 
-Next comes the initiation of new yang parsing cycle - which is represented by CrossSourceStatementReactor.BuildAction object. You can get it by calling method newBuild() on CrossSourceStatementReactor object (RFC6020_REACTOR) in YangInferencePipeline class.
+Next comes the initiation of new yang parsing cycle - which is represented by CrossSourceStatementReactor.BuildAction object. You can get it by calling method newBuild() on CrossSourceStatementReactor object (RFC7950Reactors).
 
 Then you should feed yang sources to it by calling method addSources() that takes one or more StatementStreamSource objects as arguments.
 
@@ -129,26 +125,25 @@ Finally you call the method buildEffective() on the reactor object which returns
 Let us explain how to work with models contained in the newly created SchemaContext. If you want to get all the modules in the schemaContext, you have to call method getModules() which returns a Set of modules. If you want to get all the data definitions in schemaContext, you need to call method getDataDefinitions, etc.
 
 [source, java]
-Set<Module> modules = schemaContext.getModules();
-Set<DataSchemaNodes> dataSchemaNodes = schemaContext.getDataDefinitions();
+Collection<? extends @NonNull Module> modules = schemaContext.getModules();
+Collection<? extends @NonNull DataSchemaNode> dataDefinitions = schemaContext.getDataDefinitions();
 
 Usually you want to access specific modules. Getting a concrete module from SchemaContext is a matter of calling one of these methods:
 
-* findModuleByName(),
-* findModuleByNamespace(),
-* findModuleByNamespaceAndRevision().
+* findModule(Name),
+* findModule(Namespace),
+* findModule(Namespace, Revision).
 
-In the first case, you need to provide module name as it is defined in the yang source file and module revision date if it specified in the yang source file (if it is not defined, you can just pass a null value). In order to provide the revision date in proper format, you can use a utility class named SimpleDateFormatUtil.
+In the first case, you need to provide module name as it is defined in the yang source file and module revision date if it specified in the yang source file (if it is not defined, you can just pass a null value). In order to provide the revision date in proper format, you can use a Revision.of.
 
 [source, java]
-Module exampleModule = schemaContext.findModuleByName("example-module", null);
+Module exampleModule = schemaContext.findModule("example-module").get();
 // or
-Date revisionDate = SimpleDateFormatUtil.getRevisionFormat().parse("2015-09-02");
-Module exampleModule = schemaContext.findModuleByName("example-module", revisionDate);
+Module exampleModule = schemaContext.findModule("example-module", Revision.of("2015-09-02")).get();
 
 In the second case, you have to provide module namespace in form of an URI object.
 [source, java]
-Module exampleModule = schema.findModuleByNamespace(new URI("opendaylight.org/example-module"));
+Module exampleModule = schemaContext.findModule(XMLNamespace.of("opendaylight.org/example-module")).get();
 
 In the third case, you provide both module namespace and revision date as arguments.
 
@@ -157,8 +152,8 @@ One way to do this is to use method like getIdentities() or getRpcs() which will
 
 [source, java]
 ----
-Set<AugmentationSchema> augmentationSchemas = exampleModule.getAugmentations();
-Set<ModuleImport> moduleImports = exampleModule.getImports();
+Collection<? extends @NonNull AugmentationSchemaNode> augmentations = exampleModule.getAugmentations();
+Collection<? extends @NonNull ModuleImport> imports = exampleModule.getImports();
 
 ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) exampleModule.getDataChildByName(QName.create(exampleModule.getQNameModule(), "example-choice"));
 
@@ -181,7 +176,7 @@ Set<QName> supportedFeatures = ImmutableSet.of(
     QName.create("example-namespace", "2016-08-31", "example-feature-1"),
     QName.create("example-namespace", "2016-08-31", "example-feature-2"));
 
-CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(supportedFeatures);
+CrossSourceStatementReactor.BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().setSupportedFeatures(supportedFeatures);
 ----
 
 In case when no features should be supported, you should provide an empty Set<QName> object.
@@ -190,7 +185,7 @@ In case when no features should be supported, you should provide an empty Set<QN
 ----
 Set<QName> supportedFeatures = ImmutableSet.of();
 
-CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(supportedFeatures);
+CrossSourceStatementReactor.BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().setSupportedFeatures(supportedFeatures);
 ----
 
 When this mode is not activated, all features in the processed YANG sources are supported.
@@ -199,7 +194,7 @@ Mode with active semantic version processing changes the way how YANG import sta
 
 [source, java]
 ----
-CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(StatementParserMode.SEMVER_MODE);
+CrossSourceStatementReactor.BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild(StatementParserMode.SEMVER_MODE);
 ----
 
 Before you use a semantic version statement in a YANG module, you need to define an extension for it so that the YANG statement parser can recognize it.
@@ -301,10 +296,10 @@ In order to create a concrete NormalizedNode object you can use the utility clas
 
 [source, java]
 ----
-\\ example 1
-ContainerNode containerNode = Builders.containerBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(QName.create(moduleQName, "example-container")).build();
+// example 1
+ContainerNode containerNode = Builders.containerBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(QName.create(moduleQName, "example-container"))).build());
 
-\\ example 2
+// example 2
 ContainerNode containerNode2 = Builders.containerBuilder(containerSchemaNode).build();
 ----
 Both examples produce the same result. NodeIdentifier is one of the four types of YangInstanceIdentifier (these types are described in the javadoc of YangInstanceIdentifier). The purpose of YangInstanceIdentifier is to uniquely identify a particular node in the data tree. In the first example, you have to add NodeIdentifier before building the resulting node. In the second example it is also added using the provided ContainerSchemaNode object.
@@ -315,7 +310,7 @@ ImmutableNodes class offers similar builder methods and also adds an overloaded 
 ----
 YangInstanceIdentifier.NodeIdentifier contId = new YangInstanceIdentifier.NodeIdentifier(QName.create(moduleQName, "example-container");
 
-NormalizedNode<?, ?> contNode = ImmutableNodes.fromInstanceId(schemaContext, YangInstanceIdentifier.create(contId));
+NormalizedNode contNode = ImmutableNodes.fromInstanceId(schemaContext, YangInstanceIdentifier.create(contId));
 ----
 
 Let us show a more complex example of creating a NormalizedNode. First, consider the following YANG module:
@@ -364,19 +359,17 @@ In the following example, two normalized nodes based on the module above are wri
 
 [source, java]
 ----
-TipProducingDataTree inMemoryDataTree =     InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
-inMemoryDataTree.setSchemaContext(schemaContext);
+        DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_OPERATIONAL, schemaContext);
 
 // first data tree modification
 MapEntryNode parentOrderedListEntryNode = Builders.mapEntryBuilder().withNodeIdentifier(
-new YangInstanceIdentifier.NodeIdentifierWithPredicates(
-parentOrderedListQName, parentKeyLeafQName, "pkval1"))
+new YangInstanceIdentifier.NodeIdentifierWithPredicates(parentOrderedListQName, parentKeyLeafQName, "pkval1"))
 .withChild(Builders.leafBuilder().withNodeIdentifier(
-new YangInstanceIdentifier.NodeIdentifier(parentOrdinaryLeafQName))
-.withValue("plfval1").build()).build();
+new YangInstanceIdentifier.NodeIdentifier(parentOrdinaryLeafQName)).withValue("plfval1").build()).build();
 
-OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
-new YangInstanceIdentifier.NodeIdentifier(parentOrderedListQName))
+UserMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+new NodeIdentifier(parentOrderedListQName))
 .withChild(parentOrderedListEntryNode).build();
 
 ContainerNode parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
@@ -397,8 +390,8 @@ childOrderedListQName, childKeyLeafQName, "chkval1"))
 new YangInstanceIdentifier.NodeIdentifier(childOrdinaryLeafQName))
 .withValue("chlfval1").build()).build();
 
-OrderedMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
-new YangInstanceIdentifier.NodeIdentifier(childOrderedListQName))
+UserMapNode childOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+new NodeIdentifier(childOrderedListQName))
 .withChild(childOrderedListEntryNode).build();
 
 ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
@@ -413,8 +406,8 @@ inMemoryDataTree.validate(treeModification);
 inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
 DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
-Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
-Optional<NormalizedNode<?, ?>> readNode2 = snapshotAfterCommits.readNode(path2);
+Optional<NormalizedNode> readNode1 = snapshotAfterCommits.readNode(path1);
+Optional<NormalizedNode> readNode2 = snapshotAfterCommits.readNode(path2);
 ----
 First comes the creation of in-memory data tree instance. The schema context (containing the model mentioned above) of this tree is set. After that, two normalized nodes are built. The first one consists of a parent container, a child container and a parent ordered list which contains a key leaf and an ordinary leaf. The second normalized node is a child ordered list that also contains a key leaf and an ordinary leaf.
 
@@ -443,7 +436,7 @@ NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.fr
 XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
 xmlParser.parse(reader);
 
-NormalizedNode<?, ?> transformedInput = result.getResult();
+NormalizedNode transformedInput = result.getResult();
 ----
 The XML parser utilizes the javax.xml.stream.XMLStreamReader for parsing an XML document. First, you should create an instance of this reader using XMLInputFactory and then load an XML document (in the form of InputStream object) into it.
 
