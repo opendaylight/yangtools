@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
@@ -30,12 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
 public interface MountPointNode extends DataContainerNode, DataContainerChild, MixinNode {
     @Override
     MountPointIdentifier getIdentifier();
-
-    @Override
-    @Deprecated
-    default QName getNodeType() {
-        return getIdentifier().getLabel();
-    }
 
     /**
      * Return the underlying mount point context.

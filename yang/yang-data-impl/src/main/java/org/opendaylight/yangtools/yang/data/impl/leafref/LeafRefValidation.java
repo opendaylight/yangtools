@@ -205,7 +205,7 @@ public final class LeafRefValidation {
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
         for (final DataContainerChild child : node.body()) {
-            final QName qname = child.getNodeType();
+            final QName qname = child.getIdentifier().getNodeType();
             final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
                     : findReferencedByCtxUnderChoice(referencedByCtx, qname);
             final LeafRefContext childReferencingCtx = referencingCtx == null ? null
@@ -251,7 +251,7 @@ public final class LeafRefValidation {
     private void validateChildNodeData(final DataContainerChild child, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-        final QName qname = child.getNodeType();
+        final QName qname = child.getIdentifier().getNodeType();
         final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
                 : referencedByCtx.getReferencedChildByName(qname);
         final LeafRefContext childReferencingCtx = referencingCtx == null ? null
@@ -310,11 +310,11 @@ public final class LeafRefValidation {
 
                 LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node: {} path "
                         + "of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.getNodeType(), leafRefContext.getCurrentNodePath(),
+                        leafRefTargetNodeValues, leaf.getIdentifier(), leafRefContext.getCurrentNodePath(),
                         leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
                 errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation of leafref"
                         + " TARGET node: %s path of invalid LEAFREF node: %s leafRef target path: %s %s", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.getNodeType(), leafRefContext.getCurrentNodePath(),
+                        leafRefTargetNodeValues, leaf.getIdentifier(), leafRefContext.getCurrentNodePath(),
                         leafRefContext.getAbsoluteLeafRefTargetPath(),
                         FAILED));
             });
@@ -338,9 +338,9 @@ public final class LeafRefValidation {
         LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
             referencingCtx.getNodeName(), leaf.body(), FAILED);
         LOG.debug("Invalid leafref value [{}] allowed values {} of LEAFREF node: {} leafRef target path: {}",
-            leaf.body(), values, leaf.getNodeType(), referencingCtx.getAbsoluteLeafRefTargetPath());
+            leaf.body(), values, leaf.getIdentifier(), referencingCtx.getAbsoluteLeafRefTargetPath());
         errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s of LEAFREF node: %s leafRef "
-                + "target path: %s", leaf.body(), values, leaf.getNodeType(),
+                + "target path: %s", leaf.body(), values, leaf.getIdentifier(),
                 referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 

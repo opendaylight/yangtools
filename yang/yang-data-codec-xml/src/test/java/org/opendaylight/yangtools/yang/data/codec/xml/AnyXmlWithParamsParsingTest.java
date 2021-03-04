@@ -81,7 +81,7 @@ public class AnyXmlWithParamsParsingTest {
     }
 
     private static NodeIdentifier getNodeId(final NormalizedNode parsed, final String localName) {
-        return new NodeIdentifier(QName.create(parsed.getNodeType(), localName));
+        return new NodeIdentifier(QName.create(parsed.getIdentifier().getNodeType(), localName));
     }
 
     private static String toStringDom(final DOMSource source) {
