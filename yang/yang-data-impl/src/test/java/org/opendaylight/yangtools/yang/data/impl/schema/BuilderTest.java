@@ -177,10 +177,8 @@ public class BuilderTest {
                 .build();
         final UnkeyedListEntryNode unkeyedListEntryNodeNode = ImmutableUnkeyedListEntryNodeBuilder
                 .create(unkeyedListEntryNode).build();
-        assertEquals(unkeyedListEntryNode.getNodeType().getLocalName(), unkeyedListEntryNodeSize.getNodeType()
-                .getLocalName());
-        assertEquals(unkeyedListEntryNodeSize.getNodeType().getLocalName(), unkeyedListEntryNodeNode.getNodeType()
-                .getLocalName());
+        assertEquals(unkeyedListEntryNode.getIdentifier(), unkeyedListEntryNodeSize.getIdentifier());
+        assertEquals(unkeyedListEntryNodeSize.getIdentifier(), unkeyedListEntryNodeNode.getIdentifier());
     }
 
     @Test
@@ -204,7 +202,7 @@ public class BuilderTest {
 
         assertNotNull(unkeyedListNodeSize.body());
         assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.childAt(0));
-        assertEquals(unkeyedListNode.getNodeType().getLocalName(), unkeyedListNodeSize.getNodeType().getLocalName());
+        assertEquals(unkeyedListNode.getIdentifier(), unkeyedListNodeSize.getIdentifier());
         assertNotNull(unkeyedListNodeCreated);
     }
 
