@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -46,18 +45,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               data. Nevertheless, this interface should be named 'NormalizedData'.
  */
 public interface NormalizedNode extends Identifiable<PathArgument> {
-    /**
-     * QName of the node as defined in YANG schema.
-     *
-     * @return QName of this node, non-null.
-     */
-    // FIXME: YANGTOOLS-1074: eliminate this method: the problem is that it does not work with AugmentationIdentifier
-    //                        At least we need a 'QNameModule namespace()' method, as that is the common contract.
-    @Deprecated(forRemoval = true)
-    default @NonNull QName getNodeType() {
-        return getIdentifier().getNodeType();
-    }
-
     @Override
     // We override here, so that NormalizedNode.getIdentifier() has fewer implementations
     PathArgument getIdentifier();
