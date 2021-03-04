@@ -31,12 +31,6 @@ public interface MountPointNode extends DataContainerNode, DataContainerChild, M
     @Override
     MountPointIdentifier getIdentifier();
 
-    @Override
-    @Deprecated
-    default QName getNodeType() {
-        return getIdentifier().getLabel();
-    }
-
     /**
      * Return the underlying mount point context.
      *
