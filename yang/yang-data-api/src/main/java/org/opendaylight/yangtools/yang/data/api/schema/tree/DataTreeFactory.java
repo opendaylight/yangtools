@@ -58,5 +58,5 @@ public interface DataTreeFactory {
      * @throws IllegalArgumentException if a mismatch between the arguments is detected
      */
     @NonNull DataTree create(DataTreeConfiguration treeConfig, EffectiveModelContext initialSchemaContext,
-            DistinctNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException;
+            DistinctNodeContainer<?, ?> initialRoot) throws DataValidationFailedException;
 }

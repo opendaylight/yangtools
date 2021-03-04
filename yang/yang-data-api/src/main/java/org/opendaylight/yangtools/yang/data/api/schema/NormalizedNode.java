@@ -51,7 +51,7 @@ public interface NormalizedNode extends Identifiable<PathArgument> {
      *
      * @return QName of this node, non-null.
      */
-    // FIXME: YANGTOOLS-1074: eliminate this method: the problem is that it down not with with AugmentationIdentifier
+    // FIXME: YANGTOOLS-1074: eliminate this method: the problem is that it does not work with AugmentationIdentifier
     //                        At least we need a 'QNameModule namespace()' method, as that is the common contract.
     @Deprecated(forRemoval = true)
     default @NonNull QName getNodeType() {

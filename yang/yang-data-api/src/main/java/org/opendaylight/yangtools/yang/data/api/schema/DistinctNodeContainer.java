@@ -24,12 +24,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * This interface should not be used directly, but rather use of of derived subclasses such as
  * {@link DataContainerNode}, {@link MapNode}, {@link LeafSetNode}.
  *
- * @param <I> Path argument type
  * @param <K> Child path argument type
  * @param <V> Child Node type
  */
-public interface DistinctNodeContainer<I extends PathArgument, K extends PathArgument, V extends NormalizedNode>
-        extends NormalizedNodeContainer<I, V> {
+public interface DistinctNodeContainer<K extends PathArgument, V extends NormalizedNode>
+        extends NormalizedNodeContainer<V> {
     /**
      * {@inheritDoc}
      *

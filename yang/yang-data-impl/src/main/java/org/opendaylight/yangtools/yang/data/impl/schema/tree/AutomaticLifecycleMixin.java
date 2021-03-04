@@ -107,6 +107,6 @@ final class AutomaticLifecycleMixin {
     private static boolean isEmpty(final TreeNode treeNode) {
         final NormalizedNode data = treeNode.getData();
         checkState(data instanceof NormalizedNodeContainer, "Unhandled data %s", data);
-        return ((NormalizedNodeContainer<?, ?>) data).size() == 0;
+        return ((NormalizedNodeContainer<?>) data).size() == 0;
     }
 }

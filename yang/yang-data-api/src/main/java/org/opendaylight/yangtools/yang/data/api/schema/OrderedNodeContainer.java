@@ -17,7 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * @param <V> child type
  */
 public interface OrderedNodeContainer<V extends NormalizedNode>
-        extends NormalizedNodeContainer<NodeIdentifier, V>, MixinNode, OrderingAware.User {
+        extends NormalizedNodeContainer<V>, MixinNode, OrderingAware.User {
+    @Override
+    NodeIdentifier getIdentifier();
+
     /**
      * Returns child node by position.
      *

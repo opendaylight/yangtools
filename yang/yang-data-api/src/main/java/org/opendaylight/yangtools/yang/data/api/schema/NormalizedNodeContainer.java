@@ -9,21 +9,15 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Node which is not leaf, but has child {@link NormalizedNode}s as its value. It provides iteration over its child
  * nodes via {@link #body()}. More convenient access to child nodes are provided by {@link DistinctNodeContainer} and
  * {@link OrderedNodeContainer}.
  *
- * @param <I> Path argument type
  * @param <V> Child Node type
  */
-public interface NormalizedNodeContainer<I extends PathArgument, V extends NormalizedNode>
-        extends NormalizedNode, OrderingAware {
-    @Override
-    I getIdentifier();
-
+public interface NormalizedNodeContainer<V extends NormalizedNode> extends NormalizedNode, OrderingAware {
     /**
      * {@inheritDoc}
      *

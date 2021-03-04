@@ -43,8 +43,8 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     }
 
     @SuppressWarnings("unchecked")
-    protected final DistinctNodeContainer<?, PathArgument, NormalizedNode> getData() {
-        return (DistinctNodeContainer<?, PathArgument, NormalizedNode>) data;
+    protected final DistinctNodeContainer<PathArgument, NormalizedNode> getData() {
+        return (DistinctNodeContainer<PathArgument, NormalizedNode>) data;
     }
 
     @Override

@@ -27,7 +27,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
  *               handle them, provided they get enough support from MountPointContext.
  */
 @Beta
-public interface MountPointNode extends DataContainerNode<MountPointIdentifier>, DataContainerChild, MixinNode {
+public interface MountPointNode extends DataContainerNode, DataContainerChild, MixinNode {
+    @Override
+    MountPointIdentifier getIdentifier();
+
     @Override
     @Deprecated
     default QName getNodeType() {

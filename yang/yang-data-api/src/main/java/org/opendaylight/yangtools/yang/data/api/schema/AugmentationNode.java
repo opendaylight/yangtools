@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
  * <p>
  * Augmentation node MUST NOT be direct child of other augmentation node.
  */
-public interface AugmentationNode extends DataContainerNode<AugmentationIdentifier>, DataContainerChild, MixinNode {
+public interface AugmentationNode extends DataContainerNode, DataContainerChild, MixinNode {
     /**
      * Gets identifier of augmentation node. Returned identifier of augmentation node contains all possible
      * direct child QNames.

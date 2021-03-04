@@ -22,8 +22,8 @@ abstract class AbstractContainerNode extends AbstractTreeNode {
     }
 
     @SuppressWarnings("unchecked")
-    protected final DistinctNodeContainer<?, PathArgument, NormalizedNode> castData() {
-        return (DistinctNodeContainer<?, PathArgument, NormalizedNode>) getData();
+    protected final DistinctNodeContainer<PathArgument, NormalizedNode> castData() {
+        return (DistinctNodeContainer<PathArgument, NormalizedNode>) getData();
     }
 
     protected final @Nullable TreeNode getChildFromData(final PathArgument childId) {
@@ -31,7 +31,7 @@ abstract class AbstractContainerNode extends AbstractTreeNode {
         return getChildFromData(castData(), childId, getVersion());
     }
 
-    static TreeNode getChildFromData(final DistinctNodeContainer<?, PathArgument, NormalizedNode> data,
+    static TreeNode getChildFromData(final DistinctNodeContainer<PathArgument, NormalizedNode> data,
             final PathArgument childId, final Version version) {
         final NormalizedNode child = data.childByArg(childId);
         return child != null ? TreeNodeFactory.createTreeNode(child, version) : null;

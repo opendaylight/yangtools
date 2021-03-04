@@ -64,9 +64,9 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @SuppressWarnings("unchecked")
-    private static DistinctNodeContainer<?, PathArgument, NormalizedNode> getContainer(
+    private static DistinctNodeContainer<PathArgument, NormalizedNode> getContainer(
             final @Nullable TreeNode meta) {
-        return meta == null ? null : (DistinctNodeContainer<?, PathArgument, NormalizedNode>)meta.getData();
+        return meta == null ? null : (DistinctNodeContainer<PathArgument, NormalizedNode>)meta.getData();
     }
 
     private ChildNode childNode(final ModifiedNode childMod) {

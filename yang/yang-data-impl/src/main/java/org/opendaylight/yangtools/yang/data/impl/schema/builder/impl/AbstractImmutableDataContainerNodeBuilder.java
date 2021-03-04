@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode<I>>
+abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode>
         implements DataContainerNodeBuilder<I, R> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractImmutableDataContainerNodeBuilder.class);

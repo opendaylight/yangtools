@@ -42,7 +42,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof DistinctNodeContainer) {
-            return Collections2.transform(((DistinctNodeContainer<?, ?, ?>) data).body(),
+            return Collections2.transform(((DistinctNodeContainer<?, ?>) data).body(),
                 input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
         }
         return ImmutableList.of();

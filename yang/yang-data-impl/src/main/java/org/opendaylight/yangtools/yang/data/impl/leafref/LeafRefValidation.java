@@ -167,8 +167,8 @@ public final class LeafRefValidation {
         } else if (node instanceof ChoiceNode) {
             validateChoiceNodeData((ChoiceNode) node, referencedByCtx, referencingCtx, modificationType, current);
         } else if (node instanceof DataContainerNode) {
-            validateDataContainerNodeData((DataContainerNode<?>) node, referencedByCtx, referencingCtx,
-                modificationType, current);
+            validateDataContainerNodeData((DataContainerNode) node, referencedByCtx, referencingCtx, modificationType,
+                current);
         } else if (node instanceof MapNode) {
             validateMapNodeData((MapNode) node, referencedByCtx, referencingCtx, modificationType, current);
         }
@@ -217,7 +217,7 @@ public final class LeafRefValidation {
         }
     }
 
-    private void validateDataContainerNodeData(final DataContainerNode<?> node, final LeafRefContext referencedByCtx,
+    private void validateDataContainerNodeData(final DataContainerNode node, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
         for (final DataContainerChild child : node.body()) {
@@ -372,8 +372,7 @@ public final class LeafRefValidation {
 
         final PathArgument pathArgument = new NodeIdentifier(next.getQName());
         if (node instanceof DataContainerNode) {
-            processChildNode(values, (DataContainerNode<?>) node, pathArgument, next.getQNamePredicates(), path,
-                current);
+            processChildNode(values, (DataContainerNode) node, pathArgument, next.getQNamePredicates(), path, current);
         } else if (node instanceof MapNode) {
             Stream<MapEntryNode> entries = ((MapNode) node).body().stream();
             if (!nodePredicates.isEmpty() && current != null) {
@@ -385,7 +384,7 @@ public final class LeafRefValidation {
         }
     }
 
-    private void processChildNode(final Set<Object> values, final DataContainerNode<?> parent,
+    private void processChildNode(final Set<Object> values, final DataContainerNode parent,
             final PathArgument arg, final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
         final DataContainerChild child = parent.childByArg(arg);

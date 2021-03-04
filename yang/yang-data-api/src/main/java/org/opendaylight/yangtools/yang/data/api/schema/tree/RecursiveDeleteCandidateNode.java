@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode {
-    RecursiveDeleteCandidateNode(final DistinctNodeContainer<?, PathArgument, NormalizedNode> data) {
+    RecursiveDeleteCandidateNode(final DistinctNodeContainer<PathArgument, NormalizedNode> data) {
         super(data);
     }
 
@@ -33,7 +33,7 @@ final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode 
     }
 
     @Override
-    DataTreeCandidateNode createContainer(final DistinctNodeContainer<?, PathArgument, NormalizedNode> childData) {
+    DataTreeCandidateNode createContainer(final DistinctNodeContainer<PathArgument, NormalizedNode> childData) {
         return new RecursiveDeleteCandidateNode(childData);
     }
 
