@@ -26,11 +26,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *   <li>{@link MapEntryNode} and its specializations</li>
  *   <li>{@link UnkeyedListEntryNode}</li>
  * </ul>
- *
- * @param <K> {@link PathArgument} which identifies this instance {@link DataContainerNode}
  */
-public interface DataContainerNode<K extends PathArgument>
-        extends DistinctNodeContainer<K, PathArgument, DataContainerChild>, OrderingAware.System {
+public interface DataContainerNode
+        extends DistinctNodeContainer<PathArgument, DataContainerChild>, OrderingAware.System {
     @Override
     int hashCode();
 

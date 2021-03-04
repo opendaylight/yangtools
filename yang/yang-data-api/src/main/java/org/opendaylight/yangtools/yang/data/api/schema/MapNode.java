@@ -22,8 +22,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * is defined by YANG {@code list} statement and its {@code key} and {@code ordered-by} substatements.
  */
 public interface MapNode
-        extends DistinctNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode>, DataContainerChild,
-                MixinNode {
+        extends DistinctNodeContainer<NodeIdentifierWithPredicates, MapEntryNode>, DataContainerChild, MixinNode {
+    @Override
+    NodeIdentifier getIdentifier();
+
     /**
      * Return a {@link Map} view of this node. Note that the iteration order of the returned is map is not defined in
      * this interface.

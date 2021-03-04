@@ -48,7 +48,7 @@ abstract class UniqueValidator<T> implements Immutable {
         }
 
         @Override
-        Object extractValues(final Map<List<NodeIdentifier>, Object> valueCache, final DataContainerNode<?> data) {
+        Object extractValues(final Map<List<NodeIdentifier>, Object> valueCache, final DataContainerNode data) {
             return extractValue(valueCache, data, decodePath(descendants));
         }
 
@@ -64,8 +64,7 @@ abstract class UniqueValidator<T> implements Immutable {
         }
 
         @Override
-        UniqueValues extractValues(final Map<List<NodeIdentifier>, Object> valueCache,
-                final DataContainerNode<?> data) {
+        UniqueValues extractValues(final Map<List<NodeIdentifier>, Object> valueCache, final DataContainerNode data) {
             return descendants.stream()
                 .map(obj -> extractValue(valueCache, data, decodePath(obj)))
                 .collect(UniqueValues.COLLECTOR);
@@ -101,8 +100,7 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param data Root data node
      * @return Value vector
      */
-    abstract @Nullable Object extractValues(Map<List<NodeIdentifier>, Object> valueCache,
-        DataContainerNode<?> data);
+    abstract @Nullable Object extractValues(Map<List<NodeIdentifier>, Object> valueCache, DataContainerNode data);
 
     /**
      * Index a value vector by associating each value with its corresponding {@link Descendant}.
@@ -158,7 +156,7 @@ abstract class UniqueValidator<T> implements Immutable {
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
         justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static @Nullable Object extractValue(final Map<List<NodeIdentifier>, Object> valueCache,
-            final DataContainerNode<?> data, final List<NodeIdentifier> path) {
+            final DataContainerNode data, final List<NodeIdentifier> path) {
         return valueCache.computeIfAbsent(path, key -> extractValue(data, key));
     }
 
@@ -169,8 +167,8 @@ abstract class UniqueValidator<T> implements Immutable {
      * @param path Descendant path
      * @return Value for the descendant
      */
-    private static @Nullable Object extractValue(final DataContainerNode<?> data, final List<NodeIdentifier> path) {
-        DataContainerNode<?> current = data;
+    private static @Nullable Object extractValue(final DataContainerNode data, final List<NodeIdentifier> path) {
+        DataContainerNode current = data;
         final Iterator<NodeIdentifier> it = path.iterator();
         while (true) {
             final NodeIdentifier step = it.next();
@@ -187,7 +185,7 @@ abstract class UniqueValidator<T> implements Immutable {
             }
 
             checkState(next instanceof DataContainerNode, "Unexpected node %s in %s", next, path);
-            current = (DataContainerNode<?>) next;
+            current = (DataContainerNode) next;
         }
     }
 }

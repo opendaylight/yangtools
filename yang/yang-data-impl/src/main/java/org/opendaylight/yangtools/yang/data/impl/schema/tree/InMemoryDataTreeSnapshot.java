@@ -58,7 +58,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     public Optional<DataTreeSnapshotCursor> openCursor(final YangInstanceIdentifier path) {
         return NormalizedNodes.findNode(rootNode.getData(), path).map(root -> {
             checkArgument(root instanceof DistinctNodeContainer, "Child %s is not a container", path);
-            return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (DistinctNodeContainer<?, ?, ?>)root));
+            return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (DistinctNodeContainer<?, ?>)root));
         });
     }
 
