@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 
 final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTreeSnapshot> {
-    private final Deque<DistinctNodeContainer<?, ?, ?>> stack = new ArrayDeque<>();
+    private final Deque<DistinctNodeContainer<?, ?>> stack = new ArrayDeque<>();
 
     InMemoryDataTreeSnapshotCursor(final InMemoryDataTreeSnapshot parent, final YangInstanceIdentifier rootPath,
-            final DistinctNodeContainer<?, ?, ?> normalizedNode) {
+            final DistinctNodeContainer<?, ?> normalizedNode) {
         super(parent, rootPath);
         stack.push(normalizedNode);
     }
@@ -36,7 +36,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
 
         final NormalizedNode childNode = maybeChildNode.get();
         checkArgument(childNode instanceof NormalizedNodeContainer, "Child %s is not a container", child);
-        stack.push((DistinctNodeContainer<?, ?, ?>) childNode);
+        stack.push((DistinctNodeContainer<?, ?>) childNode);
     }
 
     @Override

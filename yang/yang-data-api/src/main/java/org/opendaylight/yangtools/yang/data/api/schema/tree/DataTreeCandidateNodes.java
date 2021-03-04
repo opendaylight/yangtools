@@ -48,7 +48,7 @@ public final class DataTreeCandidateNodes {
      */
     public static @NonNull DataTreeCandidateNode unmodified(final NormalizedNode node) {
         if (node instanceof DistinctNodeContainer) {
-            return new RecursiveUnmodifiedCandidateNode((DistinctNodeContainer<?, PathArgument, NormalizedNode>) node);
+            return new RecursiveUnmodifiedCandidateNode((DistinctNodeContainer<PathArgument, NormalizedNode>) node);
         }
         return new UnmodifiedLeafCandidateNode(node);
     }
@@ -73,8 +73,8 @@ public final class DataTreeCandidateNodes {
      * @return Collection of changes
      */
     public static @NonNull Collection<DataTreeCandidateNode> containerDelta(
-            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> oldData,
-            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> newData) {
+            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
+            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> newData) {
         if (newData == null) {
             return oldData == null ? ImmutableList.of()
                     : Collections2.transform(oldData.body(), DataTreeCandidateNodes::deleteNode);
@@ -125,8 +125,8 @@ public final class DataTreeCandidateNodes {
      * @return A {@link DataTreeCandidateNode} describing the change, or empty if the node is not present
      */
     public static @NonNull Optional<DataTreeCandidateNode> containerDelta(
-            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> oldData,
-            final @Nullable DistinctNodeContainer<?, PathArgument, NormalizedNode> newData,
+            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> oldData,
+            final @Nullable DistinctNodeContainer<PathArgument, NormalizedNode> newData,
             final @NonNull PathArgument child) {
         final NormalizedNode newChild = getChild(newData, child);
         final NormalizedNode oldChild = getChild(oldData, child);
@@ -222,7 +222,7 @@ public final class DataTreeCandidateNodes {
     }
 
     private static @Nullable NormalizedNode getChild(
-            final DistinctNodeContainer<?, PathArgument, ?> container, final PathArgument identifier) {
+            final DistinctNodeContainer<PathArgument, ?> container, final PathArgument identifier) {
         return container == null ? null : container.childByArg(identifier);
     }
 
@@ -230,7 +230,7 @@ public final class DataTreeCandidateNodes {
     private static @NonNull DataTreeCandidateNode deleteNode(final NormalizedNode data) {
         if (data instanceof NormalizedNodeContainer) {
             return new RecursiveDeleteCandidateNode(
-                (DistinctNodeContainer<?, PathArgument, NormalizedNode>) data);
+                (DistinctNodeContainer<PathArgument, NormalizedNode>) data);
         }
         return new DeleteLeafCandidateNode(data);
     }
@@ -241,8 +241,8 @@ public final class DataTreeCandidateNodes {
             final NormalizedNode newData) {
         if (oldData instanceof DistinctNodeContainer) {
             return new RecursiveReplaceCandidateNode(
-                (DistinctNodeContainer<?, PathArgument, NormalizedNode>) oldData,
-                (DistinctNodeContainer<?, PathArgument, NormalizedNode>) newData);
+                (DistinctNodeContainer<PathArgument, NormalizedNode>) oldData,
+                (DistinctNodeContainer<PathArgument, NormalizedNode>) newData);
         }
         return new ReplaceLeafCandidateNode(oldData, newData);
     }
@@ -250,7 +250,7 @@ public final class DataTreeCandidateNodes {
     @SuppressWarnings("unchecked")
     private static @NonNull DataTreeCandidateNode writeNode(final NormalizedNode data) {
         if (data instanceof DistinctNodeContainer) {
-            return new RecursiveWriteCandidateNode((DistinctNodeContainer<?, PathArgument, NormalizedNode>) data);
+            return new RecursiveWriteCandidateNode((DistinctNodeContainer<PathArgument, NormalizedNode>) data);
         }
         return new WriteLeafCandidateNode(data);
     }

@@ -41,7 +41,7 @@ public class NormalizedNodesTest {
         final LeafSetEntryNode<?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
         assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedLeafSetEntryNode, mockedPathArgument));
 
-        final DataContainerNode<?> mockedDataContainerNode = mock(DataContainerNode.class);
+        final DataContainerNode mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
         doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));
         doCallRealMethod().when(mockedDataContainerNode).findChildByArg(any(PathArgument.class));
@@ -72,7 +72,7 @@ public class NormalizedNodesTest {
 
     @Test
     public void testFindNode() {
-        final DataContainerNode<?> mockedDataContainerNode = mock(DataContainerNode.class);
+        final DataContainerNode mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
         final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
         doReturn(mockedContainerNode).when(mockedDataContainerNode).childByArg(any(PathArgument.class));

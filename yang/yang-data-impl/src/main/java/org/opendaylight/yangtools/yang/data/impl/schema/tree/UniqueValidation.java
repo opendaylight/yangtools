@@ -94,11 +94,11 @@ final class UniqueValidation extends AbstractValidation {
             final ExceptionSupplier<T> exceptionSupplier) throws T {
         final Stopwatch sw = Stopwatch.createStarted();
         verify(data instanceof NormalizedNodeContainer, "Unexpected data %s", data);
-        final var children = ((NormalizedNodeContainer<?, ?>) data).body();
+        final var children = ((NormalizedNodeContainer<?>) data).body();
         final var collected = HashMultimap.<UniqueValidator<?>, Object>create(validators.size(), children.size());
         for (NormalizedNode child : children) {
             verify(child instanceof DataContainerNode, "Unexpected child %s", child);
-            final DataContainerNode<?> cont = (DataContainerNode<?>) child;
+            final DataContainerNode cont = (DataContainerNode) child;
 
             final Map<List<NodeIdentifier>, Object> valueCache = new HashMap<>();
             for (UniqueValidator<?> validator : validators) {

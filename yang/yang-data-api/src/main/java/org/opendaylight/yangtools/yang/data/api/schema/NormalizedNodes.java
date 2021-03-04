@@ -120,7 +120,7 @@ public final class NormalizedNodes {
     public static Optional<NormalizedNode> getDirectChild(final NormalizedNode node,
             final PathArgument pathArg) {
         if (node instanceof DataContainerNode) {
-            return (Optional) ((DataContainerNode<?>) node).findChildByArg(pathArg);
+            return (Optional) ((DataContainerNode) node).findChildByArg(pathArg);
         } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
             return (Optional) ((MapNode) node).findChildByArg((NodeIdentifierWithPredicates) pathArg);
         } else if (node instanceof LeafSetNode && pathArg instanceof NodeWithValue) {
@@ -147,7 +147,7 @@ public final class NormalizedNodes {
         appendPathArgument(sb.append(prefix), node.getIdentifier());
         if (node instanceof NormalizedNodeContainer) {
             sb.append(" {\n");
-            for (NormalizedNode child : ((NormalizedNodeContainer<?, ?>) node).body()) {
+            for (NormalizedNode child : ((NormalizedNodeContainer<?>) node).body()) {
                 toStringTree(sb, child, offset + STRINGTREE_INDENT);
             }
             sb.append(prefix).append('}');

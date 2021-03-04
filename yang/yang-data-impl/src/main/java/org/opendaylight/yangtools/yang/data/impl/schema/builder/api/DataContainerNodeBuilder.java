@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
-public interface DataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode<I>>
+public interface DataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode>
         extends NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild, R> {
     @Override
     DataContainerNodeBuilder<I, R> withValue(Collection<DataContainerChild> value);

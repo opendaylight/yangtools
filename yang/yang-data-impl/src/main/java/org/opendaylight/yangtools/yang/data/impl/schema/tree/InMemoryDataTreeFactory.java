@@ -75,7 +75,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public DataTree create(final DataTreeConfiguration treeConfig, final EffectiveModelContext initialSchemaContext,
-            final DistinctNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
+            final DistinctNodeContainer<?, ?> initialRoot) throws DataValidationFailedException {
         final DataTree ret = createDataTree(treeConfig, initialSchemaContext, false);
 
         final DataTreeModification mod = ret.takeSnapshot().newModification();

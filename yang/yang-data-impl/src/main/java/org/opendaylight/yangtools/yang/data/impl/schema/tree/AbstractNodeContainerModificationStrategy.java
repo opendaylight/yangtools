@@ -111,7 +111,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     final void verifyValueChildren(final NormalizedNode writtenValue) {
         if (verifyChildrenStructure) {
-            final DistinctNodeContainer<?, ?, ?> container = (DistinctNodeContainer<?, ?, ?>) writtenValue;
+            final DistinctNodeContainer<?, ?> container = (DistinctNodeContainer<?, ?>) writtenValue;
             for (final NormalizedNode child : container.body()) {
                 final ModificationApplyOperation childOp = childByArg(child.getIdentifier());
                 if (childOp == null) {
@@ -149,7 +149,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
     @Override
     protected final void recursivelyVerifyStructure(final NormalizedNode value) {
-        final NormalizedNodeContainer<?, ?> container = (NormalizedNodeContainer<?, ?>) value;
+        final NormalizedNodeContainer<?> container = (NormalizedNodeContainer<?>) value;
         for (final NormalizedNode child : container.body()) {
             final ModificationApplyOperation childOp = childByArg(child.getIdentifier());
             if (childOp == null) {
@@ -241,7 +241,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
         final NormalizedNode value = modification.getWrittenValue();
 
         Verify.verify(value instanceof DistinctNodeContainer, "Attempted to merge non-container %s", value);
-        for (final NormalizedNode c : ((DistinctNodeContainer<?, ?, ?>) value).body()) {
+        for (final NormalizedNode c : ((DistinctNodeContainer<?, ?>) value).body()) {
             final PathArgument id = c.getIdentifier();
             modification.modifyChild(id, resolveChildOperation(id), version);
         }
@@ -260,7 +260,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     @Override
     final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode value,
             final Version version) {
-        final Collection<? extends NormalizedNode> children = ((DistinctNodeContainer<?, ?, ?>)value).body();
+        final Collection<? extends NormalizedNode> children = ((DistinctNodeContainer<?, ?>)value).body();
         switch (modification.getOperation()) {
             case NONE:
                 // Fresh node, just record a MERGE with a value

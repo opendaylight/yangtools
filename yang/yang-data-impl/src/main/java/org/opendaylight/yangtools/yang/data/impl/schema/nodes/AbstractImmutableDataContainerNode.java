@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
-public abstract class AbstractImmutableDataContainerNode<K extends PathArgument, N extends DataContainerNode<K>>
-        extends AbstractNormalizedNode<K, N> implements DataContainerNode<K> {
+public abstract class AbstractImmutableDataContainerNode<K extends PathArgument, N extends DataContainerNode>
+        extends AbstractNormalizedNode<K, N> implements DataContainerNode {
     private final Map<PathArgument, Object> children;
 
     protected AbstractImmutableDataContainerNode(final Map<PathArgument, Object> children, final K nodeIdentifier) {

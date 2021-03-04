@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  * @param <T> Type of leaf node values.
  */
 public interface LeafSetNode<T>
-        extends DistinctNodeContainer<NodeIdentifier, NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild,
-                MixinNode {
-
+        extends DistinctNodeContainer<NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild, MixinNode {
+    @Override
+    NodeIdentifier getIdentifier();
 }
