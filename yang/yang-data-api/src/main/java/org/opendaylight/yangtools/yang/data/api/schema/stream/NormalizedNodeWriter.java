@@ -279,7 +279,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
                 if (input instanceof AugmentationNode) {
                     return true;
                 }
-                if (!qnames.contains(input.getNodeType())) {
+                if (!qnames.contains(input.getIdentifier().getNodeType())) {
                     return true;
                 }
 
