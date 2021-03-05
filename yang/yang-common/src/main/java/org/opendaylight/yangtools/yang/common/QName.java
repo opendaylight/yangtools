@@ -330,6 +330,26 @@ public final class QName extends AbstractQName implements Comparable<QName> {
         return sb.append(QNAME_RIGHT_PARENTHESIS).append(getLocalName()).toString();
     }
 
+    /**
+     * Return the string representation of this QName in context of previous QName.
+     *
+     * If this QName and previous QName are from the same module then only local name without namespace
+     * and revision is returned.
+     *
+     * If modules are different then full string representation including namespace,
+     * revision and local name is returned.
+     *
+     * @param previous Previous QName
+     * @return String representation
+     */
+    public @NonNull String toRelativeString(final QName previous) {
+        final QNameModule mod = previous.getModule();
+        if (getModule().equals(mod)) {
+            return getLocalName();
+        }
+        return toString();
+    }
+
     @Override
     public @NonNull QName bindTo(final QNameModule namespace) {
         return module.equals(namespace) ? this : super.bindTo(namespace);
