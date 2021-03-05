@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
@@ -824,7 +825,10 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public final String toRelativeString(final PathArgument previous) {
-            return super.toRelativeString(previous) + '[' + asMap() + ']';
+            final Map<String, Object> keys = entrySet().stream().collect(Collectors.toMap(
+                    p -> p.getKey().toRelativeString(previous.getNodeType()),
+                    Entry::getValue));
+            return super.toRelativeString(previous) + '[' + keys + ']';
         }
 
         @Override
