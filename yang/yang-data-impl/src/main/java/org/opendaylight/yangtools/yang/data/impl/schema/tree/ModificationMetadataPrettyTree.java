@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Collection;
 import java.util.function.Supplier;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class ModificationMetadataPrettyTree implements Supplier<String> {
@@ -39,20 +38,11 @@ final class ModificationMetadataPrettyTree implements Supplier<String> {
     private void toStringTree(final StringBuilder sb, final ModifiedNode node,
             final PathArgument parentIdentifier, final int offset) {
         final PathArgument identifier = node.getIdentifier();
-
-        final XMLNamespace namespace = identifier.getNodeType().getNamespace();
-        final XMLNamespace parentNamespace = parentIdentifier == null
-                ? null : parentIdentifier.getNodeType().getNamespace();
-
         sb.append("ModifiedNode{");
         sb.append("\n");
         sb.append(" ".repeat(offset));
         sb.append("identifier=");
-        if (namespace.equals(parentNamespace)) {
-            sb.append(identifier.toRelativeString(parentIdentifier));
-        } else {
-            sb.append(identifier);
-        }
+        sb.append(identifier.toRelativeString(parentIdentifier));
 
         sb.append(", operation=");
         sb.append(node.getOperation());
@@ -68,11 +58,7 @@ final class ModificationMetadataPrettyTree implements Supplier<String> {
                 sb.append(", childModification={");
                 sb.append("\n");
                 sb.append(" ".repeat(offset + INDENT));
-                if (child.getIdentifier().getNodeType().getNamespace().equals(namespace)) {
-                    sb.append(child.getIdentifier().toRelativeString(identifier));
-                } else {
-                    sb.append(child.getIdentifier());
-                }
+                sb.append(child.getIdentifier().toRelativeString(identifier));
                 sb.append("=");
                 toStringTree(sb, child, identifier,offset + 2 * INDENT);
                 sb.append("}");

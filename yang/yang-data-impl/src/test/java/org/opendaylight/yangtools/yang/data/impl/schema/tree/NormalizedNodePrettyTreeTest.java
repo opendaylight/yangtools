@@ -12,10 +12,13 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
+import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 
 public class NormalizedNodePrettyTreeTest {
@@ -28,6 +31,8 @@ public class NormalizedNodePrettyTreeTest {
     private static final QName LIST_B_QNAME = QName.create(ROOT_QNAME, "list-b");
     private static final QName LEAF_A_QNAME = QName.create(ROOT_QNAME, "leaf-a");
     private static final QName LEAF_B_QNAME = QName.create(ROOT_QNAME, "leaf-b");
+    private static final QName CHOICE_QNAME = QName.create(ROOT_QNAME, "choice");
+    private static final QName AUGMENT_QNAME = QName.create(ROOT_QNAME, "augment");
     private static final QName LIST_ANOTHER_NAMESPACE_QNAME = QName.create(ANOTHER_NAMESPACE_QNAME,
         "list-from-another-namespace");
     private static final QName LEAF_ANOTHER_NAMESPACE_QNAME = QName.create(ANOTHER_NAMESPACE_QNAME,
@@ -50,6 +55,9 @@ public class NormalizedNodePrettyTreeTest {
      *                  leaf-b "one"
      *          list-b
      *                  leaf-b "two"
+     *     choice
+     *          augment
+     *                  augmented-leaf
      *     list-from-another-namespace
      *          leaf-from-another-namespace "I am leaf from another namespace"
      *          leaf-b "one"
@@ -69,7 +77,18 @@ public class NormalizedNodePrettyTreeTest {
                         .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, ONE))
                         .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, TWO))
                         .build()).build()).build())
-            .withChild(mapNodeBuilder(LIST_ANOTHER_NAMESPACE_QNAME)
+                .withChild(Builders.choiceBuilder()
+                        .withNodeIdentifier(NodeIdentifier.create(CHOICE_QNAME))
+                        .withChild(Builders.augmentationBuilder()
+                                .withNodeIdentifier(AugmentationIdentifier
+                                        .create(Sets.newHashSet(AUGMENT_QNAME)))
+                                .withChild(Builders.leafBuilder()
+                                        .withNodeIdentifier(NodeIdentifier.create(AUGMENT_QNAME))
+                                        .withValue("augmented-leaf")
+                                        .build())
+                                .build())
+                        .build())
+                .withChild(mapNodeBuilder(LIST_ANOTHER_NAMESPACE_QNAME)
                 .withChild(mapEntry(LIST_ANOTHER_NAMESPACE_QNAME,
                     LEAF_ANOTHER_NAMESPACE_QNAME, "I am leaf from another namespace"))
                 .withChild(mapEntry(LIST_ANOTHER_NAMESPACE_QNAME, LEAF_B_QNAME, ONE))
@@ -94,6 +113,9 @@ public class NormalizedNodePrettyTreeTest {
                 "                    leafNode{identifier=leaf-b, value=one}]}]}]}",
                 "        mapEntryNode{identifier=list-a[{leaf-a=foo}], value=[",
                 "            leafNode{identifier=leaf-a, value=foo}]}]}",
+                "    choiceNode{identifier=choice, value=[",
+                "        augmentationNode{identifier=AugmentationIdentifier{childNames=[augment]}, value=[",
+                "            leafNode{identifier=augment, value=augmented-leaf}]}]}",
                 "    systemMapNode{identifier=(urn:opendaylight:controller:sal:dom:store:another)list-from-another-namespace, value=[",
                 "        mapEntryNode{identifier=list-from-another-namespace[{leaf-from-another-namespace=I am leaf from another namespace}], value=[",
                 "            leafNode{identifier=leaf-from-another-namespace, value=I am leaf from another namespace}]}",

@@ -526,6 +526,10 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public String toRelativeString(final PathArgument previous) {
+            // augmented node has the same namespace as module it is declared in
+            if (previous instanceof AugmentationIdentifier) {
+                return getNodeType().getLocalName();
+            }
             if (previous instanceof AbstractPathArgument) {
                 final QNameModule mod = previous.getNodeType().getModule();
                 if (getNodeType().getModule().equals(mod)) {
@@ -980,7 +984,10 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public String toRelativeString(final PathArgument previous) {
-            return toString();
+            final Set<String> relativeChildNames = childNames.stream()
+                    .map(p -> p.toRelativeString(previous.getNodeType()))
+                    .collect(Collectors.toSet());
+            return "AugmentationIdentifier{" + "childNames=" + relativeChildNames + '}';
         }
 
         @Override
