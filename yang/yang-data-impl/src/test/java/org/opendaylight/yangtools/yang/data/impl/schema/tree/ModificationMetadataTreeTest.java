@@ -236,12 +236,12 @@ public class ModificationMetadataTreeTest extends AbstractTestModelTest {
                 "                identifier=(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)test, operation=TOUCH, childModification={",
                 "                    outer-list=ModifiedNode{",
                 "                        identifier=outer-list, operation=TOUCH, childModification={",
-                "                            outer-list[{(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)id=2}]=ModifiedNode{",
-                "                                identifier=outer-list[{(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)id=2}], operation=TOUCH, childModification={",
+                "                            outer-list[{id=2}]=ModifiedNode{",
+                "                                identifier=outer-list[{id=2}], operation=TOUCH, childModification={",
                 "                                    inner-list=ModifiedNode{",
                 "                                        identifier=inner-list, operation=TOUCH, childModification={",
-                "                                            inner-list[{(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)name=two}]=ModifiedNode{",
-                "                                                identifier=inner-list[{(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)name=two}], operation=TOUCH, childModification={",
+                "                                            inner-list[{name=two}]=ModifiedNode{",
+                "                                                identifier=inner-list[{name=two}], operation=TOUCH, childModification={",
                 "                                                    value=ModifiedNode{",
                 "                                                        identifier=value, operation=WRITE}}}}}}}}}}}}}]");
 
