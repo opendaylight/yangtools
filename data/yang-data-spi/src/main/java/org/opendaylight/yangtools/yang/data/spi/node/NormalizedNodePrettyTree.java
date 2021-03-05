@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.spi.node;
 
 import java.util.function.Supplier;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -36,21 +35,11 @@ final class NormalizedNodePrettyTree implements Supplier<String> {
     private void toStringTree(final StringBuilder sb, final AbstractNormalizedNode<?, ?> node,
             final PathArgument parentIdentifier, final int offset) {
         final PathArgument identifier = node.getIdentifier();
-
-        final XMLNamespace namespace = identifier.getNodeType().getNamespace();
-        final XMLNamespace parentNamespace = parentIdentifier == null
-                ? null : parentIdentifier.getNodeType().getNamespace();
-
         sb.append("\n");
         sb.append(" ".repeat(offset));
         sb.append(changeClassName(node));
         sb.append("{identifier=");
-
-        if (namespace.equals(parentNamespace)) {
-            sb.append(identifier.toRelativeString(parentIdentifier));
-        } else {
-            sb.append(identifier);
-        }
+        sb.append(identifier.toRelativeString(parentIdentifier));
 
         if (node instanceof NormalizedNodeContainer) {
             sb.append(", value=[");
