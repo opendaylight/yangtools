@@ -96,7 +96,7 @@ public class OperationFailedException extends Exception {
      * @param errors {@link RpcError} instances that provide additional error information about this exception
      */
     public OperationFailedException(final String message, final Throwable cause, final RpcError... errors) {
-        this(message, null, Arrays.asList(errors));
+        this(message, cause, Arrays.asList(errors));
     }
 
     /**
