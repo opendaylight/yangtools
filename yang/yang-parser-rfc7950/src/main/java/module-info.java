@@ -43,7 +43,6 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
-    exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;

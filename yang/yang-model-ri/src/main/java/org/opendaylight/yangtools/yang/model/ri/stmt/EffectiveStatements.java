@@ -96,6 +96,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -183,6 +185,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMandatoryEffe
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyModifierEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyNamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyOrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyOrganizationEffectiveStatement;
@@ -231,6 +234,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMandatoryEf
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularModifierEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularNamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularOrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularOrganizationEffectiveStatement;
@@ -592,6 +596,12 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyModifierEffectiveStatement(declared)
             : new RegularModifierEffectiveStatement(declared, substatements);
+    }
+
+    public static MustEffectiveStatement createMust(final MustStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyMustEffectiveStatement(declared)
+            : new RegularMustEffectiveStatement(declared, substatements);
     }
 
     public static NamespaceEffectiveStatement createNamespace(final NamespaceStatement declared,
