@@ -39,7 +39,12 @@ final class NormalizedNodePrettyTree implements Supplier<String> {
         sb.append(" ".repeat(offset));
         sb.append(changeClassName(node));
         sb.append("{identifier=");
-        sb.append(identifier.toRelativeString(parentIdentifier));
+
+        if (parentIdentifier == null) {
+            sb.append(identifier);
+        } else {
+            sb.append(identifier.toRelativeString(parentIdentifier));
+        }
 
         if (node instanceof NormalizedNodeContainer) {
             sb.append(", value=[");
