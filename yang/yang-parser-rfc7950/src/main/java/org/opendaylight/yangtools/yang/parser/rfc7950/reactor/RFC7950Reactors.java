@@ -63,6 +63,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.MandatoryStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.MaxElementsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.MinElementsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ModifierStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.MustStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.NamespaceStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.OrderedByStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.OrganizationStatementSupport;
@@ -86,7 +87,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.YangVersionState
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.YinElementStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.ModuleStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.QNameModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must.MustStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path.PathStatementSupport;
