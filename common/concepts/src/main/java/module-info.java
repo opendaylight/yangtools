@@ -8,7 +8,7 @@
 module org.opendaylight.yangtools.concepts {
     exports org.opendaylight.yangtools.concepts;
 
-    requires transitive com.google.common;
+    requires  com.google.common;
     requires org.slf4j;
 
     // Annotations

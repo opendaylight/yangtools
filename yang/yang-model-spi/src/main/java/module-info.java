@@ -9,9 +9,9 @@ module org.opendaylight.yangtools.yang.model.spi {
     exports org.opendaylight.yangtools.yang.model.spi;
     exports org.opendaylight.yangtools.yang.model.spi.meta;
 
-    requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.rfc7952.model.api;
-    requires transitive org.opendaylight.yangtools.yang.xpath.api;
+    requires  org.opendaylight.yangtools.yang.model.api;
+    requires  org.opendaylight.yangtools.rfc7952.model.api;
+    requires  org.opendaylight.yangtools.yang.xpath.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
@@ -19,5 +19,5 @@ module org.opendaylight.yangtools.yang.model.spi {
     requires org.slf4j;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
 }
