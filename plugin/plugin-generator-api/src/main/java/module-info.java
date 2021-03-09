@@ -8,8 +8,8 @@
 module org.opendaylight.yangtools.plugin.generator.api {
     exports org.opendaylight.yangtools.plugin.generator.api;
 
-    requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
+    requires  org.opendaylight.yangtools.yang.model.api;
+    requires  org.opendaylight.yangtools.yang.repo.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
 

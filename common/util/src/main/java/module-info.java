@@ -10,14 +10,14 @@ module org.opendaylight.yangtools.util {
     exports org.opendaylight.yangtools.util.concurrent;
     exports org.opendaylight.yangtools.util.xml;
 
-    requires transitive java.xml;
+    requires  java.xml;
 
     requires org.opendaylight.yangtools.concepts;
     requires org.slf4j;
     requires tech.pantheon.triemap;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static java.compiler;
     requires static java.management;

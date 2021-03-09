@@ -8,9 +8,9 @@
 module org.opendaylight.yangtools.yang.model.util {
     exports org.opendaylight.yangtools.yang.model.util;
 
-    requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
-    requires transitive org.opendaylight.yangtools.yang.xpath.api;
+    requires  org.opendaylight.yangtools.yang.model.api;
+    requires  org.opendaylight.yangtools.yang.repo.api;
+    requires  org.opendaylight.yangtools.yang.xpath.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.common;
@@ -18,6 +18,6 @@ module org.opendaylight.yangtools.yang.model.util {
     requires org.slf4j;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
 }

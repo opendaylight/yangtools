@@ -10,7 +10,7 @@
 module org.opendaylight.yangtools.rfc7952.data.util {
     exports org.opendaylight.yangtools.rfc7952.data.util;
 
-    requires transitive org.opendaylight.yangtools.yang.data.util;
+    requires  org.opendaylight.yangtools.yang.data.util;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.rfc7952.data.api;
