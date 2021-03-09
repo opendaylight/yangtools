@@ -27,12 +27,12 @@ module org.opendaylight.yangtools.yang.common {
         Uint32.Support,
         Uint64.Support;
 
-    requires transitive org.opendaylight.yangtools.concepts;
+    requires  org.opendaylight.yangtools.concepts;
     requires com.google.common;
     requires org.slf4j;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
 }
