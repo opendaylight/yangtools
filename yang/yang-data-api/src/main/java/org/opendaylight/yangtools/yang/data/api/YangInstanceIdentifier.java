@@ -537,7 +537,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
                 }
             }
 
-            return getNodeType().toString();
+            return toString();
         }
 
         abstract Object writeReplace();
@@ -829,10 +829,14 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public final String toRelativeString(final PathArgument previous) {
-            final Map<String, Object> keys = entrySet().stream().collect(Collectors.toMap(
-                    p -> p.getKey().toRelativeString(previous.getNodeType()),
-                    Entry::getValue));
-            return super.toRelativeString(previous) + '[' + keys + ']';
+            if (previous instanceof AbstractPathArgument) {
+                final Map<String, Object> keys = entrySet().stream().collect(Collectors.toMap(
+                        p -> p.getKey().toRelativeString(previous.getNodeType()),
+                        Entry::getValue));
+                return super.toRelativeString(previous) + '[' + keys + ']';
+            }
+
+            return toString();
         }
 
         @Override
@@ -984,10 +988,14 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public String toRelativeString(final PathArgument previous) {
-            final Set<String> relativeChildNames = childNames.stream()
-                    .map(p -> p.toRelativeString(previous.getNodeType()))
-                    .collect(Collectors.toSet());
-            return "AugmentationIdentifier{" + "childNames=" + relativeChildNames + '}';
+            if (previous instanceof AbstractPathArgument) {
+                final Set<String> relativeChildNames = childNames.stream()
+                        .map(p -> p.toRelativeString(previous.getNodeType()))
+                        .collect(Collectors.toSet());
+                return "AugmentationIdentifier{" + "childNames=" + relativeChildNames + '}';
+            }
+
+            return toString();
         }
 
         @Override
