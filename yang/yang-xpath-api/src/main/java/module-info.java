@@ -9,8 +9,8 @@ module org.opendaylight.yangtools.yang.xpath.api {
     exports org.opendaylight.yangtools.yang.xpath.api;
 
     // FIXME: it would be nice if we could live without java.xml here
-    requires transitive java.xml;
-    requires transitive org.opendaylight.yangtools.yang.common;
+    requires  java.xml;
+    requires  org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.slf4j;
 

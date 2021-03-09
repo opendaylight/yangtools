@@ -9,10 +9,10 @@ module org.opendaylight.yangtools.yang.data.util {
     exports org.opendaylight.yangtools.yang.data.util;
     exports org.opendaylight.yangtools.yang.data.util.codec;
 
-    requires transitive org.opendaylight.yangtools.odlext.model.api;
-    requires transitive org.opendaylight.yangtools.rfc7952.data.api;
-    requires transitive org.opendaylight.yangtools.rfc8528.data.api;
-    requires transitive org.opendaylight.yangtools.yang.model.util;
+    requires  org.opendaylight.yangtools.odlext.model.api;
+    requires  org.opendaylight.yangtools.rfc7952.data.api;
+    requires  org.opendaylight.yangtools.rfc8528.data.api;
+    requires  org.opendaylight.yangtools.yang.model.util;
 
     requires java.xml;
     requires com.google.common;

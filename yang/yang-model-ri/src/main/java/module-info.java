@@ -12,8 +12,8 @@ module org.opendaylight.yangtools.yang.model.ri {
     exports org.opendaylight.yangtools.yang.model.ri.stmt;
     exports org.opendaylight.yangtools.yang.model.ri.type;
 
-    requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
+    requires  org.opendaylight.yangtools.yang.model.api;
+    requires  org.opendaylight.yangtools.yang.repo.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.common;
@@ -22,5 +22,5 @@ module org.opendaylight.yangtools.yang.model.ri {
     requires org.slf4j;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
 }

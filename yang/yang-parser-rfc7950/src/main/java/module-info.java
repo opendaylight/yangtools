@@ -16,10 +16,10 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
 
     uses org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
-    requires transitive org.opendaylight.yangtools.yang.parser.api;
-    requires transitive org.opendaylight.yangtools.yang.parser.reactor;
-    requires transitive org.opendaylight.yangtools.yang.parser.spi;
-    requires transitive org.opendaylight.yangtools.yang.repo.spi;
+    requires  org.opendaylight.yangtools.yang.parser.api;
+    requires  org.opendaylight.yangtools.yang.parser.reactor;
+    requires  org.opendaylight.yangtools.yang.parser.spi;
+    requires  org.opendaylight.yangtools.yang.repo.spi;
 
     requires java.xml;
     requires com.google.common;

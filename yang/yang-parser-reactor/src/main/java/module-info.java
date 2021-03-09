@@ -8,7 +8,7 @@
 module org.opendaylight.yangtools.yang.parser.reactor {
     exports org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-    requires transitive org.opendaylight.yangtools.yang.parser.spi;
+    requires  org.opendaylight.yangtools.yang.parser.spi;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.common;
