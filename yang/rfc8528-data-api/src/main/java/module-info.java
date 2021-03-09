@@ -10,13 +10,13 @@
 module org.opendaylight.yangtools.rfc8528.data.api {
     exports org.opendaylight.yangtools.rfc8528.data.api;
 
-    requires transitive org.opendaylight.yangtools.yang.data.api;
-    requires transitive org.opendaylight.yangtools.yang.parser.api;
+    requires  org.opendaylight.yangtools.yang.data.api;
+    requires  org.opendaylight.yangtools.yang.parser.api;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.api;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
 }
