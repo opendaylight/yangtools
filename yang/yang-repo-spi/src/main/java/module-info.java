@@ -8,9 +8,9 @@
 module org.opendaylight.yangtools.yang.repo.spi {
     exports org.opendaylight.yangtools.yang.model.repo.spi;
 
-    requires transitive java.xml;
-    requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
+    requires  java.xml;
+    requires  org.opendaylight.yangtools.yang.model.api;
+    requires  org.opendaylight.yangtools.yang.repo.api;
 
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
@@ -19,7 +19,7 @@ module org.opendaylight.yangtools.yang.repo.spi {
     requires org.slf4j;
 
     // Annotations
-    requires static transitive org.eclipse.jdt.annotation;
+    requires static  org.eclipse.jdt.annotation;
 //    requires static org.checkerframework.checker.qual;
     //    requires static com.github.spotbugs.annotations;
 }

@@ -10,8 +10,8 @@
 module org.opendaylight.yangtools.rfc6643.model.api {
     exports org.opendaylight.yangtools.rfc6643.model.api;
 
-    requires transitive org.opendaylight.yangtools.yang.model.api;
-    requires transitive org.opendaylight.yangtools.yang.repo.api;
+    requires  org.opendaylight.yangtools.yang.model.api;
+    requires  org.opendaylight.yangtools.yang.repo.api;
     requires com.google.common;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.yang.common;
