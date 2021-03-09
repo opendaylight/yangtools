@@ -124,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "e112ce3c_d0125383",
+        "filename": "docs/src/main/asciidoc/developing.adoc",
+        "patchSetId": 3
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 8808
+      },
+      "writtenOn": "2021-03-09T12:04:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b228439_e65fca27",
+      "revId": "f0d492e69cf19993dc7b906210a5ba0e3679024b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ac0ccdac_d238d75a",
         "filename": "docs/src/main/asciidoc/developing.adoc",
         "patchSetId": 3
@@ -141,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "acbe9663_2f95acb5",
+        "filename": "docs/src/main/asciidoc/developing.adoc",
+        "patchSetId": 3
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 8808
+      },
+      "writtenOn": "2021-03-09T12:04:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac0ccdac_d238d75a",
+      "revId": "f0d492e69cf19993dc7b906210a5ba0e3679024b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "209f0bb9_758d06ca",
         "filename": "docs/src/main/asciidoc/developing.adoc",
         "patchSetId": 3
@@ -155,6 +191,24 @@
       "revId": "f0d492e69cf19993dc7b906210a5ba0e3679024b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92ae9f48_ef83ea80",
+        "filename": "docs/src/main/asciidoc/developing.adoc",
+        "patchSetId": 3
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 8808
+      },
+      "writtenOn": "2021-03-09T12:04:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "209f0bb9_758d06ca",
+      "revId": "f0d492e69cf19993dc7b906210a5ba0e3679024b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
