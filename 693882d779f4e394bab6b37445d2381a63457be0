@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a0d85b21_83745246",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2021-03-09T13:24:59Z",
+      "side": 1,
+      "message": "guide",
+      "revId": "693882d779f4e394bab6b37445d2381a63457be0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3cbeccd_33b9e798",
+        "filename": "docs/src/main/asciidoc/developing.adoc",
+        "patchSetId": 5
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2021-03-09T13:24:59Z",
+      "side": 1,
+      "message": "build();",
+      "revId": "693882d779f4e394bab6b37445d2381a63457be0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
