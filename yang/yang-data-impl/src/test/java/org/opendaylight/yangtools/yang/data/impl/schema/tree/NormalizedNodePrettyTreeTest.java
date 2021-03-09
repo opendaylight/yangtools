@@ -13,8 +13,8 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import com.google.common.collect.Sets;
 import java.util.List;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -41,33 +42,35 @@ public class NormalizedNodePrettyTreeTest {
         "urn:opendaylight:controller:sal:dom:store:test", "2014-03-13", "root");
     private static final QName ANOTHER_QNAME = QName.create(
         "urn:opendaylight:controller:sal:dom:store:another", "another");
+
     private static final QName LIST_A_QNAME = QName.create(ROOT_QNAME, "list-a");
-    private static final QName LIST_B_QNAME = QName.create(ROOT_QNAME, "list-b");
     private static final QName LEAF_A_QNAME = QName.create(ROOT_QNAME, "leaf-a");
     private static final QName LEAF_B_QNAME = QName.create(ROOT_QNAME, "leaf-b");
+    private static final QName LIST_B_QNAME = QName.create(ROOT_QNAME, "list-b");
+
     private static final QName CHOICE_QNAME = QName.create(ROOT_QNAME, "choice");
     private static final QName AUGMENT_QNAME = QName.create(ROOT_QNAME, "augment");
+
     private static final QName LIST_ANOTHER_NAMESPACE_QNAME = QName.create(ANOTHER_QNAME,
             "list-from-another-namespace");
     private static final QName LEAF_ANOTHER_NAMESPACE_QNAME = QName.create(ANOTHER_QNAME,
         "leaf-from-another-namespace");
+
     private static final QName LEAF_QNAME = QName.create(ROOT_QNAME, "leaf");
     private static final QName LEAF_SET_QNAME = QName.create(ROOT_QNAME, "leaf-set");
+
     private static final QName USER_LEAF_SET_QNAME = QName.create(ROOT_QNAME, "user-leaf-set");
     private static final QName USER_ORDERED_MAP_QNAME = QName.create(ROOT_QNAME, "user-map");
-    private static final QName USER_ORDERED_MAP_ENTRY_QNAME = QName.create(ROOT_QNAME, "use-map-entry");
+    private static final QName USER_ORDERED_MAP_ENTRY_QNAME = QName.create(ROOT_QNAME, "user-map-entry");
+
     private static final QName UNKEYED_LIST_QNAME = QName.create(ROOT_QNAME,
             "unkeyed-list");
     private static final QName UNKEYED_LIST_ENTRY_QNAME = QName.create(ROOT_QNAME,
             "unkeyed-list-entry");
     private static final QName UNKEYED_LIST_LEAF_QNAME = QName.create(ROOT_QNAME,
             "unkeyed-list-leaf");
-    private static final QName ANY_DATA_QNAME = QName.create(ROOT_QNAME, "any-data");
 
-    private static final String FOO = "foo";
-    private static final String BAR = "bar";
-    private static final String ONE = "one";
-    private static final String TWO = "two";
+    private static final QName ANY_DATA_QNAME = QName.create(ROOT_QNAME, "any-data");
 
     /**
      * Return a test node.
@@ -88,7 +91,6 @@ public class NormalizedNodePrettyTreeTest {
      *     another
      *          list-from-another-namespace
      *               leaf-from-another-namespace "Leaf from another namespace value"
-     *               leaf "Leaf value"
      *     leaf "Leaf value"
      *     leaf-set "Leaf set value"
      *     user-leaf-set "User leaf set value"
@@ -108,14 +110,7 @@ public class NormalizedNodePrettyTreeTest {
                 .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
                 .withChild(createMapNode())
                 .withChild(createChoiceNode())
-                .withChild(ImmutableContainerNodeBuilder.create()
-                        .withNodeIdentifier(new NodeIdentifier(ANOTHER_QNAME))
-                        .withChild(mapNodeBuilder(LIST_ANOTHER_NAMESPACE_QNAME)
-                                .withChild(mapEntry(LIST_ANOTHER_NAMESPACE_QNAME,
-                                        LEAF_ANOTHER_NAMESPACE_QNAME,
-                                        "Leaf from another namespace value"))
-                                .build())
-                        .build())
+                .withChild(createContainerFromAnotherNamespace())
                 .withChild(createLeafNode())
                 .withChild(createLeafSetNode())
                 .withChild(createUserLeafSetNode())
@@ -127,15 +122,15 @@ public class NormalizedNodePrettyTreeTest {
 
     private static MapNode createMapNode() {
         return mapNodeBuilder(LIST_A_QNAME)
-                .withChild(mapEntry(LIST_A_QNAME, LEAF_A_QNAME, FOO))
+                .withChild(mapEntry(LIST_A_QNAME, LEAF_A_QNAME, "foo"))
                 .withChild(createMapEntryNode()).build();
     }
 
     private static MapEntryNode createMapEntryNode() {
-        return mapEntryBuilder(LIST_A_QNAME, LEAF_A_QNAME, BAR)
+        return mapEntryBuilder(LIST_A_QNAME, LEAF_A_QNAME, "bar")
                 .withChild(mapNodeBuilder(LIST_B_QNAME)
-                        .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, ONE))
-                        .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, TWO))
+                        .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, "one"))
+                        .withChild(mapEntry(LIST_B_QNAME, LEAF_B_QNAME, "two"))
                         .build()).build();
     }
 
@@ -146,14 +141,22 @@ public class NormalizedNodePrettyTreeTest {
                 .build();
     }
 
+    private static ContainerNode createContainerFromAnotherNamespace() {
+        return ImmutableContainerNodeBuilder.create()
+                .withNodeIdentifier(new NodeIdentifier(ANOTHER_QNAME))
+                .withChild(mapNodeBuilder(LIST_ANOTHER_NAMESPACE_QNAME)
+                        .withChild(mapEntry(LIST_ANOTHER_NAMESPACE_QNAME,
+                                LEAF_ANOTHER_NAMESPACE_QNAME,
+                                "Leaf from another namespace value"))
+                        .build())
+                .build();
+    }
+
     private static AugmentationNode createAugmentationNode() {
         return Builders.augmentationBuilder()
                 .withNodeIdentifier(AugmentationIdentifier
-                        .create(Sets.newHashSet(AUGMENT_QNAME)))
-                .withChild(Builders.leafBuilder()
-                        .withNodeIdentifier(NodeIdentifier.create(AUGMENT_QNAME))
-                        .withValue("Augmented leaf value")
-                        .build())
+                        .create(Set.of(AUGMENT_QNAME)))
+                .withChild(leafNode(AUGMENT_QNAME, "Augmented leaf value"))
                 .build();
     }
 
@@ -165,9 +168,10 @@ public class NormalizedNodePrettyTreeTest {
     }
 
     private static LeafSetNode<String> createLeafSetNode() {
+        final String value = "Leaf set value";
         final LeafSetEntryNode<String> leafSetValue = Builders.<String>leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue<>(LEAF_SET_QNAME, "Leaf set value"))
-                .withValue("Leaf set value")
+                .withNodeIdentifier(new NodeWithValue<>(LEAF_SET_QNAME, value))
+                .withValue(value)
                 .build();
         return Builders.<String>leafSetBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(LEAF_SET_QNAME))
@@ -176,9 +180,10 @@ public class NormalizedNodePrettyTreeTest {
     }
 
     private static UserLeafSetNode<String> createUserLeafSetNode() {
+        final String value = "User leaf set value";
         final LeafSetEntryNode<String> leafSetValue = Builders.<String>leafSetEntryBuilder()
-                .withNodeIdentifier(new NodeWithValue(USER_LEAF_SET_QNAME, "User leaf set value"))
-                .withValue("User leaf set value")
+                .withNodeIdentifier(new NodeWithValue<>(USER_LEAF_SET_QNAME, value))
+                .withValue(value)
                 .build();
         return Builders.<String>orderedLeafSetBuilder()
                 .withNodeIdentifier(NodeIdentifier.create(USER_LEAF_SET_QNAME))
@@ -308,8 +313,8 @@ public class NormalizedNodePrettyTreeTest {
         final String expected = String.join("\n",
                 "",
                 "userMapNode{identifier=(urn:opendaylight:controller:sal:dom:store:test?revision=2014-03-13)user-map, value=[",
-                "    mapEntryNode{identifier=use-map-entry[{use-map-entry=User map entry value}], value=[",
-                "        leafNode{identifier=use-map-entry, value=User map entry value}]}]}");
+                "    mapEntryNode{identifier=user-map-entry[{user-map-entry=User map entry value}], value=[",
+                "        leafNode{identifier=user-map-entry, value=User map entry value}]}]}");
         assertEquals(expected, createUserMapNode().prettyTree().get());
     }
 
@@ -318,8 +323,8 @@ public class NormalizedNodePrettyTreeTest {
     public void userMapEntryPrettyTreeTest() {
         final String expected = String.join("\n",
                 "",
-                "mapEntryNode{identifier=(urn:opendaylight:controller:sal:dom:store:test?revision=2014-03-13)use-map-entry[{(urn:opendaylight:controller:sal:dom:store:test?revision=2014-03-13)use-map-entry=User map entry value}], value=[",
-                "    leafNode{identifier=use-map-entry, value=User map entry value}]}");
+                "mapEntryNode{identifier=(urn:opendaylight:controller:sal:dom:store:test?revision=2014-03-13)user-map-entry[{(urn:opendaylight:controller:sal:dom:store:test?revision=2014-03-13)user-map-entry=User map entry value}], value=[",
+                "    leafNode{identifier=user-map-entry, value=User map entry value}]}");
         assertEquals(expected, createUserMapEntryNode().prettyTree().get());
     }
 
@@ -360,8 +365,8 @@ public class NormalizedNodePrettyTreeTest {
                 "",
                 "containerNode{identifier=(urn:opendaylight:controller:sal:dom:store:test?revision=2014-03-13)root, value=[",
                 "    userMapNode{identifier=user-map, value=[",
-                "        mapEntryNode{identifier=use-map-entry[{use-map-entry=User map entry value}], value=[",
-                "            leafNode{identifier=use-map-entry, value=User map entry value}]}]}",
+                "        mapEntryNode{identifier=user-map-entry[{user-map-entry=User map entry value}], value=[",
+                "            leafNode{identifier=user-map-entry, value=User map entry value}]}]}",
                 "    userLeafSetNode{identifier=user-leaf-set, value=[",
                 "        leafSetEntryNode{identifier=user-leaf-set[User leaf set value], value=User leaf set value}]}",
                 "    systemMapNode{identifier=list-a, value=[",

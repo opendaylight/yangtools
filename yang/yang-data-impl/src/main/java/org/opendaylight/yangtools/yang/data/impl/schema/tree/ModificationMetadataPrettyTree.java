@@ -42,7 +42,12 @@ final class ModificationMetadataPrettyTree implements Supplier<String> {
         sb.append("\n");
         sb.append(" ".repeat(offset));
         sb.append("identifier=");
-        sb.append(identifier.toRelativeString(parentIdentifier));
+
+        if (parentIdentifier == null) {
+            sb.append(identifier);
+        } else {
+            sb.append(identifier.toRelativeString(parentIdentifier));
+        }
 
         sb.append(", operation=");
         sb.append(node.getOperation());
