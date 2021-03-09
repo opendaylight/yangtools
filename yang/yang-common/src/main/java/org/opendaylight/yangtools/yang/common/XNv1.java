@@ -19,6 +19,7 @@ import java.io.ObjectOutput;
  * Externalizable proxy for {@link XMLNamespace}.
  */
 final class XNv1 implements Externalizable {
+    private static final long serialVersionUID = 1L;
 
     private XMLNamespace namespace;
 
