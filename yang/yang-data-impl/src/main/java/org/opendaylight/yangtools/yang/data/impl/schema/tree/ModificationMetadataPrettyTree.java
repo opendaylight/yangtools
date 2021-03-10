@@ -30,23 +30,22 @@ final class ModificationMetadataPrettyTree implements Supplier<String> {
         sb.append("\n");
         sb.append(" ".repeat(INDENT));
         sb.append("modification=");
-        toStringTree(sb, rootNode, null, 2 * INDENT);
+        processChildNode(sb, rootNode, null, 2 * INDENT);
         sb.append("]");
         return sb.toString();
     }
 
-    private void toStringTree(final StringBuilder sb, final ModifiedNode node,
+    private static void processChildNode(final StringBuilder sb, final ModifiedNode node,
             final PathArgument parentIdentifier, final int offset) {
-        final PathArgument identifier = node.getIdentifier();
         sb.append("ModifiedNode{");
         sb.append("\n");
         sb.append(" ".repeat(offset));
         sb.append("identifier=");
 
         if (parentIdentifier == null) {
-            sb.append(identifier);
+            sb.append(node.getIdentifier());
         } else {
-            sb.append(identifier.toRelativeString(parentIdentifier));
+            sb.append(node.getIdentifier().toRelativeString(parentIdentifier));
         }
 
         sb.append(", operation=");
@@ -57,6 +56,13 @@ final class ModificationMetadataPrettyTree implements Supplier<String> {
             sb.append(node.getModificationType());
         }
 
+        processNodeValue(sb, node, offset);
+        sb.append("}");
+    }
+
+    private static void processNodeValue(final StringBuilder sb, final ModifiedNode node,
+            final int offset) {
+        final PathArgument identifier = node.getIdentifier();
         final Collection<ModifiedNode> children = node.getChildren();
         if (!children.isEmpty()) {
             for (final ModifiedNode child : children) {
@@ -65,10 +71,9 @@ final class ModificationMetadataPrettyTree implements Supplier<String> {
                 sb.append(" ".repeat(offset + INDENT));
                 sb.append(child.getIdentifier().toRelativeString(identifier));
                 sb.append("=");
-                toStringTree(sb, child, identifier,offset + 2 * INDENT);
+                processChildNode(sb, child, identifier,offset + 2 * INDENT);
                 sb.append("}");
             }
         }
-        sb.append("}");
     }
 }

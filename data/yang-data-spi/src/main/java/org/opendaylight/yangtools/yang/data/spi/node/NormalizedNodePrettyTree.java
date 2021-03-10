@@ -28,28 +28,23 @@ final class NormalizedNodePrettyTree implements Supplier<String> {
     @Override
     public String get() {
         final StringBuilder sb = new StringBuilder();
-        toStringTree(sb, rootNode, null, 0);
+        sb.append(changeClassName(rootNode));
+        sb.append("{");
+        sb.append("\n");
+        sb.append(" ".repeat(INDENT));
+        sb.append("identifier=");
+        sb.append(rootNode.getIdentifier());
+        processNodeValue(sb, rootNode, INDENT);
         return sb.toString();
     }
 
-    private void toStringTree(final StringBuilder sb, final AbstractNormalizedNode<?, ?> node,
-            final PathArgument parentIdentifier, final int offset) {
-        final PathArgument identifier = node.getIdentifier();
-        sb.append("\n");
-        sb.append(" ".repeat(offset));
-        sb.append(changeClassName(node));
-        sb.append("{identifier=");
-
-        if (parentIdentifier == null) {
-            sb.append(identifier);
-        } else {
-            sb.append(identifier.toRelativeString(parentIdentifier));
-        }
-
+    private static void processNodeValue(final StringBuilder sb, final AbstractNormalizedNode<?, ?> node,
+            final int offset) {
         if (node instanceof NormalizedNodeContainer) {
             sb.append(", value=[");
             for (final NormalizedNode child : ((NormalizedNodeContainer<?>) node).body()) {
-                toStringTree(sb, (AbstractNormalizedNode<?, ?>) child, identifier, offset + INDENT);
+                processChildNode(sb, (AbstractNormalizedNode<?, ?>) child, node.getIdentifier(),
+                        offset + INDENT);
             }
             sb.append("]}");
         } else {
@@ -57,7 +52,18 @@ final class NormalizedNodePrettyTree implements Supplier<String> {
         }
     }
 
-    private String changeClassName(final AbstractNormalizedNode<?, ?> node) {
+    private static void processChildNode(final StringBuilder sb,
+            final AbstractNormalizedNode<?, ?> node, final PathArgument parentIdentifier,
+            final int offset) {
+        sb.append("\n");
+        sb.append(" ".repeat(offset));
+        sb.append(changeClassName(node));
+        sb.append("{identifier=");
+        sb.append(node.getIdentifier().toRelativeString(parentIdentifier));
+        processNodeValue(sb, node, offset);
+    }
+
+    private static String changeClassName(final AbstractNormalizedNode<?, ?> node) {
         final String simpleName = node.implementedType().getSimpleName();
         return Character.toLowerCase(simpleName.charAt(0)) + simpleName.substring(1);
     }
