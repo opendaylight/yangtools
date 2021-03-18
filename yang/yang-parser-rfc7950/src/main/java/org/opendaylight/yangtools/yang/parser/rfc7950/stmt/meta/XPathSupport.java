@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Beta
 @NonNullByDefault
 public final class XPathSupport {
     private static final Logger LOG = LoggerFactory.getLogger(XPathSupport.class);
@@ -32,7 +30,7 @@ public final class XPathSupport {
         this.factory = requireNonNull(factory);
     }
 
-    public QualifiedBound parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
+    QualifiedBound parseXPath(final StmtContext<?, ?, ?> ctx, final String xpath) {
         final YangXPathParser.QualifiedBound parser = factory.newParser(
             YangNamespaceContextNamespace.computeIfAbsent(ctx));
         final QualifiedBound parsed;

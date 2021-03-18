@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
 
 import java.util.ServiceLoader;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 

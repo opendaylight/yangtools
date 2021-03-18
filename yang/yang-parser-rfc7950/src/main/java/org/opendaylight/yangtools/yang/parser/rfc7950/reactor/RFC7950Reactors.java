@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
@@ -83,6 +82,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.UniqueStatementS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.UnitsStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ValueStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.WhenStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.XPathSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.YangVersionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.YinElementStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.ModuleStatementSupport;
