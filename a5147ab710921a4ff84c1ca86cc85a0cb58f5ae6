@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4eedb18a_a098dce1",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "requireNonNull(), always",
+      "range": {
+        "startLine": 20,
+        "startChar": 24,
+        "endLine": 20,
+        "endChar": 33
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7840f7c_be181a26",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "squash to previous append",
+      "range": {
+        "startLine": 33,
+        "startChar": 18,
+        "endLine": 33,
+        "endChar": 22
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ef0ffa2_77a4e9df",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "Use fluent StringBuilder chain",
+      "range": {
+        "startLine": 36,
+        "startChar": 8,
+        "endLine": 36,
+        "endChar": 17
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abe643a8_b7c3c851",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "unchecked cast: this needs to work even if the child is not a subclass of AbstractNormalizedNode",
+      "range": {
+        "startLine": 46,
+        "startChar": 37,
+        "endLine": 46,
+        "endChar": 73
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d40e7b9_471887f1",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "pass in StringBuilder and return it back, which allows us to not use a String.substring() + concat, but rather a direct append.",
+      "range": {
+        "startLine": 66,
+        "startChar": 19,
+        "endLine": 66,
+        "endChar": 41
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e5071de_e9d3e662",
+        "filename": "data/yang-data-spi/src/main/java/org/opendaylight/yangtools/yang/data/spi/node/NormalizedNodePrettyTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "This relies on default locale, use Locale.ROOT",
+      "range": {
+        "startLine": 68,
+        "startChar": 25,
+        "endLine": 68,
+        "endChar": 36
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "811066b9_430f9746",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 837,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:10:43Z",
+      "side": 1,
+      "message": "since we are not using the \u0027asMap()\u0027 shortcut, just properly iterate over the entries and concat them using a StringBuilder. The reason for that are:\n- retain iteration order\n- reduce GC pressure\n\nSame goes for the below.",
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
