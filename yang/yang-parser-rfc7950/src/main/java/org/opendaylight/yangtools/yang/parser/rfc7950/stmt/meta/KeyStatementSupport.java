@@ -5,9 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
-
-import static com.google.common.base.Verify.verify;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
@@ -15,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -24,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -117,27 +115,6 @@ public final class KeyStatementSupport
     @Override
     protected KeyEffectiveStatement createEffective(final Current<Set<QName>, KeyStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final Set<QName> arg = stmt.getArgument();
-        final KeyStatement declared = stmt.declared();
-        if (substatements.isEmpty()) {
-            return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
-                : new EmptyForeignKeyEffectiveStatement(declared, arg);
-        }
-
-        return arg.equals(declared.argument()) ? new RegularLocalKeyEffectiveStatement(declared, substatements)
-                : new RegularForeignKeyEffectiveStatement(declared, arg, substatements);
-    }
-
-    static @NonNull Object maskSet(final @NonNull Set<QName> set) {
-        return set.size() == 1 ? set.iterator().next() : set;
-    }
-
-    @SuppressWarnings("unchecked")
-    static @NonNull Set<QName> unmaskSet(final @NonNull Object masked) {
-        if (masked instanceof Set) {
-            return (Set<QName>) masked;
-        }
-        verify(masked instanceof QName, "Unexpected argument %s", masked);
-        return ImmutableSet.of((QName) masked);
+        return EffectiveStatements.createKey(stmt.declared(), stmt.getArgument(), substatements);
     }
 }

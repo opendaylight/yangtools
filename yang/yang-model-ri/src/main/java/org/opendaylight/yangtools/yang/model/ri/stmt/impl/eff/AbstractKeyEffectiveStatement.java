@@ -5,9 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
+import static com.google.common.base.Verify.verify;
+
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -22,12 +26,25 @@ abstract class AbstractKeyEffectiveStatement
 
         Foreign(final KeyStatement declared, final Set<QName> argument) {
             super(declared);
-            this.argument = KeyStatementSupport.maskSet(argument);
+            this.argument = maskSet(argument);
         }
 
         @Override
         public final Set<QName> argument() {
-            return KeyStatementSupport.unmaskSet(argument);
+            return unmaskSet(argument);
+        }
+
+        private static @NonNull Object maskSet(final @NonNull Set<QName> set) {
+            return set.size() == 1 ? set.iterator().next() : set;
+        }
+
+        @SuppressWarnings("unchecked")
+        private static @NonNull Set<QName> unmaskSet(final @NonNull Object masked) {
+            if (masked instanceof Set) {
+                return (Set<QName>) masked;
+            }
+            verify(masked instanceof QName, "Unexpected argument %s", masked);
+            return ImmutableSet.of((QName) masked);
         }
     }
 
