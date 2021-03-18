@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -120,7 +118,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * {@link #buildEffective()} instance. If this context is reused, it can be inflated to {@link EffectiveInstances}
      * and also act as a common instance reuse site.
      */
-    private @Nullable Object effectiveInstance;
+    private @Nullable E effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -265,16 +263,15 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     @Override
     public final <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
-        final Object existing = effectiveInstance;
-        return existing != null ? EffectiveInstances.local(existing).findFirstEffectiveSubstatementArgument(type)
+        final E existing = effectiveInstance;
+        return existing != null ? existing.findFirstEffectiveSubstatementArgument(type)
             : findSubstatementArgumentImpl(type);
     }
 
     @Override
     public final boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        final Object existing = effectiveInstance;
-        return existing != null ? EffectiveInstances.local(existing).findFirstEffectiveSubstatement(type).isPresent()
-            : hasSubstatementImpl(type);
+        final E existing = effectiveInstance;
+        return existing != null ? existing.findFirstEffectiveSubstatement(type).isPresent() : hasSubstatementImpl(type);
     }
 
     // Visible due to InferredStatementContext's override. At this point we do not have an effective instance available.
@@ -381,8 +378,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final E buildEffective() {
-        final Object existing;
-        return (existing = effectiveInstance) != null ? EffectiveInstances.local(existing) : loadEffective();
+        final E existing;
+        return (existing = effectiveInstance) != null ? existing : loadEffective();
     }
 
     private @NonNull E loadEffective() {
@@ -403,31 +400,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
-
-
-    /**
-     * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
-     * <ul>
-     *   <li>{@code copy} and {@code this} statement share {@link #getOriginalCtx()} if it exists</li>
-     *   <li>{@code copy} did not modify any statements relative to {@code this}</li>
-     * </ul>
-     *
-     *
-     * @param state effective statement state, acting as a lookup key
-     * @param copy New copy to append
-     * @return {@code copy} or a previously-created instances with the same {@code state}
-     */
-    @SuppressWarnings("unchecked")
-    final @NonNull E attachCopy(final @NonNull EffectiveStatementState state, final @NonNull E copy) {
-        final Object effective = verifyNotNull(effectiveInstance, "Attaching copy to a unbuilt %s", this);
-        final EffectiveInstances<E> instances;
-        if (effective instanceof EffectiveInstances) {
-            instances = (EffectiveInstances<E>) effective;
-        } else {
-            effectiveInstance = instances = new EffectiveInstances<>((E) effective);
-        }
-        return instances.attachCopy(state, copy);
-    }
 
     /**
      * Walk this statement's copy history and return the statement closest to original which has not had its effective
