@@ -154,6 +154,29 @@
       "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ecd5cbb_5f9185a3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTreeModification.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-03-18T13:11:59Z",
+      "side": 1,
+      "message": "this is a TYPE_USE annotation, hence:\n\npublic @NonNull Supplier\u003cString\u003e",
+      "range": {
+        "startLine": 209,
+        "startChar": 4,
+        "endLine": 209,
+        "endChar": 12
+      },
+      "revId": "a5147ab710921a4ff84c1ca86cc85a0cb58f5ae6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
     }
   ]
 }
