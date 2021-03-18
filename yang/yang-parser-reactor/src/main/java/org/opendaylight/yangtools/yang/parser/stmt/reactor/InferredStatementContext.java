@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementStateAware;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -225,7 +224,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            return deduplicate(tryToReuseSubstatements(factory, origEffective));
+            // FIXME: YANGTOOLS-1214: deduplicate this return
+            return tryToReuseSubstatements(factory, origEffective);
         }
 
         // We can reuse this statement let's see if all statements agree...
@@ -277,7 +277,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         prototype.decRef();
 
         // Values are the effective copies, hence this efficiently deals with recursion.
-        return deduplicate(factory.createEffective(this, declared.stream(), effective.stream()));
+        // FIXME: YANGTOOLS-1214: deduplicate this return
+        return factory.createEffective(this, declared.stream(), effective.stream());
     }
 
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
@@ -297,17 +298,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         if (sameSubstatements(original.effectiveSubstatements(), effective)) {
             LOG.debug("Reusing unchanged substatements of: {}", prototype);
             return factory.copyEffective(this, original);
-        }
-        return effective;
-    }
-
-    private @NonNull E deduplicate(final @NonNull E effective) {
-        if (effective instanceof EffectiveStatementStateAware) {
-            final ReactorStmtCtx<A, D, E> source = unmodifiedEffectiveSource();
-            if (source != this) {
-                return source.attachCopy(((EffectiveStatementStateAware) effective).toEffectiveStatementState(),
-                    effective);
-            }
         }
         return effective;
     }
