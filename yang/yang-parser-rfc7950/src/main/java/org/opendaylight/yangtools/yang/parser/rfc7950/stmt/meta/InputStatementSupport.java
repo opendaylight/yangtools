@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -32,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class InputStatementSupport
-        extends BaseOperationContainerStatementSupport<InputStatement, InputEffectiveStatement> {
+        extends AbstractOperationContainerStatementSupport<InputStatement, InputEffectiveStatement> {
     private static final @NonNull InputStatementSupport RFC6020_INSTANCE = new InputStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.INPUT)
             .addAny(YangStmtMapping.ANYXML)
@@ -95,21 +94,19 @@ public final class InputStatementSupport
     }
 
     @Override
-    protected InputEffectiveStatement copyDeclaredEffective(final int flags,
-            final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
-        return EffectiveStatements.copyInput(original, stmt.effectivePath(),
-            flags);
-    }
-
-    @Override
-    protected InputEffectiveStatement copyUndeclaredEffective(final int flags,
-            final Current<QName, InputStatement> stmt, final InputEffectiveStatement original) {
+    InputEffectiveStatement copyDeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
+            final InputEffectiveStatement original) {
         return EffectiveStatements.copyInput(original, stmt.effectivePath(), flags);
     }
 
     @Override
-    protected InputEffectiveStatement createDeclaredEffective(final int flags,
-            final Current<QName, InputStatement> stmt,
+    InputEffectiveStatement copyUndeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
+            final InputEffectiveStatement original) {
+        return EffectiveStatements.copyInput(original, stmt.effectivePath(), flags);
+    }
+
+    @Override
+    InputEffectiveStatement createDeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createInput(stmt.declared(), stmt.effectivePath(), flags, substatements);
@@ -119,8 +116,7 @@ public final class InputStatementSupport
     }
 
     @Override
-    protected InputEffectiveStatement createUndeclaredEffective(final int flags,
-            final Current<QName, InputStatement> stmt,
+    InputEffectiveStatement createUndeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createInput(stmt.effectivePath(), flags, substatements);

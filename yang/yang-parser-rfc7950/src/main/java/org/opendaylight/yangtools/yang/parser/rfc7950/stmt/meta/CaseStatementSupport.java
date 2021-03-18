@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseImplicitStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Parent.EffectiveConfig;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -41,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class CaseStatementSupport
-        extends BaseImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
+        extends AbstractImplicitStatementSupport<CaseStatement, CaseEffectiveStatement> {
     private static final @NonNull CaseStatementSupport RFC6020_INSTANCE = new CaseStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.CASE)
             .addAny(YangStmtMapping.ANYXML)

@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,12 +32,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
-public abstract class BaseOperationContainerStatementSupport<D extends DeclaredStatement<QName>,
-        E extends SchemaTreeEffectiveStatement<D>> extends BaseImplicitStatementSupport<D, E> {
+abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStatement<QName>,
+        E extends SchemaTreeEffectiveStatement<D>> extends AbstractImplicitStatementSupport<D, E> {
     private final Function<QNameModule, QName> createArgument;
 
-    protected BaseOperationContainerStatementSupport(final StatementDefinition publicDefinition,
+    AbstractOperationContainerStatementSupport(final StatementDefinition publicDefinition,
             final Function<QNameModule, QName> createArgument) {
         super(publicDefinition, uninstantiatedPolicy());
         this.createArgument = requireNonNull(createArgument);
@@ -50,27 +48,26 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
     }
 
     @Override
-    protected final @NonNull E copyDeclaredEffective(final Current<QName, D> stmt, final E original) {
+    final @NonNull E copyDeclaredEffective(final Current<QName, D> stmt, final E original) {
         return copyDeclaredEffective(
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
             stmt, original);
     }
 
-    protected abstract @NonNull E copyDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
+    abstract @NonNull E copyDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
         @NonNull E original);
 
     @Override
-    protected final @NonNull E copyUndeclaredEffective(final Current<QName, D> stmt, final E original) {
+    final @NonNull E copyUndeclaredEffective(final Current<QName, D> stmt, final E original) {
         return copyUndeclaredEffective(
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()),
             stmt, original);
     }
 
-    protected abstract @NonNull E copyUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
-        @NonNull E original);
+    abstract @NonNull E copyUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt, @NonNull E original);
 
     @Override
-    protected final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
+    final @NonNull E createDeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return createDeclaredEffective(
@@ -80,16 +77,16 @@ public abstract class BaseOperationContainerStatementSupport<D extends DeclaredS
         }
     }
 
-    protected abstract @NonNull E createDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
+    abstract @NonNull E createDeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     @Override
-    protected final E createUndeclaredEffective(final Current<QName, D> stmt,
+    final E createUndeclaredEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return createUndeclaredEffective(EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements),
             stmt, substatements);
     }
 
-    protected abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
+    abstract @NonNull E createUndeclaredEffective(int flags, @NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 }

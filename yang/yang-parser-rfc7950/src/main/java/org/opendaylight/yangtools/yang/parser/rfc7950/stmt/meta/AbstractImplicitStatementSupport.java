@@ -5,9 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,10 +25,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
-public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<QName>,
+abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E> {
-    protected BaseImplicitStatementSupport(final StatementDefinition publicDefinition,
+    AbstractImplicitStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
         super(publicDefinition, policy);
     }
@@ -61,13 +59,13 @@ public abstract class BaseImplicitStatementSupport<D extends DeclaredStatement<Q
         }
     }
 
-    protected abstract @NonNull E copyDeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
+    abstract @NonNull E copyDeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
 
-    protected abstract @NonNull E copyUndeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
+    abstract @NonNull E copyUndeclaredEffective(@NonNull Current<QName, D> stmt, @NonNull E original);
 
-    protected abstract @NonNull E createDeclaredEffective(@NonNull Current<QName, D> stmt,
+    abstract @NonNull E createDeclaredEffective(@NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
-    protected abstract @NonNull E createUndeclaredEffective(@NonNull Current<QName, D> stmt,
+    abstract @NonNull E createUndeclaredEffective(@NonNull Current<QName, D> stmt,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 }

@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseOperationContainerStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -32,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class OutputStatementSupport
-        extends BaseOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
+        extends AbstractOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
     private static final @NonNull OutputStatementSupport RFC6020_INSTANCE = new OutputStatementSupport(
         SubstatementValidator.builder(YangStmtMapping.OUTPUT)
             .addAny(YangStmtMapping.ANYXML)
@@ -95,20 +94,19 @@ public final class OutputStatementSupport
     }
 
     @Override
-    protected OutputEffectiveStatement copyDeclaredEffective(final int flags,
-            final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
+    OutputEffectiveStatement copyDeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
+            final OutputEffectiveStatement original) {
         return EffectiveStatements.copyOutput(original, stmt.effectivePath(), flags);
     }
 
     @Override
-    protected OutputEffectiveStatement copyUndeclaredEffective(final int flags,
-            final Current<QName, OutputStatement> stmt, final OutputEffectiveStatement original) {
+    OutputEffectiveStatement copyUndeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
+            final OutputEffectiveStatement original) {
         return EffectiveStatements.copyOutput(original, stmt.effectivePath(), flags);
     }
 
     @Override
-    protected OutputEffectiveStatement createDeclaredEffective(final int flags,
-            final Current<QName, OutputStatement> stmt,
+    OutputEffectiveStatement createDeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createOutput(stmt.declared(), stmt.effectivePath(), flags, substatements);
@@ -118,8 +116,7 @@ public final class OutputStatementSupport
     }
 
     @Override
-    protected OutputEffectiveStatement createUndeclaredEffective(final int flags,
-            final Current<QName, OutputStatement> stmt,
+    OutputEffectiveStatement createUndeclaredEffective(final int flags, final Current<QName, OutputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createOutput(stmt.effectivePath(), flags, substatements);
