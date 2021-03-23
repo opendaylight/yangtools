@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.odlext.parser;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 
-final class AugmentIdentifierEffectiveStatementImpl extends WithSubstatements<String, AugmentIdentifierStatement>
+final class AugmentIdentifierEffectiveStatementImpl
+        extends WithSubstatements<UnqualifiedQName, AugmentIdentifierStatement>
         implements AugmentIdentifierEffectiveStatement {
     AugmentIdentifierEffectiveStatementImpl(final AugmentIdentifierStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {

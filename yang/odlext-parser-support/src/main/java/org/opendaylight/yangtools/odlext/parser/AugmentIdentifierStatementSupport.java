@@ -13,16 +13,19 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class AugmentIdentifierStatementSupport
-        extends AbstractStringStatementSupport<AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> {
+        extends AbstractStatementSupport<UnqualifiedQName, AugmentIdentifierStatement,
+                                         AugmentIdentifierEffectiveStatement> {
     public static final @NonNull AugmentIdentifierStatementSupport INSTANCE = new AugmentIdentifierStatementSupport();
 
     private static final SubstatementValidator VALIDATOR =
@@ -33,19 +36,29 @@ public final class AugmentIdentifierStatementSupport
     }
 
     @Override
+    public UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        try {
+            return UnqualifiedQName.of(value).intern();
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx, e, "Invalid identifier \"%s\"", value);
+        }
+    }
+
+    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return VALIDATOR;
     }
 
     @Override
-    protected AugmentIdentifierStatement createDeclared(final StmtContext<String, AugmentIdentifierStatement, ?> ctx,
+    protected AugmentIdentifierStatement createDeclared(
+            final StmtContext<UnqualifiedQName, AugmentIdentifierStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new AugmentIdentifierStatementImpl(ctx.getArgument(), substatements);
     }
 
     @Override
     protected AugmentIdentifierEffectiveStatement createEffective(
-            final Current<String, AugmentIdentifierStatement> stmt,
+            final Current<UnqualifiedQName, AugmentIdentifierStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new AugmentIdentifierEffectiveStatementImpl(stmt.declared(), substatements);
     }

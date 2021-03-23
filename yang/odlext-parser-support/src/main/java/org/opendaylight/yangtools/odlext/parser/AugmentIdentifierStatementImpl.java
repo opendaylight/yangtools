@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class AugmentIdentifierStatementImpl extends WithSubstatements implements AugmentIdentifierStatement {
-    AugmentIdentifierStatementImpl(final String argument,
+final class AugmentIdentifierStatementImpl extends WithSubstatements<UnqualifiedQName>
+        implements AugmentIdentifierStatement {
+    AugmentIdentifierStatementImpl(final UnqualifiedQName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+        super(argument.getLocalName(), argument, substatements);
     }
 }
