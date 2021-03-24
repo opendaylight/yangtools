@@ -51,6 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -390,6 +391,28 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull SchemaTreeEffectiveStatement<?> enterSchemaTree(final QName nodeIdentifier) {
         return pushSchema(requireNonNull(nodeIdentifier));
+    }
+
+    /**
+     * Lookup a {@code schema tree} node by its schema node identifier and push it to the stack.
+     *
+     * @param nodeIdentifier Schema node identifier of the schema tree node to enter
+     * @return Resolved schema tree node
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding node cannot be found
+     */
+    public @NonNull SchemaTreeEffectiveStatement<?> enterSchemaTree(final SchemaNodeIdentifier nodeIdentifier) {
+        if (nodeIdentifier instanceof Absolute) {
+            clear();
+        }
+
+        final Iterator<QName> it = nodeIdentifier.getNodeIdentifiers().iterator();
+        SchemaTreeEffectiveStatement<?> ret;
+        do {
+            ret = enterSchemaTree(it.next());
+        } while (it.hasNext());
+
+        return ret;
     }
 
     /**
