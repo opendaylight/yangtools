@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -20,7 +22,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -30,19 +31,16 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class ClassCodeGeneratorTest {
     @Test
     public void compositeKeyClassTest() {
-        final List<Type> genTypes = new DefaultBindingGenerator().generateTypes(YangParserTestUtils.parseYangResource(
-            "/list-composite-key.yang"));
+        final List<GeneratedType> genTypes = new DefaultBindingGenerator().generateTypes(
+            YangParserTestUtils.parseYangResource("/list-composite-key.yang"));
 
         assertTrue(genTypes != null);
         assertEquals(7, genTypes.size());
 
         int genTypesCount = 0;
         int genTOsCount = 0;
-        for (final Type type : genTypes) {
-            if (type instanceof GeneratedType
-                    && !(type instanceof GeneratedTransferObject)) {
-                genTypesCount++;
-            } else if (type instanceof GeneratedTransferObject) {
+        for (final GeneratedType type : genTypes) {
+            if (type instanceof GeneratedTransferObject) {
                 final GeneratedTransferObject genTO = (GeneratedTransferObject) type;
 
                 if (genTO.getName().equals("CompositeKeyListKey")) {
@@ -50,9 +48,7 @@ public class ClassCodeGeneratorTest {
                             .getProperties();
                     int propertyCount = 0;
                     for (final GeneratedProperty prop : properties) {
-                        if (prop.getName().equals("key1")) {
-                            propertyCount++;
-                        } else if (prop.getName().equals("key2")) {
+                        if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
                             propertyCount++;
                         }
                     }
@@ -61,8 +57,8 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertTrue(outputStr.contains("public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String"
-                            + " _key2)"));
+                    assertThat(outputStr, containsString(
+                        "public CompositeKeyListKey(@NonNull Byte _key1, @NonNull String _key2)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;
@@ -72,6 +68,8 @@ public class ClassCodeGeneratorTest {
                     assertEquals(1, properties.size());
                     genTOsCount++;
                 }
+            } else {
+                genTypesCount++;
             }
         }
 

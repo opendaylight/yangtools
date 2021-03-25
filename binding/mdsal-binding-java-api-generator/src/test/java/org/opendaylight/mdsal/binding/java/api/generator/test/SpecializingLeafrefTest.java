@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -80,7 +79,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
 
     private File sourcesOutputDir;
     private File compiledOutputDir;
-    private List<Type> types;
+    private List<GeneratedType> types;
     private Map<String, File> files;
 
     @Before
@@ -296,14 +295,13 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private void verifyReturnType(final String typeName, final String getterName, final Type returnType) {
-        final Type type = typeByName(types, typeName);
-        assertThat(type, instanceOf(GeneratedType.class));
-        final GeneratedType generated = (GeneratedType)type;
+        final GeneratedType generated = typeByName(types, typeName);
+        assertNotNull(generated);
         assertEquals(returnType, returnTypeByMethodName(generated, getterName));
     }
 
-    private static Type typeByName(final List<Type> types, final String name) {
-        for (final Type type : types) {
+    private static GeneratedType typeByName(final List<GeneratedType> types, final String name) {
+        for (final GeneratedType type : types) {
             if (type.getName().equals(name)) {
                 return type;
             }

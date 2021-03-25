@@ -24,7 +24,7 @@ import org.junit.BeforeClass;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.mdsal.binding.java.api.generator.YangModuleInfoTemplate;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -41,7 +41,7 @@ public abstract class BaseCompilationTest {
         assertTrue(CompilationTestUtils.COMPILER_OUTPUT_DIR.mkdirs());
     }
 
-    protected static final void generateTestSources(final List<Type> types, final File sourcesOutputDir)
+    protected static final void generateTestSources(final List<GeneratedType> types, final File sourcesOutputDir)
             throws IOException {
         types.sort((o1, o2) -> o2.getName().compareTo(o1.getName()));
 
@@ -54,11 +54,11 @@ public abstract class BaseCompilationTest {
         }
     }
 
-    protected static final List<Type> generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
-            throws IOException, URISyntaxException {
+    protected static final List<GeneratedType> generateTestSources(final String resourceDirPath,
+            final File sourcesOutputDir) throws IOException, URISyntaxException {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
         final EffectiveModelContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = new DefaultBindingGenerator().generateTypes(context);
+        final List<GeneratedType> types = new DefaultBindingGenerator().generateTypes(context);
         generateTestSources(types, sourcesOutputDir);
 
         // Also generate YangModuleInfo

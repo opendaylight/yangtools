@@ -22,14 +22,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 
 public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
 
     @Test
     public void testUnionTypedefUnusedImport() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-typedef");
-        final List<Type> types = generateTestSources("/compilation/union-typedef", sourcesOutputDir);
+        final List<GeneratedType> types = generateTestSources("/compilation/union-typedef", sourcesOutputDir);
 
         final boolean isUsedImport = containsImport(
             "org.opendaylight.yang.gen.v1.org.opendaylight.yangtools.union.typedef.rev130208.TypedefUnion");
