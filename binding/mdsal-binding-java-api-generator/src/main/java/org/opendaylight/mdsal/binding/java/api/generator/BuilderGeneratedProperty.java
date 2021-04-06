@@ -88,11 +88,6 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
     }
 
     @Override
-    public Type getDefiningType() {
-        throw uoe();
-    }
-
-    @Override
     public String getValue() {
         throw uoe();
     }
