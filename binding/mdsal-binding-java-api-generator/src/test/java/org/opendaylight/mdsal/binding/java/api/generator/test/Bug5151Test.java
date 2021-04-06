@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
 import java.util.Map;
@@ -23,6 +24,9 @@ public class Bug5151Test extends BaseCompilationTest {
 
     @Test
     public void test() throws Exception {
+        // Xtend code generation uses the "line.separator" system property to generate proper line endings
+        // in templates, leading to test failures running on Windows-type OS.
+        assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"));
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput(BUG_ID);
         final File compiledOutputDir = CompilationTestUtils.compilerOutput(BUG_ID);
         generateTestSources(CompilationTestUtils.FS + "compilation" + CompilationTestUtils.FS + BUG_ID,

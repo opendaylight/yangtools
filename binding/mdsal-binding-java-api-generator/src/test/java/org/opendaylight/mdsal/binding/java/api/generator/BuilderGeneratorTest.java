@@ -16,6 +16,7 @@ import static org.mockito.Mockito.spy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -39,7 +40,7 @@ public class BuilderGeneratorTest {
     public void builderTemplateGenerateHashcodeWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent"
                 + " hashing\n"
@@ -64,7 +65,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateHashCodeWithMorePropertiesTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent"
                 + " hashing\n"
@@ -85,7 +86,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent"
                 + " hashing\n"
@@ -105,7 +106,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent"
                 + " hashing\n"
@@ -126,7 +127,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#hashCode()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent"
                 + " hashing\n"
@@ -150,7 +151,7 @@ public class BuilderGeneratorTest {
     public void builderTemplateGenerateToStringWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
                 + "\n * representations across all implementations.\n"
@@ -168,7 +169,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToStringWithoutAnyPropertyTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
                 + "\n * representations across all implementations.\n"
@@ -185,7 +186,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
                 + "\n * representations across all implementations.\n"
@@ -204,7 +205,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
                 + "\n * representations across all implementations.\n"
@@ -222,7 +223,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
                 + "\n * representations across all implementations.\n"
@@ -241,7 +242,7 @@ public class BuilderGeneratorTest {
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() throws Exception {
-        assertEquals("/**\n"
+        assertXtendEquals("/**\n"
                 + " * Default implementation of {@link Object#toString()} contract for this interface.\n"
                 + " * Implementations of this interface are encouraged to defer to this method to get consistent string"
                 + "\n * representations across all implementations.\n"
@@ -348,5 +349,11 @@ public class BuilderGeneratorTest {
         doReturn(methType).when(methSign).getReturnType();
         doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;
+    }
+
+    // Xtend's StringConcatenation is using runtime-configured line separator, which can change between runs, notably
+    // it has a different value on Windows. Make sure we account for that.
+    private static void assertXtendEquals(final String expected, final String actual) {
+        assertEquals(expected.replace("\n", StringConcatenation.DEFAULT_LINE_DELIMITER), actual);
     }
 }
