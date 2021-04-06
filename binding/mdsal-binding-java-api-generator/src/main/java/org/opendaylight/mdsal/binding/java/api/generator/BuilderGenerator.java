@@ -14,8 +14,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -69,15 +68,14 @@ public final class BuilderGenerator implements CodeGenerator {
     @VisibleForTesting
     static BuilderTemplate templateForType(final GeneratedType type) {
         final JavaTypeName origName = type.getIdentifier();
+        final JavaTypeName builderName = origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER_STR);
 
-        final GeneratedTypeBuilder builderTypeBuilder = new CodegenGeneratedTypeBuilder(
-            origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER_STR));
-
-        final GeneratedTOBuilder implTypeBuilder = builderTypeBuilder.addEnclosingTransferObject(
-            origName.simpleName() + "Impl");
-        implTypeBuilder.addImplementsType(type);
-
-        return new BuilderTemplate(builderTypeBuilder.build(), type, getKey(type));
+        return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
+            .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(
+                builderName.createEnclosed(origName.simpleName() + "Impl"))
+                .addImplementsType(type)
+                .build())
+            .build(), type, getKey(type));
     }
 
     private static Type getKey(final GeneratedType type) {
