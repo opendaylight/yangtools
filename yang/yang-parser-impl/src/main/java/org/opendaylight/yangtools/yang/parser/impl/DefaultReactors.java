@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace;
-import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.AugmentIdentifierStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.ContextInstanceStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.ContextReferenceStatementSupport;
@@ -97,9 +95,6 @@ public final class DefaultReactors {
             final @NonNull CustomCrossSourceStatementReactorBuilder builder) {
         return builder
                 // OpenDaylight extensions
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    AnyxmlSchemaLocationStatementSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AugmentIdentifierStatementSupport.INSTANCE)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextInstanceStatementSupport.INSTANCE)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextReferenceStatementSupport.INSTANCE)
