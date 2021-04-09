@@ -7,11 +7,5 @@
  */
 /**
  * YANG parser support for OpenDaylight extensions as defined in yang-ext.yang.
- *
- * <p>
- * To access this extension, add {@link org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSupport},
- * {@link org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace#BEHAVIOUR} to the reactor.
- *
- * @author Robert Varga
  */
 package org.opendaylight.yangtools.odlext.parser;
