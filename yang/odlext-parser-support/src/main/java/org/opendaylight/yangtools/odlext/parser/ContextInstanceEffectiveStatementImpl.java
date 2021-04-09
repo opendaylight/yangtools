@@ -11,12 +11,19 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
-final class ContextInstanceEffectiveStatementImpl extends WithSubstatements<String, ContextInstanceStatement>
+final class ContextInstanceEffectiveStatementImpl
+        extends AbstractIdentityAwareEffectiveStatement<ContextInstanceStatement>
         implements ContextInstanceEffectiveStatement {
     ContextInstanceEffectiveStatementImpl(final ContextInstanceStatement declared,
+            final IdentityEffectiveStatement identity,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, substatements);
+        super(declared, identity, substatements);
+    }
+
+    @Override
+    public IdentityEffectiveStatement contextType() {
+        return identity();
     }
 }

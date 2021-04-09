@@ -38,10 +38,10 @@ public class Bug3874ExtensionTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    AnyxmlSchemaLocationStatementSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
-                .build();
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                AnyxmlSchemaLocationStatementSupport.getInstance())
+            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
+            .build();
     }
 
     @AfterClass
@@ -52,10 +52,9 @@ public class Bug3874ExtensionTest {
     @Test
     public void test() throws Exception {
         SchemaContext context = reactor.newBuild()
-                .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/bugs/bug3874/foo.yang")))
-                .addSource(YangStatementStreamSource.create(
-                    YangTextSchemaSource.forResource("/bugs/bug3874/yang-ext.yang")))
-                .buildEffective();
+            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/yang-ext.yang")))
+            .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/bug3874.yang")))
+            .buildEffective();
 
         QNameModule foo = QNameModule.create(XMLNamespace.of("foo"));
         QName myContainer2QName = QName.create(foo, "my-container-2");
@@ -74,7 +73,7 @@ public class Bug3874ExtensionTest {
         UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
         assertThat(next, instanceOf(AnyxmlSchemaLocationEffectiveStatementImpl.class));
         AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
-                (AnyxmlSchemaLocationEffectiveStatementImpl) next;
+            (AnyxmlSchemaLocationEffectiveStatementImpl) next;
         assertEquals(Absolute.of(myContainer2QName), anyxmlSchemaLocationUnknownNode.argument());
         assertEquals(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION.getStatementName(),
             anyxmlSchemaLocationUnknownNode.getNodeType());

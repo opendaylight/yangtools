@@ -8,14 +8,23 @@
 package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 @Beta
-public interface ContextInstanceEffectiveStatement
-        extends UnknownEffectiveStatement<String, ContextInstanceStatement> {
+public interface ContextInstanceEffectiveStatement extends UnknownEffectiveStatement<QName, ContextInstanceStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return OpenDaylightExtensionsStatements.CONTEXT_INSTANCE;
     }
+
+    /**
+     * Return the {@link IdentityEffectiveStatement} identifying the {@code context type} of this instance.
+     *
+     * @return An {@link IdentityEffectiveStatement}.
+     */
+    @NonNull IdentityEffectiveStatement contextType();
 }

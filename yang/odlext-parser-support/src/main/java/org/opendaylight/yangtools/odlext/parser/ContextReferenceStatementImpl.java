@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceStatement;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
-final class ContextReferenceStatementImpl extends WithSubstatements implements ContextReferenceStatement {
-    ContextReferenceStatementImpl(final String argument,
+final class ContextReferenceStatementImpl extends WithSubstatements<QName> implements ContextReferenceStatement {
+    ContextReferenceStatementImpl(final String rawArgument, final QName argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        super(argument, substatements);
+        super(rawArgument, argument, substatements);
     }
 }

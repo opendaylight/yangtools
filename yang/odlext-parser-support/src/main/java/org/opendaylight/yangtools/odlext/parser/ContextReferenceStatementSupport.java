@@ -13,39 +13,31 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
 public final class ContextReferenceStatementSupport
-        extends AbstractStringStatementSupport<ContextReferenceStatement, ContextReferenceEffectiveStatement> {
+        extends AbstractIdentityAwareStatementSupport<ContextReferenceStatement, ContextReferenceEffectiveStatement> {
     public static final @NonNull ContextReferenceStatementSupport INSTANCE = new ContextReferenceStatementSupport();
 
-    private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.CONTEXT_REFERENCE).build();
-
     private ContextReferenceStatementSupport() {
-        super(OpenDaylightExtensionsStatements.CONTEXT_REFERENCE, StatementPolicy.contextIndependent());
+        super(OpenDaylightExtensionsStatements.CONTEXT_REFERENCE);
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
-    }
-
-    @Override
-    protected ContextReferenceStatement createDeclared(final StmtContext<String, ContextReferenceStatement, ?> ctx,
+    protected ContextReferenceStatement createDeclared(final StmtContext<QName, ContextReferenceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ContextReferenceStatementImpl(ctx.getArgument(), substatements);
+        return new ContextReferenceStatementImpl(ctx.rawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected ContextReferenceEffectiveStatement createEffective(final Current<String, ContextReferenceStatement> stmt,
+    ContextReferenceEffectiveStatement createEffective(final ContextReferenceStatement declared,
+            final IdentityEffectiveStatement identity,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ContextReferenceEffectiveStatementImpl(stmt.declared(), substatements);
+        return new ContextReferenceEffectiveStatementImpl(declared, identity, substatements);
     }
 }

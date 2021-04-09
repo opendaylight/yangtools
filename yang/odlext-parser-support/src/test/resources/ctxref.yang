@@ -1,0 +1,37 @@
+module foo {
+  namespace "foo";
+  prefix foo;
+
+  import yang-ext {
+    prefix ext;
+  }
+
+  list list {
+    key key;
+
+    leaf key {
+      type string;
+      ext:context-instance leaf-type;
+    }
+
+    ext:context-instance list-type;
+  }
+
+  grouping leaf-ref {
+    leaf-list leaf-ref {
+      type instance-identifier;
+      ext:context-reference leaf-type;
+    }
+  }
+
+  grouping list-ref {
+    leaf list-ref {
+      type instance-identifier;
+      ext:context-reference list-type;
+    }
+  }
+
+  identity leaf-type;
+
+  identity list-type;
+}

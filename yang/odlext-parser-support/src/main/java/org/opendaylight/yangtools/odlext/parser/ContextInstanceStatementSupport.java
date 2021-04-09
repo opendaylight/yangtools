@@ -13,39 +13,31 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
 public final class ContextInstanceStatementSupport
-        extends AbstractStringStatementSupport<ContextInstanceStatement, ContextInstanceEffectiveStatement> {
+        extends AbstractIdentityAwareStatementSupport<ContextInstanceStatement, ContextInstanceEffectiveStatement> {
     public static final @NonNull ContextInstanceStatementSupport INSTANCE = new ContextInstanceStatementSupport();
 
-    private static final SubstatementValidator VALIDATOR =
-        SubstatementValidator.builder(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE).build();
-
     private ContextInstanceStatementSupport() {
-        super(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE, StatementPolicy.contextIndependent());
+        super(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE);
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
-    }
-
-    @Override
-    protected ContextInstanceStatement createDeclared(final StmtContext<String, ContextInstanceStatement, ?> ctx,
+    protected ContextInstanceStatement createDeclared(final StmtContext<QName, ContextInstanceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new ContextInstanceStatementImpl(ctx.getArgument(), substatements);
+        return new ContextInstanceStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
     }
 
     @Override
-    protected ContextInstanceEffectiveStatement createEffective(final Current<String, ContextInstanceStatement> stmt,
+    ContextInstanceEffectiveStatement createEffective(final ContextInstanceStatement declared,
+            final IdentityEffectiveStatement identity,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new ContextInstanceEffectiveStatementImpl(stmt.declared(), substatements);
+        return new ContextInstanceEffectiveStatementImpl(declared, identity, substatements);
     }
 }
