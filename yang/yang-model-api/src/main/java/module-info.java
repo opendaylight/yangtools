@@ -16,7 +16,6 @@ module org.opendaylight.yangtools.yang.model.api {
     requires transitive org.opendaylight.yangtools.yang.common;
     requires transitive org.opendaylight.yangtools.yang.xpath.api;
     requires com.google.common;
-    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations

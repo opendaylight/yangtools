@@ -39,6 +39,11 @@
             <artifactId>value</artifactId>
             <classifier>annotations</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -47,7 +52,6 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava-testlib</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
