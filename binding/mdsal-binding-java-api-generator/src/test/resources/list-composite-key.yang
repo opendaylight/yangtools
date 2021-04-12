@@ -14,7 +14,7 @@ module list-composite-key {
     contact "http://www.opendaylight.org/";
 
     description "
-        This module contains the definitions of elements that creates network 
+        This module contains the definitions of elements that creates network
         topology i.e. definition of network nodes and links. This module is
         not designed to be used solely for network representation. This module
         SHOULD be used as base module in defining the network topology.
@@ -32,33 +32,33 @@ module list-composite-key {
             leaf key1 {
                 type int8;
             }
-            
+
             leaf key2 {
                 type string;
             }
-            
+
             list inner-list {
                 key "key1";
-                
+
                 leaf key1 {
                     type uint16;
                 }
-                
+
                 leaf foo {
                     type int32;
                 }
             }
-            
+
             leaf foo {
                 type int32;
             }
         }
-        
+
         list no-key-list {
             leaf foo {
                 type int32;
             }
-            
+
             leaf bar {
                 type decimal64 {
                     fraction-digits 2;

@@ -14,7 +14,7 @@ module foo {
         prefix "br";
         revision-date 2013-10-08;
     }
-	
+
 	description "Foo - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 	reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
 
@@ -30,7 +30,7 @@ module foo {
         container igp-link-attributes {
 			description "Igp-link-attributes - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 			reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
-		
+
             leaf name {
 				description "Name - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
 				reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";

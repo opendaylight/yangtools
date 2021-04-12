@@ -5,7 +5,7 @@ module opendaylight-test-routed-rpc {
     import yang-ext { prefix ext; }
 
     description
-        "Test model for testing of registering rpc service on binding independent mount point 
+        "Test model for testing of registering rpc service on binding independent mount point
         and retrieving rpc service via binding aware mount point.";
 
     revision "2014-07-01" {
@@ -16,18 +16,18 @@ module opendaylight-test-routed-rpc {
     identity test-context {
         description "Test Context";
     }
-    
+
     typedef encapsulated-route {
         type instance-identifier;
     }
-    
+
     grouping route-in-grouping {
         leaf route {
             type instance-identifier;
             ext:context-reference test-context;
         }
     }
-    
+
     grouping encapsulated-route-in-grouping {
         leaf route {
             type encapsulated-route;

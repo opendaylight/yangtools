@@ -14,7 +14,7 @@ module simple-list-demo {
     contact "http://www.opendaylight.org/";
 
     description "
-        This module contains the definitions of elements that creates network 
+        This module contains the definitions of elements that creates network
         topology i.e. definition of network nodes and links. This module is
         not designed to be used solely for network representation. This module
         SHOULD be used as base module in defining the network topology.
@@ -32,25 +32,25 @@ module simple-list-demo {
     		leaf list-key {
     			type int8;
     		}
-            
+
             container list-child-container {
                 leaf foo {
                     type uint8;
                 }
             }
-            
+
     		leaf foo {
     			type int32;
     		}
-            
+
             leaf-list simple-leaf-list {
                 type int32;
             }
-            
+
     		leaf bar {
     			type string;
     			config true;
-    		}	
+    		}
     	}
     }
 }

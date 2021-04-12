@@ -14,7 +14,7 @@ module simple-leaf-list-demo {
     contact "http://www.opendaylight.org/";
 
     description "
-        This module contains the definitions of elements that creates network 
+        This module contains the definitions of elements that creates network
         topology i.e. definition of network nodes and links. This module is
         not designed to be used solely for network representation. This module
         SHOULD be used as base module in defining the network topology.

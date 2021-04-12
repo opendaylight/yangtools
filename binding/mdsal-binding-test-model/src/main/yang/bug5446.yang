@@ -24,7 +24,7 @@ module bug5446 {
             type ipv6-address-binary;
         }
     }
-    
+
     container root {
         leaf ip-address {
             type ip-address-binary;

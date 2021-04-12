@@ -13,12 +13,12 @@ module abstract-topology {
 
 	import ietf-inet-types { prefix "inet"; }
     import abstract-prefixes { prefix "abs-pref"; }
-    
+
 	organization "OPEN DAYLIGHT";
     contact "http://www.opendaylight.org/";
 
     description "
-		This module contains the definitions of elements that creates network 
+		This module contains the definitions of elements that creates network
 		topology i.e. definition of network nodes and links. This module is
 		not designed to be used solely for network representation. This module
 		SHOULD be used as base module in defining the network topology.
@@ -31,7 +31,7 @@ module abstract-topology {
     revision "2013-03-08" {
         reference " WILL BE DEFINED LATER";
     }
-    
+
     revision "2012-02-08" {
         reference " WILL BE DEFINED LATER";
     }
@@ -92,7 +92,7 @@ module abstract-topology {
 				}
         	}
         }
-        
+
         container network-links {
         	list network-link {
 	            description "

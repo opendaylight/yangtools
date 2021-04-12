@@ -24,17 +24,17 @@ module abstract-topology {
     contact "WILL-BE-DEFINED-LATER";
 
     description
-        "This module contains the definitions of elements that creates network 
+        "This module contains the definitions of elements that creates network
     topology i.e. definition of network nodes and links. This module is not designed to be used solely for network representation. This module SHOULD be used as base module in defining the network topology.";
 
     revision "2013-02-08" {
         reference "~~~ WILL BE DEFINED LATER";
     }
-    
+
     revision "2013-01-01" {
         reference "~~~ WILL BE DEFINED LATER";
     }
-    
+
     typedef node-id-ref {
         type leafref {
             path "/tp:topology/tp:network-nodes/tp:network-node/tp:node-id";
@@ -97,7 +97,7 @@ module abstract-topology {
                 }
             }
         }
-        
+
         container network-links {
             list network-link {
                 key "link-id";
@@ -145,16 +145,16 @@ module abstract-topology {
             }
         }
     }
-    
+
     identity crypto-base {
         description "crypto-base description";
     }
-    
+
     identity crypto-alg {
         base crypto-base;
         description "crypto-alg description";
     }
-    
+
     grouping target {
         container nodes {
             leaf source {
@@ -168,11 +168,11 @@ module abstract-topology {
             type string;
         }
     }
-    
+
     leaf idreftest {
         type identityref {
             base crypto-alg;
         }
     }
-    
+
 }
