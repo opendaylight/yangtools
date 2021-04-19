@@ -18,13 +18,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class UnrecognizedStatementSupport
-        extends AbstractStatementSupport<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement> {
+        extends AbstractStatementSupport<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement>
+        implements OverrideChildStatementSupport {
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
         // We have no idea about the statement's semantics, hence there should be noone interested in its semantics.
         // Nevertheless it may be of interest for various hacks to understand there was an extension involved.
@@ -37,20 +38,23 @@ final class UnrecognizedStatementSupport
     }
 
     @Override
-    public Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(
-            final StatementDefinition yangStmtDef) {
+    public UnrecognizedStatementSupport statementDefinitionOverrideOf(final StatementDefinition childDef) {
+        /*
+         * This code wraps statements encountered inside an extension so they do not get confused with regular
+         * statements.
+         */
         final QName baseQName = getStatementName();
-        final QName statementName = QName.create(baseQName, yangStmtDef.getStatementName().getLocalName());
+        final QName statementName = QName.create(baseQName, childDef.getStatementName().getLocalName());
 
         final ModelDefinedStatementDefinition def;
-        final Optional<ArgumentDefinition> optArgDef = yangStmtDef.getArgumentDefinition();
+        final Optional<ArgumentDefinition> optArgDef = childDef.getArgumentDefinition();
         if (optArgDef.isPresent()) {
             final ArgumentDefinition argDef = optArgDef.get();
             def = new ModelDefinedStatementDefinition(statementName, argDef.getArgumentName(), argDef.isYinElement());
         } else {
             def = new ModelDefinedStatementDefinition(statementName);
         }
-        return Optional.of(new UnrecognizedStatementSupport(def));
+        return new UnrecognizedStatementSupport(def);
     }
 
     @Override

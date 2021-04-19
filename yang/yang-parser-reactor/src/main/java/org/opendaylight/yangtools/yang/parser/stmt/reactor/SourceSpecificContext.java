@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -112,14 +110,8 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
                     globalContext.putModelDefinedStatementDefinition(name, def);
                 }
             }
-        } else if (current != null && current.producesDeclared(UnrecognizedStatement.class)) {
-            /*
-             * This code wraps statements encountered inside an extension so
-             * they do not get confused with regular statements.
-             */
-            def = checkNotNull(current.definition().getAsUnknownStatementDefinition(def),
-                    "Unable to create unknown statement definition of yang statement %s in unknown statement %s", def,
-                    current);
+        } else if (current != null) {
+            def = current.definition().overrideDefinition(def);
         }
 
         if (InferenceException.throwIfNull(def, ref, "Statement %s does not have type mapping defined.", name)

@@ -409,18 +409,6 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
     }
 
     /**
-     * Returns unknown statement form of a regular YANG statement supplied as a parameter to the method. Default
-     * implementation does nothing.
-     *
-     * @param yangStmtDef statement definition of a regular YANG statement
-     * @return Optional of unknown statement form of a regular YANG statement or empty() if it is not supported by this
-     *         statement support
-     */
-    public Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(final StatementDefinition yangStmtDef) {
-        return Optional.empty();
-    }
-
-    /**
      * Returns true if this statement support and all its substatements ignore if-feature statements (e.g. yang-data
      * extension defined in <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>). Default
      * implementation returns false.

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -125,24 +126,30 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
         return support.hasArgumentSpecificSupports();
     }
 
-    // FIXME: 7.0.0: do we still need this?
-    StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
-            final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+    @NonNull StatementDefinitionContext<?, ?, ?> overrideDefinition(
+            final @NonNull StatementDefinitionContext<?, ?, ?> def) {
+        if (!(support instanceof OverrideChildStatementSupport)) {
+            return def;
+        }
+
         if (unknownStmtDefsOfYangStmts != null) {
-            final StatementDefinitionContext<?, ?, ?> existing = unknownStmtDefsOfYangStmts.get(yangStmtDef);
+            final StatementDefinitionContext<?, ?, ?> existing = unknownStmtDefsOfYangStmts.get(def);
             if (existing != null) {
                 return existing;
             }
         } else {
-            unknownStmtDefsOfYangStmts = new HashMap<>();
+            unknownStmtDefsOfYangStmts = new HashMap<>(4);
         }
 
-        @SuppressWarnings("unchecked")
-        final StatementDefinitionContext<?, ?, ?> ret = support.getUnknownStatementDefinitionOf(
-            yangStmtDef.getPublicView()).map(StatementDefinitionContext::new).orElse(null);
-        if (ret != null) {
-            unknownStmtDefsOfYangStmts.put(yangStmtDef, ret);
+        final StatementSupport<?, ?, ?> override =
+            ((OverrideChildStatementSupport) support).statementDefinitionOverrideOf(def.getPublicView());
+        final StatementDefinitionContext<?, ?, ?> ret;
+        if (override != null) {
+            ret = new StatementDefinitionContext<>(override);
+        } else {
+            ret = def;
         }
+        unknownStmtDefsOfYangStmts.put(def, ret);
         return ret;
     }
 }
