@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
 
 public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, UserLeafSetNode<T>> {

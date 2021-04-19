@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 public final class ImmutableLeafNodeSchemaAwareBuilder<T> extends ImmutableLeafNodeBuilder<T> {

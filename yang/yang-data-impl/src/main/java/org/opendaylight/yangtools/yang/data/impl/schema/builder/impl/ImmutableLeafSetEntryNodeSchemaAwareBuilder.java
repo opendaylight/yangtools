@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends ImmutableLeafSetEntryNodeBuilder<T> {
