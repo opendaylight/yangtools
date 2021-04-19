@@ -118,7 +118,7 @@ public class ImmutableUserLeafSetNodeBuilder<T> implements ListNodeBuilder<T, Us
         }
 
         @Override
-        public LeafSetEntryNode<T> getChild(final int position) {
+        public LeafSetEntryNode<T> childAt(final int position) {
             return Iterables.get(children.values(), position);
         }
 

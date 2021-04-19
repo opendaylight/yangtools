@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * @param <V> child type
  */
+// FIXME: 8.0.0: we really want to do a List<@NonNull V> body(), but need to reconcile that with key-based lookup in
+//               implementations -- and those are using only a Map internally.
 public interface OrderedNodeContainer<V extends NormalizedNode>
         extends NormalizedNodeContainer<V>, MixinNode, OrderingAware.User {
     @Override
@@ -28,12 +30,7 @@ public interface OrderedNodeContainer<V extends NormalizedNode>
      * @return Child Node
      * @throws IndexOutOfBoundsException Out of bound Exception
      */
-    // FIXME: 7.0.0: rename to 'childAt(int)'
-    @NonNull V getChild(int position);
-
-    // FIXME: 7.0.0: do we really mean 'List' for body?
-    //    @Override
-    //    List<V> body();
+    @NonNull V childAt(int position);
 
     @Override
     int hashCode();

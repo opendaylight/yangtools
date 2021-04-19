@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
@@ -130,9 +131,9 @@ public class BuilderTest {
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
         assertEquals(orderedMapNodeCreateNode.size(), orderedMapNodeCreateNull.size() - 1);
         assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.getIdentifier());
-        assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.getChild(0));
+        assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.childAt(0));
         assertEquals(SIZE, orderedMapNodeCreateNull.size());
-        assertEquals(orderedMapNodeSchemaAware.getChild(0), orderedMapNodeSchemaAwareMapNodeConst.getChild(0));
+        assertEquals(orderedMapNodeSchemaAware.childAt(0), orderedMapNodeSchemaAwareMapNodeConst.childAt(0));
     }
 
     @Test
@@ -157,7 +158,7 @@ public class BuilderTest {
         assertNotNull(Builders.anyXmlBuilder());
         assertNotNull(orderedLeafSetShemaAware);
         assertEquals(1, ((UserLeafSetNode<?>)orderedLeafSet).size());
-        assertEquals("baz", orderedLeafSet.getChild(0).body());
+        assertEquals("baz", orderedLeafSet.childAt(0).body());
         assertNull(orderedLeafSet.childByArg(BAR_PATH));
         assertEquals(1, leafSetCollection.size());
         assertEquals(1, SchemaAwareleafSetCollection.size());
@@ -211,16 +212,12 @@ public class BuilderTest {
                 .build();
         final UnkeyedListNode unkeyedListNodeCreated = ImmutableUnkeyedListNodeBuilder.create(unkeyedListNode)
                 .build();
-        try {
-            unkeyedListNodeSize.getChild(1);
-        } catch (IndexOutOfBoundsException e) {
-            // Ignored on purpose
-        }
+
+        assertThrows(IndexOutOfBoundsException.class, () -> unkeyedListNodeSize.childAt(1));
 
         assertNotNull(unkeyedListNodeSize.body());
-        assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.getChild(0));
-        assertEquals(unkeyedListNode.getNodeType().getLocalName(), unkeyedListNodeSize.getNodeType()
-                .getLocalName());
+        assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.childAt(0));
+        assertEquals(unkeyedListNode.getNodeType().getLocalName(), unkeyedListNodeSize.getNodeType().getLocalName());
         assertNotNull(unkeyedListNodeCreated);
     }
 

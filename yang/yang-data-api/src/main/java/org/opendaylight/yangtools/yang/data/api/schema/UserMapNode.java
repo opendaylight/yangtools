@@ -19,7 +19,7 @@ public interface UserMapNode extends MapNode, OrderedNodeContainer<MapEntryNode>
      * {@inheritDoc}
      *
      * <p>
-     * The implementation is required to define a user-visible iteration order, which must match {@link #getChild(int)}.
+     * The implementation is required to define a user-visible iteration order, which must match {@link #childAt(int)}.
      */
     @Override
     Map<NodeIdentifierWithPredicates, MapEntryNode> asMap();
