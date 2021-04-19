@@ -43,7 +43,7 @@ public class ImmutableMapEntryNodeBuilder
     protected ImmutableMapEntryNodeBuilder(final ImmutableMapEntryNode node) {
         super(node);
         this.childrenQNamesToPaths = new LinkedHashMap<>();
-        fillQnames(node.body(), childrenQNamesToPaths);
+        fillQNames(node.body(), childrenQNamesToPaths);
     }
 
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
@@ -64,38 +64,31 @@ public class ImmutableMapEntryNodeBuilder
         return new ImmutableMapEntryNodeBuilder((ImmutableMapEntryNode)node);
     }
 
-    private static void fillQnames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {
-        for (final DataContainerChild childId : iterable) {
-            final PathArgument identifier = childId.getIdentifier();
+    private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {
+        for (final DataContainerChild child : iterable) {
+            putQName(out, child);
+        }
+    }
 
-            // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-            if (isAugment(identifier)) {
-                continue;
-            }
-
-            out.put(childId.getNodeType(), identifier);
+    private static void putQName(final Map<QName, PathArgument> map, final DataContainerChild child) {
+        // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
+        final PathArgument identifier = child.getIdentifier();
+        if (!(identifier instanceof AugmentationIdentifier)) {
+            map.put(identifier.getNodeType(), identifier);
         }
     }
 
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withValue(
             final Collection<DataContainerChild> withValue) {
-        fillQnames(withValue, childrenQNamesToPaths);
+        fillQNames(withValue, childrenQNamesToPaths);
         return super.withValue(withValue);
-    }
-
-    private static boolean isAugment(final PathArgument identifier) {
-        return identifier instanceof AugmentationIdentifier;
     }
 
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
             final DataContainerChild child) {
-        // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-        if (!isAugment(child.getIdentifier())) {
-            childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
-        }
-
+        putQName(childrenQNamesToPaths, child);
         return super.withChild(child);
     }
 
