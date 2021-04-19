@@ -8,8 +8,7 @@
 // 'rfc8528' in the name ends with a digit
 @SuppressWarnings("module")
 module org.opendaylight.yangtools.rfc8528.data.util {
-    // FIXME: 7.0.0: correct this typo: rcf8525.data.util -> rfc8525.data.util
-    exports org.opendaylight.yangtools.rcf8528.data.util;
+    exports org.opendaylight.yangtools.rfc8528.data.util;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.concepts;
