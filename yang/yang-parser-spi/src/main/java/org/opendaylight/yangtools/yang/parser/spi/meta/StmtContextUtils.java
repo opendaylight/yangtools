@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
@@ -230,21 +229,6 @@ public final class StmtContextUtils {
      */
     public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
         return UnknownStatement.class.isAssignableFrom(stmtCtx.publicDefinition().getDeclaredRepresentationClass());
-    }
-
-    /**
-     * Returns true if supplied statement context represents unrecognized
-     * statement, otherwise returns false.
-     *
-     * @param stmtCtx
-     *            statement context to be checked
-     * @return true if supplied statement context represents unrecognized
-     *         statement, otherwise false
-     * @throws NullPointerException
-     *             if supplied statement context is null
-     */
-    public static boolean isUnrecognizedStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.producesDeclared(UnrecognizedStatement.class);
     }
 
     public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,

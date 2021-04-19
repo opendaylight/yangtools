@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -41,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
@@ -112,7 +112,7 @@ final class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeha
                     globalContext.putModelDefinedStatementDefinition(name, def);
                 }
             }
-        } else if (current != null && StmtContextUtils.isUnrecognizedStatement(current)) {
+        } else if (current != null && current.producesDeclared(UnrecognizedStatement.class)) {
             /*
              * This code wraps statements encountered inside an extension so
              * they do not get confused with regular statements.
