@@ -21,9 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 @Beta
 public abstract class EffectiveStatementNamespace<E extends NamespacedEffectiveStatement<?>>
-    implements IdentifierNamespace<QName, E> {
-
+        extends IdentifierNamespace<QName, E> {
     protected EffectiveStatementNamespace() {
-        // Subclasses should guard against instantiation
+        // Hidden on purpose
     }
 }

@@ -7,26 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Model specific namespace which allows access to specific
- *
- * {@link IdentifierNamespace} serves as common superclass for YANG model namespaces, which are type-captured
- * subclasses. This type capture of namespace allows for handy type-safe reading methods such as
- * {@link EffectiveStatement#get(Class, Object)} and still allows introduction of new namespaces without need to change
- * model APIs.
+ * Common base class for various YANG statement namespaces.
  *
  * @param <K> Identifier type
  * @param <V> Value type
  */
-public interface IdentifierNamespace<K, V> {
-    /**
-     * Returns value associated with supplied identifier.
-     *
-     * @param identifier Identifier of value
-     * @return value or null, if identifier is not present in namespace.
-     */
-    @Nullable V get(@NonNull K identifier);
+@NonNullByDefault
+public abstract class IdentifierNamespace<K, V> {
+    protected IdentifierNamespace() {
+        throw new UnsupportedOperationException(getClass() + " should never be instantiated");
+    }
 }

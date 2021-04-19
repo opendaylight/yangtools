@@ -27,7 +27,7 @@ public interface ModuleEffectiveStatement
      * in which it is instantiated.
      */
     abstract class PrefixToEffectiveModuleNamespace
-            implements IdentifierNamespace<String, @NonNull ModuleEffectiveStatement> {
+            extends IdentifierNamespace<String, @NonNull ModuleEffectiveStatement> {
         private PrefixToEffectiveModuleNamespace() {
             // This class should never be subclassed
         }
@@ -37,7 +37,7 @@ public interface ModuleEffectiveStatement
      * Namespace mapping all known {@link QNameModule}s to their encoding prefixes. This includes the declaration
      * from prefix/namespace/revision and all imports as they were resolved.
      */
-    abstract class QNameModuleToPrefixNamespace implements IdentifierNamespace<QNameModule, @NonNull String> {
+    abstract class QNameModuleToPrefixNamespace extends IdentifierNamespace<QNameModule, @NonNull String> {
         private QNameModuleToPrefixNamespace() {
             // This class should never be subclassed
         }
@@ -47,7 +47,7 @@ public interface ModuleEffectiveStatement
      * Namespace mapping all included submodules. The namespaces is keyed by submodule name.
      */
     abstract class NameToEffectiveSubmoduleNamespace
-            implements IdentifierNamespace<String, @NonNull SubmoduleEffectiveStatement> {
+            extends IdentifierNamespace<String, @NonNull SubmoduleEffectiveStatement> {
         private NameToEffectiveSubmoduleNamespace() {
             // This class should never be subclassed
         }
