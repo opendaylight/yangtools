@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
@@ -34,7 +34,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         }
 
         @Override
-        public Variant<Decimal64, CanonicalValueViolation> fromString(final String str) {
+        public Either<Decimal64, CanonicalValueViolation> fromString(final String str) {
             // https://tools.ietf.org/html/rfc6020#section-9.3.1
             //
             // A decimal64 value is lexically represented as an optional sign ("+"
@@ -98,7 +98,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
             if (idx > limit) {
                 // No fraction digits, we are done
-                return Variant.ofFirst(new Decimal64((byte)1, intPart, 0, negative));
+                return Either.ofFirst(new Decimal64((byte)1, intPart, 0, negative));
             }
 
             // Bump index to skip over period and check the remainder
@@ -124,7 +124,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
                 fracPart = 10 * fracPart + toInt(ch, idx);
             }
 
-            return Variant.ofFirst(new Decimal64(fracLen, intPart, fracPart, negative));
+            return Either.ofFirst(new Decimal64(fracLen, intPart, fracPart, negative));
         }
 
         private static int toInt(final char ch, final int index) {
@@ -219,7 +219,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      * @throws NumberFormatException if the string does not contain a parsable decimal64.
      */
     public static Decimal64 valueOf(final String str) {
-        final Variant<Decimal64, CanonicalValueViolation> variant = SUPPORT.fromString(str);
+        final Either<Decimal64, CanonicalValueViolation> variant = SUPPORT.fromString(str);
         final Optional<Decimal64> value = variant.tryFirst();
         if (value.isPresent()) {
             return value.get();

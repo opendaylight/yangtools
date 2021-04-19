@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Base implementation of {@link CanonicalValueSupport}. This class should be used as superclass to all implementations
@@ -66,13 +66,13 @@ public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>>
     }
 
     @Override
-    public final Variant<T, CanonicalValueViolation> validateRepresentation(final T value) {
-        return Variant.ofFirst(value);
+    public final Either<T, CanonicalValueViolation> validateRepresentation(final T value) {
+        return Either.ofFirst(value);
     }
 
     @Override
-    public final Variant<T, CanonicalValueViolation> validateRepresentation(final T value,
+    public final Either<T, CanonicalValueViolation> validateRepresentation(final T value,
             final String canonicalString) {
-        return Variant.ofFirst(value);
+        return Either.ofFirst(value);
     }
 }

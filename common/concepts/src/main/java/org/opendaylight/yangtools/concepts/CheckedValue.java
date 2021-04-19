@@ -32,7 +32,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 @NonNullByDefault
-public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
+public class CheckedValue<T, E extends Exception> extends Either<T, E> {
     protected CheckedValue(final T value) {
         super(value);
     }
@@ -77,7 +77,7 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @param <E> Exception type
      * @return Resulting {@link CheckedValue}
      */
-    public static <T, U, E extends Exception> CheckedValue<T, E> ofVariant(final Variant<T, U> variant,
+    public static <T, U, E extends Exception> CheckedValue<T, E> ofVariant(final Either<T, U> variant,
             final Function<U, E> mapper) {
         requireNonNull(mapper);
         return variant.isFirst() ? new CheckedValue<>(variant.first())
