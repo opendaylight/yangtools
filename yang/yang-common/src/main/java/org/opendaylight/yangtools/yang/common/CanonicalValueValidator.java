@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * {@link CanonicalValue} validator interface. Implementations of this interface can perform further validation of
@@ -52,7 +52,7 @@ public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends 
      * @return Validated representation or a {@link CanonicalValueViolation}
      * @throws NullPointerException if {@code value} is null
      */
-    default Variant<T, CanonicalValueViolation> validateRepresentation(final T value) {
+    default Either<T, CanonicalValueViolation> validateRepresentation(final T value) {
         return validateRepresentation(value, value.toCanonicalString());
     }
 
@@ -66,5 +66,5 @@ public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends 
      * @return Validated representation or a {@link CanonicalValueViolation}
      * @throws NullPointerException if {@code value} or {@code canonicalString} is null.
      */
-    Variant<T, CanonicalValueViolation> validateRepresentation(T value, String canonicalString);
+    Either<T, CanonicalValueViolation> validateRepresentation(T value, String canonicalString);
 }

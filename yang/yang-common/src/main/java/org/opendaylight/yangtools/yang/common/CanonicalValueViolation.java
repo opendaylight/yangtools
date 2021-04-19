@@ -19,7 +19,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * A violation of a {@link CanonicalValue} validation. Contains details as mandated by RFC7950 Section 8.3.1.
@@ -88,7 +88,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
     }
 
     private static final CanonicalValueViolation EMPTY = new Regular(null, null);
-    private static final Variant<?, CanonicalValueViolation> EMPTY_VARIANT = Variant.ofSecond(EMPTY);
+    private static final Either<?, CanonicalValueViolation> EMPTY_VARIANT = Either.ofSecond(EMPTY);
     private static final long serialVersionUID = 1L;
 
     public static CanonicalValueViolation empty() {
@@ -104,21 +104,21 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Variant<T, CanonicalValueViolation> emptyVariant() {
-        return (Variant<T, CanonicalValueViolation>) EMPTY_VARIANT;
+    public static <T> Either<T, CanonicalValueViolation> emptyVariant() {
+        return (Either<T, CanonicalValueViolation>) EMPTY_VARIANT;
     }
 
-    public static <T> Variant<T, CanonicalValueViolation> variantOf(final Exception cause) {
-        return Variant.ofSecond(CanonicalValueViolation.of(cause));
+    public static <T> Either<T, CanonicalValueViolation> variantOf(final Exception cause) {
+        return Either.ofSecond(CanonicalValueViolation.of(cause));
     }
 
-    public static <T> Variant<T, CanonicalValueViolation> variantOf(final String message) {
+    public static <T> Either<T, CanonicalValueViolation> variantOf(final String message) {
         return variantOf(null, message);
     }
 
-    public static <T> Variant<T, CanonicalValueViolation> variantOf(final @Nullable String appTag,
+    public static <T> Either<T, CanonicalValueViolation> variantOf(final @Nullable String appTag,
             final String message) {
-        return Variant.ofSecond(CanonicalValueViolation.of(appTag, message));
+        return Either.ofSecond(CanonicalValueViolation.of(appTag, message));
     }
 
     public final Optional<String> getAppTag() {

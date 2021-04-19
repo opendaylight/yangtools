@@ -13,7 +13,7 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's 'type uint8' type.
@@ -29,9 +29,9 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         }
 
         @Override
-        public Variant<Uint8, CanonicalValueViolation> fromString(final String str) {
+        public Either<Uint8, CanonicalValueViolation> fromString(final String str) {
             try {
-                return Variant.ofFirst(Uint8.valueOf(str));
+                return Either.ofFirst(Uint8.valueOf(str));
             } catch (IllegalArgumentException e) {
                 return CanonicalValueViolation.variantOf(e);
             }
