@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 
 final class NormalizedNodeContainerSupport<K extends PathArgument, T extends NormalizedNode> {
     final Function<T, NormalizedNodeContainerBuilder<K, ?, ?, T>> copyBuilder;

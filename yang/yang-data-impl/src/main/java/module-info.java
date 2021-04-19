@@ -13,7 +13,6 @@ module org.opendaylight.yangtools.yang.data.impl {
     exports org.opendaylight.yangtools.yang.data.impl.codec;
     exports org.opendaylight.yangtools.yang.data.impl.leafref;
     exports org.opendaylight.yangtools.yang.data.impl.schema;
-    exports org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
     exports org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
     exports org.opendaylight.yangtools.yang.data.impl.schema.nodes;
