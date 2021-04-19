@@ -42,7 +42,7 @@ public interface ItemOrder<T extends ItemOrder<T>> {
          * {@link List#hashCode()} (in the {@code must} reading of sensitivity. {@code need not} reading of sensitivity
          * could also be implemented as {@code Map.hashCode()} in case of a map-like container.
          */
-        // FIXME: 7.0.0: tighten 'should' to 'must'?
+        // FIXME: 8.0.0: tighten 'should' to 'must'?
         @Override
         int hashCode();
 
