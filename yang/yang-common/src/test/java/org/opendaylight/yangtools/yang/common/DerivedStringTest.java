@@ -13,7 +13,7 @@ import static org.junit.Assert.assertSame;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Test;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 @NonNullByDefault
 public class DerivedStringTest {
@@ -108,8 +108,8 @@ public class DerivedStringTest {
         }
 
         @Override
-        public Variant<EagerDerivedString, CanonicalValueViolation> fromString(final String str) {
-            return Variant.ofFirst(new EagerDerivedString(str));
+        public Either<EagerDerivedString, CanonicalValueViolation> fromString(final String str) {
+            return Either.ofFirst(new EagerDerivedString(str));
         }
     }
 
@@ -119,8 +119,8 @@ public class DerivedStringTest {
         }
 
         @Override
-        public Variant<LazyDerivedString, CanonicalValueViolation> fromString(final String str) {
-            return Variant.ofFirst(new LazyDerivedString(str));
+        public Either<LazyDerivedString, CanonicalValueViolation> fromString(final String str) {
+            return Either.ofFirst(new LazyDerivedString(str));
         }
     }
 

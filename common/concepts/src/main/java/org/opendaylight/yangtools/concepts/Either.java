@@ -28,18 +28,18 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 @NonNullByDefault
-public class Variant<T, U> implements Immutable {
+public class Either<T, U> implements Immutable {
     private final @Nullable T first;
     private final @Nullable U second;
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected Variant(final T first) {
+    protected Either(final T first) {
         this.first = requireNonNull(first);
         second = null;
     }
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected Variant(final U second, final @Nullable Void dummy) {
+    protected Either(final U second, final @Nullable Void dummy) {
         first = null;
         this.second = requireNonNull(second);
     }
@@ -61,8 +61,8 @@ public class Variant<T, U> implements Immutable {
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
-    public static <T, U> Variant<T, U> ofFirst(final T value) {
-        return new Variant<>(value);
+    public static <T, U> Either<T, U> ofFirst(final T value) {
+        return new Either<>(value);
     }
 
     /**
@@ -74,8 +74,8 @@ public class Variant<T, U> implements Immutable {
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
-    public static <T, U> Variant<T, U> ofSecond(final U value) {
-        return new Variant<>(value, null);
+    public static <T, U> Either<T, U> ofSecond(final U value) {
+        return new Either<>(value, null);
     }
 
     public final boolean isFirst() {
@@ -115,7 +115,7 @@ public class Variant<T, U> implements Immutable {
         if (obj == null || !getClass().equals(obj.getClass())) {
             return false;
         }
-        final Variant<?, ?> other = (Variant<?, ?>) obj;
+        final Either<?, ?> other = (Either<?, ?>) obj;
         return Objects.equals(first, other.first) && Objects.equals(second, other.second);
     }
 

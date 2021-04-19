@@ -17,7 +17,7 @@ import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Variant;
+import org.opendaylight.yangtools.concepts.Either;
 
 /**
  * Dedicated type for YANG's 'type uint64' type.
@@ -33,9 +33,9 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         }
 
         @Override
-        public Variant<Uint64, CanonicalValueViolation> fromString(final String str) {
+        public Either<Uint64, CanonicalValueViolation> fromString(final String str) {
             try {
-                return Variant.ofFirst(Uint64.valueOf(str));
+                return Either.ofFirst(Uint64.valueOf(str));
             } catch (IllegalArgumentException e) {
                 return CanonicalValueViolation.variantOf(e);
             }
