@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
  * An implicit sub-statement, which is implied to be always present in its parent, even if it does not appear
@@ -39,8 +39,8 @@ public final class ImplicitSubstatement implements StatementSourceReference {
     }
 
     @Override
-    public StatementSource getStatementSource() {
-        return StatementSource.CONTEXT;
+    public StatementOrigin statementOrigin() {
+        return StatementOrigin.CONTEXT;
     }
 
     @Override

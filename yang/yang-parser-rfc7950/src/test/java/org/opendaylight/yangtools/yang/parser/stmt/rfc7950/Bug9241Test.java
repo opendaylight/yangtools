@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug9241Test {
@@ -40,11 +40,11 @@ public class Bug9241Test {
         final InputSchemaNode input = actionInCont.getInput();
         assertNotNull(input);
         assertEquals(1, input.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getStatementSource());
+        assertEquals(StatementOrigin.CONTEXT, ((EffectiveStatement<?, ?>) input).statementOrigin());
 
         final OutputSchemaNode output = actionInCont.getOutput();
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getStatementSource());
+        assertEquals(StatementOrigin.CONTEXT, ((EffectiveStatement<?, ?>) output).statementOrigin());
     }
 }

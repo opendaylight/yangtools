@@ -13,17 +13,15 @@ import org.opendaylight.yangtools.yang.common.Empty;
 /**
  * Model statement. There are two base types of model statements:
  * <ul>
- * <li>{@link DeclaredStatement} - Statement representation as was defined in original
- * source. This representation could be used during computation of effective model
- * or during transforming YANG model from one serialization format to other.
- * </li>
- * <li>
- * {@link EffectiveStatement} - Representation of effective statement - this
- * statement may be different from declared, in such way, that it contains additional
- * substatements, provides access to model namespaces. Some effective statements may be not
- * directly declared in YANG source, but could be inferred by semantic processing of
- * other statements (eg. uses, augment).
- * </li>
+ *   <li>{@link DeclaredStatement} - Statement representation as was defined in original source. This representation
+ *       could be used during computation of effective model or during transforming YANG model from one serialization
+ *       format to another.
+ *   </li>
+ *   <li>{@link EffectiveStatement} - Representation of effective statement - this statement may be different from
+ *       declared, in such way, that it contains additional substatements, provides access to model namespaces. Some
+ *       effective statements may be not directly declared in YANG source, but could be inferred by semantic processing
+ *       of other statements (for example {@code uses}, {@code augment} and others).
+ *   </li>
  * </ul>
  *
  * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -44,11 +42,10 @@ public interface ModelStatement<A> {
     @NonNull A argument();
 
     /**
-     * Returns statement source, which denotes if statement was
-     * explicitly declared in original model or inferred during
-     * semantic processing of model.
+     * Returns {@link StatementOrigin}, which denotes if statement was explicitly declared in original model or inferred
+     * during semantic processing of model.
      *
-     * @return statement source.
+     * @return statement origin.
      */
-    @NonNull StatementSource getStatementSource();
+    @NonNull StatementOrigin statementOrigin();
 }

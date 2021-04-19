@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 public class DeclarationInTextSourceTest {
     @Test
     public void testStatementSource() {
-        assertEquals(StatementSource.DECLARATION, DeclarationInTextSource.atLine("foo", 5).getStatementSource());
+        assertEquals(StatementOrigin.DECLARATION, DeclarationInTextSource.atLine("foo", 5).statementOrigin());
     }
 
     @Test

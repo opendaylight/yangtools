@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 public final class RegularUndeclaredInputStatement extends RegularInputStatement {
     public RegularUndeclaredInputStatement(final QName argument,
@@ -19,7 +19,7 @@ public final class RegularUndeclaredInputStatement extends RegularInputStatement
     }
 
     @Override
-    public StatementSource getStatementSource() {
-        return StatementSource.CONTEXT;
+    public StatementOrigin statementOrigin() {
+        return StatementOrigin.CONTEXT;
     }
 }

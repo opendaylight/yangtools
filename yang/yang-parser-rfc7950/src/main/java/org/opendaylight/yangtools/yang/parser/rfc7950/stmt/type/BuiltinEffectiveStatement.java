@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -82,7 +82,7 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     }
 
     @Override
-    public final StatementSource getStatementSource() {
-        return StatementSource.CONTEXT;
+    public final StatementOrigin statementOrigin() {
+        return StatementOrigin.CONTEXT;
     }
 }

@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -112,11 +112,11 @@ public class RpcStmtTest {
         final InputSchemaNode input = barRpc.getInput();
         assertNotNull(input);
         assertEquals(2, input.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) input).getStatementSource());
+        assertEquals(StatementOrigin.CONTEXT, ((EffectiveStatement<?, ?>) input).statementOrigin());
 
         final OutputSchemaNode output = barRpc.getOutput();
         assertNotNull(output);
         assertEquals(2, output.getChildNodes().size());
-        assertEquals(StatementSource.CONTEXT, ((EffectiveStatement<?, ?>) output).getStatementSource());
+        assertEquals(StatementOrigin.CONTEXT, ((EffectiveStatement<?, ?>) output).statementOrigin());
     }
 }
