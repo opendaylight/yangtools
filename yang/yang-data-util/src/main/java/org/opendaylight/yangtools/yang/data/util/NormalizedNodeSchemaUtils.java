@@ -29,14 +29,27 @@ public final class NormalizedNodeSchemaUtils {
     }
 
     public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild child) {
+        if (child instanceof AugmentationNode) {
+            return detectCase(schema, (AugmentationNode) child);
+        }
+
+        final QName childId = child.getNodeType();
         for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
-            if (child instanceof AugmentationNode
-                    && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())
-                    || choiceCaseNode.findDataChildByName(child.getNodeType()).isPresent()) {
+            if (choiceCaseNode.dataChildByName(childId) != null) {
                 return Optional.of(choiceCaseNode);
             }
         }
 
+        return Optional.empty();
+    }
+
+    public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema, final AugmentationNode child) {
+        final AugmentationIdentifier childId = child.getIdentifier();
+        for (final CaseSchemaNode choiceCaseNode : schema.getCases()) {
+            if (belongsToCaseAugment(choiceCaseNode, childId)) {
+                return Optional.of(choiceCaseNode);
+            }
+        }
         return Optional.empty();
     }
 
