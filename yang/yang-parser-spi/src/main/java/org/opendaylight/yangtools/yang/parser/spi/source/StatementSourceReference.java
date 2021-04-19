@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
  * Reference of statement source. Statement source reference serves to provide information, why a statement was defined
@@ -22,10 +22,10 @@ public interface StatementSourceReference {
     /**
      * Returns source type.
      *
-     * @return {@link StatementSource#DECLARATION} if statement was explicitly declared in YANG model source,
-     *         {@link StatementSource#CONTEXT} if statement was inferred.
+     * @return {@link StatementOrigin#DECLARATION} if statement was explicitly declared in YANG model source,
+     *         {@link StatementOrigin#CONTEXT} if statement was inferred.
      */
-    @NonNull StatementSource getStatementSource();
+    @NonNull StatementOrigin statementOrigin();
 
     /**
      * Returns human readable representation of statement source.

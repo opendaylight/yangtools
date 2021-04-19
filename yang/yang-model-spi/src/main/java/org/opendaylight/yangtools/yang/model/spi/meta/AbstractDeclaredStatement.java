@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
  * An abstract base class for {@link DeclaredStatement} implementations. It provides various further stateless and
@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 @Beta
 public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
     @Override
-    public StatementSource getStatementSource() {
-        return StatementSource.DECLARATION;
+    public StatementOrigin statementOrigin() {
+        return StatementOrigin.DECLARATION;
     }
 
     @Override
