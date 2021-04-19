@@ -336,11 +336,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
-    protected final void checkLocalNamespaceAllowed(final Class<? extends ParserNamespace<?, ?>> type) {
-        definition().checkNamespaceAllowed(type);
-    }
-
-    @Override
     protected <K, V, N extends ParserNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
             final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);

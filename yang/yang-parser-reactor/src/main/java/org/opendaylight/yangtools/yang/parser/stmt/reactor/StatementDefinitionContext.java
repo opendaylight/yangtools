@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -50,11 +49,6 @@ final class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E exte
 
     A adaptArgumentValue(final StmtContext<A, D, E> context, final QNameModule targetModule) {
         return support.adaptArgumentValue(context, targetModule);
-    }
-
-    // FIXME: 7.0.0: remove this method
-    void checkNamespaceAllowed(final Class<? extends ParserNamespace<?,?>> namespace) {
-        // Noop
     }
 
     @NonNull StatementDefinition getPublicView() {

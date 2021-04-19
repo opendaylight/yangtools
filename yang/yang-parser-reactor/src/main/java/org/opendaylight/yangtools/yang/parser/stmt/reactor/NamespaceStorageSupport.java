@@ -50,8 +50,10 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      */
     public abstract @NonNull Registry getBehaviourRegistry();
 
-    protected void checkLocalNamespaceAllowed(final Class<? extends ParserNamespace<?, ?>> type) {
-        // NOOP
+    // FIXME: 8.0.0: do we really need this method?
+    final void checkLocalNamespaceAllowed(final Class<? extends ParserNamespace<?, ?>> type) {
+        // Always no-op. We used to route this towards StatementDefinitionContext, but this method remained
+        // unimplemented even there.
     }
 
     /**
