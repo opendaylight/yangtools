@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -34,7 +34,7 @@ abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QNam
 
     @Override
     public final E copyEffective(final Current<QName, D> stmt, final E original) {
-        final StatementSource source = stmt.source();
+        final StatementOrigin source = stmt.origin();
         switch (source) {
             case CONTEXT:
                 return copyUndeclaredEffective(stmt, original);
@@ -48,14 +48,14 @@ abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QNam
     @Override
     protected E createEffective(final Current<QName, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final StatementSource source = stmt.source();
-        switch (source) {
+        final StatementOrigin origin = stmt.origin();
+        switch (origin) {
             case CONTEXT:
                 return createUndeclaredEffective(stmt, substatements);
             case DECLARATION:
                 return createDeclaredEffective(stmt, substatements);
             default:
-                throw new IllegalStateException("Unhandled statement source " + source);
+                throw new IllegalStateException("Unhandled statement origin " + origin);
         }
     }
 

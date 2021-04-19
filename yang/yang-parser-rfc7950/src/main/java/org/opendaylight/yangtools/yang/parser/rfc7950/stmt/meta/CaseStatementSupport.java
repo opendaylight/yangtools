@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
@@ -96,14 +96,14 @@ public final class CaseStatementSupport
     @Override
     protected CaseStatement createDeclared(final StmtContext<QName, CaseStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        final StatementSource source = ctx.source();
-        switch (source) {
+        final StatementOrigin origin = ctx.origin();
+        switch (origin) {
             case CONTEXT:
                 return ImplicitStatements.createCase(ctx.getArgument(), substatements);
             case DECLARATION:
                 return DeclaredStatements.createCase(ctx.getArgument(), substatements);
             default:
-                throw new IllegalStateException("Unhandled statement source " + source);
+                throw new IllegalStateException("Unhandled statement origin " + origin);
         }
     }
 

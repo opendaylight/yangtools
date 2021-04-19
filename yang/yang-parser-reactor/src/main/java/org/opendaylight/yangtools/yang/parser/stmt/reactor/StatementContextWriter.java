@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
@@ -88,7 +88,7 @@ final class StatementContextWriter implements StatementWriter {
         //       - allow endDeclared() to be moved to AbstractResumedStatement
         //       - remove the need for verify()
         StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
-        while (parentContext != null && StatementSource.CONTEXT == parentContext.source()) {
+        while (parentContext != null && StatementOrigin.CONTEXT == parentContext.origin()) {
             parentContext.endDeclared(phase);
             parentContext = parentContext.getParentContext();
         }
@@ -108,7 +108,7 @@ final class StatementContextWriter implements StatementWriter {
 
         // Fast path: we are entering a statement which was emitted in previous phase
         AbstractResumedStatement<?, ?, ?> existing = current.lookupSubstatement(childId);
-        while (existing != null && StatementSource.CONTEXT == existing.source()) {
+        while (existing != null && StatementOrigin.CONTEXT == existing.origin()) {
             existing = existing.lookupSubstatement(childId);
         }
 

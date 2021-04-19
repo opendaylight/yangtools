@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 /**
  * Reference of statement source present in textual source format. Utility implementation
@@ -105,8 +105,8 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
     }
 
     @Override
-    public final StatementSource getStatementSource() {
-        return StatementSource.DECLARATION;
+    public final StatementOrigin statementOrigin() {
+        return StatementOrigin.DECLARATION;
     }
 
     @Override

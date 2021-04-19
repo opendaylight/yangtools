@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
@@ -64,8 +64,8 @@ public interface CommonStmtCtx {
      *
      * @return origin of statement
      */
-    default @NonNull StatementSource source() {
-        return sourceReference().getStatementSource();
+    default @NonNull StatementOrigin origin() {
+        return sourceReference().statementOrigin();
     }
 
     /**

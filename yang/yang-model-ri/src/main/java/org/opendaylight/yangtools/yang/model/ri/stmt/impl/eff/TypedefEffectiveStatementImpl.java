@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
@@ -172,8 +172,8 @@ public final class TypedefEffectiveStatementImpl extends Default<QName, TypedefS
         }
 
         @Override
-        public StatementSource getStatementSource() {
-            return StatementSource.CONTEXT;
+        public StatementOrigin statementOrigin() {
+            return StatementOrigin.CONTEXT;
         }
 
         @Override

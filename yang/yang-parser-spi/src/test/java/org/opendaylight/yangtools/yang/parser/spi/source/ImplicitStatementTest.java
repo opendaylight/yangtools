@@ -12,14 +12,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 public class ImplicitStatementTest {
     @Test
     public void testForwarding() {
         final StatementSourceReference ref = mock(StatementSourceReference.class);
         final ImplicitSubstatement stmt = ImplicitSubstatement.of(ref);
-        assertEquals(StatementSource.CONTEXT, stmt.getStatementSource());
+        assertEquals(StatementOrigin.CONTEXT, stmt.statementOrigin());
 
         doReturn("ref").when(ref).toString();
         assertEquals("ref", stmt.toString());

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 
 public final class EmptyUndeclaredInputStatement extends EmptyInputStatement {
     public EmptyUndeclaredInputStatement(final QName argument) {
@@ -16,7 +16,7 @@ public final class EmptyUndeclaredInputStatement extends EmptyInputStatement {
     }
 
     @Override
-    public StatementSource getStatementSource() {
-        return StatementSource.CONTEXT;
+    public StatementOrigin statementOrigin() {
+        return StatementOrigin.CONTEXT;
     }
 }

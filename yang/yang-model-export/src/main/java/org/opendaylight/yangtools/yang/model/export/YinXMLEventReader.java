@@ -181,9 +181,9 @@ final class YinXMLEventReader implements XMLEventReader {
 
         do {
             while (current.children.hasNext()) {
-                // We have to mind child statement source and not emit empty implicit children
+                // We have to mind child statement origin and not emit empty implicit children
                 final DeclaredStatement<?> child = current.children.next();
-                switch (child.getStatementSource()) {
+                switch (child.statementOrigin()) {
                     case CONTEXT:
                         final Iterator<? extends DeclaredStatement<?>> it = child.declaredSubstatements().iterator();
                         if (it.hasNext()) {
@@ -194,7 +194,7 @@ final class YinXMLEventReader implements XMLEventReader {
                         addStatement(child);
                         return;
                     default:
-                        throw new IllegalStateException("Unhandled statement source " + child.getStatementSource());
+                        throw new IllegalStateException("Unhandled statement origin " + child.statementOrigin());
                 }
             }
 
