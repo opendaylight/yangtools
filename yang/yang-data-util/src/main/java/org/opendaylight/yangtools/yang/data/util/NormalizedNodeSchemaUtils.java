@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema;
+package org.opendaylight.yangtools.yang.data.util;
 
+import com.google.common.annotations.Beta;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -20,10 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-// FIXME: 7.0.0: find a better place for these methods
-@Deprecated
-public final class SchemaUtils {
-    private SchemaUtils() {
+// FIXME: 8.0.0: re-examine usefulness of these methods
+@Beta
+public final class NormalizedNodeSchemaUtils {
+    private NormalizedNodeSchemaUtils() {
         // Hidden on purpose
     }
 
