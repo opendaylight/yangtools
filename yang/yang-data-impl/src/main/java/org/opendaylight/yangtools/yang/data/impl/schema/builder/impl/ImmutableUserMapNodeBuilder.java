@@ -139,7 +139,7 @@ public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEnt
         }
 
         @Override
-        public MapEntryNode getChild(final int position) {
+        public MapEntryNode childAt(final int position) {
             return Iterables.get(children.values(), position);
         }
 
