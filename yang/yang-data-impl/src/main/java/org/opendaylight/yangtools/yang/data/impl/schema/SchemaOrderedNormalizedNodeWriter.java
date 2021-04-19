@@ -141,7 +141,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         final ArrayListMultimap<QName, NormalizedNode> qNameToNodes = ArrayListMultimap.create();
         for (final NormalizedNode child : children) {
             if (child instanceof AugmentationNode) {
-                qNameToNodes.putAll(resolveAugmentations(child));
+                qNameToNodes.putAll(resolveAugmentations((AugmentationNode) child));
             } else {
                 qNameToNodes.put(child.getNodeType(), child);
             }
@@ -182,11 +182,11 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         throw new IllegalStateException("It wasn't possible to serialize node " + node);
     }
 
-    private ArrayListMultimap<QName, NormalizedNode> resolveAugmentations(final NormalizedNode child) {
+    private ArrayListMultimap<QName, NormalizedNode> resolveAugmentations(final AugmentationNode child) {
         final ArrayListMultimap<QName, NormalizedNode> resolvedAugs = ArrayListMultimap.create();
-        for (final NormalizedNode node : ((AugmentationNode) child).body()) {
+        for (final NormalizedNode node : child.body()) {
             if (node instanceof AugmentationNode) {
-                resolvedAugs.putAll(resolveAugmentations(node));
+                resolvedAugs.putAll(resolveAugmentations((AugmentationNode) node));
             } else {
                 resolvedAugs.put(node.getNodeType(), node);
             }
