@@ -53,20 +53,6 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      *
      * @param identifier Schema source identifier
      * @param source W3C DOM source
-     * @return A new {@link YinDomSchemaSource} instance.
-     * @deprecated Use {@link #create(SourceIdentifier, DOMSource, String)} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static @NonNull YinDomSchemaSource create(final @NonNull SourceIdentifier identifier,
-            final @NonNull DOMSource source) {
-        return create(identifier, source, null);
-    }
-
-    /**
-     * Create a new {@link YinDomSchemaSource} using an identifier and a source.
-     *
-     * @param identifier Schema source identifier
-     * @param source W3C DOM source
      * @param symbolicName Source symbolic name
      * @return A new {@link YinDomSchemaSource} instance.
      */
