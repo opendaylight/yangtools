@@ -45,6 +45,7 @@ public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTe
         final SAXParser parser = UntrustedXML.newSAXParser();
         final DefaultHandler handler = new StatementSourceReferenceHandler(doc, null);
         parser.parse(source.openStream(), handler);
-        return YinDomSchemaSource.create(source.getIdentifier(), new DOMSource(doc));
+        return YinDomSchemaSource.create(source.getIdentifier(), new DOMSource(doc),
+            source.getSymbolicName().orElse(null));
     }
 }
