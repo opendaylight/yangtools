@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODUL
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.Optional;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -53,15 +54,30 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @param identifier Schema source identifier
      * @param source W3C DOM source
      * @return A new {@link YinDomSchemaSource} instance.
+     * @deprecated Use {@link #create(SourceIdentifier, DOMSource, String)} instead.
      */
+    @Deprecated(forRemoval = true)
     public static @NonNull YinDomSchemaSource create(final @NonNull SourceIdentifier identifier,
             final @NonNull DOMSource source) {
+        return create(identifier, source, null);
+    }
+
+    /**
+     * Create a new {@link YinDomSchemaSource} using an identifier and a source.
+     *
+     * @param identifier Schema source identifier
+     * @param source W3C DOM source
+     * @param symbolicName Source symbolic name
+     * @return A new {@link YinDomSchemaSource} instance.
+     */
+    public static @NonNull YinDomSchemaSource create(final @NonNull SourceIdentifier identifier,
+            final @NonNull DOMSource source, final @Nullable String symbolicName) {
 
         final Node root = source.getNode().getFirstChild();
         final String rootNs = root.getNamespaceURI();
         if (rootNs == null) {
             // Let whoever is using this deal with this
-            return new Simple(identifier, source);
+            return new Simple(identifier, source, symbolicName);
         }
 
         final QName qname = QName.create(rootNs, root.getLocalName());
@@ -80,7 +96,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             REVISION_STMT.getLocalName());
         if (revisions.getLength() == 0) {
             // FIXME: is module name important (as that may have changed)
-            return new Simple(identifier, source);
+            return new Simple(identifier, source, symbolicName);
         }
 
         final Element revisionStmt = (Element) revisions.item(0);
@@ -97,7 +113,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             id = identifier;
         }
 
-        return new Simple(id, source);
+        return new Simple(id, source, symbolicName);
     }
 
     /**
@@ -125,7 +141,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             throws TransformerException {
         final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast :
-            create(xmlSchemaSource.getIdentifier(), transformSource(xmlSchemaSource.getSource()));
+            create(xmlSchemaSource.getIdentifier(), transformSource(xmlSchemaSource.getSource()),
+                xmlSchemaSource.getSymbolicName().orElse(null));
     }
 
     @Override
@@ -166,7 +183,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
 
         final Source source = xmlSchemaSource.getSource();
         if (source instanceof DOMSource) {
-            return create(xmlSchemaSource.getIdentifier(), (DOMSource) source);
+            return create(xmlSchemaSource.getIdentifier(), (DOMSource) source,
+                xmlSchemaSource.getSymbolicName().orElse(null));
         }
 
         return null;
@@ -175,10 +193,13 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     private static final class Simple extends YinDomSchemaSource {
         private final @NonNull SourceIdentifier identifier;
         private final @NonNull DOMSource source;
+        private final String symbolicName;
 
-        Simple(final @NonNull SourceIdentifier identifier, final @NonNull DOMSource source) {
+        Simple(final @NonNull SourceIdentifier identifier, final @NonNull DOMSource source,
+                final @Nullable String symbolicName) {
             this.identifier = requireNonNull(identifier);
             this.source = requireNonNull(source);
+            this.symbolicName = symbolicName;
         }
 
         @Override
@@ -189,6 +210,11 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         @Override
         public SourceIdentifier getIdentifier() {
             return identifier;
+        }
+
+        @Override
+        public Optional<String> getSymbolicName() {
+            return Optional.ofNullable(symbolicName);
         }
 
         @Override
@@ -228,6 +254,11 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         @Override
         public SourceIdentifier getIdentifier() {
             return xmlSchemaSource.getIdentifier();
+        }
+
+        @Override
+        public Optional<String> getSymbolicName() {
+            return xmlSchemaSource.getSymbolicName();
         }
 
         @Override
