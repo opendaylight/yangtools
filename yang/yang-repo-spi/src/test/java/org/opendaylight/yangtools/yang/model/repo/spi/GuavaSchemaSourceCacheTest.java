@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
@@ -125,10 +126,9 @@ public class GuavaSchemaSourceCacheTest {
     }
 
     private class TestingYangSource extends YangTextSchemaSource {
-
         private final String content;
 
-        protected TestingYangSource(final String name, final String revision, final String content) {
+        TestingYangSource(final String name, final String revision, final String content) {
             super(RevisionSourceIdentifier.create(name, Revision.ofNullable(revision)));
             this.content = content;
         }
@@ -142,6 +142,10 @@ public class GuavaSchemaSourceCacheTest {
         public InputStream openStream() throws IOException {
             return new ByteArrayInputStream(this.content.getBytes(StandardCharsets.UTF_8));
         }
-    }
 
+        @Override
+        public Optional<String> getSymbolicName() {
+            return Optional.empty();
+        }
+    }
 }
