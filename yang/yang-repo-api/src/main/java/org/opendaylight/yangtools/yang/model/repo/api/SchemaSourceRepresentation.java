@@ -54,7 +54,5 @@ public interface SchemaSourceRepresentation extends Identifiable<SourceIdentifie
      *
      * @return Symbolic name, if available
      */
-    default Optional<String> getSymbolicName() {
-        return Optional.empty();
-    }
+    Optional<String> getSymbolicName();
 }
