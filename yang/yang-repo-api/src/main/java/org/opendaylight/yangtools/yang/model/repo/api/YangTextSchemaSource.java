@@ -81,8 +81,21 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws NullPointerException if file is null
      */
     public static @NonNull YangTextSchemaSource forFile(final File file) {
+        return forFile(file, identifierFromFilename(file.getName()));
+    }
+
+    /**
+     * Create a new YangTextSchemaSource backed by a {@link File} and specified {@link SourceIdentifier}.
+     *
+     * @param file Backing File
+     * @param identifier source identifier
+     * @return A new YangTextSchemaSource
+     * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
+     * @throws NullPointerException if file is null
+     */
+    public static @NonNull YangTextSchemaSource forFile(final File file, final SourceIdentifier identifier) {
         checkArgument(file.isFile(), "Supplied file %s is not a file", file);
-        return new YangTextFileSchemaSource(identifierFromFilename(file.getName()), file);
+        return new YangTextFileSchemaSource(identifier, file);
     }
 
     /**

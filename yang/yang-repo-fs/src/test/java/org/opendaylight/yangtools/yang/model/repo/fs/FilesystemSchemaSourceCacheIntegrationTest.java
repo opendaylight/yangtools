@@ -124,6 +124,11 @@ public class FilesystemSchemaSourceCacheIntegrationTest {
                 public InputStream openStream() throws IOException {
                     return new ByteArrayInputStream("running".getBytes(StandardCharsets.UTF_8));
                 }
+
+                @Override
+                public Optional<String> getSymbolicName() {
+                    return Optional.empty();
+                }
             }), PotentialSchemaSource.create(runningId, YangTextSchemaSource.class,
                 PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 

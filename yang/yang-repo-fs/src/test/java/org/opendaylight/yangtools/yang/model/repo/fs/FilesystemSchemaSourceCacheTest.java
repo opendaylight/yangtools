@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -224,7 +225,6 @@ public class FilesystemSchemaSourceCacheTest {
     }
 
     private class TestingYangSource extends YangTextSchemaSource {
-
         private final String content;
 
         TestingYangSource(final String name, final String revision, final String content) {
@@ -240,6 +240,11 @@ public class FilesystemSchemaSourceCacheTest {
         @Override
         public InputStream openStream() throws IOException {
             return new ByteArrayInputStream(this.content.getBytes(StandardCharsets.UTF_8));
+        }
+
+        @Override
+        public Optional<String> getSymbolicName() {
+            return Optional.empty();
         }
     }
 }
