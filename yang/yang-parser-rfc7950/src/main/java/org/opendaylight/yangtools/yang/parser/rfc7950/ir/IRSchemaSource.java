@@ -45,11 +45,6 @@ public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdent
         checkArgument(rootStatement.argument() != null, "Root statement does not have an argument");
     }
 
-    @Deprecated(forRemoval = true)
-    public IRSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull IRStatement rootStatement) {
-        this(identifier, rootStatement, null);
-    }
-
     @Override
     public Optional<String> getSymbolicName() {
         return Optional.ofNullable(symbolicName);
