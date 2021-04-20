@@ -185,6 +185,11 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             }
 
             @Override
+            public Optional<String> getSymbolicName() {
+                return Optional.of(url.toString());
+            }
+
+            @Override
             protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
                 return toStringHelper.add("url", url);
             }
