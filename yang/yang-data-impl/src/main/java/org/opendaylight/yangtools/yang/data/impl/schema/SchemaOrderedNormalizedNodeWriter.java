@@ -11,9 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -124,7 +124,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         throw new IllegalStateException("It wasn't possible to serialize node " + node);
     }
 
-    private void write(final List<NormalizedNode> nodes, final SchemaNode dataSchemaNode) throws IOException {
+    private void write(final Collection<NormalizedNode> nodes, final SchemaNode dataSchemaNode) throws IOException {
         for (final NormalizedNode node : nodes) {
             write(node, dataSchemaNode);
         }
@@ -137,14 +137,10 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
 
     private boolean writeChildren(final Iterable<? extends NormalizedNode> children, final SchemaNode parentSchemaNode,
             final boolean endParent) throws IOException {
-        //Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
-        final ArrayListMultimap<QName, NormalizedNode> qNameToNodes = ArrayListMultimap.create();
+        // Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
+        final Multimap<QName, NormalizedNode> qNameToNodes = ArrayListMultimap.create();
         for (final NormalizedNode child : children) {
-            if (child instanceof AugmentationNode) {
-                qNameToNodes.putAll(resolveAugmentations((AugmentationNode) child));
-            } else {
-                qNameToNodes.put(child.getNodeType(), child);
-            }
+            putChild(qNameToNodes, child);
         }
 
         if (parentSchemaNode instanceof DataNodeContainer) {
@@ -182,16 +178,14 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         throw new IllegalStateException("It wasn't possible to serialize node " + node);
     }
 
-    private ArrayListMultimap<QName, NormalizedNode> resolveAugmentations(final AugmentationNode child) {
-        final ArrayListMultimap<QName, NormalizedNode> resolvedAugs = ArrayListMultimap.create();
-        for (final NormalizedNode node : child.body()) {
-            if (node instanceof AugmentationNode) {
-                resolvedAugs.putAll(resolveAugmentations((AugmentationNode) node));
-            } else {
-                resolvedAugs.put(node.getNodeType(), node);
+    private static void putChild(final Multimap<QName, NormalizedNode> qNameToNodes, final NormalizedNode child) {
+        if (child instanceof AugmentationNode) {
+            for (DataContainerChild grandChild : ((AugmentationNode) child).body()) {
+                putChild(qNameToNodes, grandChild);
             }
+        } else {
+            qNameToNodes.put(child.getIdentifier().getNodeType(), child);
         }
-        return resolvedAugs;
     }
 
     private final class SchemaNodeSetter implements AutoCloseable {
