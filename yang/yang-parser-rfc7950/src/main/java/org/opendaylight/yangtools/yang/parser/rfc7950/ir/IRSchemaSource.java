@@ -26,7 +26,7 @@ public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdent
     private final @Nullable String symbolicName;
 
     public IRSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull IRStatement rootStatement,
-            @Nullable final String symbolicName) {
+            final @Nullable String symbolicName) {
         super(identifier);
         this.rootStatement = requireNonNull(rootStatement);
         this.symbolicName = symbolicName;
@@ -45,6 +45,7 @@ public final class IRSchemaSource extends AbstractSimpleIdentifiable<SourceIdent
         checkArgument(rootStatement.argument() != null, "Root statement does not have an argument");
     }
 
+    @Deprecated(forRemoval = true)
     public IRSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull IRStatement rootStatement) {
         this(identifier, rootStatement, null);
     }
