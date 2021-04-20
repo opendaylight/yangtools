@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThrows;
 
+import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,12 +19,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -35,9 +31,7 @@ import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
@@ -58,7 +52,6 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static QName devices;
     private static QName device;
-    private static QName typeChoice;
     private static QName typeText;
     private static QName devDesc;
     private static QName sn;
@@ -70,7 +63,6 @@ public class DataTreeCandidateValidatorTest2 {
     private static QName desc;
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest2.class);
-    private static final String NEW_LINE = System.getProperty("line.separator");
 
     @BeforeClass
     public static void init() throws DataValidationFailedException {
@@ -104,17 +96,24 @@ public class DataTreeCandidateValidatorTest2 {
 
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        final ContainerSchemaNode chipsListContSchemaNode = (ContainerSchemaNode) mainModule.findDataChildByName(chips)
-                .get();
-        final ContainerNode chipsContainer = createChipsContainer(chipsListContSchemaNode);
-        final YangInstanceIdentifier path1 = YangInstanceIdentifier.of(chips);
-        initialDataTreeModification.write(path1, chipsContainer);
+        initialDataTreeModification.write(YangInstanceIdentifier.of(chips), Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(chips))
+            .addChild(Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(chip))
+                .addChild(createChipsListEntry("dev_type_1", "desc1"))
+                .addChild(createChipsListEntry("dev_type_2", "desc2"))
+                .build())
+            .build());
 
-        final ContainerSchemaNode devTypesListContSchemaNode = (ContainerSchemaNode) mainModule
-                .findDataChildByName(deviceTypeStr).get();
-        final ContainerNode deviceTypesContainer = createDevTypeStrContainer(devTypesListContSchemaNode);
-        final YangInstanceIdentifier path2 = YangInstanceIdentifier.of(deviceTypeStr);
-        initialDataTreeModification.write(path2, deviceTypesContainer);
+        initialDataTreeModification.write(YangInstanceIdentifier.of(deviceTypeStr), Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(deviceTypeStr))
+            .addChild(Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(deviceType))
+                .addChild(createDevTypeListEntry("dev_type_1", "typedesc1"))
+                .addChild(createDevTypeListEntry("dev_type_2", "typedesc2"))
+                .addChild(createDevTypeListEntry("dev_type_3", "typedesc3"))
+                .build())
+            .build());
 
         initialDataTreeModification.ready();
         final DataTreeCandidate writeChipsCandidate = inMemoryDataTree.prepare(initialDataTreeModification);
@@ -137,15 +136,18 @@ public class DataTreeCandidateValidatorTest2 {
     }
 
     private static void writeDevices() throws DataValidationFailedException {
-
-        final ContainerSchemaNode devicesContSchemaNode = (ContainerSchemaNode) mainModule.findDataChildByName(devices)
-                .get();
-
-        final ContainerNode devicesContainer = createDevicesContainer(devicesContSchemaNode);
-
-        final YangInstanceIdentifier devicesPath = YangInstanceIdentifier.of(devices);
         final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
-        writeModification.write(devicesPath, devicesContainer);
+        writeModification.write(YangInstanceIdentifier.of(devices), Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(devices))
+            .addChild(Builders.mapBuilder()
+                .withNodeIdentifier(new NodeIdentifier(device))
+                .addChild(createDeviceListEntry("dev_type_1", "typedesc1", 123456, "192.168.0.1"))
+                .addChild(createDeviceListEntry("dev_type_2", "typedesc2", 123457, "192.168.0.1"))
+                .addChild(createDeviceListEntry("dev_type_2", "typedesc3", 123457, "192.168.0.1"))
+                .addChild(createDeviceListEntry("dev_type_1", "typedesc2", 123458, "192.168.0.1"))
+                .addChild(createDeviceListEntry("unknown", "unknown", 123457, "192.168.0.1"))
+                .build())
+            .build());
 
         writeModification.ready();
         final DataTreeCandidate writeDevicesCandidate = inMemoryDataTree.prepare(writeModification);
@@ -155,17 +157,9 @@ public class DataTreeCandidateValidatorTest2 {
         LOG.debug("*************************");
         LOG.debug("{}", inMemoryDataTree);
 
-        boolean exception = false;
-        try {
-            LeafRefValidation.validate(writeDevicesCandidate, rootLeafRefContext);
-        } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
-
-            assertEquals(4, e.getValidationsErrorsCount());
-            exception = true;
-        }
-
-        assertTrue(exception);
+        final LeafRefDataValidationFailedException ex = assertThrows(LeafRefDataValidationFailedException.class,
+            () -> LeafRefValidation.validate(writeDevicesCandidate, rootLeafRefContext));
+        assertEquals(4, ex.getValidationsErrorsCount());
 
         inMemoryDataTree.commit(writeDevicesCandidate);
 
@@ -175,133 +169,30 @@ public class DataTreeCandidateValidatorTest2 {
         LOG.debug("{}", inMemoryDataTree);
     }
 
-    private static ContainerNode createDevTypeStrContainer(final ContainerSchemaNode container) {
-
-        final ListSchemaNode devTypeListSchemaNode = (ListSchemaNode) container.findDataChildByName(deviceType).get();
-
-        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr =
-                Builders.containerBuilder(container);
-
-        final SystemMapNode devTypeMap = createDevTypeList(devTypeListSchemaNode);
-        devTypeContainerBldr.addChild(devTypeMap);
-
-        return devTypeContainerBldr.build();
+    private static MapEntryNode createDevTypeListEntry(final String typeVal, final String descVal) {
+        return Builders.mapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(deviceType, type, typeVal))
+            .addChild(ImmutableNodes.leafNode(type, typeVal))
+            .addChild(ImmutableNodes.leafNode(desc, descVal))
+            .build();
     }
 
-    private static SystemMapNode createDevTypeList(final ListSchemaNode devTypeListSchemaNode) {
-
-        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> devTypeMapBldr =
-                Builders.mapBuilder(devTypeListSchemaNode);
-
-        devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_1", "typedesc1", devTypeListSchemaNode));
-        devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_2", "typedesc2", devTypeListSchemaNode));
-        devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_3", "typedesc3", devTypeListSchemaNode));
-
-        return devTypeMapBldr.build();
-    }
-
-    private static MapEntryNode createDevTypeListEntry(final String typeVal, final String descVal,
-            final ListSchemaNode devTypeListSchemaNode) {
-
-        final LeafNode<String> typeLeaf = ImmutableNodes.leafNode(type, typeVal);
-        final LeafNode<String> descLeaf = ImmutableNodes.leafNode(desc, descVal);
-
-        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> devTypeMapEntryBldr =
-                Builders.mapEntryBuilder(devTypeListSchemaNode);
-
-        devTypeMapEntryBldr.addChild(typeLeaf);
-        devTypeMapEntryBldr.addChild(descLeaf);
-
-        return devTypeMapEntryBldr.build();
-    }
-
-    private static ContainerNode createChipsContainer(final ContainerSchemaNode container) {
-
-        final ListSchemaNode chipsListSchemaNode = (ListSchemaNode) container.findDataChildByName(chip).get();
-
-        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> chipsContainerBldr = Builders
-                .containerBuilder(container);
-
-        final SystemMapNode chipsMap = createChipsList(chipsListSchemaNode);
-        chipsContainerBldr.addChild(chipsMap);
-
-        return chipsContainerBldr.build();
-    }
-
-    private static SystemMapNode createChipsList(final ListSchemaNode chipsListSchemaNode) {
-
-        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> chipsMapBldr =
-            Builders.mapBuilder(chipsListSchemaNode);
-
-        chipsMapBldr.addChild(createChipsListEntry("dev_type_1", "desc1", chipsListSchemaNode));
-        chipsMapBldr.addChild(createChipsListEntry("dev_type_2", "desc2", chipsListSchemaNode));
-
-        return chipsMapBldr.build();
-    }
-
-    private static MapEntryNode createChipsListEntry(final String devTypeVal, final String chipDescVal,
-            final ListSchemaNode chipsListSchemaNode) {
-
-        final LeafNode<String> devTypeLeaf = ImmutableNodes.leafNode(devType, devTypeVal);
-        final LeafNode<String> chipDescLeaf = ImmutableNodes.leafNode(chipDesc, chipDescVal);
-
-        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> chipsMapEntryBldr = Builders
-                .mapEntryBuilder(chipsListSchemaNode);
-
-        chipsMapEntryBldr.addChild(devTypeLeaf);
-        chipsMapEntryBldr.addChild(chipDescLeaf);
-
-        return chipsMapEntryBldr.build();
-    }
-
-    private static ContainerNode createDevicesContainer(final ContainerSchemaNode container) {
-
-        final ListSchemaNode devicesListSchemaNode = (ListSchemaNode) container.findDataChildByName(device).get();
-
-        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devicesContainerBldr = Builders
-                .containerBuilder(container);
-
-        final SystemMapNode devicesMap = createDeviceList(devicesListSchemaNode);
-        devicesContainerBldr.addChild(devicesMap);
-
-        return devicesContainerBldr.build();
-    }
-
-    private static SystemMapNode createDeviceList(final ListSchemaNode deviceListSchemaNode) {
-
-        final CollectionNodeBuilder<MapEntryNode, SystemMapNode> devicesMapBldr =
-                Builders.mapBuilder(deviceListSchemaNode);
-
-        devicesMapBldr.addChild(createDeviceListEntry("dev_type_1", "typedesc1", 123456, "192.168.0.1",
-                deviceListSchemaNode));
-        devicesMapBldr.addChild(createDeviceListEntry("dev_type_2", "typedesc2", 123457, "192.168.0.1",
-                deviceListSchemaNode));
-        devicesMapBldr.addChild(createDeviceListEntry("dev_type_2", "typedesc3", 123457, "192.168.0.1",
-                deviceListSchemaNode));
-        devicesMapBldr.addChild(createDeviceListEntry("dev_type_1", "typedesc2", 123458, "192.168.0.1",
-                deviceListSchemaNode));
-        devicesMapBldr
-                .addChild(createDeviceListEntry("unknown", "unknown", 123457, "192.168.0.1", deviceListSchemaNode));
-
-        return devicesMapBldr.build();
+    private static MapEntryNode createChipsListEntry(final String devTypeVal, final String chipDescVal) {
+        return Builders.mapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(chip, devType, devTypeVal))
+            .addChild(ImmutableNodes.leafNode(devType, devTypeVal))
+            .addChild(ImmutableNodes.leafNode(chipDesc, chipDescVal))
+            .build();
     }
 
     private static MapEntryNode createDeviceListEntry(final String typeTextVal, final String descVal, final int snVal,
-            final String defaultIpVal, final ListSchemaNode devicesListSchemaNode) {
-
-        final LeafNode<String> typeTextLeaf = ImmutableNodes.leafNode(typeText, typeTextVal);
-        final LeafNode<String> descLeaf = ImmutableNodes.leafNode(devDesc, descVal);
-        final LeafNode<Integer> snValLeaf = ImmutableNodes.leafNode(sn, snVal);
-        final LeafNode<String> defaultIpLeaf = ImmutableNodes.leafNode(defaultIp, defaultIpVal);
-
-        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> devicesMapEntryBldr = Builders
-                .mapEntryBuilder(devicesListSchemaNode);
-
-        devicesMapEntryBldr.addChild(typeTextLeaf);
-        devicesMapEntryBldr.addChild(descLeaf);
-        devicesMapEntryBldr.addChild(snValLeaf);
-        devicesMapEntryBldr.addChild(defaultIpLeaf);
-
-        return devicesMapEntryBldr.build();
+            final String defaultIpVal) {
+        return Builders.mapEntryBuilder()
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(device, Map.of(typeText, typeTextVal, sn, snVal)))
+            .addChild(ImmutableNodes.leafNode(typeText, typeTextVal))
+            .addChild(ImmutableNodes.leafNode(devDesc, descVal))
+            .addChild(ImmutableNodes.leafNode(sn, snVal))
+            .addChild(ImmutableNodes.leafNode(defaultIp, defaultIpVal))
+            .build();
     }
 }
