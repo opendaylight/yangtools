@@ -42,6 +42,6 @@ public final class TextToIRTransformer extends SchemaSourceTransformer<YangTextS
         final RevisionSourceIdentifier sourceId = latestRevision == null ? RevisionSourceIdentifier.create(name)
                 : RevisionSourceIdentifier.create(name, Revision.of(latestRevision));
 
-        return new IRSchemaSource(sourceId, rootStatement);
+        return new IRSchemaSource(sourceId, rootStatement, text.getSymbolicName().orElse(null));
     }
 }
