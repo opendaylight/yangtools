@@ -13,18 +13,13 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class TypeStatementRFC6020Support extends AbstractTypeStatementSupport {
-    private static final TypeStatementRFC6020Support INSTANCE = new TypeStatementRFC6020Support();
-
-    private TypeStatementRFC6020Support() {
-        // Hidden
-    }
-
-    public static TypeStatementRFC6020Support getInstance() {
-        return INSTANCE;
+    public TypeStatementRFC6020Support(final YangParserConfiguration config) {
+        super(config);
     }
 
     @Override

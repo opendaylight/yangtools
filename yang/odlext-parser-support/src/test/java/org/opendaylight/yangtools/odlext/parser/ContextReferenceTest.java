@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
@@ -44,8 +45,10 @@ public class ContextReferenceTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextInstanceStatementSupport.INSTANCE)
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextReferenceStatementSupport.INSTANCE)
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new ContextInstanceStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new ContextReferenceStatementSupport(YangParserConfiguration.DEFAULT))
             .build();
     }
 

@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
@@ -41,7 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class LeafListStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
-    private static final @NonNull LeafListStatementSupport RFC6020_INSTANCE = new LeafListStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
             .addOptional(YangStmtMapping.CONFIG)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -55,10 +56,9 @@ public final class LeafListStatementSupport
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.UNITS)
             .addOptional(YangStmtMapping.WHEN)
-            .build());
-    private static final @NonNull LeafListStatementSupport RFC7950_INSTANCE = new LeafListStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping
-            .LEAF_LIST)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.LEAF_LIST)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.DEFAULT)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -72,21 +72,21 @@ public final class LeafListStatementSupport
             .addMandatory(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.UNITS)
             .addOptional(YangStmtMapping.WHEN)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    private LeafListStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy());
+    private LeafListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull LeafListStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull LeafListStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new LeafListStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull LeafListStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull LeafListStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new LeafListStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

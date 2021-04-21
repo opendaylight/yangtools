@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
@@ -76,18 +76,11 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
-    private static final GetFilterElementAttributesStatementSupport INSTANCE =
-            new GetFilterElementAttributesStatementSupport(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES);
+    private static final SubstatementValidator VALIDATOR =
+        SubstatementValidator.builder(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES).build();
 
-    private final SubstatementValidator validator;
-
-    GetFilterElementAttributesStatementSupport(final StatementDefinition definition) {
-        super(definition, StatementPolicy.reject());
-        this.validator = SubstatementValidator.builder(definition).build();
-    }
-
-    public static GetFilterElementAttributesStatementSupport getInstance() {
-        return INSTANCE;
+    public GetFilterElementAttributesStatementSupport(final YangParserConfiguration config) {
+        super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES, StatementPolicy.reject(), config);
     }
 
     @Override
@@ -99,7 +92,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
-        return validator;
+        return VALIDATOR;
     }
 
     @Override

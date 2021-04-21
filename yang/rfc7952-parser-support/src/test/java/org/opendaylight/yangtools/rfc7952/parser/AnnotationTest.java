@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
@@ -39,7 +40,8 @@ public class AnnotationTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    new AnnotationStatementSupport(YangParserConfiguration.DEFAULT))
                 .build();
     }
 

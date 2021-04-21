@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class SubmoduleStatementSupport
         extends AbstractStatementSupport<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> {
-    private static final @NonNull SubmoduleStatementSupport RFC6020_INSTANCE = new SubmoduleStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.AUGMENT)
@@ -67,8 +68,8 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
-            .build());
-    private static final @NonNull SubmoduleStatementSupport RFC7950_INSTANCE = new SubmoduleStatementSupport(
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
@@ -96,21 +97,21 @@ public final class SubmoduleStatementSupport
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    private SubmoduleStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.SUBMODULE, StatementPolicy.reject());
+    private SubmoduleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.SUBMODULE, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull SubmoduleStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull SubmoduleStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new SubmoduleStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull SubmoduleStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull SubmoduleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new SubmoduleStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

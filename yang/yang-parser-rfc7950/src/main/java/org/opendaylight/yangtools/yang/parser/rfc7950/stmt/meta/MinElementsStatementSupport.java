@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
@@ -22,17 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MinElementsStatementSupport
         extends AbstractInternedStatementSupport<Integer, MinElementsStatement, MinElementsEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.MIN_ELEMENTS)
-        .build();
-    private static final MinElementsStatementSupport INSTANCE = new MinElementsStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.MIN_ELEMENTS).build();
 
-    private MinElementsStatementSupport() {
-        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent());
-    }
-
-    public static MinElementsStatementSupport getInstance() {
-        return INSTANCE;
+    public MinElementsStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -39,38 +39,26 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 @Beta
 public final class RpcStatementSupport extends AbstractSchemaTreeStatementSupport<RpcStatement, RpcEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.RPC)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addOptional(YangStmtMapping.INPUT)
-        .addOptional(YangStmtMapping.OUTPUT)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.STATUS)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .build();
-    private static final @NonNull RpcStatementSupport RFC6020_INSTANCE = new RpcStatementSupport(
-        InputStatementSupport.rfc6020Instance(), OutputStatementSupport.rfc6020Instance());
-    private static final @NonNull RpcStatementSupport RFC7950_INSTANCE = new RpcStatementSupport(
-        InputStatementSupport.rfc7950Instance(), OutputStatementSupport.rfc7950Instance());
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.RPC)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.INPUT)
+            .addOptional(YangStmtMapping.OUTPUT)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .build();
 
     private final InputStatementSupport implicitInput;
     private final OutputStatementSupport implicitOutput;
 
-    private RpcStatementSupport(final InputStatementSupport implicitInput,
+    public RpcStatementSupport(final YangParserConfiguration config, final InputStatementSupport implicitInput,
             final OutputStatementSupport implicitOutput) {
-        super(YangStmtMapping.RPC, StatementPolicy.reject());
+        super(YangStmtMapping.RPC, StatementPolicy.reject(), config);
         this.implicitInput = requireNonNull(implicitInput);
         this.implicitOutput = requireNonNull(implicitOutput);
-    }
-
-    public static @NonNull RpcStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
-    }
-
-    public static @NonNull RpcStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
     }
 
     @Override

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -41,14 +42,9 @@ public final class RangeStatementSupport
             .addOptional(YangStmtMapping.ERROR_MESSAGE)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
-    private static final RangeStatementSupport INSTANCE = new RangeStatementSupport();
 
-    private RangeStatementSupport() {
-        super(YangStmtMapping.RANGE, StatementPolicy.contextIndependent());
-    }
-
-    public static RangeStatementSupport getInstance() {
-        return INSTANCE;
+    public RangeStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.RANGE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -46,34 +47,34 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class ImportStatementSupport
         extends AbstractStringStatementSupport<ImportStatement, ImportEffectiveStatement> {
-    private static final @NonNull ImportStatementSupport RFC6020_INSTANCE = new ImportStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
             .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
-            .build());
-    private static final @NonNull ImportStatementSupport RFC7950_INSTANCE = new ImportStatementSupport(
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
             .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    private ImportStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.IMPORT, StatementPolicy.reject());
+    private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull ImportStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull ImportStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new ImportStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull ImportStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull ImportStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new ImportStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

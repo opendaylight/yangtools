@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -22,16 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DescriptionStatementSupport
         extends AbstractStringStatementSupport<DescriptionStatement, DescriptionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.DESCRIPTION).build();
-    private static final DescriptionStatementSupport INSTANCE = new DescriptionStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DESCRIPTION).build();
 
-    private DescriptionStatementSupport() {
-        super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent());
-    }
-
-    public static DescriptionStatementSupport getInstance() {
-        return INSTANCE;
+    public DescriptionStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

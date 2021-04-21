@@ -11,9 +11,6 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import java.math.BigDecimal;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -56,6 +53,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
@@ -83,19 +81,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.TYPE)
-        .addOptional(YangStmtMapping.BASE)
-        .addAny(YangStmtMapping.BIT)
-        .addAny(YangStmtMapping.ENUM)
-        .addOptional(YangStmtMapping.FRACTION_DIGITS)
-        .addOptional(YangStmtMapping.LENGTH)
-        .addOptional(YangStmtMapping.PATH)
-        .addAny(YangStmtMapping.PATTERN)
-        .addOptional(YangStmtMapping.RANGE)
-        .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
-        .addAny(YangStmtMapping.TYPE)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.BASE)
+            .addAny(YangStmtMapping.BIT)
+            .addAny(YangStmtMapping.ENUM)
+            .addOptional(YangStmtMapping.FRACTION_DIGITS)
+            .addOptional(YangStmtMapping.LENGTH)
+            .addOptional(YangStmtMapping.PATH)
+            .addAny(YangStmtMapping.PATTERN)
+            .addOptional(YangStmtMapping.RANGE)
+            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
+            .addAny(YangStmtMapping.TYPE)
+            .build();
 
     private static final ImmutableMap<String, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =
         ImmutableMap.<String, BuiltinEffectiveStatement>builder()
@@ -116,19 +114,20 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             .put(TypeDefinitions.UINT64.getLocalName(), BuiltinEffectiveStatement.UINT64)
             .build();
 
-    private static final ImmutableMap<String, StatementSupport<?, ?, ?>> DYNAMIC_BUILT_IN_TYPES =
-            ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
-            .put(TypeDefinitions.BITS.getLocalName(), new BitsSpecificationSupport())
-            .put(TypeDefinitions.DECIMAL64.getLocalName(), new Decimal64SpecificationSupport())
-            .put(TypeDefinitions.ENUMERATION.getLocalName(), new EnumSpecificationSupport())
-            .put(TypeDefinitions.IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC6020Support())
-            .put(TypeDefinitions.INSTANCE_IDENTIFIER.getLocalName(), new InstanceIdentifierSpecificationSupport())
-            .put(TypeDefinitions.LEAFREF.getLocalName(), new LeafrefSpecificationRFC6020Support())
-            .put(TypeDefinitions.UNION.getLocalName(), new UnionSpecificationSupport())
-            .build();
+    private final ImmutableMap<String, StatementSupport<?, ?, ?>> dynamicBuiltInTypes;
 
-    private static final ImmutableMap<String, String> BUILT_IN_TYPES = Maps.uniqueIndex(ImmutableSet.copyOf(
-        Iterables.<String>concat(STATIC_BUILT_IN_TYPES.keySet(), DYNAMIC_BUILT_IN_TYPES.keySet())), key -> key);
+    AbstractTypeStatementSupport(final YangParserConfiguration config) {
+        super(config);
+        dynamicBuiltInTypes = ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
+            .put(TypeDefinitions.BITS.getLocalName(), new BitsSpecificationSupport(config))
+            .put(TypeDefinitions.DECIMAL64.getLocalName(), new Decimal64SpecificationSupport(config))
+            .put(TypeDefinitions.ENUMERATION.getLocalName(), new EnumSpecificationSupport(config))
+            .put(TypeDefinitions.IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC6020Support(config))
+            .put(TypeDefinitions.INSTANCE_IDENTIFIER.getLocalName(), new InstanceIdentifierSpecificationSupport(config))
+            .put(TypeDefinitions.LEAFREF.getLocalName(), new LeafrefSpecificationRFC6020Support(config))
+            .put(TypeDefinitions.UNION.getLocalName(), new UnionSpecificationSupport(config))
+            .build();
+    }
 
     @Override
     public final void onFullDefinitionDeclared(
@@ -167,12 +166,12 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
 
     @Override
     public boolean hasArgumentSpecificSupports() {
-        return !DYNAMIC_BUILT_IN_TYPES.isEmpty();
+        return !dynamicBuiltInTypes.isEmpty();
     }
 
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        return DYNAMIC_BUILT_IN_TYPES.get(argument);
+        return dynamicBuiltInTypes.get(argument);
     }
 
     @Override

@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -45,8 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class ChoiceStatementSupport
         extends AbstractSchemaTreeStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
-    private static final @NonNull ChoiceStatementSupport RFC6020_INSTANCE = new ChoiceStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.CHOICE)
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CASE)
             .addOptional(YangStmtMapping.CONFIG)
@@ -61,11 +61,9 @@ public final class ChoiceStatementSupport
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
-            .build(),
-        CaseStatementSupport.rfc6020Instance());
+            .build();
 
-    private static final @NonNull ChoiceStatementSupport RFC7950_INSTANCE = new ChoiceStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.CHOICE)
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CASE)
@@ -81,24 +79,26 @@ public final class ChoiceStatementSupport
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
-            .build(),
-        CaseStatementSupport.rfc7950Instance());
+            .build();
 
     private final SubstatementValidator validator;
     private final CaseStatementSupport implicitCase;
 
-    private ChoiceStatementSupport(final SubstatementValidator validator, final CaseStatementSupport implicitCase) {
-        super(YangStmtMapping.CHOICE, instantiatedPolicy());
+    private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
+            final CaseStatementSupport implicitCase) {
+        super(YangStmtMapping.CHOICE, instantiatedPolicy(), config);
         this.validator = requireNonNull(validator);
         this.implicitCase = requireNonNull(implicitCase);
     }
 
-    public static @NonNull ChoiceStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull ChoiceStatementSupport rfc6020Instance(final YangParserConfiguration config,
+            final CaseStatementSupport implicitCase) {
+        return new ChoiceStatementSupport(config, RFC6020_VALIDATOR, implicitCase);
     }
 
-    public static @NonNull ChoiceStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull ChoiceStatementSupport rfc7950Instance(final YangParserConfiguration config,
+            final CaseStatementSupport implicitCase) {
+        return new ChoiceStatementSupport(config, RFC7950_VALIDATOR, implicitCase);
     }
 
     @Override
