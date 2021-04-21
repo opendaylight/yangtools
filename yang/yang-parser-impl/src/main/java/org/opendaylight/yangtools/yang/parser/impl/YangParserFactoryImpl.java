@@ -7,16 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -33,8 +35,10 @@ import org.osgi.service.component.annotations.Reference;
 @Singleton
 @Component(immediate = true)
 public final class YangParserFactoryImpl implements YangParserFactory {
-    private static final ImmutableList<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(
-        StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
+    private static final List<StatementParserMode> SUPPORTED_MODES = List.of(
+        StatementParserMode.DEFAULT_MODE,
+        StatementParserMode.SEMVER_MODE);
+
     private final CrossSourceStatementReactor reactor;
 
     private YangParserFactoryImpl(final @NonNull CrossSourceStatementReactor reactor) {
@@ -70,7 +74,9 @@ public final class YangParserFactoryImpl implements YangParserFactory {
     }
 
     @Override
-    public YangParser createParser(final StatementParserMode parserMode) {
-        return new YangParserImpl(reactor.newBuild(parserMode));
+    public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
+        final StatementParserMode mode = configuration.parserMode();
+        checkArgument(SUPPORTED_MODES.contains(mode), "Unsupported parser mode %s", mode);
+        return new YangParserImpl(reactor.newBuild(mode));
     }
 }
