@@ -21,20 +21,25 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Reference {@link YangParserFactory} implementation.
- *
- * @author Robert Varga
  */
 @Beta
 @MetaInfServices
 @Singleton
+@Component(immediate = true)
 public final class YangParserFactoryImpl implements YangParserFactory {
     private static final ImmutableList<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(
         StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
-
     private final CrossSourceStatementReactor reactor;
+
+    private YangParserFactoryImpl(final @NonNull CrossSourceStatementReactor reactor) {
+        this.reactor = requireNonNull(reactor);
+    }
 
     /**
      * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
@@ -44,7 +49,8 @@ public final class YangParserFactoryImpl implements YangParserFactory {
     }
 
     @Inject
-    public YangParserFactoryImpl(final YangXPathParserFactory xpathFactory) {
+    @Activate
+    public YangParserFactoryImpl(final @Reference YangXPathParserFactory xpathFactory) {
         this(DefaultReactors.defaultReactorBuilder(xpathFactory).build());
     }
 
@@ -52,9 +58,10 @@ public final class YangParserFactoryImpl implements YangParserFactory {
      * Construct a new {@link YangParserFactory} backed by specified reactor.
      *
      * @param reactor Backing reactor
+     * @return A new YangParserFactory
      */
-    public YangParserFactoryImpl(final @NonNull CrossSourceStatementReactor reactor) {
-        this.reactor = requireNonNull(reactor);
+    public static @NonNull YangParserFactory forReactor(final @NonNull CrossSourceStatementReactor reactor) {
+        return new YangParserFactoryImpl(reactor);
     }
 
     @Override
