@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
@@ -22,17 +23,12 @@ public final class YinElementStatementSupport
         extends AbstractBooleanStatementSupport<YinElementStatement, YinElementEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.YIN_ELEMENT).build();
-    private static final YinElementStatementSupport INSTANCE = new YinElementStatementSupport();
 
-    private YinElementStatementSupport() {
+    public YinElementStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.YIN_ELEMENT,
             EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(false)),
             EffectiveStatements.createYinElement(DeclaredStatements.createYinElement(true)),
-            StatementPolicy.reject());
-    }
-
-    public static YinElementStatementSupport getInstance() {
-        return INSTANCE;
+            StatementPolicy.reject(), config);
     }
 
     @Override

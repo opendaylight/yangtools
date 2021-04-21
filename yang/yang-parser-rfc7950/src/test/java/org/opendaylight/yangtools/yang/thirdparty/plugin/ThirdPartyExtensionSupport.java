@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -19,14 +20,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ThirdPartyExtensionSupport
         extends AbstractStringStatementSupport<ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> {
-    private static final ThirdPartyExtensionSupport INSTANCE = new ThirdPartyExtensionSupport();
-
-    private ThirdPartyExtensionSupport() {
-        super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION, StatementPolicy.contextIndependent());
-    }
-
-    public static ThirdPartyExtensionSupport getInstance() {
-        return INSTANCE;
+    public ThirdPartyExtensionSupport(final YangParserConfiguration config) {
+        super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

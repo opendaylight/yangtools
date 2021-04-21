@@ -8,17 +8,22 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
  * Class providing necessary support for processing YANG 1.1 leafref statement.
  */
 final class LeafrefSpecificationRFC7950Support extends AbstractLeafrefSpecificationSupport {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .TYPE)
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE)
             .addMandatory(YangStmtMapping.PATH)
             .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
             .build();
+
+    LeafrefSpecificationRFC7950Support(final YangParserConfiguration config) {
+        super(config);
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

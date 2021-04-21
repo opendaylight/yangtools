@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -42,35 +43,35 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class IdentityStatementSupport
         extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
-    private static final @NonNull IdentityStatementSupport RFC6020_INSTANCE = new IdentityStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.IDENTITY)
             .addOptional(YangStmtMapping.BASE)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
-            .build());
-    private static final @NonNull IdentityStatementSupport RFC7950_INSTANCE = new IdentityStatementSupport(
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.IDENTITY)
             .addAny(YangStmtMapping.BASE)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    private IdentityStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.IDENTITY, StatementPolicy.reject());
+    private IdentityStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.IDENTITY, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull IdentityStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull IdentityStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new IdentityStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull IdentityStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull IdentityStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new IdentityStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

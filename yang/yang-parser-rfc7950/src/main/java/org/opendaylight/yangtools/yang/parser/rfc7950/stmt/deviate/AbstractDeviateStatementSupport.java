@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
@@ -101,8 +102,8 @@ abstract class AbstractDeviateStatementSupport
     private static final ImmutableSet<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(YangStmtMapping.CONFIG,
             YangStmtMapping.MANDATORY, YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.MIN_ELEMENTS);
 
-    AbstractDeviateStatementSupport() {
-        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent());
+    AbstractDeviateStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

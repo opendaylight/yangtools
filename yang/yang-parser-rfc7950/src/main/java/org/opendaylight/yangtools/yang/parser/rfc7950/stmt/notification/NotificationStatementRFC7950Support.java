@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -25,8 +26,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 @Beta
 public final class NotificationStatementRFC7950Support extends AbstractNotificationStatementSupport {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .NOTIFICATION)
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.NOTIFICATION)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
@@ -44,16 +45,11 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addAny(YangStmtMapping.USES)
             .build();
 
-    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
-            YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
-    private static final NotificationStatementRFC7950Support INSTANCE = new NotificationStatementRFC7950Support();
+    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS =
+        ImmutableSet.of(YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
-    private NotificationStatementRFC7950Support() {
-        // Hidden
-    }
-
-    public static NotificationStatementRFC7950Support getInstance() {
-        return INSTANCE;
+    public NotificationStatementRFC7950Support(final YangParserConfiguration config) {
+        super(config);
     }
 
     @Override

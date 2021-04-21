@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -26,15 +27,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class RevisionDateStatementSupport
         extends AbstractStatementSupport<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.REVISION_DATE).build();
-    private static final RevisionDateStatementSupport INSTANCE = new RevisionDateStatementSupport();
+        SubstatementValidator.builder(YangStmtMapping.REVISION_DATE).build();
 
-    private RevisionDateStatementSupport() {
-        super(YangStmtMapping.REVISION_DATE, StatementPolicy.contextIndependent());
-    }
-
-    public static RevisionDateStatementSupport getInstance() {
-        return INSTANCE;
+    public RevisionDateStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.REVISION_DATE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

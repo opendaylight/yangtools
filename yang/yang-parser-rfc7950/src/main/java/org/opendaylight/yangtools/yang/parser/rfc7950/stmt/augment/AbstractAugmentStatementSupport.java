@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -50,13 +51,13 @@ abstract class AbstractAugmentStatementSupport
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
-    AbstractAugmentStatementSupport() {
+    AbstractAugmentStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.getArgument().equals(current.getArgument())
                 && copy.moduleName().getModule().equals(current.moduleName().getModule())
                 && Objects.equals(copy.original(), current.original())
-            ));
+            ), config);
     }
 
     @Override

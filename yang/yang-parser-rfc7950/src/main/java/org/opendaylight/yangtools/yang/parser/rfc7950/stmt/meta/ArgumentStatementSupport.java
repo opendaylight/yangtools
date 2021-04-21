@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -24,18 +25,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ArgumentStatementSupport
         extends AbstractQNameStatementSupport<ArgumentStatement, ArgumentEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .ARGUMENT)
-        .addOptional(YangStmtMapping.YIN_ELEMENT)
-        .build();
-    private static final ArgumentStatementSupport INSTANCE = new ArgumentStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.ARGUMENT).addOptional(YangStmtMapping.YIN_ELEMENT).build();
 
-    private ArgumentStatementSupport() {
-        super(YangStmtMapping.ARGUMENT, StatementPolicy.reject());
-    }
-
-    public static ArgumentStatementSupport getInstance() {
-        return INSTANCE;
+    public ArgumentStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.ARGUMENT, StatementPolicy.reject(), config);
     }
 
     @Override

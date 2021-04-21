@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -15,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -26,10 +29,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 final class UnrecognizedStatementSupport
         extends AbstractStatementSupport<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement>
         implements OverrideChildStatementSupport {
-    UnrecognizedStatementSupport(final StatementDefinition publicDefinition) {
+    private final YangParserConfiguration config;
+
+    UnrecognizedStatementSupport(final StatementDefinition publicDefinition, final YangParserConfiguration config) {
         // We have no idea about the statement's semantics, hence there should be noone interested in its semantics.
         // Nevertheless it may be of interest for various hacks to understand there was an extension involved.
-        super(publicDefinition, StatementPolicy.exactReplica());
+        super(publicDefinition, StatementPolicy.exactReplica(), config);
+        this.config = requireNonNull(config);
     }
 
     @Override
@@ -54,7 +60,7 @@ final class UnrecognizedStatementSupport
         } else {
             def = new ModelDefinedStatementDefinition(statementName);
         }
-        return new UnrecognizedStatementSupport(def);
+        return new UnrecognizedStatementSupport(def, config);
     }
 
     @Override

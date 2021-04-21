@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -40,14 +41,9 @@ public final class BelongsToStatementSupport
         extends AbstractStringStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
-    private static final BelongsToStatementSupport INSTANCE = new BelongsToStatementSupport();
 
-    private BelongsToStatementSupport() {
-        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject());
-    }
-
-    public static BelongsToStatementSupport getInstance() {
-        return INSTANCE;
+    public BelongsToStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject(), config);
     }
 
     @Override

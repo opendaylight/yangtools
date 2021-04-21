@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
@@ -20,20 +21,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ConfigStatementSupport
         extends AbstractBooleanStatementSupport<ConfigStatement, ConfigEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.CONFIG).build();
-    private static final ConfigStatementSupport INSTANCE = new ConfigStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.CONFIG).build();
 
-    private ConfigStatementSupport() {
+    public ConfigStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.CONFIG,
             EffectiveStatements.createConfig(false), EffectiveStatements.createConfig(true),
             // FIXME: This is not quite true. If we are instantiated in a context which ignores config, which should
             //        really fizzle. This needs some more analysis.
-            StatementPolicy.contextIndependent());
-    }
-
-    public static ConfigStatementSupport getInstance() {
-        return INSTANCE;
+            StatementPolicy.contextIndependent(), config);
     }
 
     @Override

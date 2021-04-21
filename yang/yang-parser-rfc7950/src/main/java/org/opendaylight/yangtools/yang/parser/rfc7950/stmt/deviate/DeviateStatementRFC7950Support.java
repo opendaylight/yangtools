@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
@@ -37,14 +38,9 @@ public final class DeviateStatementRFC7950Support extends AbstractDeviateStateme
                 .addAny(YangStmtMapping.UNIQUE)
                 .addOptional(YangStmtMapping.UNITS)
                 .build();
-    private static final DeviateStatementRFC7950Support INSTANCE = new DeviateStatementRFC7950Support();
 
-    private DeviateStatementRFC7950Support() {
-        // Hidden
-    }
-
-    public static DeviateStatementRFC7950Support getInstance() {
-        return INSTANCE;
+    public DeviateStatementRFC7950Support(final YangParserConfiguration config) {
+        super(config);
     }
 
     @Override

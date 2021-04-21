@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -28,7 +29,6 @@ public final class FractionDigitsStatementSupport
         extends AbstractStatementSupport<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.FRACTION_DIGITS).build();
-    private static final FractionDigitsStatementSupport INSTANCE = new FractionDigitsStatementSupport();
 
     // FIXME: move this to yang-model-spi
     private static final ImmutableMap<FractionDigitsStatement, FractionDigitsEffectiveStatement> EMPTY_EFF;
@@ -42,12 +42,8 @@ public final class FractionDigitsStatementSupport
         EMPTY_EFF = effBuilder.build();
     }
 
-    private FractionDigitsStatementSupport() {
-        super(YangStmtMapping.FRACTION_DIGITS, StatementPolicy.contextIndependent());
-    }
-
-    public static FractionDigitsStatementSupport getInstance() {
-        return INSTANCE;
+    public FractionDigitsStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.FRACTION_DIGITS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

@@ -55,6 +55,6 @@ public interface YangParserFactory {
      */
     @Deprecated(forRemoval = true)
     default @NonNull YangParser createParser(final StatementParserMode parserMode) {
-        return createParser(YangParserConfiguration.builder().setParserMode(parserMode).build());
+        return createParser(YangParserConfiguration.builder().parserMode(parserMode).build());
     }
 }

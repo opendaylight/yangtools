@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class GroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
-    private static final @NonNull GroupingStatementSupport RFC6020_INSTANCE = new GroupingStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
@@ -54,8 +55,8 @@ public final class GroupingStatementSupport
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .build());
-    private static final @NonNull GroupingStatementSupport RFC7950_INSTANCE = new GroupingStatementSupport(
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.ACTION)
             .addAny(YangStmtMapping.ANYDATA)
@@ -72,25 +73,25 @@ public final class GroupingStatementSupport
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    GroupingStatementSupport(final SubstatementValidator validator) {
+    GroupingStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.history().isAddedByUses() == current.history().isAddedByUses()
                 && copy.getArgument().equals(current.getArgument())
-                && copy.equalParentPath(current)));
+                && copy.equalParentPath(current)), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull GroupingStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull GroupingStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new GroupingStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull GroupingStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull GroupingStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new GroupingStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override
