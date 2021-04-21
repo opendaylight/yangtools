@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -17,6 +18,7 @@ import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -70,7 +72,9 @@ public final class YangParserFactoryImpl implements YangParserFactory {
     }
 
     @Override
-    public YangParser createParser(final StatementParserMode parserMode) {
-        return new YangParserImpl(reactor.newBuild(parserMode));
+    public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
+        final StatementParserMode mode = configuration.parserMode();
+        checkArgument(SUPPORTED_MODES.contains(mode), "Unsupported parser mode %s", mode);
+        return new YangParserImpl(reactor.newBuild(mode));
     }
 }
