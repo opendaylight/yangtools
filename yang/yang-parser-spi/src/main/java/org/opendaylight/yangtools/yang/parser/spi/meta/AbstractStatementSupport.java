@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -47,6 +48,11 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     protected abstract @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx,
             @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements);
+
+    @Override
+    public D attachDeclarationReference(final D stmt, final DeclarationReference reference) {
+        return stmt;
+    }
 
     @Override
     public final E createEffective(final Current<A, D> stmt,

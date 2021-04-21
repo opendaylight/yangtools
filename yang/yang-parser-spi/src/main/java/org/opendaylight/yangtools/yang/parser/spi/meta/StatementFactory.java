@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -30,6 +31,16 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * @return A declared statement instance.
      */
     @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx);
+
+    /**
+     * Attach specified {@link DeclarationReference} to a baseline declared statement. If an implementation does not
+     * support attaching DeclarationReferences, it should return the statement unchanged.
+     *
+     * @param stmt Declared statement
+     * @param reference {@link DeclarationReference} to attach
+     * @return Equivalent of stmt, potentially with specified reference attached.
+     */
+    @NonNull D attachDeclarationReference(@NonNull D stmt, @NonNull DeclarationReference reference);
 
     /**
      * Create a {@link EffectiveStatement} for specified context.

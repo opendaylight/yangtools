@@ -30,7 +30,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
             final StatementSourceReference ref, final String rawArgument) {
-        super(def, ref, rawArgument);
+        super(def, ref, rawArgument, parent.retainDeclarationReference());
         this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = def.parseArgumentValue(this, rawArgument());
     }
@@ -39,7 +39,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     //                       would be more appropriate
     SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
             final StatementSourceReference ref, final String rawArgument, final A argument, final CopyType copyType) {
-        super(def, ref, rawArgument, copyType);
+        super(def, ref, rawArgument, copyType, parent.retainDeclarationReference());
         this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = argument;
     }

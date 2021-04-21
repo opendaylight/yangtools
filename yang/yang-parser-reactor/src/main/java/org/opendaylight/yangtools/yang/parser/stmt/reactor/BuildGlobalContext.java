@@ -506,4 +506,9 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
         }
         mutableStatementsToSeal.clear();
     }
+
+    boolean retainDeclarationReference() {
+        // FIXME: make this configurable
+        return false;
+    }
 }
