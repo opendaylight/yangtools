@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediate
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -21,7 +20,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Optional;
@@ -180,23 +178,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
         final String path = url.getPath();
         final String fileName = path.substring(path.lastIndexOf('/') + 1);
-        final SourceIdentifier guessedId = guessSourceIdentifier(fileName);
-        return registerSource(new YangTextSchemaSource(guessedId) {
-            @Override
-            public InputStream openStream() throws IOException {
-                return url.openStream();
-            }
-
-            @Override
-            public Optional<String> getSymbolicName() {
-                return Optional.of(url.toString());
-            }
-
-            @Override
-            protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-                return toStringHelper.add("url", url);
-            }
-        });
+        return registerSource(YangTextSchemaSource.forURL(url, guessSourceIdentifier(fileName)));
     }
 
     private static SourceIdentifier guessSourceIdentifier(final @NonNull String fileName) {
@@ -303,7 +285,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Override
-    public synchronized FluentFuture<YangTextSchemaSource> getSource(
+    public synchronized @NonNull FluentFuture<YangTextSchemaSource> getSource(
             final SourceIdentifier sourceIdentifier) {
         final Collection<YangTextSchemaSource> ret = texts.get(sourceIdentifier);
 
