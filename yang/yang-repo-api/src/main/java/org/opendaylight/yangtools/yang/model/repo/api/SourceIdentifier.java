@@ -21,15 +21,12 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
- * Base class of YANG Schema source identifiers.
+ * Base class of YANG Schema source identifiers. Source identifiers are designated to be carry only necessary
+ * information to look up YANG module (or submodule) source and to be used by various SchemaSourceProviders.
  *
  * <p>
- * Source identifiers are designated to be carry only necessary information to
- * look-up YANG model source and to be used by various SchemaSourceProviders.
- *
- * <p>
- * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2
- * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
+ * For further reference see: <a href="https://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
+ * and <a ref="https://tools.ietf.org/html/rfc6022#section-3.1">RFC6022</a>.
  */
 @Beta
 public abstract class SourceIdentifier implements Identifier, Immutable {

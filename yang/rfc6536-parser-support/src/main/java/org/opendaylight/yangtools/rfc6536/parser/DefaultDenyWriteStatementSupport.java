@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
@@ -67,23 +67,16 @@ public final class DefaultDenyWriteStatementSupport
         }
     }
 
-    private static final DefaultDenyWriteStatementSupport INSTANCE =
-            new DefaultDenyWriteStatementSupport(NACMStatements.DEFAULT_DENY_WRITE);
+    private static final SubstatementValidator VALIDATOR =
+        SubstatementValidator.builder(NACMStatements.DEFAULT_DENY_WRITE).build();
 
-    private final SubstatementValidator validator;
-
-    DefaultDenyWriteStatementSupport(final StatementDefinition definition) {
-        super(definition, StatementPolicy.contextIndependent());
-        this.validator = SubstatementValidator.builder(definition).build();
-    }
-
-    public static DefaultDenyWriteStatementSupport getInstance() {
-        return INSTANCE;
+    public DefaultDenyWriteStatementSupport(final YangParserConfiguration config) {
+        super(NACMStatements.DEFAULT_DENY_WRITE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
-        return validator;
+        return VALIDATOR;
     }
 
     @Override

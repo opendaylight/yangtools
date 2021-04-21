@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
@@ -20,19 +21,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MandatoryStatementSupport extends
         AbstractBooleanStatementSupport<MandatoryStatement, MandatoryEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.MANDATORY).build();
-    private static final MandatoryStatementSupport INSTANCE = new MandatoryStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.MANDATORY).build();
 
-    private MandatoryStatementSupport() {
+    public MandatoryStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.MANDATORY,
             EffectiveStatements.createMandatory(DeclaredStatements.createMandatory(Boolean.FALSE)),
             EffectiveStatements.createMandatory(DeclaredStatements.createMandatory(Boolean.TRUE)),
-            StatementPolicy.contextIndependent());
-    }
-
-    public static MandatoryStatementSupport getInstance() {
-        return INSTANCE;
+            StatementPolicy.contextIndependent(), config);
     }
 
     @Override

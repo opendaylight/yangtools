@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.RpcContextReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -23,14 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class RpcContextReferenceStatementSupport
         extends AbstractStringStatementSupport<RpcContextReferenceStatement, RpcContextReferenceEffectiveStatement> {
-    public static final @NonNull RpcContextReferenceStatementSupport INSTANCE =
-        new RpcContextReferenceStatementSupport();
-
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE).build();
 
-    private RpcContextReferenceStatementSupport() {
-        super(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE, StatementPolicy.contextIndependent());
+    public RpcContextReferenceStatementSupport(final YangParserConfiguration config) {
+        super(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

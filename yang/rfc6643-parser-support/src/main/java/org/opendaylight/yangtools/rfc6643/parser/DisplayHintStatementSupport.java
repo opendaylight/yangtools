@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -24,14 +25,9 @@ public final class DisplayHintStatementSupport
         extends AbstractStringStatementSupport<DisplayHintStatement, DisplayHintEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT).build();
-    private static final DisplayHintStatementSupport INSTANCE = new DisplayHintStatementSupport();
 
-    private DisplayHintStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT, StatementPolicy.contextIndependent());
-    }
-
-    public static DisplayHintStatementSupport getInstance() {
-        return INSTANCE;
+    public DisplayHintStatementSupport(final YangParserConfiguration config) {
+        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

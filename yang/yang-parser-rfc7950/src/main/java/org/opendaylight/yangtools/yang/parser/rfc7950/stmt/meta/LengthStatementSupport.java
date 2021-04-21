@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -33,21 +34,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LengthStatementSupport
         extends AbstractStatementSupport<List<ValueRange>, LengthStatement, LengthEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .LENGTH)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.ERROR_APP_TAG)
-        .addOptional(YangStmtMapping.ERROR_MESSAGE)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .build();
-    private static final LengthStatementSupport INSTANCE = new LengthStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.LENGTH)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build();
 
-    private LengthStatementSupport() {
-        super(YangStmtMapping.LENGTH, StatementPolicy.contextIndependent());
-    }
-
-    public static LengthStatementSupport getInstance() {
-        return INSTANCE;
+    public LengthStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.LENGTH, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

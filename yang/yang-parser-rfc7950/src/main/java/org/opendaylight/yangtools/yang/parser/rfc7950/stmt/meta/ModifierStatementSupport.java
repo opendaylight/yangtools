@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -24,16 +25,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ModifierStatementSupport
         extends AbstractStatementSupport<ModifierKind, ModifierStatement, ModifierEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.MODIFIER).build();
-    private static final ModifierStatementSupport INSTANCE = new ModifierStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.MODIFIER).build();
 
-    private ModifierStatementSupport() {
-        super(YangStmtMapping.MODIFIER, StatementPolicy.contextIndependent());
-    }
-
-    public static ModifierStatementSupport getInstance() {
-        return INSTANCE;
+    public ModifierStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.MODIFIER, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

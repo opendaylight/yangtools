@@ -20,9 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class ThirdPartyExtensionPluginTest {
@@ -31,7 +34,12 @@ public class ThirdPartyExtensionPluginTest {
 
     @Test
     public void test() throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
-        final CrossSourceStatementReactor.BuildAction reactor = CustomInferencePipeline.CUSTOM_REACTOR.newBuild();
+        final BuildAction reactor = RFC7950Reactors.defaultReactorBuilder()
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new ThirdPartyExtensionSupport(YangParserConfiguration.DEFAULT))
+            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyNamespace.BEHAVIOR)
+            .build()
+            .newBuild();
         reactor.addSource(StmtTestUtils.sourceForResource("/plugin-test/foo.yang"));
 
         final SchemaContext schema = reactor.buildEffective();

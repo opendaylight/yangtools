@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -36,14 +37,10 @@ public final class MustStatementSupport
 
     private final @NonNull XPathSupport xpathSupport;
 
-    private MustStatementSupport(final XPathSupport xpathSupport) {
+    public MustStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent(), config);
         this.xpathSupport = requireNonNull(xpathSupport);
-    }
-
-    public static MustStatementSupport createInstance(final XPathSupport xpathSupport) {
-        return new MustStatementSupport(xpathSupport);
     }
 
     @Override

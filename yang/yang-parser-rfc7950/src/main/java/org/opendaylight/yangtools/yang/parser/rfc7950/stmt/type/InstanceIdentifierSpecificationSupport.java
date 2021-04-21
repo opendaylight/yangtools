@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.RestrictedTypes;
@@ -23,10 +24,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class InstanceIdentifierSpecificationSupport
         extends AbstractTypeSupport<InstanceIdentifierSpecification> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.TYPE)
-        .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addOptional(YangStmtMapping.REQUIRE_INSTANCE).build();
+
+    InstanceIdentifierSpecificationSupport(final YangParserConfiguration config) {
+        super(config);
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

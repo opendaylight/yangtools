@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,14 +26,9 @@ public final class SubIdStatementSupport
         extends AbstractStatementSupport<Uint32, SubIdStatement, SubIdEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.SUB_ID).build();
-    private static final SubIdStatementSupport INSTANCE = new SubIdStatementSupport();
 
-    private SubIdStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.SUB_ID, StatementPolicy.contextIndependent());
-    }
-
-    public static SubIdStatementSupport getInstance() {
-        return INSTANCE;
+    public SubIdStatementSupport(final YangParserConfiguration config) {
+        super(IetfYangSmiv2ExtensionsMapping.SUB_ID, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

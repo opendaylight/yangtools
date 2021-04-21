@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -46,14 +47,21 @@ public class IetfYangSmiv2ExtensionPluginTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.defaultReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, DisplayHintStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MaxAccessStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, DefValStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ImpliedStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AliasStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, OidStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, SubIdStatementSupport.getInstance())
-                .build();
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new DisplayHintStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new MaxAccessStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new DefValStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new ImpliedStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new AliasStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new OidStatementSupport(YangParserConfiguration.DEFAULT))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new SubIdStatementSupport(YangParserConfiguration.DEFAULT))
+            .build();
     }
 
     @AfterClass

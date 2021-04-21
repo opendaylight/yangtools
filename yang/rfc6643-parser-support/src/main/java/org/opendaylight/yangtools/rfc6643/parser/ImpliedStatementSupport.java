@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.ImpliedEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -24,14 +25,9 @@ public final class ImpliedStatementSupport
         extends AbstractStringStatementSupport<ImpliedStatement, ImpliedEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.IMPLIED).build();
-    private static final ImpliedStatementSupport INSTANCE = new ImpliedStatementSupport();
 
-    private ImpliedStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.IMPLIED, StatementPolicy.contextIndependent());
-    }
-
-    public static ImpliedStatementSupport getInstance() {
-        return INSTANCE;
+    public ImpliedStatementSupport(final YangParserConfiguration config) {
+        super(IetfYangSmiv2ExtensionsMapping.IMPLIED, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

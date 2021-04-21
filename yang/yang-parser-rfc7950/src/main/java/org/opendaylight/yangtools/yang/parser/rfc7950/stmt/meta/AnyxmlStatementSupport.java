@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -29,25 +30,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class AnyxmlStatementSupport
         extends AbstractSchemaTreeStatementSupport<AnyxmlStatement, AnyxmlEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .ANYXML)
-        .addOptional(YangStmtMapping.CONFIG)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addOptional(YangStmtMapping.MANDATORY)
-        .addAny(YangStmtMapping.MUST)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.STATUS)
-        .addOptional(YangStmtMapping.WHEN)
-        .build();
-    private static final AnyxmlStatementSupport INSTANCE = new AnyxmlStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.ANYXML)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build();
 
-    private AnyxmlStatementSupport() {
-        super(YangStmtMapping.ANYXML, instantiatedPolicy());
-    }
-
-    public static AnyxmlStatementSupport getInstance() {
-        return INSTANCE;
+    public AnyxmlStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.ANYXML, instantiatedPolicy(), config);
     }
 
     @Override

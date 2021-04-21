@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.LeafrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -22,6 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractLeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
+    AbstractLeafrefSpecificationSupport(final YangParserConfiguration config) {
+        super(config);
+    }
+
     @Override
     protected final LeafrefSpecification createDeclared(final StmtContext<QName, LeafrefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {

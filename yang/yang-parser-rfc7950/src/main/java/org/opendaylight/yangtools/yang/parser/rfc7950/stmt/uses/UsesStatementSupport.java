@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
@@ -77,14 +78,9 @@ public final class UsesStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
-    private static final UsesStatementSupport INSTANCE = new UsesStatementSupport();
 
-    private UsesStatementSupport() {
-        super(YangStmtMapping.USES, StatementPolicy.exactReplica());
-    }
-
-    public static UsesStatementSupport getInstance() {
-        return INSTANCE;
+    public UsesStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.USES, StatementPolicy.exactReplica(), config);
     }
 
     @Override
