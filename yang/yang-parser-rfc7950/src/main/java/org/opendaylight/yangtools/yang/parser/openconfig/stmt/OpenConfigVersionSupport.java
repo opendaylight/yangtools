@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiv
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
@@ -23,16 +24,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class OpenConfigVersionSupport
         extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        OpenConfigStatements.OPENCONFIG_VERSION).build();
-    private static final OpenConfigVersionSupport INSTANCE = new OpenConfigVersionSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(OpenConfigStatements.OPENCONFIG_VERSION).build();
 
-    private OpenConfigVersionSupport() {
-        super(OpenConfigStatements.OPENCONFIG_VERSION, StatementPolicy.reject());
-    }
-
-    public static OpenConfigVersionSupport getInstance() {
-        return INSTANCE;
+    public OpenConfigVersionSupport(final YangParserConfiguration config) {
+        super(OpenConfigStatements.OPENCONFIG_VERSION, StatementPolicy.reject(), config);
     }
 
     @Override

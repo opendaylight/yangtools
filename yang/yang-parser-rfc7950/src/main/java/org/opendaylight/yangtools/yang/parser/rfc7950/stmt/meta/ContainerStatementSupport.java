@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -37,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class ContainerStatementSupport
         extends AbstractSchemaTreeStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
-    private static final @NonNull ContainerStatementSupport RFC6020_INSTANCE = new ContainerStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.CONTAINER)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
@@ -56,9 +57,9 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
-            .build());
+            .build();
 
-    private static final @NonNull ContainerStatementSupport RFC7950_INSTANCE = new ContainerStatementSupport(
+    private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.CONTAINER)
             .addAny(YangStmtMapping.ACTION)
             .addAny(YangStmtMapping.ANYDATA)
@@ -80,21 +81,21 @@ public final class ContainerStatementSupport
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    private ContainerStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.CONTAINER, instantiatedPolicy());
+    private ContainerStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.CONTAINER, instantiatedPolicy(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull ContainerStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull ContainerStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new ContainerStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull ContainerStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull ContainerStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new ContainerStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

@@ -8,15 +8,10 @@
 package org.opendaylight.yangtools.openconfig.parser;
 
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 
 public final class EncryptedValueStatementSupport extends AbstractHashedValueStatementSupport {
-    private static final EncryptedValueStatementSupport INSTANCE = new EncryptedValueStatementSupport();
-
-    private EncryptedValueStatementSupport() {
-        super(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE);
-    }
-
-    public static EncryptedValueStatementSupport getInstance() {
-        return INSTANCE;
+    public EncryptedValueStatementSupport(final YangParserConfiguration config) {
+        super(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE, config);
     }
 }

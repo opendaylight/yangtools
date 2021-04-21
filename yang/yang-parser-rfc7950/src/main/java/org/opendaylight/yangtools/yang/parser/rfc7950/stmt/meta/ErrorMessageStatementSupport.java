@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -23,15 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class ErrorMessageStatementSupport
         extends AbstractStringStatementSupport<ErrorMessageStatement, ErrorMessageEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.ERROR_MESSAGE).build();
-    private static final ErrorMessageStatementSupport INSTANCE = new ErrorMessageStatementSupport();
+        SubstatementValidator.builder(YangStmtMapping.ERROR_MESSAGE).build();
 
-    private ErrorMessageStatementSupport() {
-        super(YangStmtMapping.ERROR_MESSAGE, StatementPolicy.contextIndependent());
-    }
-
-    public static ErrorMessageStatementSupport getInstance() {
-        return INSTANCE;
+    public ErrorMessageStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.ERROR_MESSAGE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

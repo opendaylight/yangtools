@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
@@ -36,36 +38,25 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true)
 public final class YangParserFactoryImpl implements YangParserFactory {
     private static final List<StatementParserMode> SUPPORTED_MODES = List.of(
-        StatementParserMode.DEFAULT_MODE,
-        StatementParserMode.SEMVER_MODE);
+        StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
 
-    private final CrossSourceStatementReactor reactor;
-
-    private YangParserFactoryImpl(final @NonNull CrossSourceStatementReactor reactor) {
-        this.reactor = requireNonNull(reactor);
-    }
+    private final ConcurrentMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
+        new ConcurrentHashMap<>(2);
+    private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
 
     /**
      * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
      */
     public YangParserFactoryImpl() {
-        this(DefaultReactors.defaultReactor());
+        reactorFactory = config -> DefaultReactors.defaultReactorBuilder(config).build();
+        // Make sure default reactor is available
+        reactorFactory.apply(YangParserConfiguration.DEFAULT);
     }
 
     @Inject
     @Activate
     public YangParserFactoryImpl(final @Reference YangXPathParserFactory xpathFactory) {
-        this(DefaultReactors.defaultReactorBuilder(xpathFactory).build());
-    }
-
-    /**
-     * Construct a new {@link YangParserFactory} backed by specified reactor.
-     *
-     * @param reactor Backing reactor
-     * @return A new YangParserFactory
-     */
-    public static @NonNull YangParserFactory forReactor(final @NonNull CrossSourceStatementReactor reactor) {
-        return new YangParserFactoryImpl(reactor);
+        reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
     }
 
     @Override
@@ -77,6 +68,8 @@ public final class YangParserFactoryImpl implements YangParserFactory {
     public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
         final StatementParserMode mode = configuration.parserMode();
         checkArgument(SUPPORTED_MODES.contains(mode), "Unsupported parser mode %s", mode);
+
+        final CrossSourceStatementReactor reactor = reactors.computeIfAbsent(configuration, reactorFactory);
         return new YangParserImpl(reactor.newBuild(mode));
     }
 }

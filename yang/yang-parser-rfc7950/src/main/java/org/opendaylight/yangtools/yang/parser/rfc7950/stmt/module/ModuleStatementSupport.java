@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -68,81 +69,79 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class ModuleStatementSupport
         extends AbstractStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
-    private static final @NonNull ModuleStatementSupport RFC6020_INSTANCE = new ModuleStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.MODULE)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.AUGMENT)
-            .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONTACT)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.DEVIATION)
-            .addAny(YangStmtMapping.EXTENSION)
-            .addAny(YangStmtMapping.FEATURE)
-            .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.IDENTITY)
-            .addAny(YangStmtMapping.IMPORT)
-            .addAny(YangStmtMapping.INCLUDE)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addMandatory(YangStmtMapping.NAMESPACE)
-            .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORGANIZATION)
-            .addMandatory(YangStmtMapping.PREFIX)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addAny(YangStmtMapping.REVISION)
-            .addAny(YangStmtMapping.RPC)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.YANG_VERSION)
-            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
-            .build());
-    private static final @NonNull ModuleStatementSupport RFC7950_INSTANCE = new ModuleStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.MODULE)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.AUGMENT)
-            .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONTACT)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.DEVIATION)
-            .addAny(YangStmtMapping.EXTENSION)
-            .addAny(YangStmtMapping.FEATURE)
-            .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.IDENTITY)
-            .addAny(YangStmtMapping.IMPORT)
-            .addAny(YangStmtMapping.INCLUDE)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addMandatory(YangStmtMapping.NAMESPACE)
-            .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORGANIZATION)
-            .addMandatory(YangStmtMapping.PREFIX)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addAny(YangStmtMapping.REVISION)
-            .addAny(YangStmtMapping.RPC)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.USES)
-            .addMandatory(YangStmtMapping.YANG_VERSION)
-            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
-            .build());
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.AUGMENT)
+        .addAny(YangStmtMapping.CHOICE)
+        .addOptional(YangStmtMapping.CONTACT)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.DEVIATION)
+        .addAny(YangStmtMapping.EXTENSION)
+        .addAny(YangStmtMapping.FEATURE)
+        .addAny(YangStmtMapping.GROUPING)
+        .addAny(YangStmtMapping.IDENTITY)
+        .addAny(YangStmtMapping.IMPORT)
+        .addAny(YangStmtMapping.INCLUDE)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addMandatory(YangStmtMapping.NAMESPACE)
+        .addAny(YangStmtMapping.NOTIFICATION)
+        .addOptional(YangStmtMapping.ORGANIZATION)
+        .addMandatory(YangStmtMapping.PREFIX)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addAny(YangStmtMapping.REVISION)
+        .addAny(YangStmtMapping.RPC)
+        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(YangStmtMapping.USES)
+        .addOptional(YangStmtMapping.YANG_VERSION)
+        .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+        .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
+        .addAny(YangStmtMapping.ANYDATA)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.AUGMENT)
+        .addAny(YangStmtMapping.CHOICE)
+        .addOptional(YangStmtMapping.CONTACT)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.DEVIATION)
+        .addAny(YangStmtMapping.EXTENSION)
+        .addAny(YangStmtMapping.FEATURE)
+        .addAny(YangStmtMapping.GROUPING)
+        .addAny(YangStmtMapping.IDENTITY)
+        .addAny(YangStmtMapping.IMPORT)
+        .addAny(YangStmtMapping.INCLUDE)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addMandatory(YangStmtMapping.NAMESPACE)
+        .addAny(YangStmtMapping.NOTIFICATION)
+        .addOptional(YangStmtMapping.ORGANIZATION)
+        .addMandatory(YangStmtMapping.PREFIX)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addAny(YangStmtMapping.REVISION)
+        .addAny(YangStmtMapping.RPC)
+        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(YangStmtMapping.USES)
+        .addMandatory(YangStmtMapping.YANG_VERSION)
+        .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
+        .build();
 
     private final SubstatementValidator validator;
 
-    private ModuleStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.MODULE, StatementPolicy.reject());
+    private ModuleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.MODULE, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull ModuleStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull ModuleStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new ModuleStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull ModuleStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull ModuleStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new ModuleStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

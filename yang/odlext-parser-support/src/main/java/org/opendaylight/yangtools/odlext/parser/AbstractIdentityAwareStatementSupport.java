@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -35,8 +36,9 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     private final SubstatementValidator validator;
 
-    AbstractIdentityAwareStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition, StatementPolicy.exactReplica());
+    AbstractIdentityAwareStatementSupport(final StatementDefinition publicDefinition,
+            final YangParserConfiguration config) {
+        super(publicDefinition, StatementPolicy.exactReplica(), config);
         validator = SubstatementValidator.builder(publicDefinition).build();
     }
 

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -24,14 +25,9 @@ public final class DefValStatementSupport
         extends AbstractStringStatementSupport<DefValStatement, DefValEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.DEFVAL).build();
-    private static final DefValStatementSupport INSTANCE = new DefValStatementSupport();
 
-    private DefValStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.DEFVAL, StatementPolicy.contextIndependent());
-    }
-
-    public static DefValStatementSupport getInstance() {
-        return INSTANCE;
+    public DefValStatementSupport(final YangParserConfiguration config) {
+        super(IetfYangSmiv2ExtensionsMapping.DEFVAL, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -22,17 +23,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultStatementSupport
         extends AbstractStringStatementSupport<DefaultStatement, DefaultEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.DEFAULT).build();
-    private static final DefaultStatementSupport INSTANCE = new DefaultStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEFAULT).build();
 
-    private DefaultStatementSupport() {
+    public DefaultStatementSupport(final YangParserConfiguration config) {
         // Note: if we start interpreting the string we'll need to use StatementPolicy.declaredCopy()
-        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent());
-    }
-
-    public static DefaultStatementSupport getInstance() {
-        return INSTANCE;
+        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.MaxAccessStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -26,14 +27,9 @@ public final class MaxAccessStatementSupport
         extends AbstractStatementSupport<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS).build();
-    private static final MaxAccessStatementSupport INSTANCE = new MaxAccessStatementSupport();
 
-    private MaxAccessStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, StatementPolicy.contextIndependent());
-    }
-
-    public static MaxAccessStatementSupport getInstance() {
-        return INSTANCE;
+    public MaxAccessStatementSupport(final YangParserConfiguration config) {
+        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

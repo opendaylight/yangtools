@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -44,28 +45,30 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 @Beta
 public final class IncludeStatementSupport
         extends AbstractStringStatementSupport<IncludeStatement, IncludeEffectiveStatement> {
-    private static final @NonNull IncludeStatementSupport RFC6020_INSTANCE = new IncludeStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.INCLUDE).addOptional(YangStmtMapping.REVISION_DATE).build());
-    private static final @NonNull IncludeStatementSupport RFC7950_INSTANCE = new IncludeStatementSupport(
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.INCLUDE)
+            .addOptional(YangStmtMapping.REVISION_DATE)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.INCLUDE)
             .addOptional(YangStmtMapping.REVISION_DATE)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    IncludeStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.INCLUDE, StatementPolicy.reject());
+    IncludeStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.INCLUDE, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull IncludeStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull IncludeStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new IncludeStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull IncludeStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull IncludeStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new IncludeStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

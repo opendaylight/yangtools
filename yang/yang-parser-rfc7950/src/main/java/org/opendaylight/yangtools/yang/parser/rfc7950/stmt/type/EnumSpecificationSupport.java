@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
@@ -28,6 +29,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class EnumSpecificationSupport extends AbstractTypeSupport<EnumSpecification> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.ENUM).build();
+
+    EnumSpecificationSupport(final YangParserConfiguration config) {
+        super(config);
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

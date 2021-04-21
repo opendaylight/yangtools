@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.antlr.YangStatementLexer;
@@ -55,16 +56,11 @@ public final class KeyStatementSupport
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.KEY).build();
-    private static final KeyStatementSupport INSTANCE = new KeyStatementSupport();
 
-    private KeyStatementSupport() {
+    public KeyStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.KEY, StatementPolicy.copyDeclared(
             // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
-            (copy, current, substatements) -> copy.getArgument() == current.getArgument()));
-    }
-
-    public static KeyStatementSupport getInstance() {
-        return INSTANCE;
+            (copy, current, substatements) -> copy.getArgument() == current.getArgument()), config);
     }
 
     @Override

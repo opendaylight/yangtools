@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
@@ -61,71 +62,69 @@ public final class ListStatementSupport
     private static final ImmutableSet<YangStmtMapping> UNINSTANTIATED_DATATREE_STATEMENTS = ImmutableSet.of(
         YangStmtMapping.GROUPING, YangStmtMapping.NOTIFICATION, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT);
 
-    private static final @NonNull ListStatementSupport RFC6020_INSTANCE = new ListStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONFIG)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.KEY)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
-            .addAny(YangStmtMapping.MUST)
-            .addOptional(YangStmtMapping.ORDERED_BY)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.UNIQUE)
-            .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.WHEN)
-            .build());
-    private static final @NonNull ListStatementSupport RFC7950_INSTANCE = new ListStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.ACTION)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONFIG)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.KEY)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
-            .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORDERED_BY)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.UNIQUE)
-            .addAny(YangStmtMapping.USES)
-            .addOptional(YangStmtMapping.WHEN)
-            .build());
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.CHOICE)
+        .addOptional(YangStmtMapping.CONFIG)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.GROUPING)
+        .addAny(YangStmtMapping.IF_FEATURE)
+        .addOptional(YangStmtMapping.KEY)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addOptional(YangStmtMapping.MAX_ELEMENTS)
+        .addOptional(YangStmtMapping.MIN_ELEMENTS)
+        .addAny(YangStmtMapping.MUST)
+        .addOptional(YangStmtMapping.ORDERED_BY)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(YangStmtMapping.UNIQUE)
+        .addAny(YangStmtMapping.USES)
+        .addOptional(YangStmtMapping.WHEN)
+        .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.LIST)
+        .addAny(YangStmtMapping.ACTION)
+        .addAny(YangStmtMapping.ANYDATA)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.CHOICE)
+        .addOptional(YangStmtMapping.CONFIG)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.GROUPING)
+        .addAny(YangStmtMapping.IF_FEATURE)
+        .addOptional(YangStmtMapping.KEY)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addOptional(YangStmtMapping.MAX_ELEMENTS)
+        .addOptional(YangStmtMapping.MIN_ELEMENTS)
+        .addAny(YangStmtMapping.MUST)
+        .addAny(YangStmtMapping.NOTIFICATION)
+        .addOptional(YangStmtMapping.ORDERED_BY)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(YangStmtMapping.UNIQUE)
+        .addAny(YangStmtMapping.USES)
+        .addOptional(YangStmtMapping.WHEN)
+        .build();
 
     private final SubstatementValidator validator;
 
-    ListStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.LIST, instantiatedPolicy());
+    ListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.LIST, instantiatedPolicy(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull ListStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull ListStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new ListStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull ListStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull ListStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new ListStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

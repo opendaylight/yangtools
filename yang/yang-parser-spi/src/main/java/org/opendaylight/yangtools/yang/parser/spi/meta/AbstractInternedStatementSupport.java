@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 /**
@@ -46,8 +47,8 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
             });
 
     protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<A, D> policy) {
-        super(publicDefinition, policy);
+            final StatementPolicy<A, D> policy, final YangParserConfiguration config) {
+        super(publicDefinition, policy, config);
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -25,17 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class NamespaceStatementSupport
         extends AbstractStatementSupport<XMLNamespace, NamespaceStatement, NamespaceEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .NAMESPACE)
-        .build();
-    private static final NamespaceStatementSupport INSTANCE = new NamespaceStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.NAMESPACE).build();
 
-    private NamespaceStatementSupport() {
-        super(YangStmtMapping.NAMESPACE, StatementPolicy.reject());
-    }
-
-    public static NamespaceStatementSupport getInstance() {
-        return INSTANCE;
+    public NamespaceStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.NAMESPACE, StatementPolicy.reject(), config);
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -35,14 +36,9 @@ public final class DeviationStatementSupport
         .addAny(YangStmtMapping.DEVIATE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
-    private static final DeviationStatementSupport INSTANCE = new DeviationStatementSupport();
 
-    private DeviationStatementSupport() {
-        super(YangStmtMapping.DEVIATION, StatementPolicy.reject());
-    }
-
-    public static DeviationStatementSupport getInstance() {
-        return INSTANCE;
+    public DeviationStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.DEVIATION, StatementPolicy.reject(), config);
     }
 
     @Override

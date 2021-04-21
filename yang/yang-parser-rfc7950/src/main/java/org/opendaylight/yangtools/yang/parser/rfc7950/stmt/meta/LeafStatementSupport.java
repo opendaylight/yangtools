@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -35,28 +36,23 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LeafStatementSupport
         extends AbstractSchemaTreeStatementSupport<LeafStatement, LeafEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .LEAF)
-        .addOptional(YangStmtMapping.CONFIG)
-        .addOptional(YangStmtMapping.DEFAULT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addOptional(YangStmtMapping.MANDATORY)
-        .addAny(YangStmtMapping.MUST)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.STATUS)
-        .addMandatory(YangStmtMapping.TYPE)
-        .addOptional(YangStmtMapping.UNITS)
-        .addOptional(YangStmtMapping.WHEN)
-        .build();
-    private static final LeafStatementSupport INSTANCE = new LeafStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.LEAF)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build();
 
-    private LeafStatementSupport() {
-        super(YangStmtMapping.LEAF, instantiatedPolicy());
-    }
-
-    public static LeafStatementSupport getInstance() {
-        return INSTANCE;
+    public LeafStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.LEAF, instantiatedPolicy(), config);
     }
 
     @Override

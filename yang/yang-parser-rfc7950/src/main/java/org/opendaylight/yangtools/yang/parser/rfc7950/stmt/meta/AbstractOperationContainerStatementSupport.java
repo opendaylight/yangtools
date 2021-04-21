@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -37,8 +38,8 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     private final Function<QNameModule, QName> createArgument;
 
     AbstractOperationContainerStatementSupport(final StatementDefinition publicDefinition,
-            final Function<QNameModule, QName> createArgument) {
-        super(publicDefinition, uninstantiatedPolicy());
+            final YangParserConfiguration config, final Function<QNameModule, QName> createArgument) {
+        super(publicDefinition, uninstantiatedPolicy(), config);
         this.createArgument = requireNonNull(createArgument);
     }
 

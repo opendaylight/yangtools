@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
@@ -50,14 +51,9 @@ public final class TypedefStatementSupport extends
         .addMandatory(YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.UNITS)
         .build();
-    private static final TypedefStatementSupport INSTANCE = new TypedefStatementSupport();
 
-    private TypedefStatementSupport() {
-        super(YangStmtMapping.TYPEDEF, StatementPolicy.exactReplica());
-    }
-
-    public static TypedefStatementSupport getInstance() {
-        return INSTANCE;
+    public TypedefStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.TYPEDEF, StatementPolicy.exactReplica(), config);
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -27,7 +28,6 @@ public final class OrderedByStatementSupport
         extends AbstractStatementSupport<Ordering, OrderedByStatement, OrderedByEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
-    private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
 
     /*
      * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
@@ -43,12 +43,8 @@ public final class OrderedByStatementSupport
     private static final @NonNull OrderedByEffectiveStatement EMPTY_USER_EFF =
         EffectiveStatements.createOrderedBy(EMPTY_USER_DECL);
 
-    private OrderedByStatementSupport() {
-        super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent());
-    }
-
-    public static OrderedByStatementSupport getInstance() {
-        return INSTANCE;
+    public OrderedByStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

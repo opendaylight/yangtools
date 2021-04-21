@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStringStatementSupport;
@@ -20,16 +21,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ContactStatementSupport
         extends AbstractInternedStringStatementSupport<ContactStatement, ContactEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.CONTACT).build();
-    private static final ContactStatementSupport INSTANCE = new ContactStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.CONTACT).build();
 
-    private ContactStatementSupport() {
-        super(YangStmtMapping.CONTACT, StatementPolicy.reject());
-    }
-
-    public static ContactStatementSupport getInstance() {
-        return INSTANCE;
+    public ContactStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.CONTACT, StatementPolicy.reject(), config);
     }
 
     @Override

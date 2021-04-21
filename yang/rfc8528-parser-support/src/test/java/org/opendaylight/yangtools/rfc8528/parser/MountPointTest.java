@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -46,7 +47,8 @@ public class MountPointTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MountPointStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    new MountPointStatementSupport(YangParserConfiguration.DEFAULT))
                 .build();
     }
 

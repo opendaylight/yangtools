@@ -8,13 +8,16 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class LeafrefSpecificationRFC6020Support extends AbstractLeafrefSpecificationSupport {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .TYPE)
-        .addMandatory(YangStmtMapping.PATH)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(YangStmtMapping.PATH).build();
+
+    LeafrefSpecificationRFC6020Support(final YangParserConfiguration config) {
+        super(config);
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
