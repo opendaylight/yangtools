@@ -71,7 +71,7 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     private List<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-        final StatementSourceReference ref, final String rawArgument) {
+            final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.sourceContext = requireNonNull(sourceContext);
         this.argument = def.parseArgumentValue(this, rawArgument());
