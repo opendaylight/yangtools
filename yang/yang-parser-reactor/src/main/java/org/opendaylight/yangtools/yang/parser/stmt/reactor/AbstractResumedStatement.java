@@ -17,11 +17,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
@@ -59,15 +61,15 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-            final String rawArgument) {
-        super(def);
+            final String rawArgument, final boolean retainDeclarationReference) {
+        super(def, retainDeclarationReference);
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = def.support().internArgument(rawArgument);
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-            final String rawArgument, final CopyType copyType) {
-        super(def, copyType);
+            final String rawArgument, final CopyType copyType, final boolean retainDeclarationReference) {
+        super(def, copyType, retainDeclarationReference);
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = rawArgument;
     }
@@ -133,21 +135,34 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         final ModelProcessingPhase phase = getCompletedPhase();
         checkState(phase == ModelProcessingPhase.FULL_DECLARATION || phase == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Cannot build declared instance after phase %s", phase);
-        return declaredInstance = definition().getFactory().createDeclared(this);
+
+        final StatementFactory<A, D, E> factory = definition().getFactory();
+        final D created = factory.createDeclared(this);
+
+        // Attach DeclarationReference if needed
+        final D result;
+        final DeclarationReference declRef = statementDeclSource.declarationReference();
+        if (declRef != null && retainDeclarationReference()) {
+            result = factory.attachDeclarationReference(created, declRef);
+        } else {
+            result = created;
+        }
+
+        return declaredInstance = result;
     }
 
     @Override
-    public StatementDefinition getDefinition() {
+    public final StatementDefinition getDefinition() {
         return publicDefinition();
     }
 
     @Override
-    public StatementSourceReference getSourceReference() {
-        return sourceReference();
+    public final StatementSourceReference getSourceReference() {
+        return statementDeclSource;
     }
 
     @Override
-    public boolean isFullyDefined() {
+    public final boolean isFullyDefined() {
         return fullyDefined();
     }
 

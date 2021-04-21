@@ -85,6 +85,15 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
     private final ImmutableSet<YangVersion> supportedVersions;
+
+    // FIXME: 8.0.0: these flags should really be passed to individual StatementSupport instances when the reactor is
+    //               wired. That requires a change in StatementSupport lifecycle, as statement supports would no longer
+    //               be stateless singletons:
+    //               - 'declarationReferences' would be completely handled in AbstractStatementSupport.createDeclared()
+    //                 without any additional storage requirements
+    //               - 'enabledSemanticVersions' would be forwarded to {Import,Module}StatementSupport's bootstrap to
+    //                 wire the appropriate behaviour
+    private final boolean retainDeclarationReferences;
     private final boolean enabledSemanticVersions;
 
     private Set<SourceSpecificContext> libSources = new HashSet<>();
@@ -93,8 +102,9 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
-            final StatementParserMode statementParserMode) {
+            final StatementParserMode statementParserMode, final boolean retainDeclarationReferences) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.retainDeclarationReferences = retainDeclarationReferences;
 
         switch (statementParserMode) {
             case DEFAULT_MODE:
@@ -114,6 +124,10 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     boolean isEnabledSemanticVersioning() {
         return enabledSemanticVersions;
+    }
+
+    boolean retainDeclarationReferences() {
+        return retainDeclarationReferences;
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import java.util.stream.Stream;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -37,6 +38,11 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     @Override
     public D createDeclared(final StmtContext<A, D, ?> ctx) {
         return delegate.createDeclared(ctx);
+    }
+
+    @Override
+    public D attachDeclarationReference(final D stmt, final DeclarationReference reference) {
+        return delegate.attachDeclarationReference(stmt, reference);
     }
 
     @Override

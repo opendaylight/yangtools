@@ -97,12 +97,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
     //
-    // {@link CopyHistory} encoded as a single byte. We still have 4 bits unused.
+    // {@link CopyHistory} encoded as a single byte. These take up four bits. We use one bit to track whether or not
+    // we also need to retain declaration reference. We still have 3 bits unused.
     //
     private static final byte COPY_LAST_TYPE_MASK        = 0x03;
     private static final byte COPY_ADDED_BY_USES         = 0x04;
     private static final byte COPY_ADDED_BY_AUGMENTATION = 0x08;
     private static final byte COPY_ORIGINAL              = 0x00;
+    // Track whether we should retain DeclarationReference
+    private static final byte RETAIN_REFERENCE           = 0x10;
 
     private final byte copyHistory;
 
@@ -135,24 +138,24 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.executionOrder = original.executionOrder;
     }
 
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final boolean retainDeclarationReference) {
         this.definition = requireNonNull(def);
-        this.copyHistory = COPY_ORIGINAL;
+        this.copyHistory = (byte) (COPY_ORIGINAL | additionalFlags(retainDeclarationReference));
     }
 
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final byte copyHistory) {
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType,
+            final boolean retainDeclarationReference) {
         this.definition = requireNonNull(def);
-        this.copyHistory = copyHistory;
-    }
-
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
-        this.definition = requireNonNull(def);
-        this.copyHistory = (byte) copyFlags(copyType);
+        this.copyHistory = (byte) (copyFlags(copyType) | additionalFlags(retainDeclarationReference));
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> prototype, final CopyType copyType) {
         this.definition = prototype.definition;
         this.copyHistory = (byte) (copyFlags(copyType) | prototype.copyHistory & ~COPY_LAST_TYPE_MASK);
+    }
+
+    private static int additionalFlags(final boolean retainDeclarationReference) {
+        return retainDeclarationReference ? 0 : RETAIN_REFERENCE;
     }
 
     private static int copyFlags(final CopyType copyType) {
@@ -228,6 +231,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Deprecated
     final void setCompletedPhase(final ModelProcessingPhase completedPhase) {
         this.executionOrder = completedPhase.executionOrder();
+    }
+
+    // This method is exposed only for AbstractResumedStatement
+    final boolean retainDeclarationReference() {
+        return (copyHistory & RETAIN_REFERENCE) != 0;
     }
 
     @Override
@@ -837,6 +845,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Beta
+    // FIXME: this information should be exposed as a well-known Namespace
     public final boolean hasImplicitParentSupport() {
         return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
     }
