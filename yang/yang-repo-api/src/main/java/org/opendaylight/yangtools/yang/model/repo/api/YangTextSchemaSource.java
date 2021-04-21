@@ -126,6 +126,18 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
         return new ResourceYangTextSchemaSource(identifier, url);
     }
 
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a URL.
+     *
+     * @param url Backing URL
+     * @param identifier Source identifier
+     * @return A new instance.
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public static @NonNull YangTextSchemaSource forURL(final URL url, final SourceIdentifier identifier) {
+        return new ResourceYangTextSchemaSource(identifier, url);
+    }
+
     @Override
     public final SourceIdentifier getIdentifier() {
         return identifier;
