@@ -137,17 +137,17 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Override
-    public StatementDefinition getDefinition() {
+    public final StatementDefinition getDefinition() {
         return publicDefinition();
     }
 
     @Override
-    public StatementSourceReference getSourceReference() {
-        return sourceReference();
+    public final StatementSourceReference getSourceReference() {
+        return statementDeclSource;
     }
 
     @Override
-    public boolean isFullyDefined() {
+    public final boolean isFullyDefined() {
         return fullyDefined();
     }
 
