@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.util.concurrent.FluentFuture;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
@@ -251,18 +250,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         @Override
         public YangTextSchemaSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            return new YangTextSchemaSource(sourceIdentifier) {
-
-                @Override
-                protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-                    return toStringHelper;
-                }
-
-                @Override
-                public InputStream openStream() throws IOException {
-                    return Files.newInputStream(cachedSource.toPath());
-                }
-            };
+            return YangTextSchemaSource.forFile(cachedSource, sourceIdentifier);
         }
     }
 
