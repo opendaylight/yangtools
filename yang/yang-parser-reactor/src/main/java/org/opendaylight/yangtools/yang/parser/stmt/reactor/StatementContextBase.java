@@ -140,11 +140,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.copyHistory = COPY_ORIGINAL;
     }
 
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final byte copyHistory) {
-        this.definition = requireNonNull(def);
-        this.copyHistory = copyHistory;
-    }
-
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyType copyType) {
         this.definition = requireNonNull(def);
         this.copyHistory = (byte) copyFlags(copyType);
@@ -837,6 +832,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Beta
+    // FIXME: this information should be exposed as a well-known Namespace
     public final boolean hasImplicitParentSupport() {
         return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
     }
