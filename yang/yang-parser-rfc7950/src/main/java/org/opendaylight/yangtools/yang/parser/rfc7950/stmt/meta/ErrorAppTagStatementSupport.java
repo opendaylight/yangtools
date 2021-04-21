@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -24,14 +25,9 @@ public final class ErrorAppTagStatementSupport
         extends AbstractStringStatementSupport<ErrorAppTagStatement, ErrorAppTagEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ERROR_APP_TAG).build();
-    private static final ErrorAppTagStatementSupport INSTANCE = new ErrorAppTagStatementSupport();
 
-    private ErrorAppTagStatementSupport() {
-        super(YangStmtMapping.ERROR_APP_TAG, StatementPolicy.contextIndependent());
-    }
-
-    public static ErrorAppTagStatementSupport getInstance() {
-        return INSTANCE;
+    public ErrorAppTagStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.ERROR_APP_TAG, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

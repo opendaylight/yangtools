@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -23,13 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class InstanceTargetStatementSupport
         extends AbstractStringStatementSupport<InstanceTargetStatement, InstanceTargetEffectiveStatement> {
-    public static final @NonNull InstanceTargetStatementSupport INSTANCE = new InstanceTargetStatementSupport();
-
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.INSTANCE_TARGET).build();
 
-    private InstanceTargetStatementSupport() {
-        super(OpenDaylightExtensionsStatements.INSTANCE_TARGET, StatementPolicy.contextIndependent());
+    public InstanceTargetStatementSupport(final YangParserConfiguration config) {
+        super(OpenDaylightExtensionsStatements.INSTANCE_TARGET, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

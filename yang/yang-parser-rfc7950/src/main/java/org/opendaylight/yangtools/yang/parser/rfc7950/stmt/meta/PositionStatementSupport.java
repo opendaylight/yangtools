@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractInternedStatementSupport;
@@ -23,16 +24,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class PositionStatementSupport
         extends AbstractInternedStatementSupport<Uint32, PositionStatement, PositionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.POSITION).build();
-    private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.POSITION).build();
 
-    private PositionStatementSupport() {
-        super(YangStmtMapping.POSITION, StatementPolicy.contextIndependent());
-    }
-
-    public static PositionStatementSupport getInstance() {
-        return INSTANCE;
+    public PositionStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.POSITION, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

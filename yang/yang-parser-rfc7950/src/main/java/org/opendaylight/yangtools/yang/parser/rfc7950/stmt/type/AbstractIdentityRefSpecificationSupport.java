@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.ri.type.IdentityrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -33,6 +34,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractIdentityRefSpecificationSupport
         extends AbstractTypeSupport<IdentityRefSpecification> {
+    AbstractIdentityRefSpecificationSupport(final YangParserConfiguration config) {
+        super(config);
+    }
+
     @Override
     public final void onFullDefinitionDeclared(final Mutable<QName, IdentityRefSpecification,
             EffectiveStatement<QName, IdentityRefSpecification>> stmt) {

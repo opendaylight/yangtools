@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -30,14 +31,9 @@ public final class AliasStatementSupport
                 .add(YangStmtMapping.STATUS, 0, 1)
                 .add(IetfYangSmiv2ExtensionsMapping.OBJECT_ID, 0, 1)
                 .build();
-    private static final AliasStatementSupport INSTANCE = new AliasStatementSupport();
 
-    private AliasStatementSupport() {
-        super(IetfYangSmiv2ExtensionsMapping.ALIAS, StatementPolicy.contextIndependent());
-    }
-
-    public static AliasStatementSupport getInstance() {
-        return INSTANCE;
+    public AliasStatementSupport(final YangParserConfiguration config) {
+        super(IetfYangSmiv2ExtensionsMapping.ALIAS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

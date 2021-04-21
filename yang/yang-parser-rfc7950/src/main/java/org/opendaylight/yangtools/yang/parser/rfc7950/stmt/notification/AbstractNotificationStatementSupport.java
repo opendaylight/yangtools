@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
@@ -25,8 +26,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractNotificationStatementSupport
         extends AbstractSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
-    AbstractNotificationStatementSupport() {
-        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy());
+    AbstractNotificationStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy(), config);
     }
 
     @Override

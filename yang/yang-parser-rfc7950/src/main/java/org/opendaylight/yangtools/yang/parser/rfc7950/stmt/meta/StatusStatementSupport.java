@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -26,14 +27,9 @@ public final class StatusStatementSupport
         extends AbstractStatementSupport<Status, StatusStatement, StatusEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.STATUS).build();
-    private static final StatusStatementSupport INSTANCE = new StatusStatementSupport();
 
-    private StatusStatementSupport() {
-        super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent());
-    }
-
-    public static StatusStatementSupport getInstance() {
-        return INSTANCE;
+    public StatusStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -27,14 +28,9 @@ public final class YangVersionStatementSupport
         extends AbstractStatementSupport<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.YANG_VERSION).build();
-    private static final YangVersionStatementSupport INSTANCE = new YangVersionStatementSupport();
 
-    private YangVersionStatementSupport() {
-        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject());
-    }
-
-    public static YangVersionStatementSupport getInstance() {
-        return INSTANCE;
+    public YangVersionStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject(), config);
     }
 
     @Override

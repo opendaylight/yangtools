@@ -8,17 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class IfFeatureStatementRFC7950Support extends AbstractIfFeatureStatementSupport {
-    private static final IfFeatureStatementRFC7950Support INSTANCE = new IfFeatureStatementRFC7950Support();
-
-    private IfFeatureStatementRFC7950Support() {
-        // Hidden on purpose
-    }
-
-    public static IfFeatureStatementRFC7950Support getInstance() {
-        return INSTANCE;
+    public IfFeatureStatementRFC7950Support(final YangParserConfiguration config) {
+        super(config);
     }
 
     @Override

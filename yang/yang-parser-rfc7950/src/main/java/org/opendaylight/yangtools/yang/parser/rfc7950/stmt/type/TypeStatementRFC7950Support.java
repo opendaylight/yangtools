@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -28,27 +29,23 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 @Beta
 public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupport {
-    private static final ImmutableMap<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap.of(
-        TypeDefinitions.LEAFREF.getLocalName(), new LeafrefSpecificationRFC7950Support(),
-        TypeDefinitions.IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC7950Support());
-    private static final TypeStatementRFC7950Support INSTANCE = new TypeStatementRFC7950Support();
+    private final ImmutableMap<String, StatementSupport<?, ?, ?>> argumentSpecificSupports;
 
-    private TypeStatementRFC7950Support() {
-        // Hidden
-    }
-
-    public static TypeStatementRFC7950Support getInstance() {
-        return INSTANCE;
+    public TypeStatementRFC7950Support(final YangParserConfiguration config) {
+        super(config);
+        argumentSpecificSupports = ImmutableMap.of(
+            TypeDefinitions.LEAFREF.getLocalName(), new LeafrefSpecificationRFC7950Support(config),
+            TypeDefinitions.IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC7950Support(config));
     }
 
     @Override
     public boolean hasArgumentSpecificSupports() {
-        return !ARGUMENT_SPECIFIC_SUPPORTS.isEmpty() || super.hasArgumentSpecificSupports();
+        return !argumentSpecificSupports.isEmpty() || super.hasArgumentSpecificSupports();
     }
 
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        final StatementSupport<?, ?, ?> potential = ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
+        final StatementSupport<?, ?, ?> potential = argumentSpecificSupports.get(argument);
         return potential != null ? potential : super.getSupportSpecificForArgument(argument);
     }
 

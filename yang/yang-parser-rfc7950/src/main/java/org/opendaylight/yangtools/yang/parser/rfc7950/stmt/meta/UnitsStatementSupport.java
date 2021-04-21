@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -22,17 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class UnitsStatementSupport
         extends AbstractStringStatementSupport<UnitsStatement, UnitsEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.UNITS)
-        .build();
-    private static final UnitsStatementSupport INSTANCE = new UnitsStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.UNITS).build();
 
-    private UnitsStatementSupport() {
-        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent());
-    }
-
-    public static UnitsStatementSupport getInstance() {
-        return INSTANCE;
+    public UnitsStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

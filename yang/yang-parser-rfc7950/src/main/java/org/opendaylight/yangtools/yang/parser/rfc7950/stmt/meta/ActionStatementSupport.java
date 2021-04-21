@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins;
@@ -40,25 +42,26 @@ public final class ActionStatementSupport extends
     private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
             YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.ACTION)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addOptional(YangStmtMapping.INPUT)
-        .addOptional(YangStmtMapping.OUTPUT)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.STATUS)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .build();
-    private static final ActionStatementSupport INSTANCE = new ActionStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.ACTION)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.INPUT)
+            .addOptional(YangStmtMapping.OUTPUT)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .build();
 
-    private ActionStatementSupport() {
-        super(YangStmtMapping.ACTION, uninstantiatedPolicy());
-    }
+    private final InputStatementSupport implicitInput;
+    private final OutputStatementSupport implicitOutput;
 
-    public static ActionStatementSupport getInstance() {
-        return INSTANCE;
+    public ActionStatementSupport(final YangParserConfiguration config, final InputStatementSupport implicitInput,
+             final OutputStatementSupport implicitOutput) {
+        super(YangStmtMapping.ACTION, uninstantiatedPolicy(), config);
+        this.implicitInput = requireNonNull(implicitInput);
+        this.implicitOutput = requireNonNull(implicitOutput);
     }
 
     @Override
@@ -81,12 +84,10 @@ public final class ActionStatementSupport extends
 
         verify(stmt instanceof StatementContextBase);
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
-                InputStatementSupport.rfc7950Instance(), null);
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitInput, null);
         }
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
-                OutputStatementSupport.rfc7950Instance(), null);
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitOutput, null);
         }
     }
 

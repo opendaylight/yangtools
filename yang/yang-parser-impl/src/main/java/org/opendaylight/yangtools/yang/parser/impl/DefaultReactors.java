@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataArgumentNamespace;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -77,7 +78,19 @@ public final class DefaultReactors {
      * @return A populated CrossSourceStatementReactor builder.
      */
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
-        return addExtensions(RFC7950Reactors.defaultReactorBuilder());
+        return defaultReactorBuilder(YangParserConfiguration.DEFAULT);
+    }
+
+    /**
+     * Return a baseline CrossSourceStatementReactor {@link Builder}. The builder is initialized to the equivalent
+     * of the reactor returned via {@link #defaultReactor()}, but can be further customized before use.
+     *
+     * @param config parser configuration
+     * @return A populated CrossSourceStatementReactor builder.
+     */
+    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+            final YangParserConfiguration config) {
+        return addExtensions(RFC7950Reactors.defaultReactorBuilder(config), config);
     }
 
     /**
@@ -88,53 +101,67 @@ public final class DefaultReactors {
      */
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangXPathParserFactory xpathFactory) {
-        return addExtensions(RFC7950Reactors.defaultReactorBuilder(xpathFactory));
+        return defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
+    }
+
+    /**
+     * Return a baseline CrossSourceStatementReactor {@link Builder}. The builder is initialized to the equivalent
+     * of the reactor returned via {@link #defaultReactor()}, but can be further customized before use.
+     *
+     * @param config parser configuration
+     * @return A populated CrossSourceStatementReactor builder.
+     */
+    public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
+            final YangXPathParserFactory xpathFactory, final YangParserConfiguration config) {
+        return addExtensions(RFC7950Reactors.defaultReactorBuilder(xpathFactory, config), config);
     }
 
     private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
-            final @NonNull CustomCrossSourceStatementReactorBuilder builder) {
+            final @NonNull CustomCrossSourceStatementReactorBuilder builder, final YangParserConfiguration config) {
         return builder
                 // OpenDaylight extensions
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AugmentIdentifierStatementSupport.INSTANCE)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextInstanceStatementSupport.INSTANCE)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ContextReferenceStatementSupport.INSTANCE)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, InstanceTargetStatementSupport.INSTANCE)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    RpcContextReferenceStatementSupport.INSTANCE)
+                    new AugmentIdentifierStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ContextInstanceStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    new ContextReferenceStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new InstanceTargetStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    new RpcContextReferenceStatementSupport(config))
 
                 // RFC6241 get-filter-element-attributes support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    GetFilterElementAttributesStatementSupport.getInstance())
+                    new GetFilterElementAttributesStatementSupport(config))
 
                 // RFC6536 default-deny-{all,write} support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    DefaultDenyAllStatementSupport.getInstance())
+                    new DefaultDenyAllStatementSupport(config))
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    DefaultDenyWriteStatementSupport.getInstance())
+                    new DefaultDenyWriteStatementSupport(config))
 
                 // RFC6643 extensions
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, DisplayHintStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MaxAccessStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, DefValStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ImpliedStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AliasStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, OidStatementSupport.getInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, SubIdStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DisplayHintStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MaxAccessStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefValStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ImpliedStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AliasStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new OidStatementSupport(config))
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new SubIdStatementSupport(config))
 
                 // RFC7952 annotation support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AnnotationStatementSupport(config))
 
                 // RFC8040 yang-data support
                 .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new YangDataStatementSupport(config))
 
                 // RFC8528 yang-data support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MountPointStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MountPointStatementSupport(config))
 
                 // OpenConfig extensions support (except openconfig-version)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    EncryptedValueStatementSupport.getInstance())
+                    new EncryptedValueStatementSupport(config))
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    HashedValueStatementSupport.getInstance());
+                    new HashedValueStatementSupport(config));
     }
 }

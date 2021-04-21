@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -25,19 +26,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class RevisionStatementSupport
         extends AbstractStatementSupport<Revision, RevisionStatement, RevisionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.REVISION)
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.REVISION)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
-    private static final RevisionStatementSupport INSTANCE = new RevisionStatementSupport();
 
-    private RevisionStatementSupport() {
-        super(YangStmtMapping.REVISION, StatementPolicy.reject());
-    }
-
-    public static RevisionStatementSupport getInstance() {
-        return INSTANCE;
+    public RevisionStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.REVISION, StatementPolicy.reject(), config);
     }
 
     @Override

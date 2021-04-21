@@ -18,9 +18,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 /**
@@ -34,19 +36,43 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 @Beta
 public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
-    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy) {
+    private final boolean retainDeclarationReference;
+
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
+            final YangParserConfiguration config) {
         super(publicDefinition, policy);
+        this.retainDeclarationReference = config.retainDeclarationReferences();
     }
 
     @Override
     public final D createDeclared(final StmtContext<A, D, ?> ctx) {
-        return createDeclared(ctx, ctx.declaredSubstatements().stream()
+        final D stmt = createDeclared(ctx, ctx.declaredSubstatements().stream()
             .map(StmtContext::declared)
             .collect(ImmutableList.toImmutableList()));
+        return retainDeclarationReference ? attachDeclarationReference(stmt, ctx) : stmt;
     }
 
     protected abstract @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx,
             @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements);
+
+    private @NonNull D attachDeclarationReference(final @NonNull D stmt, final @NonNull StmtContext<A, D, ?> ctx) {
+        final DeclarationReference ref = ctx.sourceReference().declarationReference();
+        return ref == null ? stmt : attachDeclarationReference(stmt, ref);
+    }
+
+    /**
+     * Attach specified {@link DeclarationReference} to a baseline declared statement. If an implementation does not
+     * support attaching DeclarationReferences, it should return the statement unchanged.
+     *
+     * @param stmt Declared statement
+     * @param reference {@link DeclarationReference} to attach
+     * @return Equivalent of stmt, potentially with specified reference attached.
+     */
+    // FIXME: make this method abstract
+    protected @NonNull D attachDeclarationReference(final @NonNull D stmt,
+            final @NonNull DeclarationReference reference) {
+        return stmt;
+    }
 
     @Override
     public final E createEffective(final Current<A, D> stmt,

@@ -8,16 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
  * Class providing necessary support for processing YANG 1.1 identityref statement.
  */
 final class IdentityRefSpecificationRFC7950Support extends AbstractIdentityRefSpecificationSupport {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .TYPE)
-            .addMultiple(YangStmtMapping.BASE)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.BASE).build();
+
+    IdentityRefSpecificationRFC7950Support(final YangParserConfiguration config) {
+        super(config);
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

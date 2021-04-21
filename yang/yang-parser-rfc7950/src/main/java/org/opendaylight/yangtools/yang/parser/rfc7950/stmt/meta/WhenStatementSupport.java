@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -34,14 +35,10 @@ public final class WhenStatementSupport
 
     private final @NonNull XPathSupport xpathSupport;
 
-    private WhenStatementSupport(final XPathSupport xpathSupport) {
+    public WhenStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent(), config);
         this.xpathSupport = requireNonNull(xpathSupport);
-    }
-
-    public static WhenStatementSupport createInstance(final XPathSupport xpathSupport) {
-        return new WhenStatementSupport(xpathSupport);
     }
 
     @Override

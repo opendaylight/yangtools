@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -63,8 +64,8 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
 
     protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<QName, D> policy) {
-        super(publicDefinition, policy);
+            final StatementPolicy<QName, D> policy, final YangParserConfiguration config) {
+        super(publicDefinition, policy, config);
     }
 
     /**

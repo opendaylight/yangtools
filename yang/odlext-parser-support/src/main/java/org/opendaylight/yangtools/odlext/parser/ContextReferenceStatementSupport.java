@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
@@ -17,15 +16,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
 public final class ContextReferenceStatementSupport
         extends AbstractIdentityAwareStatementSupport<ContextReferenceStatement, ContextReferenceEffectiveStatement> {
-    public static final @NonNull ContextReferenceStatementSupport INSTANCE = new ContextReferenceStatementSupport();
-
-    private ContextReferenceStatementSupport() {
-        super(OpenDaylightExtensionsStatements.CONTEXT_REFERENCE);
+    public ContextReferenceStatementSupport(final YangParserConfiguration config) {
+        super(OpenDaylightExtensionsStatements.CONTEXT_REFERENCE, config);
     }
 
     @Override

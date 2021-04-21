@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
@@ -45,7 +46,7 @@ public class NetconfTest {
     public static void createReactor() {
         reactor = RFC7950Reactors.defaultReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    GetFilterElementAttributesStatementSupport.getInstance())
+                    new GetFilterElementAttributesStatementSupport(YangParserConfiguration.DEFAULT))
                 .build();
     }
 

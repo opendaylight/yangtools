@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -27,25 +28,21 @@ public final class PathStatementSupport
         extends AbstractStatementSupport<PathExpression, PathStatement, PathEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.PATH).build();
-    private static final PathStatementSupport LENIENT_INSTANCE = new PathStatementSupport(
-        new PathExpressionParser.Lenient());
-    private static final PathStatementSupport STRICT_INSTANCE = new PathStatementSupport(
-        new PathExpressionParser());
 
     private final PathExpressionParser parser;
 
-    private PathStatementSupport(final PathExpressionParser parser) {
+    private PathStatementSupport(final YangParserConfiguration config, final PathExpressionParser parser) {
         // TODO: can 'path' really be copied?
-        super(YangStmtMapping.PATH, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.PATH, StatementPolicy.contextIndependent(), config);
         this.parser = requireNonNull(parser);
     }
 
-    public static PathStatementSupport lenientInstance() {
-        return LENIENT_INSTANCE;
+    public static PathStatementSupport lenientInstance(final YangParserConfiguration config) {
+        return new PathStatementSupport(config, new PathExpressionParser.Lenient());
     }
 
-    public static PathStatementSupport strictInstance() {
-        return STRICT_INSTANCE;
+    public static PathStatementSupport strictInstance(final YangParserConfiguration config) {
+        return new PathStatementSupport(config, new PathExpressionParser());
     }
 
     @Override

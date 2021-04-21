@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractBooleanStatementSupport;
@@ -20,18 +21,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class RequireInstanceStatementSupport
         extends AbstractBooleanStatementSupport<RequireInstanceStatement, RequireInstanceEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.REQUIRE_INSTANCE).build();
-    private static final RequireInstanceStatementSupport INSTANCE = new RequireInstanceStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.REQUIRE_INSTANCE).build();
 
-    private RequireInstanceStatementSupport() {
+    public RequireInstanceStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.REQUIRE_INSTANCE,
             EffectiveStatements.createRequireInstance(false), EffectiveStatements.createRequireInstance(true),
-            StatementPolicy.contextIndependent());
-    }
-
-    public static RequireInstanceStatementSupport getInstance() {
-        return INSTANCE;
+            StatementPolicy.contextIndependent(), config);
     }
 
     @Override

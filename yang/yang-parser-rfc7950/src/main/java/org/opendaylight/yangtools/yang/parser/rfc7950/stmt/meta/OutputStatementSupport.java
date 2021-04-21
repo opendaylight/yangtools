@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementOrigin;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.ImplicitStatements;
@@ -32,46 +33,44 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class OutputStatementSupport
         extends AbstractOperationContainerStatementSupport<OutputStatement, OutputEffectiveStatement> {
-    private static final @NonNull OutputStatementSupport RFC6020_INSTANCE = new OutputStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.OUTPUT)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.USES)
-            .build());
-    private static final @NonNull OutputStatementSupport RFC7950_INSTANCE = new OutputStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.OUTPUT)
-            .addAny(YangStmtMapping.ANYDATA)
-            .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
-            .addAny(YangStmtMapping.CONTAINER)
-            .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.LEAF)
-            .addAny(YangStmtMapping.LEAF_LIST)
-            .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.USES)
-            .build());
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.OUTPUT)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.CHOICE)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(YangStmtMapping.GROUPING)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(YangStmtMapping.USES)
+        .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.OUTPUT)
+        .addAny(YangStmtMapping.ANYDATA)
+        .addAny(YangStmtMapping.ANYXML)
+        .addAny(YangStmtMapping.CHOICE)
+        .addAny(YangStmtMapping.CONTAINER)
+        .addAny(YangStmtMapping.GROUPING)
+        .addAny(YangStmtMapping.LEAF)
+        .addAny(YangStmtMapping.LEAF_LIST)
+        .addAny(YangStmtMapping.LIST)
+        .addAny(YangStmtMapping.MUST)
+        .addAny(YangStmtMapping.TYPEDEF)
+        .addAny(YangStmtMapping.USES)
+        .build();
 
     private final SubstatementValidator validator;
 
-    private OutputStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.OUTPUT, YangConstants::operationOutputQName);
+    private OutputStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.OUTPUT, config, YangConstants::operationOutputQName);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull OutputStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull OutputStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new OutputStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull OutputStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull OutputStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new OutputStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override
