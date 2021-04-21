@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.SetMultimap;
 import java.util.Arrays;
@@ -20,6 +21,8 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -63,6 +66,21 @@ public final class CrossSourceStatementReactor {
      * @throws NullPointerException if statementParserMode is null
      */
     public @NonNull BuildAction newBuild(final StatementParserMode statementParserMode) {
+        return newBuild(StatementParserMode.DEFAULT_MODE, false);
+    }
+
+    /**
+     * Start a new reactor build using the specified statement parser mode and enabling all features and deviations.
+     *
+     * @param statementParserMode Parser mode to use
+     * @param retainDeclarationReferences {@code true} if {@link DeclaredStatement}s should retain their
+     *                                    {@link DeclarationReference}s
+     * @return A new {@link BuildAction}.
+     * @throws NullPointerException if statementParserMode is null
+     */
+    @Beta
+    public @NonNull BuildAction newBuild(final StatementParserMode statementParserMode,
+            final boolean retainDeclarationReferences) {
         return new BuildAction(supportedTerminology, supportedValidation, requireNonNull(statementParserMode));
     }
 

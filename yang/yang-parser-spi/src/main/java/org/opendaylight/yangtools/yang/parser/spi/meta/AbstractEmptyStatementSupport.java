@@ -17,8 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public abstract class AbstractEmptyStatementSupport<D extends DeclaredStatement<Empty>,
         E extends EffectiveStatement<Empty, D>> extends AbstractStatementSupport<Empty, D, E> {
     protected AbstractEmptyStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<Empty, D> policy, final boolean retainDeclarationReference) {
+        super(publicDefinition, policy, retainDeclarationReference);
+    }
+
+    // FIXME: YANGTOOLS-1193: remove this method
+    @Deprecated(forRemoval = true)
+    protected AbstractEmptyStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<Empty, D> policy) {
-        super(publicDefinition, policy);
+        this(publicDefinition, policy, false);
     }
 
     @Override

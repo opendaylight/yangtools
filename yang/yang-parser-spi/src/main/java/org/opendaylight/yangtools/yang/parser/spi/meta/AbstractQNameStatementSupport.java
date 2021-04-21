@@ -24,8 +24,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<QName, D> policy, final boolean retainDeclarationReference) {
+        super(publicDefinition, policy, retainDeclarationReference);
+    }
+
+    // FIXME: YANGTOOLS-1193: remove this method
+    @Deprecated(forRemoval = true)
+    protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
-        super(publicDefinition, policy);
+        this(publicDefinition, policy, false);
     }
 
     @Override
