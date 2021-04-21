@@ -46,8 +46,15 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
             });
 
     protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<A, D> policy, final boolean retainDeclarationReference) {
+        super(publicDefinition, policy, retainDeclarationReference);
+    }
+
+    // FIXME: YANGTOOLS-1193: remove this method
+    @Deprecated(forRemoval = true)
+    protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<A, D> policy) {
-        super(publicDefinition, policy);
+        this(publicDefinition, policy, false);
     }
 
     @Override

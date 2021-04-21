@@ -24,14 +24,9 @@ public final class ErrorAppTagStatementSupport
         extends AbstractStringStatementSupport<ErrorAppTagStatement, ErrorAppTagEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ERROR_APP_TAG).build();
-    private static final ErrorAppTagStatementSupport INSTANCE = new ErrorAppTagStatementSupport();
 
-    private ErrorAppTagStatementSupport() {
-        super(YangStmtMapping.ERROR_APP_TAG, StatementPolicy.contextIndependent());
-    }
-
-    public static ErrorAppTagStatementSupport getInstance() {
-        return INSTANCE;
+    public ErrorAppTagStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.ERROR_APP_TAG, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

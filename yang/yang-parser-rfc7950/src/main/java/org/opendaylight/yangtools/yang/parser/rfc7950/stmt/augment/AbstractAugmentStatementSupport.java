@@ -50,13 +50,13 @@ abstract class AbstractAugmentStatementSupport
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
-    AbstractAugmentStatementSupport() {
+    AbstractAugmentStatementSupport(final boolean retainDeclarationReference) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.getArgument().equals(current.getArgument())
                 && copy.moduleName().getModule().equals(current.moduleName().getModule())
                 && Objects.equals(copy.original(), current.original())
-            ));
+            ), retainDeclarationReference);
     }
 
     @Override

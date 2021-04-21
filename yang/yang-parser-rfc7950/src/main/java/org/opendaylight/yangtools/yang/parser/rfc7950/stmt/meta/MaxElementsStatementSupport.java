@@ -22,17 +22,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MaxElementsStatementSupport
         extends AbstractStringStatementSupport<MaxElementsStatement, MaxElementsEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.MAX_ELEMENTS)
-        .build();
-    private static final MaxElementsStatementSupport INSTANCE = new MaxElementsStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.MAX_ELEMENTS).build();
 
-    private MaxElementsStatementSupport() {
-        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent());
-    }
-
-    public static MaxElementsStatementSupport getInstance() {
-        return INSTANCE;
+    public MaxElementsStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

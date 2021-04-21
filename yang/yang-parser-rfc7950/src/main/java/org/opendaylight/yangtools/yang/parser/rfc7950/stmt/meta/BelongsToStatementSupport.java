@@ -40,14 +40,9 @@ public final class BelongsToStatementSupport
         extends AbstractStringStatementSupport<BelongsToStatement, BelongsToEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
-    private static final BelongsToStatementSupport INSTANCE = new BelongsToStatementSupport();
 
-    private BelongsToStatementSupport() {
-        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject());
-    }
-
-    public static BelongsToStatementSupport getInstance() {
-        return INSTANCE;
+    public BelongsToStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

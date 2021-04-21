@@ -34,12 +34,20 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
     private final @NonNull D emptyDeclaredTrue;
 
     protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
-            final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy) {
-        super(publicDefinition, policy);
+            final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
+            final boolean retainDeclarationReference) {
+        super(publicDefinition, policy, retainDeclarationReference);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
         emptyDeclaredFalse = requireNonNull(emptyEffectiveFalse.getDeclared());
         emptyDeclaredTrue = requireNonNull(emptyEffectiveTrue.getDeclared());
+    }
+
+    // FIXME: YANGTOOLS-1193: remove this method
+    @Deprecated(forRemoval = true)
+    protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
+            final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy) {
+        this(publicDefinition, emptyEffectiveFalse, emptyEffectiveTrue, policy, false);
     }
 
     @Override

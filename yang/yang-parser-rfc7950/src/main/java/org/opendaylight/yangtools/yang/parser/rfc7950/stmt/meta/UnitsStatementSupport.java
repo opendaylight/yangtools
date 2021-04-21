@@ -22,17 +22,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class UnitsStatementSupport
         extends AbstractStringStatementSupport<UnitsStatement, UnitsEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.UNITS)
-        .build();
-    private static final UnitsStatementSupport INSTANCE = new UnitsStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.UNITS).build();
 
-    private UnitsStatementSupport() {
-        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent());
-    }
-
-    public static UnitsStatementSupport getInstance() {
-        return INSTANCE;
+    public UnitsStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

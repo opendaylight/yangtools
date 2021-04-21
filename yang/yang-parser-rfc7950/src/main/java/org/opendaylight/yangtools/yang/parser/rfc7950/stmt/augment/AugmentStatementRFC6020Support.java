@@ -28,14 +28,9 @@ public final class AugmentStatementRFC6020Support extends AbstractAugmentStateme
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();
-    private static final AugmentStatementRFC6020Support INSTANCE = new AugmentStatementRFC6020Support();
 
-    private AugmentStatementRFC6020Support() {
-        // Hidden
-    }
-
-    public static AugmentStatementRFC6020Support getInstance() {
-        return INSTANCE;
+    public AugmentStatementRFC6020Support(final boolean retainDeclarationReference) {
+        super(retainDeclarationReference);
     }
 
     @Override
