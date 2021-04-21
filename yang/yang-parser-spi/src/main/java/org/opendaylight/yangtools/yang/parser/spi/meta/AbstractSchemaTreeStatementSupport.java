@@ -63,8 +63,15 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
 
     protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
+            final StatementPolicy<QName, D> policy, final boolean retainDeclarationReference) {
+        super(publicDefinition, policy, retainDeclarationReference);
+    }
+
+    // FIXME: YANGTOOLS-1193: remove this method
+    @Deprecated(forRemoval = true)
+    protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
             final StatementPolicy<QName, D> policy) {
-        super(publicDefinition, policy);
+        this(publicDefinition, policy, false);
     }
 
     /**
