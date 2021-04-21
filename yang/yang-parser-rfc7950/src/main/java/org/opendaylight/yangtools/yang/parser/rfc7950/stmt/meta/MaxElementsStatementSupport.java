@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -22,17 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MaxElementsStatementSupport
         extends AbstractStringStatementSupport<MaxElementsStatement, MaxElementsEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.MAX_ELEMENTS)
-        .build();
-    private static final MaxElementsStatementSupport INSTANCE = new MaxElementsStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.MAX_ELEMENTS).build();
 
-    private MaxElementsStatementSupport() {
-        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent());
-    }
-
-    public static MaxElementsStatementSupport getInstance() {
-        return INSTANCE;
+    public MaxElementsStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

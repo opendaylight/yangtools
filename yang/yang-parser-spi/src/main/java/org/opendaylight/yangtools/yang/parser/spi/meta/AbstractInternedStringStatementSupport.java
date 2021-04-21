@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 
 /**
  * A specialization of {@link AbstractInternedStatementSupport} for {@link String} arguments.
@@ -22,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public abstract class AbstractInternedStringStatementSupport<D extends DeclaredStatement<String>,
         E extends EffectiveStatement<String, D>> extends AbstractInternedStatementSupport<String, D, E> {
     protected AbstractInternedStringStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<String, D> policy) {
-        super(publicDefinition, policy);
+            final StatementPolicy<String, D> policy, final YangParserConfiguration config) {
+        super(publicDefinition, policy, config);
     }
 
     @Override

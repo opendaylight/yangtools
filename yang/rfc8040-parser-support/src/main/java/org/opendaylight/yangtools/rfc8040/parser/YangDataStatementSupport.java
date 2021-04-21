@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -46,20 +46,14 @@ public final class YangDataStatementSupport
         }
     }
 
-    private static final YangDataStatementSupport INSTANCE = new YangDataStatementSupport(YangDataStatements.YANG_DATA);
-
     private final SubstatementValidator declaredValidator;
 
-    private YangDataStatementSupport(final StatementDefinition definition) {
-        super(definition, StatementPolicy.reject());
-        declaredValidator = SubstatementValidator.builder(definition)
+    public YangDataStatementSupport(final YangParserConfiguration config) {
+        super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), config);
+        declaredValidator = SubstatementValidator.builder(YangDataStatements.YANG_DATA)
                 .addMandatory(YangStmtMapping.CONTAINER)
                 .addOptional(YangStmtMapping.USES)
                 .build();
-    }
-
-    public static YangDataStatementSupport getInstance() {
-        return INSTANCE;
     }
 
     @Override

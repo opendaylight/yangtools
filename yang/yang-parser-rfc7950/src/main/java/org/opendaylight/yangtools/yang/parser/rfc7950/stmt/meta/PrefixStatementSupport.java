@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -23,15 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class PrefixStatementSupport
         extends AbstractStringStatementSupport<PrefixStatement, PrefixEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.PREFIX).build();
-    private static final PrefixStatementSupport INSTANCE = new PrefixStatementSupport();
+        SubstatementValidator.builder(YangStmtMapping.PREFIX).build();
 
-    private PrefixStatementSupport() {
-        super(YangStmtMapping.PREFIX, StatementPolicy.reject());
-    }
-
-    public static PrefixStatementSupport getInstance() {
-        return INSTANCE;
+    public PrefixStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.PREFIX, StatementPolicy.reject(), config);
     }
 
     @Override

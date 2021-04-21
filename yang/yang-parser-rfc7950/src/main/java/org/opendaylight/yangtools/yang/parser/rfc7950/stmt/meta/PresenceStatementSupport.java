@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -23,15 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class PresenceStatementSupport
         extends AbstractStringStatementSupport<PresenceStatement, PresenceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.PRESENCE).build();
-    private static final PresenceStatementSupport INSTANCE = new PresenceStatementSupport();
+        SubstatementValidator.builder(YangStmtMapping.PRESENCE).build();
 
-    private PresenceStatementSupport() {
-        super(YangStmtMapping.PRESENCE, StatementPolicy.contextIndependent());
-    }
-
-    public static PresenceStatementSupport getInstance() {
-        return INSTANCE;
+    public PresenceStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.PRESENCE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

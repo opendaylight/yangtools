@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument.WithSubstatements;
@@ -102,25 +103,17 @@ public final class AnnotationStatementSupport
         }
     }
 
-    private static final AnnotationStatementSupport INSTANCE = new AnnotationStatementSupport(
-        MetadataStatements.ANNOTATION);
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(MetadataStatements.ANNOTATION)
+        .addMandatory(YangStmtMapping.TYPE)
+        .addOptional(YangStmtMapping.DESCRIPTION)
+        .addAny(YangStmtMapping.IF_FEATURE)
+        .addOptional(YangStmtMapping.REFERENCE)
+        .addOptional(YangStmtMapping.STATUS)
+        .addOptional(YangStmtMapping.UNITS)
+        .build();
 
-    private final SubstatementValidator validator;
-
-    AnnotationStatementSupport(final StatementDefinition definition) {
-        super(definition, StatementPolicy.reject());
-        this.validator = SubstatementValidator.builder(definition)
-                .addMandatory(YangStmtMapping.TYPE)
-                .addOptional(YangStmtMapping.DESCRIPTION)
-                .addAny(YangStmtMapping.IF_FEATURE)
-                .addOptional(YangStmtMapping.REFERENCE)
-                .addOptional(YangStmtMapping.STATUS)
-                .addOptional(YangStmtMapping.UNITS)
-                .build();
-    }
-
-    public static AnnotationStatementSupport getInstance() {
-        return INSTANCE;
+    public AnnotationStatementSupport(final YangParserConfiguration config) {
+        super(MetadataStatements.ANNOTATION, StatementPolicy.reject(), config);
     }
 
     @Override
@@ -137,7 +130,7 @@ public final class AnnotationStatementSupport
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
-        return validator;
+        return VALIDATOR;
     }
 
     @Override

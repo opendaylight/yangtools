@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -26,13 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class AugmentIdentifierStatementSupport
         extends AbstractStatementSupport<UnqualifiedQName, AugmentIdentifierStatement,
                                          AugmentIdentifierEffectiveStatement> {
-    public static final @NonNull AugmentIdentifierStatementSupport INSTANCE = new AugmentIdentifierStatementSupport();
-
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER).build();
 
-    private AugmentIdentifierStatementSupport() {
-        super(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER, StatementPolicy.contextIndependent());
+    public AugmentIdentifierStatementSupport(final YangParserConfiguration config) {
+        super(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

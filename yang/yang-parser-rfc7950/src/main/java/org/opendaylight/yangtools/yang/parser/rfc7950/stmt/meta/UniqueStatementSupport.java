@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
@@ -41,19 +42,13 @@ public final class UniqueStatementSupport
     private static final Splitter SEP_SPLITTER = Splitter.on(CharMatcher.anyOf(" \t\n").precomputed())
             .omitEmptyStrings();
 
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.UNIQUE)
-        .build();
-    private static final UniqueStatementSupport INSTANCE = new UniqueStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.UNIQUE).build();
 
-    private UniqueStatementSupport() {
+    public UniqueStatementSupport(final YangParserConfiguration config) {
         // FIXME: This reflects what the current implementation does. We really want to define an adaptArgumentValue(),
         //        but how that plays with the argument and expectations needs to be investigated.
-        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent());
-    }
-
-    public static UniqueStatementSupport getInstance() {
-        return INSTANCE;
+        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override

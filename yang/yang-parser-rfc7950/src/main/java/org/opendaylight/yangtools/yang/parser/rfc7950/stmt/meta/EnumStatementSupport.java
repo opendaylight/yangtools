@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -27,35 +28,33 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class EnumStatementSupport
         extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
-    private static final @NonNull EnumStatementSupport RFC6020_INSTANCE = new EnumStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.ENUM)
+    private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.ENUM)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.VALUE)
-            .build());
-    private static final @NonNull EnumStatementSupport RFC7950_INSTANCE = new EnumStatementSupport(
-        SubstatementValidator.builder(YangStmtMapping.ENUM)
+            .build();
+    private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.ENUM)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.VALUE)
-            .build());
+            .build();
 
     private final SubstatementValidator validator;
 
-    private EnumStatementSupport(final SubstatementValidator validator) {
-        super(YangStmtMapping.ENUM, StatementPolicy.contextIndependent());
+    private EnumStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.ENUM, StatementPolicy.contextIndependent(), config);
         this.validator = requireNonNull(validator);
     }
 
-    public static @NonNull EnumStatementSupport rfc6020Instance() {
-        return RFC6020_INSTANCE;
+    public static @NonNull EnumStatementSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new EnumStatementSupport(config, RFC6020_VALIDATOR);
     }
 
-    public static @NonNull EnumStatementSupport rfc7950Instance() {
-        return RFC7950_INSTANCE;
+    public static @NonNull EnumStatementSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new EnumStatementSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override

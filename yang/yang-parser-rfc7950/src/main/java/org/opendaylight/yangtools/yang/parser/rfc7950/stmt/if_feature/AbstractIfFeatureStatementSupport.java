@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
@@ -46,8 +47,8 @@ abstract class AbstractIfFeatureStatementSupport
         YangStmtMapping.IF_FEATURE)
         .build();
 
-    AbstractIfFeatureStatementSupport() {
-        super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent());
+    AbstractIfFeatureStatementSupport(final YangParserConfiguration config) {
+        super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent(), config);
     }
 
     @Override
