@@ -20,17 +20,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ReferenceStatementSupport
         extends AbstractInternedStringStatementSupport<ReferenceStatement, ReferenceEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.REFERENCE)
-        .build();
-    private static final ReferenceStatementSupport INSTANCE = new ReferenceStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.REFERENCE).build();
 
-    private ReferenceStatementSupport() {
-        super(YangStmtMapping.REFERENCE, StatementPolicy.contextIndependent());
-    }
-
-    public static ReferenceStatementSupport getInstance() {
-        return INSTANCE;
+    public ReferenceStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.REFERENCE, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

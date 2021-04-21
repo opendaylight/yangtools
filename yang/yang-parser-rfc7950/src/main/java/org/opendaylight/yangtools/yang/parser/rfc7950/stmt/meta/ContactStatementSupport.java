@@ -20,16 +20,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ContactStatementSupport
         extends AbstractInternedStringStatementSupport<ContactStatement, ContactEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.CONTACT).build();
-    private static final ContactStatementSupport INSTANCE = new ContactStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.CONTACT).build();
 
-    private ContactStatementSupport() {
-        super(YangStmtMapping.CONTACT, StatementPolicy.reject());
-    }
-
-    public static ContactStatementSupport getInstance() {
-        return INSTANCE;
+    public ContactStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.CONTACT, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

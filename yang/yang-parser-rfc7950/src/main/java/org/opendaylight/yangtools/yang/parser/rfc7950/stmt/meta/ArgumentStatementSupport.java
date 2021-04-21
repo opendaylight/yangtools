@@ -24,18 +24,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ArgumentStatementSupport
         extends AbstractQNameStatementSupport<ArgumentStatement, ArgumentEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .ARGUMENT)
-        .addOptional(YangStmtMapping.YIN_ELEMENT)
-        .build();
-    private static final ArgumentStatementSupport INSTANCE = new ArgumentStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.ARGUMENT).addOptional(YangStmtMapping.YIN_ELEMENT).build();
 
-    private ArgumentStatementSupport() {
-        super(YangStmtMapping.ARGUMENT, StatementPolicy.reject());
-    }
-
-    public static ArgumentStatementSupport getInstance() {
-        return INSTANCE;
+    public ArgumentStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.ARGUMENT, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

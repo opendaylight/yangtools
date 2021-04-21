@@ -27,14 +27,9 @@ public final class YangVersionStatementSupport
         extends AbstractStatementSupport<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.YANG_VERSION).build();
-    private static final YangVersionStatementSupport INSTANCE = new YangVersionStatementSupport();
 
-    private YangVersionStatementSupport() {
-        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject());
-    }
-
-    public static YangVersionStatementSupport getInstance() {
-        return INSTANCE;
+    public YangVersionStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

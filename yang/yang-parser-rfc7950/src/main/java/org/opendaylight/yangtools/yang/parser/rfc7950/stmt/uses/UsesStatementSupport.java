@@ -77,14 +77,9 @@ public final class UsesStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
-    private static final UsesStatementSupport INSTANCE = new UsesStatementSupport();
 
-    private UsesStatementSupport() {
-        super(YangStmtMapping.USES, StatementPolicy.exactReplica());
-    }
-
-    public static UsesStatementSupport getInstance() {
-        return INSTANCE;
+    public UsesStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.USES, StatementPolicy.exactReplica(), retainDeclarationReference);
     }
 
     @Override

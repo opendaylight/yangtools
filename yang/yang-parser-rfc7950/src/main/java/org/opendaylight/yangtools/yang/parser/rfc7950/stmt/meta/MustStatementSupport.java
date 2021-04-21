@@ -36,14 +36,10 @@ public final class MustStatementSupport
 
     private final @NonNull XPathSupport xpathSupport;
 
-    private MustStatementSupport(final XPathSupport xpathSupport) {
+    public MustStatementSupport(final XPathSupport xpathSupport, final boolean retainDeclarationReference) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent(), retainDeclarationReference);
         this.xpathSupport = requireNonNull(xpathSupport);
-    }
-
-    public static MustStatementSupport createInstance(final XPathSupport xpathSupport) {
-        return new MustStatementSupport(xpathSupport);
     }
 
     @Override

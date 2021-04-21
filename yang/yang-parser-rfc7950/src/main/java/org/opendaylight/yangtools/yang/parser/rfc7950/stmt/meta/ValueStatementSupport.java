@@ -23,16 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ValueStatementSupport
         extends AbstractInternedStatementSupport<Integer, ValueStatement, ValueEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.VALUE).build();
-    private static final ValueStatementSupport INSTANCE = new ValueStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.VALUE).build();
 
-    private ValueStatementSupport() {
-        super(YangStmtMapping.VALUE, StatementPolicy.contextIndependent());
-    }
-
-    public static ValueStatementSupport getInstance() {
-        return INSTANCE;
+    public ValueStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.VALUE, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

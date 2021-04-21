@@ -22,17 +22,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultStatementSupport
         extends AbstractStringStatementSupport<DefaultStatement, DefaultEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.DEFAULT).build();
-    private static final DefaultStatementSupport INSTANCE = new DefaultStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEFAULT).build();
 
-    private DefaultStatementSupport() {
+    public DefaultStatementSupport(final boolean retainDeclarationReference) {
         // Note: if we start interpreting the string we'll need to use StatementPolicy.declaredCopy()
-        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent());
-    }
-
-    public static DefaultStatementSupport getInstance() {
-        return INSTANCE;
+        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

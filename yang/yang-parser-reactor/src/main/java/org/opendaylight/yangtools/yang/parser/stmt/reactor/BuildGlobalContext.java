@@ -85,6 +85,10 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
     private final ImmutableSet<YangVersion> supportedVersions;
+
+    // FIXME: 7.0.0: this flag should really be passed to  {Import,Module}StatementSupport's bootstrap to wire the
+    //               appropriate behaviour. That requires a change in StatementSupport lifecycle, as statement supports
+    //               would no longer be stateless singletons.
     private final boolean enabledSemanticVersions;
 
     private Set<SourceSpecificContext> libSources = new HashSet<>();

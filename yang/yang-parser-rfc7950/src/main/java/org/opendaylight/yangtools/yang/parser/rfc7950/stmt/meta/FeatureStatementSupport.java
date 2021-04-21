@@ -36,14 +36,9 @@ public final class FeatureStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
-    private static final FeatureStatementSupport INSTANCE = new FeatureStatementSupport();
 
-    private FeatureStatementSupport() {
-        super(YangStmtMapping.FEATURE, StatementPolicy.reject());
-    }
-
-    public static FeatureStatementSupport getInstance() {
-        return INSTANCE;
+    public FeatureStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.FEATURE, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

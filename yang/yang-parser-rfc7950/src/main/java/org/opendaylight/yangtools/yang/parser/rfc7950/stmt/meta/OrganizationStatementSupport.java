@@ -20,17 +20,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class OrganizationStatementSupport
         extends AbstractInternedStringStatementSupport<OrganizationStatement, OrganizationEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.ORGANIZATION)
-        .build();
-    private static final OrganizationStatementSupport INSTANCE = new OrganizationStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.ORGANIZATION).build();
 
-    private OrganizationStatementSupport() {
-        super(YangStmtMapping.ORGANIZATION, StatementPolicy.reject());
-    }
-
-    public static OrganizationStatementSupport getInstance() {
-        return INSTANCE;
+    public OrganizationStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.ORGANIZATION, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

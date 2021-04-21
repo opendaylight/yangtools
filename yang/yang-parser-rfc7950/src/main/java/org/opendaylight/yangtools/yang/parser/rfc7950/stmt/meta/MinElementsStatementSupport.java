@@ -22,17 +22,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class MinElementsStatementSupport
         extends AbstractInternedStatementSupport<Integer, MinElementsStatement, MinElementsEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.MIN_ELEMENTS)
-        .build();
-    private static final MinElementsStatementSupport INSTANCE = new MinElementsStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.MIN_ELEMENTS).build();
 
-    private MinElementsStatementSupport() {
-        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent());
-    }
-
-    public static MinElementsStatementSupport getInstance() {
-        return INSTANCE;
+    public MinElementsStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

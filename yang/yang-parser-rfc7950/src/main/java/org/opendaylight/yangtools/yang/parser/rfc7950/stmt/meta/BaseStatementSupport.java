@@ -35,14 +35,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class BaseStatementSupport extends AbstractQNameStatementSupport<BaseStatement, BaseEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BASE).build();
-    private static final BaseStatementSupport INSTANCE = new BaseStatementSupport();
 
-    private BaseStatementSupport() {
-        super(YangStmtMapping.BASE, StatementPolicy.contextIndependent());
-    }
-
-    public static BaseStatementSupport getInstance() {
-        return INSTANCE;
+    public BaseStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.BASE, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

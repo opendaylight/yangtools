@@ -77,6 +77,6 @@ public final class YangParserFactoryImpl implements YangParserFactory {
     public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
         final StatementParserMode mode = configuration.parserMode();
         checkArgument(SUPPORTED_MODES.contains(mode), "Unsupported parser mode %s", mode);
-        return new YangParserImpl(reactor.newBuild(mode));
+        return new YangParserImpl(reactor.newBuild(mode, configuration.retainDeclarationReferences()));
     }
 }

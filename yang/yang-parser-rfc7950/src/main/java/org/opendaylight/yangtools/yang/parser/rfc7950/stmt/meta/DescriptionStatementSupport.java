@@ -22,16 +22,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DescriptionStatementSupport
         extends AbstractStringStatementSupport<DescriptionStatement, DescriptionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.DESCRIPTION).build();
-    private static final DescriptionStatementSupport INSTANCE = new DescriptionStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DESCRIPTION).build();
 
-    private DescriptionStatementSupport() {
-        super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent());
-    }
-
-    public static DescriptionStatementSupport getInstance() {
-        return INSTANCE;
+    public DescriptionStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

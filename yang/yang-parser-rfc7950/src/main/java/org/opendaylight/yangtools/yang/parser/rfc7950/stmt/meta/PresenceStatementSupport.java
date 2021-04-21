@@ -23,15 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 public final class PresenceStatementSupport
         extends AbstractStringStatementSupport<PresenceStatement, PresenceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(YangStmtMapping.PRESENCE).build();
-    private static final PresenceStatementSupport INSTANCE = new PresenceStatementSupport();
+        SubstatementValidator.builder(YangStmtMapping.PRESENCE).build();
 
-    private PresenceStatementSupport() {
-        super(YangStmtMapping.PRESENCE, StatementPolicy.contextIndependent());
-    }
-
-    public static PresenceStatementSupport getInstance() {
-        return INSTANCE;
+    public PresenceStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.PRESENCE, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

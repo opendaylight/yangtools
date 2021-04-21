@@ -35,14 +35,9 @@ public final class DeviationStatementSupport
         .addAny(YangStmtMapping.DEVIATE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
-    private static final DeviationStatementSupport INSTANCE = new DeviationStatementSupport();
 
-    private DeviationStatementSupport() {
-        super(YangStmtMapping.DEVIATION, StatementPolicy.reject());
-    }
-
-    public static DeviationStatementSupport getInstance() {
-        return INSTANCE;
+    public DeviationStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.DEVIATION, StatementPolicy.reject(), retainDeclarationReference);
     }
 
     @Override

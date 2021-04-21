@@ -34,14 +34,10 @@ public final class WhenStatementSupport
 
     private final @NonNull XPathSupport xpathSupport;
 
-    private WhenStatementSupport(final XPathSupport xpathSupport) {
+    public WhenStatementSupport(final XPathSupport xpathSupport, final boolean retainDeclarationReference) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent());
+        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent(), retainDeclarationReference);
         this.xpathSupport = requireNonNull(xpathSupport);
-    }
-
-    public static WhenStatementSupport createInstance(final XPathSupport xpathSupport) {
-        return new WhenStatementSupport(xpathSupport);
     }
 
     @Override

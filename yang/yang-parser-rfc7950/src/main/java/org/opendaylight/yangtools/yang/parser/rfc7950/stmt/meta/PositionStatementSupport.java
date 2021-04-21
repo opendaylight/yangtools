@@ -23,16 +23,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class PositionStatementSupport
         extends AbstractInternedStatementSupport<Uint32, PositionStatement, PositionEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.POSITION).build();
-    private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.POSITION).build();
 
-    private PositionStatementSupport() {
-        super(YangStmtMapping.POSITION, StatementPolicy.contextIndependent());
-    }
-
-    public static PositionStatementSupport getInstance() {
-        return INSTANCE;
+    public PositionStatementSupport(final boolean retainDeclarationReference) {
+        super(YangStmtMapping.POSITION, StatementPolicy.contextIndependent(), retainDeclarationReference);
     }
 
     @Override

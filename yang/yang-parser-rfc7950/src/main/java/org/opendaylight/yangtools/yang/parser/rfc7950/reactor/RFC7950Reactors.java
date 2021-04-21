@@ -147,12 +147,37 @@ public final class RFC7950Reactors {
     private static final ImmutableSet<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
 
     private static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle.builder(SUPPORTED_VERSIONS)
-            .addSupport(ValidationBundlesNamespace.BEHAVIOUR)
-            .addSupport(SupportedFeaturesNamespace.BEHAVIOUR)
-            .addSupport(ModulesDeviatedByModules.BEHAVIOUR)
-            .build();
+        .addSupport(ValidationBundlesNamespace.BEHAVIOUR)
+        .addSupport(SupportedFeaturesNamespace.BEHAVIOUR)
+        .addSupport(ModulesDeviatedByModules.BEHAVIOUR)
+        .build();
 
-    private static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle.derivedFrom(INIT_BUNDLE)
+    private static final class NoDeclarationReference {
+        private static final StatementSupportBundle PRE_LINKAGE_BUNDLE = createPreLinkageBundle(false);
+        private static final StatementSupportBundle LINKAGE_BUNDLE = createLinkageBundle(false);
+        private static final StatementSupportBundle STMT_DEF_BUNDLE = createStmtDefBundle(false);
+
+        private NoDeclarationReference() {
+            // Hidden on purpose
+        }
+    }
+
+    private static final class RetainDeclarationReference {
+        private static final StatementSupportBundle PRE_LINKAGE_BUNDLE = createPreLinkageBundle(true);
+        private static final StatementSupportBundle LINKAGE_BUNDLE = createLinkageBundle(true);
+        private static final StatementSupportBundle STMT_DEF_BUNDLE = createStmtDefBundle(true);
+
+        private RetainDeclarationReference() {
+            // Hidden on purpose
+        }
+    }
+
+    private RFC7950Reactors() {
+        // Hidden on purpose
+    }
+
+    private static StatementSupportBundle createPreLinkageBundle(final boolean retainDeclarationReference) {
+        return StatementSupportBundle.derivedFrom(INIT_BUNDLE)
             .addVersionSpecificSupport(VERSION_1, ModuleStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, ModuleStatementSupport.rfc7950Instance())
             .addVersionSpecificSupport(VERSION_1, SubmoduleStatementSupport.rfc6020Instance())
@@ -162,9 +187,9 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, ImportStatementSupport.rfc7950Instance())
             .addVersionSpecificSupport(VERSION_1, IncludeStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, IncludeStatementSupport.rfc7950Instance())
-            .addSupport(BelongsToStatementSupport.getInstance())
-            .addSupport(PrefixStatementSupport.getInstance())
-            .addSupport(YangVersionStatementSupport.getInstance())
+            .addSupport(new BelongsToStatementSupport(retainDeclarationReference))
+            .addSupport(new PrefixStatementSupport(retainDeclarationReference))
+            .addSupport(new YangVersionStatementSupport(retainDeclarationReference))
             .addSupport(RevisionStatementSupport.getInstance())
             .addSupport(RevisionDateStatementSupport.getInstance())
             .addSupport(ModuleNameToNamespace.BEHAVIOUR)
@@ -174,13 +199,14 @@ public final class RFC7950Reactors {
             .addSupport(QNameModuleNamespace.BEHAVIOUR)
             .addSupport(ImportedVersionNamespace.BEHAVIOUR)
             .build();
+    }
 
-    private static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
-            .derivedFrom(PRE_LINKAGE_BUNDLE)
-            .addSupport(DescriptionStatementSupport.getInstance())
-            .addSupport(ReferenceStatementSupport.getInstance())
-            .addSupport(ContactStatementSupport.getInstance())
-            .addSupport(OrganizationStatementSupport.getInstance())
+    private static StatementSupportBundle createLinkageBundle(final boolean retainDeclarationReference) {
+        return StatementSupportBundle.derivedFrom(preLinkageBundle(retainDeclarationReference))
+            .addSupport(new DescriptionStatementSupport(retainDeclarationReference))
+            .addSupport(new ReferenceStatementSupport(retainDeclarationReference))
+            .addSupport(new ContactStatementSupport(retainDeclarationReference))
+            .addSupport(new OrganizationStatementSupport(retainDeclarationReference))
             .addSupport(ModuleNamespace.BEHAVIOUR)
             .addSupport(ModuleNamespaceForBelongsTo.BEHAVIOUR)
             .addSupport(SubmoduleNamespace.BEHAVIOUR)
@@ -198,25 +224,26 @@ public final class RFC7950Reactors {
             .addSupport(BelongsToModuleContext.BEHAVIOUR)
             .addSupport(BelongsToPrefixToModuleName.BEHAVIOUR)
             .build();
+    }
 
-    private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
-            .derivedFrom(LINKAGE_BUNDLE)
+    private static StatementSupportBundle createStmtDefBundle(final boolean retainDeclarationReference) {
+        return StatementSupportBundle.derivedFrom(linkageBundle(retainDeclarationReference))
             .addSupport(YinElementStatementSupport.getInstance())
-            .addSupport(ArgumentStatementSupport.getInstance())
+            .addSupport(new ArgumentStatementSupport(retainDeclarationReference))
             .addSupport(ExtensionStatementSupport.getInstance())
             .addSupport(SchemaTreeNamespace.getInstance())
             .addSupport(ExtensionNamespace.BEHAVIOUR)
-            .addSupport(TypedefStatementSupport.getInstance())
+            .addSupport(new TypedefStatementSupport(retainDeclarationReference))
             .addSupport(TypeNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, IdentityStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, IdentityStatementSupport.rfc7950Instance())
             .addSupport(IdentityNamespace.BEHAVIOUR)
-            .addSupport(DefaultStatementSupport.getInstance())
+            .addSupport(new DefaultStatementSupport(retainDeclarationReference))
             .addSupport(StatusStatementSupport.getInstance())
             .addSupport(BaseTypeNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, TypeStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, TypeStatementRFC7950Support.getInstance())
-            .addSupport(UnitsStatementSupport.getInstance())
+            .addSupport(new UnitsStatementSupport(retainDeclarationReference))
             .addSupport(RequireInstanceStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1, BitStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, BitStatementSupport.rfc7950Instance())
@@ -247,13 +274,24 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1, NotificationStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, NotificationStatementRFC7950Support.getInstance())
             .addSupport(FractionDigitsStatementSupport.getInstance())
-            .addSupport(BaseStatementSupport.getInstance())
+            .addSupport(new BaseStatementSupport(retainDeclarationReference))
             .addSupport(StatementDefinitionNamespace.BEHAVIOUR)
             .build();
+    }
 
+    private static StatementSupportBundle preLinkageBundle(final boolean retainDeclarationReference) {
+        return retainDeclarationReference ? RetainDeclarationReference.PRE_LINKAGE_BUNDLE
+            : NoDeclarationReference.PRE_LINKAGE_BUNDLE;
+    }
 
-    private RFC7950Reactors() {
-        // Hidden on purpose
+    private static StatementSupportBundle linkageBundle(final boolean retainDeclarationReference) {
+        return retainDeclarationReference ? RetainDeclarationReference.LINKAGE_BUNDLE
+            : NoDeclarationReference.LINKAGE_BUNDLE;
+    }
+
+    private static StatementSupportBundle stmtDefBundle(final boolean retainDeclarationReference) {
+        return retainDeclarationReference ? RetainDeclarationReference.STMT_DEF_BUNDLE
+            : NoDeclarationReference.STMT_DEF_BUNDLE;
     }
 
     /**
@@ -311,22 +349,33 @@ public final class RFC7950Reactors {
      * @return A new {@link CustomCrossSourceStatementReactorBuilder}.
      */
     public static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder() {
-        return vanillaReactorBuilder(ServiceLoaderState.XPath.INSTANCE);
+        return vanillaReactorBuilder(false);
+    }
+
+    public static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
+            final boolean retainDeclarationReference) {
+        return vanillaReactorBuilder(ServiceLoaderState.XPath.INSTANCE, retainDeclarationReference);
     }
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
             final @NonNull YangXPathParserFactory xpathFactory) {
-        return vanillaReactorBuilder(new XPathSupport(xpathFactory));
+        return vanillaReactorBuilder(xpathFactory, false);
+    }
+
+    public static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
+            final @NonNull YangXPathParserFactory xpathFactory, final boolean retainDeclarationReference) {
+        return vanillaReactorBuilder(new XPathSupport(xpathFactory), retainDeclarationReference);
     }
 
     private static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
-            final @NonNull XPathSupport xpathSupport) {
-        final StatementSupportBundle fullDeclarationBundle = fullDeclarationBundle(xpathSupport);
+            final @NonNull XPathSupport xpathSupport, final boolean retainDeclarationReference) {
+        final StatementSupportBundle fullDeclarationBundle =
+            fullDeclarationBundle(xpathSupport, retainDeclarationReference);
         return new CustomCrossSourceStatementReactorBuilder(SUPPORTED_VERSIONS)
                 .addAllSupports(ModelProcessingPhase.INIT, INIT_BUNDLE)
-                .addAllSupports(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
-                .addAllSupports(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
-                .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
+                .addAllSupports(ModelProcessingPhase.SOURCE_PRE_LINKAGE, preLinkageBundle(retainDeclarationReference))
+                .addAllSupports(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle(retainDeclarationReference))
+                .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle(retainDeclarationReference))
                 .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, fullDeclarationBundle)
                 .addAllSupports(ModelProcessingPhase.EFFECTIVE_MODEL, fullDeclarationBundle)
                 .addValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
@@ -342,19 +391,19 @@ public final class RFC7950Reactors {
                     YangValidationBundles.SUPPORTED_DATA_NODES);
     }
 
-    private static @NonNull StatementSupportBundle fullDeclarationBundle(final XPathSupport xpathSupport) {
-        return StatementSupportBundle
-            .derivedFrom(STMT_DEF_BUNDLE)
+    private static @NonNull StatementSupportBundle fullDeclarationBundle(final XPathSupport xpathSupport,
+            final boolean retainDeclarationReference) {
+        return StatementSupportBundle.derivedFrom(stmtDefBundle(retainDeclarationReference))
             .addSupport(LeafStatementSupport.getInstance())
             .addSupport(ConfigStatementSupport.getInstance())
-            .addSupport(DeviationStatementSupport.getInstance())
+            .addSupport(new DeviationStatementSupport(retainDeclarationReference))
             .addVersionSpecificSupport(VERSION_1, DeviateStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, DeviateStatementRFC7950Support.getInstance())
             .addVersionSpecificSupport(VERSION_1, ChoiceStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementSupport.rfc7950Instance())
             .addVersionSpecificSupport(VERSION_1, CaseStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, CaseStatementSupport.rfc7950Instance())
-            .addSupport(MustStatementSupport.createInstance(xpathSupport))
+            .addSupport(new MustStatementSupport(xpathSupport, retainDeclarationReference))
             .addSupport(MandatoryStatementSupport.getInstance())
             .addSupport(AnyxmlStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, AnydataStatementSupport.getInstance())
@@ -363,25 +412,25 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, IfFeatureStatementRFC7950Support.getInstance())
             .addSupport(GroupingNamespace.BEHAVIOUR)
             .addSupport(SourceGroupingNamespace.BEHAVIOUR)
-            .addSupport(UsesStatementSupport.getInstance())
-            .addSupport(ErrorMessageStatementSupport.getInstance())
-            .addSupport(ErrorAppTagStatementSupport.getInstance())
+            .addSupport(new UsesStatementSupport(retainDeclarationReference))
+            .addSupport(new ErrorMessageStatementSupport(retainDeclarationReference))
+            .addSupport(new ErrorAppTagStatementSupport(retainDeclarationReference))
             .addVersionSpecificSupport(VERSION_1, LeafListStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, LeafListStatementSupport.rfc7950Instance())
-            .addSupport(PresenceStatementSupport.getInstance())
-            .addSupport(MaxElementsStatementSupport.getInstance())
-            .addSupport(MinElementsStatementSupport.getInstance())
+            .addSupport(new PresenceStatementSupport(retainDeclarationReference))
+            .addSupport(new MaxElementsStatementSupport(retainDeclarationReference))
+            .addSupport(new MinElementsStatementSupport(retainDeclarationReference))
             .addSupport(OrderedByStatementSupport.getInstance())
-            .addSupport(WhenStatementSupport.createInstance(xpathSupport))
+            .addSupport(new WhenStatementSupport(xpathSupport, retainDeclarationReference))
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
-            .addVersionSpecificSupport(VERSION_1, AugmentStatementRFC6020Support.getInstance())
-            .addVersionSpecificSupport(VERSION_1_1, AugmentStatementRFC7950Support.getInstance())
+            .addVersionSpecificSupport(VERSION_1, new AugmentStatementRFC6020Support(retainDeclarationReference))
+            .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRFC7950Support(retainDeclarationReference))
             .addSupport(RefineTargetNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, RefineStatementSupport.rfc6020Instance())
             .addVersionSpecificSupport(VERSION_1_1, RefineStatementSupport.rfc7950Instance())
-            .addSupport(FeatureStatementSupport.getInstance())
-            .addSupport(PositionStatementSupport.getInstance())
-            .addSupport(ValueStatementSupport.getInstance())
+            .addSupport(new FeatureStatementSupport(retainDeclarationReference))
+            .addSupport(new PositionStatementSupport(retainDeclarationReference))
+            .addSupport(new ValueStatementSupport(retainDeclarationReference))
             .addSupport(YangNamespaceContextNamespace.BEHAVIOUR)
             .build();
     }
