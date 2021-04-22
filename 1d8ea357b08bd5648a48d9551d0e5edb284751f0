@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02b1ec2b_7a6156e9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-04-22T17:45:55Z",
+      "side": 1,
+      "message": "Identity",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 10
+      },
+      "revId": "1d8ea357b08bd5648a48d9551d0e5edb284751f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd9bee71_3b1b9380",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-04-22T17:45:55Z",
+      "side": 1,
+      "message": "value.",
+      "range": {
+        "startLine": 12,
+        "startChar": 13,
+        "endLine": 12,
+        "endChar": 18
+      },
+      "revId": "1d8ea357b08bd5648a48d9551d0e5edb284751f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0e55280_9016695f",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameTransformingStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-04-22T17:45:55Z",
+      "side": 1,
+      "message": "super.scalarValue(value instanceOf QName ? transform((QName) value) : value);",
+      "range": {
+        "startLine": 93,
+        "startChar": 8,
+        "endLine": 93,
+        "endChar": 37
+      },
+      "revId": "1d8ea357b08bd5648a48d9551d0e5edb284751f0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
