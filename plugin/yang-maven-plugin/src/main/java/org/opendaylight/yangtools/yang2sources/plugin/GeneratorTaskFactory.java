@@ -12,19 +12,23 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.plugin.generator.api.FileGenerator.ImportResolutionMode;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 @NonNullByDefault
-abstract class GeneratorTaskFactory extends ParserModeAware {
-    private final StatementParserMode parserMode;
+abstract class GeneratorTaskFactory extends ParserConfigAware {
+    private static final YangParserConfiguration SEMVER_CONFIG = YangParserConfiguration.builder()
+        .importResolutionMode(org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
+
+    private final YangParserConfiguration parserConfig;
 
     GeneratorTaskFactory(final ImportResolutionMode importMode) {
         switch (importMode) {
             case REVISION_EXACT_OR_LATEST:
-                parserMode = StatementParserMode.DEFAULT_MODE;
+                parserConfig = YangParserConfiguration.DEFAULT;
                 break;
             case SEMVER_LATEST:
-                parserMode = StatementParserMode.SEMVER_MODE;
+                parserConfig = SEMVER_CONFIG;
                 break;
             default:
                 throw new LinkageError("Unhandled import mode " + importMode);
@@ -32,8 +36,8 @@ abstract class GeneratorTaskFactory extends ParserModeAware {
     }
 
     @Override
-    final StatementParserMode parserMode() {
-        return parserMode;
+    final YangParserConfiguration parserConfig() {
+        return parserConfig;
     }
 
     final String generatorName() {

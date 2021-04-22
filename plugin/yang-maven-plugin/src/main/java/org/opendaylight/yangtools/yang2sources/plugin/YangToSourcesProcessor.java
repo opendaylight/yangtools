@@ -37,12 +37,12 @@ import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
@@ -140,8 +140,8 @@ class YangToSourcesProcessor {
             return;
         }
 
-        final Set<StatementParserMode> parserModes = codeGenerators.stream()
-            .map(GeneratorTaskFactory::parserMode)
+        final Set<YangParserConfiguration> parserConfigs = codeGenerators.stream()
+            .map(GeneratorTaskFactory::parserConfig)
             .collect(Collectors.toUnmodifiableSet());
 
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
@@ -191,9 +191,9 @@ class YangToSourcesProcessor {
 
         // FIXME: store these files into state, so that we can verify/clean up
         final Builder<File> files = ImmutableSet.builder();
-        for (StatementParserMode parserMode : parserModes) {
+        for (YangParserConfiguration parserConfig : parserConfigs) {
             final Optional<ProcessorModuleReactor> optReactor = createReactor(yangFilesInProject,
-                parserMode, dependencies, parsed);
+                parserConfig, dependencies, parsed);
             if (optReactor.isPresent()) {
                 final ProcessorModuleReactor reactor = optReactor.orElseThrow();
 
@@ -211,7 +211,7 @@ class YangToSourcesProcessor {
 
                     LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(),
                         sw);
-                    files.addAll(generateSources(holder, codeGenerators, parserMode));
+                    files.addAll(generateSources(holder, codeGenerators, parserConfig));
                 } else {
                     LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
                 }
@@ -267,12 +267,12 @@ class YangToSourcesProcessor {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<ProcessorModuleReactor> createReactor(final List<File> yangFilesInProject,
-            final StatementParserMode parserMode, final Collection<ScannedDependency> dependencies,
+            final YangParserConfiguration parserConfig, final Collection<ScannedDependency> dependencies,
             final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed) throws MojoExecutionException {
 
         try {
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
-            final YangParser parser = parserFactory.createParser(parserMode);
+            final YangParser parser = parserFactory.createParser(parserConfig);
             for (final Entry<YangTextSchemaSource, IRSchemaSource> entry : parsed) {
                 final YangTextSchemaSource textSource = entry.getKey();
                 final IRSchemaSource astSource = entry.getValue();
@@ -319,10 +319,10 @@ class YangToSourcesProcessor {
      * Call generate on every generator from plugin configuration.
      */
     private Set<File> generateSources(final ContextHolder context, final Collection<GeneratorTaskFactory> generators,
-            final StatementParserMode parserMode) throws MojoFailureException {
+            final YangParserConfiguration parserConfig) throws MojoFailureException {
         final Builder<File> allFiles = ImmutableSet.builder();
         for (GeneratorTaskFactory factory : generators) {
-            if (!parserMode.equals(factory.parserMode())) {
+            if (!parserConfig.equals(factory.parserConfig())) {
                 continue;
             }
 

@@ -14,11 +14,16 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 
 final class SemVerDependencyResolver extends DependencyResolver {
+    private static final YangParserConfiguration CONFIG = YangParserConfiguration.builder()
+        .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
 
-    protected SemVerDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+    SemVerDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         super(depInfo);
     }
 
@@ -48,6 +53,11 @@ final class SemVerDependencyResolver extends DependencyResolver {
         final SemVer modVer = moduleSemVer.get();
         final SemVer impVer = importSemVer.get();
         return modVer.getMajor() == impVer.getMajor() && modVer.compareTo(impVer) >= 0;
+    }
+
+    @Override
+    YangParserConfiguration parserConfig() {
+        return CONFIG;
     }
 
     @Override

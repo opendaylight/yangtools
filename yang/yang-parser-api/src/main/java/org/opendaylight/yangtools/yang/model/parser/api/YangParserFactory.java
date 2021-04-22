@@ -11,12 +11,17 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 /**
  * Basic entry point into a YANG parser implementation. Implementations of this interface are expected to be
  * thread-safe.
+ *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.parser.api.YangParserFactory} instead.
  */
 @Beta
+@Deprecated(since = "7.0.0", forRemoval = true)
 public interface YangParserFactory {
     /**
      * Return enumeration of {@link StatementParserMode}s supported by this factory.
@@ -55,6 +60,18 @@ public interface YangParserFactory {
      */
     @Deprecated(forRemoval = true)
     default @NonNull YangParser createParser(final StatementParserMode parserMode) {
-        return createParser(YangParserConfiguration.builder().parserMode(parserMode).build());
+        final ImportResolutionMode importMode;
+        switch (parserMode) {
+            case DEFAULT_MODE:
+                importMode = ImportResolutionMode.DEFAULT;
+                break;
+            case SEMVER_MODE:
+                importMode = ImportResolutionMode.OPENCONFIG_SEMVER;
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported mode " + parserMode);
+        }
+
+        return createParser(YangParserConfiguration.builder().importResolutionMode(importMode).build());
     }
 }

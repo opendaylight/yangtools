@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
+@Deprecated(since = "7.0.0", forRemoval = true)
 public class YangSyntaxErrorException extends YangParserException {
     private static final long serialVersionUID = 2L;
 

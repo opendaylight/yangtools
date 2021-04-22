@@ -27,13 +27,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 
 /**
  * Utility class which provides convenience methods for producing effective schema context based on the supplied
@@ -71,18 +71,18 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangResource(final String resource) {
-        return parseYangResource(resource, StatementParserMode.DEFAULT_MODE);
+        return parseYangResource(resource, YangParserConfiguration.DEFAULT);
     }
 
     /**
      * Creates a new effective schema context containing the specified YANG source. All YANG features are supported.
      *
      * @param resource relative path to the YANG file to be parsed
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResource(final String resource, final StatementParserMode parserMode) {
-        return parseYangResource(resource, parserMode, null);
+    public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config) {
+        return parseYangResource(resource, config, null);
     }
 
     /**
@@ -95,7 +95,7 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangResource(final String resource, final Set<QName> supportedFeatures) {
-        return parseYangResource(resource, StatementParserMode.DEFAULT_MODE, supportedFeatures);
+        return parseYangResource(resource, YangParserConfiguration.DEFAULT, supportedFeatures);
     }
 
     /**
@@ -104,13 +104,13 @@ public final class YangParserTestUtils {
      * @param resource relative path to the YANG file to be parsed
      * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
      *                          model are resolved
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangResource(final String resource, final StatementParserMode parserMode,
+    public static EffectiveModelContext parseYangResource(final String resource, final YangParserConfiguration config,
             final Set<QName> supportedFeatures) {
         final YangTextSchemaSource source = YangTextSchemaSource.forResource(YangParserTestUtils.class, resource);
-        return parseYangSources(parserMode, supportedFeatures, source);
+        return parseYangSources(config, supportedFeatures, source);
     }
 
     /**
@@ -132,7 +132,7 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangFiles(final Collection<File> files) {
-        return parseYangFiles(StatementParserMode.DEFAULT_MODE, files);
+        return parseYangFiles(YangParserConfiguration.DEFAULT, files);
     }
 
     /**
@@ -150,30 +150,30 @@ public final class YangParserTestUtils {
 
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final Collection<File> files) {
-        return parseYangFiles(supportedFeatures, StatementParserMode.DEFAULT_MODE, files);
+        return parseYangFiles(supportedFeatures, YangParserConfiguration.DEFAULT, files);
     }
 
     /**
      * Creates a new effective schema context containing the specified YANG sources. All YANG features are supported.
      *
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final StatementParserMode parserMode, final File... files) {
-        return parseYangFiles(parserMode, Arrays.asList(files));
+    public static EffectiveModelContext parseYangFiles(final YangParserConfiguration config, final File... files) {
+        return parseYangFiles(config, Arrays.asList(files));
     }
 
     /**
      * Creates a new effective schema context containing the specified YANG sources. All YANG features are supported.
      *
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @param files collection of YANG files to be parsed
      * @return effective schema context
      */
-    public static EffectiveModelContext parseYangFiles(final StatementParserMode parserMode,
+    public static EffectiveModelContext parseYangFiles(final YangParserConfiguration config,
             final Collection<File> files) {
-        return parseYangFiles(null, parserMode, files);
+        return parseYangFiles(null, config, files);
     }
 
     /**
@@ -181,13 +181,13 @@ public final class YangParserTestUtils {
      *
      * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
      *                          models are resolved
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @param files YANG files to be parsed
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
-            final StatementParserMode parserMode, final File... files) {
-        return parseYangFiles(supportedFeatures, parserMode, Arrays.asList(files));
+            final YangParserConfiguration config, final File... files) {
+        return parseYangFiles(supportedFeatures, config, Arrays.asList(files));
     }
 
     /**
@@ -195,13 +195,13 @@ public final class YangParserTestUtils {
      *
      * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
      *                          models are resolved
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @param files YANG files to be parsed
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
-            final StatementParserMode parserMode, final Collection<File> files) {
-        return parseSources(parserMode, supportedFeatures,
+            final YangParserConfiguration config, final Collection<File> files) {
+        return parseSources(config, supportedFeatures,
             files.stream().map(YangTextSchemaSource::forFile).collect(Collectors.toList()));
     }
 
@@ -213,19 +213,19 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath) {
-        return parseYangResourceDirectory(resourcePath, StatementParserMode.DEFAULT_MODE);
+        return parseYangResourceDirectory(resourcePath, YangParserConfiguration.DEFAULT);
     }
 
     /**
      * Creates a new effective schema context containing the specified YANG sources. All YANG features are supported.
      *
      * @param resourcePath relative path to the directory with YANG files to be parsed
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
-            final StatementParserMode parserMode) {
-        return parseYangResourceDirectory(resourcePath, null, parserMode);
+            final YangParserConfiguration config) {
+        return parseYangResourceDirectory(resourcePath, null, config);
     }
 
     /**
@@ -239,7 +239,7 @@ public final class YangParserTestUtils {
      */
     public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures) {
-        return parseYangResourceDirectory(resourcePath, supportedFeatures, StatementParserMode.DEFAULT_MODE);
+        return parseYangResourceDirectory(resourcePath, supportedFeatures, YangParserConfiguration.DEFAULT);
     }
 
     /**
@@ -248,19 +248,19 @@ public final class YangParserTestUtils {
      * @param resourcePath relative path to the directory with YANG files to be parsed
      * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
      *                          models are resolved
-     * @param parserMode mode of statement parser
+     * @param config parser configuration
      * @return effective schema context
      */
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
     public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
-            final Set<QName> supportedFeatures, final StatementParserMode parserMode) {
+            final Set<QName> supportedFeatures, final YangParserConfiguration config) {
         final URI directoryPath;
         try {
             directoryPath = YangParserTestUtils.class.getResource(resourcePath).toURI();
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Failed to open resource " + resourcePath, e);
         }
-        return parseYangFiles(supportedFeatures, parserMode, new File(directoryPath).listFiles(YANG_FILE_FILTER));
+        return parseYangFiles(supportedFeatures, config, new File(directoryPath).listFiles(YANG_FILE_FILTER));
     }
 
     /**
@@ -280,7 +280,7 @@ public final class YangParserTestUtils {
         for (final String r : resources) {
             sources.add(YangTextSchemaSource.forResource(clazz, r));
         }
-        return parseSources(StatementParserMode.DEFAULT_MODE, null, sources);
+        return parseSources(YangParserConfiguration.DEFAULT, null, sources);
     }
 
     /**
@@ -295,7 +295,7 @@ public final class YangParserTestUtils {
      */
     public static EffectiveModelContext parseYangResources(final List<String> yangDirs, final List<String> yangFiles,
             final Set<QName> supportedFeatures) {
-        return parseYangResources(yangDirs, yangFiles, supportedFeatures, StatementParserMode.DEFAULT_MODE);
+        return parseYangResources(yangDirs, yangFiles, supportedFeatures, YangParserConfiguration.DEFAULT);
     }
 
     /**
@@ -303,12 +303,12 @@ public final class YangParserTestUtils {
      *
      * @param yangResourceDirs relative paths to the directories containing YANG files to be parsed
      * @param yangResources relative paths to the YANG files to be parsed
-     * @param statementParserMode mode of statement parser
+     * @param config parser configuration
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
-            final List<String> yangResources, final StatementParserMode statementParserMode) {
-        return parseYangResources(yangResourceDirs, yangResources, null, statementParserMode);
+            final List<String> yangResources, final YangParserConfiguration config) {
+        return parseYangResources(yangResourceDirs, yangResources, null, config);
     }
 
     /**
@@ -318,12 +318,12 @@ public final class YangParserTestUtils {
      * @param yangResources relative paths to the YANG files to be parsed
      * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
      *                          models are resolved
-     * @param statementParserMode mode of statement parser
+     * @param config parser configuration
      * @return effective schema context
      */
     public static EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
             final List<String> yangResources, final Set<QName> supportedFeatures,
-            final StatementParserMode statementParserMode) {
+            final YangParserConfiguration config) {
         final List<File> allYangFiles = new ArrayList<>();
         for (final String yangDir : yangResourceDirs) {
             allYangFiles.addAll(getYangFiles(yangDir));
@@ -337,17 +337,17 @@ public final class YangParserTestUtils {
             }
         }
 
-        return parseYangFiles(supportedFeatures, statementParserMode, allYangFiles);
+        return parseYangFiles(supportedFeatures, config, allYangFiles);
     }
 
-    public static EffectiveModelContext parseYangSources(final StatementParserMode parserMode,
+    public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final YangTextSchemaSource... sources) {
-        return parseSources(parserMode, supportedFeatures, Arrays.asList(sources));
+        return parseSources(config, supportedFeatures, Arrays.asList(sources));
     }
 
-    public static EffectiveModelContext parseSources(final StatementParserMode parserMode,
+    public static EffectiveModelContext parseSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends SchemaSourceRepresentation> sources) {
-        final YangParser parser = PARSER_FACTORY.createParser(parserMode);
+        final YangParser parser = PARSER_FACTORY.createParser(config);
         if (supportedFeatures != null) {
             parser.setSupportedFeatures(supportedFeatures);
         }

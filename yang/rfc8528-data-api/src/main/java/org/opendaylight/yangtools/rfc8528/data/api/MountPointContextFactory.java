@@ -12,7 +12,7 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 
 /**
  * An entity able to resolve the SchemaContext for embedded mount points based on generic data provided by the current
