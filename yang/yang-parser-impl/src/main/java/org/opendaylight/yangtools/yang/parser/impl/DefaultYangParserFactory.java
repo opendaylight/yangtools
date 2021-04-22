@@ -68,8 +68,6 @@ public final class DefaultYangParserFactory implements YangParserFactory {
     public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
         final ImportResolutionMode importMode = configuration.importResolutionMode();
         checkArgument(SUPPORTED_MODES.contains(importMode), "Unsupported import resolution mode %s", importMode);
-
-        final CrossSourceStatementReactor reactor = reactors.computeIfAbsent(configuration, reactorFactory);
-        return new DefaultYangParser(reactor.newBuild(importMode));
+        return new DefaultYangParser(reactors.computeIfAbsent(configuration, reactorFactory).newBuild());
     }
 }

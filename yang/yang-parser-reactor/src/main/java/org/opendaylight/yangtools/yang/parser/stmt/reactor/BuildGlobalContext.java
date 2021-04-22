@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -86,38 +85,17 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     private final Set<SourceSpecificContext> sources = new HashSet<>();
     private final ImmutableSet<YangVersion> supportedVersions;
 
-    // FIXME: 7.0.0: this flag should really be passed to  {Import,Module}StatementSupport's bootstrap to wire the
-    //               appropriate behaviour. That requires a change in StatementSupport lifecycle, as statement supports
-    //               would no longer be stateless singletons.
-    private final boolean enabledSemanticVersions;
-
     private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
-            final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
-            final ImportResolutionMode statementParserMode) {
+            final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
-
-        switch (statementParserMode) {
-            case DEFAULT:
-                enabledSemanticVersions = false;
-                break;
-            case OPENCONFIG_SEMVER:
-                enabledSemanticVersions = true;
-                break;
-            default:
-                throw new IllegalArgumentException("Unhandled parser mode " + statementParserMode);
-        }
 
         addToNamespace(ValidationBundlesNamespace.class, supportedValidation);
 
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
-    }
-
-    boolean isEnabledSemanticVersioning() {
-        return enabledSemanticVersions;
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
@@ -129,8 +107,6 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
     }
 
     void addLibSource(final @NonNull StatementStreamSource libSource) {
-        checkState(!isEnabledSemanticVersioning(),
-            "Library sources are not supported in semantic version mode currently.");
         checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         libSources.add(new SourceSpecificContext(this, libSource));
