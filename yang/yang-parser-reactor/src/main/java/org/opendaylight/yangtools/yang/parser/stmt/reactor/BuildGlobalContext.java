@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -97,14 +97,14 @@ final class BuildGlobalContext extends NamespaceStorageSupport implements Regist
 
     BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
             final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
-            final StatementParserMode statementParserMode) {
+            final ImportResolutionMode statementParserMode) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
         switch (statementParserMode) {
-            case DEFAULT_MODE:
+            case DEFAULT:
                 enabledSemanticVersions = false;
                 break;
-            case SEMVER_MODE:
+            case OPENCONFIG_SEMVER:
                 enabledSemanticVersions = true;
                 break;
             default:

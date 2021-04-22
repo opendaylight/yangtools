@@ -11,7 +11,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
