@@ -15,9 +15,10 @@ import com.google.common.annotations.Beta;
  * Base exception reported by {@link YangParser}. This is used as an exception of last resort, semantic reporting
  * of individual errors is performed via subclasses, like {@link YangSyntaxErrorException}.
  *
- * @author Robert Varga
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.parser.api.YangParserException} instead.
  */
 @Beta
+@Deprecated(since = "7.0.0", forRemoval = true)
 public class YangParserException extends Exception {
     private static final long serialVersionUID = 1L;
 

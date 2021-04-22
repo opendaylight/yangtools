@@ -7,6 +7,7 @@
  */
 module org.opendaylight.yangtools.yang.parser.api {
     exports org.opendaylight.yangtools.yang.model.parser.api;
+    exports org.opendaylight.yangtools.yang.parser.api;
 
     requires transitive com.google.common;
     requires transitive org.opendaylight.yangtools.yang.common;
