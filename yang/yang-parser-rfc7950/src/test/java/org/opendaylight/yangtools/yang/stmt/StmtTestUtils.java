@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSou
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,13 +140,11 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
             throws ReactorException {
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild(config.importResolutionMode())
-                .addSources(sources);
+        final BuildAction build = getReactor(config).newBuild().addSources(sources);
         if (supportedFeatures != null) {
-            reactor.setSupportedFeatures(supportedFeatures);
+            build.setSupportedFeatures(supportedFeatures);
         }
-
-        return reactor.buildEffective();
+        return build.buildEffective();
     }
 
     public static EffectiveModelContext parseYangSources(final File... files) throws ReactorException, IOException,
@@ -262,8 +261,8 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYinSources(final YangParserConfiguration config,
             final StatementStreamSource... sources) throws ReactorException {
-        return RFC7950Reactors.defaultReactor()
-            .newBuild(config.importResolutionMode())
+        return getReactor(config)
+            .newBuild()
             .addSources(sources)
             .buildEffective();
     }
@@ -300,5 +299,10 @@ public final class StmtTestUtils {
             return;
         }
         assertEquals(expected, actual);
+    }
+
+    private static CrossSourceStatementReactor getReactor(final YangParserConfiguration config) {
+        return YangParserConfiguration.DEFAULT.equals(config) ? RFC7950Reactors.defaultReactor()
+            : RFC7950Reactors.defaultReactorBuilder(config).build();
     }
 }

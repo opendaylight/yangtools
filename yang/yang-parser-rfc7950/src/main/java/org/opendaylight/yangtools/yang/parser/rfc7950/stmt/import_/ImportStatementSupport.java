@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
@@ -65,10 +66,12 @@ public final class ImportStatementSupport
             .build();
 
     private final SubstatementValidator validator;
+    private final boolean semanticVersioning;
 
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
+        semanticVersioning = config.importResolutionMode() == ImportResolutionMode.OPENCONFIG_SEMVER;
     }
 
     public static @NonNull ImportStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -118,7 +121,7 @@ public final class ImportStatementSupport
 
     @Override
     public void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
-        if (stmt.isEnabledSemanticVersioning()) {
+        if (semanticVersioning) {
             SemanticVersionImport.onLinkageDeclared(stmt);
         } else {
             RevisionImport.onLinkageDeclared(stmt);
