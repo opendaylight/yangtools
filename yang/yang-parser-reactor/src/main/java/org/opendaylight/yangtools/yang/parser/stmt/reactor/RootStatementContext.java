@@ -235,10 +235,6 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
         return sourceContext;
     }
 
-    boolean isEnabledSemanticVersioningImpl() {
-        return sourceContext.globalContext().isEnabledSemanticVersioning();
-    }
-
     @NonNull YangVersion getRootVersionImpl() {
         return rootVersion == null ? DEFAULT_VERSION : rootVersion;
     }
