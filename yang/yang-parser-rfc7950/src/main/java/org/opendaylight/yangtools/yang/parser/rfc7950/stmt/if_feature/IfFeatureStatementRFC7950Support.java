@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class IfFeatureStatementRFC7950Support extends AbstractIfFeatureStatementSupport {

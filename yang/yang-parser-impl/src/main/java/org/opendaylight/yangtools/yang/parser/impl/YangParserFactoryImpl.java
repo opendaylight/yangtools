@@ -20,7 +20,7 @@ import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;

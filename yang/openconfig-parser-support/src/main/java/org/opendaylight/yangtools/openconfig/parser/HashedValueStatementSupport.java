@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.openconfig.parser;
 
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 public final class HashedValueStatementSupport extends AbstractHashedValueStatementSupport {
     public HashedValueStatementSupport(final YangParserConfiguration config) {
