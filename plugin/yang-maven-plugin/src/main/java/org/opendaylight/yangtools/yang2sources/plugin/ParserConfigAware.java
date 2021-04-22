@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 @NonNullByDefault
-abstract class ParserModeAware {
+abstract class ParserConfigAware {
 
-    abstract StatementParserMode parserMode();
+    abstract YangParserConfiguration parserConfig();
 }

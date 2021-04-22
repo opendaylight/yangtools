@@ -17,13 +17,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.AbstractSchemaRepository;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
+import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultYangParserFactory;
 
 /**
  * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as long as their specification is the same.
@@ -51,7 +51,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     }
 
     public SharedSchemaRepository(final String id) {
-        this(id, new YangParserFactoryImpl());
+        this(id, new DefaultYangParserFactory());
     }
 
     public SharedSchemaRepository(final String id, final YangParserFactory factory) {

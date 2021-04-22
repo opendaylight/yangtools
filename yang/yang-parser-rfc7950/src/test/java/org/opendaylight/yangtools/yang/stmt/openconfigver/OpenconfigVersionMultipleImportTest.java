@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt.openconfigver;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -18,40 +19,36 @@ import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class OpenconfigVersionMultipleImportTest {
+    private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
+        .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
 
     @Test
     public void multipleInvalidDeprecatedTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-invalid-deprecated",
-                    StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid openconfig version");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Unable to find module compatible with requested import [bar(1.0.0)]."));
-        }
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-invalid-deprecated", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(),
+            startsWith("Unable to find module compatible with requested import [bar(1.0.0)]."));
     }
 
     @Test
     public void multipleInvalidNosufficientTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-invalid-nosufficient",
-                    StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid openconfig version");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Unable to find module compatible with requested import [bar(2.5.5)]."));
-        }
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-invalid-nosufficient", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(),
+            startsWith("Unable to find module compatible with requested import [bar(2.5.5)]."));
     }
 
     @Test
     public void multipleValidDefaultsTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-valid-defaults",
-                StatementParserMode.SEMVER_MODE);
+            SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -67,7 +64,7 @@ public class OpenconfigVersionMultipleImportTest {
     @Test
     public void multipleValidSpecifiedTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/multiple/multiple-valid-specified",
-                StatementParserMode.SEMVER_MODE);
+            SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();

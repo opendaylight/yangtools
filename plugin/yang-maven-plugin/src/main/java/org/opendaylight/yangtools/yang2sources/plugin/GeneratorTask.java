@@ -14,11 +14,11 @@ import java.io.IOException;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorException;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 @NonNullByDefault
-abstract class GeneratorTask<T extends GeneratorTaskFactory> extends ParserModeAware {
+abstract class GeneratorTask<T extends GeneratorTaskFactory> extends ParserConfigAware {
     private final ContextHolder context;
     private final T factory;
 
@@ -28,8 +28,8 @@ abstract class GeneratorTask<T extends GeneratorTaskFactory> extends ParserModeA
     }
 
     @Override
-    final StatementParserMode parserMode() {
-        return factory.parserMode();
+    final YangParserConfiguration parserConfig() {
+        return factory.parserConfig();
     }
 
     final Collection<File> execute(final BuildContext buildContext) throws FileGeneratorException, IOException {

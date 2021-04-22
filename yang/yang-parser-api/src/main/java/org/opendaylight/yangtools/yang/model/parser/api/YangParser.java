@@ -25,9 +25,10 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation
  * Configurable single-use YANG parser. Each instance can be configured to use a different set of models after
  * which it is built. Models once added cannot be removed. Implementations are expected to be NOT thread-safe.
  *
- * @author Robert Varga
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.parser.api.YangParser} instead.
  */
 @Beta
+@Deprecated(since = "7.0.0", forRemoval = true)
 public interface YangParser {
     /**
      * Return enumeration of concrete types of {@link SchemaSourceRepresentation} parsers created from this factory

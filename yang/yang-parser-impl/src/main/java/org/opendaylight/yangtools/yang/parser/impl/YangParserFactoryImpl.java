@@ -7,23 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
 import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -31,45 +27,50 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * Reference {@link YangParserFactory} implementation.
+ *
+ * @deprecated Use {@link DefaultYangParserFactory} instead.
  */
 @Beta
 @MetaInfServices
 @Singleton
 @Component(immediate = true)
+@Deprecated(since = "7.0.0", forRemoval = true)
 public final class YangParserFactoryImpl implements YangParserFactory {
-    private static final List<StatementParserMode> SUPPORTED_MODES = List.of(
-        StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
+    private final DefaultYangParserFactory delegate;
 
-    private final ConcurrentMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
-        new ConcurrentHashMap<>(2);
-    private final Function<YangParserConfiguration, CrossSourceStatementReactor> reactorFactory;
+    private YangParserFactoryImpl(final DefaultYangParserFactory delegate) {
+        this.delegate = requireNonNull(delegate);
+    }
 
     /**
      * Construct a new {@link YangParserFactory} backed by {@link DefaultReactors#defaultReactor()}.
      */
     public YangParserFactoryImpl() {
-        reactorFactory = config -> DefaultReactors.defaultReactorBuilder(config).build();
-        // Make sure default reactor is available
-        reactorFactory.apply(YangParserConfiguration.DEFAULT);
+        this(new DefaultYangParserFactory());
     }
 
     @Inject
     @Activate
     public YangParserFactoryImpl(final @Reference YangXPathParserFactory xpathFactory) {
-        reactorFactory = config -> DefaultReactors.defaultReactorBuilder(xpathFactory, config).build();
+        this(new DefaultYangParserFactory(xpathFactory));
     }
 
     @Override
     public Collection<StatementParserMode> supportedParserModes() {
-        return SUPPORTED_MODES;
+        return Collections2.transform(delegate.supportedImportResolutionModes(), mode -> {
+            switch (mode) {
+                case DEFAULT:
+                    return StatementParserMode.DEFAULT_MODE;
+                case OPENCONFIG_SEMVER:
+                    return StatementParserMode.SEMVER_MODE;
+                default:
+                    throw new IllegalStateException("Unhandled mode " + mode);
+            }
+        });
     }
 
     @Override
     public @NonNull YangParser createParser(final YangParserConfiguration configuration) {
-        final StatementParserMode mode = configuration.parserMode();
-        checkArgument(SUPPORTED_MODES.contains(mode), "Unsupported parser mode %s", mode);
-
-        final CrossSourceStatementReactor reactor = reactors.computeIfAbsent(configuration, reactorFactory);
-        return new YangParserImpl(reactor.newBuild(mode));
+        return new YangParserImpl(delegate.createParser(configuration));
     }
 }

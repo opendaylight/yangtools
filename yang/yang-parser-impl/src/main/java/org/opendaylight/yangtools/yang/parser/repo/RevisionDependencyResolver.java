@@ -12,11 +12,11 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 
 final class RevisionDependencyResolver extends DependencyResolver {
-
-    protected RevisionDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+    RevisionDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         super(depInfo);
     }
 
@@ -28,6 +28,11 @@ final class RevisionDependencyResolver extends DependencyResolver {
         }
 
         return null;
+    }
+
+    @Override
+    YangParserConfiguration parserConfig() {
+        return YangParserConfiguration.DEFAULT;
     }
 
     @Override
