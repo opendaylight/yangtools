@@ -148,6 +148,12 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
         return super.startAnyxmlNode(transform(name), objectModel);
     }
 
+    @Override
+    public void scalarValue(final Object value) throws IOException {
+        // identityref leaf nodes contain identity QName as a value - it needs to be transformed
+        super.scalarValue(value instanceof QName ? transform((QName) value) : value);
+    }
+
     /**
      * Transforms a QName to new mapping.
      *
