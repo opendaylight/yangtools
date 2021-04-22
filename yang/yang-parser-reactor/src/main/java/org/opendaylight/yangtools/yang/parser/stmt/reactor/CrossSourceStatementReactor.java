@@ -20,7 +20,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -52,18 +51,7 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      */
     public @NonNull BuildAction newBuild() {
-        return newBuild(StatementParserMode.DEFAULT_MODE);
-    }
-
-    /**
-     * Start a new reactor build using the specified statement parser mode and enabling all features and deviations.
-     *
-     * @param statementParserMode Parser mode to use
-     * @return A new {@link BuildAction}.
-     * @throws NullPointerException if statementParserMode is null
-     */
-    public @NonNull BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(supportedTerminology, supportedValidation, requireNonNull(statementParserMode));
+        return new BuildAction(supportedTerminology, supportedValidation);
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
@@ -95,9 +83,8 @@ public final class CrossSourceStatementReactor {
         private boolean modulesDeviatedByModulesSet = false;
 
         BuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
-                final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
-                final StatementParserMode statementParserMode) {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode);
+                final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation) {
+            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation);
         }
 
         /**

@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -130,10 +131,12 @@ public final class ModuleStatementSupport
         .build();
 
     private final SubstatementValidator validator;
+    private final boolean semanticVersioning;
 
     private ModuleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.MODULE, StatementPolicy.reject(), config);
         this.validator = requireNonNull(validator);
+        semanticVersioning = config.parserMode() == StatementParserMode.SEMVER_MODE;
     }
 
     public static @NonNull ModuleStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -210,7 +213,7 @@ public final class ModuleStatementSupport
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, moduleName);
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
 
-        if (stmt.isEnabledSemanticVersioning()) {
+        if (semanticVersioning) {
             addToSemVerModuleNamespace(stmt, moduleIdentifier);
         }
     }
