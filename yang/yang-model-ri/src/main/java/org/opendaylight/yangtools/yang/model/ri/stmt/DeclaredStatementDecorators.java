@@ -74,6 +74,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
@@ -142,6 +143,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefTypeStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefTypedefStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUniqueStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUnitsStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefUsesStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefValueStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.ref.RefWhenStatement;
@@ -421,6 +423,11 @@ public final class DeclaredStatementDecorators {
 
     public static UnitsStatement decorateUnits(final UnitsStatement stmt, final DeclarationReference ref) {
         return new RefUnitsStatement(stmt, ref);
+    }
+
+    public static UnrecognizedStatement decorateUnrecognized(final UnrecognizedStatement stmt,
+            final DeclarationReference ref) {
+        return new RefUnrecognizedStatement(stmt, ref);
     }
 
     public static UsesStatement decorateUses(final UsesStatement stmt, final DeclarationReference ref) {

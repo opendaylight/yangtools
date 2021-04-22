@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -91,6 +92,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
@@ -228,6 +230,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularWhenStatem
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularYangVersionStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.RegularYinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.SubmoduleStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl.UnrecognizedStatementImpl;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -661,6 +664,12 @@ public final class DeclaredStatements {
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return substatements.isEmpty() ? new EmptyUnitsStatement(argument)
             : new RegularUnitsStatement(argument, substatements);
+    }
+
+    public static UnrecognizedStatement createUnrecognized(final String rawArgument,
+            final StatementDefinition publicDefinition,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new UnrecognizedStatementImpl(rawArgument, publicDefinition, substatements);
     }
 
     public static UsesStatement createUses(final String rawArgument, final QName argument,
