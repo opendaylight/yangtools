@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 import org.opendaylight.yangtools.rfc6643.model.api.ObjectIdentifier;
 import org.opendaylight.yangtools.rfc6643.model.api.OidEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -49,7 +50,12 @@ public final class OidStatementSupport
     @Override
     protected OidStatement createDeclared(final StmtContext<ObjectIdentifier, OidStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new OidIdStatementImpl(ctx.getArgument(), substatements);
+        return new OidStatementImpl(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected OidStatement attachDeclarationReference(final OidStatement stmt, final DeclarationReference reference) {
+        return new RefOidStatement(stmt, reference);
     }
 
     @Override

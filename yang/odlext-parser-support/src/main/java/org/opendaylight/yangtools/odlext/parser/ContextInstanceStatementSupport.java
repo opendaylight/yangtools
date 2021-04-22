@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.odlext.model.api.ContextInstanceEffectiveState
 import org.opendaylight.yangtools.odlext.model.api.ContextInstanceStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
@@ -30,6 +31,12 @@ public final class ContextInstanceStatementSupport
     protected ContextInstanceStatement createDeclared(final StmtContext<QName, ContextInstanceStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ContextInstanceStatementImpl(ctx.getRawArgument(), ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected ContextInstanceStatement attachDeclarationReference(final ContextInstanceStatement stmt,
+            final DeclarationReference reference) {
+        return new RefContextInstanceStatement(stmt, reference);
     }
 
     @Override

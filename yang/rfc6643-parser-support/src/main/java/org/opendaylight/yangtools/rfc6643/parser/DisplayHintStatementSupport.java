@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DisplayHintStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -39,6 +40,12 @@ public final class DisplayHintStatementSupport
     protected DisplayHintStatement createDeclared(final StmtContext<String, DisplayHintStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new DisplayHintStatementImpl(ctx.getRawArgument(), substatements);
+    }
+
+    @Override
+    protected DisplayHintStatement attachDeclarationReference(final DisplayHintStatement stmt,
+            final DeclarationReference reference) {
+        return new RefDisplayHintStatement(stmt, reference);
     }
 
     @Override

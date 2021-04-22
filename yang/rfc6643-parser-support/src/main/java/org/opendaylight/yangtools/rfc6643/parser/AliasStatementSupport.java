@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.AliasEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.AliasStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -45,6 +46,12 @@ public final class AliasStatementSupport
     protected AliasStatement createDeclared(final StmtContext<String, AliasStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new AliasStatementImpl(ctx.getRawArgument(), substatements);
+    }
+
+    @Override
+    protected AliasStatement attachDeclarationReference(final AliasStatement stmt,
+            final DeclarationReference reference) {
+        return new RefAliasStatement(stmt, reference);
     }
 
     @Override

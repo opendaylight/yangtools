@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMappi
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -45,6 +46,12 @@ public final class SubIdStatementSupport
     protected SubIdStatement createDeclared(final StmtContext<Uint32, SubIdStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new SubIdStatementImpl(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected SubIdStatement attachDeclarationReference(final SubIdStatement stmt,
+            final DeclarationReference reference) {
+        return new RefSubIdStatement(stmt, reference);
     }
 
     @Override

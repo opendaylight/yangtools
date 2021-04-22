@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * @param <D> Class representing declared version of this statement.
  */
 public abstract class AbstractRefStatement<A, D extends DeclaredStatement<A>>
-        extends ForwardingDeclaredStatement<A, D> {
+        extends ForwardingDeclaredStatement<A, D> implements Delegator<D> {
     private final @NonNull DeclarationReference ref;
     private final @NonNull D delegate;
 
@@ -35,6 +36,11 @@ public abstract class AbstractRefStatement<A, D extends DeclaredStatement<A>>
     @Override
     public final Optional<DeclarationReference> declarationReference() {
         return Optional.of(ref);
+    }
+
+    @Override
+    public final D getDelegate() {
+        return delegate;
     }
 
     @Override

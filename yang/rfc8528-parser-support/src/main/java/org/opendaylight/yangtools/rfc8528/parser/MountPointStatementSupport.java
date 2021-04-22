@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -80,6 +81,12 @@ public final class MountPointStatementSupport
     protected MountPointStatement createDeclared(@NonNull final StmtContext<QName, MountPointStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new MountPointStatementImpl(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected MountPointStatement attachDeclarationReference(final MountPointStatement stmt,
+            final DeclarationReference reference) {
+        return new RefMountPointStatement(stmt, reference);
     }
 
     @Override

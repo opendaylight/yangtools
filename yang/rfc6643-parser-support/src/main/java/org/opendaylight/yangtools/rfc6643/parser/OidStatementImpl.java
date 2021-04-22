@@ -13,8 +13,8 @@ import org.opendaylight.yangtools.rfc6643.model.api.OidStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.ArgumentToString.WithSubstatements;
 
-final class OidIdStatementImpl extends WithSubstatements<ObjectIdentifier> implements OidStatement {
-    OidIdStatementImpl(final ObjectIdentifier argument,
+final class OidStatementImpl extends WithSubstatements<ObjectIdentifier> implements OidStatement {
+    OidStatementImpl(final ObjectIdentifier argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument, substatements);
     }

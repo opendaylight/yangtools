@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.ImpliedStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -39,6 +40,12 @@ public final class ImpliedStatementSupport
     protected ImpliedStatement createDeclared(final StmtContext<String, ImpliedStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ImpliedStatementImpl(ctx.getRawArgument(), substatements);
+    }
+
+    @Override
+    protected ImpliedStatement attachDeclarationReference(final ImpliedStatement stmt,
+            final DeclarationReference reference) {
+        return new RefImpliedStatement(stmt, reference);
     }
 
     @Override

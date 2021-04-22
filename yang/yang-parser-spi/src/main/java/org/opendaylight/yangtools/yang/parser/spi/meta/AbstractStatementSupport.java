@@ -68,11 +68,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      * @param reference {@link DeclarationReference} to attach
      * @return Equivalent of stmt, potentially with specified reference attached.
      */
-    // FIXME: make this method abstract
-    protected @NonNull D attachDeclarationReference(final @NonNull D stmt,
-            final @NonNull DeclarationReference reference) {
-        return stmt;
-    }
+    protected abstract @NonNull D attachDeclarationReference(@NonNull D stmt, @NonNull DeclarationReference reference);
 
     @Override
     public final E createEffective(final Current<A, D> stmt,

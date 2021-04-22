@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.InstanceTargetStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -39,6 +40,12 @@ public final class InstanceTargetStatementSupport
     protected InstanceTargetStatement createDeclared(final StmtContext<String, InstanceTargetStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new InstanceTargetStatementImpl(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected InstanceTargetStatement attachDeclarationReference(final InstanceTargetStatement stmt,
+            final DeclarationReference reference) {
+        return new RefInstanceTargetStatement(stmt, reference);
     }
 
     @Override

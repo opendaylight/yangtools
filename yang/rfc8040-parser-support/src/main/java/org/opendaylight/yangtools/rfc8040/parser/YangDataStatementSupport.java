@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithRawStringArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -36,16 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class YangDataStatementSupport
         extends AbstractStringStatementSupport<YangDataStatement, YangDataEffectiveStatement> {
-    /**
-     * Declared statement representation of 'yang-data' extension defined in
-     * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
-     */
-    private static final class Declared extends WithSubstatements implements YangDataStatement {
-        Declared(final String rawArgument, final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(rawArgument, substatements);
-        }
-    }
-
     private final SubstatementValidator declaredValidator;
 
     public YangDataStatementSupport(final YangParserConfiguration config) {
@@ -91,7 +81,13 @@ public final class YangDataStatementSupport
     @Override
     protected YangDataStatement createDeclared(@NonNull final StmtContext<String, YangDataStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return new Declared(ctx.getRawArgument(), substatements);
+        return new YangDataStatementImpl(ctx.getRawArgument(), substatements);
+    }
+
+    @Override
+    protected YangDataStatement attachDeclarationReference(final YangDataStatement stmt,
+            final DeclarationReference reference) {
+        return new RefYangDataStatement(stmt, reference);
     }
 
     @Override

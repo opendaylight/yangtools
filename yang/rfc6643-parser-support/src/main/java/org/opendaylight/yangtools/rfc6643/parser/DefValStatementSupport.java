@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValEffectiveStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.DefValStatement;
 import org.opendaylight.yangtools.rfc6643.model.api.IetfYangSmiv2ExtensionsMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -39,6 +40,12 @@ public final class DefValStatementSupport
     protected DefValStatement createDeclared(final StmtContext<String, DefValStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new DefValStatementImpl(ctx.getRawArgument(), substatements);
+    }
+
+    @Override
+    protected DefValStatement attachDeclarationReference(final DefValStatement stmt,
+            final DeclarationReference reference) {
+        return new RefDefValStatement(stmt, reference);
     }
 
     @Override

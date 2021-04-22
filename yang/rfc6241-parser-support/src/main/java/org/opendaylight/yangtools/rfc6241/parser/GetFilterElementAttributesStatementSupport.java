@@ -9,25 +9,17 @@ package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
-import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithoutArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractEmptyStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -37,44 +29,6 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class GetFilterElementAttributesStatementSupport extends AbstractEmptyStatementSupport<
         GetFilterElementAttributesStatement, GetFilterElementAttributesEffectiveStatement> {
-
-    private static final class Declared extends WithSubstatements implements GetFilterElementAttributesStatement {
-        static final @NonNull Declared EMPTY = new Declared(ImmutableList.of());
-
-        Declared(final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-            super(substatements);
-        }
-    }
-
-    private static final class Effective
-            extends UnknownEffectiveStatementBase<Empty, GetFilterElementAttributesStatement>
-            implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
-        private final @NonNull Immutable path;
-
-        Effective(final Current<Empty, GetFilterElementAttributesStatement> stmt,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-            super(stmt, substatements);
-            path = SchemaPathSupport.toEffectivePath(stmt.getEffectiveParent().getSchemaPath()
-                    .createChild(stmt.publicDefinition().getStatementName()));
-        }
-
-        @Override
-        public QName getQName() {
-            return SchemaNodeDefaults.extractQName(path);
-        }
-
-        @Override
-        @Deprecated
-        public SchemaPath getPath() {
-            return SchemaNodeDefaults.extractPath(this, path);
-        }
-
-        @Override
-        public GetFilterElementAttributesEffectiveStatement asEffectiveStatement() {
-            return this;
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(GetFilterElementAttributesStatementSupport.class);
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES).build();
@@ -99,14 +53,21 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
     protected GetFilterElementAttributesStatement createDeclared(
             final StmtContext<Empty, GetFilterElementAttributesStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        return substatements.isEmpty() ? Declared.EMPTY : new Declared(substatements);
+        return substatements.isEmpty() ? GetFilterElementAttributesStatementImpl.EMPTY
+            : new GetFilterElementAttributesStatementImpl(substatements);
+    }
+
+    @Override
+    protected GetFilterElementAttributesStatement attachDeclarationReference(
+            final GetFilterElementAttributesStatement stmt, final DeclarationReference reference) {
+        return new RefGetFilterElementAttributesStatement(stmt, reference);
     }
 
     @Override
     protected GetFilterElementAttributesEffectiveStatement createEffective(
             final Current<Empty, GetFilterElementAttributesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new Effective(stmt, substatements);
+        return new GetFilterElementAttributesEffectiveStatementImpl(stmt, substatements);
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {

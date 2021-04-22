@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveSta
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -52,6 +53,12 @@ public final class AugmentIdentifierStatementSupport
             final StmtContext<UnqualifiedQName, AugmentIdentifierStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new AugmentIdentifierStatementImpl(ctx.getArgument(), substatements);
+    }
+
+    @Override
+    protected AugmentIdentifierStatement attachDeclarationReference(final AugmentIdentifierStatement stmt,
+            final DeclarationReference reference) {
+        return new RefAugmentIdentifierStatement(stmt, reference);
     }
 
     @Override
