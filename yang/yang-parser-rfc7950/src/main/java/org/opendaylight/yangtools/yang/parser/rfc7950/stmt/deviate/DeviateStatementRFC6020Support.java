@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
-import org.opendaylight.yangtools.yang.model.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 public final class DeviateStatementRFC6020Support extends AbstractDeviateStatementSupport {
     public DeviateStatementRFC6020Support(final YangParserConfiguration config) {

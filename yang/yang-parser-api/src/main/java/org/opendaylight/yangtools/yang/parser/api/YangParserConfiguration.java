@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.parser.api;
+package org.opendaylight.yangtools.yang.parser.api;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,12 +15,10 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 
 /**
  * A configuration of {@link YangParser} wiring for use with {@link YangParserFactory}.
  */
-@Beta
 @NonNullByDefault
 public final class YangParserConfiguration implements Immutable {
     /**
@@ -28,16 +26,18 @@ public final class YangParserConfiguration implements Immutable {
      */
     public static final YangParserConfiguration DEFAULT = builder().build();
 
-    private final StatementParserMode parserMode;
+    private final ImportResolutionMode importResolutionMode;
     private final boolean retainDeclarationReferences;
 
-    private YangParserConfiguration(final StatementParserMode parserMode, final boolean retainDeclarationReferences) {
-        this.parserMode = requireNonNull(parserMode);
+    private YangParserConfiguration(final ImportResolutionMode importResolutionMode,
+            final boolean retainDeclarationReferences) {
+        this.importResolutionMode = requireNonNull(importResolutionMode);
         this.retainDeclarationReferences = retainDeclarationReferences;
     }
 
-    public StatementParserMode parserMode() {
-        return parserMode;
+    @Beta
+    public ImportResolutionMode importResolutionMode() {
+        return importResolutionMode;
     }
 
     public boolean retainDeclarationReferences() {
@@ -46,7 +46,7 @@ public final class YangParserConfiguration implements Immutable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(parserMode, retainDeclarationReferences);
+        return Objects.hash(importResolutionMode, retainDeclarationReferences);
     }
 
     @Override
@@ -58,14 +58,15 @@ public final class YangParserConfiguration implements Immutable {
             return false;
         }
         final YangParserConfiguration other = (YangParserConfiguration) obj;
-        return parserMode == other.parserMode && retainDeclarationReferences == other.retainDeclarationReferences;
+        return importResolutionMode == other.importResolutionMode
+            && retainDeclarationReferences == other.retainDeclarationReferences;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("parserMode", parserMode)
-            .add("retainDeclarationReferences", retainDeclarationReferences)
+            .add("importResolution", importResolutionMode)
+            .add("declarationReferences", retainDeclarationReferences)
             .toString();
     }
 
@@ -74,7 +75,7 @@ public final class YangParserConfiguration implements Immutable {
     }
 
     public static final class Builder implements org.opendaylight.yangtools.concepts.Builder<YangParserConfiguration> {
-        private StatementParserMode parserMode = StatementParserMode.DEFAULT_MODE;
+        private ImportResolutionMode importResolutionMode = ImportResolutionMode.DEFAULT;
         private boolean retainDeclarationReferences = false;
 
         private Builder() {
@@ -83,11 +84,12 @@ public final class YangParserConfiguration implements Immutable {
 
         @Override
         public YangParserConfiguration build() {
-            return new YangParserConfiguration(parserMode, retainDeclarationReferences);
+            return new YangParserConfiguration(importResolutionMode, retainDeclarationReferences);
         }
 
-        public Builder parserMode(final StatementParserMode newParserMode) {
-            this.parserMode = requireNonNull(newParserMode);
+        @Beta
+        public Builder importResolutionMode(final ImportResolutionMode newImportResolutionMode) {
+            this.importResolutionMode = requireNonNull(newImportResolutionMode);
             return this;
         }
 
