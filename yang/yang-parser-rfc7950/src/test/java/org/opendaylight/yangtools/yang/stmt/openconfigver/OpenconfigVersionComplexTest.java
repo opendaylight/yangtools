@@ -17,22 +17,26 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class OpenconfigVersionComplexTest {
+    private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
+        .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
 
     @Test
     public void complexTest1() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-1",
-                StatementParserMode.SEMVER_MODE);
+            SEMVER);
         verifySchemaContextTest1(context);
     }
 
     @Test
     public void complexTest1Yang1_1() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-1-rfc7950",
-                StatementParserMode.SEMVER_MODE);
+            SEMVER);
         verifySchemaContextTest1(context);
     }
 
@@ -74,15 +78,14 @@ public class OpenconfigVersionComplexTest {
 
     @Test
     public void complexTest2() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-2",
-                StatementParserMode.SEMVER_MODE);
+        final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-2", SEMVER);
         verifySchemaContextTest2(context);
     }
 
     @Test
     public void complexTest2Yang1_1() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-2-rfc7950",
-                StatementParserMode.SEMVER_MODE);
+            SEMVER);
         verifySchemaContextTest2(context);
     }
 

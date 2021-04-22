@@ -15,15 +15,18 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class OpenconfigVersionIgnoringRevisionTest {
+    private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
+        .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
 
     @Test
     public void ignoringRevisionTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/ignoring-revision",
-                StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/ignoring-revision", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -38,8 +41,7 @@ public class OpenconfigVersionIgnoringRevisionTest {
 
     @Test
     public void ignoringRevision2Test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/ignoring-revision-2",
-                StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/ignoring-revision-2", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();

@@ -7,26 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.stmt.openconfigver;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class OpenconfigVersionImportTest {
+    private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
+        .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
 
     @Test
     public void importValidTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/import/import-valid",
-                StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/import/import-valid", SEMVER);
         assertNotNull(context);
 
         Module semVer = context.findModules(XMLNamespace.of("http://openconfig.net/yang/openconfig-ext"))
@@ -36,50 +40,34 @@ public class OpenconfigVersionImportTest {
     }
 
     @Test
-    public void importInvalidDeprecatedTest1() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-deprecated-1",
-                    StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid import of openconfig-version module");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import [openconfig-extensions(1.0.0)]."));
-        }
+    public void importInvalidDeprecatedTest1() {
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-deprecated-1", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+            "Unable to find module compatible with requested import [openconfig-extensions(1.0.0)]."));
     }
 
     @Test
-    public void importInvalidDeprecatedTest2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-deprecated-2",
-                    StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid import of openconfig-version module");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import [openconfig-extensions(0.9.9)]."));
-        }
+    public void importInvalidDeprecatedTest2() {
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-deprecated-2", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+            "Unable to find module compatible with requested import [openconfig-extensions(0.9.9)]."));
     }
 
     @Test
-    public void importInvalidNotsufficientTest1() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-notsufficient-1",
-                    StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid import of openconfig-version module");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import [openconfig-extensions(2.0.0)]."));
-        }
+    public void importInvalidNotsufficientTest1() {
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-notsufficient-1", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+            "Unable to find module compatible with requested import [openconfig-extensions(2.0.0)]."));
     }
 
     @Test
-    public void importInvalidNotsufficientTest2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-notsufficient-2",
-                    StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid import of openconfig-version module");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import [openconfig-extensions(2.0.5)]."));
-        }
+    public void importInvalidNotsufficientTest2() {
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/import/import-invalid-notsufficient-2", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(), startsWith(
+            "Unable to find module compatible with requested import [openconfig-extensions(2.0.5)]."));
     }
 }

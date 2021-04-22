@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.stmt.openconfigver;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -24,15 +24,19 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class OpenconfigVersionTest {
+    private static final YangParserConfiguration SEMVER = YangParserConfiguration.builder()
+        .importResolutionMode(ImportResolutionMode.OPENCONFIG_SEMVER)
+        .build();
+
     @Test
     public void basicTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic",
-            StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -47,8 +51,7 @@ public class OpenconfigVersionTest {
 
     @Test
     public void basicTest2() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic-2",
-            StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic-2", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -63,8 +66,7 @@ public class OpenconfigVersionTest {
 
     @Test
     public void basicTest3() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic-3",
-            StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic-3", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -77,8 +79,7 @@ public class OpenconfigVersionTest {
 
     @Test
     public void basicImportTest1() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic-import-1",
-                StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/basic-import-1", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -93,8 +94,7 @@ public class OpenconfigVersionTest {
 
     @Test
     public void multipleModulesTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/multiple-modules",
-                StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/multiple-modules", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();
@@ -109,32 +109,23 @@ public class OpenconfigVersionTest {
 
     @Test
     public void basicImportErrTest1() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-1",
-                StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid openconfig version");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
-        }
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-1", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(),
+            startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
     }
 
     @Test
     public void basicImportErrTest2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-2",
-                StatementParserMode.SEMVER_MODE);
-            fail("Test should fail due to invalid openconfig version");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
-        }
+        ReactorException ex = assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-2", SEMVER));
+        assertThat(ex.getCause().getCause().getMessage(),
+            startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
     }
 
     @Test
     public void nodeTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/node-test",
-            StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/node-test", SEMVER);
         assertNotNull(context);
 
         Module foo = context.findModules(XMLNamespace.of("foo")).iterator().next();

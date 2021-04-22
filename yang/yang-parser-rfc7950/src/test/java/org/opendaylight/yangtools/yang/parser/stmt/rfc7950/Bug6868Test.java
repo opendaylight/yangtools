@@ -5,15 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -24,7 +23,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -55,8 +54,7 @@ public class Bug6868Test {
     private static void assertSchemaContextFor(final Set<String> supportedFeatures,
             final Set<String> expectedContainers) throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6868/yang11",
-                supportedFeatures != null ? createFeaturesSet(supportedFeatures) : null,
-                StatementParserMode.DEFAULT_MODE);
+            supportedFeatures != null ? createFeaturesSet(supportedFeatures) : null, YangParserConfiguration.DEFAULT);
         assertNotNull(schemaContext);
 
         for (final String expectedContainer : expectedContainers) {
@@ -87,13 +85,9 @@ public class Bug6868Test {
     }
 
     @Test
-    public void invalidYang10Test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6868/invalid10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage()
-                    .startsWith("Invalid identifier '(not foo) or (bar and baz)' [at "));
-        }
+    public void invalidYang10Test() {
+        SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6868/invalid10.yang"));
+        assertThat(ex.getCause().getMessage(), startsWith("Invalid identifier '(not foo) or (bar and baz)' [at "));
     }
 }

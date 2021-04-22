@@ -20,7 +20,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -52,7 +52,7 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      */
     public @NonNull BuildAction newBuild() {
-        return newBuild(StatementParserMode.DEFAULT_MODE);
+        return newBuild(ImportResolutionMode.DEFAULT);
     }
 
     /**
@@ -62,7 +62,7 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      */
-    public @NonNull BuildAction newBuild(final StatementParserMode statementParserMode) {
+    public @NonNull BuildAction newBuild(final ImportResolutionMode statementParserMode) {
         return new BuildAction(supportedTerminology, supportedValidation, requireNonNull(statementParserMode));
     }
 
@@ -96,7 +96,7 @@ public final class CrossSourceStatementReactor {
 
         BuildAction(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
                 final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
-                final StatementParserMode statementParserMode) {
+                final ImportResolutionMode statementParserMode) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode);
         }
 
