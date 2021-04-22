@@ -10,55 +10,27 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
-// FIXME: 7.0.0: hide this class
-// FIXME: 7.0.0: do not implement SchemaNode
 public final class RefineEffectiveStatementImpl extends WithSubstatements<Descendant, RefineStatement>
-        implements RefineEffectiveStatement, SchemaNode, DocumentedNodeMixin<Descendant, RefineStatement> {
+        implements RefineEffectiveStatement, DocumentedNodeMixin<Descendant, RefineStatement> {
     private final @NonNull SchemaNode refineTargetNode;
-    private final @Nullable SchemaPath path;
 
     RefineEffectiveStatementImpl(final RefineStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path,
-            final SchemaNode refineTargetNode) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaNode refineTargetNode) {
         super(declared, substatements);
         this.refineTargetNode = requireNonNull(refineTargetNode);
-        this.path = path;
     }
 
+    // FIXME: 8.0.0: discover this through namespace population
     public SchemaNode getRefineTargetNode() {
         return refineTargetNode;
-    }
-
-    @Override
-    @Deprecated
-    public QName getQName() {
-        return Iterables.getLast(argument().getNodeIdentifiers());
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
-    }
-
-    @Override
-    public Status getStatus() {
-        return findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
     }
 }

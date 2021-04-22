@@ -99,7 +99,7 @@ public final class RefineStatementSupport
     protected RefineEffectiveStatement createEffective(final Current<Descendant, RefineStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         // Empty refine is exceedingly unlikely: let's be lazy and reuse the implementation
-        return new RefineEffectiveStatementImpl(stmt.declared(), substatements, stmt.optionalPath(),
+        return new RefineEffectiveStatementImpl(stmt.declared(), substatements,
             (SchemaNode) verifyNotNull(stmt.namespaceItem(RefineTargetNamespace.class, Empty.getInstance()))
                 .buildEffective());
     }
