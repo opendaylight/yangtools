@@ -21,5 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 public interface ContainerNode extends DataContainerNode, DataContainerChild {
     @Override
+    default Class<ContainerNode> contract() {
+        return ContainerNode.class;
+    }
+
+    @Override
     NodeIdentifier getIdentifier();
 }

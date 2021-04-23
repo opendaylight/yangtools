@@ -19,5 +19,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 public interface UnkeyedListEntryNode extends DataContainerNode {
     @Override
+    default Class<UnkeyedListEntryNode> contract() {
+        return UnkeyedListEntryNode.class;
+    }
+
+    @Override
     NodeIdentifier getIdentifier();
 }

@@ -22,5 +22,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 public interface LeafSetNode<T>
         extends DistinctNodeContainer<NodeWithValue<?>, LeafSetEntryNode<T>>, DataContainerChild, MixinNode {
     @Override
+    @SuppressWarnings("rawtypes")
+    Class<? extends LeafSetNode> contract();
+
+    @Override
     NodeIdentifier getIdentifier();
 }

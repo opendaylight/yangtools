@@ -27,5 +27,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 public interface ChoiceNode extends MixinNode, DataContainerNode, DataContainerChild {
     @Override
+    default Class<ChoiceNode> contract() {
+        return ChoiceNode.class;
+    }
+
+    @Override
     NodeIdentifier getIdentifier();
 }
