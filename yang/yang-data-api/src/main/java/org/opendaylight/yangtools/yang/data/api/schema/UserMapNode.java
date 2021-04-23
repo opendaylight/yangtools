@@ -15,6 +15,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * a {@code list} with {@code ordered-by user;} substatement and a {@code key} definition.
  */
 public interface UserMapNode extends MapNode, OrderedNodeContainer<MapEntryNode> {
+    @Override
+    default Class<UserMapNode> contract() {
+        return UserMapNode.class;
+    }
+
     /**
      * {@inheritDoc}
      *

@@ -27,5 +27,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 @Beta
 public interface AnydataNode<V> extends ForeignDataNode<V> {
     @Override
+    default Class<AnydataNode> contract() {
+        return AnydataNode.class;
+    }
+
+    @Override
     NodeIdentifier getIdentifier();
 }

@@ -13,6 +13,11 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  */
 public interface SystemMapNode extends MapNode, OrderingAware.System {
     @Override
+    default Class<SystemMapNode> contract() {
+        return SystemMapNode.class;
+    }
+
+    @Override
     int hashCode();
 
     @Override

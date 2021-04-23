@@ -14,5 +14,9 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * @param <T> Value type of Leaf entries
  */
 public interface UserLeafSetNode<T> extends LeafSetNode<T>, OrderedNodeContainer<LeafSetEntryNode<T>> {
-
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<UserLeafSetNode> contract() {
+        return UserLeafSetNode.class;
+    }
 }
