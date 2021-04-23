@@ -18,6 +18,12 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  */
 public interface SystemLeafSetNode<T> extends LeafSetNode<T>, OrderingAware.System {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<SystemLeafSetNode> normalizedContract() {
+        return SystemLeafSetNode.class;
+    }
+
+    @Override
     int hashCode();
 
     @Override

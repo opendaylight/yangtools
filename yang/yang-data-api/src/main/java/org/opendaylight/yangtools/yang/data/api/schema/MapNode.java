@@ -24,6 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 public interface MapNode
         extends DistinctNodeContainer<NodeIdentifierWithPredicates, MapEntryNode>, DataContainerChild, MixinNode {
     @Override
+    Class<? extends MapNode> normalizedContract();
+
+    @Override
     NodeIdentifier getIdentifier();
 
     /**
