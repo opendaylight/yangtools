@@ -17,7 +17,6 @@
     </parent>
 
     <artifactId>rfc6241-parser-support</artifactId>
-    <version>7.0.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>RFC6241 parser support</description>

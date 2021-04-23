@@ -29,12 +29,7 @@ public final class PresenceStatementSupport
         SubstatementValidator.builder(YangStmtMapping.PRESENCE).build();
 
     public PresenceStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.PRESENCE, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.PRESENCE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

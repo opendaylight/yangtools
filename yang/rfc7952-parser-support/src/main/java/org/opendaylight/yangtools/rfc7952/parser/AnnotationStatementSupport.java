@@ -38,7 +38,7 @@ public final class AnnotationStatementSupport
         .build();
 
     public AnnotationStatementSupport(final YangParserConfiguration config) {
-        super(MetadataStatements.ANNOTATION, StatementPolicy.reject(), config);
+        super(MetadataStatements.ANNOTATION, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override
@@ -51,11 +51,6 @@ public final class AnnotationStatementSupport
         final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
                 stmt, "Annotations may only be defined at root of either a module or a submodule");
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
     }
 
     @Override

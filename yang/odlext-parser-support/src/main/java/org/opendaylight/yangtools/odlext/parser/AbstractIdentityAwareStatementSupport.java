@@ -34,12 +34,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
-    private final SubstatementValidator validator;
-
     AbstractIdentityAwareStatementSupport(final StatementDefinition publicDefinition,
-            final YangParserConfiguration config) {
-        super(publicDefinition, StatementPolicy.exactReplica(), config);
-        validator = SubstatementValidator.builder(publicDefinition).build();
+            final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(publicDefinition, StatementPolicy.exactReplica(), config, validator);
     }
 
     @Override
@@ -63,11 +60,6 @@ abstract class AbstractIdentityAwareStatementSupport<D extends DeclaredStatement
                 throw new InferenceException(stmt, "Unable to resolve identity %s", stmt.argument());
             }
         });
-    }
-
-    @Override
-    protected final SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

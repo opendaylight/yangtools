@@ -33,12 +33,7 @@ final class Decimal64SpecificationSupport extends AbstractTypeSupport<Decimal64S
             .build();
 
     Decimal64SpecificationSupport(final YangParserConfiguration config) {
-        super(config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

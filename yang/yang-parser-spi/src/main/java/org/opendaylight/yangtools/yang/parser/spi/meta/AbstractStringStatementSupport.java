@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -24,8 +25,9 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 public abstract class AbstractStringStatementSupport<D extends DeclaredStatement<String>,
         E extends EffectiveStatement<String, D>> extends AbstractStatementSupport<String, D, E> {
     protected AbstractStringStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<String, D> policy, final YangParserConfiguration config) {
-        super(publicDefinition, policy, config);
+            final StatementPolicy<String, D> policy, final YangParserConfiguration config,
+            final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, config, validator);
     }
 
     @Override

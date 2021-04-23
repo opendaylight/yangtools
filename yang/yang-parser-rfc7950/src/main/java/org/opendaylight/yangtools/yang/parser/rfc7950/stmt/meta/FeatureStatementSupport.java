@@ -41,7 +41,7 @@ public final class FeatureStatementSupport
             .build();
 
     public FeatureStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.FEATURE, StatementPolicy.reject(), config);
+        super(YangStmtMapping.FEATURE, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -53,11 +53,6 @@ public final class FeatureStatementSupport
     public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.addContext(FeatureNamespace.class, stmt.getArgument(), stmt);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

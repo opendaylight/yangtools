@@ -61,7 +61,7 @@ public final class ActionStatementSupport extends
 
     public ActionStatementSupport(final YangParserConfiguration config, final InputStatementSupport implicitInput,
              final OutputStatementSupport implicitOutput) {
-        super(YangStmtMapping.ACTION, uninstantiatedPolicy(), config);
+        super(YangStmtMapping.ACTION, uninstantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
         this.implicitInput = requireNonNull(implicitInput);
         this.implicitOutput = requireNonNull(implicitOutput);
     }
@@ -91,11 +91,6 @@ public final class ActionStatementSupport extends
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
             ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitOutput, null);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

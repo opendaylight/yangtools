@@ -19,12 +19,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 @Beta
 public final class ContextInstanceStatementSupport
         extends AbstractIdentityAwareStatementSupport<ContextInstanceStatement, ContextInstanceEffectiveStatement> {
+    private static final SubstatementValidator VALIDATOR =
+        SubstatementValidator.builder(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE).build();
+
     public ContextInstanceStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE, config);
+        super(OpenDaylightExtensionsStatements.CONTEXT_INSTANCE, config, VALIDATOR);
     }
 
     @Override

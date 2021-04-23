@@ -105,7 +105,9 @@ abstract class AbstractDeviateStatementSupport
             YangStmtMapping.MANDATORY, YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.MIN_ELEMENTS);
 
     AbstractDeviateStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), config);
+        // Note: we are performing our own validation based on deviate kind.
+        // TODO: perhaps we should do argumentSpecificSupport?
+        super(YangStmtMapping.DEVIATE, StatementPolicy.contextIndependent(), config, null);
     }
 
     @Override
@@ -186,11 +188,6 @@ abstract class AbstractDeviateStatementSupport
         } else {
             return rawArgument;
         }
-    }
-
-    @Override
-    protected final SubstatementValidator getSubstatementValidator() {
-        return null;
     }
 
     @Override

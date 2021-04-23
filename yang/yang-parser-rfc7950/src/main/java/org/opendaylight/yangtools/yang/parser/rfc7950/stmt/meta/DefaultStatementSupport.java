@@ -30,12 +30,7 @@ public final class DefaultStatementSupport
 
     public DefaultStatementSupport(final YangParserConfiguration config) {
         // Note: if we start interpreting the string we'll need to use StatementPolicy.declaredCopy()
-        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.DEFAULT, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

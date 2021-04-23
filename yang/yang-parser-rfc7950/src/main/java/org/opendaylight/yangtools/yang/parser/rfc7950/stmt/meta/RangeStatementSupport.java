@@ -46,7 +46,7 @@ public final class RangeStatementSupport
             .build();
 
     public RangeStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.RANGE, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.RANGE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -96,11 +96,6 @@ public final class RangeStatementSupport
     protected RangeEffectiveStatement createEffective(final Current<List<ValueRange>, RangeStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createRange(stmt.declared(), substatements);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     private static @NonNull Number parseDecimalConstraintValue(final @NonNull StmtContext<?, ?, ?> ctx,

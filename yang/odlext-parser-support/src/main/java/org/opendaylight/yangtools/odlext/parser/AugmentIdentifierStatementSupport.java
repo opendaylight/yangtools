@@ -31,7 +31,8 @@ public final class AugmentIdentifierStatementSupport
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER).build();
 
     public AugmentIdentifierStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER, StatementPolicy.contextIndependent(), config);
+        super(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER, StatementPolicy.contextIndependent(), config,
+            VALIDATOR);
     }
 
     @Override
@@ -41,11 +42,6 @@ public final class AugmentIdentifierStatementSupport
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid identifier \"%s\"", value);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
     }
 
     @Override

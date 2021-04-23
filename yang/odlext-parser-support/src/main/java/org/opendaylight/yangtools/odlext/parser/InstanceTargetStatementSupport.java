@@ -28,12 +28,8 @@ public final class InstanceTargetStatementSupport
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.INSTANCE_TARGET).build();
 
     public InstanceTargetStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.INSTANCE_TARGET, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
+        super(OpenDaylightExtensionsStatements.INSTANCE_TARGET, StatementPolicy.contextIndependent(), config,
+            VALIDATOR);
     }
 
     @Override

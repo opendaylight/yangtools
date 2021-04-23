@@ -29,12 +29,7 @@ public final class DescriptionStatementSupport
         SubstatementValidator.builder(YangStmtMapping.DESCRIPTION).build();
 
     public DescriptionStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.DESCRIPTION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

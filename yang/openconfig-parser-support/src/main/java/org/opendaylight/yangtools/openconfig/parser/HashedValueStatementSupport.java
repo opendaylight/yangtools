@@ -9,9 +9,13 @@ package org.opendaylight.yangtools.openconfig.parser;
 
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class HashedValueStatementSupport extends AbstractHashedValueStatementSupport {
+    private static final SubstatementValidator VALIDATOR =
+        SubstatementValidator.builder(OpenConfigStatements.OPENCONFIG_HASHED_VALUE).build();
+
     public HashedValueStatementSupport(final YangParserConfiguration config) {
-        super(OpenConfigStatements.OPENCONFIG_HASHED_VALUE, config);
+        super(OpenConfigStatements.OPENCONFIG_HASHED_VALUE, config, VALIDATOR);
     }
 }

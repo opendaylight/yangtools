@@ -45,7 +45,7 @@ public final class MountPointStatementSupport
             // Implied by UnknownSchemaNode
             && copy.history().isAugmenting() == current.history().isAugmenting()
             && copy.history().isAddedByUses() == current.history().isAddedByUses()
-            && copy.equalParentPath(current)), config);
+            && copy.equalParentPath(current)), config, VALIDATOR);
     }
 
     // FIXME: these two methods are not quite right. RFC8528 states that:
@@ -70,11 +70,6 @@ public final class MountPointStatementSupport
         final StatementDefinition parentDef = stmt.coerceParentContext().publicDefinition();
         SourceException.throwIf(YangStmtMapping.CONTAINER != parentDef && YangStmtMapping.LIST != parentDef, stmt,
             "Mount points may only be defined at either a container or a list");
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
     }
 
     @Override

@@ -28,12 +28,8 @@ public final class RpcContextReferenceStatementSupport
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE).build();
 
     public RpcContextReferenceStatementSupport(final YangParserConfiguration config) {
-        super(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
+        super(OpenDaylightExtensionsStatements.RPC_CONTEXT_REFERENCE, StatementPolicy.contextIndependent(), config,
+            VALIDATOR);
     }
 
     @Override

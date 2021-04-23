@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,15 +22,32 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractLeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
-    AbstractLeafrefSpecificationSupport(final YangParserConfiguration config) {
-        super(config);
+final class LeafrefSpecificationSupport extends AbstractTypeSupport<LeafrefSpecification> {
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(YangStmtMapping.PATH).build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE)
+            .addMandatory(YangStmtMapping.PATH)
+            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
+            .build();
+
+    private LeafrefSpecificationSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(config, validator);
+    }
+
+    static LeafrefSpecificationSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new LeafrefSpecificationSupport(config, RFC6020_VALIDATOR);
+    }
+
+    static LeafrefSpecificationSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new LeafrefSpecificationSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override
-    protected final LeafrefSpecification createDeclared(final StmtContext<QName, LeafrefSpecification, ?> ctx,
+    protected LeafrefSpecification createDeclared(final StmtContext<QName, LeafrefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noPath(ctx);
@@ -38,7 +56,7 @@ abstract class AbstractLeafrefSpecificationSupport extends AbstractTypeSupport<L
     }
 
     @Override
-    protected final LeafrefSpecification attachDeclarationReference(final LeafrefSpecification stmt,
+    protected LeafrefSpecification attachDeclarationReference(final LeafrefSpecification stmt,
             final DeclarationReference reference) {
         return new RefLeafrefSpecification(stmt, reference);
     }

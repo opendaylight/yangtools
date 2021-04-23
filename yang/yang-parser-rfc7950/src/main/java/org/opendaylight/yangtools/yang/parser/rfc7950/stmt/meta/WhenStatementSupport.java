@@ -29,28 +29,23 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBo
 
 public final class WhenStatementSupport
         extends AbstractStatementSupport<QualifiedBound, WhenStatement, WhenEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.WHEN)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.WHEN)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build();
 
     private final @NonNull XPathSupport xpathSupport;
 
     public WhenStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.WHEN, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 
     @Override
     public QualifiedBound parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return xpathSupport.parseXPath(ctx, value);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

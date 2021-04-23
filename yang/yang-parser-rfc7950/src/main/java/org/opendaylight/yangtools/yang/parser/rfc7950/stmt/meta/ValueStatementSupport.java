@@ -30,7 +30,7 @@ public final class ValueStatementSupport
         SubstatementValidator.builder(YangStmtMapping.VALUE).build();
 
     public ValueStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.VALUE, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.VALUE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -41,11 +41,6 @@ public final class ValueStatementSupport
             throw new SourceException(ctx, e,
                 "%s is not valid value statement integer argument in a range of -2147483648..2147483647", value);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

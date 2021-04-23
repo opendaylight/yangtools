@@ -31,7 +31,7 @@ public final class StatusStatementSupport
         SubstatementValidator.builder(YangStmtMapping.STATUS).build();
 
     public StatusStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.STATUS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -60,11 +60,6 @@ public final class StatusStatementSupport
         } else {
             return rawArgument;
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

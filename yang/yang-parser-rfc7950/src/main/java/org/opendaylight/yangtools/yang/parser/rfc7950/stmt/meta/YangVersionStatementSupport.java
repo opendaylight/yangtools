@@ -32,7 +32,7 @@ public final class YangVersionStatementSupport
         SubstatementValidator.builder(YangStmtMapping.YANG_VERSION).build();
 
     public YangVersionStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject(), config);
+        super(YangStmtMapping.YANG_VERSION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -44,11 +44,6 @@ public final class YangVersionStatementSupport
     public void onPreLinkageDeclared(
             final Mutable<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> stmt) {
         stmt.setRootVersion(stmt.argument());
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

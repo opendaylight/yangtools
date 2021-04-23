@@ -27,12 +27,7 @@ public final class ReferenceStatementSupport
         SubstatementValidator.builder(YangStmtMapping.REFERENCE).build();
 
     public ReferenceStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.REFERENCE, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.REFERENCE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -58,11 +57,8 @@ public final class RefineStatementSupport
         .addOptional(YangStmtMapping.MAX_ELEMENTS)
         .build();
 
-    private final SubstatementValidator validator;
-
     private RefineStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.REFINE, StatementPolicy.reject(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.REFINE, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull RefineStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -76,11 +72,6 @@ public final class RefineStatementSupport
     @Override
     public Descendant parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return ArgumentUtils.parseDescendantSchemaNodeIdentifier(ctx, value);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class MaxAccessStatementSupport
         extends AbstractStatementSupport<MaxAccess, MaxAccessStatement, MaxAccessEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+    private static final SubstatementValidator VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS).build();
 
     public MaxAccessStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, StatementPolicy.contextIndependent(), config);
+        super(IetfYangSmiv2ExtensionsMapping.MAX_ACCESS, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override
@@ -46,11 +46,6 @@ public final class MaxAccessStatementSupport
     public String internArgument(final String rawArgument) {
         final MaxAccess val = MaxAccess.forStringLiteral(rawArgument);
         return val == null ? rawArgument : val.stringLiteral();
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

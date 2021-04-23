@@ -49,7 +49,7 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
         ImmutableSet.of(YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
     public NotificationStatementRFC7950Support(final YangParserConfiguration config) {
-        super(config);
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -62,10 +62,5 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
         StmtContextUtils.validateNoKeylessListAncestorOf(stmt, "Notification");
 
         super.onStatementAdded(stmt);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 }

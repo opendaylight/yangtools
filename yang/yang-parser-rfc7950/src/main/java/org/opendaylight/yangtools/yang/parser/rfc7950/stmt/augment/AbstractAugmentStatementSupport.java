@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
@@ -53,13 +54,13 @@ abstract class AbstractAugmentStatementSupport
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
-    AbstractAugmentStatementSupport(final YangParserConfiguration config) {
+    AbstractAugmentStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.AUGMENT, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.getArgument().equals(current.getArgument())
                 && copy.moduleName().getModule().equals(current.moduleName().getModule())
                 && Objects.equals(copy.original(), current.original())
-            ), config);
+            ), config, validator);
     }
 
     @Override

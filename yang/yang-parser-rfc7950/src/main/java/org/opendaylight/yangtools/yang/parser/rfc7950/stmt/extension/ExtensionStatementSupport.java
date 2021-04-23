@@ -46,7 +46,7 @@ public final class ExtensionStatementSupport
     private final YangParserConfiguration config;
 
     public ExtensionStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.EXTENSION, StatementPolicy.reject(), config);
+        super(YangStmtMapping.EXTENSION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
         this.config = requireNonNull(config);
     }
 
@@ -76,11 +76,6 @@ public final class ExtensionStatementSupport
             new UnrecognizedStatementSupport(new ModelDefinedStatementDefinition(stmt.getArgument(),
                 argument != null ? argument.argument() : null, yinElement != null && yinElement.getArgument()),
                 config));
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

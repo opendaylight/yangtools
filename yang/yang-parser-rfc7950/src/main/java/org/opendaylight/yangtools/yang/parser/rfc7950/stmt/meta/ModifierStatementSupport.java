@@ -31,18 +31,13 @@ public final class ModifierStatementSupport
         SubstatementValidator.builder(YangStmtMapping.MODIFIER).build();
 
     public ModifierStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.MODIFIER, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.MODIFIER, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
     public ModifierKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return SourceException.unwrap(ModifierKind.parse(value), ctx,
             "'%s' is not valid argument of modifier statement", value);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

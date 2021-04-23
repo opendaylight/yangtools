@@ -30,7 +30,7 @@ public final class PositionStatementSupport
         SubstatementValidator.builder(YangStmtMapping.POSITION).build();
 
     public PositionStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.POSITION, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.POSITION, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -40,11 +40,6 @@ public final class PositionStatementSupport
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Bit position value %s is not valid integer", value);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

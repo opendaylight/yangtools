@@ -32,12 +32,7 @@ final class BitsSpecificationSupport extends AbstractTypeSupport<BitsSpecificati
         SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.BIT).build();
 
     BitsSpecificationSupport(final YangParserConfiguration config) {
-        super(config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

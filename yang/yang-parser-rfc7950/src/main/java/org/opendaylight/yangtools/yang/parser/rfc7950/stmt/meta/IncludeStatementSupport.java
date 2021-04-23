@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 
@@ -58,11 +57,8 @@ public final class IncludeStatementSupport
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
-    private final SubstatementValidator validator;
-
     IncludeStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.INCLUDE, StatementPolicy.reject(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.INCLUDE, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull IncludeStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -113,11 +109,6 @@ public final class IncludeStatementSupport
                     "Included submodule '%s' was not found: ", stmt.argument());
             }
         });
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

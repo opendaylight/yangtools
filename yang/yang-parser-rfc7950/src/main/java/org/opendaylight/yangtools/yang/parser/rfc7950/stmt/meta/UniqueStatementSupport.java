@@ -50,7 +50,7 @@ public final class UniqueStatementSupport
     public UniqueStatementSupport(final YangParserConfiguration config) {
         // FIXME: This reflects what the current implementation does. We really want to define an adaptArgumentValue(),
         //        but how that plays with the argument and expectations needs to be investigated.
-        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.UNIQUE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -60,11 +60,6 @@ public final class UniqueStatementSupport
             "Invalid argument value '%s' of unique statement. The value must contains at least one descendant schema "
                 + "node identifier.", value);
         return uniqueConstraints;
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

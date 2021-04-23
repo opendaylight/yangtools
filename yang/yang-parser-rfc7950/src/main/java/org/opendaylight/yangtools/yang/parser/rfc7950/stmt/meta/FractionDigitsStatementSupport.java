@@ -45,7 +45,7 @@ public final class FractionDigitsStatementSupport
     }
 
     public FractionDigitsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.FRACTION_DIGITS, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.FRACTION_DIGITS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -60,11 +60,6 @@ public final class FractionDigitsStatementSupport
             throw new SourceException("fraction-digits argument should be integer within [1..18]", ctx);
         }
         return fractionDigits;
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

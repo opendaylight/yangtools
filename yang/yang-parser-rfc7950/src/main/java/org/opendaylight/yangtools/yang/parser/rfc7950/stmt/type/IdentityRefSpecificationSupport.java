@@ -12,8 +12,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -31,16 +33,30 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractIdentityRefSpecificationSupport
-        extends AbstractTypeSupport<IdentityRefSpecification> {
-    AbstractIdentityRefSpecificationSupport(final YangParserConfiguration config) {
-        super(config);
+final class IdentityRefSpecificationSupport extends AbstractTypeSupport<IdentityRefSpecification> {
+    private static final SubstatementValidator RFC6020_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMandatory(YangStmtMapping.BASE).build();
+    private static final SubstatementValidator RFC7950_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.BASE).build();
+
+    private IdentityRefSpecificationSupport(final YangParserConfiguration config,
+            final SubstatementValidator validator) {
+        super(config, validator);
+    }
+
+    static @NonNull IdentityRefSpecificationSupport rfc6020Instance(final YangParserConfiguration config) {
+        return new IdentityRefSpecificationSupport(config, RFC6020_VALIDATOR);
+    }
+
+    static @NonNull IdentityRefSpecificationSupport rfc7950Instance(final YangParserConfiguration config) {
+        return new IdentityRefSpecificationSupport(config, RFC7950_VALIDATOR);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(final Mutable<QName, IdentityRefSpecification,
+    public void onFullDefinitionDeclared(final Mutable<QName, IdentityRefSpecification,
             EffectiveStatement<QName, IdentityRefSpecification>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
@@ -56,7 +72,7 @@ abstract class AbstractIdentityRefSpecificationSupport
     }
 
     @Override
-    protected final IdentityRefSpecification createDeclared(final StmtContext<QName, IdentityRefSpecification, ?> ctx,
+    protected IdentityRefSpecification createDeclared(final StmtContext<QName, IdentityRefSpecification, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBase(ctx);
@@ -71,7 +87,7 @@ abstract class AbstractIdentityRefSpecificationSupport
     }
 
     @Override
-    protected final EffectiveStatement<QName, IdentityRefSpecification> createEffective(
+    protected EffectiveStatement<QName, IdentityRefSpecification> createEffective(
             final Current<QName, IdentityRefSpecification> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {

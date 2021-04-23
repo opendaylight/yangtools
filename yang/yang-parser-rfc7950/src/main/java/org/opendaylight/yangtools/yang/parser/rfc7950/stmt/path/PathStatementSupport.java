@@ -35,7 +35,7 @@ public final class PathStatementSupport
 
     private PathStatementSupport(final YangParserConfiguration config, final PathExpressionParser parser) {
         // TODO: can 'path' really be copied?
-        super(YangStmtMapping.PATH, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.PATH, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.parser = requireNonNull(parser);
     }
 
@@ -50,11 +50,6 @@ public final class PathStatementSupport
     @Override
     public PathExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return parser.parseExpression(ctx, value);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

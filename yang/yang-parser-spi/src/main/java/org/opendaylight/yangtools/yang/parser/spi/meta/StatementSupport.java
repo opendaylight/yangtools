@@ -325,7 +325,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *
      * <p>
      * Implementation may use method to perform actions on this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement.
      * @throws SourceException when an inconsistency is detected.
@@ -340,7 +340,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *
      * <p>
      * Implementation may use method to perform actions on this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement. Argument and statement parent is accessible.
      * @throws SourceException when an inconsistency is detected.
@@ -355,13 +355,13 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *
      * <p>
      * Implementation may use method to perform actions on this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * {@link Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt Context of added statement. Argument and statement parent is accessible.
      * @throws SourceException when an inconsistency is detected.
      */
-    public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) {
-        final SubstatementValidator validator = getSubstatementValidator();
+    public void onFullDefinitionDeclared(final Mutable<A, D, E> stmt) {
+        final SubstatementValidator validator = substatementValidator();
         if (validator != null) {
             validator.validate(stmt);
         }
@@ -372,8 +372,7 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
      *
      * @return substatement validator or null, if substatement validator is not defined
      */
-    // FIXME: rename to 'substatementValidator' and perhaps let it be passed in?
-    protected abstract @Nullable SubstatementValidator getSubstatementValidator();
+    protected abstract @Nullable SubstatementValidator substatementValidator();
 
     /**
      * Returns true if this support has argument specific supports.

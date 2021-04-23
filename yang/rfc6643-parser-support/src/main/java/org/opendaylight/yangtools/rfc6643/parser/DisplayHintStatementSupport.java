@@ -24,16 +24,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class DisplayHintStatementSupport
         extends AbstractStringStatementSupport<DisplayHintStatement, DisplayHintEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+    private static final SubstatementValidator VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT).build();
 
     public DisplayHintStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(IetfYangSmiv2ExtensionsMapping.DISPLAY_HINT, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

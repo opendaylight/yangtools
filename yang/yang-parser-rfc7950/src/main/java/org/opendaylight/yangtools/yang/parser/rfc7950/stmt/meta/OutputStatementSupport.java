@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -60,11 +58,8 @@ public final class OutputStatementSupport
         .addAny(YangStmtMapping.USES)
         .build();
 
-    private final SubstatementValidator validator;
-
     private OutputStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.OUTPUT, config, YangConstants::operationOutputQName);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.OUTPUT, config, validator, YangConstants::operationOutputQName);
     }
 
     public static @NonNull OutputStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -73,11 +68,6 @@ public final class OutputStatementSupport
 
     public static @NonNull OutputStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new OutputStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

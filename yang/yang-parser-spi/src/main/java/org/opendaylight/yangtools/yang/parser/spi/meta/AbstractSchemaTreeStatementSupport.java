@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -64,8 +65,9 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         StatementPolicy.copyDeclared(new SchemaTreeEquality<>());
 
     protected AbstractSchemaTreeStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<QName, D> policy, final YangParserConfiguration config) {
-        super(publicDefinition, policy, config);
+            final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
+            final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, config, validator);
     }
 
     /**

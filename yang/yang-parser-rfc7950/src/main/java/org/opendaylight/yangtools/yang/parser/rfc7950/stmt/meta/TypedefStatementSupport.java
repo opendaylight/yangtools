@@ -55,7 +55,7 @@ public final class TypedefStatementSupport extends
         .build();
 
     public TypedefStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.TYPEDEF, StatementPolicy.exactReplica(), config);
+        super(YangStmtMapping.TYPEDEF, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -95,11 +95,6 @@ public final class TypedefStatementSupport extends
                 });
             }
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

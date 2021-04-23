@@ -29,7 +29,7 @@ public final class OpenConfigVersionSupport
         SubstatementValidator.builder(OpenConfigStatements.OPENCONFIG_VERSION).build();
 
     public OpenConfigVersionSupport(final YangParserConfiguration config) {
-        super(OpenConfigStatements.OPENCONFIG_VERSION, StatementPolicy.reject(), config);
+        super(OpenConfigStatements.OPENCONFIG_VERSION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -41,11 +41,6 @@ public final class OpenConfigVersionSupport
     public void onLinkageDeclared(
             final Mutable<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> stmt) {
         stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.argument());
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

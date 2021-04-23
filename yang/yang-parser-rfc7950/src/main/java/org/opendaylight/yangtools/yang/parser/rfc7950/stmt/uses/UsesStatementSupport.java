@@ -70,19 +70,19 @@ import org.slf4j.LoggerFactory;
 public final class UsesStatementSupport
         extends AbstractQNameStatementSupport<UsesStatement, UsesEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementSupport.class);
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .USES)
-        .addAny(YangStmtMapping.AUGMENT)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addAny(YangStmtMapping.REFINE)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.STATUS)
-        .addOptional(YangStmtMapping.WHEN)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.USES)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.REFINE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
+            .build();
 
     public UsesStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.USES, StatementPolicy.exactReplica(), config);
+        super(YangStmtMapping.USES, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -127,11 +127,6 @@ public final class UsesStatementSupport
                 throw new InferenceException("Unknown error occurred.", usesNode);
             }
         });
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

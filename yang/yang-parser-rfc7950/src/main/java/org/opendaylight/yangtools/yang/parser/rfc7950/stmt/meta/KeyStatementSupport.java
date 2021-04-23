@@ -62,7 +62,8 @@ public final class KeyStatementSupport
     public KeyStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.KEY, StatementPolicy.copyDeclared(
             // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
-            (copy, current, substatements) -> copy.getArgument() == current.getArgument()), config);
+            (copy, current, substatements) -> copy.getArgument() == current.getArgument()),
+            config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -97,11 +98,6 @@ public final class KeyStatementSupport
 
         // This makes sure we reuse the collection when a grouping is instantiated in the same module.
         return replaced ? builder.build() : ctx.argument();
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

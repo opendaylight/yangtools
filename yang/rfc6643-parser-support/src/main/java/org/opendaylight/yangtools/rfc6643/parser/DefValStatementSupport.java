@@ -24,16 +24,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 @Beta
 public final class DefValStatementSupport
         extends AbstractStringStatementSupport<DefValStatement, DefValEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+    private static final SubstatementValidator VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.DEFVAL).build();
 
     public DefValStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.DEFVAL, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(IetfYangSmiv2ExtensionsMapping.DEFVAL, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

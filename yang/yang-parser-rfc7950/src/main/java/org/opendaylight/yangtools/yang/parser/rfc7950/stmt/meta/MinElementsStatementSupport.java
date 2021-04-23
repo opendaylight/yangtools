@@ -29,7 +29,7 @@ public final class MinElementsStatementSupport
         SubstatementValidator.builder(YangStmtMapping.MIN_ELEMENTS).build();
 
     public MinElementsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.MIN_ELEMENTS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -39,11 +39,6 @@ public final class MinElementsStatementSupport
         } catch (NumberFormatException e) {
             throw new SourceException("Invalid min-elements argument", ctx, e);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

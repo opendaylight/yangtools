@@ -13,6 +13,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -47,8 +48,9 @@ public abstract class AbstractInternedStatementSupport<A, D extends DeclaredStat
             });
 
     protected AbstractInternedStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<A, D> policy, final YangParserConfiguration config) {
-        super(publicDefinition, policy, config);
+            final StatementPolicy<A, D> policy, final YangParserConfiguration config,
+            final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, config, validator);
     }
 
     @Override

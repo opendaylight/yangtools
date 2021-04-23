@@ -36,12 +36,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 @Beta
 public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>,
         E extends EffectiveStatement<A, D>> extends StatementSupport<A, D, E> {
+    private final SubstatementValidator substatementValidator;
     private final boolean retainDeclarationReference;
 
     protected AbstractStatementSupport(final StatementDefinition publicDefinition, final StatementPolicy<A, D> policy,
-            final YangParserConfiguration config) {
+            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
         super(publicDefinition, policy);
         this.retainDeclarationReference = config.retainDeclarationReferences();
+        this.substatementValidator = validator;
+    }
+
+    @Override
+    protected final SubstatementValidator substatementValidator() {
+        return substatementValidator;
     }
 
     @Override

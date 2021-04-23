@@ -39,12 +39,7 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
             .build();
 
     public AugmentStatementRFC7950Support(final YangParserConfiguration config) {
-        super(config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

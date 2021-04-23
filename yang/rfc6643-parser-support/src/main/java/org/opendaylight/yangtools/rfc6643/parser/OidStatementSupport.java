@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class OidStatementSupport
         extends AbstractStatementSupport<ObjectIdentifier, OidStatement, OidEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+    private static final SubstatementValidator VALIDATOR =
             SubstatementValidator.builder(IetfYangSmiv2ExtensionsMapping.OBJECT_ID).build();
 
     public OidStatementSupport(final YangParserConfiguration config) {
-        super(IetfYangSmiv2ExtensionsMapping.OBJECT_ID, StatementPolicy.contextIndependent(), config);
+        super(IetfYangSmiv2ExtensionsMapping.OBJECT_ID, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override
@@ -40,11 +40,6 @@ public final class OidStatementSupport
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid object identifier '%s'", value);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

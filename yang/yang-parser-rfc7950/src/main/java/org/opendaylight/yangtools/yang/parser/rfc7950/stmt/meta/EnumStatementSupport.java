@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
@@ -44,11 +42,8 @@ public final class EnumStatementSupport
             .addOptional(YangStmtMapping.VALUE)
             .build();
 
-    private final SubstatementValidator validator;
-
     private EnumStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.ENUM, StatementPolicy.contextIndependent(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.ENUM, StatementPolicy.contextIndependent(), config, validator);
     }
 
     public static @NonNull EnumStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -63,11 +58,6 @@ public final class EnumStatementSupport
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         // FIXME: Checks for real value
         return value;
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

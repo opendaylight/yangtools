@@ -34,7 +34,7 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
         SubstatementValidator.builder(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES).build();
 
     public GetFilterElementAttributesStatementSupport(final YangParserConfiguration config) {
-        super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES, StatementPolicy.reject(), config);
+        super(NetconfStatements.GET_FILTER_ELEMENT_ATTRIBUTES, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override
@@ -42,11 +42,6 @@ public final class GetFilterElementAttributesStatementSupport extends AbstractEm
             GetFilterElementAttributesEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
     }
 
     @Override

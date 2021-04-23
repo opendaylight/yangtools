@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -77,15 +75,12 @@ public final class GroupingStatementSupport
             .addAny(YangStmtMapping.USES)
             .build();
 
-    private final SubstatementValidator validator;
-
     GroupingStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.history().isAddedByUses() == current.history().isAddedByUses()
                 && copy.getArgument().equals(current.getArgument())
-                && copy.equalParentPath(current)), config);
-        this.validator = requireNonNull(validator);
+                && copy.equalParentPath(current)), config, validator);
     }
 
     public static @NonNull GroupingStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -133,11 +128,6 @@ public final class GroupingStatementSupport
                 });
             }
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

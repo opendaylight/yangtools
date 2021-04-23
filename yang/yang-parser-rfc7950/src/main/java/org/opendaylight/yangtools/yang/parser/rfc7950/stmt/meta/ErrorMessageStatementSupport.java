@@ -29,12 +29,7 @@ public final class ErrorMessageStatementSupport
         SubstatementValidator.builder(YangStmtMapping.ERROR_MESSAGE).build();
 
     public ErrorMessageStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ERROR_MESSAGE, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.ERROR_MESSAGE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

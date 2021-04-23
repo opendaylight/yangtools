@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 final class UnrecognizedStatementSupport
         extends AbstractStatementSupport<Object, UnrecognizedStatement, UnrecognizedEffectiveStatement>
@@ -37,7 +36,7 @@ final class UnrecognizedStatementSupport
     UnrecognizedStatementSupport(final StatementDefinition publicDefinition, final YangParserConfiguration config) {
         // We have no idea about the statement's semantics, hence there should be noone interested in its semantics.
         // Nevertheless it may be of interest for various hacks to understand there was an extension involved.
-        super(publicDefinition, StatementPolicy.exactReplica(), config);
+        super(publicDefinition, StatementPolicy.exactReplica(), config, null);
         this.config = requireNonNull(config);
     }
 
@@ -64,12 +63,6 @@ final class UnrecognizedStatementSupport
             def = new ModelDefinedStatementDefinition(statementName);
         }
         return new UnrecognizedStatementSupport(def, config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        // We know nothing about this statement
-        return null;
     }
 
     @Override

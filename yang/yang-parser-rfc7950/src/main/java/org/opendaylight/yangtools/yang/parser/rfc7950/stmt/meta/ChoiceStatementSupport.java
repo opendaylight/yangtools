@@ -83,13 +83,11 @@ public final class ChoiceStatementSupport
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    private final SubstatementValidator validator;
     private final CaseStatementSupport implicitCase;
 
     private ChoiceStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator,
             final CaseStatementSupport implicitCase) {
-        super(YangStmtMapping.CHOICE, instantiatedPolicy(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.CHOICE, instantiatedPolicy(), config, requireNonNull(validator));
         this.implicitCase = requireNonNull(implicitCase);
     }
 
@@ -107,11 +105,6 @@ public final class ChoiceStatementSupport
     public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
         return YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef) ? Optional.of(implicitCase)
             : Optional.empty();
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

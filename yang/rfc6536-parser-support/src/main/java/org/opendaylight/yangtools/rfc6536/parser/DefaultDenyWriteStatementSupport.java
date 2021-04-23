@@ -27,12 +27,7 @@ public final class DefaultDenyWriteStatementSupport
         SubstatementValidator.builder(NACMStatements.DEFAULT_DENY_WRITE).build();
 
     public DefaultDenyWriteStatementSupport(final YangParserConfiguration config) {
-        super(NACMStatements.DEFAULT_DENY_WRITE, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return VALIDATOR;
+        super(NACMStatements.DEFAULT_DENY_WRITE, StatementPolicy.contextIndependent(), config, VALIDATOR);
     }
 
     @Override

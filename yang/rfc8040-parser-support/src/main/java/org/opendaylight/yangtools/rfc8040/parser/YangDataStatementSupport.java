@@ -36,14 +36,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public final class YangDataStatementSupport
         extends AbstractStringStatementSupport<YangDataStatement, YangDataEffectiveStatement> {
-    private final SubstatementValidator declaredValidator;
+    private static final SubstatementValidator VALIDATOR = SubstatementValidator.builder(YangDataStatements.YANG_DATA)
+        .addMandatory(YangStmtMapping.CONTAINER)
+        .addOptional(YangStmtMapping.USES)
+        .build();
 
     public YangDataStatementSupport(final YangParserConfiguration config) {
-        super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), config);
-        declaredValidator = SubstatementValidator.builder(YangDataStatements.YANG_DATA)
-                .addMandatory(YangStmtMapping.CONTAINER)
-                .addOptional(YangStmtMapping.USES)
-                .build();
+        super(YangDataStatements.YANG_DATA, StatementPolicy.reject(), config, VALIDATOR);
     }
 
     @Override
@@ -71,11 +70,6 @@ public final class YangDataStatementSupport
     @Override
     public boolean isIgnoringConfig() {
         return true;
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return declaredValidator;
     }
 
     @Override

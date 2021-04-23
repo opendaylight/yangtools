@@ -45,7 +45,7 @@ public final class BelongsToStatementSupport
             SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
 
     public BelongsToStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject(), config);
+        super(YangStmtMapping.BELONGS_TO, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -103,10 +103,5 @@ public final class BelongsToStatementSupport
     private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,
             BelongsToEffectiveStatement> belongsToCtx) {
         return RevisionSourceIdentifier.create(belongsToCtx.getArgument());
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 }

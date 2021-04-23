@@ -45,12 +45,7 @@ public final class AnydataStatementSupport
             .build();
 
     public AnydataStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ANYDATA, instantiatedPolicy(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.ANYDATA, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

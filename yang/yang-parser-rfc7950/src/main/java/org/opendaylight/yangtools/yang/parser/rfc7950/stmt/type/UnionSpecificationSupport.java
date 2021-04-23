@@ -30,12 +30,7 @@ final class UnionSpecificationSupport extends AbstractTypeSupport<UnionSpecifica
         SubstatementValidator.builder(YangStmtMapping.TYPE).addMultiple(YangStmtMapping.TYPE).build();
 
     UnionSpecificationSupport(final YangParserConfiguration config) {
-        super(config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
