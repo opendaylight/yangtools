@@ -260,7 +260,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings("rawtypes")
     public void endNode() {
         final NormalizedNodeBuilder finishedBuilder = builders.poll();
         checkState(finishedBuilder != null, "Node which should be closed does not exists.");
