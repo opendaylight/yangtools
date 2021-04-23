@@ -20,5 +20,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 public interface LeafNode<T> extends ValueNode<T>, DataContainerChild {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<LeafNode> normalizedContract() {
+        return LeafNode.class;
+    }
+
+    @Override
     NodeIdentifier getIdentifier();
 }

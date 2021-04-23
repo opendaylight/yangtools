@@ -16,5 +16,8 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * (iteration) is provided by {@link #body()} call.
  */
 public interface UnkeyedListNode extends OrderedNodeContainer<UnkeyedListEntryNode>, DataContainerChild {
-
+    @Override
+    default Class<UnkeyedListNode> normalizedContract() {
+        return UnkeyedListNode.class;
+    }
 }

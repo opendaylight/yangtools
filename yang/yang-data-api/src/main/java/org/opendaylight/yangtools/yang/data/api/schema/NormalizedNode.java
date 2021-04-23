@@ -50,6 +50,18 @@ public interface NormalizedNode extends Identifiable<PathArgument> {
     PathArgument getIdentifier();
 
     /**
+     * Return the contract governing this {@link NormalizedNode} instance.
+     *
+     * @apiNote
+     *     This method should be specialized in intermediate contracts like {@link MapNode} and implemented as a default
+     *     method by interfaces which form the contracts themselves, for example {@link ContainerNode}, {@link LeafNode}
+     *     and similar.
+     *
+     * @return A class identifying the NormalizedNode contract.
+     */
+    @NonNull Class<? extends NormalizedNode> normalizedContract();
+
+    /**
      * Returns the body of this node. While the return value specifies {@link Object}, this method's return value has
      * further semantics. The returned object must be a well-published contract, such as {@code String},
      * {@code Collection<NormalizedNode>} or {@code DOMSource}.
