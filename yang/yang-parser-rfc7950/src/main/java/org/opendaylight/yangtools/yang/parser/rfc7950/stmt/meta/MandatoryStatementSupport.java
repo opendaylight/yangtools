@@ -30,12 +30,7 @@ public final class MandatoryStatementSupport extends
         super(YangStmtMapping.MANDATORY,
             EffectiveStatements.createMandatory(DeclaredStatements.createMandatory(Boolean.FALSE)),
             EffectiveStatements.createMandatory(DeclaredStatements.createMandatory(Boolean.TRUE)),
-            StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+            StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

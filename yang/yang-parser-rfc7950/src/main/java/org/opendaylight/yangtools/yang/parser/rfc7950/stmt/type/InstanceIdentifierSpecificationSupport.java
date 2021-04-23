@@ -29,12 +29,7 @@ final class InstanceIdentifierSpecificationSupport
         SubstatementValidator.builder(YangStmtMapping.TYPE).addOptional(YangStmtMapping.REQUIRE_INSTANCE).build();
 
     InstanceIdentifierSpecificationSupport(final YangParserConfiguration config) {
-        super(config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

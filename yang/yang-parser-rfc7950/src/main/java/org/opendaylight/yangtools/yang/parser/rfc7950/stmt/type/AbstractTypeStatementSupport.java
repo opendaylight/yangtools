@@ -119,14 +119,14 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private final ImmutableMap<String, StatementSupport<?, ?, ?>> dynamicBuiltInTypes;
 
     AbstractTypeStatementSupport(final YangParserConfiguration config) {
-        super(config);
+        super(config, SUBSTATEMENT_VALIDATOR);
         dynamicBuiltInTypes = ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
             .put(TypeDefinitions.BITS.getLocalName(), new BitsSpecificationSupport(config))
             .put(TypeDefinitions.DECIMAL64.getLocalName(), new Decimal64SpecificationSupport(config))
             .put(TypeDefinitions.ENUMERATION.getLocalName(), new EnumSpecificationSupport(config))
-            .put(TypeDefinitions.IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC6020Support(config))
+            .put(TypeDefinitions.IDENTITYREF.getLocalName(), IdentityRefSpecificationSupport.rfc6020Instance(config))
             .put(TypeDefinitions.INSTANCE_IDENTIFIER.getLocalName(), new InstanceIdentifierSpecificationSupport(config))
-            .put(TypeDefinitions.LEAFREF.getLocalName(), new LeafrefSpecificationRFC6020Support(config))
+            .put(TypeDefinitions.LEAFREF.getLocalName(), LeafrefSpecificationSupport.rfc6020Instance(config))
             .put(TypeDefinitions.UNION.getLocalName(), new UnionSpecificationSupport(config))
             .build();
     }
@@ -174,11 +174,6 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         return dynamicBuiltInTypes.get(argument);
-    }
-
-    @Override
-    protected final SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

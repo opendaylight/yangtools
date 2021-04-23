@@ -29,12 +29,7 @@ public final class RequireInstanceStatementSupport
     public RequireInstanceStatementSupport(final YangParserConfiguration config) {
         super(YangStmtMapping.REQUIRE_INSTANCE,
             EffectiveStatements.createRequireInstance(false), EffectiveStatements.createRequireInstance(true),
-            StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+            StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

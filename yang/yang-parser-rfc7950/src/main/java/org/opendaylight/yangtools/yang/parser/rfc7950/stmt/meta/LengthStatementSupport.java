@@ -45,7 +45,7 @@ public final class LengthStatementSupport
             .build();
 
     public LengthStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.LENGTH, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.LENGTH, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -77,11 +77,6 @@ public final class LengthStatementSupport
         }
 
         return ImmutableList.copyOf(ranges);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

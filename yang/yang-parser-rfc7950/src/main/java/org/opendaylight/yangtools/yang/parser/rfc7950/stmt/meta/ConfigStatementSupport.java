@@ -31,12 +31,7 @@ public final class ConfigStatementSupport
             EffectiveStatements.createConfig(false), EffectiveStatements.createConfig(true),
             // FIXME: This is not quite true. If we are instantiated in a context which ignores config, which should
             //        really fizzle. This needs some more analysis.
-            StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+            StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

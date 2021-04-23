@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -114,11 +113,8 @@ public final class ListStatementSupport
         .addOptional(YangStmtMapping.WHEN)
         .build();
 
-    private final SubstatementValidator validator;
-
     ListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.LIST, instantiatedPolicy(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.LIST, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull ListStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -127,11 +123,6 @@ public final class ListStatementSupport
 
     public static @NonNull ListStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new ListStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

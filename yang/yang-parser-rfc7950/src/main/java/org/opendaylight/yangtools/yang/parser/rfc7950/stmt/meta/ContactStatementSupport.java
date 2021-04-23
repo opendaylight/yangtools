@@ -27,12 +27,7 @@ public final class ContactStatementSupport
         SubstatementValidator.builder(YangStmtMapping.CONTACT).build();
 
     public ContactStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.CONTACT, StatementPolicy.reject(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.CONTACT, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

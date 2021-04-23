@@ -24,12 +24,13 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractNotificationStatementSupport
         extends AbstractSchemaTreeStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
-    AbstractNotificationStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy(), config);
+    AbstractNotificationStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.NOTIFICATION, uninstantiatedPolicy(), config, validator);
     }
 
     @Override

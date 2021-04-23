@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.annotations.Beta;
@@ -132,12 +131,10 @@ public final class ModuleStatementSupport
         .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
         .build();
 
-    private final SubstatementValidator validator;
     private final boolean semanticVersioning;
 
     private ModuleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.MODULE, StatementPolicy.reject(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.MODULE, StatementPolicy.reject(), config, validator);
         semanticVersioning = config.importResolutionMode() == ImportResolutionMode.OPENCONFIG_SEMVER;
     }
 
@@ -218,11 +215,6 @@ public final class ModuleStatementSupport
         if (semanticVersioning) {
             addToSemVerModuleNamespace(stmt, moduleIdentifier);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

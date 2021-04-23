@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
  * A massively-misnamed superclass for statements which are both schema tree participants and can be created as implicit
@@ -29,8 +30,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 abstract class AbstractImplicitStatementSupport<D extends DeclaredStatement<QName>,
         E extends SchemaTreeEffectiveStatement<D>> extends AbstractSchemaTreeStatementSupport<D, E> {
     AbstractImplicitStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<QName, D> policy, final YangParserConfiguration config) {
-        super(publicDefinition, policy, config);
+            final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
+            final SubstatementValidator validator) {
+        super(publicDefinition, policy, config, validator);
     }
 
     @Override

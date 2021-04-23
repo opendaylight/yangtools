@@ -29,12 +29,7 @@ public final class PrefixStatementSupport
         SubstatementValidator.builder(YangStmtMapping.PREFIX).build();
 
     public PrefixStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.PREFIX, StatementPolicy.reject(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.PREFIX, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

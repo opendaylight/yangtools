@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -74,11 +72,8 @@ public final class CaseStatementSupport
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    private final SubstatementValidator validator;
-
     private CaseStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.CASE, instantiatedPolicy(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.CASE, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull CaseStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -87,11 +82,6 @@ public final class CaseStatementSupport
 
     public static @NonNull CaseStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new CaseStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

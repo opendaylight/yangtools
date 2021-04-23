@@ -34,8 +34,8 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     public TypeStatementRFC7950Support(final YangParserConfiguration config) {
         super(config);
         argumentSpecificSupports = ImmutableMap.of(
-            TypeDefinitions.LEAFREF.getLocalName(), new LeafrefSpecificationRFC7950Support(config),
-            TypeDefinitions.IDENTITYREF.getLocalName(), new IdentityRefSpecificationRFC7950Support(config));
+            TypeDefinitions.LEAFREF.getLocalName(), LeafrefSpecificationSupport.rfc7950Instance(config),
+            TypeDefinitions.IDENTITYREF.getLocalName(), IdentityRefSpecificationSupport.rfc7950Instance(config));
     }
 
     @Override

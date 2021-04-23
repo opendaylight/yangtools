@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
@@ -50,11 +48,8 @@ public final class PatternStatementSupport
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
-    private final SubstatementValidator validator;
-
     private PatternStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.PATTERN, StatementPolicy.contextIndependent(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.PATTERN, StatementPolicy.contextIndependent(), config, validator);
     }
 
     public static @NonNull PatternStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -74,11 +69,6 @@ public final class PatternStatementSupport
             throw new SourceException(ctx, e, "Pattern \"%s\" failed to compile", pattern);
         }
         return PatternExpression.of(value, pattern);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

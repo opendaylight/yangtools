@@ -32,15 +32,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class DeviationStatementSupport
         extends AbstractStatementSupport<Absolute, DeviationStatement, DeviationEffectiveStatement> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-        .DEVIATION)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.DEVIATE)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.DEVIATION)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .build();
 
     public DeviationStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.DEVIATION, StatementPolicy.reject(), config);
+        super(YangStmtMapping.DEVIATION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -58,11 +58,6 @@ public final class DeviationStatementSupport
             throw new InferenceException(ctx,
                     "Deviation must not target the same module as the one it is defined in: %s", currentModule);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

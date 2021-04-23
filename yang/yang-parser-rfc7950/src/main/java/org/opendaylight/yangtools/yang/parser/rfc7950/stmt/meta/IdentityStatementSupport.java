@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
@@ -61,11 +60,8 @@ public final class IdentityStatementSupport
             .addOptional(YangStmtMapping.STATUS)
             .build();
 
-    private final SubstatementValidator validator;
-
     private IdentityStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.IDENTITY, StatementPolicy.reject(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.IDENTITY, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull IdentityStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -88,11 +84,6 @@ public final class IdentityStatementSupport
         final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(IdentityNamespace.class, qname);
         SourceException.throwIf(prev != null, stmt, "Duplicate identity definition %s", qname);
         stmt.addToNs(IdentityNamespace.class, qname, stmt);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -25,8 +26,9 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractStatementSupport<QName, D, E> {
     protected AbstractQNameStatementSupport(final StatementDefinition publicDefinition,
-            final StatementPolicy<QName, D> policy, final YangParserConfiguration config) {
-        super(publicDefinition, policy, config);
+            final StatementPolicy<QName, D> policy, final YangParserConfiguration config,
+            final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, config, validator);
     }
 
     @Override

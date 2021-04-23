@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -36,8 +37,8 @@ public abstract class AbstractBooleanStatementSupport<D extends DeclaredStatemen
 
     protected AbstractBooleanStatementSupport(final StatementDefinition publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue, final StatementPolicy<Boolean, D> policy,
-            final YangParserConfiguration config) {
-        super(publicDefinition, policy, config);
+            final YangParserConfiguration config, final @Nullable SubstatementValidator validator) {
+        super(publicDefinition, policy, config, validator);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
         emptyDeclaredFalse = requireNonNull(emptyEffectiveFalse.getDeclared());

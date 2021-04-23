@@ -54,18 +54,13 @@ public final class LeafStatementSupport
             .build();
 
     public LeafStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.LEAF, instantiatedPolicy(), config);
+        super(YangStmtMapping.LEAF, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<QName, LeafStatement, LeafEffectiveStatement> ctx) {
         super.onFullDefinitionDeclared(ctx);
         StmtContextUtils.validateIfFeatureAndWhenOnListKeys(ctx);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

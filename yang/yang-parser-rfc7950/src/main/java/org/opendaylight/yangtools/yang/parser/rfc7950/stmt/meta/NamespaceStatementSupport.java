@@ -32,7 +32,7 @@ public final class NamespaceStatementSupport
         SubstatementValidator.builder(YangStmtMapping.NAMESPACE).build();
 
     public NamespaceStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.NAMESPACE, StatementPolicy.reject(), config);
+        super(YangStmtMapping.NAMESPACE, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -42,11 +42,6 @@ public final class NamespaceStatementSupport
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid namespace \"%s\"", value);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

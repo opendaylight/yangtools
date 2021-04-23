@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.List;
@@ -19,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
  * Abstract base of all type-related statement support classes.
@@ -47,8 +50,8 @@ abstract class AbstractTypeSupport<T extends TypeStatement>
         TypeDefinitions.UNION),
         QName::getLocalName);
 
-    AbstractTypeSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica(), config);
+    AbstractTypeSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+        super(YangStmtMapping.TYPE, StatementPolicy.exactReplica(), config, requireNonNull(validator));
     }
 
     @Override

@@ -45,12 +45,11 @@ import org.slf4j.LoggerFactory;
 abstract class AbstractIfFeatureStatementSupport
         extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractIfFeatureStatementSupport.class);
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.IF_FEATURE)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.IF_FEATURE).build();
 
     AbstractIfFeatureStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.IF_FEATURE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -82,11 +81,6 @@ abstract class AbstractIfFeatureStatementSupport
                     unresolvedFeatures, stmt.rawArgument());
             }
         });
-    }
-
-    @Override
-    protected final SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

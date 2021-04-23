@@ -27,12 +27,7 @@ public final class OrganizationStatementSupport
         SubstatementValidator.builder(YangStmtMapping.ORGANIZATION).build();
 
     public OrganizationStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ORGANIZATION, StatementPolicy.reject(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.ORGANIZATION, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

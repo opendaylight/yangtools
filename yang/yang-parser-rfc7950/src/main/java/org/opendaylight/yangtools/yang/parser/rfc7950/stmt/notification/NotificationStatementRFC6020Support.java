@@ -12,29 +12,24 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class NotificationStatementRFC6020Support extends AbstractNotificationStatementSupport {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.NOTIFICATION)
-        .addAny(YangStmtMapping.ANYXML)
-        .addAny(YangStmtMapping.CHOICE)
-        .addAny(YangStmtMapping.CONTAINER)
-        .addOptional(YangStmtMapping.DESCRIPTION)
-        .addAny(YangStmtMapping.GROUPING)
-        .addAny(YangStmtMapping.IF_FEATURE)
-        .addAny(YangStmtMapping.LEAF)
-        .addAny(YangStmtMapping.LEAF_LIST)
-        .addAny(YangStmtMapping.LIST)
-        .addOptional(YangStmtMapping.REFERENCE)
-        .addOptional(YangStmtMapping.STATUS)
-        .addAny(YangStmtMapping.TYPEDEF)
-        .addAny(YangStmtMapping.USES)
-        .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+        SubstatementValidator.builder(YangStmtMapping.NOTIFICATION)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build();
 
     public NotificationStatementRFC6020Support(final YangParserConfiguration config) {
-        super(config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(config, SUBSTATEMENT_VALIDATOR);
     }
 }

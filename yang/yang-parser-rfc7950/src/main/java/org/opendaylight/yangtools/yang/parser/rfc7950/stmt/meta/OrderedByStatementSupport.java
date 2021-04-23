@@ -46,7 +46,7 @@ public final class OrderedByStatementSupport
         EffectiveStatements.createOrderedBy(EMPTY_USER_DECL);
 
     public OrderedByStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.ORDERED_BY, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -67,11 +67,6 @@ public final class OrderedByStatementSupport
         } else {
             return rawArgument;
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

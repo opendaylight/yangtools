@@ -17,12 +17,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSu
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ThirdPartyExtensionSupport
         extends AbstractStringStatementSupport<ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> {
     public ThirdPartyExtensionSupport(final YangParserConfiguration config) {
-        super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION, StatementPolicy.contextIndependent(), config);
+        super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION, StatementPolicy.contextIndependent(), config, null);
     }
 
     @Override
@@ -30,11 +29,6 @@ public final class ThirdPartyExtensionSupport
             final Mutable<String, ThirdPartyExtensionStatement, ThirdPartyExtensionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
         stmt.addToNs(ThirdPartyNamespace.class, Empty.getInstance(), "Third-party namespace test.");
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return null;
     }
 
     @Override

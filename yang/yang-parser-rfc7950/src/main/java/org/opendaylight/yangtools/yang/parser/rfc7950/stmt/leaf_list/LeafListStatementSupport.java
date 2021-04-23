@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -76,11 +74,8 @@ public final class LeafListStatementSupport
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    private final SubstatementValidator validator;
-
     private LeafListStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.LEAF_LIST, instantiatedPolicy(), config, validator);
     }
 
     public static @NonNull LeafListStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -89,11 +84,6 @@ public final class LeafListStatementSupport
 
     public static @NonNull LeafListStatementSupport rfc7950Instance(final YangParserConfiguration config) {
         return new LeafListStatementSupport(config, RFC7950_VALIDATOR);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

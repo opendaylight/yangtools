@@ -58,7 +58,7 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
 
     public RpcStatementSupport(final YangParserConfiguration config, final InputStatementSupport implicitInput,
             final OutputStatementSupport implicitOutput) {
-        super(YangStmtMapping.RPC, StatementPolicy.reject(), config);
+        super(YangStmtMapping.RPC, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
         this.implicitInput = requireNonNull(implicitInput);
         this.implicitOutput = requireNonNull(implicitOutput);
     }
@@ -74,11 +74,6 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
             ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implicitOutput, null);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

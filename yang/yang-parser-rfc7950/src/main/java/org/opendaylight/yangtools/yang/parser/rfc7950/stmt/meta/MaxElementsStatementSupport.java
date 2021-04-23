@@ -29,17 +29,12 @@ public final class MaxElementsStatementSupport
         SubstatementValidator.builder(YangStmtMapping.MAX_ELEMENTS).build();
 
     public MaxElementsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.MAX_ELEMENTS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
     public String internArgument(final String rawArgument) {
         return "unbounded".equals(rawArgument) ? "unbounded" : rawArgument;
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

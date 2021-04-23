@@ -46,11 +46,8 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
             .addOptional(YangStmtMapping.POSITION)
             .build();
 
-    private final SubstatementValidator validator;
-
     private BitStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.BIT, StatementPolicy.contextIndependent(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.BIT, StatementPolicy.contextIndependent(), config, requireNonNull(validator));
     }
 
     public static @NonNull BitStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -65,11 +62,6 @@ public final class BitStatementSupport extends AbstractStatementSupport<String, 
     public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         // Performs de-duplication and interning in one go
         return StmtContextUtils.parseIdentifier(ctx, value).getLocalName();
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

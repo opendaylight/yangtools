@@ -32,7 +32,7 @@ public final class RevisionDateStatementSupport
         SubstatementValidator.builder(YangStmtMapping.REVISION_DATE).build();
 
     public RevisionDateStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.REVISION_DATE, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.REVISION_DATE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -42,11 +42,6 @@ public final class RevisionDateStatementSupport
         } catch (DateTimeParseException e) {
             throw new SourceException(ctx, e, "Revision value %s is not in required format yyyy-MM-dd", value);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

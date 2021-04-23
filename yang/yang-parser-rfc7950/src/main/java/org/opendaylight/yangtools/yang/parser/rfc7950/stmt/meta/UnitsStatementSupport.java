@@ -29,12 +29,7 @@ public final class UnitsStatementSupport
         SubstatementValidator.builder(YangStmtMapping.UNITS).build();
 
     public UnitsStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent(), config);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        super(YangStmtMapping.UNITS, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override

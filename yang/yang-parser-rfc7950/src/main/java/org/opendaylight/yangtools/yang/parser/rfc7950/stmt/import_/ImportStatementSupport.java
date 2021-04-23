@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
@@ -65,12 +64,10 @@ public final class ImportStatementSupport
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
-    private final SubstatementValidator validator;
     private final boolean semanticVersioning;
 
     private ImportStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.IMPORT, StatementPolicy.reject(), config, validator);
         semanticVersioning = config.importResolutionMode() == ImportResolutionMode.OPENCONFIG_SEMVER;
     }
 
@@ -126,11 +123,6 @@ public final class ImportStatementSupport
         } else {
             RevisionImport.onLinkageDeclared(stmt);
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override

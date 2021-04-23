@@ -40,7 +40,7 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
             SubstatementValidator.builder(YangStmtMapping.BASE).build();
 
     public BaseStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.BASE, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.BASE, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
@@ -72,11 +72,6 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
                 }
             });
         }
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

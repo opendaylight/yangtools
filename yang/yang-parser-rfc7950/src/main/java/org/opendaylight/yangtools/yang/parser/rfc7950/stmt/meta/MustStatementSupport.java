@@ -41,18 +41,13 @@ public final class MustStatementSupport
 
     public MustStatementSupport(final XPathSupport xpathSupport, final YangParserConfiguration config) {
         // Note: if we end up binding expressions, this needs to become declaredCopy()
-        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent(), config);
+        super(YangStmtMapping.MUST, StatementPolicy.contextIndependent(), config, SUBSTATEMENT_VALIDATOR);
         this.xpathSupport = requireNonNull(xpathSupport);
     }
 
     @Override
     public QualifiedBound parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return xpathSupport.parseXPath(ctx, value);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

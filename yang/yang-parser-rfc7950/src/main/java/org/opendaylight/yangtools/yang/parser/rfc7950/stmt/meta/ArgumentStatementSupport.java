@@ -31,17 +31,12 @@ public final class ArgumentStatementSupport
         SubstatementValidator.builder(YangStmtMapping.ARGUMENT).addOptional(YangStmtMapping.YIN_ELEMENT).build();
 
     public ArgumentStatementSupport(final YangParserConfiguration config) {
-        super(YangStmtMapping.ARGUMENT, StatementPolicy.reject(), config);
+        super(YangStmtMapping.ARGUMENT, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
     }
 
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return StmtContextUtils.parseIdentifier(ctx, value);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override

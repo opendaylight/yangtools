@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -38,8 +39,9 @@ abstract class AbstractOperationContainerStatementSupport<D extends DeclaredStat
     private final Function<QNameModule, QName> createArgument;
 
     AbstractOperationContainerStatementSupport(final StatementDefinition publicDefinition,
-            final YangParserConfiguration config, final Function<QNameModule, QName> createArgument) {
-        super(publicDefinition, uninstantiatedPolicy(), config);
+            final YangParserConfiguration config, final SubstatementValidator validator,
+            final Function<QNameModule, QName> createArgument) {
+        super(publicDefinition, uninstantiatedPolicy(), config, validator);
         this.createArgument = requireNonNull(createArgument);
     }
 

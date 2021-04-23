@@ -92,8 +92,8 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return delegate.getSubstatementValidator();
+    protected SubstatementValidator substatementValidator() {
+        return delegate.substatementValidator();
     }
 
     @Override

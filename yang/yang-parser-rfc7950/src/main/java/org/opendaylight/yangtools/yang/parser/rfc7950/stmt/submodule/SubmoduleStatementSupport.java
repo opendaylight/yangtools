@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
@@ -101,11 +100,8 @@ public final class SubmoduleStatementSupport
             .addOptional(YangStmtMapping.YANG_VERSION)
             .build();
 
-    private final SubstatementValidator validator;
-
     private SubmoduleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
-        super(YangStmtMapping.SUBMODULE, StatementPolicy.reject(), config);
-        this.validator = requireNonNull(validator);
+        super(YangStmtMapping.SUBMODULE, StatementPolicy.reject(), config, validator);
     }
 
     public static @NonNull SubmoduleStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -154,11 +150,6 @@ public final class SubmoduleStatementSupport
 
         final String prefix = prefixSubStmtCtx.rawArgument();
         stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
-    }
-
-    @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return validator;
     }
 
     @Override
