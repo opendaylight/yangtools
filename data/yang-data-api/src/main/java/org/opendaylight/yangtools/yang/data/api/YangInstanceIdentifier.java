@@ -466,13 +466,14 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         /**
          * Return the string representation of this object for use in context
          * provided by a previous object. This method can be implemented in
-         * terms of {@link #toString()}, but implementations are encourage to
-         * reuse any context already emitted by the previous object.
+         * terms of {@link #toString()}. But in cases when the previous object
+         * is not {@code null} implementations are encouraged to reuse any context
+         * already emitted by it.
          *
-         * @param previous Previous path argument
+         * @param previous Possibly {@code null} previous path argument
          * @return String representation
          */
-        @NonNull String toRelativeString(PathArgument previous);
+        @NonNull String toRelativeString(@Nullable PathArgument previous);
     }
 
     private abstract static class AbstractPathArgument implements PathArgument {
@@ -523,7 +524,11 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
+        public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
+            // augmented node has the same namespace as module it is declared in
+            if (previous instanceof AugmentationIdentifier) {
+                return getNodeType().getLocalName();
+            }
             if (previous instanceof AbstractPathArgument) {
                 final QNameModule mod = previous.getNodeType().getModule();
                 if (getNodeType().getModule().equals(mod)) {
@@ -531,7 +536,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
                 }
             }
 
-            return getNodeType().toString();
+            return toString();
         }
 
         abstract Object writeReplace();
@@ -822,8 +827,23 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         }
 
         @Override
-        public final String toRelativeString(final PathArgument previous) {
-            return super.toRelativeString(previous) + '[' + asMap() + ']';
+        public final @NonNull String toRelativeString(final @Nullable PathArgument previous) {
+            if (previous instanceof AbstractPathArgument) {
+                final QName previousNodeType = previous.getNodeType();
+                final StringBuilder sb = new StringBuilder().append(super.toRelativeString(previous)).append("[{");
+                final Iterator<Entry<QName, Object>> it = entrySet().iterator();
+                while (it.hasNext()) {
+                    final Entry<QName, Object> entry = it.next();
+                    sb.append(entry.getKey().toRelativeString(previousNodeType)).append('=').append(entry.getValue());
+                    if (it.hasNext()) {
+                        sb.append(", ");
+                    }
+                }
+                sb.append("}]");
+                return sb.toString();
+            }
+
+            return toString();
         }
 
         @Override
@@ -871,7 +891,7 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
+        public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
             return super.toRelativeString(previous) + '[' + value + ']';
         }
 
@@ -974,7 +994,21 @@ public abstract sealed class YangInstanceIdentifier implements HierarchicalIdent
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
+        public @NonNull String toRelativeString(final @Nullable PathArgument previous) {
+            if (previous instanceof AbstractPathArgument) {
+                final QName previousNodeType = ((AbstractPathArgument) previous).nodeType;
+                final StringBuilder sb = new StringBuilder().append("AugmentationIdentifier{childNames=[");
+                final Iterator<QName> it = childNames.iterator();
+                while (it.hasNext()) {
+                    sb.append(it.next().toRelativeString(previousNodeType));
+                    if (it.hasNext()) {
+                        sb.append(", ");
+                    }
+                }
+                sb.append("]}");
+                return sb.toString();
+            }
+
             return toString();
         }
 
