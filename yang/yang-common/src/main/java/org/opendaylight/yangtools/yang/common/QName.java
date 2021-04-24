@@ -74,10 +74,6 @@ public final class QName extends AbstractQName implements Comparable<QName> {
     // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
     private static final long serialVersionUID = 1L;
 
-    static final String QNAME_REVISION_DELIMITER = "?revision=";
-    static final String QNAME_LEFT_PARENTHESIS = "(";
-    static final String QNAME_RIGHT_PARENTHESIS = ")";
-
     @Regex
     private static final String QNAME_STRING_FULL = "^\\((.+)\\?revision=(.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(QNAME_STRING_FULL);
@@ -322,12 +318,12 @@ public final class QName extends AbstractQName implements Comparable<QName> {
 
     @Override
     public @NonNull String toString() {
-        final StringBuilder sb = new StringBuilder().append(QNAME_LEFT_PARENTHESIS).append(getNamespace());
+        final StringBuilder sb = new StringBuilder().append('(').append(getNamespace());
         final Optional<Revision> rev = getRevision();
         if (rev.isPresent()) {
-            sb.append(QNAME_REVISION_DELIMITER).append(rev.get());
+            sb.append("?revision=").append(rev.get());
         }
-        return sb.append(QNAME_RIGHT_PARENTHESIS).append(getLocalName()).toString();
+        return sb.append(')').append(getLocalName()).toString();
     }
 
     @Override
