@@ -23,8 +23,7 @@ public class QNameTest {
     @Test
     public void testStringSerialization() throws Exception {
         QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
-        assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_REVISION_DELIMITER + REVISION
-            + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME, qname.toString());
+        assertEquals("(urn:foo?revision=2013-12-24)bar", qname.toString());
         assertEquals(qname, QName.create(qname.toString()));
     }
 
@@ -32,8 +31,7 @@ public class QNameTest {
     public void testStringSerializationNoRevision() throws Exception {
         // no revision
         QName qname = QName.create(NS, LOCALNAME);
-        assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME,
-            qname.toString());
+        assertEquals("(urn:foo)bar", qname.toString());
         assertEquals(qname, QName.create(qname.toString()));
     }
 
