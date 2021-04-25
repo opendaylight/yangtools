@@ -1,0 +1,4 @@
+submodule baz {
+  belongs-to bar;
+
+}
