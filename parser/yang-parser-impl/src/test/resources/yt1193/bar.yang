@@ -1,0 +1,21 @@
+module bar {
+  namespace bar;
+  prefix bar;
+  yang-version 1.1;
+
+  import foo {
+    revision-date 2021-04-26;
+    prefix foo;
+  }
+
+  identity id1;
+
+  identity id2 {
+    base id1;
+  }
+
+  anydata anydata;
+  anyxml anyxml;
+
+  include baz;
+}
