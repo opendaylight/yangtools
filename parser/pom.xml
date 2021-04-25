@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright © 2021 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.opendaylight.odlparent</groupId>
+        <artifactId>odlparent-lite</artifactId>
+        <version>9.0.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.opendaylight.yangtools</groupId>
+    <artifactId>parser-aggregator</artifactId>
+    <version>7.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
+    <modules>
+        <!-- YANG parser end-user API -->
+        <module>yang-parser-api</module>
+        <module>yang-test-util</module>
+
+        <!-- YANG parser reference implementation -->
+        <module>yang-parser-impl</module>
+
+        <!-- Metamodel statement reactor -->
+        <module>yang-parser-spi</module>
+        <module>yang-parser-reactor</module>
+
+        <!-- Combined RFC6020/RFC7960 metamodel implementation. Also includes support
+             for OpenConfig's semantic-version extension. -->
+        <module>yang-parser-antlr</module>
+        <module>yang-parser-rfc7950</module>
+
+        <!-- Support for IETF YANG extensions -->
+        <module>rfc6241-parser-support</module>
+        <module>rfc6536-parser-support</module>
+        <module>rfc6643-parser-support</module>
+        <module>rfc7952-parser-support</module>
+        <module>rfc8040-parser-support</module>
+        <module>rfc8528-parser-support</module>
+
+        <!-- Support for OpenDaylight YANG extensions -->
+        <module>odlext-parser-support</module>
+
+        <!-- Support for OpenConfig YANG extensions. -->
+        <module>openconfig-parser-support</module>
+    </modules>
+</project>
