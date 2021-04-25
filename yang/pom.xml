@@ -40,13 +40,5 @@
         <module>yang-repo-api</module>
         <module>yang-repo-spi</module>
         <module>yang-repo-fs</module>
-
-        <!-- Metadata (annotation) metamodel support -->
-        <module>rfc7952-data-api</module>
-        <module>rfc7952-data-util</module>
-
-        <!-- RFC8528 (mount-point) metamodel support -->
-        <module>rfc8528-data-api</module>
-        <module>rfc8528-data-util</module>
     </modules>
 </project>
