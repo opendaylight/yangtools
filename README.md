@@ -15,11 +15,12 @@ serialization and deserialization as defined in IETF drafts and standards.
   * **DOM-like APIs** - DOM-like tree model, which uses conceptual meta-model
   * **Java Bindings** - Concrete data model generated from YANG models
 * serialization / deserialization of YANG-modeled data driven by YANG models
-  * XML - as defined in [RFC6020]
-  * JSON - as defined in [draft-lhotka-netmod-yang-json-01]
+  * XML - as defined in [RFC6020] and revised in [RFC7950]
+  * JSON - as defined in [draft-lhotka-netmod-yang-json-01] and standardized in [RFC7951]
 * Integration of YANG model parsing into Maven build lifecycle and
   support for third-party generators processing  YANG models.
 
-
 [RFC6020]:https://tools.ietf.org/html/rfc6020
+[RFC7950]:https://tools.ietf.org/html/rfc7950
+[RFC7951]:https://tools.ietf.org/html/rfc7951
 [draft-lhotka-netmod-yang-json-01]:https://tools.ietf.org/html/draft-lhotka-netmod-yang-json-01

@@ -28,6 +28,10 @@
     </properties>
 
     <modules>
+        <module>yang-data-api</module>
+        <module>yang-data-impl</module>
         <module>yang-data-spi</module>
+        <module>yang-data-transform</module>
+        <module>yang-data-util</module>
     </modules>
 </project>

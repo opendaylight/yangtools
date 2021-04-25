@@ -22,14 +22,15 @@
     <version>7.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
     <modules>
         <!-- FIXME: organize these into groups -->
         <module>yang-common</module>
         <module>yang-common-netty</module>
-        <module>yang-data-api</module>
-        <module>yang-data-util</module>
-        <module>yang-data-impl</module>
-        <module>yang-data-transform</module>
         <module>yang-data-codec-binfmt</module>
         <module>yang-data-codec-gson</module>
         <module>yang-data-codec-xml</module>
