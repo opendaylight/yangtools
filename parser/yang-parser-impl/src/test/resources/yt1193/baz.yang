@@ -1,0 +1,11 @@
+submodule baz {
+  belongs-to bar {
+    prefix bar;
+  }
+
+  extension ext {
+    argument arg {
+      yin-element true;
+    }
+  }
+}
