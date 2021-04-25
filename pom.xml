@@ -46,6 +46,7 @@
         <module>model</module>
         <module>plugin</module>
         <module>tools</module>
+        <module>xpath</module>
 
         <module>yang</module>
     </modules>
