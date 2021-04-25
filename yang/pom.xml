@@ -34,19 +34,12 @@
         <module>yang-data-codec-binfmt</module>
         <module>yang-data-codec-gson</module>
         <module>yang-data-codec-xml</module>
-        <module>yang-model-export</module>
 
         <!-- YANG XPath API and implementation -->
         <module>yang-xpath-api</module>
         <module>yang-xpath-antlr</module>
         <!-- FIXME: rename to yang-xpath-ri -->
         <module>yang-xpath-impl</module>
-
-        <!-- RFC7950 YANG model and reference implementation -->
-        <module>yang-model-api</module>
-        <module>yang-model-spi</module>
-        <module>yang-model-ri</module>
-        <module>yang-model-util</module>
 
         <!-- YANG parser end-user API -->
         <module>yang-parser-api</module>
@@ -68,42 +61,33 @@
         <module>yang-parser-antlr</module>
         <module>yang-parser-rfc7950</module>
 
-        <!-- OpenConfig (semantic version, hashed value) metamodel support -->
-        <module>openconfig-model-api</module>
         <!-- OpenConfig hashed value parser support. Semantic version support
              is integrated in yang-parser-rfc7950. -->
         <module>openconfig-parser-support</module>
 
         <!-- OpenDaylight messy extensions -->
-        <module>odlext-model-api</module>
         <module>odlext-parser-support</module>
 
         <!-- NETCONF messy extensions -->
-        <module>rfc6241-model-api</module>
         <module>rfc6241-parser-support</module>
 
         <!-- NACM metamodel support -->
-        <module>rfc6536-model-api</module>
         <module>rfc6536-parser-support</module>
 
         <!-- SMIv2-to-YANG translations support -->
-        <module>rfc6643-model-api</module>
         <module>rfc6643-parser-support</module>
 
         <!-- Metadata (annotation) metamodel support -->
         <module>rfc7952-data-api</module>
         <module>rfc7952-data-util</module>
-        <module>rfc7952-model-api</module>
         <module>rfc7952-parser-support</module>
 
         <!-- RFC8040 (yang-data) metamodel support -->
-        <module>rfc8040-model-api</module>
         <module>rfc8040-parser-support</module>
 
         <!-- RFC8528 (mount-point) metamodel support -->
         <module>rfc8528-data-api</module>
         <module>rfc8528-data-util</module>
-        <module>rfc8528-model-api</module>
         <module>rfc8528-parser-support</module>
     </modules>
 
