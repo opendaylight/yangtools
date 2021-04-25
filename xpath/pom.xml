@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>xpath-aggregator</artifactId>
-    <version>7.0.0-SNAPSHOT</version>
+    <version>7.0.1-SHAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
