@@ -89,14 +89,14 @@ public final class NormalizedNodePrettyTree extends PrettyTree implements Immuta
             }
         } else if (node instanceof ForeignDataNode) {
             final ForeignDataNode<?> data = (ForeignDataNode<?>) node;
-            sb.append("= (").append(data.bodyObjectModel().getName()).append(')');
-
             final Object body = data.body();
             if (body instanceof PrettyTreeAware) {
-                sb.append(" {\n");
+                sb.append("= {\n");
                 ((PrettyTreeAware) body).prettyTree().appendTo(sb, depth + 1);
                 appendIndent(sb, depth);
                 sb.append('}');
+            } else {
+                sb.append("= (").append(data.bodyObjectModel().getName()).append(')');
             }
         } else {
             throw new IllegalStateException("Unhandled node " + node);
