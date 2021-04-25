@@ -41,6 +41,7 @@
 
         <module>benchmarks</module>
         <module>bundle-parent</module>
+        <module>codec</module>
         <module>common</module>
         <module>data</module>
         <module>model</module>

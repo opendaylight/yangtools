@@ -28,12 +28,6 @@
     </properties>
 
     <modules>
-        <!-- FIXME: organize these into groups -->
-
-        <module>yang-data-codec-binfmt</module>
-        <module>yang-data-codec-gson</module>
-        <module>yang-data-codec-xml</module>
-
         <!-- YANG repository API and implementions -->
         <module>yang-repo-api</module>
         <module>yang-repo-spi</module>
