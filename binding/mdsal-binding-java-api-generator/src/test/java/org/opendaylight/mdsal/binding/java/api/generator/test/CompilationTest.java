@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -565,13 +567,16 @@ public class CompilationTest extends BaseCompilationTest {
             final Class<?> clsTypeDef1 = loader.loadClass(pkg + ".Typedef1");
             final Class<?> clsTypeDef2 = loader.loadClass(pkg + ".Typedef2");
             final Class<?> clsTypeDef3 = loader.loadClass(pkg + ".Typedef3");
-            assertTrue(clsTypedefDepr.getAnnotations()[0].toString().contains("Deprecated"));
-            assertTrue(clsTypedefCur.getAnnotations().length == 0);
-            assertTrue(clsGroupingDepr.getAnnotations()[0].toString().contains("Deprecated"));
-            assertTrue(clsGroupingCur.getAnnotations().length == 0);
-            assertTrue(clsTypeDef1.getAnnotations().length == 0);
-            assertTrue(clsTypeDef3.getAnnotations().length == 0);
-            assertTrue(clsTypeDef2.getAnnotations()[0].toString().contains("Deprecated"));
+            assertEquals(1, clsTypedefDepr.getAnnotations().length);
+            assertThat(clsTypedefDepr.getAnnotations()[0].toString(), startsWith("@java.lang.Deprecated"));
+            assertEquals(0, clsTypedefCur.getAnnotations().length);
+            assertEquals(1, clsGroupingDepr.getAnnotations().length);
+            assertThat(clsGroupingDepr.getAnnotations()[0].toString(), startsWith("@java.lang.Deprecated"));
+            assertEquals(0, clsGroupingCur.getAnnotations().length);
+            assertEquals(0, clsTypeDef1.getAnnotations().length);
+            assertEquals(1, clsTypeDef2.getAnnotations().length);
+            assertThat(clsTypeDef2.getAnnotations()[0].toString(), startsWith("@java.lang.Deprecated"));
+            assertEquals(0, clsTypeDef3.getAnnotations().length);
 
             /*methods inside container*/
             assertTrue(clsContainer.getMethod("getContainerMainLeafDepr").isAnnotationPresent(Deprecated.class));
