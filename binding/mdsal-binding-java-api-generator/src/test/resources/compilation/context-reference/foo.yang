@@ -11,18 +11,15 @@ module foo {
     prefix "f";
 
     import bar { prefix "b"; }
+    import yang-ext { prefix ext; }
 
     revision "2013-10-08" {
-    }
-
-    extension context-reference {
-        argument "context-type";
     }
 
     container nodes {
         leaf id {
             type instance-identifier;
-            f:context-reference "b:identity-class";
+            ext:context-reference "b:identity-class";
         }
         leaf-list constraints {
             type string;
