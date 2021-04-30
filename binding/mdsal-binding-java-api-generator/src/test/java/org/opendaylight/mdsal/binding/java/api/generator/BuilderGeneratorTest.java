@@ -265,7 +265,10 @@ public class BuilderGeneratorTest {
         final EffectiveModelContext context = YangParserTestUtils.parseYangResource(
                 "/test-types.yang");
         final List<GeneratedType> types = new DefaultBindingGenerator().generateTypes(context);
-        final BuilderTemplate bt = BuilderGenerator.templateForType(types.get(19));
+        assertEquals(29, types.size());
+
+        final BuilderTemplate bt = BuilderGenerator.templateForType(
+            types.stream().filter(t -> t.getName().equals("Nodes")).findFirst().orElseThrow());
 
         final List<String> sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())
