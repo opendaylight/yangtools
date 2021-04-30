@@ -43,6 +43,7 @@ public class YT1233Test {
     @Test
     public void testExitToGrouping() {
         final GroupingEffectiveStatement baz = stack.enterGrouping(QName.create("foo", "baz"));
+        assertTrue(stack.inGrouping());
         final DataTreeEffectiveStatement<?> xyzzy = stack.enterDataTree(QName.create("foo", "xyzzy"));
         assertSame(xyzzy, stack.exitToDataTree());
         assertSame(baz, stack.currentStatement());
