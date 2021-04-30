@@ -55,6 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference;
@@ -305,13 +306,15 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
-     * Check if the stack is in instantiated context. This indicates the stack is non-empty and there is no grouping
-     * (or similar construct) present in the stack.
+     * Check if the stack is in instantiated context. This indicates the stack is non-empty and there are only screma
+     * tree statements in the stack.
      *
-     * @return False if the stack is empty or contains a grouping, true otherwise.
+     * @return False if the stack is empty or contains a statement which is not a {@link SchemaTreeEffectiveStatement},
+     *         true otherwise.
      */
     public boolean inInstantiatedContext() {
-        return groupingDepth == 0 && !deque.isEmpty();
+        return groupingDepth == 0 && !deque.isEmpty()
+            && deque.stream().allMatch(SchemaTreeEffectiveStatement.class::isInstance);
     }
 
     /**
@@ -329,7 +332,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * {@link #enterSchemaTree(QName)}, except it handles the use case where traversal ignores actual {@code case}
      * intermediate schema tree children.
      *
-     * @param nodeIdentifier Node identifier of the grouping to enter
+     * @param nodeIdentifier Node identifier of the choice to enter
      * @return Resolved choice
      * @throws NullPointerException if {@code nodeIdentifier} is null
      * @throws IllegalArgumentException if the corresponding choice cannot be found
@@ -425,6 +428,18 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull DataTreeEffectiveStatement<?> enterDataTree(final QName nodeIdentifier) {
         return pushData(requireNonNull(nodeIdentifier));
+    }
+
+    /**
+     * Lookup a {@code typedef} by its node identifier and push it to the stack.
+     *
+     * @param nodeIdentifier Node identifier of the typedef to enter
+     * @return Resolved choice
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding typedef cannot be found
+     */
+    public @NonNull TypedefEffectiveStatement enterTypedef(final QName nodeIdentifier) {
+        return pushTypedef(requireNonNull(nodeIdentifier));
     }
 
     /**
@@ -718,6 +733,29 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         return ret;
     }
 
+    private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull QName nodeIdentifier) {
+        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        return parent != null ? pushTypedef(parent, nodeIdentifier) : pushFirstTypedef(nodeIdentifier);
+    }
+
+    private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull EffectiveStatement<?, ?> parent,
+            final @NonNull QName nodeIdentifier) {
+        // TODO: 8.0.0: revisit this once we have TypedefNamespace working
+        final TypedefEffectiveStatement ret = parent.streamEffectiveSubstatements(TypedefEffectiveStatement.class)
+            .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Grouping " + nodeIdentifier + " not present"));
+        deque.push(ret);
+        return ret;
+    }
+
+    private @NonNull TypedefEffectiveStatement pushFirstTypedef(final @NonNull QName nodeIdentifier) {
+        final ModuleEffectiveStatement module = getModule(nodeIdentifier);
+        final TypedefEffectiveStatement ret = pushTypedef(module, nodeIdentifier);
+        currentModule = module;
+        return ret;
+    }
+
     private @NonNull ModuleEffectiveStatement getModule(final @NonNull QName nodeIdentifier) {
         final ModuleEffectiveStatement module = effectiveModel.getModuleStatements().get(nodeIdentifier.getModule());
         checkArgument(module != null, "Module for %s not found", nodeIdentifier);
@@ -756,6 +794,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                 tmp.enterSchemaTree(((SchemaTreeEffectiveStatement<?> )stmt).argument());
             } else if (stmt instanceof GroupingEffectiveStatement) {
                 tmp.enterGrouping(((GroupingEffectiveStatement) stmt).argument());
+            } else if (stmt instanceof TypedefEffectiveStatement) {
+                tmp.enterTypedef(((TypedefEffectiveStatement) stmt).argument());
             } else {
                 throw new VerifyException("Unexpected statement " + stmt);
             }
