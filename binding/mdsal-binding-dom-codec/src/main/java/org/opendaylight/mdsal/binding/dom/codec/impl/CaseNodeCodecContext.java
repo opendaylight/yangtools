@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.List;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
@@ -37,9 +39,9 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
-        Preconditions.checkState(normalizedNode instanceof ChoiceNode);
-        return createBindingProxy((ChoiceNode) normalizedNode);
+    public D deserialize(final NormalizedNode<?, ?> data) {
+        checkState(data instanceof ChoiceNode, "Unexpected data %s", data);
+        return createBindingProxy((ChoiceNode) data);
     }
 
     @Override
@@ -49,13 +51,13 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final PathArgument arg) {
-        Preconditions.checkArgument(arg == null);
+        checkArgument(arg == null, "Unexpected argument %s", arg);
         return null;
     }
 
     @Override
     public PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(arg == null);
+        checkArgument(arg == null, "Unexpected argument %s", arg);
         return null;
     }
 }

@@ -442,7 +442,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         } else if (typeDef instanceof LeafrefTypeDefinition) {
             final Entry<GeneratedType, WithStatus> typeWithSchema = context.getTypeWithSchema(valueType);
             final WithStatus schema = typeWithSchema.getValue();
-            checkState(schema instanceof TypeDefinition);
+            checkState(schema instanceof TypeDefinition, "Unexpected schema %s", schema);
             return getCodec(valueType, (TypeDefinition<?>) schema);
         }
         return ValueTypeCodec.getCodecFor(valueType, typeDef);

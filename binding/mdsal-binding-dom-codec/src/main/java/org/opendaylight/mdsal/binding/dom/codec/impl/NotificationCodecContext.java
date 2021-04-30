@@ -101,7 +101,7 @@ final class NotificationCodecContext<D extends DataObject & Notification>
 
     @Override
     public D deserialize(final NormalizedNode<?, ?> data) {
-        checkState(data instanceof ContainerNode);
+        checkState(data instanceof ContainerNode, "Unexpected data %s", data);
         return createBindingProxy((ContainerNode) data);
     }
 

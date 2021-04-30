@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -22,7 +23,7 @@ final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCo
 
     @Override
     public D deserialize(final NormalizedNode<?, ?> data) {
-        Preconditions.checkState(data instanceof ContainerNode);
+        checkState(data instanceof ContainerNode, "Unexpected data %s", data);
         return createBindingProxy((ContainerNode) data);
     }
 
