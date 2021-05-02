@@ -481,7 +481,12 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     public @NonNull DataTreeEffectiveStatement<?> exitToDataTree() {
         final EffectiveStatement<?, ?> child = exit();
         checkState(child instanceof DataTreeEffectiveStatement, "Unexpected current %s", child);
-        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        EffectiveStatement<?, ?> parent = deque.peekFirst();
+        while (parent instanceof ChoiceEffectiveStatement || parent instanceof CaseEffectiveStatement) {
+            deque.pollFirst();
+            parent = deque.peekFirst();
+        }
+
         checkState(parent == null || parent instanceof DataTreeAwareEffectiveStatement, "Unexpected parent %s", parent);
         return (DataTreeEffectiveStatement<?>) child;
     }
