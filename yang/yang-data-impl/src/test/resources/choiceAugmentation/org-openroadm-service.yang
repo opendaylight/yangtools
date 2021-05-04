@@ -1,0 +1,35 @@
+module org-openroadm-service {
+    yang-version 1;
+    namespace "dummy:org-openroadm-service";
+    prefix "org-openroadm-service";
+
+    import org-openroadm-topology {
+        prefix org-openroadm-topology;
+        revision-date 2021-04-26;
+    }
+
+    revision 2021-04-26 {
+        description "test";
+    }
+
+    container top-service {
+      list services {
+        key "service-name";
+
+        leaf service-name {
+          type string;
+        }
+
+        container topology {
+          leaf test-topology-string {
+            type string;
+          }
+          uses org-openroadm-topology:topology;
+        }
+
+        leaf test-service-string {
+          type string;
+        }
+    }
+  }
+}
