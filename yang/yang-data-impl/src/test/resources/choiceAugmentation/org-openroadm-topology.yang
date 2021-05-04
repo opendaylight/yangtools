@@ -1,0 +1,32 @@
+module org-openroadm-topology {
+    yang-version 1;
+    namespace "dummy:topology";
+    prefix "org-openroadm-topology";
+
+    import org-openroadm-resource {
+        prefix org-openroadm-resource;
+        revision-date 2021-04-26;
+    }
+
+    revision 2021-04-26 {
+        description "test";
+    }
+
+    grouping topology {
+      list aToZ {
+        key "id";
+        leaf id {
+          type string;
+        }
+        uses hop;
+      }
+    }
+
+    grouping hop {
+      uses org-openroadm-resource:resource {
+        augment "resource/resource/interface" {
+          uses org-openroadm-resource:resource-reporting;
+        }
+      }
+    }
+}

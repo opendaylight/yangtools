@@ -120,13 +120,30 @@ public final class NormalizedNodes {
     public static Optional<NormalizedNode<?, ?>> getDirectChild(final NormalizedNode<?, ?> node,
             final PathArgument pathArg) {
         if (node instanceof DataContainerNode) {
-            return (Optional) ((DataContainerNode<?>) node).getChild(pathArg);
+            final DataContainerNode<?> containerNode = (DataContainerNode<?>) node;
+            final Optional<NormalizedNode<?, ?>> directChild = (Optional)containerNode.getChild(pathArg);
+            return directChild.isPresent() ? directChild : getDirectChildInAugmentation(containerNode, pathArg);
         } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
             return (Optional) ((MapNode) node).getChild((NodeIdentifierWithPredicates) pathArg);
         } else if (node instanceof LeafSetNode && pathArg instanceof NodeWithValue) {
             return (Optional) ((LeafSetNode<?>) node).getChild((NodeWithValue) pathArg);
         }
         // Anything else, including ValueNode
+        return Optional.empty();
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private static Optional<NormalizedNode<?, ?>> getDirectChildInAugmentation(final DataContainerNode<?> node,
+        final PathArgument pathArg) {
+        for (DataContainerChild<?, ?> child : node.getValue()) {
+            if (child instanceof AugmentationNode) {
+                Optional<NormalizedNode<?, ?>> augmentedChild = (Optional) ((DataContainerNode<?>) child)
+                    .getChild(pathArg);
+                if (augmentedChild.isPresent()) {
+                    return augmentedChild;
+                }
+            }
+        }
         return Optional.empty();
     }
 

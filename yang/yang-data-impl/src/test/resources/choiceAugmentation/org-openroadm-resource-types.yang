@@ -1,0 +1,18 @@
+module org-openroadm-resource-types {
+    yang-version 1;
+    namespace "dummy:org-openroadm-resource-types";
+    prefix "org-openroadm-resource-types";
+
+    revision 2021-04-26 {
+        description "test";
+    }
+
+    grouping interface-name {
+      leaf interface-name {
+        type string;
+        mandatory false;
+        description
+          "Interface identifier.";
+      }
+    }
+}

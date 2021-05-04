@@ -1,0 +1,52 @@
+module org-openroadm-resource {
+    yang-version 1;
+    namespace "dummy:org-openroadm-resource";
+    prefix "org-openroadm-resource";
+
+    import org-openroadm-interfaces {
+        prefix org-openroadm-interfaces;
+        revision-date 2021-04-26;
+    }
+
+    import org-openroadm-resource-types {
+        prefix org-openroadm-resource-types;
+        revision-date 2021-04-26;
+    }
+
+    revision 2021-04-26 {
+        description "test";
+    }
+
+    grouping resource {
+      container resource {
+        choice resource {
+          case port {
+            container port {
+              leaf port {
+                type uint32;
+              }
+            }
+          }
+          case interface {
+            uses org-openroadm-resource-types:interface-name;
+          }
+        }
+      }
+    }
+
+    grouping resource-reporting {
+      leaf type {
+        type identityref {
+          base org-openroadm-interfaces:interface-type;
+        }
+        mandatory true;
+      }
+
+      container ethernet {
+        when "../type = 'ethernetCsmacd'";
+        leaf speed {
+           type uint32;
+        }
+      }
+    }
+}
