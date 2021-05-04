@@ -1,0 +1,19 @@
+module org-openroadm-interfaces {
+    yang-version 1;
+    namespace "dummy:org-openroadm-interfaces";
+    prefix "org-openroadm-interfaces";
+
+    revision 2021-04-26 {
+        description "test";
+    }
+
+    identity interface-type {
+      description
+        "Base identity from which specific interface types are
+         derived.";
+    }
+
+    identity ethernetCsmacd {
+      base interface-type;
+    }
+}
