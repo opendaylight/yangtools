@@ -24,7 +24,7 @@ import org.slf4j.Logger;
  */
 @Value.Immutable
 @Value.Style(stagedBuilder = true, allowedClasspathAnnotations = {
-        SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
+    SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
 })
 public abstract class ThreadFactoryProvider {
 
