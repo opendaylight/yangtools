@@ -1,0 +1,16 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container foo {
+    presence blah;
+  }
+
+  augment /foo {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+}
+
