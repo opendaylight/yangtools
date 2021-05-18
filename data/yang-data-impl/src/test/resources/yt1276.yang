@@ -1,0 +1,36 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container foo {
+    presence blah;
+
+    choice choice-node {
+      case case1 {
+        leaf case1-direct-leaf {
+          type string;
+        }
+      }
+    }
+  }
+
+  augment /foo {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+
+  augment /foo/choice-node/case1 {
+    leaf augmented-mandatory-leaf {
+      type string;
+      mandatory true;
+    }
+    container augmented-container {
+      leaf augmented-container-leaf {
+        type uint8;
+      }
+    }
+  }
+}
+
