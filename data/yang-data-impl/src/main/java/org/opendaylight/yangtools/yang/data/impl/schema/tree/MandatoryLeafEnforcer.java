@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -16,6 +15,9 @@ import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -54,9 +56,22 @@ final class MandatoryLeafEnforcer implements Immutable {
 
     void enforceOnData(final NormalizedNode data) {
         for (final YangInstanceIdentifier id : mandatoryNodes) {
-            checkArgument(NormalizedNodes.findNode(data, id).isPresent(),
-                "Node %s is missing mandatory descendant %s", data.getIdentifier(), id);
+            if (NormalizedNodes.findNode(data, id).isEmpty()) {
+                enforceOnAugmentationNodes(data, id);
+            }
         }
+    }
+
+    private void enforceOnAugmentationNodes(final NormalizedNode data, final YangInstanceIdentifier id) {
+        for (DataContainerChild child : ((DataContainerNode) data).body()) {
+            if (child instanceof AugmentationNode) {
+                if (NormalizedNodes.findNode(child, id).isPresent()) {
+                    return;
+                }
+            }
+        }
+        throw new IllegalArgumentException(String.format("Node %s is missing mandatory descendant %s",
+            data.getIdentifier(), id));
     }
 
     void enforceOnTreeNode(final TreeNode tree) {
