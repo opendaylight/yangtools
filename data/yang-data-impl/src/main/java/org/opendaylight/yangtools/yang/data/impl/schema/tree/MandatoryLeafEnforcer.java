@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -33,12 +32,11 @@ import org.slf4j.LoggerFactory;
 final class MandatoryLeafEnforcer implements Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(MandatoryLeafEnforcer.class);
 
-    private final ImmutableList<YangInstanceIdentifier> mandatoryNodes;
+    private final ImmutableList<MandatoryNodeIdentifier> mandatoryNodes;
 
-    private MandatoryLeafEnforcer(final ImmutableList<YangInstanceIdentifier> mandatoryNodes) {
+    private MandatoryLeafEnforcer(final ImmutableList<MandatoryNodeIdentifier> mandatoryNodes) {
         this.mandatoryNodes = requireNonNull(mandatoryNodes);
     }
-
 
     static Optional<MandatoryLeafEnforcer> forContainer(final DataNodeContainer schema,
             final DataTreeConfiguration treeConfig) {
@@ -46,16 +44,27 @@ final class MandatoryLeafEnforcer implements Immutable {
             return Optional.empty();
         }
 
-        final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
+        final Builder<MandatoryNodeIdentifier> builder = ImmutableList.builder();
         findMandatoryNodes(builder, YangInstanceIdentifier.empty(), schema, treeConfig.getTreeType());
-        final ImmutableList<YangInstanceIdentifier> mandatoryNodes = builder.build();
+        final ImmutableList<MandatoryNodeIdentifier> mandatoryNodes = builder.build();
         return mandatoryNodes.isEmpty() ? Optional.empty() : Optional.of(new MandatoryLeafEnforcer(mandatoryNodes));
     }
 
+    /**
+     * Due to an issue with augmented mandatory nodes(YANGTOOLS-1276), the enforcing is done in 2 steps here.
+     * - first seek the mandatory node as a direct child of the data node - using his NodeIdentifier
+     * - in case the mandatory node came from augmentation, try looking for his AugmentationIdentifier
+     */
     void enforceOnData(final NormalizedNode data) {
-        for (final YangInstanceIdentifier id : mandatoryNodes) {
-            checkArgument(NormalizedNodes.findNode(data, id).isPresent(),
-                "Node %s is missing mandatory descendant %s", data.getIdentifier(), id);
+        for (MandatoryNodeIdentifier id : mandatoryNodes) {
+            if (NormalizedNodes.findNode(data, id.getDirectId()).isEmpty()) {
+                final YangInstanceIdentifier augmentedId = id.getAugmentedId();
+                if (augmentedId != null && NormalizedNodes.findNode(data, augmentedId).isPresent()) {
+                    continue;
+                }
+                throw new IllegalArgumentException(String.format("Node %s is missing mandatory descendant %s",
+                    data.getIdentifier(), id.getDirectId()));
+            }
         }
     }
 
@@ -63,14 +72,15 @@ final class MandatoryLeafEnforcer implements Immutable {
         enforceOnData(tree.getData());
     }
 
-    private static void findMandatoryNodes(final Builder<YangInstanceIdentifier> builder,
-            final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
+    private static void findMandatoryNodes(final Builder<MandatoryNodeIdentifier> builder,
+        final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
         for (final DataSchemaNode child : schema.getChildNodes()) {
             if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                 if (child instanceof ContainerSchemaNode) {
                     final ContainerSchemaNode container = (ContainerSchemaNode) child;
                     if (!container.isPresenceContainer()) {
-                        findMandatoryNodes(builder, id.node(NodeIdentifier.create(child.getQName())), container, type);
+                        findMandatoryNodes(builder,
+                            id.node(NodeIdentifier.create(child.getQName())), container, type);
                     }
                 } else {
                     boolean needEnforce = child instanceof MandatoryAware && ((MandatoryAware) child).isMandatory();
@@ -82,9 +92,11 @@ final class MandatoryLeafEnforcer implements Immutable {
                                 }).orElse(Boolean.FALSE).booleanValue();
                     }
                     if (needEnforce) {
-                        final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
-                        LOG.debug("Adding mandatory child {}", childId);
-                        builder.add(childId.toOptimized());
+                        final MandatoryNodeIdentifier mandatoryId = child.isAugmenting()
+                            ? MandatoryNodeIdentifier.fromAugmentedMandatoryNode(schema, id, child)
+                            : MandatoryNodeIdentifier.fromDirectMandatoryNode(id, child);
+                        LOG.debug("Adding {}", mandatoryId.toString());
+                        builder.add(mandatoryId);
                     }
                 }
             }
