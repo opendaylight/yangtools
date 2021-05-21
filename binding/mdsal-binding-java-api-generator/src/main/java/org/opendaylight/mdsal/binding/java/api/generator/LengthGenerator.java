@@ -14,6 +14,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.util.Types;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +95,8 @@ final class LengthGenerator {
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraint);
 
-        sb.append("private static void ").append(lengthCheckerName(member)).append("(final String value) {\n");
+        sb.append("private static void ").append(lengthCheckerName(member))
+            .append("(final ").append(template.importedName(Types.STRING)).append(" value) {\n");
 
         if (!expressions.isEmpty()) {
             sb.append("    final int length = value.codePointCount(0, value.length());\n");
