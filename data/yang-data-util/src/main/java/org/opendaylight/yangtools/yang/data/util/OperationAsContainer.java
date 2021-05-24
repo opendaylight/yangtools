@@ -10,32 +10,22 @@ package org.opendaylight.yangtools.yang.data.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ForwardingObject;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 @Beta
-public class OperationAsContainer extends ForwardingObject implements ContainerLike, OperationDefinition {
+public class OperationAsContainer extends AbstractAsContainer implements OperationDefinition {
     private final @NonNull OperationDefinition delegate;
 
     OperationAsContainer(final OperationDefinition parentNode) {
@@ -52,16 +42,6 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final Optional<String> getDescription() {
-        return delegate.getDescription();
-    }
-
-    @Override
-    public final Optional<String> getReference() {
-        return delegate.getReference();
-    }
-
-    @Override
     public final Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
@@ -72,11 +52,6 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public final Status getStatus() {
-        return delegate.getStatus();
-    }
-
-    @Override
     public final InputSchemaNode getInput() {
         return delegate.getInput();
     }
@@ -84,17 +59,6 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     @Override
     public final OutputSchemaNode getOutput() {
         return delegate.getOutput();
-    }
-
-    @Override
-    public final QName getQName() {
-        return delegate.getQName();
-    }
-
-    @Override
-    @Deprecated
-    public final SchemaPath getPath() {
-        return delegate.getPath();
     }
 
     @Override
@@ -114,11 +78,6 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
     }
 
     @Override
-    public Collection<? extends UsesNode> getUses() {
-        return ImmutableSet.of();
-    }
-
-    @Override
     public final Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return ImmutableSet.of();
     }
@@ -135,54 +94,5 @@ public class OperationAsContainer extends ForwardingObject implements ContainerL
             ret.add(output);
         }
         return ret;
-    }
-
-    @Deprecated
-    @Override
-    public final boolean isAugmenting() {
-        return false;
-    }
-
-    @Deprecated
-    @Override
-    public final boolean isAddedByUses() {
-        return false;
-    }
-
-    @Override
-    public final Optional<Boolean> effectiveConfig() {
-        return Optional.empty();
-    }
-
-    @Override
-    public final Collection<? extends ActionDefinition> getActions() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public Optional<ActionDefinition> findAction(final QName qname) {
-        requireNonNull(qname);
-        return Optional.empty();
-    }
-
-    @Override
-    public final Collection<? extends NotificationDefinition> getNotifications() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public Optional<NotificationDefinition> findNotification(final QName qname) {
-        requireNonNull(qname);
-        return Optional.empty();
-    }
-
-    @Override
-    public final Collection<? extends @NonNull MustDefinition> getMustConstraints() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public final Optional<? extends QualifiedBound> getWhenCondition() {
-        return Optional.empty();
     }
 }

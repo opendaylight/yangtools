@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.NotificationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
@@ -51,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -90,9 +92,11 @@ public final class JsonParserStream implements Closeable, Flushable {
         if (!stack.isEmpty()) {
             final EffectiveStatement<?, ?> parent = stack.currentStatement();
             if (parent instanceof DataSchemaNode) {
-                parentNode =  (DataSchemaNode) parent;
+                parentNode = (DataSchemaNode) parent;
             } else if (parent instanceof OperationDefinition) {
-                parentNode =  OperationAsContainer.of((OperationDefinition) parent);
+                parentNode = OperationAsContainer.of((OperationDefinition) parent);
+            } else if (parent instanceof NotificationDefinition) {
+                parentNode = NotificationAsContainer.of((NotificationDefinition) parent);
             } else {
                 throw new IllegalArgumentException("Illegal parent node " + parent);
             }
