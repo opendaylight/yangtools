@@ -247,9 +247,19 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
 
     public SchemaNode startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
-        final SchemaNode schema = enterDataTree(name);
-        checkArgument(schema instanceof ContainerLike || schema instanceof NotificationDefinition,
-            "Node %s is not a container nor a notification", schema);
+
+        final SchemaNode schema;
+        if (schemaStack.isEmpty() && root instanceof NotificationDefinition) {
+            // Special case for stacks initialized at notification. We pretend the first container is contained within
+            // itself.
+            // FIXME: 8.0.0: factor this special case out to something more reasonable, like being initialized at the
+            //               Notification's parent and knowing to enterSchemaTree() instead of enterDataTree().
+            schema = (NotificationDefinition) root;
+        } else {
+            schema = enterDataTree(name);
+            checkArgument(schema instanceof ContainerLike, "Node %s is not a container", schema);
+        }
+
         schemaStack.push(schema);
         return schema;
     }
