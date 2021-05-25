@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public final class ImmutableLeafNodeSchemaAwareBuilder<T> extends ImmutableLeafNodeBuilder<T> {
     private ImmutableLeafNodeSchemaAwareBuilder(final LeafSchemaNode schema) {
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));

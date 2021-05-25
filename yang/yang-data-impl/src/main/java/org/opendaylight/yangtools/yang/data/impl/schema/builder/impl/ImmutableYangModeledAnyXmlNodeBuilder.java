@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> {
-
     private final ContainerSchemaNode contentSchema;
 
     private ImmutableYangModeledAnyXmlNodeBuilder(final YangModeledAnyxmlSchemaNode yangModeledAnyXMLSchemaNode) {

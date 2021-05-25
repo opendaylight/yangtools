@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataN
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmentationNodeBuilder {
-
     private final DataNodeContainerValidator validator;
 
     protected ImmutableAugmentationNodeSchemaAwareBuilder(final AugmentationSchemaNode schema) {

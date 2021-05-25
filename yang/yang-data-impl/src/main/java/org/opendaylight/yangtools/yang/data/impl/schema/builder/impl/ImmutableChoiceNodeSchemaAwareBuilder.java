@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataV
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
-
     private final ChoiceSchemaNode schema;
     private DataNodeContainerValidator validator;
 

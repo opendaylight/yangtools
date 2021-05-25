@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder {
     private final ListSchemaNode schema;
 

@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataN
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException.IllegalListKeyException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapEntryNodeBuilder {
-
     private final ListSchemaNode schema;
     private final DataNodeContainerValidator validator;
 

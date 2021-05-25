@@ -74,6 +74,7 @@ public final class Builders {
         return ImmutableLeafNodeBuilder.create();
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder(
             final LeafSchemaNode schema) {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
@@ -83,6 +84,7 @@ public final class Builders {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
@@ -92,11 +94,13 @@ public final class Builders {
         return ImmutableAnyXmlNodeBuilder.create();
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder(
             final AnyxmlSchemaNode schema) {
         return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static DataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
             final YangModeledAnyxmlSchemaNode schema) {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
@@ -111,6 +115,7 @@ public final class Builders {
         return ImmutableOrderedLeafSetNodeBuilder.create();
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder(final LeafListSchemaNode schema) {
         return ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(schema);
     }
@@ -123,10 +128,12 @@ public final class Builders {
         return ImmutableLeafSetNodeBuilder.create(node);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema) {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema,
             final LeafSetNode<T> node) {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema, node);
@@ -141,10 +148,12 @@ public final class Builders {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final ContainerLike schema) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(final ContainerLike schema,
             final ContainerNode node) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema, node);
@@ -159,6 +168,7 @@ public final class Builders {
         return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final ListSchemaNode schema) {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
@@ -184,10 +194,12 @@ public final class Builders {
         return ImmutableMapNodeBuilder.create(node);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema);
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema,
             final MapNode node) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema, node);
@@ -197,6 +209,7 @@ public final class Builders {
         return ImmutableAugmentationNodeBuilder.create();
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder(
             final AugmentationSchemaNode schema) {
         return ImmutableAugmentationNodeSchemaAwareBuilder.create(schema);
@@ -206,6 +219,7 @@ public final class Builders {
         return ImmutableChoiceNodeBuilder.create();
     }
 
+    @Deprecated(since = "6.0.7", forRemoval = true)
     public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder(final ChoiceSchemaNode schema) {
         return ImmutableChoiceNodeSchemaAwareBuilder.create(schema);
     }

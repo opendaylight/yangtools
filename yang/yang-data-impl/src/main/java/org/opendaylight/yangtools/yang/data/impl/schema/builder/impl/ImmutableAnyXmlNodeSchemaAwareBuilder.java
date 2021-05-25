@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXmlNodeBuilder {
-
     private ImmutableAnyXmlNodeSchemaAwareBuilder(final AnyxmlSchemaNode schema) {
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }

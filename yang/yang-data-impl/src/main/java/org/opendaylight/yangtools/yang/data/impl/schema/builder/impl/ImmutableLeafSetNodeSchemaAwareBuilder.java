@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuil
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLeafSetNodeBuilder<T> {
-
     private final LeafListSchemaNode schema;
 
     private ImmutableLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {

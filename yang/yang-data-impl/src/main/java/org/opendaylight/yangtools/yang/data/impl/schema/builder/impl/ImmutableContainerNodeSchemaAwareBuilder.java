@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 
+@Deprecated(since = "6.0.7", forRemoval = true)
 public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableContainerNodeBuilder {
     private final DataNodeContainerValidator validator;
 
