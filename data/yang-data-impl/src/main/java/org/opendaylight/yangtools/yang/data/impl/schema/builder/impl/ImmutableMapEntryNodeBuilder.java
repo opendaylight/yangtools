@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNode
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +59,16 @@ public class ImmutableMapEntryNodeBuilder
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final MapEntryNode node) {
         if (!(node instanceof ImmutableMapEntryNode)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
         }
 
         return new ImmutableMapEntryNodeBuilder((ImmutableMapEntryNode)node);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+            final ListSchemaNode schema) {
+        return new SchemaAwareImmutableMapEntryNodeBuilder(schema);
     }
 
     private static void fillQNames(final Iterable<DataContainerChild> iterable, final Map<QName, PathArgument> out) {
