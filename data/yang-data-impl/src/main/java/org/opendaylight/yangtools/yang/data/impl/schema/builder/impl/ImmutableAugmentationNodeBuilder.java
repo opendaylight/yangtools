@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
 public class ImmutableAugmentationNodeBuilder
         extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
@@ -27,7 +28,7 @@ public class ImmutableAugmentationNodeBuilder
         super(sizeHint);
     }
 
-    public ImmutableAugmentationNodeBuilder(final ImmutableAugmentationNode node) {
+    ImmutableAugmentationNodeBuilder(final ImmutableAugmentationNode node) {
         super(node);
     }
 
@@ -47,6 +48,12 @@ public class ImmutableAugmentationNodeBuilder
         }
 
         return new ImmutableAugmentationNodeBuilder((ImmutableAugmentationNode)node);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+            final AugmentationSchemaNode schema) {
+        return new SchemaAwareImmutableAugmentationNodeBuilder(schema);
     }
 
     @Override

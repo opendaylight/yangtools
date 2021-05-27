@@ -18,9 +18,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, SystemLeafSetNode<T>> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -55,11 +57,24 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, System
     }
 
     public static <T> @NonNull ListNodeBuilder<T, SystemLeafSetNode<T>> create(final SystemLeafSetNode<T> node) {
-        if (!(node instanceof ImmutableLeafSetNode<?>)) {
-            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        if (node instanceof ImmutableLeafSetNode) {
+            return new ImmutableLeafSetNodeBuilder<>((ImmutableLeafSetNode<T>) node);
         }
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
+    }
 
-        return new ImmutableLeafSetNodeBuilder<>((ImmutableLeafSetNode<T>) node);
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static <T> @NonNull ListNodeBuilder<T, SystemLeafSetNode<T>> create(final LeafListSchemaNode schema) {
+        return new SchemaAwareImmutableLeafSetNodeBuilder<>(schema);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static <T> @NonNull ListNodeBuilder<T, SystemLeafSetNode<T>> create(final LeafListSchemaNode schema,
+            final LeafSetNode<T> node) {
+        if (node instanceof ImmutableLeafSetNode) {
+            return new SchemaAwareImmutableLeafSetNodeBuilder<>(schema, (ImmutableLeafSetNode<T>) node);
+        }
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     @Override

@@ -18,19 +18,21 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.spi.node.AbstractNormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public final class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, UserMapNode> {
+public class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, UserMapNode> {
     private static final int DEFAULT_CAPACITY = 4;
 
     private Map<NodeIdentifierWithPredicates, MapEntryNode> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
-    private ImmutableUserMapNodeBuilder() {
+    ImmutableUserMapNodeBuilder() {
         this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
         this.dirty = false;
     }
@@ -44,7 +46,7 @@ public final class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<
         this.dirty = false;
     }
 
-    private ImmutableUserMapNodeBuilder(final ImmutableUserMapNode node) {
+    ImmutableUserMapNodeBuilder(final ImmutableUserMapNode node) {
         this.nodeIdentifier = node.getIdentifier();
         this.value = node.children;
         this.dirty = true;
@@ -64,6 +66,20 @@ public final class ImmutableUserMapNodeBuilder implements CollectionNodeBuilder<
         }
 
         return new ImmutableUserMapNodeBuilder((ImmutableUserMapNode) node);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, UserMapNode> create(final ListSchemaNode schema) {
+        return new SchemaAwareImmutableOrderedMapNodeBuilder(schema);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, UserMapNode> create(final ListSchemaNode schema,
+            final MapNode node) {
+        if (node instanceof ImmutableUserMapNode) {
+            return new SchemaAwareImmutableOrderedMapNodeBuilder(schema, (ImmutableUserMapNode) node);
+        }
+        throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
     }
 
     private void checkDirty() {
