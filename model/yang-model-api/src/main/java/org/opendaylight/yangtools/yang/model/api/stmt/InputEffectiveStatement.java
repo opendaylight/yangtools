@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public interface InputEffectiveStatement
-        extends SchemaTreeEffectiveStatement<InputStatement>, DataTreeAwareEffectiveStatement<QName, InputStatement> {
+        extends DataTreeEffectiveStatement<InputStatement>, DataTreeAwareEffectiveStatement<QName, InputStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.INPUT;
