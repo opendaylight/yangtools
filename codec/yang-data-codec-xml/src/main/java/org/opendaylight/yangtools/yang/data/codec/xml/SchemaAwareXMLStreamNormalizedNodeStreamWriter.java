@@ -166,7 +166,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
     @Override
     public void domSourceValue(final DOMSource value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof AnyxmlSchemaNode, "Unexpected scala value %s with %s", value, current);
+        checkState(current instanceof AnyxmlSchemaNode, "Unexpected value %s with %s", value, current);
         anyxmlValue(value);
     }
 
@@ -180,7 +180,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter
             try {
                 return tracker.resolveLeafref((LeafrefTypeDefinition) type);
             } catch (IllegalArgumentException e) {
-                throw new XMLStreamException("Cannot resolved type " + type, e);
+                throw new XMLStreamException("Cannot resolve type " + type, e);
             }
         }
         return type;
