@@ -123,16 +123,13 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
                     }
                 }
             }
-            return false;
         } else if (stmt instanceof CaseEffectiveStatement) {
             // For case statements go through all their statements
             for (EffectiveStatement<?, ?> child : stmt.effectiveSubstatements()) {
                 indexDataTree(map, child);
             }
-            return false;
-        } else {
-            return true;
         }
+        return false;
     }
 
     private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map, final T child,
