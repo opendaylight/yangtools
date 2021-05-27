@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public interface OutputEffectiveStatement
-        extends SchemaTreeEffectiveStatement<OutputStatement>, DataTreeAwareEffectiveStatement<QName, OutputStatement> {
+        extends DataTreeEffectiveStatement<OutputStatement>, DataTreeAwareEffectiveStatement<QName, OutputStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangStmtMapping.OUTPUT;
