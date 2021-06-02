@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkState;
+import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.getField;
-import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.loadThis;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.base.Throwables;

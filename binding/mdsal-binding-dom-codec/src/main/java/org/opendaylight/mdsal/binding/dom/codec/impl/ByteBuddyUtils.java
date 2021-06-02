@@ -23,7 +23,6 @@ import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.FieldAccess;
 import net.bytebuddy.implementation.bytecode.member.FieldAccess.Defined;
 import net.bytebuddy.implementation.bytecode.member.MethodInvocation;
-import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.ClassVisitor;
 import net.bytebuddy.jar.asm.ClassWriter;
 import net.bytebuddy.jar.asm.Label;
@@ -33,15 +32,8 @@ import net.bytebuddy.matcher.ElementMatchers;
 import net.bytebuddy.pool.TypePool;
 
 final class ByteBuddyUtils {
-    private static final StackManipulation LOAD_THIS = MethodVariableAccess.loadThis();
-
     private ByteBuddyUtils() {
-
-    }
-
-    // TODO: eliminate this method once MethodVariableAccess.loadThis() returns a singleton
-    static StackManipulation loadThis() {
-        return LOAD_THIS;
+        // Hidden on purpose
     }
 
     static StackManipulation invokeMethod(final Method method) {

@@ -10,10 +10,10 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
+import static net.bytebuddy.implementation.bytecode.member.MethodVariableAccess.loadThis;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.computeFrames;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.getField;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.invokeMethod;
-import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.loadThis;
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.collect.ImmutableMap;
