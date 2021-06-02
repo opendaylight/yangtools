@@ -218,6 +218,9 @@ final class SharedEffectiveModelContextFactory implements EffectiveModelContextF
             public void onFailure(final Throwable cause) {
                 LOG.debug("Failed assembly of {} in {}", sources, sw, cause);
                 entry.getFuture().setException(cause);
+
+                // remove failed result from the cache so it can be recomputed
+                cache.remove(sources, entry);
             }
         }, MoreExecutors.directExecutor());
     }

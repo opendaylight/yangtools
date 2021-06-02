@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -18,11 +21,13 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
@@ -84,5 +89,52 @@ public class SharedEffectiveModelContextFactoryTest {
         final ListenableFuture<EffectiveModelContext> schemaContext =
                 sharedSchemaContextFactory.createEffectiveModelContext(sIdWithoutRevision, provider.getId());
         assertNotNull(schemaContext.get());
+    }
+
+    @Test
+    public void testTransientFailureWhilreRetrievingSchemaSource() throws Exception {
+        final YangTextSchemaSource source = YangTextSchemaSource.forResource("/ietf/network-topology@2013-10-21.yang");
+        final RevisionSourceIdentifier s3 =
+                RevisionSourceIdentifier.create("network-topology", Revision.of("2013-10-21"));
+
+        repository.registerSchemaSource(new TransientFailureProvider(source),
+                PotentialSchemaSource.create(s1, YangTextSchemaSource.class, 1));
+
+        final SharedEffectiveModelContextFactory sharedSchemaContextFactory =
+                new SharedEffectiveModelContextFactory(repository, config);
+
+        ListenableFuture<EffectiveModelContext> schemaContext =
+                sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
+
+        final ExecutionException exception = assertThrows(ExecutionException.class, schemaContext::get);
+        assertTrue(exception.getCause() instanceof MissingSchemaSourceException);
+
+        // check if future is invalidated and resolution of source is retried after failure
+        schemaContext = sharedSchemaContextFactory.createEffectiveModelContext(s1, s3);
+        assertNotNull(schemaContext.get());
+    }
+
+    /**
+     * Schema source provider that fails on first attempt of getSource() and succeeds on every subsequent call
+     * to simulate transient failures of source retrieval.
+     */
+    private static final class TransientFailureProvider implements SchemaSourceProvider<YangTextSchemaSource> {
+
+        private final YangTextSchemaSource schemaSource;
+        private boolean shouldFail = true;
+
+        private TransientFailureProvider(final YangTextSchemaSource schemaSource) {
+            this.schemaSource = schemaSource;
+        }
+
+        @Override
+        public ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
+            if (shouldFail) {
+                shouldFail = false;
+                return immediateFailedFluentFuture(new Exception("Transient test failure."));
+            }
+
+            return immediateFluentFuture(schemaSource);
+        }
     }
 }
