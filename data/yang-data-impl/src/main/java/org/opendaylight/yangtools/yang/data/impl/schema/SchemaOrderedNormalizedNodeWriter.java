@@ -65,7 +65,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         super(writer);
         this.schemaContext = requireNonNull(schemaContext);
 
-        final SchemaInferenceStack stack = SchemaInferenceStack.ofInstantiatedPath(schemaContext, path);
+        final SchemaInferenceStack stack = SchemaInferenceStack.ofSchemaPath(schemaContext, path);
         if (!stack.isEmpty()) {
             final EffectiveStatement<?, ?> current = stack.currentStatement();
             // FIXME: this should be one of NormalizedNodeContainer/NotificationDefinition/OperationDefinition

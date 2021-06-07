@@ -245,7 +245,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     /**
      * Create a new stack backed by an effective model, pointing to specified schema node identified by an absolute
-     * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()}.
+     * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()} interpreted as a schema node identifier.
      *
      * @param effectiveModel EffectiveModelContext to which this stack is attached
      * @return A new stack
@@ -259,6 +259,39 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
         final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
         path.getPathFromRoot().forEach(ret::enterSchemaTree);
+        return ret;
+    }
+
+    /**
+     * Create a new stack backed by an effective model, pointing to specified schema node identified by an absolute
+     * {@link SchemaPath} and its {@link SchemaPath#getPathFromRoot()}, interpreted as a series of steps along primarily
+     * schema tree, with grouping namespace being the alternative lookup.
+     *
+     * @param effectiveModel EffectiveModelContext to which this stack is attached
+     * @return A new stack
+     * @throws NullPointerException {@code effectiveModel} is null
+     * @throws IllegalArgumentException if {@code path} cannot be resolved in the effective model or if it is not an
+     *                                  absolute path.
+     */
+    @Deprecated
+    public static @NonNull SchemaInferenceStack ofSchemaPath(final EffectiveModelContext effectiveModel,
+            final SchemaPath path) {
+        checkArgument(path.isAbsolute(), "Cannot operate on relative path %s", path);
+        final SchemaInferenceStack ret = new SchemaInferenceStack(effectiveModel);
+
+        for (QName step : path.getPathFromRoot()) {
+            try {
+                ret.enterSchemaTree(step);
+            } catch (IllegalArgumentException schemaEx) {
+                try {
+                    ret.enterGrouping(step);
+                } catch (IllegalArgumentException ex) {
+                    ex.addSuppressed(schemaEx);
+                    throw ex;
+                }
+            }
+        }
+
         return ret;
     }
 

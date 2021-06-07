@@ -148,7 +148,7 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
     @Deprecated
     public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
             final SchemaPath path) {
-        return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.ofInstantiatedPath(context, path));
+        return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.ofSchemaPath(context, path));
     }
 
     /**
