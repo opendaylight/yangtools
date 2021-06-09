@@ -1,0 +1,19 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  description
+    "When we have overlapping types for a union we need to be mindful of squashed patterns. In this case the TypeObject
+     generated for union needs to contain constants for each pattern.";
+
+  typedef foo {
+    type union {
+      type string {
+        pattern a.+;
+      }
+      type string {
+        pattern b.+;
+      }
+    }
+  }
+}

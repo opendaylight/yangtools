@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.model.util.TypeConstants;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -731,6 +732,22 @@ public class CompilationTest extends BaseCompilationTest {
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal664");
         generateTestSources("/compilation/mdsal664", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    @Test
+    public void testUnionStringPatterns() throws Exception {
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-string-pattern");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-string-pattern");
+        generateTestSources("/compilation/union-string-pattern", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class<?> fooClass = Class.forName(CompilationTestUtils.BASE_PKG + ".foo.norev.Foo", true, loader);
+
+        final Field patterns = fooClass.getDeclaredField(TypeConstants.PATTERN_CONSTANT_NAME);
+        assertEquals(List.class, patterns.getType());
+
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
