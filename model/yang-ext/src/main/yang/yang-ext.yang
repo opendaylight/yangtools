@@ -42,6 +42,39 @@ module yang-ext {
         argument "identifier";
     }
 
+    // Mount point marker
+
+    extension mount {
+        description
+           "YANG language extension which marks a place where a semantic mount
+            point can be present. This extension can only be used in a container or
+            a list statement, for example:
+
+              module foo {
+                container foo {
+                  leaf bar {
+                    type string;
+                  }
+
+                  ext:mount;
+                }
+              }
+
+            In this example, container foo can contain a local leaf bar and some
+            mounted data. From addressing perspective, the extension use acts as
+            a container with yang-ext's namespace, i.e. it looks as though as this
+            (yang-ext) module contained the following construct:
+
+              import foo { prefix foo; }
+
+              augment /foo:foo {
+                container mount;
+              }
+
+            From data lifecycle perspective, this container should never be
+            automatically included in the datastore content for 'container foo', unless
+            specifically explicitly requested.";
+    }
 
     // Context-aware RPCs
 
