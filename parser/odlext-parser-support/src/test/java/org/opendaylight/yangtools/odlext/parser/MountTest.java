@@ -52,8 +52,13 @@ public class MountTest {
             .getModuleStatements()
             .get(FOO);
 
-        final Optional<MountEffectiveStatement> mount = foo.findDataTreeNode(QName.create(FOO, "foo")).orElseThrow()
+        final Optional<MountEffectiveStatement> fooMount = foo.findDataTreeNode(QName.create(FOO, "foo")).orElseThrow()
             .findFirstEffectiveSubstatement(MountEffectiveStatement.class);
-        assertTrue(mount.isPresent());
+        assertTrue(fooMount.isPresent());
+
+        final Optional<MountEffectiveStatement> barMount = foo.findDataTreeNode(QName.create(FOO, "bar")).orElseThrow()
+            .findFirstEffectiveSubstatement(MountEffectiveStatement.class);
+        assertTrue(barMount.isPresent());
+
     }
 }
