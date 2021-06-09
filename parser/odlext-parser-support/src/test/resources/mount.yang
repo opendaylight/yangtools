@@ -1,0 +1,12 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  import yang-ext {
+    prefix ext;
+  }
+
+  container foo {
+    ext:mount;
+  }
+}

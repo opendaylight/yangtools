@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -19,11 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
-@NonNullByDefault
 public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     // Binding codegen support
     AUGMENT_IDENTIFIER(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier"),
         "identifier", AugmentIdentifierStatement.class, AugmentIdentifierEffectiveStatement.class),
+
+    // Mount extension
+    MOUNT(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "mount"), null,
+        MountStatement.class, MountEffectiveStatement.class),
 
     // Context-aware RPCs
     CONTEXT_INSTANCE(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "context-instance"),
@@ -35,16 +38,17 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     RPC_CONTEXT_REFERENCE(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "rpc-context-reference"),
         "context-type", RpcContextReferenceStatement.class, RpcContextReferenceEffectiveStatement.class);
 
-    private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
-    private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
-    private final QName statementName;
+    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
+    private final @NonNull Class<? extends DeclaredStatement<?>> declaredRepresentation;
+    private final @NonNull QName statementName;
     private final ArgumentDefinition argumentDef;
 
     OpenDaylightExtensionsStatements(final QName statementName, final String argumentName,
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
-        this.argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
+        this.argumentDef = argumentName == null ? null
+            : ArgumentDefinition.of(QName.create(statementName, argumentName).intern(), false);
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
     }
@@ -56,7 +60,7 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
 
     @Override
     public Optional<ArgumentDefinition> getArgumentDefinition() {
-        return Optional.of(argumentDef);
+        return Optional.ofNullable(argumentDef);
     }
 
     @Override
