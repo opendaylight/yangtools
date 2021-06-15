@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -482,6 +483,19 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull TypedefEffectiveStatement enterTypedef(final QName nodeIdentifier) {
         return pushTypedef(requireNonNull(nodeIdentifier));
+    }
+
+    /**
+     * Lookup a {@code typedef} by its node identifier and push it to the stack.
+     *
+     * @param nodeIdentifier Node identifier of the typedef to enter
+     * @return Resolved choice
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding yang-data cannot be found
+     * @throws IllegalStateException if this stack is not empty
+     */
+    public @NonNull YangDataEffectiveStatement enterYangData(final QName nodeIdentifier) {
+        checkState(isEmpty(), "Cannot enter yang-data with non-empty stack");
     }
 
     /**
