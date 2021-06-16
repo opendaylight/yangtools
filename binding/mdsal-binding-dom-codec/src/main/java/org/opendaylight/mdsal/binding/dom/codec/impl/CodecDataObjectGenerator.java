@@ -153,8 +153,8 @@ import org.slf4j.LoggerFactory;
  */
 abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
     // Not reusable definition: we can inline NodeContextSuppliers without a problem
-    // FIXME: 6.0.0: wire this implementation, which requires that BindingRuntimeTypes provides information about types
-    //               being generated from within a grouping
+    // FIXME: MDSAL-443: wire this implementation, which requires that BindingRuntimeTypes provides information about
+    //                   types being generated from within a grouping
     private static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements NodeContextSupplierProvider<T> {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
