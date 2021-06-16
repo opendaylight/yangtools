@@ -371,17 +371,11 @@ public final class QName extends AbstractQName implements Comparable<QName> {
         return getLocalName().equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
     }
 
-    // FIXME: this comparison function looks odd. We are sorting first by local name and then by module? What is
-    //        the impact on iteration order of SortedMap<QName, ?>?
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int compareTo(final QName o) {
-        // compare mandatory localName parameter
-        int result = getLocalName().compareTo(o.getLocalName());
-        if (result != 0) {
-            return result;
-        }
-        return module.compareTo(o.module);
+        final int result = module.compareTo(o.module);
+        return result != 0 ? result : getLocalName().compareTo(o.getLocalName());
     }
 
     @Override
