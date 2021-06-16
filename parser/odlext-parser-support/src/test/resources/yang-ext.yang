@@ -13,7 +13,7 @@ module yang-ext {
             and is available at http://www.eclipse.org/legal/epl-v10.html";
 
     revision "2013-07-09" {
-        description "";
+        description "Initial revision.";
     }
 
     // Augmentation name
@@ -24,8 +24,8 @@ module yang-ext {
             augmentation. Augment identifier is used to identify
             specific augment statement by name.
 
-            The identifier syntax is defined formally defined by the rule
-            'identifier' in Section 12 of RFC 6020.
+            The identifier syntax is formally defined by the 'identifier' rule
+            in Section 12 of RFC 6020.
 
             All augment identifiers defined in a namespace MUST be unique.
             The namespace of augment identifiers is shared by module and
@@ -40,6 +40,18 @@ module yang-ext {
                 and when condition.
             */
         argument "identifier";
+    }
+
+    extension augment-equivalent {
+        description
+           "YANG language extension which instructs the code generator to treat
+            this augmentation as equivalent of the specified augmentation.
+
+            The argument identifies a sibling or top-level augmentation tagged with
+            the augment-identifier extension. The argument syntax is formally
+            defined by the 'node-identifier' rule in Section 12 or RFC 6020.";
+
+        argument node-identifier;
     }
 
     // Mount point marker

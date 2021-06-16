@@ -23,6 +23,8 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     // Binding codegen support
     AUGMENT_IDENTIFIER(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-identifier"),
         "identifier", AugmentIdentifierStatement.class, AugmentIdentifierEffectiveStatement.class),
+    AUGMENT_EQUIVALENT(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "augment-equivalent"),
+        "node-identifier", AugmentEquivalentStatement.class, AugmentEquivalentEffectiveStatement.class),
 
     // Mount extension
     MOUNT(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "mount"), null,
