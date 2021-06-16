@@ -1,0 +1,22 @@
+module mdsal668 {
+  namespace mdsal668;
+  prefix mdsal668;
+
+  grouping bar {
+    container bar {
+      leaf-list bar {
+        type leafref {
+          path ../../foo;
+        }
+      }
+    }
+  }
+
+  container foo {
+    leaf foo {
+      type instance-identifier;
+    }
+
+    uses bar;
+  }
+}

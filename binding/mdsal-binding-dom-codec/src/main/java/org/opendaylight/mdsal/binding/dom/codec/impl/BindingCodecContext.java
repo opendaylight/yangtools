@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -367,6 +368,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 if (schema instanceof LeafSchemaNode) {
                     final LeafSchemaNode leafSchema = (LeafSchemaNode) schema;
 
+                    // FIXME: MDSAL-670: this is not right as we need to find a concrete type, but this may return
+                    //                   Object.class
                     final Class<?> valueType = method.getReturnType();
                     final IllegalArgumentCodec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
                     valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
@@ -382,6 +385,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                         valueType = (Class<?>) genericType;
                     } else if (genericType instanceof ParameterizedType) {
                         valueType = (Class<?>) ((ParameterizedType) genericType).getRawType();
+                    } else if (genericType instanceof WildcardType) {
+                        // FIXME: MDSAL-670: this is not right as we need to find a concrete type
+                        valueType = Object.class;
                     } else {
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
@@ -420,6 +426,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         } else if (BindingReflections.isBindingClass(valueType)) {
             return getCodecForBindingClass(valueType, instantiatedType);
         }
+        // FIXME: MDSAL-670: this is right for most situations, but we must never return NOOP_CODEC for
+        //                   valueType=Object.class
         return ValueTypeCodec.NOOP_CODEC;
     }
 
