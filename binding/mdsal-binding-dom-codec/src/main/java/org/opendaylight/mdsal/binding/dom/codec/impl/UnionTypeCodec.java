@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
+import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.runtime.api.RuntimeGeneratedUnion;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
@@ -31,31 +33,39 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
     }
 
     static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
-            final BindingCodecContext bindingCodecContext) {
+            final BindingCodecContext codecContext) {
         return () -> {
-            final GeneratedType contextType = bindingCodecContext.getRuntimeContext().getTypeWithSchema(unionCls)
-                .getKey();
-            verify(contextType instanceof RuntimeGeneratedUnion, "Unexpected runtime type %s", contextType);
-            final RuntimeGeneratedUnion contextUnion = (RuntimeGeneratedUnion) contextType;
-
+            final List<String> unionProperties = extractUnionProperties(codecContext.getRuntimeContext()
+                .getTypeWithSchema(unionCls).getKey());
             final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
-            final List<String> unionProperties = contextUnion.typePropertyNames();
             verify(unionTypes.size() == unionProperties.size(), "Mismatched union types %s and properties %s",
                 unionTypes, unionProperties);
 
             final List<UnionValueOptionContext> values = new ArrayList<>(unionTypes.size());
             final Iterator<String> it = unionProperties.iterator();
-            for (final TypeDefinition<?> subtype : unionType.getTypes()) {
+            for (final TypeDefinition<?> subtype : unionTypes) {
                 final String getterName = BindingMapping.GETTER_PREFIX + BindingMapping.toFirstUpper(it.next());
                 final Method valueGetter = unionCls.getMethod(getterName);
                 final Class<?> valueType = valueGetter.getReturnType();
-                final IllegalArgumentCodec<Object, Object> codec = bindingCodecContext.getCodec(valueType, subtype);
+                final IllegalArgumentCodec<Object, Object> codec = codecContext.getCodec(valueType, subtype);
 
                 values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, codec));
             }
 
             return new UnionTypeCodec(unionCls, values);
         };
+    }
+
+    private static List<String> extractUnionProperties(final GeneratedType type) {
+        verify(type instanceof GeneratedTransferObject, "Unexpected runtime type %s", type);
+
+        GeneratedTransferObject gto = (GeneratedTransferObject) type;
+        while (true) {
+            if (gto instanceof RuntimeGeneratedUnion) {
+                return ((RuntimeGeneratedUnion) gto).typePropertyNames();
+            }
+            gto = verifyNotNull(gto.getSuperType(), "Cannot find union type information for %s", type);
+        }
     }
 
     @Override
