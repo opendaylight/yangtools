@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -33,6 +34,9 @@ public class YT1276Test {
     private static final QName BAZ = QName.create(FOO, "baz");
     private static final QName XYZZY_LEAF = QName.create(FOO, "xyzzy-leaf");
     private static final QName XYZZY_AUGMENT = QName.create(FOO, "xyzzy-augment");
+    private static final QName XYZZY_AUGMENT_CONT = QName.create(FOO, "xyzzy-augment-container");
+    private static final QName XYZZY_AUGMENT_CONT_INNER = QName.create(FOO, "xyzzy-augment-container-inner");
+    private static final QName XYZZY_AUGMENT_CONT_LEAF = QName.create(FOO, "xyzzy-augment-container-leaf");
 
     private static EffectiveModelContext MODEL;
 
@@ -81,7 +85,7 @@ public class YT1276Test {
     }
 
     @Test
-    public void testBarWithXyzzy() throws DataValidationFailedException {
+    public void testBarWithXyzzyWithSubtree() throws DataValidationFailedException {
         applyOperation(mod -> {
             mod.write(YangInstanceIdentifier.of(BAR), Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(BAR))
@@ -89,8 +93,15 @@ public class YT1276Test {
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
                     .withChild(Builders.augmentationBuilder()
-                        .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT)))
+                        .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT, XYZZY_AUGMENT_CONT)))
                         .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                        .withChild(ImmutableContainerNodeBuilder.create()
+                            .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT))
+                            .withChild(ImmutableContainerNodeBuilder.create()
+                                .withNodeIdentifier(new NodeIdentifier(XYZZY_AUGMENT_CONT_INNER))
+                                .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
+                                .build())
+                            .build())
                         .build())
                     .build())
                 .build());
@@ -107,6 +118,13 @@ public class YT1276Test {
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(ImmutableNodes.leafNode(XYZZY_LEAF, "xyzzy"))
                     .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                    .withChild(ImmutableContainerNodeBuilder.create()
+                        .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
+                        .withChild(ImmutableContainerNodeBuilder.create()
+                            .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
+                            .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
+                            .build())
+                        .build())
                     .build())
                 .build());
         });
@@ -120,8 +138,15 @@ public class YT1276Test {
                 .withChild(Builders.choiceBuilder()
                     .withNodeIdentifier(new NodeIdentifier(BAZ))
                     .withChild(Builders.augmentationBuilder()
-                        .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT)))
+                        .withNodeIdentifier(new AugmentationIdentifier(Set.of(XYZZY_AUGMENT, XYZZY_AUGMENT_CONT)))
                         .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT, "xyzzy"))
+                        .withChild(ImmutableContainerNodeBuilder.create()
+                            .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT))
+                            .withChild(ImmutableContainerNodeBuilder.create()
+                                .withNodeIdentifier(NodeIdentifier.create(XYZZY_AUGMENT_CONT_INNER))
+                                .withChild(ImmutableNodes.leafNode(XYZZY_AUGMENT_CONT_LEAF, "aug-cont-leaf"))
+                                .build())
+                            .build())
                         .build())
                     .build())
                 .build());
@@ -142,9 +167,8 @@ public class YT1276Test {
                     .build())
                 .build());
         });
-        assertEquals("Node (foo)baz is missing mandatory descendant "
-            + "/AugmentationIdentifier{childNames=[(foo)xyzzy-augment]}/(foo)xyzzy-augment",
-            ex.getMessage());
+        assertEquals("Node (foo)baz is missing mandatory descendant /AugmentationIdentifier{childNames="
+                + "[(foo)xyzzy-augment, (foo)xyzzy-augment-container]}/(foo)xyzzy-augment", ex.getMessage());
 
     }
 

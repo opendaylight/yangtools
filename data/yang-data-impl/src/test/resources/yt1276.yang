@@ -31,6 +31,15 @@ module foo {
       type string;
       mandatory true;
     }
+
+    container xyzzy-augment-container {
+       container xyzzy-augment-container-inner {
+        leaf xyzzy-augment-container-leaf {
+           type string;
+           mandatory true;
+        }
+       }
+    }
   }
 }
 
