@@ -31,6 +31,45 @@ module foo {
       type string;
       mandatory true;
     }
+
+    container xyzzy-augment-container {
+      container xyzzy-augment-container-inner {
+        leaf xyzzy-augment-container-leaf {
+          type string;
+          mandatory true;
+        }
+      }
+    }
+  }
+
+  augment /bar/baz {
+    case augmented-case {
+      leaf augmented-case-mandatory {
+        type string;
+        mandatory true;
+      }
+
+      leaf augmented-case-non-mandatory {
+        type string;
+      }
+    }
+  }
+
+  augment /bar/baz {
+    case case-nested-choice {
+      choice nested-baz {
+        case nested-xyz-case {
+          leaf nested-xyz-mandatory {
+            type string;
+            mandatory true;
+          }
+
+          leaf nested-xyz-non-mandatory {
+            type string;
+          }
+        }
+      }
+    }
   }
 }
 
