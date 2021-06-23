@@ -55,8 +55,8 @@ final class JavaFileGenerator implements FileGenerator {
     private final BindingGenerator bindingGenerator;
     private final boolean ignoreDuplicateFiles;
 
-    JavaFileGenerator(final Map<String, String> additionalConfig) {
-        final String ignoreDuplicateFilesString = additionalConfig.get(CONFIG_IGNORE_DUPLICATE_FILES);
+    JavaFileGenerator(final Map<String, String> configuration) {
+        final String ignoreDuplicateFilesString = configuration.get(CONFIG_IGNORE_DUPLICATE_FILES);
         if (ignoreDuplicateFilesString != null) {
             ignoreDuplicateFiles = Boolean.parseBoolean(ignoreDuplicateFilesString);
         } else {

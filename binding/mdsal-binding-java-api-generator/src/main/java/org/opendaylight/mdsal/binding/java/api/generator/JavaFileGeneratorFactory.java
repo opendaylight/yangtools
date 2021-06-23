@@ -19,7 +19,7 @@ public final class JavaFileGeneratorFactory extends AbstractFileGeneratorFactory
     }
 
     @Override
-    public JavaFileGenerator newFileGenerator(final Map<String, String> additionalConfiguration) {
-        return new JavaFileGenerator(additionalConfiguration);
+    public JavaFileGenerator newFileGenerator(final Map<String, String> configuration) {
+        return new JavaFileGenerator(configuration);
     }
 }
