@@ -99,7 +99,9 @@ public class BuilderGeneratorTest {
                 + "static int bindingHashCode(final test.@NonNull test obj) {\n"
                 + "    final int prime = 31;\n"
                 + "    int result = 1;\n"
-                + "    result = prime * result + obj.augmentations().hashCode();\n"
+                + "    for (var augmentation : obj.augmentations().values()) {\n"
+                + "        result += augmentation.hashCode();\n"
+                + "    }\n"
                 + "    return result;\n"
                 + "}\n", genHashCode(mockAugment(mockGenType(TEST))).toString());
     }
@@ -120,7 +122,9 @@ public class BuilderGeneratorTest {
                 + "    final int prime = 31;\n"
                 + "    int result = 1;\n"
                 + "    result = prime * result + Objects.hashCode(obj.getTest());\n"
-                + "    result = prime * result + obj.augmentations().hashCode();\n"
+                + "    for (var augmentation : obj.augmentations().values()) {\n"
+                + "        result += augmentation.hashCode();\n"
+                + "    }\n"
                 + "    return result;\n"
                 + "}\n", genHashCode(mockAugment(mockGenType("get" + TEST))).toString());
     }
@@ -142,7 +146,9 @@ public class BuilderGeneratorTest {
                 + "    int result = 1;\n"
                 + "    result = prime * result + Objects.hashCode(obj.getTest1());\n"
                 + "    result = prime * result + Objects.hashCode(obj.getTest2());\n"
-                + "    result = prime * result + obj.augmentations().hashCode();\n"
+                + "    for (var augmentation : obj.augmentations().values()) {\n"
+                + "        result += augmentation.hashCode();\n"
+                + "    }\n"
                 + "    return result;\n"
                 + "}\n", genHashCode(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
     }

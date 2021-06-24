@@ -293,7 +293,9 @@ class InterfaceTemplate extends BaseTemplate {
                     result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
                 «ENDFOR»
                 «IF augmentable»
-                    result = prime * result + obj.augmentations().hashCode();
+                    for (var augmentation : obj.augmentations().values()) {
+                        result += augmentation.hashCode();
+                    }
                 «ENDIF»
                 return result;
             }
