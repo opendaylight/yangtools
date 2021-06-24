@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -20,6 +19,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -247,35 +247,40 @@ public final class BindingReflections {
         return match.group(0);
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
     public static QNameModule getQNameModule(final Class<?> clz) {
         if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)
                 || Action.class.isAssignableFrom(clz)) {
             return findQName(clz).getModule();
         }
-        try {
-            return getModuleInfo(clz).getName().getModule();
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to get QName of defining model.", e);
-        }
+
+        return getModuleInfo(clz).getName().getModule();
     }
 
     /**
      * Returns instance of {@link YangModuleInfo} of declaring model for specific class.
      *
      * @param cls data object class
-     * @return Instance of {@link YangModuleInfo} associated with model, from
-     *         which this class was derived.
+     * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
      */
-    // FIXME: 8.0.0: do not throw Exception here
-    public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
-        checkArgument(cls != null);
-        String packageName = getModelRootPackageName(cls.getPackage());
+    public static @NonNull YangModuleInfo getModuleInfo(final Class<?> cls) {
+        final String packageName = getModelRootPackageName(cls.getPackage());
         final String potentialClassName = getModuleInfoClassName(packageName);
-        return ClassLoaderUtils.callWithClassLoader(cls.getClassLoader(), () -> {
-            Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
-            return (YangModuleInfo) verifyNotNull(moduleInfoClass.getMethod("getInstance").invoke(null));
-        });
+        final Class<?> moduleInfoClass;
+        try {
+            moduleInfoClass = cls.getClassLoader().loadClass(potentialClassName);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Failed to load " + potentialClassName, e);
+        }
+
+        final Object infoInstance;
+        try {
+            infoInstance = moduleInfoClass.getMethod("getInstance").invoke(null);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new IllegalStateException("Failed to get instance of " + moduleInfoClass, e);
+        }
+
+        checkState(infoInstance instanceof YangModuleInfo, "Unexpected instance %s", infoInstance);
+        return (YangModuleInfo) infoInstance;
     }
 
     public static @NonNull String getModuleInfoClassName(final String packageName) {
@@ -482,10 +487,9 @@ public final class BindingReflections {
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
             final int parameterOffset) {
         try {
-            return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
-                return genericParameter(method.getGenericReturnType(), parameterOffset).flatMap(
-                    result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty());
-            });
+            return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(),
+                () -> genericParameter(method.getGenericReturnType(), parameterOffset)
+                    .flatMap(result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty()));
         } catch (Exception e) {
             /*
              * It is safe to log this this exception on debug, since this
@@ -572,18 +576,11 @@ public final class BindingReflections {
          * @throws IllegalArgumentException If supplied class was not derived from YANG model.
          */
         // FIXME: Extend this algorithm to also provide QName for YANG modeled simple types.
-        @SuppressWarnings({ "rawtypes", "unchecked", "checkstyle:illegalCatch" })
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         private static QName computeQName(final Class key) {
             checkArgument(isBindingClass(key), "Supplied class %s is not derived from YANG.", key);
 
-            YangModuleInfo moduleInfo;
-            try {
-                moduleInfo = getModuleInfo(key);
-            } catch (Exception e) {
-                throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.",
-                    e);
-            }
-            final QName module = moduleInfo.getName();
+            final QName module = getModuleInfo(key).getName();
             if (Augmentation.class.isAssignableFrom(key)) {
                 return module;
             } else if (isRpcType(key)) {
