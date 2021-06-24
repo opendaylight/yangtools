@@ -20,10 +20,6 @@
     <artifactId>binding-parent</artifactId>
     <packaging>pom</packaging>
 
-    <properties>
-        <salGeneratorPath>${project.build.directory}/generated-sources/mdsal-binding</salGeneratorPath>
-    </properties>
-
     <build>
         <!-- https://bugs.opendaylight.org/show_bug.cgi?id=6252 -->
         <resources>
@@ -79,58 +75,6 @@
                                     </goals>
                                     <configuration>
                                         <inspectDependencies>true</inspectDependencies>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <plugin>
-                            <artifactId>maven-clean-plugin</artifactId>
-                            <configuration>
-                                <filesets>
-                                    <fileset>
-                                        <directory>${salGeneratorPath}</directory>
-                                        <includes>
-                                            <include>**</include>
-                                        </includes>
-                                    </fileset>
-                                </filesets>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>build-helper-maven-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>add-yang-sources</id>
-                                    <phase>generate-sources</phase>
-                                    <goals>
-                                        <goal>add-source</goal>
-                                    </goals>
-                                    <configuration>
-                                        <sources>
-                                            <source>${salGeneratorPath}</source>
-                                        </sources>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-
-                        <!-- This has to match the definition in odlparent and exists only
-                             because for some reason PMD does not understand wildcards. -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-pmd-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>cpd</id>
-                                    <phase>process-sources</phase>
-                                    <goals>
-                                        <goal>cpd-check</goal>
-                                    </goals>
-                                    <configuration>
-                                        <excludeRoots>
-                                            <excludeRoot>${salGeneratorPath}</excludeRoot>
-                                        </excludeRoots>
                                     </configuration>
                                 </execution>
                             </executions>
