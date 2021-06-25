@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import org.opendaylight.yangtools.yang.common.YangError.UniqueViolation;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintException;
 
 /**
  * Exception thrown when unique constraints would be violated and we cannot throw a {@link UniqueConstraintException}.
  */
-final class UniqueValidationFailedException extends SchemaValidationFailedException {
+final class UniqueValidationFailedException extends SchemaValidationFailedException implements UniqueViolation {
     private static final long serialVersionUID = 1L;
 
     UniqueValidationFailedException(final String message) {
