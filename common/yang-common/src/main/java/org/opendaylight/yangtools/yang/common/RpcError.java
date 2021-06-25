@@ -7,37 +7,67 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.Maps;
+import java.util.Arrays;
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
- * Representation of an error.
- *
+ * Representation of an operation error in YANG world. Due to the unfortunate structuring of RFC6020, where
+ * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-8.3">Section 8.3</a>, explicitly references
+ * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-4.3">RFC4741 NETCONF</a> via {@link #getTag()}
+ * allocation and corresponding {@link #getInfo()} structural reference.
  */
 public interface RpcError {
-
     enum ErrorSeverity {
         ERROR,
         WARNING
     }
 
+    /**
+     * Enumeration of {@code error-type} values. These provide glue between {@link NetconfLayer} and various sources of
+     * such errors.
+     */
     enum ErrorType {
         /**
-         * Indicates an error occurred during transport of data, eg over the network.
+         * A {@link NetconfLayer#TRANSPORT} layer error. This typically happens on transport endpoints, where a protocol
+         * plugin needs to report a NETCONF-equivalent condition.
          */
-        TRANSPORT,
-
+        TRANSPORT("transport"),
         /**
-         * Indicates an error occurred during a remote procedure call.
+         * A {@link NetconfLayer#RPC} layer error. This typically happens on request routers, where a request may end up
+         * being resolved due to implementation-internal causes, such as timeouts and state loss.
          */
-        RPC,
-
+        RPC("rpc"),
         /**
-         * Indicates an error at a protocol layer, eg if invalid data was passed by the caller.
+         * A {@link NetconfLayer#OPERATIONS} layer error. These typically happen in a NETCONF protocol implementation.
          */
-        PROTOCOL,
-
+        PROTOCOL("protocol"),
         /**
-         * Indicates an error occurred during internal processing.
+         * A {@link NetconfLayer#CONTENT} layer error. These typically happen due to YANG data handling, such as
+         * type checking and structural consistency.
          */
-        APPLICATION
+        APPLICATION("application");
+
+        private static final Map<String, ErrorType> BY_NETCONF_STRING =
+            Maps.uniqueIndex(Arrays.asList(values()), ErrorType::netconfString);
+
+        private final @NonNull String netconfString;
+
+        ErrorType(final @NonNull String netconfString) {
+            this.netconfString = requireNonNull(netconfString);
+        }
+
+        public @NonNull String netconfString() {
+            return netconfString;
+        }
+
+        public static @Nullable ErrorType forNetconfString(final String netconfString) {
+            return BY_NETCONF_STRING.get(requireNonNull(netconfString));
+        }
     }
 
     /**
@@ -51,7 +81,9 @@ public interface RpcError {
      * Returns a short string that identifies the general type of error condition.
      *
      * <p>
-     * The following outlines suggested values as defined by netconf (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC 6241</a>):
+     * The following outlines suggested values as defined by
+     * (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC6241</a>):
+     *
      * <pre>
      *    access-denied
      *    bad-attribute
@@ -75,6 +107,7 @@ public interface RpcError {
      * </pre>
      * @return a string if available or null otherwise.
      */
+    // FIXME: this really should be a QName, as defined by RFC6241's mapping to XML.
     String getTag();
 
     /**
