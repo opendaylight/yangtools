@@ -42,7 +42,7 @@ final class CompiledPatternContext {
 
     void validate(final String str) {
         if (pattern.matcher(str).matches() == invert) {
-            throw new YangInvalidValueException(ErrorType.PROTOCOL, constraint,
+            throw new YangInvalidValueException(ErrorType.APPLICATION, constraint,
                 "Value '" + str + "' " + (invert ? "matches" : "does not match") + " regular expression '"
                         + constraint.getRegularExpressionString() + "'");
         }
