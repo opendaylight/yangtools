@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +17,14 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.data.api.YangErrorInfo;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.codec.YangMissingKeyException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
+import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -30,6 +37,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPointDataWithSchema<ListSchemaNode> {
     private static final class Keyed extends ListEntryNodeDataWithSchema {
+        private static final NodeIdentifier BAD_ELEMENT_NODEID = NodeIdentifier.create(YangConstants.BAD_ELEMENT_QNAME);
+
         private final Map<QName, SimpleNodeDataWithSchema<?>> keyValues = new HashMap<>();
         // This template results in Maps in schema definition order
         private final ImmutableMapTemplate<QName> predicateTemplate;
@@ -58,7 +67,12 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
         public void write(final NormalizedNodeStreamWriter writer, final MetadataExtension metaWriter)
                 throws IOException {
             final var schema = getSchema();
-            writer.nextDataSchemaNode(schema);
+            final var expectedKeys = predicateTemplate.keySet();
+            if (expectedKeys.size() != keyValues.size()) {
+                throw new YangMissingKeyException(Sets.difference(expectedKeys, keyValues.keySet()).stream()
+                    .map(qname -> YangErrorInfo.of(ImmutableNodes.leafNode(BAD_ELEMENT_NODEID, qname)))
+                    .collect(ImmutableSet.toImmutableSet()));
+            }
 
             final var nodeType = schema.getQName();
             final Map<QName, Object> predicates;
@@ -75,6 +89,7 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
                 throw new IOException("List entry " + nodeType + " is missing leaf values for " + missing, e);
             }
 
+            writer.nextDataSchemaNode(schema);
             writer.startMapEntryNode(NodeIdentifierWithPredicates.of(nodeType, predicates), childSizeHint());
             writeMetadata(metaWriter);
             super.write(writer, metaWriter);
