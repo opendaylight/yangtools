@@ -35,7 +35,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.mdsal.binding.model.api.AnnotationType;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
-import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -137,7 +136,7 @@ class JavaFileTemplate {
             throw new ExceptionInInitializerError(e);
         }
 
-        AUGMENTATION_RET_TYPE = DefaultType.of(JavaTypeName.create(m.getReturnType()));
+        AUGMENTATION_RET_TYPE = Type.of(JavaTypeName.create(m.getReturnType()));
     }
 
     private final AbstractJavaGeneratedType javaType;
@@ -306,7 +305,7 @@ class JavaFileTemplate {
                     augmentType = t;
                 }
             } else if (Augmentable.class.getName().equals(implementedIfc.getFullyQualifiedName())) {
-                augmentType = Types.parameterizedTypeFor(AUGMENTATION_RET_TYPE, DefaultType.of(type.getIdentifier()));
+                augmentType = Types.parameterizedTypeFor(AUGMENTATION_RET_TYPE, Type.of(type.getIdentifier()));
             }
         }
 

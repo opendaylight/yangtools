@@ -27,7 +27,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.IncorrectNestingException;
-import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -402,7 +401,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         final BindingRuntimeContext ctx = factory().getRuntimeContext();
         final Class<?> loaded;
         try {
-            loaded = ctx.loadClass(DefaultType.of(cls));
+            loaded = ctx.loadClass(Type.of(cls));
         } catch (ClassNotFoundException e) {
             LOG.debug("Proposed {} cannot be loaded in {}", cls, ctx, e);
             return false;

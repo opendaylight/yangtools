@@ -27,7 +27,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.model.api.DefaultType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
@@ -80,7 +79,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final <T extends Augmentation<?>> AugmentationSchemaNode getAugmentationDefinition(final Class<T> augClass) {
-        return getTypes().findAugmentation(DefaultType.of(augClass)).orElse(null);
+        return getTypes().findAugmentation(Type.of(augClass)).orElse(null);
     }
 
     @Override
@@ -88,17 +87,17 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         checkArgument(!Augmentation.class.isAssignableFrom(cls), "Supplied class must not be an augmentation (%s is)",
             cls);
         checkArgument(!Action.class.isAssignableFrom(cls), "Supplied class must not be an action (%s is)", cls);
-        return (DataSchemaNode) getTypes().findSchema(DefaultType.of(cls)).orElse(null);
+        return (DataSchemaNode) getTypes().findSchema(Type.of(cls)).orElse(null);
     }
 
     @Override
     public final ActionDefinition getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
-        return (ActionDefinition) getTypes().findSchema(DefaultType.of(cls)).orElse(null);
+        return (ActionDefinition) getTypes().findSchema(Type.of(cls)).orElse(null);
     }
 
     @Override
     public final Absolute getActionIdentifier(final Class<? extends Action<?, ?, ?>> cls) {
-        return getTypes().findSchemaNodeIdentifier(DefaultType.of(cls)).orElse(null);
+        return getTypes().findSchemaNodeIdentifier(Type.of(cls)).orElse(null);
     }
 
     @Override
@@ -158,7 +157,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final Entry<GeneratedType, WithStatus> getTypeWithSchema(final Class<?> type) {
-        return getTypeWithSchema(getTypes(), DefaultType.of(type));
+        return getTypeWithSchema(getTypes(), Type.of(type));
     }
 
     private static @NonNull Entry<GeneratedType, WithStatus> getTypeWithSchema(final BindingRuntimeTypes types,
@@ -207,7 +206,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final Set<Class<?>> getCases(final Class<?> choice) {
-        final Collection<Type> cazes = getTypes().findCases(DefaultType.of(choice));
+        final Collection<Type> cazes = getTypes().findCases(Type.of(choice));
         final Set<Class<?>> ret = new HashSet<>(cazes.size());
         for (final Type caze : cazes) {
             try {
