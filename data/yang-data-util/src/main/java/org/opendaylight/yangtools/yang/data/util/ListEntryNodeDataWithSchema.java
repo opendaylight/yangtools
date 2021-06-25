@@ -9,14 +9,18 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Verify.verify;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.codec.YangMissingKeyException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -57,6 +61,13 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         @Override
         public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
                 throws IOException {
+            final Set<QName> expectedKeys = predicateTemplate.keySet();
+            if (expectedKeys.size() != keyValues.size()) {
+                throw new YangMissingKeyException(Sets.difference(expectedKeys, keyValues.keySet()).stream()
+                    .map(YangErrorInfos::badElement)
+                    .collect(ImmutableSet.toImmutableSet()));
+            }
+
             writer.nextDataSchemaNode(getSchema());
             final NodeIdentifierWithPredicates identifier = NodeIdentifierWithPredicates.of(getSchema().getQName(),
                 predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue()));
