@@ -17,9 +17,12 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
  * An error condition raised as a consequence of a YANG-defined contract. This interface should not be directly
  * implemented, but rather should be attached to a well-defined Exception class.
  *
- * @author Robert Varga
+ * @deprecated This interface is not completely sufficient to describe errors, as it lacks the ability to carry instance
+ *             path as well as more-info elements.
  */
 @Beta
+@Deprecated(forRemoval = true, since = "7.0.4")
+// FIXME: 8.0.0: remove this class
 public interface YangError {
     /**
      * Returns the conceptual layer at which the error occurred.
