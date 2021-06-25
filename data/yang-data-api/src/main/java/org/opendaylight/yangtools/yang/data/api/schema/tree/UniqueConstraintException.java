@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.YangError.UniqueViolation;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  */
 @Beta
 @NonNullByDefault
-public class UniqueConstraintException extends DataValidationFailedException {
+public class UniqueConstraintException extends DataValidationFailedException implements UniqueViolation {
     private static final long serialVersionUID = 1L;
 
     // Note: this cannot be an ImmutableMap because we must support null values

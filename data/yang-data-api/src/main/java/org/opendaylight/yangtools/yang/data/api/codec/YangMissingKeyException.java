@@ -10,12 +10,9 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.common.YangError;
 
 /**
@@ -38,38 +35,16 @@ import org.opendaylight.yangtools.yang.common.YangError;
 public class YangMissingKeyException extends IllegalArgumentException implements YangError {
     private static final long serialVersionUID = 1L;
 
-    private final @NonNull ErrorType errorType;
     private final @NonNull Set<QName> missingKeys;
 
-    public YangMissingKeyException(final ErrorType errorType, final Set<QName> missingKeys) {
+    public YangMissingKeyException(final Set<QName> missingKeys) {
         super(requireNonNull("List entry is missing keys " + missingKeys));
-        this.errorType = requireNonNull(errorType);
         this.missingKeys = Set.copyOf(missingKeys);
     }
 
     @Override
-    public final ErrorType getErrorType() {
-        return errorType;
-    }
-
-    @Override
-    public final ErrorSeverity getSeverity() {
-        return ErrorSeverity.ERROR;
-    }
-
-    @Override
-    public final String getTag() {
+    public final String getErrorTag() {
         return "missing-element";
-    }
-
-    @Override
-    public final Optional<String> getErrorAppTag() {
-        return Optional.empty();
-    }
-
-    @Override
-    public final Optional<String> getErrorMessage() {
-        return Optional.empty();
     }
 
     public final Set<QName> getMissingKeys() {

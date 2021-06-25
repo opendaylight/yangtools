@@ -26,33 +26,96 @@ public interface YangError {
      *
      * @return an {@link ErrorType} enum.
      */
-    @NonNull ErrorType getErrorType();
+    default @NonNull ErrorType getErrorType() {
+        return ErrorType.APPLICATION;
+    }
 
     /**
      * Returns the error severity, as determined by the application reporting the error.
      *
      * @return an {@link ErrorSeverity} enum.
      */
-    @NonNull ErrorSeverity getSeverity();
+    default @NonNull ErrorSeverity getSeverity() {
+        return ErrorSeverity.ERROR;
+    }
 
     /**
      * Returns the error tag, as determined by the application reporting the error.
      *
      * @return an error tag.
      */
-    @NonNull String getTag();
+    @NonNull String getErrorTag();
 
     /**
      * Returns the value of the argument of YANG {@code error-app-tag} statement.
      *
      * @return string with the application error tag, or empty if it was not provided.
      */
-    Optional<String> getErrorAppTag();
+    default Optional<String> getErrorAppTag() {
+        return Optional.empty();
+    }
 
     /**
      * Returns the value of the argument of YANG {@code error-message} statement.
      *
      * @return string with the error message, or empty if it was not provided.
      */
-    Optional<String> getErrorMessage();
+    default Optional<String> getErrorMessage() {
+        return Optional.empty();
+    }
+
+    // FIXME: as per RFC8040 mapping -- 'anydata representing a container with data nodes
+    //    ListMultimap<QName, Object> getErrorInfo()
+
+    // FIXME: decide on naming these and handle everything in RFC6020/RFC7950/RFC7951 at least.
+
+    // violation of an explicit YANG constraint, 8.3.1 bullet 1
+    public interface ConstraintViolation extends YangError {
+        @Override
+        default String getErrorTag() {
+            return "invalid-value";
+        }
+    }
+
+    // missing a mandatory leaf (explicit, or implied by key), 8.3.1 bullet 2, 7.13.2
+    public interface MissingElement extends YangError {
+        @Override
+        default String getErrorTag() {
+            return "missing-element";
+        }
+
+        // FIXME: QName getBadElement()
+    }
+
+    // unknown node encountered: might be if-feature, when, or whatever, 8.3.1 bullets 4, 5
+    public interface UnknownElement extends YangError {
+        @Override
+        default String getErrorTag() {
+            return "unknown-element";
+        }
+
+        // FIXME: QName getBadElement()
+    }
+
+    // violation of a unique statement, 13.1
+    // FIXME: add 13.2 max-elements
+    // FIXME: add 13.3 min-elements
+    // FIXME: add 13.4 must
+    // FIXME: add 13.5 require-instance
+    // FIXME: add 13.6 leafref
+    // FIXME: add 13.7 mandatory choice
+    // FIXME: add 13.8 "insert with invalid "key"/"value"
+    public interface UniqueViolation extends YangError {
+        @Override
+        default String getErrorTag() {
+            return "operation-failed";
+        }
+
+        @Override
+        default Optional<String> getErrorAppTag() {
+            return Optional.of("data-not-unique");
+        }
+
+        // FIXME: List<YangInstanceIdentifier> getNonUnique()
+    }
 }
