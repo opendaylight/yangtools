@@ -13,9 +13,8 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
-import org.opendaylight.yangtools.yang.common.YangError;
+import org.opendaylight.yangtools.yang.common.YangError.ConstraintViolation;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  * which defines the appropriate severity and adds more semantics.
  */
 @Beta
-public class YangInvalidValueException extends IllegalArgumentException implements YangError {
+public class YangInvalidValueException extends IllegalArgumentException implements ConstraintViolation {
     private static final long serialVersionUID = 1L;
 
     private final @NonNull ErrorType errorType;
@@ -53,16 +52,6 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
     @Override
     public final ErrorType getErrorType() {
         return errorType;
-    }
-
-    @Override
-    public final ErrorSeverity getSeverity() {
-        return ErrorSeverity.ERROR;
-    }
-
-    @Override
-    public final String getTag() {
-        return "invalid-value";
     }
 
     @Override
