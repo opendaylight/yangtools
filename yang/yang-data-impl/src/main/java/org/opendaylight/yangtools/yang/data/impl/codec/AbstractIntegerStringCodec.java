@@ -99,7 +99,7 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         if (rangeConstraint != null) {
             final RangeSet<N> ranges = rangeConstraint.getAllowedRanges();
             if (!ranges.contains(deserialized)) {
-                throw new YangInvalidValueException(ErrorType.PROTOCOL, rangeConstraint,
+                throw new YangInvalidValueException(ErrorType.APPLICATION, rangeConstraint,
                     "Value '" + deserialized + "'  is not in required ranges " + ranges);
             }
         }
@@ -127,9 +127,7 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     }
 
     private static int provideBase(final String integer) {
-        if (integer.length() == 1 && integer.charAt(0) == '0') {
-            return 10;
-        } else if (INT_PATTERN.matcher(integer).matches()) {
+        if ((integer.length() == 1 && integer.charAt(0) == '0') || INT_PATTERN.matcher(integer).matches()) {
             return 10;
         } else if (HEX_PATTERN.matcher(integer).matches()) {
             return 16;

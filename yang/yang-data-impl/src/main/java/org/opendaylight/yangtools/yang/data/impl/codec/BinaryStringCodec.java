@@ -36,7 +36,7 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
         void validate(final byte[] value) {
             final RangeSet<Integer> ranges = lengthConstraint.getAllowedRanges();
             if (!ranges.contains(value.length)) {
-                throw new YangInvalidValueException(ErrorType.PROTOCOL, lengthConstraint,
+                throw new YangInvalidValueException(ErrorType.APPLICATION, lengthConstraint,
                         "Value length " + value.length + " is not in required ranges " + ranges);
             }
         }
