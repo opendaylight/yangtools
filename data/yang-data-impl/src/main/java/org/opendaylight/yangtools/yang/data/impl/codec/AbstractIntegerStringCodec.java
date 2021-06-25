@@ -16,7 +16,7 @@ import com.google.common.collect.RangeSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorType;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -127,7 +127,7 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     }
 
     private static int provideBase(final String integer) {
-        if ((integer.length() == 1 && integer.charAt(0) == '0') || INT_PATTERN.matcher(integer).matches()) {
+        if (integer.length() == 1 && integer.charAt(0) == '0' || INT_PATTERN.matcher(integer).matches()) {
             return 10;
         } else if (HEX_PATTERN.matcher(integer).matches()) {
             return 16;
