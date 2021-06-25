@@ -11,8 +11,8 @@ import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingRuntimeGenera
 import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeGenerator;
 
 module org.opendaylight.mdsal.binding.generator {
-    // FIXME: 8.0.0: rename to mdsal.binding.generator.ri, keep implementation hidden in ri.impl
-    exports org.opendaylight.mdsal.binding.generator.impl;
+    exports org.opendaylight.mdsal.binding.generator;
+    exports org.opendaylight.mdsal.binding.generator.impl.di;
 
     provides BindingGenerator with DefaultBindingGenerator;
     provides BindingRuntimeGenerator with DefaultBindingRuntimeGenerator;

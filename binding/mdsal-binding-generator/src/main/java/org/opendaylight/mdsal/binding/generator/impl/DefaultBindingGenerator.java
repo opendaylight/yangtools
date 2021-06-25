@@ -7,15 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl;
 
-import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.mdsal.binding.generator.BindingGenerator;
@@ -32,16 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 /**
  * Default implementation of {@link BindingGenerator}.
  */
-@Beta
 @MetaInfServices
-@Singleton
-// Note: not exposed in OSGi on purpose, as this should only be needed at compile-time
+// Note: not exposed in DI on purpose, as this should only be needed at compile-time
 public final class DefaultBindingGenerator implements BindingGenerator {
-    @Inject
-    public DefaultBindingGenerator() {
-        // Exposed for DI
-    }
-
     @Override
     public List<GeneratedType> generateTypes(final EffectiveModelContext context,
             final Collection<? extends Module> modules) {
