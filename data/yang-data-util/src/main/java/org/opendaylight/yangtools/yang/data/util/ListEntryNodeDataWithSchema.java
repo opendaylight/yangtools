@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.codec.YangMissingKeyException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -63,8 +62,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
                 throws IOException {
             final Set<QName> expectedKeys = predicateTemplate.keySet();
             if (expectedKeys.size() != keyValues.size()) {
-                throw new YangMissingKeyException(ErrorType.APPLICATION,
-                    Sets.difference(expectedKeys, keyValues.keySet()));
+                throw new YangMissingKeyException(Sets.difference(expectedKeys, keyValues.keySet()));
             }
 
             writer.nextDataSchemaNode(getSchema());
