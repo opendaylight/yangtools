@@ -61,6 +61,11 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
     }
 
     @Override
+    public final String getTag() {
+        return "invalid-value";
+    }
+
+    @Override
     public final Optional<String> getErrorAppTag() {
         return Optional.ofNullable(errorAppTag);
     }
