@@ -13,8 +13,10 @@ import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.Map;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorTag;
+import org.opendaylight.yangtools.yang.common.YangError;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
@@ -24,8 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  * @author Robert Varga
  */
 @Beta
-@NonNullByDefault
-public class UniqueConstraintException extends DataValidationFailedException {
+public class UniqueConstraintException extends DataValidationFailedException implements YangError {
     private static final long serialVersionUID = 1L;
 
     // Note: this cannot be an ImmutableMap because we must support null values
@@ -40,5 +41,15 @@ public class UniqueConstraintException extends DataValidationFailedException {
 
     public final Map<Descendant, @Nullable Object> values() {
         return Collections.unmodifiableMap(values);
+    }
+
+    @Override
+    public final ErrorTag getErrorTag() {
+        return ErrorTag.OPERATION_FAILED;
+    }
+
+    @Override
+    public final Optional<String> getErrorAppTag() {
+        return Optional.of("data-not-unique");
     }
 }

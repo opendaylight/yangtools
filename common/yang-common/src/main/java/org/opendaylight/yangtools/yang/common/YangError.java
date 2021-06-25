@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.common;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorTag;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorType;
 
 /**
  * An error condition raised as a consequence of a YANG-defined contract. This interface should not be directly
@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
  *
  * @author Robert Varga
  */
+// FIXME: as per RFC8040 definition
 @Beta
 public interface YangError {
     /**
@@ -26,33 +27,32 @@ public interface YangError {
      *
      * @return an {@link ErrorType} enum.
      */
-    @NonNull ErrorType getErrorType();
-
-    /**
-     * Returns the error severity, as determined by the application reporting the error.
-     *
-     * @return an {@link ErrorSeverity} enum.
-     */
-    @NonNull ErrorSeverity getSeverity();
+    default @NonNull ErrorType getErrorType() {
+        return ErrorType.APPLICATION;
+    }
 
     /**
      * Returns the error tag, as determined by the application reporting the error.
      *
      * @return an error tag.
      */
-    @NonNull String getErrorTag();
+    @NonNull ErrorTag getErrorTag();
 
     /**
      * Returns the value of the argument of YANG {@code error-app-tag} statement.
      *
      * @return string with the application error tag, or empty if it was not provided.
      */
-    Optional<String> getErrorAppTag();
+    default Optional<String> getErrorAppTag() {
+        return Optional.empty();
+    }
 
     /**
      * Returns the value of the argument of YANG {@code error-message} statement.
      *
      * @return string with the error message, or empty if it was not provided.
      */
-    Optional<String> getErrorMessage();
+    default Optional<String> getErrorMessage() {
+        return Optional.empty();
+    }
 }
