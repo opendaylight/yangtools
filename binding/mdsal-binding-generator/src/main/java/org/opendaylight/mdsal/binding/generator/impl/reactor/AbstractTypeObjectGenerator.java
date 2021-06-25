@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.generator.impl.reactor;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -358,8 +359,11 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
                 .map(context::resolveIdentity)
                 .collect(Collectors.toUnmodifiableList()));
         } else if (TypeDefinitions.LEAFREF.equals(arg)) {
-            refType = TypeReference.leafRef(context.resolveLeafref(
-                type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow()));
+            final AbstractTypeObjectGenerator<?> targetGenerator = context.resolveLeafref(
+                type.findFirstEffectiveSubstatementArgument(PathEffectiveStatement.class).orElseThrow());
+            checkArgument(targetGenerator != this, "Effective model contains self-referencing leaf %s",
+                statement().argument());
+            refType = TypeReference.leafRef(targetGenerator);
         } else if (TypeDefinitions.UNION.equals(arg)) {
             unionDependencies = new UnionDependencies(type, context);
             LOG.trace("Resolved union {} to dependencies {}", type, unionDependencies);
