@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 
 public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final Type LIST_STRING_TYPE  = Types.listTypeFor(Types.STRING);

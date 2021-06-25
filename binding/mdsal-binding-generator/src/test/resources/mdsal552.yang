@@ -1,0 +1,28 @@
+module mdsal552 {
+  prefix mdsal552;
+  namespace mdsal552;
+
+  leaf foo {
+    type enumeration {
+      enum one;
+    }
+  }
+
+  container baz {
+    leaf ref {
+      type leafref {
+        path /foo;
+      }
+    }
+  }
+
+  rpc bar {
+    input {
+      leaf ref {
+        type leafref {
+          path /foo;
+        }
+      }
+    }
+  }
+}

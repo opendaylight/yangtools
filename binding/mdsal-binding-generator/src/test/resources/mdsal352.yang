@@ -1,0 +1,32 @@
+module enum-leafref {
+  namespace "urn:donaldh:yang:leafref:bug";
+  prefix l;
+
+  typedef action-effort {
+    type enumeration {
+      enum best-effort {
+      }
+      enum exact-match {
+      }
+    }
+  }
+
+  container operations {
+    list operation {
+      key 'effort';
+      uses operation-g;
+    }
+  }
+
+  grouping operation-g {
+    leaf effort {
+      type action-effort;
+    }
+    leaf-list operation {
+      type leafref {
+        path '/operations/operation/effort';
+      }
+    }
+  }
+}
+

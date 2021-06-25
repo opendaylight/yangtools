@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
+import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
@@ -22,7 +22,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.MethodSignature.ValueMechanics
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.mdsal.binding.model.ri.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.AbstractAugmentable
 

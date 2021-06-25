@@ -20,7 +20,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.util.BindingTypes
+import org.opendaylight.mdsal.binding.model.ri.BindingTypes
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {

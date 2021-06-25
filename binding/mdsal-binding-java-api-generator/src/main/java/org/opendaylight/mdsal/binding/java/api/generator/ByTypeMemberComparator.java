@@ -21,10 +21,10 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.TypeMember;
-import org.opendaylight.mdsal.binding.model.util.BaseYangTypes;
-import org.opendaylight.mdsal.binding.model.util.BindingTypes;
-import org.opendaylight.mdsal.binding.model.util.TypeConstants;
-import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.mdsal.binding.model.ri.BaseYangTypes;
+import org.opendaylight.mdsal.binding.model.ri.BindingTypes;
+import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 

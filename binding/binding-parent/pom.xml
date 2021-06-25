@@ -58,11 +58,6 @@
                             <dependencies>
                                 <dependency>
                                     <groupId>org.opendaylight.mdsal</groupId>
-                                    <artifactId>mdsal-binding-generator-impl</artifactId>
-                                    <version>8.0.0-SNAPSHOT</version>
-                                </dependency>
-                                <dependency>
-                                    <groupId>org.opendaylight.mdsal</groupId>
                                     <artifactId>mdsal-binding-java-api-generator</artifactId>
                                     <version>8.0.0-SNAPSHOT</version>
                                 </dependency>

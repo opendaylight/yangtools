@@ -1,0 +1,30 @@
+module mdsal572 {
+  namespace "mdsal572";
+  prefix l;
+
+  grouping state-top {
+    leaf index {
+      type union {
+        type enumeration {
+          enum ALL;
+        }
+        type uint32;
+      }
+    }
+  }
+
+  grouping g {
+    list l {
+      container state {
+        uses state-top;
+      }
+      leaf index {
+        type leafref {
+          path "../state/index";
+        }
+      }
+    }
+  }
+
+  uses g;
+}

@@ -1,0 +1,17 @@
+module bar {
+  yang-version 1.1;
+  namespace "bar";
+  prefix bar;
+
+  import foo {
+    prefix foo;
+  }
+
+  augment "/foo:foo-cont/foo:foo-act/foo:input" {
+    description
+      "An augmentation of a action input of module a";
+    leaf bar-aug-leaf {
+      type empty;
+    }
+  }
+}

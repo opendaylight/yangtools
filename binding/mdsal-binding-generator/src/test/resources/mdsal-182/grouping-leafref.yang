@@ -1,0 +1,26 @@
+module grouping-leafref {
+
+  namespace "odl:test:leafref:grouping";
+  prefix "gl";
+  revision 2016-07-01;
+
+  leaf target-leaf {
+    type string;
+  }
+
+  /* two levels with uses */
+  grouping leafref-grouping {
+    leaf my-leafref {
+      type leafref {
+        path "../../../target-leaf";
+      }
+    }
+  }
+
+  container outer-container {
+    container inner-container {
+      uses leafref-grouping;
+    }
+  }
+
+}

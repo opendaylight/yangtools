@@ -23,8 +23,8 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.WildcardType;
-import org.opendaylight.mdsal.binding.model.util.TypeConstants;
-import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 
 public final class GeneratorUtil {
     private GeneratorUtil() {

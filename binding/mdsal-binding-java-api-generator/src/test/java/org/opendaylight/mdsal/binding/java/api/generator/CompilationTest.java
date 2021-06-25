@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.util.TypeConstants;
+import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.Empty;

@@ -1,0 +1,22 @@
+module foo {
+  namespace foo;
+  prefix foo;
+  yang-version 1.1;
+
+  description
+    "Model for a namespace mapping collision between grouping namespace and schema tree namespace. Both are mapped
+     to a Class simple name and to a package name. When this basic conflict happens, schema tree occupant wins on
+     priority, forcing grouping mapping to use its '$T' namespace suffix. This happens consistently for RPCs and
+     actions.";
+
+  grouping foo;
+
+  rpc foo;
+
+  container bar {
+    grouping baz;
+
+    action baz;
+  }
+}
+

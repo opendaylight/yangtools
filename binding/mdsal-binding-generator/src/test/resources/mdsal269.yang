@@ -1,0 +1,30 @@
+module mdsal269 {
+    namespace "mdsal269";
+    prefix "mdsal269";
+
+    revision "2018-01-30";
+
+    identity mpls-label-special-purpose-value {
+
+    }
+
+    typedef mpls-label-special-purpose {
+        type identityref {
+            base mpls-label-special-purpose-value;
+        }
+    }
+
+    typedef mpls-label-general-use {
+        type uint32 {
+            range "16..1048575";
+        }
+    }
+
+    typedef mpls-label {
+        type union {
+            type mpls-label-special-purpose;
+            type mpls-label-general-use;
+        }
+    }
+}
+

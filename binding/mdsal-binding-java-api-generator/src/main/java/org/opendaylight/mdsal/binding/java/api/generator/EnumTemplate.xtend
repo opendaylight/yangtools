@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static extension org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
+import static extension org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets
+import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableMap.Builder

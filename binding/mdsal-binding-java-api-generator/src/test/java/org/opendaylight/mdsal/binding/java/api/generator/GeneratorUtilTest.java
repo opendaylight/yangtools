@@ -16,7 +16,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.opendaylight.mdsal.binding.java.api.generator.GeneratorUtil.createImports;
-import static org.opendaylight.mdsal.binding.model.util.TypeConstants.PATTERN_CONSTANT_NAME;
+import static org.opendaylight.mdsal.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Constructor;

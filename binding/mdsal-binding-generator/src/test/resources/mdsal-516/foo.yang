@@ -1,0 +1,18 @@
+module foo {
+  yang-version 1.1;
+  namespace "foo";
+  prefix foo;
+
+  import bar {
+    prefix bar;
+  }
+
+  grouping foo-grp {
+    uses bar:bar-grp;
+  }
+
+  container foo {
+    uses foo-grp;
+  }
+}
+

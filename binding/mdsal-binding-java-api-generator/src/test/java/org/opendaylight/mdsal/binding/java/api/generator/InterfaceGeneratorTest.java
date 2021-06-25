@@ -21,7 +21,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 
 public class InterfaceGeneratorTest {
     private static final String TEST = "test";
@@ -139,7 +139,7 @@ public class InterfaceGeneratorTest {
         return methSign;
     }
 
-    private static void addMethodStatus(MethodSignature methSign, JavaTypeName annotationJavaType) {
+    private static void addMethodStatus(final MethodSignature methSign, final JavaTypeName annotationJavaType) {
         final AnnotationType annotationType = mock(AnnotationType.class);
         doReturn(annotationJavaType).when(annotationType).getIdentifier();
         doReturn(ImmutableList.of(annotationType)).when(methSign).getAnnotations();

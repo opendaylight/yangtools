@@ -12,8 +12,8 @@ import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMappin
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isRequireMethodName
-import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING
+import static org.opendaylight.mdsal.binding.model.ri.Types.BOOLEAN
+import static org.opendaylight.mdsal.binding.model.ri.Types.STRING
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.REQUIRE_PREFIX
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_EQUALS_NAME
@@ -35,8 +35,8 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.util.Types
-import org.opendaylight.mdsal.binding.model.util.TypeConstants
+import org.opendaylight.mdsal.binding.model.ri.Types
+import org.opendaylight.mdsal.binding.model.ri.TypeConstants
 
 /**
  * Template for generating JAVA interfaces.

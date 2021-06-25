@@ -1,0 +1,44 @@
+module mdsal-302 {
+    namespace "mdsal-302";
+    prefix "augchoi";
+    revision 2018-01-25;
+
+    grouping some-grouping {
+        choice result {
+            case no-success {
+                container foo;
+            }
+        }
+    }
+
+    rpc some-rpc {
+        input {
+            uses some-grouping {
+                augment result {
+                    case success {
+                        container bar;
+                    }
+                }
+            }
+        }
+        output {
+            uses some-grouping {
+                augment result {
+                    case success {
+                        container bar;
+                    }
+                }
+            }
+        }
+    }
+
+    container some-cont {
+        uses some-grouping {
+            augment result {
+                case success {
+                    container bar;
+                }
+            }
+        }
+    }
+}

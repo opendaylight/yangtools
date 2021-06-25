@@ -1,0 +1,16 @@
+module aug {
+    yang-version 1.1;
+    namespace "aug";
+    prefix "aug";
+
+    import base {
+        prefix base;
+    }
+
+    augment /base:foo {
+        action bar {
+
+        }
+    }
+}
+

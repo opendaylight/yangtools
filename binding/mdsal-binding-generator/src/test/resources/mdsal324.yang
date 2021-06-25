@@ -1,0 +1,45 @@
+module mdsal324 {
+    namespace "urn:odl:mdsal324";
+    prefix mdsal324;
+
+    container foo {
+        leaf bar {
+            type union {
+                type enumeration {
+                    enum "foo";
+                }
+                type string {
+                    length 2;
+                }
+                type union {
+                    type enumeration {
+                        enum bar;
+                    }
+                    type string {
+                        length 1;
+                    }
+                }
+            }
+        }
+
+        leaf bar1 {
+            type union {
+                type enumeration {
+                    enum "foo";
+                }
+                type string {
+                    length 2;
+                }
+                type union {
+                    type enumeration {
+                        enum bar;
+                    }
+                    type string {
+                        length 1;
+                    }
+                }
+            }
+        }
+    }
+}
+

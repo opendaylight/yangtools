@@ -1,0 +1,10 @@
+module base {
+    yang-version 1.1;
+    namespace "base";
+    prefix "base";
+
+    container foo {
+
+    }
+}
+

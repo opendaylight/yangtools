@@ -1,0 +1,30 @@
+module specific-grouping-leafref {
+
+  namespace "odl:test:leafref:grouping:nested";
+  prefix "gl";
+  revision 2020-02-28;
+
+  container container-top {
+    leaf leaf-1 {
+      type string;
+    }
+    uses grouping-leafref;
+  }
+
+  grouping grouping-leafref {
+    container nested-container {
+      leaf leafref-1 {
+        type leafref {
+          path "../leafref-2";
+        }
+      }
+
+      leaf leafref-2 {
+        type leafref {
+          path "../../leaf-1";
+        }
+      }
+    }
+  }
+
+}

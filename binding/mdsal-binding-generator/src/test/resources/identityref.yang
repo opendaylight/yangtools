@@ -1,0 +1,20 @@
+module module-identityref {
+
+    namespace "urn:identityref:module";
+    prefix "sbd";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    revision 2013-11-09 {
+    }
+
+    identity some-identity {
+    }
+
+    leaf lf {
+        type identityref {
+            base "some-identity";
+        }
+    }
+}

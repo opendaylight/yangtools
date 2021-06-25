@@ -1,0 +1,71 @@
+module abstract-topology {
+    yang-version 1;
+    namespace "urn:model:abstract:topology";
+    prefix "tp";
+
+    revision "2013-02-08" {
+    }
+
+    typedef node-id-ref {
+        type leafref {
+            path "/tp:topology/tp:network-nodes/tp:network-node/tp:node-id";
+        }
+    }
+
+    typedef link-id-ref {
+        type leafref {
+            path "/tp:topology/tp:network-links/tp:network-link/tp:link-id";
+        }
+    }
+
+    typedef uri {
+        type string;
+    }
+
+    container topology {
+
+        leaf topology-id {
+            type uri;
+        }
+
+        container network-nodes {
+            list network-node {
+                key "node-id";
+
+                leaf node-id {
+                    type uri;
+                }
+
+                container attributes {
+                }
+            }
+        }
+
+        container network-links {
+            list network-link {
+                key "link-id";
+
+                leaf link-id {
+                    type uri;
+                    description "";
+                }
+
+                container source-node {
+                    leaf id {
+                        type node-id-ref;
+                    }
+                }
+
+                container destination-node {
+                    leaf id {
+                        type node-id-ref;
+                    }
+                }
+
+                container attributes {
+                }
+            }
+        }
+    }
+
+}

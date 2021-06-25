@@ -1,0 +1,184 @@
+module ietf-interfaces {
+
+  namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces";
+  prefix if;
+
+  import iana-if-type {
+    prefix ianaift;
+  }
+
+
+  revision 2012-11-15 {
+  }
+
+  /* Typedefs */
+
+  typedef interface-ref {
+    type leafref {
+      path "/if:interfaces/if:interface/if:name";
+    }
+    description
+      "This type is used by data models that need to reference
+       interfaces.";
+  }
+
+  /* Features */
+
+  feature arbitrary-names {
+    description
+      "This feature indicates that the server allows interfaces to
+       be named arbitrarily.";
+  }
+
+  feature if-mib {
+    description
+      "This feature indicates that the server implements IF-MIB.";
+    reference
+      "RFC 2863: The Interfaces Group MIB";
+  }
+
+  /* Data nodes */
+
+  container interfaces {
+    description
+      "Interface parameters.";
+
+    list interface {
+      key "name";
+      unique "type location";
+
+      description
+        "The list of interfaces on the device.";
+
+      leaf name {
+        type string;
+      }
+
+      leaf description {
+        type string;
+      }
+
+      leaf type {
+        type ianaift:iana-if-type;
+        mandatory true;
+      }
+
+      leaf location {
+        type string;
+      }
+
+      leaf enabled {
+        type boolean;
+        default "true";
+      }
+
+      leaf oper-status {
+        type enumeration {
+          enum up {
+            value 1;
+            description
+              "Ready to pass packets.";
+          }
+          enum down {
+            value 2;
+            description
+              "The interface does not pass any packets.";
+          }
+          enum testing {
+            value 3;
+            description
+              "In some test mode.  No operational packets can
+               be passed.";
+          }
+          enum unknown {
+            value 4;
+            description
+              "Status cannot be determined for some reason.";
+          }
+          enum dormant {
+            value 5;
+            description
+              "Waiting for some external event.";
+          }
+          enum not-present {
+            value 6;
+            description
+              "Some component is missing.";
+          }
+          enum lower-layer-down {
+            value 7;
+            description
+              "Down due to state of lower-layer interface(s).";
+          }
+        }
+        config false;
+        description
+          "The current operational state of the interface.
+
+           If 'enabled' is 'false' then 'oper-status'
+           should be 'down'.  If 'enabled' is changed to 'true'
+           then 'oper-status' should change to 'up' if the interface
+           is ready to transmit and receive network traffic; it
+           should change to 'dormant' if the interface is waiting for
+           external actions (such as a serial line waiting for an
+           incoming connection); it should remain in the 'down' state
+           if and only if there is a fault that prevents it from
+           going to the 'up' state; it should remain in the
+           'not-present' state if the interface has missing
+           (typically, hardware) components.";
+        reference
+          "RFC 2863: The Interfaces Group MIB - ifOperStatus";
+      }
+
+      leaf last-change {
+        type string;
+        config false;
+      }
+
+      leaf if-index {
+        if-feature if-mib;
+        type int32 {
+          range "1..2147483647";
+        }
+        config false;
+      }
+
+      leaf link-up-down-trap-enable {
+        if-feature if-mib;
+        type enumeration {
+          enum enabled {
+            value 1;
+          }
+          enum disabled {
+            value 2;
+          }
+        }
+      }
+
+      leaf phys-address {
+        type string;
+        config false;
+      }
+
+      leaf-list higher-layer-if {
+        type interface-ref;
+        config false;
+      }
+
+      leaf-list lower-layer-if {
+        type interface-ref;
+        config false;
+      }
+
+      leaf speed {
+        type uint64;
+        units "bits / second";
+        config false;
+      }
+
+      container statistics {
+        config false;
+      }
+    }
+  }
+}

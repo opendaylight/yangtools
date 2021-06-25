@@ -1,0 +1,35 @@
+module mdsal448 {
+    yang-version "1.1";
+    namespace "urn:example:test";
+    prefix "test";
+
+    grouping the-grouping {
+        leaf the-leaf {
+            type string;
+        }
+    }
+
+    grouping action-grouping {
+        action action-with-grouping {
+            input {
+                leaf leaf1 {
+                    type string;
+                }
+
+                uses the-grouping;
+            }
+        }
+    }
+
+    container network {
+        list node {
+            key "id";
+
+            leaf id {
+                type string;
+            }
+
+            uses action-grouping;
+        }
+    }
+}

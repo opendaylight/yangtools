@@ -1,0 +1,21 @@
+module mdsal332 {
+    namespace "mdsal332";
+    prefix "mdsal332";
+
+    grouping foo {
+
+    }
+
+    identity foo {
+
+    }
+
+    container foo {
+
+    }
+
+    typedef foo {
+        type string;
+    }
+}
+

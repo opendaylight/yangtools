@@ -1,0 +1,26 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    revision "2015-11-11";
+
+    list neighbor {
+        description
+           "List of neighbors.";
+        leaf neighbor-id {
+            type leafref {
+                path "../../neighbor/mystring";
+            }
+            description "Neighbor.";
+        }
+
+        leaf neighbor2-id {
+            type leafref {
+                path "/foo:neighbor/foo:mystring1";
+            }
+        }
+
+        leaf mystring {
+            type string;
+        }
+    }
+}

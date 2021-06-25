@@ -9,12 +9,11 @@ package org.opendaylight.mdsal.binding.runtime.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 /**
- * Runtime equivalent of {@link BindingGenerator}. It generates equivalent type information, but does not include
- * metadata not required at runtime, such as comments, references and similar.
+ * Runtime binding type generator. Generated types contain metadata required for integrating compile-time generated
+ * code with YANG-modeled schema.
  */
 @Beta
 @NonNullByDefault

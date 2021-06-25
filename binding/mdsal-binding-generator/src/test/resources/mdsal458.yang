@@ -1,0 +1,16 @@
+module mdsal458 {
+  namespace "mdsal458";
+  prefix mdsal458;
+
+  container exported-to {
+    leaf exported-to {
+      type union {
+        type enumeration {
+          enum "netconf";
+          enum "cli";
+        }
+        type string;
+      }
+    }
+  }
+}

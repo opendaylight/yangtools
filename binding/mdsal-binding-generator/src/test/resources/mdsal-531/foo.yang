@@ -1,0 +1,50 @@
+module foo {
+  yang-version 1.1;
+  namespace "a";
+  prefix a;
+  import bar { prefix b;}
+
+  grouping foo {
+    container bar {
+      leaf foo {
+        type string;
+      }
+      uses software-operation-state;
+    }
+
+    grouping software-operation-state {
+
+      leaf bar2 {
+        type empty;
+      }
+      uses next-operation-group;
+    }
+
+    grouping next-operation-group {
+      list next-operation {
+         key order;
+         config false;
+        // ui:group-ref "current-operation-group";
+         leaf order {
+             description "A logical sequence number of operations to be done.";
+             type uint8;
+         }
+
+         leaf operation-type {
+             description "Type of software action launched on the device.";
+             type string;
+
+         }
+
+         leaf software-name {
+             description "Name of the software on which the operation was performed. For download operations, the leaf only records the software name and not the complete URL.";
+             type string;
+         }
+      } // list next-operation
+    }
+  }
+
+  augment "/b:fooo" {
+    uses a:foo;
+  }
+}

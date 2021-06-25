@@ -1,0 +1,33 @@
+module ietf-interfaces {
+
+  namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces";
+  prefix if;
+
+  revision 2012-11-15 {
+  }
+
+  typedef interface-ref {
+    type leafref {
+      path "/if:interfaces/if:interface/if:name";
+    }
+  }
+
+
+  container interfaces {
+
+    list interface {
+      key "name";
+      unique "type location";
+
+      leaf name {
+        type string;
+      }
+
+      leaf-list higher-layer-if {
+        type interface-ref;
+        config false;
+      }
+
+    }
+  }
+}

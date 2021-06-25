@@ -7,12 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.BINARY_TYPE;
-import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.BOOLEAN_TYPE;
-import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.EMPTY_TYPE;
-import static org.opendaylight.mdsal.binding.model.util.BaseYangTypes.STRING_TYPE;
-import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
-import static org.opendaylight.mdsal.binding.model.util.Types.getOuterClassName;
+import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BINARY_TYPE;
+import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
+import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
+import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
+import static org.opendaylight.mdsal.binding.model.ri.Types.getOuterClassName;
 
 import java.util.Base64;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer

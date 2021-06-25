@@ -1,0 +1,19 @@
+module foo {
+  yang-version 1.1;
+  namespace "foo";
+  prefix foo;
+
+  grouping foo-grp {
+    action foo-act {
+      input {
+        leaf foo-action-input-leaf {
+          type empty;
+        }
+      }
+    }
+  }
+
+  container foo-cont {
+    uses foo:foo-grp;
+  }
+}

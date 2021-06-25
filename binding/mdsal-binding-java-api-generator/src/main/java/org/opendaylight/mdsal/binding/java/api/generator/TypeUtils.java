@@ -14,7 +14,7 @@ import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.util.TypeConstants;
+import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
 
 /**
  * Random utility methods for dealing with {@link Type} objects.

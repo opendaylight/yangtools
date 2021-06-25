@@ -1,0 +1,120 @@
+module mdsal161 {
+    namespace "mdsal161";
+    prefix "mdsal161";
+
+    // Reported case:
+    typedef revision-identifier {
+        type string {
+            pattern '\d{4}-\d{2}-\d{2}';
+        }
+    }
+
+    grouping grp {
+        leaf name {
+            type string;
+        }
+        leaf revision {
+            type union {
+                type revision-identifier;
+                type string { length 0; }
+            }
+        }
+    }
+
+    list with-grp {
+        key "name revision";
+
+        uses grp;
+    }
+
+    // Simpler case: same thing without the grouping
+    list without-grp {
+        key "name revision";
+
+        leaf name {
+            type string;
+        }
+        leaf revision {
+            type union {
+                type revision-identifier;
+                type string { length 0; }
+            }
+        }
+    }
+
+    // Two different cases: the type is defined in a grouping typedef
+    grouping grp-typedef {
+        typedef revision-type {
+            type union {
+                type revision-identifier;
+                type string { length 0; }
+            }
+        }
+
+        leaf name {
+            type string;
+        }
+        leaf revision {
+            type revision-type;
+        }
+    }
+
+    list with-grp-typedef {
+        key "name revision";
+
+        uses grp-typedef;
+    }
+
+    list without-grp-typedef {
+        typedef revision-type {
+            type union {
+                type revision-identifier;
+                type string { length 0; }
+            }
+        }
+
+        key "name revision";
+
+        leaf name {
+            type string;
+        }
+        leaf revision {
+            type revision-type;
+        }
+    }
+
+    // Another set of cases: the type is externally typedef'd
+    typedef ext-typedef {
+        type union {
+            type revision-identifier;
+            type string { length 0; }
+        }
+    }
+
+    grouping grp-ext {
+        leaf name {
+            type string;
+        }
+        leaf revision {
+            type ext-typedef;
+        }
+    }
+
+    list with-grp-ext {
+        key "name revision";
+
+        uses grp-ext;
+    }
+
+    list without-grp-ext {
+        key "name revision";
+
+        leaf name {
+            type string;
+        }
+        leaf revision {
+            type ext-typedef;
+        }
+    }
+}
+

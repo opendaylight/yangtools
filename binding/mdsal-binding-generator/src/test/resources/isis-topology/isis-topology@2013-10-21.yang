@@ -1,0 +1,21 @@
+module isis-topology {
+    yang-version 1;
+    namespace "urn:TBD:params:xml:ns:yang:network:isis-topology";
+
+    prefix "isis";
+    import network-topology { prefix nt; revision-date 2013-10-21; }
+    import l3-unicast-igp-topology { prefix igp; revision-date 2013-10-21; }
+
+    revision "2013-10-21" {
+        description "Initial version";
+    }
+
+    augment "/nt:network-topology/nt:topology/igp:igp-topology-attributes" {
+        when "../nt:topology-types/igp:l3-unicast-igp-topology/isis";
+        container isis-topology-attributes {
+            leaf net {
+                type string;
+            }
+        }
+    }
+}

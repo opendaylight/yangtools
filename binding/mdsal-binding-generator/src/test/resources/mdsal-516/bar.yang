@@ -1,0 +1,10 @@
+module bar {
+  yang-version 1.1;
+  namespace "bar";
+  prefix bar;
+
+  grouping bar-grp {
+    action something;
+  }
+}
+

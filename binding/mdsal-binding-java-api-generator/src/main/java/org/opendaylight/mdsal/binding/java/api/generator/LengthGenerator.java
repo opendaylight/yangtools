@@ -14,7 +14,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,7 @@ final class LengthGenerator {
 
         for (Range<Integer> l : constraints) {
             // We have to deal with restrictions being out of integer's range
-            final String expr = createExpression(l.lowerEndpoint().intValue(), l.upperEndpoint().intValue());
+            final String expr = createExpression(l.lowerEndpoint(), l.upperEndpoint());
             if (expr == null) {
                 // This range is implicitly capped by String/byte[] length returns
                 LOG.debug("Constraint {} implied by int type value domain, skipping", l);

@@ -1,0 +1,72 @@
+module test-leafref {
+
+    namespace "odl:test:leafref";
+    prefix "tl";
+    revision 2015-04-09;
+
+    typedef my-enum {
+        type enumeration {
+            enum one {
+                value 1;
+            }
+        }
+    }
+
+    leaf my-inner-leaf {
+        type my-enum;
+    }
+
+    leaf my-leafref-inner {
+        type leafref {
+            path "/tl:my-inner-leaf";
+        }
+    }
+
+    leaf my-leaf {
+        type enumeration {
+            enum one {
+                value 1;
+            }
+        }
+    }
+
+    leaf my-leafref {
+        type leafref {
+            path "/tl:my-leaf";
+        }
+    }
+
+    leaf-list list-of-enums-inner {
+        type enumeration {
+            enum x;
+            enum y;
+            enum z;
+        }
+    }
+
+    leaf-list enums {
+        type leafref {
+            path "/tl:list-of-enums";
+        }
+    }
+
+    leaf-list list-of-enums {
+        type leafref {
+            path "/tl:my-leaf";
+        }
+    }
+
+    grouping my-group {
+        container my-cont {
+            leaf my-enum {
+                type my-enum;
+                mandatory true;
+            }
+        }
+    }
+
+    container my-cont2 {
+        uses my-group;
+    }
+
+}

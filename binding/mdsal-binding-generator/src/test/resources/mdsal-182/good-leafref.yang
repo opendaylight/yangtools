@@ -1,0 +1,44 @@
+module good-leafref {
+
+  namespace "odl:test:leafref:good";
+  prefix "gl";
+  revision 2016-07-01;
+
+  leaf target-leaf {
+    type string;
+  }
+
+  /* one level without uses */
+  container direct-container {
+    leaf direct-leafref {
+      type leafref {
+        path "../../target-leaf";
+      }
+    }
+  }
+
+  /* one level with uses */
+  grouping leafref-grouping {
+    leaf grouping-leafref {
+      type leafref {
+        path "../../target-leaf";
+      }
+    }
+  }
+
+  container grouping-container {
+    uses leafref-grouping;
+  }
+
+  /* two levels without uses */
+  container outer-container {
+    container inner-container {
+      leaf my-leafref {
+        type leafref {
+          path "../../../target-leaf";
+        }
+      }
+    }
+  }
+
+}

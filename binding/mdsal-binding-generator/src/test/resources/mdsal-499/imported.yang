@@ -1,0 +1,16 @@
+module imported {
+  namespace "http://foo/bar/yang/imported";
+  prefix imp;
+
+  typedef foo {
+    type string {
+      pattern 'S(\d+G)?(\d+M)?';
+    }
+  }
+
+  container root {
+    leaf leaf1 {
+      type string;
+    }
+  }
+}
