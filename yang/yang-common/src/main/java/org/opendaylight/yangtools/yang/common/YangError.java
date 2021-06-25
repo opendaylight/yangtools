@@ -36,14 +36,21 @@ public interface YangError {
     @NonNull ErrorSeverity getSeverity();
 
     /**
-     * Returns the value of the argument of YANG <code>error-app-tag</code> keyword.
+     * Returns the error tag, as determined by the application reporting the error.
      *
-     * @return string with the application tag, or empty if it was not provided.
+     * @return an error tag.
+     */
+    @NonNull String getErrorTag();
+
+    /**
+     * Returns the value of the argument of YANG {@code error-app-tag} statement.
+     *
+     * @return string with the application error tag, or empty if it was not provided.
      */
     Optional<String> getErrorAppTag();
 
     /**
-     * Returns the value of the argument of YANG <code>error-message</code> keyword.
+     * Returns the value of the argument of YANG {@code error-message} statement.
      *
      * @return string with the error message, or empty if it was not provided.
      */
