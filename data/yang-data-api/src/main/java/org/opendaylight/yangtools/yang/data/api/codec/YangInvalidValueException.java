@@ -13,8 +13,8 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorTag;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorType;
 import org.opendaylight.yangtools.yang.common.YangError;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
@@ -51,18 +51,13 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
     }
 
     @Override
+    public final ErrorTag getErrorTag() {
+        return ErrorTag.INVALID_VALUE;
+    }
+
+    @Override
     public final ErrorType getErrorType() {
         return errorType;
-    }
-
-    @Override
-    public final ErrorSeverity getSeverity() {
-        return ErrorSeverity.ERROR;
-    }
-
-    @Override
-    public final String getErrorTag() {
-        return "invalid-value";
     }
 
     @Override
