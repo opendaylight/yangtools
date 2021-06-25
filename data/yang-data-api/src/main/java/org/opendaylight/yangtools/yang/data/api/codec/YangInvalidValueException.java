@@ -50,26 +50,31 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
         this.errorMessage = constraint.getErrorMessage().orElse(null);
     }
 
+    @Deprecated
     @Override
     public final ErrorType getErrorType() {
         return errorType;
     }
 
+    @Deprecated
     @Override
     public final ErrorSeverity getSeverity() {
         return ErrorSeverity.ERROR;
     }
 
+    @Deprecated
     @Override
     public final String getErrorTag() {
         return "invalid-value";
     }
 
+    @Deprecated
     @Override
     public final Optional<String> getErrorAppTag() {
         return Optional.ofNullable(errorAppTag);
     }
 
+    @Deprecated
     @Override
     public final Optional<String> getErrorMessage() {
         return Optional.ofNullable(errorMessage);
