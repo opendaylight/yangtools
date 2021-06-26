@@ -87,6 +87,58 @@ public final class YangConstants {
      */
     public static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
 
+    /**
+     * NETCONF protocol elements' namespace, as defined in
+     * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-3.1">RFC4741 section 3.1</a>, in String format.
+     */
+    public static final String NETCONF_NAMESPACE_STRING = "urn:ietf:params:xml:ns:netconf:base:1.0";
+
+    /**
+     * NETCONF protocol elements' namespace, as defined in
+     * <a href="https://datatracker.ietf.org/doc/html/rfc4741#section-3.1">RFC4741 section 3.1</a>, in String format.
+     */
+    public static final XMLNamespace NETCONF_NAMESPACE = XMLNamespace.of(NETCONF_NAMESPACE_STRING).intern();
+
+    /**
+     * NETCONF namespace bound to YANG through
+     * <a href="https://datatracker.ietf.org/doc/html/rfc6241#section-10.3">ietf-netconf@2011-06-01.yang</a>.
+     */
+    public static final QNameModule RFC6241_YANG_MODULE =
+        QNameModule.create(NETCONF_NAMESPACE, Revision.of("2011-06-01")).intern();
+
+    /**
+     * {@code bad-attribute}, {@link #value()} is the name of the attribute.
+     */
+    public static final QName BAD_ATTRIBUTE_QNAME = QName.create(RFC6241_YANG_MODULE, "bad-attribute").intern();
+    /**
+     * {@code bad-element}, {@link #value()} is the name of the element.
+     */
+    public static final QName BAD_ELEMENT_QNAME = QName.create(RFC6241_YANG_MODULE, "bad-element").intern();
+    /**
+     * {@code bad-namespace}, {@link #value()} is the name of the namespace.
+     */
+    public static final QName BAD_NAMESPACE_QNAME = QName.create(RFC6241_YANG_MODULE, "bad-namespace").intern();
+    /**
+     * {@code session-id}, {@link #value()} the session identifier, as modeled in {@code SessionIdOrZero}.
+     */
+    public static final QName SESSION_ID_QNAME = QName.create(RFC6241_YANG_MODULE, "session-id").intern();
+    @Deprecated(since = "RFC6241")
+    public static final QName ERR_ELEMENT_QNAME = QName.create(RFC6241_YANG_MODULE, "err-element").intern();
+    @Deprecated(since = "RFC6241")
+    public static final QName NOOP_ELEMENT_QNAME = QName.create(RFC6241_YANG_MODULE, "noop-element").intern();
+    @Deprecated(since = "RFC6241")
+    public static final QName OK_ELEMENT_QNAME = QName.create(RFC6241_YANG_MODULE, "ok-element").intern();
+    /**
+     * {@code missing-choice} as defined in
+     * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.7">RFC6020, section 13.7</a>.
+     */
+    public static final QName MISSING_CHOICE_QNAME = QName.create(RFC6020_YANG_MODULE, "missing-choice").intern();
+    /**
+     * {@code non-unique} as defined in
+     * <a href="https://datatracker.ietf.org/doc/html/rfc6020#section-13.1">RFC6020, section 13.1</a>.
+     */
+    public static final QName NON_UNIQUE_QNAME = QName.create(RFC6020_YANG_MODULE, "non-unique").intern();
+
     // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
     // UnqualifiedQName#bindTo()
     private static final UnqualifiedQName DUMMY_OPERATION_INPUT = UnqualifiedQName.of("input");

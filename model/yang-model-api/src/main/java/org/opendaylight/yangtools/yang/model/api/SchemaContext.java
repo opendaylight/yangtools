@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
 
 /**
@@ -40,7 +41,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * QName of NETCONF top-level data node.
      */
     // FIXME: YANGTOOLS-1074: we do not want this name
-    @NonNull QName NAME = QName.create(XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0"), "data").intern();
+    @NonNull QName NAME = QName.create(YangConstants.NETCONF_NAMESPACE, "data").intern();
 
     /**
      * Returns data schema node instances which represents direct subnodes (like
