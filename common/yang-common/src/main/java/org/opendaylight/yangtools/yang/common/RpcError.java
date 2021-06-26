@@ -7,37 +7,78 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * Representation of an error.
- *
  */
 public interface RpcError {
-
+    // FIXME: 8.0.0: remove this in favor of Netconf.ErrorSeverity
+    @NonNullByDefault
     enum ErrorSeverity {
-        ERROR,
-        WARNING
+        ERROR {
+            @Override
+            public Netconf.ErrorSeverity toNetconf() {
+                return Netconf.ErrorSeverity.ERROR;
+            }
+        },
+        WARNING {
+            @Override
+            public Netconf.ErrorSeverity toNetconf() {
+                return Netconf.ErrorSeverity.WARNING;
+            }
+        };
+
+        public abstract Netconf.ErrorSeverity toNetconf();
     }
 
+    /**
+     * Enumeration of {@code error-type} values. These provide glue between {@link Netconf.Layer} and various sources of
+     * such errors.
+     *
+     * @deprecated Please use {@link Netconf.ErrorType} instead.
+     */
+    // FIXME: 8.0.0: remove this in favor of Netconf.ErrorType
+    @NonNullByDefault
     enum ErrorType {
         /**
          * Indicates an error occurred during transport of data, eg over the network.
          */
-        TRANSPORT,
-
+        TRANSPORT {
+            @Override
+            public Netconf.ErrorType toNetconf() {
+                return Netconf.ErrorType.TRANSPORT;
+            }
+        },
         /**
          * Indicates an error occurred during a remote procedure call.
          */
-        RPC,
-
+        RPC {
+            @Override
+            public Netconf.ErrorType toNetconf() {
+                return Netconf.ErrorType.RPC;
+            }
+        },
         /**
          * Indicates an error at a protocol layer, eg if invalid data was passed by the caller.
          */
-        PROTOCOL,
-
+        PROTOCOL {
+            @Override
+            public Netconf.ErrorType toNetconf() {
+                return Netconf.ErrorType.PROTOCOL;
+            }
+        },
         /**
          * Indicates an error occurred during internal processing.
          */
-        APPLICATION
+        APPLICATION {
+            @Override
+            public Netconf.ErrorType toNetconf() {
+                return Netconf.ErrorType.APPLICATION;
+            }
+        };
+
+        public abstract Netconf.ErrorType toNetconf();
     }
 
     /**
@@ -51,7 +92,9 @@ public interface RpcError {
      * Returns a short string that identifies the general type of error condition.
      *
      * <p>
-     * The following outlines suggested values as defined by netconf (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC 6241</a>):
+     * The following outlines suggested values as defined by
+     * (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC6241</a>):
+     *
      * <pre>
      *    access-denied
      *    bad-attribute
@@ -75,6 +118,7 @@ public interface RpcError {
      * </pre>
      * @return a string if available or null otherwise.
      */
+    // FIXME: return Netconf.ErrorTag here
     String getTag();
 
     /**
@@ -99,6 +143,7 @@ public interface RpcError {
      *
      * @return a string if available or null otherwise.
      */
+    // FIXME: YANGTOOLS-765: return a Set<Netconf.ErrorInfo> here
     String getInfo();
 
     /**
