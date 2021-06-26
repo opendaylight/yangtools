@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.Netconf;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -40,7 +41,7 @@ public interface SchemaContext extends ContainerLike, Immutable {
      * QName of NETCONF top-level data node.
      */
     // FIXME: YANGTOOLS-1074: we do not want this name
-    @NonNull QName NAME = QName.create(XMLNamespace.of("urn:ietf:params:xml:ns:netconf:base:1.0"), "data").intern();
+    @NonNull QName NAME = QName.create(Netconf.NAMESPACE, "data").intern();
 
     /**
      * Returns data schema node instances which represents direct subnodes (like
