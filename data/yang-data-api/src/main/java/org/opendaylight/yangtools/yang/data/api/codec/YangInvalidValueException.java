@@ -10,12 +10,19 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.yang.common.ErrorSeverity;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
+import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.common.YangError;
+import org.opendaylight.yangtools.yang.data.api.YangErrorInfo;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
@@ -35,14 +42,14 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  * which defines the appropriate severity and adds more semantics.
  */
 @Beta
-public class YangInvalidValueException extends IllegalArgumentException implements YangError {
+public class YangInvalidValueException extends IllegalArgumentException implements YangError, YangNetconfErrorAware {
     private static final long serialVersionUID = 1L;
 
-    private final @NonNull ErrorType errorType;
+    private final RpcError.@NonNull ErrorType errorType;
     private final @Nullable String errorAppTag;
     private final @Nullable String errorMessage;
 
-    public YangInvalidValueException(final ErrorType errorType, final ConstraintMetaDefinition constraint,
+    public YangInvalidValueException(final RpcError.ErrorType errorType, final ConstraintMetaDefinition constraint,
             final String message) {
         super(requireNonNull(message));
         this.errorType = requireNonNull(errorType);
@@ -51,13 +58,13 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
     }
 
     @Override
-    public final ErrorType getErrorType() {
+    public final RpcError.ErrorType getErrorType() {
         return errorType;
     }
 
     @Override
-    public final ErrorSeverity getSeverity() {
-        return ErrorSeverity.ERROR;
+    public final RpcError.ErrorSeverity getSeverity() {
+        return RpcError.ErrorSeverity.ERROR;
     }
 
     @Override
@@ -73,5 +80,46 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
     @Override
     public final Optional<String> getErrorMessage() {
         return Optional.ofNullable(errorMessage);
+    }
+
+    @Override
+    public List<YangNetconfError> getNetconfErrors() {
+        return List.of(new YangNetconfError() {
+            @Override
+            public ErrorSeverity severity() {
+                return ErrorSeverity.ERROR;
+            }
+
+            @Override
+            public ErrorType type() {
+                return errorType.toNetconf();
+            }
+
+            @Override
+            public ErrorTag tag() {
+                return ErrorTag.INVALID_VALUE;
+            }
+
+            @Override
+            public String message() {
+                return errorMessage;
+            }
+
+            @Override
+            public String appTag() {
+                return errorAppTag;
+            }
+
+            @Override
+            public YangInstanceIdentifier path() {
+                // FIXME: provide this information
+                return null;
+            }
+
+            @Override
+            public List<YangErrorInfo<?>> info() {
+                return List.of();
+            }
+        });
     }
 }
