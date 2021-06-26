@@ -12,12 +12,17 @@ package org.opendaylight.yangtools.yang.common;
  *
  */
 public interface RpcError {
-
+    // FIXME: 8.0.0: remove this in favor of Netconf.ErrorSeverity
     enum ErrorSeverity {
         ERROR,
         WARNING
     }
 
+    /**
+     * Enumeration of {@code error-type} values. These provide glue between {@link NetconfLayer} and various sources of
+     * such errors.
+     */
+    // FIXME: 8.0.0: remove this in favor of Netconf.ErrorType
     enum ErrorType {
         /**
          * Indicates an error occurred during transport of data, eg over the network.
@@ -75,6 +80,7 @@ public interface RpcError {
      * </pre>
      * @return a string if available or null otherwise.
      */
+    // FIXME: return Netconf.ErrorTag here
     String getTag();
 
     /**
@@ -99,6 +105,7 @@ public interface RpcError {
      *
      * @return a string if available or null otherwise.
      */
+    // FIXME: YANGTOOLS-765: return a Set<Netconf.ErrorInfo> here
     String getInfo();
 
     /**
