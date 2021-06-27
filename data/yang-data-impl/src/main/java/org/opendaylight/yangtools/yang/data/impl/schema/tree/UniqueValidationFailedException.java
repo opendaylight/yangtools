@@ -7,15 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.List;
+import org.opendaylight.yangtools.yang.common.ErrorSeverity;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
+import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintException;
 
 /**
  * Exception thrown when unique constraints would be violated and we cannot throw a {@link UniqueConstraintException}.
  */
-final class UniqueValidationFailedException extends SchemaValidationFailedException {
+final class UniqueValidationFailedException extends SchemaValidationFailedException implements YangNetconfErrorAware {
     private static final long serialVersionUID = 1L;
 
+    // FIXME: 8.0.0: we should be getting a list of YangErrorInfo containing 'non-unique' items
     UniqueValidationFailedException(final String message) {
         super(message);
+    }
+
+    @Override
+    public List<YangNetconfError> getNetconfErrors() {
+        return List.of(ImmutableYangNetconfError.builder()
+            .severity(ErrorSeverity.ERROR)
+            .type(ErrorType.APPLICATION)
+            .tag(ErrorTag.OPERATION_FAILED)
+            .appTag("data-not-unique")
+            .build());
     }
 }
