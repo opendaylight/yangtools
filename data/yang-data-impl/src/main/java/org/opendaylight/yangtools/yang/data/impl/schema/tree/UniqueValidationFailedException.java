@@ -7,15 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Netconf.ErrorTag;
+import org.opendaylight.yangtools.yang.common.YangError;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintException;
 
 /**
  * Exception thrown when unique constraints would be violated and we cannot throw a {@link UniqueConstraintException}.
  */
-final class UniqueValidationFailedException extends SchemaValidationFailedException {
+final class UniqueValidationFailedException extends SchemaValidationFailedException implements YangError {
     private static final long serialVersionUID = 1L;
 
     UniqueValidationFailedException(final String message) {
         super(message);
+    }
+
+    @Override
+    public ErrorTag getErrorTag() {
+        return ErrorTag.OPERATION_FAILED;
+    }
+
+    @Override
+    public Optional<String> getErrorAppTag() {
+        return Optional.of("data-not-unique");
     }
 }
