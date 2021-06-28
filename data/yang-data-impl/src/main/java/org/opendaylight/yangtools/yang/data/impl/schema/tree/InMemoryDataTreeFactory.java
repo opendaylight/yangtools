@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.RequireServiceComponentRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,7 @@ import org.slf4j.LoggerFactory;
 @MetaInfServices
 @Singleton
 @Component(immediate = true)
+@RequireServiceComponentRuntime
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeFactory.class);
     // FIXME: YANGTOOLS-1074: we do not want this name
