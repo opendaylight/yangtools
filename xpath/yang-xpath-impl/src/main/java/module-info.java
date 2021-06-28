@@ -20,6 +20,7 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     requires org.slf4j;
 
     // Annotations
+    requires static com.github.spotbugs.annotations;
     requires static javax.inject;
     requires static metainf.services;
     requires static org.eclipse.jdt.annotation;
