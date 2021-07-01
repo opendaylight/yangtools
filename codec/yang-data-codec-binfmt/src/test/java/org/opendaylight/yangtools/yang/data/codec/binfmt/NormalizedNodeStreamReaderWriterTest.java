@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteStreams;
@@ -21,7 +22,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -31,7 +31,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -67,7 +66,7 @@ import org.xml.sax.InputSource;
 
 @RunWith(Parameterized.class)
 public class NormalizedNodeStreamReaderWriterTest {
-    enum Unsigned implements Function<String, Number> {
+    public enum Unsigned implements Function<String, Number> {
         BIG_INTEGER {
             @Override
             public BigInteger apply(final String str) {
@@ -84,7 +83,7 @@ public class NormalizedNodeStreamReaderWriterTest {
 
     @Parameters(name = "{0} {1}")
     public static Iterable<Object[]> data() {
-        return Arrays.asList(
+        return List.of(
             new Object[] { NormalizedNodeStreamVersion.LITHIUM,    Unsigned.BIG_INTEGER,
                 1_050_286, 9_577_973, 171, 1_553, 103, 237,  98 },
             new Object[] { NormalizedNodeStreamVersion.NEON_SR2,   Unsigned.BIG_INTEGER,
@@ -141,11 +140,8 @@ public class NormalizedNodeStreamReaderWriterTest {
 
         NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
 
-        NormalizedNode node = nnin.readNormalizedNode();
-        Assert.assertEquals(testContainer, node);
-
-        node = nnin.readNormalizedNode();
-        Assert.assertEquals(toasterContainer, node);
+        assertEquals(testContainer, nnin.readNormalizedNode());
+        assertEquals(toasterContainer, nnin.readNormalizedNode());
     }
 
     private NormalizedNode createTestContainer() {
@@ -184,55 +180,36 @@ public class NormalizedNodeStreamReaderWriterTest {
         assertEquals(yiidStreamingSize, bytes.length);
 
         NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-
-        YangInstanceIdentifier newPath = nnin.readYangInstanceIdentifier();
-        Assert.assertEquals(path, newPath);
+        assertEquals(path, nnin.readYangInstanceIdentifier());
     }
 
     @Test
     public void testNormalizedNodeAndYangInstanceIdentifierStreaming() throws IOException {
+        final NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
+        final YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
+            .node(TestModel.OUTER_LIST_QNAME)
+            .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10)
+            .build();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        NormalizedNodeDataOutput writer = version.newDataOutput(
-            ByteStreams.newDataOutput(bos));
-
-        NormalizedNode testContainer = TestModel.createBaseTestContainerBuilder(uint64).build();
-        writer.writeNormalizedNode(testContainer);
-
-        YangInstanceIdentifier path = YangInstanceIdentifier.builder(TestModel.TEST_PATH)
-                .node(TestModel.OUTER_LIST_QNAME).nodeWithKey(
-                        TestModel.INNER_LIST_QNAME, TestModel.ID_QNAME, 10).build();
-
-        writer.writeYangInstanceIdentifier(path);
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (NormalizedNodeDataOutput writer = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
+            writer.writeNormalizedNode(testContainer);
+            writer.writeYangInstanceIdentifier(path);
+        }
 
         final byte[] bytes = bos.toByteArray();
         assertEquals(nnYiidStreamingSize, bytes.length);
 
-        NormalizedNodeDataInput reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-
-        NormalizedNode node = reader.readNormalizedNode();
-        Assert.assertEquals(testContainer, node);
-
-        YangInstanceIdentifier newPath = reader.readYangInstanceIdentifier();
-        Assert.assertEquals(path, newPath);
-
-        writer.close();
+        final NormalizedNodeDataInput reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        assertEquals(testContainer, reader.readNormalizedNode());
+        assertEquals(path, reader.readYangInstanceIdentifier());
     }
 
-    @Test(expected = InvalidNormalizedNodeStreamException.class, timeout = 10000)
+    @Test
     public void testInvalidNormalizedNodeStream() throws IOException {
-        byte[] invalidBytes = {1, 2, 3};
-        NormalizedNodeDataInput reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(invalidBytes));
-
-        reader.readNormalizedNode();
-    }
-
-    @Test(expected = InvalidNormalizedNodeStreamException.class, timeout = 10000)
-    public void testInvalidYangInstanceIdentifierStream() throws IOException {
-        byte[] invalidBytes = {1,2,3};
-        NormalizedNodeDataInput reader = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(invalidBytes));
-
-        reader.readYangInstanceIdentifier();
+        final InvalidNormalizedNodeStreamException ex = assertThrows(InvalidNormalizedNodeStreamException.class,
+            () -> NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(new byte[] { 1, 2, 3})));
+        assertEquals("Invalid signature marker: 1", ex.getMessage());
     }
 
     @Test
@@ -240,7 +217,7 @@ public class NormalizedNodeStreamReaderWriterTest {
         NormalizedNode input = TestModel.createTestContainer(uint64);
         SampleNormalizedNodeSerializable serializable = new SampleNormalizedNodeSerializable(version, input);
         SampleNormalizedNodeSerializable clone = clone(serializable);
-        Assert.assertEquals(input, clone.getInput());
+        assertEquals(input, clone.getInput());
     }
 
     @Test
