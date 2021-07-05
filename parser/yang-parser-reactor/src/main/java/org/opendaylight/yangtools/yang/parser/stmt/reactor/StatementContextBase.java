@@ -446,7 +446,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     final boolean doTryToCompletePhase(final byte targetOrder) {
-        final boolean finished = phaseMutation.isEmpty() ? true : runMutations(targetOrder);
+        final boolean finished = phaseMutation.isEmpty() || runMutations(targetOrder);
         if (completeChildren(targetOrder) && finished) {
             onPhaseCompleted(targetOrder);
             return true;
@@ -468,7 +468,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private boolean runMutations(final byte targetOrder) {
         final ModelProcessingPhase phase = verifyNotNull(ModelProcessingPhase.ofExecutionOrder(targetOrder));
         final Collection<ContextMutation> openMutations = phaseMutation.get(phase);
-        return openMutations.isEmpty() ? true : runMutations(phase, openMutations);
+        return openMutations.isEmpty() || runMutations(phase, openMutations);
     }
 
     private boolean runMutations(final ModelProcessingPhase phase, final Collection<ContextMutation> openMutations) {
