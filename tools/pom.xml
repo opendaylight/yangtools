@@ -23,6 +23,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>parser-perf-tool</module>
         <module>yang-model-validator</module>
         <module>yang-validation-tool</module>
     </modules>
