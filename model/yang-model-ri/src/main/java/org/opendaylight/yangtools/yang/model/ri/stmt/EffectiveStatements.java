@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -280,56 +278,56 @@ public final class EffectiveStatements {
         // Hidden on purpose
     }
 
-    public static ActionEffectiveStatement copyAction(final ActionEffectiveStatement original, final Immutable path,
+    public static ActionEffectiveStatement copyAction(final ActionEffectiveStatement original, final QName qname,
             final int flags) {
         checkArgument(original instanceof ActionEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, path, flags);
+        return new ActionEffectiveStatementImpl((ActionEffectiveStatementImpl) original, qname, flags);
     }
 
-    public static ActionEffectiveStatement createAction(final ActionStatement declared, final Immutable path,
+    public static ActionEffectiveStatement createAction(final ActionStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
                 throws SubstatementIndexingException {
-        return new ActionEffectiveStatementImpl(declared, path, flags, substatements);
+        return new ActionEffectiveStatementImpl(declared, qname, flags, substatements);
     }
 
-    public static AnydataEffectiveStatement copyAnydata(final AnydataEffectiveStatement original, final Immutable path,
+    public static AnydataEffectiveStatement copyAnydata(final AnydataEffectiveStatement original, final QName qname,
             final int flags, final @Nullable AnydataSchemaNode newOriginal) {
         if (original instanceof RegularAnydataEffectiveStatement) {
-            return new RegularAnydataEffectiveStatement((RegularAnydataEffectiveStatement) original, path, flags,
+            return new RegularAnydataEffectiveStatement((RegularAnydataEffectiveStatement) original, qname, flags,
                 newOriginal);
         } else if (original instanceof EmptyAnydataEffectiveStatement) {
-            return new EmptyAnydataEffectiveStatement((EmptyAnydataEffectiveStatement) original, path, flags,
+            return new EmptyAnydataEffectiveStatement((EmptyAnydataEffectiveStatement) original, qname, flags,
                 newOriginal);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
     }
 
-    public static AnydataEffectiveStatement createAnydata(final AnydataStatement declared, final Immutable path,
+    public static AnydataEffectiveStatement createAnydata(final AnydataStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable AnydataSchemaNode original) {
-        return substatements.isEmpty() ? new EmptyAnydataEffectiveStatement(declared, path, flags, original)
-            : new RegularAnydataEffectiveStatement(declared, path, flags, original, substatements);
+        return substatements.isEmpty() ? new EmptyAnydataEffectiveStatement(declared, qname, flags, original)
+            : new RegularAnydataEffectiveStatement(declared, qname, flags, original, substatements);
     }
 
-    public static AnyxmlEffectiveStatement copyAnyxml(final AnyxmlEffectiveStatement original, final Immutable path,
+    public static AnyxmlEffectiveStatement copyAnyxml(final AnyxmlEffectiveStatement original, final QName qname,
             final int flags, final @Nullable AnyxmlSchemaNode newOriginal) {
         if (original instanceof RegularAnyxmlEffectiveStatement) {
-            return new RegularAnyxmlEffectiveStatement((RegularAnyxmlEffectiveStatement) original, path, flags,
+            return new RegularAnyxmlEffectiveStatement((RegularAnyxmlEffectiveStatement) original, qname, flags,
                 newOriginal);
         } else if (original instanceof EmptyAnyxmlEffectiveStatement) {
-            return new EmptyAnyxmlEffectiveStatement((EmptyAnyxmlEffectiveStatement) original, path, flags,
+            return new EmptyAnyxmlEffectiveStatement((EmptyAnyxmlEffectiveStatement) original, qname, flags,
                 newOriginal);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
     }
 
-    public static AnyxmlEffectiveStatement createAnyxml(final AnyxmlStatement declared, final Immutable path,
+    public static AnyxmlEffectiveStatement createAnyxml(final AnyxmlStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable AnyxmlSchemaNode original) {
-        return substatements.isEmpty() ? new EmptyAnyxmlEffectiveStatement(declared, path, flags, original)
-            : new RegularAnyxmlEffectiveStatement(declared, path, flags, original, substatements);
+        return substatements.isEmpty() ? new EmptyAnyxmlEffectiveStatement(declared, qname, flags, original)
+            : new RegularAnyxmlEffectiveStatement(declared, qname, flags, original, substatements);
     }
 
     public static ArgumentEffectiveStatement createArgument(final ArgumentStatement declared,
@@ -363,41 +361,41 @@ public final class EffectiveStatements {
             : new RegularBitEffectiveStatement(declared, substatements);
     }
 
-    public static CaseEffectiveStatement copyCase(final CaseEffectiveStatement original,
-            final Immutable path, final int flags, final @Nullable CaseSchemaNode newOriginal) {
+    public static CaseEffectiveStatement copyCase(final CaseEffectiveStatement original, final QName qname,
+            final int flags, final @Nullable CaseSchemaNode newOriginal) {
         if (original instanceof DeclaredCaseEffectiveStatement) {
-            return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original, path, flags,
+            return new DeclaredCaseEffectiveStatement((DeclaredCaseEffectiveStatement) original, qname, flags,
                 newOriginal);
         } else if (original instanceof UndeclaredCaseEffectiveStatement) {
-            return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original, path, flags,
+            return new UndeclaredCaseEffectiveStatement((UndeclaredCaseEffectiveStatement) original, qname, flags,
                 newOriginal);
         } else {
             throw new IllegalArgumentException("Unsupported origin " + original);
         }
     }
 
-    public static CaseEffectiveStatement createCase(final Immutable path,
-            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-                final @Nullable CaseSchemaNode original) {
-        return new UndeclaredCaseEffectiveStatement(substatements, path, flags, original);
+    public static CaseEffectiveStatement createCase(final QName qname, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final @Nullable CaseSchemaNode original) {
+        return new UndeclaredCaseEffectiveStatement(substatements, qname, flags, original);
     }
 
-    public static CaseEffectiveStatement createCase(final CaseStatement declared, final Immutable path,
+    public static CaseEffectiveStatement createCase(final CaseStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable CaseSchemaNode original) {
-        return new DeclaredCaseEffectiveStatement(declared, substatements, path, flags, original);
+        return new DeclaredCaseEffectiveStatement(declared, substatements, qname, flags, original);
     }
 
     public static ChoiceEffectiveStatement copyChoice(final ChoiceEffectiveStatement original,
-            final Immutable path, final int flags, final @Nullable ChoiceSchemaNode newOriginal) {
+            final QName qname, final int flags, final @Nullable ChoiceSchemaNode newOriginal) {
         checkArgument(original instanceof ChoiceEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original, path, flags, newOriginal);
+        return new ChoiceEffectiveStatementImpl((ChoiceEffectiveStatementImpl) original, qname, flags, newOriginal);
     }
 
-    public static ChoiceEffectiveStatement createChoice(final ChoiceStatement declared, final Immutable path,
+    public static ChoiceEffectiveStatement createChoice(final ChoiceStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable CaseSchemaNode defaultCase, final @Nullable ChoiceSchemaNode original) {
-        return new ChoiceEffectiveStatementImpl(declared, substatements, path, flags, defaultCase, original);
+        return new ChoiceEffectiveStatementImpl(declared, substatements, qname, flags, defaultCase, original);
     }
 
     public static ConfigEffectiveStatement createConfig(final boolean argument) {
@@ -425,15 +423,15 @@ public final class EffectiveStatements {
     }
 
     public static ContainerEffectiveStatement copyContainer(final ContainerEffectiveStatement original,
-            final Immutable path, final int flags, final @Nullable ContainerSchemaNode orig) {
+            final QName qname, final int flags, final @Nullable ContainerSchemaNode orig) {
         checkArgument(original instanceof ContainerEffectiveStatementImpl, "Unsupported original %s", original);
-        return new ContainerEffectiveStatementImpl((ContainerEffectiveStatementImpl) original, path, flags, orig);
+        return new ContainerEffectiveStatementImpl((ContainerEffectiveStatementImpl) original, qname, flags, orig);
     }
 
-    public static ContainerEffectiveStatement createContainer(final ContainerStatement declared, final Immutable path,
+    public static ContainerEffectiveStatement createContainer(final ContainerStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable ContainerSchemaNode original) {
-        return new ContainerEffectiveStatementImpl(declared, substatements, path, flags, original);
+        return new ContainerEffectiveStatementImpl(declared, substatements, qname, flags, original);
     }
 
     public static DefaultEffectiveStatement createDefault(final DefaultStatement declared,
@@ -477,15 +475,14 @@ public final class EffectiveStatements {
     }
 
     public static ExtensionEffectiveStatement createExtension(final ExtensionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final @Nullable SchemaPath schemaPath) {
-        return new ExtensionEffectiveStatementImpl(declared, substatements, schemaPath);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new ExtensionEffectiveStatementImpl(declared, substatements);
     }
 
-    public static FeatureEffectiveStatement createFeature(final FeatureStatement declared, final Immutable path,
-            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return substatements.isEmpty() ? new EmptyFeatureEffectiveStatement(declared, path, flags)
-            : new RegularFeatureEffectiveStatement(declared, path, flags, substatements);
+    public static FeatureEffectiveStatement createFeature(final FeatureStatement declared, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return substatements.isEmpty() ? new EmptyFeatureEffectiveStatement(declared, flags)
+            : new RegularFeatureEffectiveStatement(declared, flags, substatements);
     }
 
     public static FractionDigitsEffectiveStatement createFractionDigits(final FractionDigitsStatement declared) {
@@ -499,9 +496,9 @@ public final class EffectiveStatements {
     }
 
     public static GroupingEffectiveStatement createGrouping(final GroupingStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname,
             final int flags) throws SubstatementIndexingException {
-        return new GroupingEffectiveStatementImpl(declared, substatements, path, flags);
+        return new GroupingEffectiveStatementImpl(declared, substatements, qname, flags);
     }
 
     public static IfFeatureEffectiveStatement createIfFeature(final IfFeatureStatement declared,
@@ -510,14 +507,14 @@ public final class EffectiveStatements {
             : new RegularIfFeatureEffectiveStatement(declared, substatements);
     }
 
-    public static IdentityEffectiveStatement createIdentity(final IdentityStatement declared, final Immutable path) {
-        return new EmptyIdentityEffectiveStatement(declared, path);
+    public static IdentityEffectiveStatement createIdentity(final IdentityStatement declared) {
+        return new EmptyIdentityEffectiveStatement(declared);
     }
 
-    public static IdentityEffectiveStatement createIdentity(final IdentityStatement declared, final Immutable path,
-            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    public static IdentityEffectiveStatement createIdentity(final IdentityStatement declared, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableSet<IdentitySchemaNode> baseIdentities) {
-        return new RegularIdentityEffectiveStatement(declared, path, flags, substatements, baseIdentities);
+        return new RegularIdentityEffectiveStatement(declared, flags, substatements, baseIdentities);
     }
 
     public static ImportEffectiveStatement createImport(final ImportStatement declared,
@@ -532,27 +529,27 @@ public final class EffectiveStatements {
             : new RegularIncludeEffectiveStatement(declared, substatements);
     }
 
-    public static InputEffectiveStatement copyInput(final InputEffectiveStatement original, final Immutable path,
+    public static InputEffectiveStatement copyInput(final InputEffectiveStatement original, final QName qname,
             final int flags) {
         if (original instanceof DeclaredInputEffectiveStatement) {
-            return new DeclaredInputEffectiveStatement((DeclaredInputEffectiveStatement) original, path, flags);
+            return new DeclaredInputEffectiveStatement((DeclaredInputEffectiveStatement) original, qname, flags);
         } else if (original instanceof UndeclaredInputEffectiveStatement) {
-            return new UndeclaredInputEffectiveStatement((UndeclaredInputEffectiveStatement) original, path, flags);
+            return new UndeclaredInputEffectiveStatement((UndeclaredInputEffectiveStatement) original, qname, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
     }
 
-    public static InputEffectiveStatement createInput(final Immutable path, final int flags,
+    public static InputEffectiveStatement createInput(final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
             throws SubstatementIndexingException {
-        return new UndeclaredInputEffectiveStatement(substatements, path, flags);
+        return new UndeclaredInputEffectiveStatement(substatements, qname, flags);
     }
 
-    public static InputEffectiveStatement createInput(final InputStatement declared, final Immutable path,
+    public static InputEffectiveStatement createInput(final InputStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
                 throws SubstatementIndexingException {
-        return new DeclaredInputEffectiveStatement(declared, substatements, path, flags);
+        return new DeclaredInputEffectiveStatement(declared, substatements, qname, flags);
     }
 
     public static KeyEffectiveStatement createKey(final KeyStatement declared, final Set<QName> argument,
@@ -565,17 +562,17 @@ public final class EffectiveStatements {
             : new RegularForeignKeyEffectiveStatement(declared, argument, substatements);
     }
 
-    public static LeafEffectiveStatement copyLeaf(final LeafEffectiveStatement original, final Immutable path,
+    public static LeafEffectiveStatement copyLeaf(final LeafEffectiveStatement original, final QName qname,
             final int flags, final @Nullable LeafSchemaNode newOriginal) {
         checkArgument(original instanceof AbstractLeafEffectiveStatement, "Unsupported original %s", original);
-        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, path, flags, newOriginal);
+        return new RegularLeafEffectiveStatement((AbstractLeafEffectiveStatement) original, qname, flags, newOriginal);
     }
 
-    public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final Immutable path,
-            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+    public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final QName qname, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @Nullable LeafSchemaNode original)  throws SubstatementIndexingException {
-        return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
-            : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
+        return original == null ? new EmptyLeafEffectiveStatement(declared, qname, flags, substatements)
+            : new RegularLeafEffectiveStatement(declared, qname, flags, substatements, original);
     }
 
     public static LengthEffectiveStatement createLength(final LengthStatement declared,
@@ -629,39 +626,38 @@ public final class EffectiveStatements {
     }
 
     public static NotificationEffectiveStatement copyNotification(final NotificationEffectiveStatement original,
-            final Immutable path, final int flags) {
+            final QName qname, final int flags) {
         checkArgument(original instanceof NotificationEffectiveStatementImpl, "Unsupported original %s", original);
-        return new NotificationEffectiveStatementImpl((NotificationEffectiveStatementImpl) original, path, flags);
+        return new NotificationEffectiveStatementImpl((NotificationEffectiveStatementImpl) original, qname, flags);
     }
 
     public static NotificationEffectiveStatement createNotification(final NotificationStatement declared,
-            final Immutable path, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+            final QName qname, final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
                 throws SubstatementIndexingException {
-        return new NotificationEffectiveStatementImpl(declared, substatements, path, flags);
+        return new NotificationEffectiveStatementImpl(declared, substatements, qname, flags);
     }
 
-    public static OutputEffectiveStatement copyOutput(final OutputEffectiveStatement original, final Immutable path,
+    public static OutputEffectiveStatement copyOutput(final OutputEffectiveStatement original, final QName qname,
             final int flags) {
         if (original instanceof DeclaredOutputEffectiveStatement) {
-            return new DeclaredOutputEffectiveStatement((DeclaredOutputEffectiveStatement) original, path, flags);
+            return new DeclaredOutputEffectiveStatement((DeclaredOutputEffectiveStatement) original, qname, flags);
         } else if (original instanceof UndeclaredOutputEffectiveStatement) {
-            return new UndeclaredOutputEffectiveStatement((UndeclaredOutputEffectiveStatement) original, path, flags);
+            return new UndeclaredOutputEffectiveStatement((UndeclaredOutputEffectiveStatement) original, qname, flags);
         } else {
             throw new IllegalArgumentException("Unsupported original " + original);
         }
     }
 
-    public static OutputEffectiveStatement createOutput(final Immutable path, final int flags,
+    public static OutputEffectiveStatement createOutput(final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
             throws SubstatementIndexingException {
-        return new UndeclaredOutputEffectiveStatement(substatements, path, flags);
+        return new UndeclaredOutputEffectiveStatement(substatements, qname, flags);
     }
 
-    public static OutputEffectiveStatement createOutput(final OutputStatement declared, final Immutable path,
+    public static OutputEffectiveStatement createOutput(final OutputStatement declared, final QName qname,
             final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
                 throws SubstatementIndexingException {
-        return new DeclaredOutputEffectiveStatement(declared, substatements, path, flags);
+        return new DeclaredOutputEffectiveStatement(declared, substatements, qname, flags);
     }
 
     public static OrderedByEffectiveStatement createOrderedBy(final OrderedByStatement declared) {
@@ -767,9 +763,9 @@ public final class EffectiveStatements {
     }
 
     public static RpcEffectiveStatement createRpc(final RpcStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
-                final int flags) throws SubstatementIndexingException {
-        return new RpcEffectiveStatementImpl(declared, substatements, path, flags);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname, final int flags)
+                throws SubstatementIndexingException {
+        return new RpcEffectiveStatementImpl(declared, substatements, qname, flags);
     }
 
     public static StatusEffectiveStatement createStatus(final StatusStatement declared) {
@@ -795,10 +791,9 @@ public final class EffectiveStatements {
             : new RegularStatusEffectiveStatement(declared, substatements);
     }
 
-    public static TypedefEffectiveStatement createTypedef(final TypedefStatement declared,
-            final Immutable path, final int flags,
+    public static TypedefEffectiveStatement createTypedef(final TypedefStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new TypedefEffectiveStatementImpl(declared, path, flags, substatements);
+        return new TypedefEffectiveStatementImpl(declared, flags, substatements);
     }
 
     public static UnitsEffectiveStatement createUnits(final UnitsStatement declared,

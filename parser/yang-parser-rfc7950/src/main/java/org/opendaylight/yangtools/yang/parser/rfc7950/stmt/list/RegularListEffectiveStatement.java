@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -20,25 +19,25 @@ final class RegularListEffectiveStatement extends AbstractListEffectiveStatement
     private final ElementCountConstraint elementCountConstraint;
     private final ListSchemaNode original;
 
-    RegularListEffectiveStatement(final ListStatement declared, final Immutable path, final int flags,
+    RegularListEffectiveStatement(final ListStatement declared, final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition, final ElementCountConstraint elementCountConstraint,
             final ListSchemaNode original) {
-        super(declared, path, flags, substatements, keyDefinition);
+        super(declared, qname, flags, substatements, keyDefinition);
         this.elementCountConstraint = elementCountConstraint;
         this.original = original;
     }
 
     RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective, final ListSchemaNode original,
-            final Immutable path, final int flags) {
-        super(originalEffective, path, flags);
+            final QName qname, final int flags) {
+        super(originalEffective, qname, flags);
         this.elementCountConstraint = originalEffective.elementCountConstraint;
         this.original = original;
     }
 
     RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective, final ListSchemaNode original,
-            final Immutable path, final int flags) {
-        super(originalEffective, path, flags);
+            final QName qname, final int flags) {
+        super(originalEffective, qname, flags);
         this.elementCountConstraint = null;
         this.original = original;
     }
