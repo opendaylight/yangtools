@@ -104,14 +104,14 @@ public final class LeafListStatementSupport
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
         if (original instanceof RegularLeafListEffectiveStatement) {
             return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
+                stmt.original(LeafListSchemaNode.class), stmt.getArgument(), flags);
         } else if (original instanceof SlimLeafListEffectiveStatement) {
             return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
+                stmt.original(LeafListSchemaNode.class), stmt.getArgument(), flags);
         } else if (original instanceof EmptyLeafListEffectiveStatement) {
             // Promote to slim
             return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.effectivePath(), flags);
+                stmt.original(LeafListSchemaNode.class), stmt.getArgument(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
@@ -147,12 +147,12 @@ public final class LeafListStatementSupport
         final LeafListStatement declared = stmt.declared();
         if (defaultValues.isEmpty()) {
             return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
+                ? new EmptyLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements)
+                    : new SlimLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original,
                         elementCountConstraint.orElse(null));
         }
 
-        return new RegularLeafListEffectiveStatement(declared, stmt.effectivePath(), flags, substatements, original,
+        return new RegularLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original,
             defaultValues, elementCountConstraint.orElse(null));
     }
 
