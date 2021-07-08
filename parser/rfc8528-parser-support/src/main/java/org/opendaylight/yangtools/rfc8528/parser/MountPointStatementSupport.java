@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -44,8 +43,7 @@ public final class MountPointStatementSupport
             copy.getArgument().equals(current.getArgument())
             // Implied by UnknownSchemaNode
             && copy.history().isAugmenting() == current.history().isAugmenting()
-            && copy.history().isAddedByUses() == current.history().isAddedByUses()
-            && copy.equalParentPath(current)), config, VALIDATOR);
+            && copy.history().isAddedByUses() == current.history().isAddedByUses()), config, VALIDATOR);
     }
 
     // FIXME: these two methods are not quite right. RFC8528 states that:
@@ -87,7 +85,6 @@ public final class MountPointStatementSupport
     @Override
     protected MountPointEffectiveStatement createEffective(final Current<QName, MountPointStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return new MountPointEffectiveStatementImpl(stmt, substatements, SchemaPathSupport.toOptionalPath(
-            stmt.getEffectiveParent().getSchemaPath().createChild(stmt.getArgument())));
+        return new MountPointEffectiveStatementImpl(stmt, substatements);
     }
 }

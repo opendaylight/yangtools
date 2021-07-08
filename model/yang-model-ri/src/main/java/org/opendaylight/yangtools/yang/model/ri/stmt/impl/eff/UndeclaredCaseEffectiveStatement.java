@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -25,21 +24,21 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractUndeclaredEffectiv
 public final class UndeclaredCaseEffectiveStatement
         extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement> implements CaseEffectiveStatementMixin {
     private final @Nullable CaseSchemaNode original;
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final int flags;
 
     public UndeclaredCaseEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Immutable path, final int flags, final @Nullable CaseSchemaNode original) {
+            final QName qname, final int flags, final @Nullable CaseSchemaNode original) {
         super(substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
         this.original = original;
     }
 
-    public UndeclaredCaseEffectiveStatement(final UndeclaredCaseEffectiveStatement origEffective, final Immutable path,
+    public UndeclaredCaseEffectiveStatement(final UndeclaredCaseEffectiveStatement origEffective, final QName qname,
             final int flags, final @Nullable CaseSchemaNode original) {
         super(origEffective);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
         this.original = original;
     }
@@ -50,8 +49,8 @@ public final class UndeclaredCaseEffectiveStatement
     }
 
     @Override
-    public Immutable pathObject() {
-        return path;
+    public QName getQName() {
+        return qname;
     }
 
     @Override
@@ -71,6 +70,6 @@ public final class UndeclaredCaseEffectiveStatement
 
     @Override
     public String toString() {
-        return UndeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return UndeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + qname + "]";
     }
 }

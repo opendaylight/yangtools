@@ -79,8 +79,7 @@ public final class GroupingStatementSupport
         super(YangStmtMapping.GROUPING, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.history().isAddedByUses() == current.history().isAddedByUses()
-                && copy.getArgument().equals(current.getArgument())
-                && copy.equalParentPath(current)), config, validator);
+                && copy.getArgument().equals(current.getArgument())), config, validator);
     }
 
     public static @NonNull GroupingStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -146,7 +145,7 @@ public final class GroupingStatementSupport
     protected GroupingEffectiveStatement createEffective(final Current<QName, GroupingStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createGrouping(stmt.declared(), substatements, stmt.effectivePath(),
+            return EffectiveStatements.createGrouping(stmt.declared(), substatements, stmt.getArgument(),
                 EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);

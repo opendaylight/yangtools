@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -22,23 +21,23 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AddedByUsesMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin.WithStatus;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.NotificationNodeContainerMixin;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
 public final class GroupingEffectiveStatementImpl
         extends WithSubstatements<QName, GroupingStatement, GroupingEffectiveStatement>
         implements GroupingDefinition, GroupingEffectiveStatement,
-            DataNodeContainerMixin<QName, GroupingStatement>,
-            SchemaNodeMixin<QName, GroupingStatement>, ActionNodeContainerMixin<QName, GroupingStatement>,
+            DataNodeContainerMixin<QName, GroupingStatement>, WithStatus<QName, GroupingStatement>,
+            ActionNodeContainerMixin<QName, GroupingStatement>,
             NotificationNodeContainerMixin<QName, GroupingStatement>, AddedByUsesMixin<QName, GroupingStatement> {
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final int flags;
 
     public GroupingEffectiveStatementImpl(final GroupingStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname,
             final int flags) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
@@ -48,13 +47,13 @@ public final class GroupingEffectiveStatementImpl
     }
 
     @Override
-    public Immutable pathObject() {
-        return path;
+    public QName argument() {
+        return qname;
     }
 
     @Override
-    public QName argument() {
-        return getQName();
+    public QName getQName() {
+        return qname;
     }
 
     @Override
@@ -69,6 +68,6 @@ public final class GroupingEffectiveStatementImpl
 
     @Override
     public String toString() {
-        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + qname + "]";
     }
 }
