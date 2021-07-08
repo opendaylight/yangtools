@@ -102,7 +102,7 @@ public final class IdentityStatementSupport
     protected IdentityEffectiveStatement createEffective(final Current<QName, IdentityStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
-            return EffectiveStatements.createIdentity(stmt.declared(), stmt.effectivePath());
+            return EffectiveStatements.createIdentity(stmt.declared());
         }
 
         final List<IdentitySchemaNode> identities = new ArrayList<>();
@@ -118,7 +118,7 @@ public final class IdentityStatementSupport
             }
         }
 
-        return EffectiveStatements.createIdentity(stmt.declared(), stmt.effectivePath(), new FlagsBuilder()
+        return EffectiveStatements.createIdentity(stmt.declared(), new FlagsBuilder()
             .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
             .toFlags(), substatements, ImmutableSet.copyOf(identities));
     }

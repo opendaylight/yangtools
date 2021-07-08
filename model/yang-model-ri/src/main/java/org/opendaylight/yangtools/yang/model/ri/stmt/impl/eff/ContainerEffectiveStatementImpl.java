@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.P
 public final class ContainerEffectiveStatementImpl
         extends WithSubstatements<QName, ContainerStatement, ContainerEffectiveStatement>
         implements ContainerEffectiveStatement, ContainerSchemaNode, DerivableSchemaNode,
-            DataSchemaNodeMixin<QName, ContainerStatement>, DataNodeContainerMixin<QName, ContainerStatement>,
+            DataSchemaNodeMixin<ContainerStatement>, DataNodeContainerMixin<QName, ContainerStatement>,
             ActionNodeContainerMixin<QName, ContainerStatement>,
             ActionNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
             NotificationNodeContainerMixin<QName, ContainerStatement>,
@@ -44,22 +43,22 @@ public final class ContainerEffectiveStatementImpl
             AugmentationTargetMixin<QName, ContainerStatement> {
 
     private final int flags;
-    private final @NonNull Immutable path;
+    private final @NonNull QName argument;
     private final @Nullable ContainerSchemaNode original;
 
     public ContainerEffectiveStatementImpl(final ContainerStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
             final int flags, final @Nullable ContainerSchemaNode original) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.original = original;
         this.flags = flags;
     }
 
-    public ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final Immutable path,
+    public ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final QName argument,
             final int flags, final @Nullable ContainerSchemaNode original) {
         super(origEffective);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.original = original;
         this.flags = flags;
     }
@@ -71,12 +70,7 @@ public final class ContainerEffectiveStatementImpl
 
     @Override
     public QName argument() {
-        return getQName();
-    }
-
-    @Override
-    public Immutable pathObject() {
-        return path;
+        return argument;
     }
 
     @Override
@@ -101,6 +95,6 @@ public final class ContainerEffectiveStatementImpl
 
     @Override
     public String toString() {
-        return "container " + getQName().getLocalName();
+        return "container " + argument.getLocalName();
     }
 }

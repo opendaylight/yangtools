@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -39,29 +38,29 @@ abstract class AbstractListEffectiveStatement
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
-            DataSchemaNodeMixin<QName, ListStatement>, UserOrderedMixin<QName, ListStatement>,
+            DataSchemaNodeMixin<ListStatement>, UserOrderedMixin<QName, ListStatement>,
             DataNodeContainerMixin<QName, ListStatement>, WhenConditionMixin<QName, ListStatement>,
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
     private final @NonNull Object substatements;
-    private final @NonNull Immutable path;
+    private final @NonNull QName argument;
     private final @NonNull Object keyDefinition;
 
-    AbstractListEffectiveStatement(final ListStatement declared, final Immutable path, final int flags,
+    AbstractListEffectiveStatement(final ListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.substatements = maskList(substatements);
         this.keyDefinition = maskList(keyDefinition);
         this.flags = flags;
     }
 
-    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final Immutable path,
+    AbstractListEffectiveStatement(final AbstractListEffectiveStatement original, final QName argument,
             final int flags) {
         super(original);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.substatements = original.substatements;
         this.keyDefinition = original.keyDefinition;
         this.flags = flags;
@@ -73,18 +72,13 @@ abstract class AbstractListEffectiveStatement
     }
 
     @Override
+    public final QName argument() {
+        return argument;
+    }
+
+    @Override
     public final int flags() {
         return flags;
-    }
-
-    @Override
-    public final QName argument() {
-        return getQName();
-    }
-
-    @Override
-    public final Immutable pathObject() {
-        return path;
     }
 
     @Override

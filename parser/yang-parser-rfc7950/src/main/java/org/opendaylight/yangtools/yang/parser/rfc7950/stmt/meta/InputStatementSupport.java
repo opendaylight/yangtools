@@ -93,20 +93,20 @@ public final class InputStatementSupport
     @Override
     InputEffectiveStatement copyDeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
             final InputEffectiveStatement original) {
-        return EffectiveStatements.copyInput(original, stmt.effectivePath(), flags);
+        return EffectiveStatements.copyInput(original, stmt.getArgument(), flags);
     }
 
     @Override
     InputEffectiveStatement copyUndeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
             final InputEffectiveStatement original) {
-        return EffectiveStatements.copyInput(original, stmt.effectivePath(), flags);
+        return EffectiveStatements.copyInput(original, stmt.getArgument(), flags);
     }
 
     @Override
     InputEffectiveStatement createDeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createInput(stmt.declared(), stmt.effectivePath(), flags, substatements);
+            return EffectiveStatements.createInput(stmt.declared(), stmt.getArgument(), flags, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -116,7 +116,7 @@ public final class InputStatementSupport
     InputEffectiveStatement createUndeclaredEffective(final int flags, final Current<QName, InputStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createInput(stmt.effectivePath(), flags, substatements);
+            return EffectiveStatements.createInput(stmt.getArgument(), flags, substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

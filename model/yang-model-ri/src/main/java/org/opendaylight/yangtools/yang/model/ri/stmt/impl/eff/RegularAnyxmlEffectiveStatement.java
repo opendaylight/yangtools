@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -18,16 +18,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 public final class RegularAnyxmlEffectiveStatement extends EmptyAnyxmlEffectiveStatement {
     private final @NonNull Object substatements;
 
-    public RegularAnyxmlEffectiveStatement(final AnyxmlStatement declared, final Immutable path, final int flags,
+    public RegularAnyxmlEffectiveStatement(final AnyxmlStatement declared, final QName argument, final int flags,
             final @Nullable AnyxmlSchemaNode original,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, path, flags, original);
+        super(declared, argument, flags, original);
         this.substatements = maskList(substatements);
     }
 
-    public RegularAnyxmlEffectiveStatement(final RegularAnyxmlEffectiveStatement original, final Immutable path,
+    public RegularAnyxmlEffectiveStatement(final RegularAnyxmlEffectiveStatement original, final QName argument,
             final int flags, final @Nullable AnyxmlSchemaNode newOriginal) {
-        super(original, path, flags, newOriginal);
+        super(original, argument, flags, newOriginal);
         this.substatements = original.substatements;
     }
 
