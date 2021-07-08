@@ -264,12 +264,6 @@ public interface SchemaContext extends ContainerLike, Immutable {
 
     @Override
     @Deprecated
-    default SchemaPath getPath() {
-        return SchemaPath.ROOT;
-    }
-
-    @Override
-    @Deprecated
     default Status getStatus() {
         return Status.CURRENT;
     }

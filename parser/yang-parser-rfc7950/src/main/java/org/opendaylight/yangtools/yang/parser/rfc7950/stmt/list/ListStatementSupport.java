@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -142,10 +141,10 @@ public final class ListStatementSupport
         final int flags = computeFlags(stmt, original.effectiveSubstatements());
         if (original instanceof RegularListEffectiveStatement) {
             return new RegularListEffectiveStatement((RegularListEffectiveStatement) original,
-                stmt.original(ListSchemaNode.class), stmt.effectivePath(), flags);
+                stmt.original(ListSchemaNode.class), stmt.getArgument(), flags);
         } else if (original instanceof EmptyListEffectiveStatement) {
             return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original,
-                stmt.original(ListSchemaNode.class), stmt.effectivePath(), flags);
+                stmt.original(ListSchemaNode.class), stmt.getArgument(), flags);
         } else {
             // Safe fallback
             return super.copyEffective(stmt, original);
@@ -189,12 +188,12 @@ public final class ListStatementSupport
 
         final Optional<ElementCountConstraint> elementCountConstraint =
             EffectiveStmtUtils.createElementCountConstraint(substatements);
-        final Immutable path = stmt.effectivePath();
+        final QName qname = stmt.getArgument();
         final ListSchemaNode original = stmt.original(ListSchemaNode.class);
         try {
             return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition)
-                    : new RegularListEffectiveStatement(stmt.declared(), path, flags, substatements, keyDefinition,
+                ? new EmptyListEffectiveStatement(stmt.declared(), qname, flags, substatements, keyDefinition)
+                    : new RegularListEffectiveStatement(stmt.declared(), qname, flags, substatements, keyDefinition,
                         elementCountConstraint.orElse(null), original);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);

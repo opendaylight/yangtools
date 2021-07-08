@@ -7,11 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
@@ -20,17 +16,9 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
 
 abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName, IdentityStatement>
-        implements IdentityEffectiveStatement, IdentitySchemaNode, SchemaNodeMixin<QName, IdentityStatement> {
-    private final @NonNull Immutable path;
-
-    AbstractIdentityEffectiveStatement(final IdentityStatement declared, final Immutable path) {
+        implements IdentityEffectiveStatement, IdentitySchemaNode, SchemaNodeMixin<IdentityStatement> {
+    AbstractIdentityEffectiveStatement(final IdentityStatement declared) {
         super(declared);
-        this.path = requireNonNull(path);
-    }
-
-    @Override
-    public final Immutable pathObject() {
-        return path;
     }
 
     @Override
@@ -40,6 +28,6 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(this).add("qname", getQName()).add("path", path).toString();
+        return MoreObjects.toStringHelper(this).add("qname", getQName()).toString();
     }
 }

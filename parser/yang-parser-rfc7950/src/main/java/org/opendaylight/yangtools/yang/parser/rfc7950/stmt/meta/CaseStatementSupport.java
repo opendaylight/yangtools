@@ -106,14 +106,14 @@ public final class CaseStatementSupport
     @Override
     protected CaseEffectiveStatement copyDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
-        return EffectiveStatements.copyCase(original, stmt.effectivePath(),
+        return EffectiveStatements.copyCase(original, stmt.getArgument(),
             computeFlags(stmt, original.effectiveSubstatements()), stmt.original(CaseSchemaNode.class));
     }
 
     @Override
     protected CaseEffectiveStatement copyUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
-        return EffectiveStatements.copyCase(original, stmt.effectivePath(),
+        return EffectiveStatements.copyCase(original, stmt.getArgument(),
             computeFlags(stmt, original.effectiveSubstatements()), stmt.original(CaseSchemaNode.class));
     }
 
@@ -121,7 +121,7 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement createDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createCase(stmt.declared(), stmt.effectivePath(),
+            return EffectiveStatements.createCase(stmt.declared(), stmt.getArgument(),
                 computeFlags(stmt, substatements), substatements, stmt.original(CaseSchemaNode.class));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
@@ -132,7 +132,7 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createCase(stmt.effectivePath(), computeFlags(stmt, substatements),
+            return EffectiveStatements.createCase(stmt.getArgument(), computeFlags(stmt, substatements),
                 substatements, stmt.original(CaseSchemaNode.class));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
