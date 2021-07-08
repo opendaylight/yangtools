@@ -20,28 +20,4 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      * @return QName with the name of the schema node
      */
     @NonNull QName getQName();
-
-    /**
-     * Returns the schema path of the instance of the type {@code SchemaNode}.
-     *
-     * <p>
-     * The default implementation throws an {@link UnsupportedOperationException}.
-     *
-     * @return schema path of the schema node
-     * @throws UnsupportedOperationException when the implementation does not support per-node unique paths
-     * @deprecated The idea of identifying SchemaNodes through a global path does not work. There are two problems:
-     *             <ul>
-     *               <li>SchemaPath does not work because it does not discern namespaces, i.e. we do not known whether
-     *                   the {@code QName} refers to a {@code grouping}, a {@code typedef} or a {@code container}.
-     *               </li>
-     *               <li>Such a path needs to be maintained by each SchemaNode and requires us to instantiate each
-     *                   effective statement as a separate object (because {@link #getPath()} is effectively an
-     *                   identity within a given {@link EffectiveModelContext}.
-     *               </li>
-     *             </ul>
-     */
-    @Deprecated
-    default @NonNull SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupported(this);
-    }
 }

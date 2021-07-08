@@ -11,11 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,16 +29,14 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public class YangParserSimpleTest {
-    private static final QNameModule SN = QNameModule.create(XMLNamespace.of("urn:opendaylight:simple-nodes"),
-        Revision.of("2013-07-30"));
+    private static final XMLNamespace NS = XMLNamespace.of("urn:opendaylight:simple-nodes");
+    private static final QNameModule SN = QNameModule.create(NS, Revision.of("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
-    private static final SchemaPath SN_NODES_PATH = SchemaPath.create(true, SN_NODES);
 
     private SchemaContext context;
     private Module testModule;
@@ -149,7 +144,6 @@ public class YangParserSimpleTest {
                 .getDataChildByName(QName.create(testModule.getQNameModule(), "nodes"));
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
-        assertPathEquals(SN_NODES_PATH, nodes);
         assertEquals(Optional.of("nodes collection"), nodes.getDescription());
         assertEquals(Optional.of("nodes ref"), nodes.getReference());
         assertEquals(Status.CURRENT, nodes.getStatus());
@@ -202,8 +196,8 @@ public class YangParserSimpleTest {
         assertEquals(8, nodes.getChildNodes().size());
         final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "added"));
-        assertPathEquals(createPath("nodes", "added"), added);
-        assertEquals(createPath("mytype").getLastComponent(), added.getType().getQName());
+        assertEquals(QName.create(SN, "added"), added.getQName());
+        assertEquals(QName.create(SN, "mytype"), added.getType().getQName());
 
         final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
             testModule.getQNameModule(), "links"));
@@ -219,17 +213,4 @@ public class YangParserSimpleTest {
         final UsesNode use = uses.iterator().next();
         assertEquals(nodeGroup, use.getSourceGrouping());
     }
-
-
-    private static final XMLNamespace NS = XMLNamespace.of("urn:opendaylight:simple-nodes");
-
-    private static SchemaPath createPath(final String... names) {
-        final Revision rev = Revision.of("2013-07-30");
-        final List<QName> path = new ArrayList<>();
-        for (final String name : names) {
-            path.add(QName.create(NS, rev, name));
-        }
-        return SchemaPath.create(path, true);
-    }
-
 }

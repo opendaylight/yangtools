@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -79,7 +78,6 @@ public class EffectiveSchemaContextTest {
         assertFalse(schemaContext.getDescription().isPresent());
         assertFalse(schemaContext.getReference().isPresent());
         assertEquals(SchemaContext.NAME, schemaContext.getQName());
-        assertEquals(SchemaPath.ROOT, schemaContext.getPath());
         assertEquals(Status.CURRENT, schemaContext.getStatus());
         assertNotNull(schemaContext.getUses());
         assertTrue(schemaContext.getUses().isEmpty());

@@ -70,8 +70,7 @@ public final class FeatureStatementSupport
     @Override
     protected FeatureEffectiveStatement createEffective(final Current<QName, FeatureStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return EffectiveStatements.createFeature(stmt.declared(), stmt.effectivePath(), computeFlags(substatements),
-            substatements);
+        return EffectiveStatements.createFeature(stmt.declared(), computeFlags(substatements), substatements);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
