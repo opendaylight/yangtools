@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
 interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchemaNode, DerivableSchemaNode,
-        DataSchemaNodeMixin<QName, CaseStatement>, DocumentedNodeMixin.WithStatus<QName, CaseStatement>,
+        DataSchemaNodeMixin<CaseStatement>, DocumentedNodeMixin.WithStatus<QName, CaseStatement>,
         DataNodeContainerMixin<QName, CaseStatement>, MustConstraintMixin<QName, CaseStatement>,
         AugmentationTargetMixin<QName, CaseStatement> {
 

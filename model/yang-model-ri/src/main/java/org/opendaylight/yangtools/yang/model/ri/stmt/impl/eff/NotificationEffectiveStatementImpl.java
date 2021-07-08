@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -28,31 +27,36 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.S
 public final class NotificationEffectiveStatementImpl
         extends WithSubstatements<QName, NotificationStatement, NotificationEffectiveStatement>
         implements NotificationDefinition, NotificationEffectiveStatement,
-                   SchemaNodeMixin<QName, NotificationStatement>, DataNodeContainerMixin<QName, NotificationStatement>,
+                   SchemaNodeMixin<NotificationStatement>, DataNodeContainerMixin<QName, NotificationStatement>,
                    AugmentationTargetMixin<QName, NotificationStatement>, CopyableMixin<QName, NotificationStatement>,
                    MustConstraintMixin<QName, NotificationStatement> {
 
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final int flags;
 
     public NotificationEffectiveStatementImpl(final NotificationStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname,
             final int flags) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
-    public NotificationEffectiveStatementImpl(final NotificationEffectiveStatementImpl original, final Immutable path,
+    public NotificationEffectiveStatementImpl(final NotificationEffectiveStatementImpl original, final QName qname,
             final int flags) {
         super(original);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
     @Override
     public QName argument() {
-        return getQName();
+        return qname;
+    }
+
+    @Override
+    public QName getQName() {
+        return qname;
     }
 
     @Override
@@ -66,18 +70,12 @@ public final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    public Immutable pathObject() {
-        return path;
-    }
-
-    @Override
     public NotificationEffectiveStatement asEffectiveStatement() {
         return this;
     }
 
     @Override
     public String toString() {
-        return NotificationEffectiveStatementImpl.class.getSimpleName() + "[qname=" + getQName() + ", path=" + path
-                + "]";
+        return NotificationEffectiveStatementImpl.class.getSimpleName() + "[qname=" + qname + "]";
     }
 }

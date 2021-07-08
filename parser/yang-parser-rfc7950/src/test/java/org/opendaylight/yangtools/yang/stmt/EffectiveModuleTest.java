@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
@@ -31,43 +30,28 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class EffectiveModuleTest {
-
-    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
-            "/semantic-statement-parser/effective-module/root.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
-            "/semantic-statement-parser/effective-module/imported.yang");
-    private static final StatementStreamSource SUBMODULE = sourceForResource(
-            "/semantic-statement-parser/effective-module/submod.yang");
-
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(XMLNamespace.of("root-ns"));
-
     private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
-
-    private static final SchemaPath FEATURE1_SCHEMA_PATH = SchemaPath.create(true, FEATURE1);
-
     private static final Revision REVISION = Revision.of("2000-01-01");
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE)
-                .buildEffective();
-
-        assertNotNull(result);
-
-        Module rootModule = result.findModules("root").iterator().next();
+        final Module rootModule = RFC7950Reactors.defaultReactor().newBuild()
+                .addSources(
+                    sourceForResource("/semantic-statement-parser/effective-module/root.yang"),
+                    sourceForResource("/semantic-statement-parser/effective-module/imported.yang"),
+                    sourceForResource("/semantic-statement-parser/effective-module/submod.yang"))
+                .buildEffective()
+                .findModules("root").iterator().next();
         assertNotNull(rootModule);
 
         assertEquals("root-pref", rootModule.getPrefix());
@@ -121,7 +105,6 @@ public class EffectiveModuleTest {
         final FeatureDefinition featureStmt = features.iterator().next();
         assertNotNull(featureStmt);
         assertEquals(FEATURE1, featureStmt.getQName());
-        assertPathEquals(FEATURE1_SCHEMA_PATH, featureStmt);
         assertEquals(Optional.of("feature1 description"), featureStmt.getDescription());
         assertEquals(Optional.of("feature1 reference"), featureStmt.getReference());
         assertEquals(Status.CURRENT, featureStmt.getStatus());

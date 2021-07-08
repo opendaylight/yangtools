@@ -128,7 +128,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         @Override
-        public final D getDeclared() {
+        public final @NonNull D getDeclared() {
             return declared;
         }
     }
