@@ -49,9 +49,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
                 final Collection<? extends EffectiveStatement<?, ?>> substatements) {
             return equalHistory(copy.history(), current.history())
-                && copy.getArgument().equals(current.getArgument())
-                // FIXME: 8.0.0: eliminate this call
-                && copy.equalParentPath(current);
+                && copy.getArgument().equals(current.getArgument());
         }
 
         private static boolean equalHistory(final CopyHistory copy, final CopyHistory current) {
@@ -74,7 +72,6 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * Return the {@link StatementPolicy} corresponding to a potentially-instantiated YANG statement. Statements are
      * reused as long as:
      * <ul>
-     *   <li>{@link Current#schemaPath()} does not change</li>
      *   <li>{@link Current#argument()} does not change</li>
      *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
      *   <li>{@link Current#effectiveConfig()} does not change</li>
@@ -96,7 +93,6 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      * Return the {@link StatementPolicy} corresponding to an uninstantiated YANG statement. Statements are
      * reused as long as:
      * <ul>
-     *   <li>{@link Current#schemaPath()} does not change</li>
      *   <li>{@link Current#argument()} does not change</li>
      *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
      * </ul>

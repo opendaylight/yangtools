@@ -115,7 +115,7 @@ public final class ContainerStatementSupport
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
         try {
-            return EffectiveStatements.createContainer(stmt.declared(), stmt.effectivePath(),
+            return EffectiveStatements.createContainer(stmt.declared(), stmt.getArgument(),
                 createFlags(stmt, substatements), substatements, stmt.original(ContainerSchemaNode.class));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
@@ -125,7 +125,7 @@ public final class ContainerStatementSupport
     @Override
     public ContainerEffectiveStatement copyEffective(final Current<QName, ContainerStatement> stmt,
             final ContainerEffectiveStatement original) {
-        return EffectiveStatements.copyContainer(original, stmt.effectivePath(),
+        return EffectiveStatements.copyContainer(original, stmt.getArgument(),
             createFlags(stmt, original.effectiveSubstatements()), stmt.original(ContainerSchemaNode.class));
     }
 

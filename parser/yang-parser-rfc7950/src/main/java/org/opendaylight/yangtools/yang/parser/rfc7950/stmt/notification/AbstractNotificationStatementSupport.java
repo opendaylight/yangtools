@@ -49,7 +49,7 @@ abstract class AbstractNotificationStatementSupport
     protected final NotificationEffectiveStatement createEffective(final Current<QName, NotificationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createNotification(stmt.declared(), stmt.effectivePath(),
+            return EffectiveStatements.createNotification(stmt.declared(), stmt.getArgument(),
                 EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
@@ -60,7 +60,7 @@ abstract class AbstractNotificationStatementSupport
     // FIXME: propagate original?
     public final NotificationEffectiveStatement copyEffective(final Current<QName, NotificationStatement> stmt,
             final NotificationEffectiveStatement original) {
-        return EffectiveStatements.copyNotification(original, stmt.effectivePath(),
+        return EffectiveStatements.copyNotification(original, stmt.getArgument(),
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
     }
 }

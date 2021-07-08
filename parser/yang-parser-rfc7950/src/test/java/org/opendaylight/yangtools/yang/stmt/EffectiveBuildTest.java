@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.FileNotFoundException;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -85,9 +83,9 @@ public class EffectiveBuildTest {
         ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode) grpSubCon2.getDataChildByName(q6);
         assertNotNull(grpSubSubCon2);
 
-        assertPathEquals(SchemaPath.create(true, q1, q2, q3), subSubCon);
-        assertPathEquals(SchemaPath.create(true, q4, q5, q6), subSubCon2);
-        assertPathEquals(SchemaPath.create(true, q7, q5, q6), grpSubSubCon2);
+        assertEquals(q3, subSubCon.getQName());
+        assertEquals(q6, subSubCon2.getQName());
+        assertEquals(q6, grpSubSubCon2.getQName());
     }
 
     @Test
