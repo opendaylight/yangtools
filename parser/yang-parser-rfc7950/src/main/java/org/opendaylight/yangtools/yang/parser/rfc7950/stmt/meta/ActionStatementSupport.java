@@ -112,7 +112,7 @@ public final class ActionStatementSupport extends
         verify(!substatements.isEmpty(), "Missing implicit input/output statements at %s", ref);
 
         try {
-            return EffectiveStatements.createAction(stmt.declared(), stmt.effectivePath(),
+            return EffectiveStatements.createAction(stmt.declared(), stmt.getArgument(),
                 EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
@@ -122,7 +122,7 @@ public final class ActionStatementSupport extends
     @Override
     public ActionEffectiveStatement copyEffective(final Current<QName, ActionStatement> stmt,
             final ActionEffectiveStatement original) {
-        return EffectiveStatements.copyAction(original, stmt.effectivePath(),
+        return EffectiveStatements.copyAction(original, stmt.getArgument(),
             EffectiveStatementMixins.historyAndStatusFlags(stmt.history(), original.effectiveSubstatements()));
     }
 }
