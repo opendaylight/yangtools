@@ -11,11 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -33,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
@@ -53,10 +49,6 @@ public class AugmentTest {
     public void testAugmentParsing() throws Exception {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
             .toURI());
-        final List<QName> qnames = new ArrayList<>();
-        qnames.add(Q0);
-        qnames.add(Q1);
-        qnames.add(Q2);
 
         // foo.yang
         final Module module1 = TestUtils.findModule(context, "foo").get();
@@ -65,7 +57,7 @@ public class AugmentTest {
         final AugmentationSchemaNode augment = augmentations.iterator().next();
         assertNotNull(augment);
 
-        assertEquals(Absolute.of(qnames), augment.getTargetPath());
+        assertEquals(Absolute.of(Q0, Q1, Q2), augment.getTargetPath());
 
         final Collection<? extends DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(4, augmentChildren.size());
@@ -88,37 +80,21 @@ public class AugmentTest {
         assertNotNull(odl);
 
         // leaf ds0ChannelNumber
-        QName qname = QName.create(FOO, "ds0ChannelNumber");
-        qnames.add(qname);
-        assertEquals(qname, ds0ChannelNumber.getQName());
-        SchemaPath expectedSchemaPath = SchemaPath.create(qnames, true);
-        assertPathEquals(expectedSchemaPath, ds0ChannelNumber);
+        assertEquals(QName.create(FOO, "ds0ChannelNumber"), ds0ChannelNumber.getQName());
         assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
         assertEquals(TypeDefinitions.STRING, ds0ChannelNumber.getType().getQName());
 
         // leaf interface-id
-        qname = QName.create(FOO, "interface-id");
-        assertEquals(qname, interfaceId.getQName());
-        qnames.set(3, qname);
-        expectedSchemaPath = SchemaPath.create(qnames, true);
-        assertPathEquals(expectedSchemaPath, interfaceId);
+        assertEquals(QName.create(FOO, "interface-id"), interfaceId.getQName());
         assertFalse(interfaceId.isAugmenting());
 
         // container schemas
-        qname = QName.create(FOO, "schemas");
-        assertEquals(qname, schemas.getQName());
-        qnames.set(3, qname);
-        expectedSchemaPath = SchemaPath.create(qnames, true);
-        assertPathEquals(expectedSchemaPath, schemas);
+        assertEquals(QName.create(FOO, "schemas"), schemas.getQName());
         assertFalse(schemas.isAugmenting());
 
         // choice odl
-        qname = QName.create(FOO, "odl");
-        assertEquals(qname, odl.getQName());
-        qnames.set(3, qname);
-        expectedSchemaPath = SchemaPath.create(qnames, true);
-        assertPathEquals(expectedSchemaPath, odl);
+        assertEquals(QName.create(FOO, "odl"), odl.getQName());
         assertFalse(odl.isAugmenting());
 
         // baz.yang
@@ -167,18 +143,12 @@ public class AugmentTest {
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
                 module2.getQNameModule(), "ifEntry"));
 
-        final List<QName> qnames = new ArrayList<>();
-        qnames.add(Q0);
-        qnames.add(Q1);
-        qnames.add(Q2);
-
         // baz.yang
         // augment "/br:interfaces/br:ifEntry" {
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(BAZ,
                 "augment-holder"));
         TestUtils.checkIsAugmenting(augmentHolder, true);
         assertEquals(Q2, augmentHolder.getQName());
-        assertPathEquals(SchemaPath.create(qnames, true), augmentHolder);
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
@@ -196,28 +166,16 @@ public class AugmentTest {
         assertNotNull(odl);
 
         // leaf ds0ChannelNumber
-        QName qname = QName.create(FOO, "ds0ChannelNumber");
-        assertEquals(qname, ds0ChannelNumber.getQName());
-        qnames.add(qname);
-        assertPathEquals(SchemaPath.create(qnames, true), ds0ChannelNumber);
+        assertEquals(QName.create(FOO, "ds0ChannelNumber"), ds0ChannelNumber.getQName());
 
         // leaf interface-id
-        qname = QName.create(FOO, "interface-id");
-        assertEquals(qname, interfaceId.getQName());
-        qnames.set(3, qname);
-        assertPathEquals(SchemaPath.create(qnames, true), interfaceId);
+        assertEquals(QName.create(FOO, "interface-id"), interfaceId.getQName());
 
         // container schemas
-        qname = QName.create(FOO, "schemas");
-        assertEquals(qname, schemas.getQName());
-        qnames.set(3, qname);
-        assertPathEquals(SchemaPath.create(qnames, true), schemas);
+        assertEquals(QName.create(FOO, "schemas"), schemas.getQName());
 
         // choice odl
-        qname = QName.create(FOO, "odl");
-        assertEquals(qname, odl.getQName());
-        qnames.set(3, qname);
-        assertPathEquals(SchemaPath.create(qnames, true), odl);
+        assertEquals(QName.create(FOO, "odl"), odl.getQName());
     }
 
     @Test
@@ -262,64 +220,36 @@ public class AugmentTest {
         assertNotNull(node2);
         assertNotNull(node3);
 
-        final List<QName> qnames = new ArrayList<>();
-        qnames.add(Q0);
-        qnames.add(Q1);
-        qnames.add(Q2);
-        qnames.add(QName.create(FOO, "odl"));
-
         // case id
-        QName qname = QName.create(FOO, "id");
-        assertEquals(qname, id.getQName());
-        qnames.add(qname);
-        assertPathEquals(SchemaPath.create(qnames, true), id);
+        assertEquals(QName.create(FOO, "id"), id.getQName());
         final Collection<? extends DataSchemaNode> idChildren = id.getChildNodes();
         assertEquals(1, idChildren.size());
 
         // case node1
-        qname = QName.create(FOO, "node1");
-        assertEquals(qname, node1.getQName());
-        qnames.set(4, qname);
-        assertPathEquals(SchemaPath.create(qnames, true), node1);
+        assertEquals(QName.create(FOO, "node1"), node1.getQName());
         final Collection<? extends DataSchemaNode> node1Children = node1.getChildNodes();
         assertTrue(node1Children.isEmpty());
 
         // case node2
-        qname = QName.create(FOO, "node2");
-        assertEquals(qname, node2.getQName());
-        qnames.set(4, qname);
-        assertPathEquals(SchemaPath.create(qnames, true), node2);
+        assertEquals(QName.create(FOO, "node2"), node2.getQName());
         final Collection<? extends DataSchemaNode> node2Children = node2.getChildNodes();
         assertTrue(node2Children.isEmpty());
 
         // case node3
-        qname = QName.create(FOO, "node3");
-        assertEquals(qname, node3.getQName());
-        qnames.set(4, qname);
-        assertPathEquals(SchemaPath.create(qnames, true), node3);
+        assertEquals(QName.create(FOO, "node3"), node3.getQName());
         final Collection<? extends DataSchemaNode> node3Children = node3.getChildNodes();
         assertEquals(1, node3Children.size());
 
         // test cases
-        qnames.clear();
-        qnames.add(Q0);
-        qnames.add(Q1);
-        qnames.add(Q2);
-        qnames.add(QName.create(FOO, "odl"));
-
         // case id child
-        qnames.add(QName.create(FOO, "id"));
-        qnames.add(QName.create(FOO, "id"));
         final LeafSchemaNode caseIdChild = (LeafSchemaNode) idChildren.iterator().next();
         assertNotNull(caseIdChild);
-        assertPathEquals(SchemaPath.create(qnames, true), caseIdChild);
+        assertEquals(QName.create(FOO, "id"), caseIdChild.getQName());
 
         // case node3 child
-        qnames.set(4, QName.create(FOO, "node3"));
-        qnames.set(5, QName.create(FOO, "node3"));
         final ContainerSchemaNode caseNode3Child = (ContainerSchemaNode) node3Children.iterator().next();
         assertNotNull(caseNode3Child);
-        assertPathEquals(SchemaPath.create(qnames, true), caseNode3Child);
+        assertEquals(QName.create(FOO, "node3"), caseNode3Child.getQName());
     }
 
     @Test
@@ -374,29 +304,18 @@ public class AugmentTest {
         assertTrue(create.isAugmenting());
         assertTrue(destroy.isAugmenting());
 
-        final QName[] qnames = new QName[4];
-        qnames[0] = submitQName;
-        qnames[1] = inputQName;
-        qnames[2] = argumentsQName;
-
         // case attach
-        qnames[3] = QName.create(NS_FOO, revision, "attach");
-        assertEquals(qnames[3], attach.getQName());
-        assertPathEquals(SchemaPath.create(true, qnames), attach);
+        assertEquals(QName.create(NS_FOO, revision, "attach"), attach.getQName());
         final Collection<? extends DataSchemaNode> attachChildren = attach.getChildNodes();
         assertEquals(1, attachChildren.size());
 
         // case create
-        qnames[3] = QName.create(NS_FOO, revision, "create");
-        assertEquals(qnames[3], create.getQName());
-        assertPathEquals(SchemaPath.create(true, qnames), create);
+        assertEquals(QName.create(NS_FOO, revision, "create"), create.getQName());
         final Collection<? extends DataSchemaNode> createChildren = create.getChildNodes();
         assertEquals(1, createChildren.size());
 
         // case attach
-        qnames[3] = QName.create(NS_FOO, revision, "destroy");
-        assertEquals(qnames[3], destroy.getQName());
-        assertPathEquals(SchemaPath.create(true, qnames), destroy);
+        assertEquals(QName.create(NS_FOO, revision, "destroy"), destroy.getQName());
         final Collection<? extends DataSchemaNode> destroyChildren = destroy.getChildNodes();
         assertEquals(1, destroyChildren.size());
     }
@@ -422,5 +341,4 @@ public class AugmentTest {
         final LeafSchemaNode id = (LeafSchemaNode) node.getDataChildByName(QName.create(test.getQNameModule(), "id"));
         assertTrue(id.isAugmenting());
     }
-
 }

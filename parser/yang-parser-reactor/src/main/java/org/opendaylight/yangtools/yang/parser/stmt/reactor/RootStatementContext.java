@@ -24,7 +24,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -115,12 +114,6 @@ public final class RootStatementContext<A, D extends DeclaredStatement<A>, E ext
     @Override
     public A argument() {
         return argument;
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath schemaPath() {
-        return SchemaPath.ROOT;
     }
 
     @Override

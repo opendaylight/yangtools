@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -31,41 +30,35 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 public final class ChoiceEffectiveStatementImpl
         extends WithSubstatements<QName, ChoiceStatement, ChoiceEffectiveStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,
-                   DataSchemaNodeMixin<QName, ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
+                   DataSchemaNodeMixin<ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
                    MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final int flags;
 
     public ChoiceEffectiveStatementImpl(final ChoiceStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
-            final int flags, final @Nullable CaseSchemaNode defaultCase,
-            final @Nullable ChoiceSchemaNode original) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname, final int flags,
+            final @Nullable CaseSchemaNode defaultCase, final @Nullable ChoiceSchemaNode original) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
         this.defaultCase = defaultCase;
         this.original = original;
     }
 
-    public ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final Immutable path,
+    public ChoiceEffectiveStatementImpl(final ChoiceEffectiveStatementImpl origEffective, final QName qname,
             final int flags, final ChoiceSchemaNode newOriginal) {
         super(origEffective);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
         this.defaultCase = origEffective.defaultCase;
         this.original = newOriginal;
     }
 
     @Override
-    public @NonNull QName argument() {
-        return getQName();
-    }
-
-    @Override
-    public Immutable pathObject() {
-        return path;
+    public QName argument() {
+        return qname;
     }
 
     @Override
@@ -79,8 +72,8 @@ public final class ChoiceEffectiveStatementImpl
     }
 
     @Override
-    public Optional<? extends CaseSchemaNode> findCase(final QName qname) {
-        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(qname));
+    public Optional<? extends CaseSchemaNode> findCase(final QName caseName) {
+        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace().get(requireNonNull(caseName));
         return child instanceof CaseSchemaNode ? Optional.of((CaseSchemaNode) child) : Optional.empty();
     }
 
@@ -101,6 +94,6 @@ public final class ChoiceEffectiveStatementImpl
 
     @Override
     public String toString() {
-        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + qname + "]";
     }
 }
