@@ -7,25 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin.WithStatus;
 
-public class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
-        implements FeatureDefinition, FeatureEffectiveStatement, SchemaNodeMixin<QName, FeatureStatement> {
-    private final @NonNull Immutable path;
+public class EmptyFeatureEffectiveStatement extends DefaultArgument<QName, FeatureStatement>
+        implements FeatureDefinition, FeatureEffectiveStatement, WithStatus<QName, FeatureStatement> {
     private final int flags;
 
-    public EmptyFeatureEffectiveStatement(final FeatureStatement declared, final Immutable path, final int flags) {
+    public EmptyFeatureEffectiveStatement(final FeatureStatement declared, final int flags) {
         super(declared);
-        this.path = requireNonNull(path);
         this.flags = flags;
     }
 
@@ -35,14 +29,8 @@ public class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatem
     }
 
     @Override
-    public final @NonNull QName argument() {
-        return getQName();
-    }
-
-    @Override
-    @Deprecated
-    public final Immutable pathObject() {
-        return path;
+    public final QName getQName() {
+        return argument();
     }
 
     @Override

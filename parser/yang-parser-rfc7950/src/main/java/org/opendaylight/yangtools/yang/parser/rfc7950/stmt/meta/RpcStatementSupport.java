@@ -93,7 +93,7 @@ public final class RpcStatementSupport extends AbstractSchemaTreeStatementSuppor
         checkState(!substatements.isEmpty(), "Missing implicit input/output statements at %s", stmt.sourceReference());
 
         try {
-            return EffectiveStatements.createRpc(stmt.declared(), substatements, stmt.effectivePath(),
+            return EffectiveStatements.createRpc(stmt.declared(), substatements, stmt.getArgument(),
                 computeFlags(substatements));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);

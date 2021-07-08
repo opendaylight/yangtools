@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -17,14 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
 final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
-    EmptyListEffectiveStatement(final ListStatement declared, final Immutable path, final int flags,
+    EmptyListEffectiveStatement(final ListStatement declared, final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
-        super(declared, path, flags, substatements, keyDefinition);
+        super(declared, qname, flags, substatements, keyDefinition);
     }
 
-    EmptyListEffectiveStatement(final EmptyListEffectiveStatement original, final Immutable path, final int flags) {
-        super(original, path, flags);
+    EmptyListEffectiveStatement(final EmptyListEffectiveStatement original, final QName qname, final int flags) {
+        super(original, qname, flags);
     }
 
     @Override
