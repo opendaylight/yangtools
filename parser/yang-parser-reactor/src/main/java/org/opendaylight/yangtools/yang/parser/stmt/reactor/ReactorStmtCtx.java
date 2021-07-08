@@ -22,16 +22,10 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -159,11 +153,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     // 'isSupportedToBuildEffective'.
     // FIXME: move this out once we have JDK15+
     private boolean boolFlag;
-
-    // SchemaPath cache for use with SubstatementContext and InferredStatementContext. This hurts RootStatementContext
-    // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
-    // FIXME: this should become 'QName'
-    private SchemaPath schemaPath;
 
     ReactorStmtCtx() {
         // Empty on purpose
@@ -614,63 +603,14 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final QName argumentAsTypeQName() {
-        return interpretAsQName(getRawArgument());
+        // FIXME: This may yield illegal argument exceptions
+        return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), getRawArgument());
     }
 
     @Override
     public final QNameModule effectiveNamespace() {
         // FIXME: there has to be a better way to do this
         return getSchemaPath().getLastComponent().getModule();
-    }
-
-    //
-    //
-    // Common SchemaPath cache. All of this is bound to be removed once YANGTOOLS-1066 is done.
-    //
-    //
-
-    // Exists only to support {SubstatementContext,InferredStatementContext}.schemaPath()
-    @Deprecated
-    final @Nullable SchemaPath substatementGetSchemaPath() {
-        if (schemaPath == null) {
-            schemaPath = createSchemaPath((StatementContextBase<?, ?, ?>) coerceParentContext());
-        }
-        return schemaPath;
-    }
-
-    // FIXME: 7.0.0: this method's logic needs to be moved to the respective StatementSupport classes
-    @Deprecated
-    private SchemaPath createSchemaPath(final StatementContextBase<?, ?, ?> parent) {
-        final SchemaPath parentPath = parent.getSchemaPath();
-        if (StmtContextUtils.isUnknownStatement(this)) {
-            return parentPath.createChild(publicDefinition().getStatementName());
-        }
-        final Object argument = argument();
-        if (argument instanceof QName) {
-            final QName qname = (QName) argument;
-            if (producesDeclared(UsesStatement.class)) {
-                return parentPath;
-            }
-
-            return parentPath.createChild(qname);
-        }
-        if (argument instanceof String) {
-            return parentPath.createChild(interpretAsQName((String) argument));
-        }
-        if (argument instanceof SchemaNodeIdentifier
-                && (producesDeclared(AugmentStatement.class) || producesDeclared(RefineStatement.class)
-                        || producesDeclared(DeviationStatement.class))) {
-
-            return parentPath.createChild(((SchemaNodeIdentifier) argument).getNodeIdentifiers());
-        }
-
-        // FIXME: this does not look right, investigate more?
-        return parentPath;
-    }
-
-    private @NonNull QName interpretAsQName(final String argument) {
-        // FIXME: This may yield illegal argument exceptions
-        return StmtContextUtils.qnameFromArgument(getOriginalCtx().orElse(this), argument);
     }
 
     //
