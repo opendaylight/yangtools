@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -37,24 +36,24 @@ abstract class AbstractLeafListEffectiveStatement
             UserOrderedMixin<QName, LeafListStatement>, DataSchemaNodeMixin<QName, LeafListStatement>,
             MustConstraintMixin<QName, LeafListStatement> {
     private final @NonNull Object substatements;
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final @NonNull TypeDefinition<?> type;
     private final int flags;
 
-    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
+    AbstractLeafListEffectiveStatement(final LeafListStatement declared, final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.substatements = maskList(substatements);
         this.flags = flags;
         // TODO: lazy instantiation?
         this.type = buildType();
     }
 
-    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final Immutable path,
+    AbstractLeafListEffectiveStatement(final AbstractLeafListEffectiveStatement original, final QName qname,
             final int flags) {
         super(original);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.substatements = original.substatements;
         this.flags = flags;
         // TODO: lazy instantiation?
@@ -73,12 +72,12 @@ abstract class AbstractLeafListEffectiveStatement
 
     @Override
     public final QName argument() {
-        return getQName();
+        return qname;
     }
 
     @Override
-    public final Immutable pathObject() {
-        return path;
+    public final QName getQName() {
+        return qname;
     }
 
     @Override
@@ -98,7 +97,7 @@ abstract class AbstractLeafListEffectiveStatement
 
     @Override
     public final String toString() {
-        return getClass().getSimpleName() + "[" + getQName() + "]";
+        return getClass().getSimpleName() + "[" + qname + "]";
     }
 
     private TypeDefinition<?> buildType() {

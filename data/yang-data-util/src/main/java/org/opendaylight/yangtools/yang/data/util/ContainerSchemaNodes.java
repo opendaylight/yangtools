@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
@@ -82,12 +81,6 @@ public final class ContainerSchemaNodes {
         @Override
         public QName getQName() {
             return schemaNode.getQName();
-        }
-
-        @Override
-        @Deprecated
-        public SchemaPath getPath() {
-            return schemaNode.getPath();
         }
 
         @Override
