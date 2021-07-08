@@ -93,6 +93,6 @@ public final class ExtensionStatementSupport
     @Override
     protected ExtensionEffectiveStatement createEffective(final Current<QName, ExtensionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return EffectiveStatements.createExtension(stmt.declared(), substatements, stmt.optionalPath());
+        return EffectiveStatements.createExtension(stmt.declared(), substatements);
     }
 }

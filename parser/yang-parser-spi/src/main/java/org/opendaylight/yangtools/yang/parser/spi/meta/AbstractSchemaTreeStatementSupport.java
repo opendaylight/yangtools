@@ -49,9 +49,7 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
         public boolean canReuseCurrent(final Current<QName, D> copy, final Current<QName, D> current,
                 final Collection<? extends EffectiveStatement<?, ?>> substatements) {
             return equalHistory(copy.history(), current.history())
-                && copy.getArgument().equals(current.getArgument())
-                // FIXME: 8.0.0: eliminate this call
-                && copy.equalParentPath(current);
+                && copy.getArgument().equals(current.getArgument());
         }
 
         private static boolean equalHistory(final CopyHistory copy, final CopyHistory current) {
