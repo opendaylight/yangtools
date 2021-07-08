@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
@@ -45,12 +44,6 @@ abstract class AbstractAsContainer extends ForwardingObject implements Container
     @Override
     public final QName getQName() {
         return delegate().getQName();
-    }
-
-    @Override
-    @Deprecated
-    public final SchemaPath getPath() {
-        return delegate().getPath();
     }
 
     @Deprecated
