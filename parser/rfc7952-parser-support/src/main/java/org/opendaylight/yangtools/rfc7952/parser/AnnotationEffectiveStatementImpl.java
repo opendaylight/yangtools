@@ -11,13 +11,10 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -26,13 +23,11 @@ import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class AnnotationEffectiveStatementImpl extends UnknownEffectiveStatementBase<QName, AnnotationStatement>
         implements AnnotationEffectiveStatement, AnnotationSchemaNode {
     private final @NonNull TypeDefinition<?> type;
-    private final @Nullable SchemaPath path;
 
     AnnotationEffectiveStatementImpl(final Current<QName, AnnotationStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -51,19 +46,11 @@ final class AnnotationEffectiveStatementImpl extends UnknownEffectiveStatementBa
             builder.setUnits(unitsStmt.argument());
         }
         type = builder.build();
-
-        path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
     }
 
     @Override
     public QName getQName() {
         return verifyNotNull(argument());
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override

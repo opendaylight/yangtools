@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,26 +24,26 @@ public final class ActionEffectiveStatementImpl
         extends WithSubstatements<QName, ActionStatement, ActionEffectiveStatement>
         implements ActionDefinition, ActionEffectiveStatement, OperationDefinitionMixin<ActionStatement>,
                    CopyableMixin<QName, ActionStatement> {
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final int flags;
 
-    public ActionEffectiveStatementImpl(final ActionStatement declared, final Immutable path, final int flags,
+    public ActionEffectiveStatementImpl(final ActionStatement declared, final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
-    public ActionEffectiveStatementImpl(final ActionEffectiveStatementImpl original, final Immutable path,
+    public ActionEffectiveStatementImpl(final ActionEffectiveStatementImpl original, final QName qname,
             final int flags) {
         super(original);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
     @Override
-    public Immutable pathObject() {
-        return path;
+    public QName getQName() {
+        return qname;
     }
 
     @Override

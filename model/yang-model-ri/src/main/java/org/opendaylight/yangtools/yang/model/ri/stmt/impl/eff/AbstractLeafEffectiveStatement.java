@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -38,24 +37,23 @@ public abstract class AbstractLeafEffectiveStatement
             DataSchemaNodeMixin<QName, LeafStatement>, MandatoryMixin<QName, LeafStatement>,
             MustConstraintMixin<QName, LeafStatement> {
     private final @NonNull Object substatements;
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final @NonNull TypeDefinition<?> type;
     private final int flags;
 
-    AbstractLeafEffectiveStatement(final LeafStatement declared, final Immutable path, final int flags,
+    AbstractLeafEffectiveStatement(final LeafStatement declared, final QName qname, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.substatements = maskList(substatements);
         this.flags = flags;
         // TODO: lazy instantiation?
         this.type = buildType();
     }
 
-    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final Immutable path,
-            final int flags) {
+    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final QName qname, final int flags) {
         super(original);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.substatements = original.substatements;
         this.flags = flags;
         // FIXME: share with original?
@@ -74,12 +72,12 @@ public abstract class AbstractLeafEffectiveStatement
 
     @Override
     public final QName argument() {
-        return getQName();
+        return qname;
     }
 
     @Override
-    public final Immutable pathObject() {
-        return path;
+    public final QName getQName() {
+        return qname;
     }
 
     @Override
