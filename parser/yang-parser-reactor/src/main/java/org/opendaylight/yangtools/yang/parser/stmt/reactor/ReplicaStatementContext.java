@@ -186,7 +186,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     @Deprecated
     public SchemaPath schemaPath() {
-        return substatementGetSchemaPath();
+        return null;
     }
 
     @Override

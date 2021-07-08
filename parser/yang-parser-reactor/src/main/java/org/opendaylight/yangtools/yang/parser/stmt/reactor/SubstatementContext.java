@@ -58,7 +58,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     @Deprecated
     public SchemaPath schemaPath() {
-        return substatementGetSchemaPath();
+        return null;
     }
 
     @Override
