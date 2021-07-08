@@ -28,7 +28,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -607,12 +606,6 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
      * below methods exist in the same form in SubstatementContext. If any adjustment is made here, make sure it is
      * properly updated there.
      */
-    @Override
-    @Deprecated
-    public SchemaPath schemaPath() {
-        return substatementGetSchemaPath();
-    }
-
     @Override
     public A argument() {
         return argument;

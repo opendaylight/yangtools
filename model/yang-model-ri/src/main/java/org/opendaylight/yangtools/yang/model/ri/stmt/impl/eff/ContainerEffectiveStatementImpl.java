@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -44,22 +43,22 @@ public final class ContainerEffectiveStatementImpl
             AugmentationTargetMixin<QName, ContainerStatement> {
 
     private final int flags;
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final @Nullable ContainerSchemaNode original;
 
     public ContainerEffectiveStatementImpl(final ContainerStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
-            final int flags, final @Nullable ContainerSchemaNode original) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname, final int flags,
+            final @Nullable ContainerSchemaNode original) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.original = original;
         this.flags = flags;
     }
 
-    public ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final Immutable path,
+    public ContainerEffectiveStatementImpl(final ContainerEffectiveStatementImpl origEffective, final QName qname,
             final int flags, final @Nullable ContainerSchemaNode original) {
         super(origEffective);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.original = original;
         this.flags = flags;
     }
@@ -71,12 +70,12 @@ public final class ContainerEffectiveStatementImpl
 
     @Override
     public QName argument() {
-        return getQName();
+        return qname;
     }
 
     @Override
-    public Immutable pathObject() {
-        return path;
+    public QName getQName() {
+        return qname;
     }
 
     @Override
@@ -101,6 +100,6 @@ public final class ContainerEffectiveStatementImpl
 
     @Override
     public String toString() {
-        return "container " + getQName().getLocalName();
+        return "container " + qname.getLocalName();
     }
 }

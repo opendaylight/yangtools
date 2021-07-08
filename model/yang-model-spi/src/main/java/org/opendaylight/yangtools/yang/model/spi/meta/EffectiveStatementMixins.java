@@ -17,7 +17,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -41,9 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -194,8 +190,8 @@ public final class EffectiveStatementMixins {
      * @param <A> Argument type ({@link Void} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public interface DataSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DataSchemaNode, CopyableMixin<A, D>, SchemaNodeMixin<A, D>, WhenConditionMixin<A, D> {
+    public interface DataSchemaNodeMixin<A, D extends DeclaredStatement<A>> extends DataSchemaNode, CopyableMixin<A, D>,
+            DocumentedNodeMixin.WithStatus<A, D>, WhenConditionMixin<A, D> {
         @Override
         default Optional<Boolean> effectiveConfig() {
             final int fl = flags() & FlagsBuilder.MASK_CONFIG;
@@ -306,36 +302,13 @@ public final class EffectiveStatementMixins {
     }
 
     /**
-     * Bridge between {@link EffectiveStatementWithFlags} and {@link SchemaNode}.
-     *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
-     * @param <D> Class representing declared version of this statement.
-     */
-    public interface SchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DocumentedNodeMixin.WithStatus<A, D>, SchemaNode {
-        // FIXME: ditch all this complexity once we do not require SchemaPath
-        @Override
-        default QName getQName() {
-            return SchemaNodeDefaults.extractQName(pathObject());
-        }
-
-        @Override
-        @Deprecated
-        default SchemaPath getPath() {
-            return SchemaNodeDefaults.extractPath(this, pathObject());
-        }
-
-        @NonNull Immutable pathObject();
-    }
-
-    /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link UnknownSchemaNode}.
      *
      * @param <A> Argument type ({@link Void} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface UnknownSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends SchemaNodeMixin<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
+            extends DocumentedNodeMixin.WithStatus<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
 
         @Override
         default String getNodeParameter() {
@@ -377,7 +350,7 @@ public final class EffectiveStatementMixins {
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
                     MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
-                    SchemaNodeMixin<QName, D>, CopyableMixin<QName, D> {
+                    CopyableMixin<QName, D> {
         @Override
         default @NonNull QName argument() {
             return getQName();
@@ -433,7 +406,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OperationDefinitionMixin<D extends DeclaredStatement<QName>>
-            extends SchemaNodeMixin<QName, D>, OperationDefinition {
+            extends DocumentedNodeMixin.WithStatus<QName, D>, OperationDefinition {
         @Override
         default @NonNull QName argument() {
             return getQName();
