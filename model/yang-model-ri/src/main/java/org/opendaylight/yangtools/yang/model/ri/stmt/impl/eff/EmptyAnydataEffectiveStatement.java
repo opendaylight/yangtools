@@ -13,7 +13,6 @@ import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -24,29 +23,29 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.O
 
 public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
         implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
-    private final @NonNull Immutable path;
+    private final @NonNull QName argument;
     private final AnydataSchemaNode original;
     private final int flags;
 
-    public EmptyAnydataEffectiveStatement(final AnydataStatement declared, final Immutable path, final int flags,
+    public EmptyAnydataEffectiveStatement(final AnydataStatement declared, final QName argument, final int flags,
             final @Nullable AnydataSchemaNode original) {
         super(declared);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.flags = flags;
         this.original = original;
     }
 
-    public EmptyAnydataEffectiveStatement(final EmptyAnydataEffectiveStatement original, final Immutable path,
+    public EmptyAnydataEffectiveStatement(final EmptyAnydataEffectiveStatement original, final QName argument,
             final int flags, final @Nullable AnydataSchemaNode newOriginal) {
         super(original);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.flags = flags;
         this.original = newOriginal;
     }
 
     @Override
-    public final Immutable pathObject() {
-        return path;
+    public final QName argument() {
+        return argument;
     }
 
     @Override

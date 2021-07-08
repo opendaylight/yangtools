@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -20,12 +19,11 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
 interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchemaNode, DerivableSchemaNode,
-        DataSchemaNodeMixin<QName, CaseStatement>, DocumentedNodeMixin.WithStatus<QName, CaseStatement>,
+        DataSchemaNodeMixin<CaseStatement>, DocumentedNodeMixin.WithStatus<QName, CaseStatement>,
         DataNodeContainerMixin<QName, CaseStatement>, MustConstraintMixin<QName, CaseStatement>,
         AugmentationTargetMixin<QName, CaseStatement> {
-
     @Override
-    default @NonNull QName argument() {
-        return getQName();
+    default QName getQName() {
+        return argument();
     }
 }

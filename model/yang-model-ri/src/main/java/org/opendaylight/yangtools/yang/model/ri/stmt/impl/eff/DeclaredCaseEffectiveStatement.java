@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -25,34 +24,34 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 public final class DeclaredCaseEffectiveStatement
         extends WithSubstatements<QName, CaseStatement, CaseEffectiveStatement> implements CaseEffectiveStatementMixin {
     private final CaseSchemaNode original;
-    private final @NonNull Immutable path;
+    private final @NonNull QName argument;
     private final int flags;
 
     public DeclaredCaseEffectiveStatement(final CaseStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final Immutable path,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName argument,
             final int flags, final @Nullable CaseSchemaNode original) {
         super(declared, substatements);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.flags = flags;
         this.original = original;
     }
 
-    public DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final Immutable path,
+    public DeclaredCaseEffectiveStatement(final DeclaredCaseEffectiveStatement origEffective, final QName argument,
             final int flags, final @Nullable CaseSchemaNode original) {
         super(origEffective);
-        this.path = requireNonNull(path);
+        this.argument = requireNonNull(argument);
         this.flags = flags;
         this.original = original;
+    }
+
+    @Override
+    public QName argument() {
+        return argument;
     }
 
     @Override
     public int flags() {
         return flags;
-    }
-
-    @Override
-    public Immutable pathObject() {
-        return path;
     }
 
     @Override
@@ -72,6 +71,6 @@ public final class DeclaredCaseEffectiveStatement
 
     @Override
     public String toString() {
-        return DeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return DeclaredCaseEffectiveStatement.class.getSimpleName() + "[" + "qname=" + argument + "]";
     }
 }

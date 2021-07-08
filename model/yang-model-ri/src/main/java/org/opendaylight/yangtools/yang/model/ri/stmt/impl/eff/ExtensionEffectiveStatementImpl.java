@@ -12,11 +12,8 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
@@ -63,25 +60,17 @@ public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName
 
     private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
 
-    private final @Nullable SchemaPath path;
     private final Object substatements;
 
     public ExtensionEffectiveStatementImpl(final ExtensionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final SchemaPath path) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.substatements = maskList(substatements);
-        this.path = path;
     }
 
     @Override
     public QName getQName() {
         return argument();
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override
@@ -125,7 +114,6 @@ public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName
             return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
                     + "argument=" + getArgument()
                     + ", qname=" + getQName()
-                    + ", schemaPath=" + path
                     + ", yin=" + isYinElement()
                     + ", extensionSchemaNodes=" + getUnknownSchemaNodes()
                     + "]";
@@ -138,7 +126,6 @@ public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName
         return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
                 + "argument=" + getArgument()
                 + ", qname=" + getQName()
-                + ", schemaPath=" + path
                 + ", yin=" + isYinElement()
                 + " <RECURSIVE> ]";
     }

@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,16 +21,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 final class RegularLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
     private final @NonNull ImmutableSet<String> defaults;
 
-    RegularLeafListEffectiveStatement(final LeafListStatement declared, final Immutable path, final int flags,
+    RegularLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final LeafListSchemaNode original,
             final ImmutableSet<String> defaults, final ElementCountConstraint elementCountConstraint) {
-        super(declared, path, flags, substatements, original, elementCountConstraint);
+        super(declared, argument, flags, substatements, original, elementCountConstraint);
         this.defaults = requireNonNull(defaults);
     }
 
     RegularLeafListEffectiveStatement(final RegularLeafListEffectiveStatement originalEffective,
-            final LeafListSchemaNode original, final Immutable path, final int flags) {
-        super(originalEffective, original, path, flags);
+            final LeafListSchemaNode original, final QName argument, final int flags) {
+        super(originalEffective, original, argument, flags);
         this.defaults = originalEffective.defaults;
     }
 

@@ -9,19 +9,16 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 
 public final class EmptyLeafEffectiveStatement extends AbstractLeafEffectiveStatement {
-    public EmptyLeafEffectiveStatement(final LeafStatement declared, final Immutable path, final int flags,
+    public EmptyLeafEffectiveStatement(final LeafStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared, path, flags, substatements);
-    }
-
-    EmptyLeafEffectiveStatement(final EmptyLeafEffectiveStatement original, final Immutable path, final int flags) {
-        super(original, path, flags);
+        // FIXME: this seems to imply that argument.equals(declared.argument()) and we could save a field
+        super(declared, argument, flags, substatements);
     }
 
     @Override

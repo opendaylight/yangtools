@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -55,12 +54,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
      * below methods exist in the same form in InferredStatementContext. If any adjustment is made here, make sure it is
      * properly updated there.
      */
-    @Override
-    @Deprecated
-    public SchemaPath schemaPath() {
-        return substatementGetSchemaPath();
-    }
-
     @Override
     public A argument() {
         return argument;

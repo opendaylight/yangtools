@@ -16,14 +16,11 @@ import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -31,12 +28,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 
 @Beta
 final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode {
-    private final @Nullable SchemaPath path;
     private final @NonNull QName argumentQName;
     private final @NonNull ContainerEffectiveStatement container;
 
@@ -45,7 +40,6 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         super(stmt, substatements);
         this.argumentQName = requireNonNull(qname);
 
-        path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is
@@ -56,12 +50,6 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     @Override
     public QName getQName() {
         return argumentQName;
-    }
-
-    @Override
-    @Deprecated
-    public SchemaPath getPath() {
-        return SchemaNodeDefaults.throwUnsupportedIfNull(this, path);
     }
 
     @Override
@@ -96,7 +84,6 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
                 .add("qname", argumentQName)
-                .add("path", path)
                 .add("container", container).toString();
     }
 }
