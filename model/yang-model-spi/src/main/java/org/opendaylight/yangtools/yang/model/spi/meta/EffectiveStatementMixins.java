@@ -17,8 +17,8 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
@@ -42,8 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -81,7 +79,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatement} and {@link AugmentationTarget}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface AugmentationTargetMixin<A, D extends DeclaredStatement<A>>
@@ -95,7 +93,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link AddedByUsesAware}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface AddedByUsesMixin<A, D extends DeclaredStatement<A>>
@@ -109,7 +107,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link ActionNodeContainer}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface ActionNodeContainerMixin<A, D extends DeclaredStatement<A>>
@@ -123,7 +121,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link NotificationNodeContainer}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface NotificationNodeContainerMixin<A, D extends DeclaredStatement<A>>
@@ -137,7 +135,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link MustConstraintAware}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface MustConstraintMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, MustConstraintAware {
@@ -150,7 +148,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link CopyableNode}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface CopyableMixin<A, D extends DeclaredStatement<A>> extends AddedByUsesMixin<A, D>, CopyableNode {
@@ -163,7 +161,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link DataNodeContainer}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface DataNodeContainerMixin<A, D extends DeclaredStatement<A>> extends DataNodeContainer, Mixin<A, D> {
@@ -191,11 +189,10 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link DataSchemaNode}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public interface DataSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DataSchemaNode, CopyableMixin<A, D>, SchemaNodeMixin<A, D>, WhenConditionMixin<A, D> {
+    public interface DataSchemaNodeMixin<D extends DeclaredStatement<QName>>
+            extends DataSchemaNode, CopyableMixin<QName, D>, SchemaNodeMixin<D>, WhenConditionMixin<QName, D> {
         @Override
         default Optional<Boolean> effectiveConfig() {
             final int fl = flags() & FlagsBuilder.MASK_CONFIG;
@@ -215,7 +212,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link DocumentedNode}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface DocumentedNodeMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, DocumentedNode {
@@ -223,7 +220,7 @@ public final class EffectiveStatementMixins {
          * Bridge between {@link EffectiveStatementWithFlags} and
          * {@link org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus}.
          *
-         * @param <A> Argument type ({@link Void} if statement does not have argument.)
+         * @param <A> Argument type ({@link Empty} if statement does not have argument.)
          * @param <D> Class representing declared version of this statement.
          */
         interface WithStatus<A, D extends DeclaredStatement<A>>
@@ -263,7 +260,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link ConstraintMetaDefinition}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface ConstraintMetaDefinitionMixin<A, D extends DeclaredStatement<A>> extends DocumentedNodeMixin<A, D>,
@@ -282,7 +279,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link MandatoryAware}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface MandatoryMixin<A, D extends DeclaredStatement<A>>
@@ -296,7 +293,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@code presence} statement.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface PresenceMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D> {
@@ -308,35 +305,24 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link SchemaNode}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
-    public interface SchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends DocumentedNodeMixin.WithStatus<A, D>, SchemaNode {
-        // FIXME: ditch all this complexity once we do not require SchemaPath
+    public interface SchemaNodeMixin<D extends DeclaredStatement<QName>>
+            extends DocumentedNodeMixin.WithStatus<QName, D>, SchemaNode {
         @Override
         default QName getQName() {
-            return SchemaNodeDefaults.extractQName(pathObject());
+            return argument();
         }
-
-        @Override
-        @Deprecated
-        default SchemaPath getPath() {
-            return SchemaNodeDefaults.extractPath(this, pathObject());
-        }
-
-        @NonNull Immutable pathObject();
     }
 
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link UnknownSchemaNode}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface UnknownSchemaNodeMixin<A, D extends DeclaredStatement<A>>
-            extends SchemaNodeMixin<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
-
+            extends DocumentedNodeMixin.WithStatus<A, D>, CopyableMixin<A, D>, UnknownSchemaNode {
         @Override
         default String getNodeParameter() {
             return Strings.nullToEmpty(getDeclared().rawArgument());
@@ -346,7 +332,7 @@ public final class EffectiveStatementMixins {
     /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@code ordered-by} statement.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface UserOrderedMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D> {
@@ -359,7 +345,7 @@ public final class EffectiveStatementMixins {
      * Helper used to locate the effective {@code when} statement and exposing its argument as per
      * {@link WhenConditionAware}.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface WhenConditionMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, WhenConditionAware {
@@ -377,12 +363,7 @@ public final class EffectiveStatementMixins {
     public interface OperationContainerMixin<D extends DeclaredStatement<QName>>
             extends ContainerLike, DocumentedNodeMixin.WithStatus<QName, D>, DataNodeContainerMixin<QName, D>,
                     MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D>, AugmentationTargetMixin<QName, D>,
-                    SchemaNodeMixin<QName, D>, CopyableMixin<QName, D> {
-        @Override
-        default @NonNull QName argument() {
-            return getQName();
-        }
-
+                    SchemaNodeMixin<D>, CopyableMixin<QName, D> {
         @Override
         default Optional<ActionDefinition> findAction(final QName qname) {
             return Optional.empty();
@@ -419,7 +400,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DerivableSchemaNode, DataSchemaNodeMixin<QName, D>, DocumentedNodeMixin.WithStatus<QName, D>,
+            extends DerivableSchemaNode, DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>,
                     MandatoryMixin<QName, D>, MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
         @Override
         default @NonNull QName argument() {
@@ -433,12 +414,7 @@ public final class EffectiveStatementMixins {
      * @param <D> Class representing declared version of this statement.
      */
     public interface OperationDefinitionMixin<D extends DeclaredStatement<QName>>
-            extends SchemaNodeMixin<QName, D>, OperationDefinition {
-        @Override
-        default @NonNull QName argument() {
-            return getQName();
-        }
-
+            extends SchemaNodeMixin<D>, OperationDefinition {
         @Override
         default Collection<? extends @NonNull TypeDefinition<?>> getTypeDefinitions() {
             return filterTypeDefinitions(this);
@@ -464,7 +440,7 @@ public final class EffectiveStatementMixins {
      * Support interface for various mixins. Implementations are required to store 32bits worth of flags, which are
      * globally assigned to sub-interfaces -- thus providing storage for many low-cardinality properties.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      */
     public interface EffectiveStatementWithFlags<A, D extends DeclaredStatement<A>> extends Mixin<A, D> {

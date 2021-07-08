@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
@@ -24,26 +23,26 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.O
 public final class UndeclaredInputEffectiveStatement
         extends WithSubstatements<QName, InputStatement, InputEffectiveStatement>
         implements InputEffectiveStatement, InputSchemaNode, OperationContainerMixin<InputStatement> {
-    private final @NonNull Immutable path;
+    private final @NonNull QName qname;
     private final int flags;
 
     public UndeclaredInputEffectiveStatement(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final Immutable path, final int flags) {
+            final QName qname, final int flags) {
         super(substatements);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
-    public UndeclaredInputEffectiveStatement(final UndeclaredInputEffectiveStatement original, final Immutable path,
+    public UndeclaredInputEffectiveStatement(final UndeclaredInputEffectiveStatement original, final QName qname,
             final int flags) {
         super(original);
-        this.path = requireNonNull(path);
+        this.qname = requireNonNull(qname);
         this.flags = flags;
     }
 
     @Override
-    public Immutable pathObject() {
-        return path;
+    public QName argument() {
+        return qname;
     }
 
     @Override

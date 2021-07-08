@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.assertPathEquals;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Range;
@@ -50,7 +49,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -127,8 +125,6 @@ public class YangParserTest {
         // test SchemaNode args
         assertEquals(QName.create(BAR, "ifEntry"), ifEntry.getQName());
 
-        assertPathEquals(SchemaPath.create(true, QName.create(BAR, "interfaces"), QName.create(BAR, "ifEntry")),
-            ifEntry);
         assertFalse(ifEntry.getDescription().isPresent());
         assertFalse(ifEntry.getReference().isPresent());
         assertEquals(Status.CURRENT, ifEntry.getStatus());
@@ -558,8 +554,6 @@ public class YangParserTest {
         final NotificationDefinition notification = notifications.iterator().next();
         // test SchemaNode args
         assertEquals(QName.create(BAZ, "event"), notification.getQName());
-        final SchemaPath expectedPath = SchemaPath.create(true,  QName.create(BAZ, "event"));
-        assertPathEquals(expectedPath, notification);
         assertFalse(notification.getDescription().isPresent());
         assertFalse(notification.getReference().isPresent());
         assertEquals(Status.CURRENT, notification.getStatus());

@@ -122,8 +122,7 @@ public final class TypedefStatementSupport extends
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeEffectiveStmt, dflt), stmt,
             "Typedef '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
-        return EffectiveStatements.createTypedef(declared, stmt.effectivePath(), computeFlags(substatements),
-            substatements);
+        return EffectiveStatements.createTypedef(declared, computeFlags(substatements), substatements);
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
