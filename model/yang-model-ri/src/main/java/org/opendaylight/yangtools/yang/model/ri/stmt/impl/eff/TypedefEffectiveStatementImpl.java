@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
@@ -17,7 +15,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -35,13 +32,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.ri.type.DerivedTypes;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.Default;
-import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.SchemaNodeMixin;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
+import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin.WithStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class TypedefEffectiveStatementImpl extends Default<QName, TypedefStatement>
-        implements TypedefEffectiveStatement, SchemaNodeMixin<QName, TypedefStatement> {
+public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName, TypedefStatement>
+        implements TypedefEffectiveStatement, WithStatus<QName, TypedefStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
     private static final VarHandle TYPE_DEFINITION;
@@ -59,8 +56,6 @@ public final class TypedefEffectiveStatementImpl extends Default<QName, TypedefS
         }
     }
 
-    private final @NonNull Object substatements;
-    private final @NonNull Immutable path;
     private final int flags;
 
     // Accessed via TYPE_DEFINITION
@@ -70,32 +65,15 @@ public final class TypedefEffectiveStatementImpl extends Default<QName, TypedefS
     @SuppressWarnings("unused")
     private volatile ProxyTypeEffectiveStatement typeStatement;
 
-    public TypedefEffectiveStatementImpl(final TypedefStatement declared, final Immutable path, final int flags,
+    public TypedefEffectiveStatementImpl(final TypedefStatement declared, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(declared);
-        this.path = requireNonNull(path);
+        super(declared, substatements);
         this.flags = flags;
-        this.substatements = maskList(substatements);
     }
 
     @Override
     public int flags() {
         return flags;
-    }
-
-    @Override
-    public Immutable pathObject() {
-        return path;
-    }
-
-    @Override
-    public @NonNull QName argument() {
-        return getQName();
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
     }
 
     @Override
@@ -112,7 +90,7 @@ public final class TypedefEffectiveStatementImpl extends Default<QName, TypedefS
 
     private @NonNull TypeDefinition<?> loadTypeDefinition() {
         final TypeEffectiveStatement<?> type = findFirstEffectiveSubstatement(TypeEffectiveStatement.class).get();
-        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), getQName());
+        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(type.getTypeDefinition(), argument());
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {

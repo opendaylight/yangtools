@@ -63,14 +63,14 @@ public final class AnyxmlStatementSupport
     @Override
     protected AnyxmlEffectiveStatement createEffective(final Current<QName, AnyxmlStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        return EffectiveStatements.createAnyxml(stmt.declared(), stmt.effectivePath(), createFlags(stmt, substatements),
+        return EffectiveStatements.createAnyxml(stmt.declared(), stmt.getArgument(), createFlags(stmt, substatements),
             substatements, stmt.original(AnyxmlSchemaNode.class));
     }
 
     @Override
     public AnyxmlEffectiveStatement copyEffective(final Current<QName, AnyxmlStatement> stmt,
             final AnyxmlEffectiveStatement original) {
-        return EffectiveStatements.copyAnyxml(original, stmt.effectivePath(),
+        return EffectiveStatements.copyAnyxml(original, stmt.getArgument(),
             createFlags(stmt, original.effectiveSubstatements()), stmt.original(AnyxmlSchemaNode.class));
     }
 
