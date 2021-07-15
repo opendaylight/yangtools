@@ -126,24 +126,7 @@ abstract class AbstractTypeProvider implements TypeProvider {
 
     @Override
     public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode,
-            final boolean lenientRelativeLeafrefs) {
-        return javaTypeForSchemaDefinitionType(typeDefinition, parentNode, null, lenientRelativeLeafrefs);
-    }
-
-    /**
-     * Converts schema definition type <code>typeDefinition</code> to JAVA <code>Type</code>.
-     *
-     * @param typeDefinition type definition which is converted to JAVA type
-     * @throws IllegalArgumentException
-     *             <ul>
-     *             <li>if <code>typeDefinition</code> equal null</li>
-     *             <li>if Qname of <code>typeDefinition</code> equal null</li>
-     *             <li>if name of <code>typeDefinition</code> equal null</li>
-     *             </ul>
-     */
-    @Override
-    public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode,
-            final Restrictions restrictions, final boolean lenientRelativeLeafrefs) {
+            final Restrictions restrictions) {
         throw new UnsupportedOperationException();
     }
 
@@ -645,7 +628,7 @@ abstract class AbstractTypeProvider implements TypeProvider {
 
         final TypeDefinition<?> baseType = baseTypeDefForExtendedType(unionSubtype);
         if (unionTypeName.equals(baseType.getQName().getLocalName())) {
-            final Type javaType = BaseYangTypesProvider.INSTANCE.javaTypeForSchemaDefinitionType(baseType, parentNode,
+            final Type javaType = baseJavaTypeForSchema(baseType, parentNode,
                 BindingGeneratorUtil.getRestrictions(unionSubtype));
             if (javaType != null) {
                 updateUnionTypeAsProperty(parentUnionGenTOBuilder, javaType, unionTypeName);
@@ -668,6 +651,13 @@ abstract class AbstractTypeProvider implements TypeProvider {
         if (baseType instanceof StringTypeDefinition) {
             expressions.putAll(resolveRegExpressionsFromTypedef(unionSubtype));
         }
+    }
+
+    private static Type baseJavaTypeForSchema(final TypeDefinition<?> type, final SchemaNode parentNode,
+            final Restrictions restrictions) {
+        final String typeName = type.getQName().getLocalName();
+        final Type mapped = BaseYangTypes.javaTypeForYangType(typeName);
+        return mapped == null || restrictions == null ? mapped : Types.restrictedType(mapped, restrictions);
     }
 
     /**

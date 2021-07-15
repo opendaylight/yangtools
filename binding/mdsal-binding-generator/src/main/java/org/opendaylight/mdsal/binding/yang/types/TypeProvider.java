@@ -12,7 +12,7 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface TypeProvider {
+interface TypeProvider {
     /**
      * Resolve of YANG Type Definition to it's java counter part. If the Type Definition contains one of YANG primitive
      * types the method will return {@code java.lang.} counterpart. (For example if YANG type is int32 the Java
@@ -33,18 +33,20 @@ public interface TypeProvider {
      * @param lenientRelativeLeafrefs treat relative leafrefs leniently
      * @return Resolved Type
      */
-    Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode,
-            boolean lenientRelativeLeafrefs);
-
     default Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode) {
-        return javaTypeForSchemaDefinitionType(type, parentNode, false);
+        return javaTypeForSchemaDefinitionType(type, parentNode, null);
     }
 
-    Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode, Restrictions restrictions,
-            boolean lenient);
-
-    default Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode,
-            final Restrictions restrictions) {
-        return javaTypeForSchemaDefinitionType(type, parentNode, restrictions, false);
-    }
+    /**
+     * Converts schema definition type <code>typeDefinition</code> to JAVA <code>Type</code>.
+     *
+     * @param typeDefinition type definition which is converted to JAVA type
+     * @throws IllegalArgumentException
+     *             <ul>
+     *             <li>if <code>typeDefinition</code> equal null</li>
+     *             <li>if Qname of <code>typeDefinition</code> equal null</li>
+     *             <li>if name of <code>typeDefinition</code> equal null</li>
+     *             </ul>
+     */
+    Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode, Restrictions restrictions);
 }

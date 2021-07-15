@@ -144,4 +144,11 @@ public class BindingGeneratorImplTest {
         assertNull(childOf);
         assertNotNull(dataObject);
     }
+
+    @Test
+    public void testBaseYangTypes() {
+        final List<GeneratedType> types = DefaultBindingGenerator.generateFor(
+            YangParserTestUtils.parseYangResource("/base-yang-types.yang"));
+        assertEquals(19, types.size());
+    }
 }
