@@ -183,22 +183,6 @@ public class TypeProviderTest {
         return result;
     }
 
-    // FIXME: Remove @Ignore annotation once the bug https://bugs.opendaylight.org/show_bug.cgi?id=1862 is fixed
-    @Ignore
-    @Test
-    public void bug1862RestrictedTypedefTransformationTest() {
-        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
-        final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo",
-            "bug-1862-restricted-typedef");
-
-        final TypeDefinition<?> leafType = leaf.getType();
-        final Restrictions restrictions = BindingGeneratorUtil.getRestrictions(leafType);
-        final Type result = provider.javaTypeForSchemaDefinitionType(leafType, leaf, restrictions);
-        assertNotNull(result);
-        assertTrue(result instanceof GeneratedTransferObject);
-        //TODO: complete test after bug 1862 is fixed
-    }
-
     @Test
     public void javaTypeForSchemaDefinitionEnumExtTypeTest() {
         final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
