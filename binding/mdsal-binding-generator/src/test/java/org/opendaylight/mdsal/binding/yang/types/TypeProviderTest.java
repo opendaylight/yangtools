@@ -81,48 +81,6 @@ public class TypeProviderTest {
         return SCHEMA_CONTEXT.findModules(moduleName).iterator().next();
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void typeProviderInstanceWithNullSchemaContextTest() {
-        new RuntimeTypeProvider(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void putReferencedTypeWithNullSchemaPathParamTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        provider.putReferencedType(null, null);
-        provider.putReferencedType(this.schemaPath, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void putReferencedTypeWithNullRefTypeParamTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        provider.putReferencedType(this.schemaPath, null);
-    }
-
-    @Test
-    public void getAdditionalTypesTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        assertNotNull(provider.getAdditionalTypes());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void javaTypeForSchemaDefinitionTypeNullTypedefTest() {
-        final TypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        provider.javaTypeForSchemaDefinitionType(null, null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void javaTypeForSchemaDefinitionTypeTypedefNullQNameTest() {
-        final TypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final TestIntegerTypeDefinition testTypedef = new TestIntegerTypeDefinition();
-        provider.javaTypeForSchemaDefinitionType(testTypedef, null, null);
-    }
-
     private static LeafSchemaNode provideLeafNodeFromTopLevelContainer(final Module module, final String containerName,
             final String leafNodeName) {
         final QName containerNode = QName.create(module.getQNameModule(), containerName);
@@ -541,19 +499,6 @@ public class TypeProviderTest {
         assertNotNull(yangBinary);
         assertNotNull(yangBits);
         assertNotNull(yangInstanceIdentifier);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void generatedTypeForExtendedDefinitionTypeWithTypedefNullTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        provider.generatedTypeForExtendedDefinitionType(null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void generatedTypeForExtendedDefinitionTypeWithTypedefQNameNullTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        final TestIntegerTypeDefinition testInt = new TestIntegerTypeDefinition();
-        provider.generatedTypeForExtendedDefinitionType(testInt, testInt);
     }
 
     @Test
