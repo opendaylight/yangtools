@@ -305,7 +305,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         try {
             stmt = inferenceStack.resolvePathExpression(path);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Failed to find leafref target " + path, e);
+            throw new IllegalArgumentException("Failed to find leafref target " + path.getOriginalString(), e);
         }
         return mapToGenerator(stmt);
     }
