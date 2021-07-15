@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test suite for testing public methods in TypeProviderImpl class.
@@ -55,9 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 @Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class TypeProviderTest {
-
-    public static EffectiveModelContext SCHEMA_CONTEXT;
-    public static Module TEST_TYPE_PROVIDER;
+    static EffectiveModelContext SCHEMA_CONTEXT;
+    static Module TEST_TYPE_PROVIDER;
 
     @Mock
     public SchemaPath schemaPath;
@@ -67,8 +67,9 @@ public class TypeProviderTest {
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = TypeProviderModel.createTestContext();
-        TEST_TYPE_PROVIDER = resolveModule(TypeProviderModel.TEST_TYPE_PROVIDER_MODULE_NAME);
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResources(TypeProviderTest.class,
+            "/base-yang-types.yang", "/test-type-provider-b.yang", "/test-type-provider.yang");
+        TEST_TYPE_PROVIDER = resolveModule("test-type-provider");
     }
 
     @AfterClass
