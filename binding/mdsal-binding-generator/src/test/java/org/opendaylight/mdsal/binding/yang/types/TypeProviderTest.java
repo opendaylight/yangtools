@@ -30,7 +30,6 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -529,26 +528,5 @@ public class TypeProviderTest {
     public void provideGeneratedTOBuilderForBitsTypeDefinitionWithNullTypedefTest() {
         final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
         provider.provideGeneratedTOBuilderForBitsTypeDefinition(JavaTypeName.create("foo", "foo"), null, "foo");
-    }
-
-    @Test
-    public void addUnitsToGenTOTest() {
-        final GeneratedTOBuilder builder = new CodegenGeneratedTOBuilder(
-            JavaTypeName.create("test.package", "TestBuilder"));
-
-        CodegenTypeProvider.addUnitsToGenTO(builder, null);
-        GeneratedTransferObject genTO = builder.build();
-        assertTrue(genTO.getConstantDefinitions().isEmpty());
-
-        CodegenTypeProvider.addUnitsToGenTO(builder, "");
-        genTO = builder.build();
-        assertTrue(genTO.getConstantDefinitions().isEmpty());
-
-        CodegenTypeProvider.addUnitsToGenTO(builder, "125");
-        genTO = builder.build();
-        assertTrue(!genTO.getConstantDefinitions().isEmpty());
-        assertEquals(1, genTO.getConstantDefinitions().size());
-        assertEquals("_UNITS", genTO.getConstantDefinitions().get(0).getName());
-        assertEquals(genTO.getConstantDefinitions().get(0).getValue(), "\"125\"");
     }
 }
