@@ -109,7 +109,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionExtTypeTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo",
             "yang-int8-type");
 
@@ -128,7 +128,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionRestrictedExtTypeTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo",
             "restricted-int8-type");
 
@@ -186,7 +186,7 @@ public class TypeProviderTest {
     @Ignore
     @Test
     public void bug1862RestrictedTypedefTransformationTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo",
             "bug-1862-restricted-typedef");
 
@@ -200,7 +200,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionEnumExtTypeTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo", "resolve-enum-leaf");
         TypeDefinition<?> leafType = leaf.getType();
         Type result = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
@@ -227,7 +227,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionLeafrefExtTypeTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "bar", "leafref-value");
         TypeDefinition<?> leafType = leaf.getType();
         final Type leafrefResolvedType1 = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
@@ -291,7 +291,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionConditionalLeafrefTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         final Module module = resolveModule("test-type-provider-b");
 
         final QName leafrefNode = QName.create(module.getQNameModule(), "conditional-leafref");
@@ -309,7 +309,7 @@ public class TypeProviderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void javaTypeForSchemaDefinitionInvalidLeafrefPathTest() {
-        final TypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         final Module module = resolveModule("test-type-provider-b");
 
         final QName leafrefNode = QName.create(module.getQNameModule(), "unreslovable-leafref");
@@ -323,7 +323,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionIdentityrefExtTypeTest() {
-        final TypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo", "crypto");
         final TypeDefinition<?> leafType = leaf.getType();
 
@@ -334,7 +334,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionForExtUnionWithSimpleTypesTest() {
-        final TypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "use-of-unions",
             "simple-int-types-union");
         final TypeDefinition<?> leafType = leaf.getType();
@@ -348,7 +348,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionForExtComplexUnionWithInnerUnionTypesTest() {
-        final TypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "use-of-unions",
             "complex-union");
         final TypeDefinition<?> leafType = leaf.getType();
@@ -362,7 +362,7 @@ public class TypeProviderTest {
 
     @Test
     public void javaTypeForSchemaDefinitionForExtUnionWithInnerUnionAndSimpleTypeTest() {
-        final TypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
+        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
         final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "use-of-unions",
             "complex-string-int-union");
         final TypeDefinition<?> leafType = leaf.getType();

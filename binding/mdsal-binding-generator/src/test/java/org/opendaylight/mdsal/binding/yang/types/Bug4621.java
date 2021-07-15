@@ -27,7 +27,7 @@ public class Bug4621 {
     public void bug4621test() {
         final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResource("/bug4621.yang");
         final Module moduleValid = schemaContext.findModules(XMLNamespace.of("foo")).iterator().next();
-        final TypeProvider typeProvider = new RuntimeTypeProvider(schemaContext);
+        final AbstractTypeProvider typeProvider = new RuntimeTypeProvider(schemaContext);
 
         final QName listNode = QName.create(moduleValid.getQNameModule(), "neighbor");
         final QName leafrefNode = QName.create(moduleValid.getQNameModule(), "neighbor2-id");
