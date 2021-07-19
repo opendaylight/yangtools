@@ -13,7 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.ClassGenerator;
+import org.opendaylight.mdsal.binding.dom.codec.impl.loader.CodecClassLoader.ClassGenerator;
 
 /**
  * Bridge for initializing generated instance constants during class loading time. This class is public only due to

@@ -8,33 +8,30 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Method;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.LowestLevel1;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.LowestLevel2;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.UnionTestType;
 
 public class UnionValueOptionContextTest {
     private static UnionValueOptionContext TEST_UVOC_1;
     private static UnionValueOptionContext TEST_UVOC_2;
 
-    @Before
-    public void setUp() throws Exception {
-        final Method methodFoo1 = TestDataObject1.class.getMethod("foo");
-        final Method methodFoo2 = TestDataObject2.class.getMethod("foo");
-        TEST_UVOC_1 = new UnionValueOptionContext(TestUnion.class, TestDataObject1.class, methodFoo1,
-            SchemaUnawareCodec.NOOP_CODEC);
-        TEST_UVOC_2 = new UnionValueOptionContext(TestUnion.class, TestDataObject2.class, methodFoo2,
-            SchemaUnawareCodec.NOOP_CODEC);
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        TEST_UVOC_1 = new UnionValueOptionContext(UnionTestType.class, LowestLevel1.class,
+            UnionTestType.class.getMethod("getLowestLevel1"), SchemaUnawareCodec.NOOP_CODEC);
+        TEST_UVOC_2 = new UnionValueOptionContext(UnionTestType.class, LowestLevel2.class,
+            UnionTestType.class.getMethod("getLowestLevel2"), SchemaUnawareCodec.NOOP_CODEC);
     }
 
     @Test
     public void hashCodeTest() throws Exception {
-        final Method methodFoo1 = TestDataObject1.class.getMethod("foo");
-        final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(TestUnion.class, TestDataObject1.class,
-            methodFoo1, SchemaUnawareCodec.NOOP_CODEC);
+        final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(UnionTestType.class, LowestLevel1.class,
+            UnionTestType.class.getMethod("getLowestLevel1"), SchemaUnawareCodec.NOOP_CODEC);
 
         assertEquals("HashCode", test_uvoc.hashCode(), TEST_UVOC_1.hashCode());
         assertNotEquals("HashCode", TEST_UVOC_1.hashCode(), TEST_UVOC_2.hashCode());
@@ -42,33 +39,10 @@ public class UnionValueOptionContextTest {
 
     @Test
     public void equalsTest() throws Exception {
-        final Method methodFoo1 = TestDataObject1.class.getMethod("foo");
-        final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(TestUnion.class, TestDataObject1.class,
-            methodFoo1, SchemaUnawareCodec.NOOP_CODEC);
+        final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(UnionTestType.class, LowestLevel1.class,
+            UnionTestType.class.getMethod("getLowestLevel1"), SchemaUnawareCodec.NOOP_CODEC);
 
-        assertTrue("Equals", TEST_UVOC_1.equals(test_uvoc));
-        assertFalse("Not equals", TEST_UVOC_1.equals(TEST_UVOC_2));
-    }
-
-    protected static final class TestDataObject1 {
-        public void foo() {
-
-        }
-    }
-
-    protected static final class TestDataObject2 {
-        public void foo() {
-
-        }
-    }
-
-    public static final class TestUnion {
-        public TestUnion(final TestDataObject1 arg) {
-
-        }
-
-        public TestUnion(final TestDataObject2 arg) {
-
-        }
+        assertEquals(TEST_UVOC_1, test_uvoc);
+        assertNotEquals(TEST_UVOC_1, TEST_UVOC_2);
     }
 }

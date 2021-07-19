@@ -22,11 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class NonCachingCodecTest {
     @Mock
-    private BindingNormalizedNodeCodec<DataObject> codec;
+    public BindingNormalizedNodeCodec<DataObject> codec;
     @Mock
-    private NormalizedNode node;
+    public NormalizedNode node;
     @Mock
-    private DataObject object;
+    public DataObject object;
 
     @Before
     public void before() {

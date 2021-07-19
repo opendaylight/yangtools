@@ -7,8 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.annotations.Beta;
-import javax.inject.Singleton;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
@@ -19,12 +17,10 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Beta
 @MetaInfServices
-@Singleton
 @Component(immediate = true)
-public final class DefaultBindingCodecTreeFactory implements BindingCodecTreeFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultBindingCodecTreeFactory.class);
+public final class SimpleBindingCodecTreeFactory implements BindingCodecTreeFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleBindingCodecTreeFactory.class);
 
     @Override
     public BindingCodecTree create(final BindingRuntimeContext context) {
@@ -36,7 +32,6 @@ public final class DefaultBindingCodecTreeFactory implements BindingCodecTreeFac
     void activate() {
         LOG.info("Binding-DOM Codec enabled");
     }
-
 
     @Deactivate
     @SuppressWarnings("static-method")
