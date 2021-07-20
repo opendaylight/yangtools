@@ -131,7 +131,26 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         executebug8927Test("/bug8927/xml/scalar_array.xml", "/bug8927/json/scalar_array.json");
     }
 
+    @Test
+    public void yt1302TestFlatArray() throws Exception {
+        executeYt1302Test("/yt1302/xml/flat-array.xml", "/yt1302/json/flat-array.json");
+    }
+
+    @Test
+    public void yt1302TestArrayOfArray() throws Exception {
+        executeYt1302Test("/yt1302/xml/array-of-array.xml", "/yt1302/json/array-of-array.json");
+    }
+
     private void executebug8927Test(final String inputXmlFile, final String expectedJsonFile) throws Exception {
+        verifyExpectedJson(inputXmlFile, expectedJsonFile, "bug8927.test", "2017-01-01", "foo");
+    }
+
+    private void executeYt1302Test(final String inputXmlFile, final String expectedJsonFile) throws Exception {
+        verifyExpectedJson(inputXmlFile, expectedJsonFile, "yt1302.test", "2022-10-11", "data");
+    }
+
+    private void verifyExpectedJson(final String inputXmlFile, final String expectedJsonFile,
+            final String namespace, final String revision, final String localName) throws Exception {
         final InputStream resourceAsStream = AnyXmlSupportTest.class.getResourceAsStream(inputXmlFile);
         final NormalizedNodeResult result = new NormalizedNodeResult();
         loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
@@ -140,12 +159,12 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         assertTrue(result.getResult() instanceof ContainerNode);
 
         final DataContainerChild data = ((ContainerNode) result.getResult())
-                .childByArg(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
+                .childByArg(new NodeIdentifier(QName.create(namespace, revision, localName)));
         assertNotNull(data);
         final String jsonOutput = normalizedNodesToJsonString(data, schemaContext);
         assertEquals(JsonParser.parseReader(new FileReader(
-            new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8)),
-            JsonParser.parseString(jsonOutput));
+                        new File(getClass().getResource(expectedJsonFile).toURI()), StandardCharsets.UTF_8)),
+                JsonParser.parseString(jsonOutput));
     }
 
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode transformedInput, final QName anyxmlName) {
