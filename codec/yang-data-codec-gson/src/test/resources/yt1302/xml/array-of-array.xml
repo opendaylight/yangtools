@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<data xmlns="yt1302.test">
+    <anyxml-data>
+        <list-a>
+            <list-a>
+                <leaflist-a>alpha</leaflist-a>
+                <leaflist-a>beta</leaflist-a>
+            </list-a>
+            <list-b>
+                <leaflist-b>gamma</leaflist-b>
+                <leaflist-b>delta</leaflist-b>
+            </list-b>
+            <list-a>
+                <leaf-a>epsilon</leaf-a>
+            </list-a>
+            <list-b>
+                <leaf-b>zeta</leaf-b>
+            </list-b>
+        </list-a>
+        <list-b>
+            <leaf-b>eta</leaf-b>
+        </list-b>
+        <list-a>
+            <leaflist-a>theta</leaflist-a>
+            <leaflist-a>iota</leaflist-a>
+        </list-a>
+        <list-b>
+            <leaf-b>kappa</leaf-b>
+        </list-b>
+    </anyxml-data>
+</data>
+</root>
