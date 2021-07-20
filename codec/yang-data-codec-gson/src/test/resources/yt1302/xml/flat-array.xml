@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<data xmlns="yt1302.test">
+    <anyxml-data>
+        <list-a>
+            <leaf-a>alpha</leaf-a>
+            <leaf-b>beta</leaf-b>
+        </list-a>
+        <list-b>
+            <leaf-a>gamma</leaf-a>
+            <leaf-b>delta</leaf-b>
+        </list-b>
+        <list-a>
+            <leaf-a>epsilon</leaf-a>
+        </list-a>
+        <list-b>
+            <leaf-a>zeta</leaf-a>
+        </list-b>
+    </anyxml-data>
+</data>
+</root>
