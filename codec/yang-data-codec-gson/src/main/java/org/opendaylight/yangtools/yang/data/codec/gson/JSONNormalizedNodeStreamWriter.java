@@ -14,7 +14,9 @@ import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
@@ -552,12 +554,13 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeObject(Node node) throws IOException {
-        String previousNodeName = "";
+        final Set<String> previousNodeNames = new HashSet<>();
         while (node != null) {
             if (Node.ELEMENT_NODE == node.getNodeType()) {
-                if (!node.getNodeName().equals(previousNodeName)) {
-                    previousNodeName = node.getNodeName();
-                    writer.name(node.getNodeName());
+                final String nodeName = node.getNodeName();
+                if (!previousNodeNames.contains(nodeName)) {
+                    previousNodeNames.add(nodeName);
+                    writer.name(nodeName);
                     writeXmlNode(node);
                 }
             }
