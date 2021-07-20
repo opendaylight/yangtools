@@ -1,0 +1,24 @@
+{
+    "yt1302:data": {
+        "anyxml-data": {
+            "list-a": [
+                {
+                    "leaf-a": "alpha",
+                    "leaf-b": "beta"
+                },
+                {
+                    "leaf-a": "epsilon"
+                }
+            ],
+            "list-b": [
+                {
+                    "leaf-a": "gamma",
+                    "leaf-b": "delta"
+                },
+                {
+                    "leaf-a": "zeta"
+                }
+            ]
+        }
+    }
+}

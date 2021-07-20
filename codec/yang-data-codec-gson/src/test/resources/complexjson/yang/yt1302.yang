@@ -1,0 +1,12 @@
+module yt1302 {
+    namespace "yt1302.test";
+    prefix yt1302;
+
+    revision 2022-10-11 {
+        description "Initial revision.";
+    }
+
+    container data {
+        anyxml anyxml-data;
+    }
+}
