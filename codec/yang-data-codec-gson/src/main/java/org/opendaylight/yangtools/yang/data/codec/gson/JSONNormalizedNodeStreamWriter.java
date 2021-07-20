@@ -14,6 +14,7 @@ import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
@@ -97,6 +98,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private final JSONCodecFactory codecs;
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
+
+    //To store tags that are processed
+    private ArrayList<String> processedTags = new ArrayList<String>();
 
     JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
             final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
@@ -494,6 +498,14 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private void handleArray(final Node node) throws IOException {
         final Element parentNode = (Element)node.getParentNode();
         final NodeList elementsList = parentNode.getElementsByTagName(node.getNodeName());
+        //If the tag (of array) is already processed then return
+        if (processedTags.contains(node.getNodeName())) {
+            return;
+        }
+        //if the tag is not processed then add to list
+        if (!node.getNodeName().equals("array-element")) {
+            processedTags.add(node.getNodeName());
+        }
         for (int i = 0, length = elementsList.getLength(); i < length; i++) {
             final Node arrayElement = elementsList.item(i);
             final Element parent = (Element)arrayElement.getParentNode();
@@ -515,6 +527,19 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
             if (Node.ELEMENT_NODE == node.getNodeType()) {
                 if (!node.getNodeName().equals(previousNodeName)) {
                     previousNodeName = node.getNodeName();
+                    /*To cover edge cases. If a tag is used as an array and text node
+                      in the same document. Make sure array nodes are not processed again */
+                    if (processedTags.contains(node.getNodeName())) {
+                        if (!isArrayElement(node)) {
+                            if (node.hasChildNodes() && null != node.getFirstChild()) {
+                                if (Node.ELEMENT_NODE == node.getFirstChild().getNodeType()) {
+                                    continue;
+                                }
+                            }
+                        } else {
+                            continue;
+                        }
+                    }
                     writer.name(node.getNodeName());
                     writeXmlNode(node);
                 }
