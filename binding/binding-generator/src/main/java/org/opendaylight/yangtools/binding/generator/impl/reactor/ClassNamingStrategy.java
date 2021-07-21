@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -17,7 +18,10 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Enumeration of known strategies for translating a YANG node identifier into a Java package name segment or a Java
  * simple class name.
  */
-abstract class ClassNamingStrategy implements Immutable {
+@NonNullByDefault
+abstract sealed class ClassNamingStrategy implements Immutable permits FallbackCamelCaseNamingStrategy,
+    ForwardingClassNamingStrategy, YangDataNamingStrategy, YangIdentifierClassNamingStrategy {
+
     /**
      * Return the simple Java class name assigned by this naming strategy.
      *
@@ -48,5 +52,5 @@ abstract class ClassNamingStrategy implements Immutable {
         return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
-    abstract @NonNull ToStringHelper addToStringAttributes(@NonNull ToStringHelper helper);
+    abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 }

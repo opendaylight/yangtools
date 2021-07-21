@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -158,6 +159,22 @@ public final class Naming {
     private static final String ROOT_PACKAGE_PATTERN_STRING =
             "(org.opendaylight.yang.(gen|svc).v1.[a-z0-9_\\.]*?\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
+
+    /**
+     * Initial character in names which follow bijective mapping (as opposed to camel-cased). This is defined to be
+     * <a href="https://www.fileformat.info/info/unicode/char/00a4/index.htm">CURRENCY SIGN</a>.
+     */
+    private static final char BIJECTIVE_START = '¤';
+    /**
+     * The character used as replacement for {@code -}. This is defined to be
+     * <a href="https://www.fileformat.info/info/unicode/char/fe4d/index.htm">DASHED LOW LINE</a>.
+     */
+    private static final char BIJECTIVE_DASH = '﹍';
+    /**
+     * The character used as replacement for {@code .}. This is defined to be
+     * <a href="https://www.fileformat.info/info/unicode/char/fe4e/index.htm">CENTERLINE LOW LINE</a>.
+     */
+    private static final char BIJECTIVE_DOT = '﹎';
 
     private Naming() {
         // Hidden on purpose
@@ -320,6 +337,76 @@ public final class Naming {
         return potential;
     }
 
+    /**
+     * Determines whether the identifier is unique.
+     *
+     * @param str identifier
+     * @return boolean
+     */
+    public static boolean isUniqueJavaIdentifier(final String str) {
+        return !str.isEmpty() && str.charAt(0) == BIJECTIVE_START;
+    }
+
+    /**
+     * Creates a unique identifier starting with "¤" and dots or dashes replaced with "﹎" and "﹍".
+     *
+     * @param identifier identifier to be modified
+     * @return String identifier
+     */
+    public static @NonNull String createUniqueJavaIdentifer(final AbstractQName identifier) {
+        return createUniqueJavaIdentifer(identifier.getLocalName());
+    }
+
+    /**
+     * Creates a unique identifier starting with "¤" and dots or dashes replaced with "﹎" and "﹍".
+     *
+     * @param localName identifier to be modified
+     * @return String identifier
+     */
+    public static @NonNull String createUniqueJavaIdentifer(final String localName) {
+        // Find the first character that needs escaping. If there is none use a simple concatenation
+        final int offset = indexOfDotOrDash(localName, 0);
+        return offset != -1 ? createUniqueJavaIdentifer(localName, offset) : BIJECTIVE_START + localName;
+    }
+
+    private static @NonNull String createUniqueJavaIdentifer(final String localName, final int firstOffset) {
+        // Allocate enough capacity and append the initial character
+        final StringBuilder sb = new StringBuilder(localName.length() + 1).append(BIJECTIVE_START);
+
+        int start = 0;
+        int end = firstOffset;
+        do {
+            // Determine the appropriate escape character
+            final char escaped = switch (localName.charAt(end)) {
+                case '.' -> BIJECTIVE_DOT;
+                case '-' -> BIJECTIVE_DASH;
+                default ->  throw new IllegalStateException("Unhandled character at " + end + " of " + localName);
+            };
+
+            // Append the non-escaped part and then the escape character
+            sb.append(localName, start, end).append(escaped);
+
+            // Adjust start and search for next escape
+            start = end + 1;
+            end = indexOfDotOrDash(localName, start);
+        } while (end != -1);
+
+        // Deal with the last unescaped segment and return
+        return sb.append(localName, start, localName.length()).toString();
+    }
+
+    private static int indexOfDotOrDash(final String str, final int fromIndex) {
+        final int dot = str.indexOf('.', fromIndex);
+        final int dash = str.indexOf('-', fromIndex);
+        if (dot == -1) {
+            return dash;
+        } else if (dash == -1) {
+            return dot;
+        } else {
+            return Math.min(dot, dash);
+        }
+    }
+
     // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a
     //        property.
     public static @NonNull String getUnionLeafrefMemberName(final String unionClassSimpleName,
@@ -350,6 +437,9 @@ public final class Naming {
      * @return the {@link String} {@code str} with an upper case first character.
      */
     public static @NonNull String toFirstUpper(final @NonNull String str) {
+        if (isUniqueJavaIdentifier(str)) {
+            return str.charAt(0) + toFirstUpper(str.substring(1));
+        }
         if (str.isEmpty()) {
             return str;
         }
@@ -371,6 +461,9 @@ public final class Naming {
      *         {@link String} {@code str} was empty.
      */
     private static @NonNull String toFirstLower(final @NonNull String str) {
+        if (isUniqueJavaIdentifier(str)) {
+            return str.charAt(0) + toFirstLower(str.substring(1));
+        }
         if (str.isEmpty()) {
             return str;
         }

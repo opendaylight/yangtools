@@ -13,32 +13,23 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A fallback {@link ClassNamingStrategy} derived from a {@link CamelCaseNamingStrategy}.
+ * A naming strategy which is forwarding some requests to a delegate.
  */
 @NonNullByDefault
-abstract non-sealed class FallbackCamelCaseNamingStrategy extends ClassNamingStrategy {
-    private final CamelCaseNamingStrategy delegate;
+abstract sealed class ForwardingClassNamingStrategy extends ClassNamingStrategy permits BijectiveNamingStrategy,
+    BijectiveWithNamespaceNamingStrategy {
+    private final ClassNamingStrategy delegate;
 
-    FallbackCamelCaseNamingStrategy(final CamelCaseNamingStrategy delegate) {
+    ForwardingClassNamingStrategy(final ClassNamingStrategy delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
-    final CamelCaseNamingStrategy delegate() {
+    ClassNamingStrategy delegate() {
         return delegate;
     }
 
     @Override
-    final String rootName() {
-        return delegate.rootName();
-    }
-
-    @Override
-    final String childPackage() {
-        return delegate.childPackage();
-    }
-
-    @Override
-    final ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("delegate", delegate);
     }
 }
