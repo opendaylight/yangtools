@@ -1,0 +1,32 @@
+module mdsal502 {
+  namespace mdsal502;
+  prefix mdsal502;
+
+  grouping MyGrp {
+    leaf MyGrp {
+      type string;
+    }
+  }
+
+  grouping My_grp {
+    leaf My_grp {
+      type string;
+    }
+  }
+
+  grouping my-grp {
+    leaf my-grp {
+      type string;
+    }
+  }
+
+  grouping my.grp {
+    leaf my.grp {
+      type string;
+    }
+  }
+
+  container my-grp {
+    uses MyGrp;
+  }
+}

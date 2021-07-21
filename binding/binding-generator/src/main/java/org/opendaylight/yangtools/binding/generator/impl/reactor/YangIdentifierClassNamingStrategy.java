@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
  * {@link AbstractQName#getLocalName()}.
  */
 @NonNullByDefault
-abstract class YangIdentifierClassNamingStrategy extends ClassNamingStrategy {
+abstract non-sealed class YangIdentifierClassNamingStrategy extends ClassNamingStrategy {
     private final AbstractQName nodeIdentifier;
 
     YangIdentifierClassNamingStrategy(final AbstractQName nodeIdentifier) {
