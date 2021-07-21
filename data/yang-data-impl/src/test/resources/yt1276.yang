@@ -1,0 +1,36 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  container foo {
+    presence blah;
+  }
+
+  augment /foo {
+    leaf bar {
+      type string;
+      mandatory true;
+    }
+  }
+
+  container bar {
+    presence blah;
+
+    choice baz {
+      case xyzzy-case {
+        leaf xyzzy-leaf {
+          type string;
+          mandatory true;
+        }
+      }
+    }
+  }
+
+  augment /bar/baz/xyzzy-case {
+    leaf xyzzy-augment {
+      type string;
+      mandatory true;
+    }
+  }
+}
+
