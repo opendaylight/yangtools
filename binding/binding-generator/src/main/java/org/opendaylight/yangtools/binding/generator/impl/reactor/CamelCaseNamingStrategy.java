@@ -12,9 +12,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 
+/**
+ * Original Binding Specification naming, backed by {@link Naming#getClassName(String)}.
+ */
 @NonNullByDefault
 final class CamelCaseNamingStrategy extends YangIdentifierClassNamingStrategy {
     private final StatementNamespace namespace;
