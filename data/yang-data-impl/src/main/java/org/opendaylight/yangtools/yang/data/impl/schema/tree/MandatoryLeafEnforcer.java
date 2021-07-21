@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.spi.tree.TreeNode;
@@ -33,12 +31,11 @@ import org.slf4j.LoggerFactory;
 final class MandatoryLeafEnforcer implements Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(MandatoryLeafEnforcer.class);
 
-    private final ImmutableList<YangInstanceIdentifier> mandatoryNodes;
+    private final ImmutableList<MandatoryDescendant> mandatoryNodes;
 
-    private MandatoryLeafEnforcer(final ImmutableList<YangInstanceIdentifier> mandatoryNodes) {
+    private MandatoryLeafEnforcer(final ImmutableList<MandatoryDescendant> mandatoryNodes) {
         this.mandatoryNodes = requireNonNull(mandatoryNodes);
     }
-
 
     static Optional<MandatoryLeafEnforcer> forContainer(final DataNodeContainer schema,
             final DataTreeConfiguration treeConfig) {
@@ -46,45 +43,44 @@ final class MandatoryLeafEnforcer implements Immutable {
             return Optional.empty();
         }
 
-        final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
+        final Builder<MandatoryDescendant> builder = ImmutableList.builder();
         findMandatoryNodes(builder, YangInstanceIdentifier.empty(), schema, treeConfig.getTreeType());
-        final ImmutableList<YangInstanceIdentifier> mandatoryNodes = builder.build();
+        final ImmutableList<MandatoryDescendant> mandatoryNodes = builder.build();
         return mandatoryNodes.isEmpty() ? Optional.empty() : Optional.of(new MandatoryLeafEnforcer(mandatoryNodes));
     }
 
     void enforceOnData(final NormalizedNode data) {
-        for (final YangInstanceIdentifier id : mandatoryNodes) {
-            checkArgument(NormalizedNodes.findNode(data, id).isPresent(),
-                "Node %s is missing mandatory descendant %s", data.getIdentifier(), id);
-        }
+        mandatoryNodes.forEach(node -> node.enforceOnData(data));
     }
 
     void enforceOnTreeNode(final TreeNode tree) {
         enforceOnData(tree.getData());
     }
 
-    private static void findMandatoryNodes(final Builder<YangInstanceIdentifier> builder,
-            final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
+    private static void findMandatoryNodes(final Builder<MandatoryDescendant> builder,
+        final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
         for (final DataSchemaNode child : schema.getChildNodes()) {
             if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                 if (child instanceof ContainerSchemaNode) {
                     final ContainerSchemaNode container = (ContainerSchemaNode) child;
                     if (!container.isPresenceContainer()) {
-                        findMandatoryNodes(builder, id.node(NodeIdentifier.create(child.getQName())), container, type);
+                        findMandatoryNodes(builder,
+                            id.node(NodeIdentifier.create(container.getQName())), container, type);
                     }
                 } else {
                     boolean needEnforce = child instanceof MandatoryAware && ((MandatoryAware) child).isMandatory();
                     if (!needEnforce && child instanceof ElementCountConstraintAware) {
-                        needEnforce = ((ElementCountConstraintAware) child)
-                                .getElementCountConstraint().map(constraint -> {
-                                    final Integer min = constraint.getMinElements();
-                                    return min != null && min > 0;
-                                }).orElse(Boolean.FALSE).booleanValue();
+                        needEnforce = ((ElementCountConstraintAware) child).getElementCountConstraint()
+                            .map(constraint -> {
+                                final Integer min = constraint.getMinElements();
+                                return min != null && min > 0;
+                            })
+                            .orElse(Boolean.FALSE);
                     }
                     if (needEnforce) {
-                        final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
-                        LOG.debug("Adding mandatory child {}", childId);
-                        builder.add(childId.toOptimized());
+                        final MandatoryDescendant desc = MandatoryDescendant.create(id, schema, child);
+                        LOG.debug("Adding mandatory child {}", desc);
+                        builder.add(desc);
                     }
                 }
             }
