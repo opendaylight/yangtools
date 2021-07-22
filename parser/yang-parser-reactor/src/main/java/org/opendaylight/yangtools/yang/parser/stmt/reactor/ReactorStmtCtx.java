@@ -297,7 +297,22 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition()).add("rawArgument", rawArgument());
+        return toStringHelper.add("definition", definition()).add("rawArgument", rawArgument())
+            .add("refCount", refString());
+    }
+
+    private String refString() {
+        final int current = refcount;
+        switch (current) {
+            case REFCOUNT_DEFUNCT:
+                return "DEFUNCT";
+            case REFCOUNT_SWEEPING:
+                return "SWEEPING";
+            case REFCOUNT_SWEPT:
+                return "SWEPT";
+            default:
+                return String.valueOf(refcount);
+        }
     }
 
     /**
