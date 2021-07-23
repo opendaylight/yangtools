@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -188,8 +189,7 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
             final Set<QName> supportedFeatures, final YangParserConfiguration config) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
-
-        final URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
+        final URL resourceDir = Resources.getResource(StmtTestUtils.class, yangSourcesDirectoryPath);
         final File testSourcesDir = new File(resourceDir.toURI());
 
         return parseYangSources(config, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
@@ -204,8 +204,8 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
             final String yangLibsDirectoryPath, final Set<QName> supportedFeatures) throws URISyntaxException,
             ReactorException, IOException, YangSyntaxErrorException {
-        final File yangsDir = new File(StmtTestUtils.class.getResource(yangFilesDirectoryPath).toURI());
-        final File libsDir = new File(StmtTestUtils.class.getResource(yangLibsDirectoryPath).toURI());
+        final File yangsDir = new File(Resources.getResource(StmtTestUtils.class, yangFilesDirectoryPath).toURI());
+        final File libsDir = new File(Resources.getResource(StmtTestUtils.class, yangLibsDirectoryPath).toURI());
 
         return parseYangSources(yangsDir.listFiles(YANG_FILE_FILTER), libsDir.listFiles(YANG_FILE_FILTER),
                 supportedFeatures);
@@ -246,7 +246,7 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath,
             final YangParserConfiguration config) throws URISyntaxException, SAXException, IOException,
             ReactorException {
-        final URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
+        final URL resourceDir = Resources.getResource(StmtTestUtils.class, yinSourcesDirectoryPath);
         final File[] files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
         final StatementStreamSource[] sources = new StatementStreamSource[files.length];
         for (int i = 0; i < files.length; i++) {
