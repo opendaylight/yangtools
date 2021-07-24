@@ -878,6 +878,15 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         if (parent == null) {
             return PARENTREF_ABSENT;
         }
+
+        // A slight wrinkle here is that our machinery handles only PRESENT -> ABSENT invalidation and we can reach here
+        // while inference is still ongoing and hence we may not have a complete picture about existing references. We
+        // could therefore end up caching an ABSENT result and then that information becoming stale as a new reference
+        // is introduced.
+        if (parent.executionOrder() < ExecutionOrder.EFFECTIVE_MODEL) {
+            return PARENTREF_UNKNOWN;
+        }
+
         // There are three possibilities:
         // - REFCOUNT_NONE, in which case we need to search next parent
         // - negative (< REFCOUNT_NONE), meaning parent is in some stage of sweeping, hence it does not have
