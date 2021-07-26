@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serializable;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -23,7 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * error tag.
  */
 @NonNullByDefault
-public final class ErrorTag {
+public final class ErrorTag implements Serializable {
     /**
      * {@code access-denied} {@link ErrorTag}.
      */
@@ -147,6 +148,8 @@ public final class ErrorTag {
      */
     public static final ErrorTag UNKNOWN_NAMESPACE = new ErrorTag("unknown-namespace");
 
+    private static final long serialVersionUID = 1L;
+
     private final String elementBody;
 
     public ErrorTag(final String elementBody) {
@@ -175,5 +178,9 @@ public final class ErrorTag {
     @Override
     public String toString() {
         return elementBody;
+    }
+
+    Object writeReplace() {
+        return new ETv1(this);
     }
 }
