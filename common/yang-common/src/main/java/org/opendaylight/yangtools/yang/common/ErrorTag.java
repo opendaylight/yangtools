@@ -76,6 +76,11 @@ public final class ErrorTag implements Serializable {
      */
     public static final ErrorTag LOCK_DENIED = new ErrorTag("lock-denied");
     /**
+     * {@code unknown-element} {@link ErrorTag}. Covers mechanics specified in
+     *  <a href="https://datatracker.ietf.org/doc/html/rfc6241#page-80">RFC6241, Appendix A, last item</a>.
+     */
+    public static final ErrorTag MALFORMED_MESSAGE = new ErrorTag("malformed-message");
+    /**
      * {@code missing-attribute} {@link ErrorTag}.
      */
     public static final ErrorTag MISSING_ATTRIBUTE = new ErrorTag("missing-attribute");
