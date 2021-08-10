@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5949826a_08ce6c4e",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryDescendant.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2021-08-10T11:54:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "842cceb1_63f6da1c",
+      "range": {
+        "startLine": 54,
+        "startChar": 67,
+        "endLine": 54,
+        "endChar": 91
+      },
+      "revId": "c83915ad989b4600c7d315be1416092b27231667",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dd199670_0268b3c9",
         "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryDescendant.java",
         "patchSetId": 6
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "ff6de4d0_18bf80c0",
+        "filename": "data/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryDescendant.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2021-08-10T11:54:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd199670_0268b3c9",
+      "range": {
+        "startLine": 93,
+        "startChar": 16,
+        "endLine": 93,
+        "endChar": 43
+      },
+      "revId": "c83915ad989b4600c7d315be1416092b27231667",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "823060ee_b987fb26",
         "filename": "data/yang-data-impl/src/test/resources/yt1276.yang",
         "patchSetId": 6
@@ -68,6 +116,30 @@
       "revId": "c83915ad989b4600c7d315be1416092b27231667",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "168d8c17_6579bd0d",
+        "filename": "data/yang-data-impl/src/test/resources/yt1276.yang",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2021-08-10T11:54:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "823060ee_b987fb26",
+      "range": {
+        "startLine": 58,
+        "startChar": 2,
+        "endLine": 58,
+        "endChar": 4
+      },
+      "revId": "c83915ad989b4600c7d315be1416092b27231667",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
