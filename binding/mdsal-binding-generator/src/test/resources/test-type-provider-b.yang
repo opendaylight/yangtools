@@ -34,13 +34,16 @@ module test-type-provider-b {
 
     leaf conditional-leafref {
         type leafref {
-            path "/prov:foo/prov:bars/prov:bar-item[prov:id=current()/../id]";
+            path "/prov:foo/prov:bars/prov:bar-item[prov:id=current()/../id]/prov:id";
         }
     }
 
-    leaf unreslovable-leafref {
-        type leafref {
-            path "/somewhere/i/bellong";
+    grouping grp {
+        // This has to be in a grouping, otherwise we'll just reject it
+        leaf unresolvable-leafref {
+            type leafref {
+                path "/somewhere/i/bellong";
+            }
         }
     }
 }

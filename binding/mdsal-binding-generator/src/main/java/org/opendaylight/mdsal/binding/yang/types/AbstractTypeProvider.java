@@ -81,11 +81,6 @@ abstract class AbstractTypeProvider {
 
     private final Map<String, Map<Optional<Revision>, Map<String, GeneratedType>>> genTypeDefsContextMap =
         new HashMap<>();
-
-    /**
-     * The map which maps schema paths to JAVA <code>Type</code>.
-     */
-    private final Map<SchemaPath, Type> referencedTypes = new HashMap<>();
     private final Map<Module, Set<GeneratedType>> additionalTypes = new HashMap<>();
 
     /**
@@ -99,25 +94,6 @@ abstract class AbstractTypeProvider {
         this.schemaContext = requireNonNull(schemaContext);
 
         resolveTypeDefsFromContext();
-    }
-
-    /**
-     * Puts <code>refType</code> to map with key <code>refTypePath</code>.
-     *
-     * @param refTypePath schema path used as the map key
-     * @param refType type which represents the map value
-     * @throws IllegalArgumentException
-     *             <ul>
-     *             <li>if <code>refTypePath</code> equal null</li>
-     *             <li>if <code>refType</code> equal null</li>
-     *             </ul>
-     *
-     */
-    public void putReferencedType(final SchemaPath refTypePath, final Type refType) {
-        Preconditions.checkArgument(refTypePath != null,
-                "Path reference of Enumeration Type Definition cannot be NULL!");
-        Preconditions.checkArgument(refType != null, "Reference to Enumeration Type cannot be NULL!");
-        referencedTypes.put(refTypePath, refType);
     }
 
     public Map<Module, Set<GeneratedType>> getAdditionalTypes() {

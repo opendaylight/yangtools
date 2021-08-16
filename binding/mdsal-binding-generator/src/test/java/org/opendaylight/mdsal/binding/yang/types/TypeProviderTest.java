@@ -232,48 +232,6 @@ public class TypeProviderTest {
     }
 
     @Test
-    public void javaTypeForSchemaDefinitionLeafrefToEnumTypeTest() {
-        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
-
-        setReferencedTypeForTypeProvider(provider);
-
-        final Module module = resolveModule("test-type-provider-b");
-
-        final QName leafNode = QName.create(module.getQNameModule(), "enum");
-        final DataSchemaNode enumNode = module.findDataChildByName(leafNode).get();
-        assertTrue(enumNode instanceof LeafSchemaNode);
-        final LeafSchemaNode leaf = (LeafSchemaNode) enumNode;
-        final TypeDefinition<?> leafType = leaf.getType();
-
-        final Type leafrefResolvedType1 = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-        assertNotNull(leafrefResolvedType1);
-
-        final QName leafListNode = QName.create(module.getQNameModule(), "enums");
-        final DataSchemaNode enumListNode = module.findDataChildByName(leafListNode).get();
-        assertTrue(enumListNode instanceof LeafListSchemaNode);
-        final LeafListSchemaNode leafList = (LeafListSchemaNode) enumListNode;
-        final TypeDefinition<?> leafListType = leafList.getType();
-
-        final Type leafrefResolvedType2 = provider.javaTypeForSchemaDefinitionType(leafListType, leafList);
-        assertNotNull(leafrefResolvedType2);
-        assertTrue(leafrefResolvedType2 instanceof ParameterizedType);
-    }
-
-    private static void setReferencedTypeForTypeProvider(final AbstractTypeProvider provider) {
-        final LeafSchemaNode enumLeafNode = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo",
-            "resolve-direct-use-of-enum");
-        final TypeDefinition<?> enumLeafTypedef = enumLeafNode.getType();
-        provider.putReferencedType(enumLeafNode.getPath(),
-            Type.of(provider.javaTypeForSchemaDefinitionType(enumLeafTypedef, enumLeafNode)));
-
-        final LeafListSchemaNode enumListNode = provideLeafListNodeFromTopLevelContainer(TEST_TYPE_PROVIDER,
-            "foo", "list-of-enums");
-        final TypeDefinition<?> enumLeafListTypedef = enumListNode.getType();
-        provider.putReferencedType(enumListNode.getPath(),
-            Type.of(provider.javaTypeForSchemaDefinitionType(enumLeafListTypedef, enumListNode)));
-    }
-
-    @Test
     public void javaTypeForSchemaDefinitionConditionalLeafrefTest() {
         final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
         final Module module = resolveModule("test-type-provider-b");
