@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility serialization/deserialization for {@link DataTreeCandidate}. Note that this utility does not maintain
  * before-image information across serialization.
- *
- * @author Robert Varga
  */
 @Beta
 public final class DataTreeCandidateInputOutput {
@@ -78,7 +76,7 @@ public final class DataTreeCandidateInputOutput {
                 rootNode = UnmodifiedRootDataTreeCandidateNode.INSTANCE;
                 break;
             default:
-                throw new IllegalArgumentException("Unhandled node type " + type);
+                throw unhandledNodeType(type);
         }
 
         return DataTreeCandidates.newDataTreeCandidate(rootPath, rootNode);
@@ -113,7 +111,7 @@ public final class DataTreeCandidateInputOutput {
                 out.writeNormalizedNode(node.getDataAfter().get());
                 break;
             default:
-                throwUnhandledNodeType(node);
+                throw unhandledNodeType(node);
         }
     }
 
@@ -163,7 +161,7 @@ public final class DataTreeCandidateInputOutput {
             case WRITE:
                 return DataTreeCandidateNodes.written(in.readNormalizedNode(receiver));
             default:
-                throw new IllegalArgumentException("Unhandled node type " + type);
+                throw unhandledNodeType(type);
         }
     }
 
@@ -205,11 +203,15 @@ public final class DataTreeCandidateInputOutput {
                 out.writeByte(UNMODIFIED);
                 break;
             default:
-                throwUnhandledNodeType(node);
+                throw unhandledNodeType(node);
         }
     }
 
-    private static void throwUnhandledNodeType(final DataTreeCandidateNode node) {
-        throw new IllegalArgumentException("Unhandled node type " + node.getModificationType());
+    private static IllegalArgumentException unhandledNodeType(final byte type) {
+        return new IllegalArgumentException("Unhandled node type " + type);
+    }
+
+    private static IllegalArgumentException unhandledNodeType(final DataTreeCandidateNode node) {
+        return new IllegalArgumentException("Unhandled node type " + node.getModificationType());
     }
 }
