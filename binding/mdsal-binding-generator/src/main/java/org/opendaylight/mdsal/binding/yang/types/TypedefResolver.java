@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 final class TypedefResolver {
     private TypedefResolver() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static List<TypeDefinition<?>> getAllTypedefs(final Module module) {

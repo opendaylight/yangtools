@@ -23,7 +23,7 @@ final class LengthGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(LengthGenerator.class);
 
     private LengthGenerator() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     private static String lengthCheckerName(final String member) {

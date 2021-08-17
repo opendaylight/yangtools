@@ -28,7 +28,7 @@ import org.opendaylight.mdsal.binding.model.ri.Types;
 
 public final class GeneratorUtil {
     private GeneratorUtil() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**
