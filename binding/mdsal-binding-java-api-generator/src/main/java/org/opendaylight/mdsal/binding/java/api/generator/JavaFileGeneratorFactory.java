@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 @MetaInfServices(value = FileGeneratorFactory.class)
 public final class JavaFileGeneratorFactory extends AbstractFileGeneratorFactory {
     public JavaFileGeneratorFactory() {
-        super(JavaFileGenerator.class.getName());
+        super("BindingJavaFileGenerator");
     }
 
     @Override
