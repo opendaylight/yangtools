@@ -45,7 +45,8 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     @Override
     void enforceOnData(final NormalizedNode data) {
-        enforceOnData(data, (actual, message) -> new MinMaxElementsValidationFailedException(message));
+        enforceOnData(data, (actual, message) -> new MinMaxElementsValidationFailedException(message, minElements,
+            maxElements, actual));
     }
 
     @Override
