@@ -45,7 +45,8 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     @Override
     void enforceOnData(final NormalizedNode data) {
-        enforceOnData(data, (actual, message) -> new MinMaxElementsValidationFailedException(message));
+        enforceOnData(data, (actual, message) -> new MinMaxElementsValidationFailedException(message, minElements,
+            maxElements, actual));
     }
 
     @Override
@@ -63,7 +64,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     private <X extends @NonNull Exception> void enforceOnData(final NormalizedNode value,
             final ExceptionSupplier<X> exceptionSupplier) throws X {
         checkArgument(value instanceof NormalizedNodeContainer, "Value %s is not a NormalizedNodeContainer", value);
-        final int children = ((NormalizedNodeContainer) value).size();
+        final int children = ((NormalizedNodeContainer<?>) value).size();
         if (minElements > children) {
             throw exceptionSupplier.get(children, value.getIdentifier()
                 + " does not have enough elements (" + children + "), needs at least " + minElements);

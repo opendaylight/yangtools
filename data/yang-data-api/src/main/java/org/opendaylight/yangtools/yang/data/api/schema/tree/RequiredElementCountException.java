@@ -8,9 +8,16 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
+import java.util.List;
 import java.util.OptionalInt;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.ErrorSeverity;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
+import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 
 /**
  * Exception thrown when {@code min-elements} or {@code max-element} statement restrictions are violated.
@@ -19,7 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  */
 @Beta
 @NonNullByDefault
-public final class RequiredElementCountException extends DataValidationFailedException {
+public final class RequiredElementCountException extends DataValidationFailedException
+        implements YangNetconfErrorAware {
     private static final long serialVersionUID = 1L;
 
     private final int actualCount;
@@ -49,5 +57,25 @@ public final class RequiredElementCountException extends DataValidationFailedExc
 
     public int getActualCount() {
         return actualCount;
+    }
+
+    @Override
+    public List<YangNetconfError> getNetconfErrors() {
+        final String appTag;
+        if (actualCount < minimumCount) {
+            appTag = "too-few-elements";
+        } else if (actualCount > maximumCount) {
+            appTag = "too-many-elements";
+        } else {
+            throw new IllegalStateException(
+                "Invalid min " + minimumCount + " max " + maximumCount + " actual " + actualCount);
+        }
+
+        return List.of(ImmutableYangNetconfError.builder()
+            .severity(ErrorSeverity.ERROR)
+            .type(ErrorType.APPLICATION)
+            .tag(ErrorTag.OPERATION_FAILED)
+            .appTag(appTag)
+            .build());
     }
 }

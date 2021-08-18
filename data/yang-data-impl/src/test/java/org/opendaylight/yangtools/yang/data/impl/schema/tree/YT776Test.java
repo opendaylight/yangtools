@@ -8,13 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafSetBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.mapBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.mapEntryBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.tree.ListConstraintsValidation.assertTooFewElements;
+import static org.opendaylight.yangtools.yang.data.impl.schema.tree.ListConstraintsValidation.assertTooManyElements;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.AfterClass;
@@ -88,15 +90,11 @@ public class YT776Test {
                 .build())
             .build());
 
-        try {
-            mod.ready();
-            fail("Should fail with IAE");
-        } catch (IllegalArgumentException e) {
-            // FIXME: This is actually mandatory leaf enforcer kicking in: attributes have to be present. This is
-            //        most probably not what we want.
-            assertEquals("Node (yt776)object[{(yt776)object-id=1}] is missing mandatory descendant /(yt776)attributes",
-                e.getMessage());
-        }
+        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, mod::ready);
+        // FIXME: This is actually mandatory leaf enforcer kicking in: attributes have to be present. This is
+        //        most probably not what we want.
+        assertEquals("Node (yt776)object[{(yt776)object-id=1}] is missing mandatory descendant /(yt776)attributes",
+                ex.getMessage());
     }
 
     @Test
@@ -110,12 +108,9 @@ public class YT776Test {
                 .build())
             .build());
 
-        try {
-            mod.ready();
-            fail("Should fail with IAE");
-        } catch (IllegalArgumentException e) {
-            assertEquals("(yt776)attributes does not have enough elements (0), needs at least 1", e.getMessage());
-        }
+        final IllegalArgumentException ex = assertThrows(MinMaxElementsValidationFailedException.class, mod::ready);
+        assertEquals("(yt776)attributes does not have enough elements (0), needs at least 1", ex.getMessage());
+        assertTooFewElements(ex);
     }
 
     @Test
@@ -162,12 +157,9 @@ public class YT776Test {
                 .build())
             .build());
 
-        try {
-            mod.ready();
-            fail("Should fail with IAE");
-        } catch (IllegalArgumentException e) {
-            assertEquals("(yt776)attributes has too many elements (3), can have at most 2", e.getMessage());
-        }
+        final IllegalArgumentException ex = assertThrows(MinMaxElementsValidationFailedException.class, mod::ready);
+        assertEquals("(yt776)attributes has too many elements (3), can have at most 2", ex.getMessage());
+        assertTooManyElements(ex);
     }
 
     @Test

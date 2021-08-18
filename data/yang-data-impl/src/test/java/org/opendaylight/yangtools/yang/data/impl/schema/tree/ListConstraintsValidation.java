@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
@@ -19,10 +21,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.ErrorSeverity;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -242,9 +249,12 @@ public class ListConstraintsValidation {
         modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), fuuLeafSetEntry);
 
+        final MinMaxElementsValidationFailedException ex = assertThrows(MinMaxElementsValidationFailedException.class,
+            () -> modificationTree.ready());
         assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
             + "revision=2015-02-02)min-max-leaf-list has too many elements (4), can have at most 3",
-            assertThrows(MinMaxElementsValidationFailedException.class, () -> modificationTree.ready()).getMessage());
+            ex.getMessage());
+        assertTooManyElements(ex);
     }
 
     @Test
@@ -271,7 +281,7 @@ public class ListConstraintsValidation {
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
         assertTrue(unkeyedListRead.isPresent());
-        assertTrue(((UnkeyedListNode) unkeyedListRead.get()).size() == 1);
+        assertEquals(1, ((UnkeyedListNode) unkeyedListRead.get()).size());
     }
 
     @Test
@@ -292,8 +302,29 @@ public class ListConstraintsValidation {
                 .withValue(unkeyedEntries).build();
 
         modificationTree.write(UNKEYED_LIST_PATH, unkeyedListNode);
+        final MinMaxElementsValidationFailedException ex = assertThrows(MinMaxElementsValidationFailedException.class,
+            () -> modificationTree.ready());
         assertEquals("(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-            + "revision=2015-02-02)unkeyed-list has too many elements (2), can have at most 1",
-            assertThrows(MinMaxElementsValidationFailedException.class, () -> modificationTree.ready()).getMessage());
+            + "revision=2015-02-02)unkeyed-list has too many elements (2), can have at most 1", ex.getMessage());
+        assertTooManyElements(ex);
+    }
+
+    static void assertTooFewElements(final Exception ex) {
+        assertOperationFailed(ex, "too-few-elements");
+    }
+
+    static void assertTooManyElements(final Exception ex) {
+        assertOperationFailed(ex, "too-many-elements");
+    }
+
+    private static void assertOperationFailed(final Exception ex, final String expectedAppTag) {
+        assertThat(ex, instanceOf(YangNetconfErrorAware.class));
+        final List<YangNetconfError> errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
+        assertEquals(1, errors.size());
+        final YangNetconfError error = errors.get(0);
+        assertEquals(ErrorSeverity.ERROR, error.severity());
+        assertEquals(ErrorType.APPLICATION, error.type());
+        assertEquals(ErrorTag.OPERATION_FAILED, error.tag());
+        assertEquals(expectedAppTag, error.appTag());
     }
 }
