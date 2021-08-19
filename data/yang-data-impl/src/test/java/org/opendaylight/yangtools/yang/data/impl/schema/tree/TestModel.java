@@ -23,7 +23,6 @@ public final class TestModel {
     public static final QName ID_QNAME = QName.create(TEST_QNAME, "id");
     public static final QName NAME_QNAME = QName.create(TEST_QNAME, "name");
     public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
-    private static final String DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
 
     public static final QName NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "non-presence");
     public static final QName DEEP_CHOICE_QNAME = QName.create(TEST_QNAME, "deep-choice");
@@ -47,10 +46,12 @@ public final class TestModel {
         throw new UnsupportedOperationException();
     }
 
+    // FIXME: inline into single caller
     public static EffectiveModelContext createTestContext() {
-        return createTestContext(DATASTORE_TEST_YANG);
+        return createTestContext("/odl-datastore-test.yang");
     }
 
+    // FIXME: remove this method
     public static EffectiveModelContext createTestContext(final String resourcePath) {
         return YangParserTestUtils.parseYangResources(TestModel.class, resourcePath);
     }
