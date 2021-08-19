@@ -8,16 +8,24 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.ErrorSeverity;
+import org.opendaylight.yangtools.yang.common.ErrorTag;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
@@ -28,7 +36,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintExce
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class UniqueConstraintTest {
     private static final String NS = "foo";
@@ -49,7 +56,7 @@ public class UniqueConstraintTest {
     }
 
     @Test
-    public void switchEntriesTest() throws ReactorException, DataValidationFailedException {
+    public void switchEntriesTest() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(TEST_MODEL, true);
         writeMapEntry(inMemoryDataTree, "1", "l1", "l2", "l3");
         writeMapEntry(inMemoryDataTree, "2", "l2", "l3", "l4");
@@ -74,11 +81,11 @@ public class UniqueConstraintTest {
     }
 
     @Test
-    public void mapTest() throws ReactorException, DataValidationFailedException {
+    public void mapTest() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(TEST_MODEL, true);
 
 
-        verifyExceptionMessage(assertThrows(UniqueValidationFailedException.class,
+        verifyException(assertThrows(UniqueValidationFailedException.class,
             () -> writeMap(inMemoryDataTree, true)),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
             "}] violates unique constraint on [l2, l1] of ",
@@ -86,7 +93,7 @@ public class UniqueConstraintTest {
             "(foo?revision=2016-05-17)my-leaf-2]");
 
         writeMap(inMemoryDataTree, false);
-        verifyExceptionMessage(assertThrows(UniqueConstraintException.class,
+        verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "4", "l1", "l2", "l30")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
             "}] violates unique constraint on [l2, l1] of ",
@@ -95,7 +102,7 @@ public class UniqueConstraintTest {
     }
 
     @Test
-    public void mapEntryTest() throws ReactorException, DataValidationFailedException {
+    public void mapEntryTest() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(TEST_MODEL, true);
         writeAndRemoveMapEntries(inMemoryDataTree, true);
         writeAndRemoveMapEntries(inMemoryDataTree, false);
@@ -108,14 +115,14 @@ public class UniqueConstraintTest {
         writeMapEntry(inMemoryDataTree, "3", "l3", "l4", "l5");
         writeMapEntry(inMemoryDataTree, "2", "l2", "l3", "l6");
         writeMapEntry(inMemoryDataTree, "10", "l2", "l10", "l4");
-        verifyExceptionMessage(assertThrows(UniqueConstraintException.class,
+        verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "4", "l1", "l5", "l3")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
                     "}] violates unique constraint on [l1, l3] of ",
                     "(foo?revision=2016-05-17)my-container, my-leaf-3",
                     "(foo?revision=2016-05-17)my-leaf-1");
         writeMapEntry(inMemoryDataTree, "4", "l4", "l5", "l6");
-        verifyExceptionMessage(assertThrows(UniqueConstraintException.class,
+        verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "5", "l3", "l4", "l7")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
             "}] violates unique constraint on [l4, l3] of ",
@@ -124,7 +131,7 @@ public class UniqueConstraintTest {
         removeMapEntry(inMemoryDataTree, taskEntryKey("3"));
         writeMapEntry(inMemoryDataTree, "5", "l3", "l4", "l7");
         writeMapEntry(inMemoryDataTree, "5", "l3", "l4", "l7");
-        verifyExceptionMessage(assertThrows(UniqueConstraintException.class,
+        verifyException(assertThrows(UniqueConstraintException.class,
             () -> writeMapEntry(inMemoryDataTree, "6", "l3", "l4", "l11")),
             "(foo?revision=2016-05-17)task[{(foo?revision=2016-05-17)task-id=",
             "}] violates unique constraint on [l4, l3] of ",
@@ -140,9 +147,17 @@ public class UniqueConstraintTest {
         }
     }
 
-    private static void verifyExceptionMessage(final Exception ex, final String expectedStart,
+    private static void verifyException(final Exception ex, final String expectedStart,
             final String... expectedLeaves) {
-        verifyExceptionMessage(expectedStart,  ex.getMessage(), expectedLeaves);
+        verifyExceptionMessage(expectedStart, ex.getMessage(), expectedLeaves);
+        assertThat(ex, instanceOf(YangNetconfErrorAware.class));
+        final List<YangNetconfError> errors = ((YangNetconfErrorAware) ex).getNetconfErrors();
+        assertEquals(1, errors.size());
+        final YangNetconfError error = errors.get(0);
+        assertEquals(ErrorSeverity.ERROR, error.severity());
+        assertEquals(ErrorType.APPLICATION, error.type());
+        assertEquals(ErrorTag.OPERATION_FAILED, error.tag());
+        assertEquals("data-not-unique", error.appTag());
     }
 
     private static void verifyExceptionMessage(final String expectedStart, final String message,
@@ -224,7 +239,7 @@ public class UniqueConstraintTest {
     }
 
     @Test
-    public void disabledUniqueIndexTest() throws ReactorException, DataValidationFailedException {
+    public void disabledUniqueIndexTest() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(TEST_MODEL, false);
 
         writeMapEntry(inMemoryDataTree, "1", "l1", "l2", "l3");
@@ -258,8 +273,8 @@ public class UniqueConstraintTest {
         return inMemoryDataTree;
     }
 
-    private static InMemoryDataTree emptyDataTree(final EffectiveModelContext schemaContext, final boolean uniqueIndex)
-            throws DataValidationFailedException {
+    private static InMemoryDataTree emptyDataTree(final EffectiveModelContext schemaContext,
+            final boolean uniqueIndex) {
         final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) new InMemoryDataTreeFactory().create(
             new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setUniqueIndexes(uniqueIndex).build());
         inMemoryDataTree.setEffectiveModelContext(schemaContext);
