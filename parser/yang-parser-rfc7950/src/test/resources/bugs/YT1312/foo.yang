@@ -1,0 +1,26 @@
+module foo {
+  namespace foo;
+  prefix foo;
+  yang-version 1.1;
+
+  grouping grp {
+    leaf-list foo {
+      type string;
+    }
+    leaf-list bar {
+      type string;
+      default "";
+    }
+  }
+
+  uses grp {
+    refine foo {
+      default abc;
+    }
+
+    refine bar {
+      default def;
+    }
+  }
+}
+

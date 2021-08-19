@@ -27,17 +27,18 @@ public final class YangValidationBundles {
         YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.IF_FEATURE);
 
     public static final Map<StatementDefinition, Set<StatementDefinition>> SUPPORTED_REFINE_TARGETS =
-            ImmutableMap.<StatementDefinition, Set<StatementDefinition>>builder()
-            .put(YangStmtMapping.DEFAULT, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.CHOICE))
+        ImmutableMap.<StatementDefinition, Set<StatementDefinition>>builder()
+            .put(YangStmtMapping.DEFAULT, ImmutableSet.of(
+                YangStmtMapping.LEAF, YangStmtMapping.CHOICE, YangStmtMapping.LEAF_LIST))
             .put(YangStmtMapping.MANDATORY, ImmutableSet.of(
-                YangStmtMapping.LEAF, YangStmtMapping.CHOICE, YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA))
-        .put(YangStmtMapping.PRESENCE, ImmutableSet.of(YangStmtMapping.CONTAINER))
-        .put(YangStmtMapping.MUST, ImmutableSet.of(
-                YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF,
-                YangStmtMapping.LEAF_LIST, YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA))
-        .put(YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
-        .put(YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
-        .build();
+                YangStmtMapping.LEAF, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML, YangStmtMapping.CHOICE))
+            .put(YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
+            .put(YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
+            .put(YangStmtMapping.MUST, ImmutableSet.of(
+                YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.CONTAINER,
+                YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML))
+            .put(YangStmtMapping.PRESENCE, ImmutableSet.of(YangStmtMapping.CONTAINER))
+            .build();
 
     private YangValidationBundles() {
         // Hidden on purpose
