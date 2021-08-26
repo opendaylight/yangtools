@@ -89,6 +89,13 @@ final class StatementPrefixResolver {
             indexPrefixes(prefixToNamespaces, submodule.getAll(QNameModuleToPrefixNamespace.class), submodule);
         }
 
+        Multimap<QNameModule, String> utilMap = ArrayListMultimap.create();
+        for (Entry<String, Multimap<QNameModule, EffectiveStatement<?,?>>> entry : prefixToNamespaces.entrySet()) {
+            for (Entry<QNameModule, EffectiveStatement<?,?>> namespace : entry.getValue().entries()) {
+                utilMap.put(namespace.getKey(), entry.getKey());
+            }
+        }
+
         // Stage two: resolve first order of conflicts, potentially completely resolving mappings...
         final Builder<QNameModule, Object> builder = ImmutableMap.builderWithExpectedSize(prefixToNamespaces.size());
 
@@ -99,8 +106,11 @@ final class StatementPrefixResolver {
             final Entry<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> entry = it.next();
             final Multimap<QNameModule, EffectiveStatement<?, ?>> modules = entry.getValue();
             if (modules.size() == 1) {
-                builder.put(modules.keys().iterator().next(), entry.getKey());
-                it.remove();
+                final QNameModule qNameModule = modules.keys().iterator().next();
+                if (utilMap.get(qNameModule).size() == 1) {
+                    builder.put(qNameModule, entry.getKey());
+                    it.remove();
+                }
             }
         }
 
