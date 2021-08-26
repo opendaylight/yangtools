@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Maps;
@@ -42,7 +43,7 @@ final class StatementPrefixResolver {
         private final Collection<Entry<DeclaredStatement<?>, String>> statements;
 
         Conflict(final Collection<Entry<DeclaredStatement<?>, String>> entries) {
-            this.statements = requireNonNull(entries);
+            statements = requireNonNull(entries);
         }
 
         @Nullable String findPrefix(final DeclaredStatement<?> stmt) {
@@ -66,11 +67,11 @@ final class StatementPrefixResolver {
     private final Map<QNameModule, ?> lookup;
 
     private StatementPrefixResolver(final Map<QNameModule, String> map) {
-        this.lookup = ImmutableMap.copyOf(map);
+        lookup = ImmutableMap.copyOf(map);
     }
 
     private StatementPrefixResolver(final ImmutableMap<QNameModule, ?> map) {
-        this.lookup = requireNonNull(map);
+        lookup = requireNonNull(map);
     }
 
     static StatementPrefixResolver forModule(final ModuleEffectiveStatement module) {
@@ -89,7 +90,15 @@ final class StatementPrefixResolver {
             indexPrefixes(prefixToNamespaces, submodule.getAll(QNameModuleToPrefixNamespace.class), submodule);
         }
 
-        // Stage two: resolve first order of conflicts, potentially completely resolving mappings...
+        // Stage two: see what QNameModule -> prefix mappings there are. We will need to understand this in step three
+        final Multimap<QNameModule, String> namespaceToPrefixes = HashMultimap.create();
+        for (Entry<String, Multimap<QNameModule, EffectiveStatement<?,?>>> entry : prefixToNamespaces.entrySet()) {
+            for (QNameModule namespace : entry.getValue().keySet()) {
+                namespaceToPrefixes.put(namespace, entry.getKey());
+            }
+        }
+
+        // Stage three: resolve first order of conflicts, potentially completely resolving mappings...
         final Builder<QNameModule, Object> builder = ImmutableMap.builderWithExpectedSize(prefixToNamespaces.size());
 
         // ... first resolve unambiguous mappings ...
@@ -99,8 +108,12 @@ final class StatementPrefixResolver {
             final Entry<String, Multimap<QNameModule, EffectiveStatement<?, ?>>> entry = it.next();
             final Multimap<QNameModule, EffectiveStatement<?, ?>> modules = entry.getValue();
             if (modules.size() == 1) {
-                builder.put(modules.keys().iterator().next(), entry.getKey());
-                it.remove();
+                // Careful now: the namespace needs to be unambiguous
+                final QNameModule namespace = modules.keys().iterator().next();
+                if (namespaceToPrefixes.get(namespace).size() == 1) {
+                    builder.put(namespace, entry.getKey());
+                    it.remove();
+                }
             }
         }
 
