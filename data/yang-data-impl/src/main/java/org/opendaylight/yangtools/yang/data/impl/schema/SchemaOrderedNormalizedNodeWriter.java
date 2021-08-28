@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaTreeInference;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -91,20 +90,6 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
             final SchemaTreeInference rootInference) {
         this(writer, SchemaInferenceStack.ofInference(rootInference));
-    }
-
-    /**
-     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
-     *
-     * @param writer Back-end writer
-     * @param schemaContext Associated {@link EffectiveModelContext}
-     * @param path root path
-     * @deprecated Use either one of the alternative constructors instead.
-     */
-    @Deprecated(since = "7.0.11")
-    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer,
-            final EffectiveModelContext schemaContext, final SchemaPath path) {
-        this(writer, SchemaInferenceStack.ofSchemaPath(schemaContext, path));
     }
 
     @Override

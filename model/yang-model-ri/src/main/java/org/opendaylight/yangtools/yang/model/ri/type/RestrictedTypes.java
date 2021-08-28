@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -64,7 +63,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  *
  * <p>
  * This class holds methods which allow creation of restricted types using {@link TypeBuilder} and its subclasses. Each
- * restricted type is logically anchored at a {@link SchemaPath}, but can be substituted by its base type if it does
+ * restricted type is logically anchored at a {@link QName}, but can be substituted by its base type if it does
  * not contribute any additional restrictions. TypeBuilder instances take this into account, and result in the base type
  * being returned from the builder when the base type and restricted type are semantically equal.
  *

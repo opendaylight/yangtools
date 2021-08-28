@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -151,21 +150,6 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
             .enterPath(path)
             .orElseThrow()
             .stack());
-    }
-
-    /**
-     * Create a new writer with the specified context and rooted in the specified schema path.
-     *
-     * @param context Associated {@link EffectiveModelContext}
-     * @param path schema path
-     * @return A new {@link NormalizedNodeStreamWriterStack}
-     * @throws NullPointerException if any argument is null
-     * @throws IllegalArgumentException if {@code path} does not point to a valid root
-     */
-    @Deprecated
-    public static @NonNull NormalizedNodeStreamWriterStack of(final EffectiveModelContext context,
-            final SchemaPath path) {
-        return new NormalizedNodeStreamWriterStack(SchemaInferenceStack.ofSchemaPath(context, path));
     }
 
     /**

@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -101,37 +100,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final NormalizedNodeStreamWriterStack tracker,
             final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
         this.writer = requireNonNull(writer);
-        this.codecs = requireNonNull(codecFactory);
+        codecs = requireNonNull(codecFactory);
         this.tracker = requireNonNull(tracker);
-        this.context = requireNonNull(rootContext);
-    }
-
-    /**
-     * Create a new stream writer, which writes to the specified output stream.
-     *
-     * <p>
-     * The codec factory can be reused between multiple writers.
-     *
-     * <p>
-     * Returned writer is exclusive user of JsonWriter, which means it will start
-     * top-level JSON element and ends it.
-     *
-     * <p>
-     * This instance of writer can be used only to emit one top level element,
-     * otherwise it will produce incorrect JSON. Closing this instance will close
-     * the writer too.
-     *
-     * @param codecFactory JSON codec factory
-     * @param path Schema Path
-     * @param initialNs Initial namespace
-     * @param jsonWriter JsonWriter
-     * @return A stream writer instance
-     */
-    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
-            final SchemaPath path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Exclusive(codecFactory,
-            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
-            new JSONStreamWriterExclusiveRootContext(initialNs));
+        context = requireNonNull(rootContext);
     }
 
     /**
@@ -187,32 +158,6 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         return new Exclusive(codecFactory,
             NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
-    }
-
-    /**
-     * Create a new stream writer, which writes to the specified output stream.
-     *
-     * <p>
-     * The codec factory can be reused between multiple writers.
-     *
-     * <p>
-     * Returned writer can be used emit multiple top level element,
-     * but does not start / close parent JSON object, which must be done
-     * by user providing {@code jsonWriter} instance in order for
-     * JSON to be valid. Closing this instance <strong>will not</strong>
-     * close the wrapped writer; the caller must take care of that.
-     *
-     * @param codecFactory JSON codec factory
-     * @param path Schema Path
-     * @param initialNs Initial namespace
-     * @param jsonWriter JsonWriter
-     * @return A stream writer instance
-     */
-    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
-            final SchemaPath path, final XMLNamespace initialNs, final JsonWriter jsonWriter) {
-        return new Nested(codecFactory,
-            NormalizedNodeStreamWriterStack.of(codecFactory.getEffectiveModelContext(), path), jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     /**
