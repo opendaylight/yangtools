@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class LeafRefContextBuilder implements Mutable {
     private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
