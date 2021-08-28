@@ -24,7 +24,7 @@ public final class LeafRefContextUtils {
 
     public static LeafRefContext getLeafRefReferencingContext(final SchemaInferenceStack node,
             final LeafRefContext root) {
-        final Iterator<QName> iterator = node.schemaPathIterator();
+        final Iterator<QName> iterator = node.schemaNodeIdentifierAxis();
         LeafRefContext leafRefCtx = null;
         LeafRefContext current = root;
         while (iterator.hasNext() && current != null) {
@@ -40,7 +40,7 @@ public final class LeafRefContextUtils {
 
     public static LeafRefContext getLeafRefReferencedByContext(final SchemaInferenceStack node,
             final LeafRefContext root) {
-        final Iterator<QName> iterator = node.schemaPathIterator();
+        final Iterator<QName> iterator = node.schemaNodeIdentifierAxis();
         LeafRefContext leafRefCtx = null;
         LeafRefContext current = root;
         while (iterator.hasNext() && current != null) {
