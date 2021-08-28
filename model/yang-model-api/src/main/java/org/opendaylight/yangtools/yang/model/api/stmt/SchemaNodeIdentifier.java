@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * Represents unique path to every schema node inside the schema node identifier namespace. This concept is defined
@@ -87,11 +85,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        final SchemaPath implicitSchemaPathParent() {
-            return SchemaPath.ROOT;
-        }
-
-        @Override
         final String className() {
             return "Absolute";
         }
@@ -139,11 +132,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
             final ImmutableList<QName> qnames = checkQNames(nodeIdentifiers);
             return qnames.size() == 1 ? of(qnames.get(0)) : new DescandantMultiple(qnames);
-        }
-
-        @Override
-        final SchemaPath implicitSchemaPathParent() {
-            return SchemaPath.SAME;
         }
 
         @Override
@@ -244,11 +232,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
     }
 
-    private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, SchemaPath> SCHEMAPATH_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, SchemaPath.class, "schemaPath");
-
-    // Cached SchemaPath.
-    private volatile SchemaPath schemaPath;
     // Cached hashCode
     private volatile int hash;
 
@@ -284,16 +267,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return local.get(local.size() - 1);
     }
 
-    /**
-     * Create the {@link SchemaPath} equivalent of this identifier.
-     *
-     * @return SchemaPath equivalent.
-     */
-    public final @NonNull SchemaPath asSchemaPath() {
-        final SchemaPath ret = schemaPath;
-        return ret != null ? ret : loadSchemaPath();
-    }
-
     @Override
     public final int hashCode() {
         final int local;
@@ -311,16 +284,9 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return MoreObjects.toStringHelper(className()).add("qnames", toStringQNames()).toString();
     }
 
-    abstract @NonNull SchemaPath implicitSchemaPathParent();
-
     abstract @NonNull Object pathObject();
 
     abstract @NonNull String className();
-
-    private @NonNull SchemaPath loadSchemaPath() {
-        final SchemaPath newPath = implicitSchemaPathParent().createChild(getNodeIdentifiers());
-        return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
-    }
 
     private List<?> toStringQNames() {
         final List<QName> ids = getNodeIdentifiers();
