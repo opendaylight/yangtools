@@ -39,8 +39,11 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      *                   identity within a given {@link EffectiveModelContext}.
      *               </li>
      *             </ul>
+     *             An alternative method of exchanging pointers to schema nodes (well, statements, really), exists in
+     *             the form of {@link EffectiveStatementInference} and its ecosystem. This method is scheduled for
+     *             removal in the next major release.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default @NonNull SchemaPath getPath() {
         return SchemaNodeDefaults.throwUnsupported(this);
     }
