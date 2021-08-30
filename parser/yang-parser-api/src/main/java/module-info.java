@@ -6,7 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 module org.opendaylight.yangtools.yang.parser.api {
-    exports org.opendaylight.yangtools.yang.model.parser.api;
     exports org.opendaylight.yangtools.yang.parser.api;
 
     requires transitive com.google.common;
