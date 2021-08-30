@@ -476,7 +476,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * Lookup a {@code typedef} by its node identifier and push it to the stack.
      *
      * @param nodeIdentifier Node identifier of the typedef to enter
-     * @return Resolved choice
+     * @return Resolved typedef
      * @throws NullPointerException if {@code nodeIdentifier} is null
      * @throws IllegalArgumentException if the corresponding typedef cannot be found
      */
@@ -791,7 +791,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final TypedefEffectiveStatement ret = parent.streamEffectiveSubstatements(TypedefEffectiveStatement.class)
             .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Grouping " + nodeIdentifier + " not present"));
+            .orElseThrow(() -> new IllegalArgumentException("Typedef " + nodeIdentifier + " not present"));
         deque.push(ret);
         return ret;
     }

@@ -49,6 +49,9 @@ module my-module {
                 type string;
             }
         }
+        typedef my-typedef-in-container {
+            type string;
+        }
     }
 
     rpc my-rpc {
