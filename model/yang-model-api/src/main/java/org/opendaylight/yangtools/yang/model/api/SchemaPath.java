@@ -39,8 +39,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
  *                   to a specific statement. Unlike SchemaPath, though, it does not require additional lookup in most
  *                   cases</li>
  *             </ul>
+ *             This class is scheduled for removal in the next major release.
  */
-@Deprecated(since = "7.0.8")
+@Deprecated(since = "7.0.8", forRemoval = true)
 public abstract class SchemaPath implements Immutable {
 
     /**
