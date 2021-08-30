@@ -15,11 +15,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 
 /**
- * Namespace for remembering the {@code yang-data} argument's QName. This namespace is necessary because we are forced
- * to have a String argument due to us being an extension.
+ * Namespace for remembering the {@code yang-data} argument's QName.
  */
 @Beta
-// FIXME: YANGTOOLS-1196: remove this namespace once we can bind freely
+// FIXME: We should not be needing this namespace, as yang-data's argument is not documented anywhere to be compatible
+//        with 'identifier', hence we cannot safely form a QName.
 public interface YangDataArgumentNamespace extends ParserNamespace<Empty, QName> {
     NamespaceBehaviour<Empty, QName, @NonNull YangDataArgumentNamespace> BEHAVIOUR =
         NamespaceBehaviour.statementLocal(YangDataArgumentNamespace.class);

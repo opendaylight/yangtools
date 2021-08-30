@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
+import java.util.Map;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -23,7 +25,10 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
@@ -31,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 @Beta
 final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode {
-
     private final @Nullable SchemaPath path;
     private final @NonNull QName argumentQName;
     private final @NonNull ContainerEffectiveStatement container;
@@ -46,7 +50,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is
         //       incomplete.
-        Verify.verify(container instanceof ContainerSchemaNode);
+        verify(container instanceof ContainerSchemaNode, "Incompatible container %s", container);
     }
 
     @Override
@@ -74,6 +78,18 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     @Override
     public YangDataEffectiveStatement asEffectiveStatement() {
         return this;
+    }
+
+    @Override
+    protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
+            final Class<N> namespace) {
+        if (SchemaTreeAwareEffectiveStatement.Namespace.class.equals(namespace)
+            || DataTreeAwareEffectiveStatement.Namespace.class.equals(namespace)) {
+            @SuppressWarnings("unchecked")
+            final Map<K, V> ns = (Map<K, V>)Map.of(container.argument(), container);
+            return Optional.of(ns);
+        }
+        return super.getNamespaceContents(namespace);
     }
 
     @Override
