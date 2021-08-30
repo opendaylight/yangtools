@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -485,6 +486,18 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
+     * Lookup a {@code rc:yang-data} by its node identifier and push it to the stack.
+     *
+     * @param nodeIdentifier Node identifier of the yang-data to enter
+     * @return Resolved yang-data
+     * @throws NullPointerException if {@code nodeIdentifier} is null
+     * @throws IllegalArgumentException if the corresponding yang-data cannot be found
+     */
+    public @NonNull YangDataEffectiveStatement enterYangData(final QName nodeIdentifier) {
+        return pushYangData(requireNonNull(nodeIdentifier));
+    }
+
+    /**
      * Pop the current statement from the stack.
      *
      * @return Previous statement
@@ -800,6 +813,22 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final ModuleEffectiveStatement module = getModule(nodeIdentifier);
         final TypedefEffectiveStatement ret = pushTypedef(module, nodeIdentifier);
         currentModule = module;
+        return ret;
+    }
+
+    private @NonNull YangDataEffectiveStatement pushYangData(final @NonNull QName nodeIdentifier) {
+        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        return parent != null ? pushYangData(parent, nodeIdentifier) : pushFirstYangData(nodeIdentifier);
+    }
+
+    private @NonNull YangDataEffectiveStatement pushYangData(final @NonNull EffectiveStatement<?, ?> parent,
+            final @NonNull QName nodeIdentifier) {
+        // TODO: 8.0.0: revisit this once we have TypedefNamespace working
+        final YangDataEffectiveStatement ret = parent.streamEffectiveSubstatements(YangDataEffectiveStatement.class)
+            .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("yang-data " + nodeIdentifier + " not present"));
+        deque.push(ret);
         return ret;
     }
 
