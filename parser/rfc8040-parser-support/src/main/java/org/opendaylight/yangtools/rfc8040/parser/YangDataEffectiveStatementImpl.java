@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc8040.parser;
 
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -20,7 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNodeDefaults;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -37,25 +35,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SchemaPathSupport;
 final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode {
     private final @Nullable SchemaPath path;
-    private final @NonNull QName argumentQName;
     private final @NonNull ContainerEffectiveStatement container;
 
     YangDataEffectiveStatementImpl(final Current<String, YangDataStatement> stmt,
-             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname) {
+             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        this.argumentQName = requireNonNull(qname);
 
-        path = SchemaPathSupport.toOptionalPath(stmt.getEffectiveParent().getSchemaPath().createChild(qname));
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
+        path = SchemaPathSupport.toOptionalPath(
+            stmt.getEffectiveParent().getSchemaPath().createChild(container.argument()));
 
         // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is
         //       incomplete.
         verify(container instanceof ContainerSchemaNode, "Incompatible container %s", container);
-    }
-
-    @Override
-    public QName getQName() {
-        return argumentQName;
     }
 
     @Override

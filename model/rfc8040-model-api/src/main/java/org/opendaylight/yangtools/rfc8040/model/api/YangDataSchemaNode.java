@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
@@ -19,13 +21,18 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  */
 @Beta
 public interface YangDataSchemaNode extends UnknownSchemaNode {
+    @Override
+    default QName getQName() {
+        return getContainerSchemaNode().getQName();
+    }
+
+    @Override
+    YangDataEffectiveStatement asEffectiveStatement();
+
     /**
      * Returns container schema node container within this yang-data definition.
      *
      * @return container schema node
      */
-    ContainerSchemaNode getContainerSchemaNode();
-
-    @Override
-    YangDataEffectiveStatement asEffectiveStatement();
+    @NonNull ContainerSchemaNode getContainerSchemaNode();
 }
