@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -482,6 +483,34 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      */
     public @NonNull TypedefEffectiveStatement enterTypedef(final QName nodeIdentifier) {
         return pushTypedef(requireNonNull(nodeIdentifier));
+    }
+
+    /**
+     * Lookup a {@code rc:yang-data} by the module namespace where it is defined and its template name.
+     *
+     * @param namespace Module namespace in which to lookup the template
+     * @param name Template name
+     * @return Resolved yang-data
+     * @throws NullPointerException if any argument is null
+     * @throws IllegalArgumentException if the corresponding yang-data cannot be found
+     * @throws IllegalStateException if this stack is not empty
+     */
+    public @NonNull YangDataEffectiveStatement enterYangData(final QNameModule namespace, final String name) {
+        final EffectiveStatement<?, ?> parent = deque.peekFirst();
+        checkState(parent == null, "Cannot lookup yang-data in a non-empty stack");
+
+        final String templateName = requireNonNull(name);
+        final ModuleEffectiveStatement module = effectiveModel.getModuleStatements().get(requireNonNull(namespace));
+        checkArgument(module != null, "Module for %s not found", namespace);
+
+        final YangDataEffectiveStatement ret = module.streamEffectiveSubstatements(YangDataEffectiveStatement.class)
+            .filter(stmt -> templateName.equals(stmt.argument()))
+            .findFirst()
+            .orElseThrow(
+                () -> new IllegalArgumentException("yang-data " + templateName + " not present in " + namespace));
+        deque.push(ret);
+        currentModule = module;
+        return ret;
     }
 
     /**
