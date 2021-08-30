@@ -28,7 +28,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Desce
 
 /**
  * Represents unique path to the every node inside the module.
+ *
+ * @deprecated This path is not really unique, as it does not handle YANG namespace overlap correctly. There are two
+ *             different replacements for this class:
+ *             <ul>
+ *               <li>{@link SchemaNodeIdentifier} for use in
+ *                   <a href="https://datatracker.ietf.org/doc/html/rfc7950#section-6.5">YANG schema addressing</a>
+ *                   contexts</li>
+ *               <li>{@link EffectiveStatementInference} for use in contexts where the intent is to exchange pointer
+ *                   to a specific statement. Unlike SchemaPath, though, it does not require additional lookup in most
+ *                   cases</li>
+ *             </ul>
  */
+@Deprecated(since = "7.0.8")
 public abstract class SchemaPath implements Immutable {
 
     /**
