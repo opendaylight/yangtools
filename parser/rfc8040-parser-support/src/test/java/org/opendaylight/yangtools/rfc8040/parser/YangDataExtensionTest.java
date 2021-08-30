@@ -74,7 +74,6 @@ public class YangDataExtensionTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     new YangDataStatementSupport(YangParserConfiguration.DEFAULT))
                 .build();
@@ -192,7 +191,12 @@ public class YangDataExtensionTest {
 
     @Test
     public void testYangDataWithMissingTopLevelContainer() {
-        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
+        assertMissingContainer(FOO_INVALID_1_MODULE);
+        assertMissingContainer(FOO_INVALID_3_MODULE);
+    }
+
+    private static void assertMissingContainer(final StatementStreamSource source) {
+        final BuildAction build = reactor.newBuild().addSources(source, IETF_RESTCONF_MODULE);
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(MissingSubstatementException.class));
