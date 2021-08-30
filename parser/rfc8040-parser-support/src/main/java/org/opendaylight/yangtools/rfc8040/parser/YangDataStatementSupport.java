@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.rfc8040.parser;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatements;
-import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -29,9 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementExcept
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class YangDataStatementSupport
@@ -52,14 +46,6 @@ public final class YangDataStatementSupport
         if (ctx.coerceParentContext().getParentContext() != null) {
             ctx.setIsSupportedToBuildEffective(false);
         }
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
-        // Parse and populate our argument to be picked up when we build the effecitve statement
-        final String argument = SourceException.throwIfNull(ctx.argument(), ctx, "yang-data requires an argument");
-        final QName qname = StmtContextUtils.parseIdentifier(ctx, argument);
-        ctx.addToNs(YangDataArgumentNamespace.class, Empty.getInstance(), qname);
     }
 
     @Override
@@ -99,7 +85,6 @@ public final class YangDataStatementSupport
                 "yang-data requires exactly one data definition node, found %s", dataDefs);
         }
 
-        return new YangDataEffectiveStatementImpl(stmt, substatements,
-            verifyNotNull(stmt.namespaceItem(YangDataArgumentNamespace.class, Empty.getInstance())));
+        return new YangDataEffectiveStatementImpl(stmt, substatements);
     }
 }

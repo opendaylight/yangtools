@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.rfc8040.parser;
 
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -32,13 +31,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 @Beta
 final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode {
-    private final @NonNull QName argumentQName;
     private final @NonNull ContainerEffectiveStatement container;
 
     YangDataEffectiveStatementImpl(final Current<String, YangDataStatement> stmt,
-             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname) {
+             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements);
-        this.argumentQName = requireNonNull(qname);
 
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
@@ -49,7 +46,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
 
     @Override
     public QName getQName() {
-        return argumentQName;
+        return container.argument();
     }
 
     @Override
@@ -83,7 +80,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
-                .add("qname", argumentQName)
+                .add("qname", getQName())
                 .add("container", container).toString();
     }
 }
