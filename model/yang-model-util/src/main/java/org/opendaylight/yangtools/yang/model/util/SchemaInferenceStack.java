@@ -340,7 +340,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     }
 
     /**
-     * Check if the stack is in instantiated context. This indicates the stack is non-empty and there are only screma
+     * Check if the stack is in instantiated context. This indicates the stack is non-empty and there are only schema
      * tree statements in the stack.
      *
      * @return False if the stack is empty or contains a statement which is not a {@link SchemaTreeEffectiveStatement},
