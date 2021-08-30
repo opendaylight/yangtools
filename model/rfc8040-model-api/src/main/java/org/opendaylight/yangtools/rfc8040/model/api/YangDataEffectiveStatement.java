@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
 /**
@@ -17,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
  * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
  */
 @Beta
-public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<String, YangDataStatement> {
+public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<String, YangDataStatement>,
+        DataTreeAwareEffectiveStatement<String, YangDataStatement> {
     @Override
     default StatementDefinition statementDefinition() {
         return YangDataStatements.YANG_DATA;
@@ -28,5 +31,5 @@ public interface YangDataEffectiveStatement extends UnknownEffectiveStatement<St
      *
      * @return container statement
      */
-    ContainerEffectiveStatement getContainer();
+    @NonNull ContainerEffectiveStatement getContainer();
 }
