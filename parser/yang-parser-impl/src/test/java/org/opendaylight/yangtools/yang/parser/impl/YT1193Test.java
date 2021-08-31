@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.List;
@@ -71,7 +71,7 @@ public class YT1193Test {
         assertFalse(it.hasNext());
     }
 
-    private static void assertFooContainerReferences(DeclaredStatement<?> foo) {
+    private static void assertFooContainerReferences(final DeclaredStatement<?> foo) {
         assertReference(foo, YangStmtMapping.CONTAINER, 13, 3);
 
         final Iterator<? extends DeclaredStatement<?>> it = foo.declaredSubstatements().iterator();
@@ -80,7 +80,7 @@ public class YT1193Test {
         assertFalse(it.hasNext());
     }
 
-    private static void assertDeprLeafListReferences(DeclaredStatement<?> depr) {
+    private static void assertDeprLeafListReferences(final DeclaredStatement<?> depr) {
         assertReference(depr, YangStmtMapping.LEAF_LIST, 28, 3);
 
         final Iterator<? extends DeclaredStatement<?>> it = depr.declaredSubstatements().iterator();
@@ -90,7 +90,7 @@ public class YT1193Test {
         assertFalse(it.hasNext());
     }
 
-    private static void assertObsoTypedefReferences(DeclaredStatement<?> obso) {
+    private static void assertObsoTypedefReferences(final DeclaredStatement<?> obso) {
         assertReference(obso, YangStmtMapping.TYPEDEF, 40, 3);
 
         final Iterator<? extends DeclaredStatement<?>> it = obso.declaredSubstatements().iterator();
