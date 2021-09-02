@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -72,4 +73,14 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      */
     boolean canReuseCurrent(@NonNull Current<A, D> copy, @NonNull Current<A, D> current,
         @NonNull Collection<? extends EffectiveStatement<?, ?>> substatements);
+
+    /**
+     * Return the {@link EffectiveStatementState} for a particular statement. This acts as a summary for comparison with
+     * statements created by this factory, without taking substatements into account. This is an optional operation, it
+     * is always safe to return null.
+     *
+     * @param stmt EffectiveStatement to examine
+     * @return EffectiveStatementState or null if the statement cannot be expressed
+     */
+    @Nullable EffectiveStatementState extractEffectiveState(@NonNull E stmt);
 }
