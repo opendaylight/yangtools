@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -117,7 +118,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
      * {@link #buildEffective()} instance. If this context is reused, it can be inflated to {@link EffectiveInstances}
      * and also act as a common instance reuse site.
      */
-    private @Nullable E effectiveInstance;
+    private @Nullable Object effectiveInstance;
 
     // Master flag controlling whether this context can yield an effective statement
     // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
@@ -253,15 +254,20 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     @Override
     public final <X, Z extends EffectiveStatement<X, ?>> @NonNull Optional<X> findSubstatementArgument(
             final @NonNull Class<Z> type) {
-        final E existing = effectiveInstance;
+        final E existing = effectiveInstance();
         return existing != null ? existing.findFirstEffectiveSubstatementArgument(type)
             : findSubstatementArgumentImpl(type);
     }
 
     @Override
     public final boolean hasSubstatement(final @NonNull Class<? extends EffectiveStatement<?, ?>> type) {
-        final E existing = effectiveInstance;
+        final E existing = effectiveInstance();
         return existing != null ? existing.findFirstEffectiveSubstatement(type).isPresent() : hasSubstatementImpl(type);
+    }
+
+    private E effectiveInstance() {
+        final Object existing = effectiveInstance;
+        return existing != null ? EffectiveInstances.local(existing) : null;
     }
 
     // Visible due to InferredStatementContext's override. At this point we do not have an effective instance available.
@@ -378,8 +384,8 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
     @Override
     public final E buildEffective() {
-        final E existing;
-        return (existing = effectiveInstance) != null ? existing : loadEffective();
+        final Object existing;
+        return (existing = effectiveInstance) != null ? EffectiveInstances.local(existing) : loadEffective();
     }
 
     private @NonNull E loadEffective() {
@@ -400,6 +406,29 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+    /**
+     * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
+     * <ul>
+     *   <li>{@code copy} and {@code this} statement share {@link #getOriginalCtx()} if it exists</li>
+     *   <li>{@code copy} did not modify any statements relative to {@code this}</li>
+     * </ul>
+     *
+     * @param state effective statement state, acting as a lookup key
+     * @param stmt New copy to append
+     * @return {@code stmt} or a previously-created instances with the same {@code state}
+     */
+    @SuppressWarnings("unchecked")
+    final @NonNull E attachEffectiveCopy(final @NonNull EffectiveStatementState state, final @NonNull E stmt) {
+        final Object local = effectiveInstance;
+        final EffectiveInstances<E> instances;
+        if (local instanceof EffectiveInstances) {
+            instances = (EffectiveInstances<E>) local;
+        } else {
+            effectiveInstance = instances = new EffectiveInstances<>((E) local);
+        }
+        return instances.attachCopy(state, stmt);
+    }
 
     /**
      * Walk this statement's copy history and return the statement closest to original which has not had its effective
