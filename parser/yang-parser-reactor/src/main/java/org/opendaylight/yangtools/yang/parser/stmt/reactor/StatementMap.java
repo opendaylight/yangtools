@@ -135,21 +135,29 @@ abstract class StatementMap extends AbstractCollection<AbstractResumedStatement<
 
         @Override
         public Iterator<AbstractResumedStatement<?, ?, ?>> iterator() {
-            return new AbstractIterator<>() {
-                private int nextOffset = 0;
+            return new Iter(this);
+        }
 
-                @Override
-                protected AbstractResumedStatement<?, ?, ?> computeNext() {
-                    while (nextOffset < elements.length) {
-                        final AbstractResumedStatement<?, ?, ?> ret = elements[nextOffset++];
-                        if (ret != null) {
-                            return ret;
-                        }
+        private static final class Iter extends AbstractIterator<AbstractResumedStatement<?, ?, ?>> {
+            private int nextOffset = 0;
+            private Regular map;
+
+            Iter(final Regular map) {
+                this.map = requireNonNull(map);
+            }
+
+            @Override
+            protected AbstractResumedStatement<?, ?, ?> computeNext() {
+                while (nextOffset < map.elements.length) {
+                    final AbstractResumedStatement<?, ?, ?> ret = map.elements[nextOffset++];
+                    if (ret != null) {
+                        return ret;
                     }
-
-                    return endOfData();
                 }
-            };
+
+                map = null;
+                return endOfData();
+            }
         }
     }
 
