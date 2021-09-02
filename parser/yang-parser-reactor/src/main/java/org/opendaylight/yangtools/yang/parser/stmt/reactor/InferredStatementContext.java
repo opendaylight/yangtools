@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.OnDemandSchemaTreeStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -219,8 +220,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            // FIXME: YANGTOOLS-1214: deduplicate this return
-            return tryToReuseSubstatements(factory, origEffective);
+            return internAlongCopyAxis(factory, tryToReuseSubstatements(factory, origEffective));
         }
 
         // We can reuse this statement let's see if all statements agree...
@@ -272,8 +272,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         prototype.decRef();
 
         // Values are the effective copies, hence this efficiently deals with recursion.
-        // FIXME: YANGTOOLS-1214: deduplicate this return
-        return factory.createEffective(this, declared.stream(), effective.stream());
+        return internAlongCopyAxis(factory, factory.createEffective(this, declared.stream(), effective.stream()));
     }
 
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
@@ -295,6 +294,16 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return factory.copyEffective(this, original);
         }
         return effective;
+    }
+
+    private @NonNull E internAlongCopyAxis(final StatementFactory<A, D, E> factory, final @NonNull E stmt) {
+        if (!isModified()) {
+            final EffectiveStatementState state = factory.extractEffectiveState(stmt);
+            if (state != null) {
+                return prototype.unmodifiedEffectiveSource().attachEffectiveCopy(state, stmt);
+            }
+        }
+        return stmt;
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
