@@ -271,6 +271,12 @@ public abstract class StatementSupport<A, D extends DeclaredStatement<A>, E exte
         return policy.canReuseCurrent(copy, current, substatements);
     }
 
+    @Override
+    public EffectiveStatementState extractEffectiveState(final E stmt) {
+        // Not implemented for most statements
+        return null;
+    }
+
     /**
      * Parses textual representation of argument in object representation.
      *
