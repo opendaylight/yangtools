@@ -219,6 +219,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
             NodeIdentifier.create(Foo.QNAME));
         final var ex = assertThrows(IncorrectNestingException.class,
             () -> codecContext.fromYangInstanceIdentifier(yiid));
-        assertEquals("Argument (urn:odl:actions)foo is not valid child of list lst", ex.getMessage());
+        assertEquals("Argument (urn:odl:actions)foo is not valid child of "
+            + "EmptyListEffectiveStatement{argument=(urn:odl:actions)lst}", ex.getMessage());
     }
 }

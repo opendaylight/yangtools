@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static java.util.Objects.requireNonNull
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BINARY_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE
+import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.DECIMAL64_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.EMPTY_TYPE
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.INT16_TYPE
@@ -61,6 +62,7 @@ class ClassTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing([prop | prop.name])
     static val VALUEOF_TYPES = Set.of(
         BOOLEAN_TYPE,
+        DECIMAL64_TYPE,
         INT8_TYPE,
         INT16_TYPE,
         INT32_TYPE,

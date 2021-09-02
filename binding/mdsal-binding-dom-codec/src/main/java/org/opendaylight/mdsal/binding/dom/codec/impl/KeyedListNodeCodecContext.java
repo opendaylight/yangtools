@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 
 abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends DataObject & Identifiable<I>>
         extends ListNodeCodecContext<D> {
@@ -70,9 +69,8 @@ abstract class KeyedListNodeCodecContext<I extends Identifier<D>, D extends Data
         final ListRuntimeType type = prototype.getType();
         final IdentifiableItemCodec codec = prototype.getFactory().getPathArgumentCodec(bindingClass, type);
 
-        return type.statement().findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class)
-            .orElse(Ordering.SYSTEM) == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
-                : new Ordered<>(prototype, keyMethod, codec);
+        return type.statement().ordering() == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
+            : new Ordered<>(prototype, keyMethod, codec);
     }
 
     @Override

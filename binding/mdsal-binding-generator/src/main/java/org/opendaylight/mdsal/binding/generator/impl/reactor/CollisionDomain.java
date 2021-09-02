@@ -14,7 +14,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -327,8 +326,6 @@ final class CollisionDomain {
         return MoreObjects.toStringHelper(this).add("gen", gen).toString();
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-        justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private @NonNull Member addMember(final @NonNull Member member) {
         if (members.isEmpty()) {
             members = new ArrayList<>();
@@ -337,8 +334,6 @@ final class CollisionDomain {
         return member;
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-        justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static @NonNull String packageString(final AbstractQName component) {
         // Replace dashes with dots, as dashes are not allowed in package names
         return component.getLocalName().replace('-', '.');

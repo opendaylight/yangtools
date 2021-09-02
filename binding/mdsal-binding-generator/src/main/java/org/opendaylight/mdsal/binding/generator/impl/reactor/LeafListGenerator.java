@@ -13,7 +13,6 @@ import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.runtime.api.LeafListRuntimeType;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 
 /**
  * Generator corresponding to a {@code leaf-list} statement.
@@ -30,16 +29,11 @@ final class LeafListGenerator
         // List<Object>, we will try to narrow the return type in subclasses.
         final Type type = super.methodReturnType(builderFactory);
         final boolean isObject = Types.objectType().equals(type);
-        final Ordering ordering = statement().findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class)
-            .orElse(Ordering.SYSTEM);
-        switch (ordering) {
-            case SYSTEM:
-                return isObject ? Types.setTypeWildcard() : Types.setTypeFor(type);
-            case USER:
-                return isObject ? Types.listTypeWildcard() : Types.listTypeFor(type);
-            default:
-                throw new IllegalStateException("Unexpected ordering " + ordering);
+
+        if (statement().ordering() == Ordering.SYSTEM) {
+            return isObject ? Types.setTypeWildcard() : Types.setTypeFor(type);
         }
+        return isObject ? Types.listTypeWildcard() : Types.listTypeFor(type);
     }
 
     @Override

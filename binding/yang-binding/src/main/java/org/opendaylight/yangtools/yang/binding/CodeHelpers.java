@@ -15,6 +15,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -416,6 +417,8 @@ public final class CodeHelpers {
         return (Set<T>) set;
     }
 
+    @SuppressFBWarnings(value = "DCN_NULLPOINTER_EXCEPTION",
+        justification = "Internal NPE->IAE conversion")
     private static void checkCollectionField(final @NonNull Class<?> requiredClass,
             final @NonNull String fieldName, final @Nullable Collection<?> collection) {
         if (collection != null) {

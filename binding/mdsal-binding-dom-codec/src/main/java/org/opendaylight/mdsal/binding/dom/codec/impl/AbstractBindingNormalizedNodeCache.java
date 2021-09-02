@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,12 +27,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 abstract class AbstractBindingNormalizedNodeCache<T extends BindingObject, C extends NodeCodecContext>
         extends CacheLoader<T, NormalizedNode> {
-    private final LoadingCache<T, NormalizedNode> cache = CacheBuilder.newBuilder().weakValues().build(this);
-
+    private final LoadingCache<T, NormalizedNode> cache;
     private final @NonNull C rootContext;
 
+    @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR", justification = "False positive")
     AbstractBindingNormalizedNodeCache(final C rootContext) {
         this.rootContext = requireNonNull(rootContext);
+        cache = CacheBuilder.newBuilder().weakValues().build(this);
     }
 
     /**

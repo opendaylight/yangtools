@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -201,8 +200,6 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         return next;
     }
 
-    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-                justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private synchronized void unregister(final ImmutableList<RegisteredModuleInfo> regInfos) {
         for (RegisteredModuleInfo regInfo : regInfos) {
             if (!regInfo.decRef()) {

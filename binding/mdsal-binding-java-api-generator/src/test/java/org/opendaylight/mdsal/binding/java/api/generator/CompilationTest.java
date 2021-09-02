@@ -25,7 +25,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
-import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -38,6 +37,7 @@ import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -400,7 +400,7 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsMethod(nodesClass, b.getClass(), "getIdBinary");
         CompilationTestUtils.assertContainsMethod(nodesClass, pkg + ".Nodes$IdBits", "getIdBits", loader);
         CompilationTestUtils.assertContainsMethod(nodesClass, Boolean.class, "getIdBoolean");
-        CompilationTestUtils.assertContainsMethod(nodesClass, BigDecimal.class, "getIdDecimal64");
+        CompilationTestUtils.assertContainsMethod(nodesClass, Decimal64.class, "getIdDecimal64");
         CompilationTestUtils.assertContainsMethod(nodesClass, Empty.class, "getIdEmpty");
         CompilationTestUtils.assertContainsMethod(nodesClass, pkg + ".Nodes$IdEnumeration", "getIdEnumeration", loader);
         testReturnTypeIdentityref(nodesClass, "getIdIdentityref", pkg + ".Alg");
@@ -429,10 +429,10 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method, expectedMsg, arg);
 
         method = CompilationTestUtils.assertContainsMethod(builderClass, builderClass, "setIdDecimal64",
-            BigDecimal.class);
-        final List<Range<BigDecimal>> rangeConstraints = new ArrayList<>();
-        rangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
-        Object arg1 = new BigDecimal("1.4");
+            Decimal64.class);
+        final List<Range<Decimal64>> rangeConstraints = new ArrayList<>();
+        rangeConstraints.add(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
+        Object arg1 = Decimal64.valueOf("1.4");
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg1, rangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(builderObj, method, expectedMsg, arg1);
 

@@ -26,7 +26,6 @@ import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -92,13 +91,8 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     Type methodReturnType(final TypeBuilderFactory builderFactory) {
         final Type generatedType = super.methodReturnType(builderFactory);
         // We are wrapping the generated type in either a List or a Map based on presence of the key
-        if (keyGen != null) {
-            final Ordering ordering = statement()
-                .findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class)
-                .orElse(Ordering.SYSTEM);
-            if (ordering == Ordering.SYSTEM) {
-                return Types.mapTypeFor(keyGen.getGeneratedType(builderFactory), generatedType);
-            }
+        if (keyGen != null && statement().ordering() == Ordering.SYSTEM) {
+            return Types.mapTypeFor(keyGen.getGeneratedType(builderFactory), generatedType);
         }
 
         return Types.listTypeFor(generatedType);

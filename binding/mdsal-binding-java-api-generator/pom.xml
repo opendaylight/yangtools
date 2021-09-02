@@ -39,6 +39,7 @@
         <dependency>
             <groupId>org.eclipse.xtend</groupId>
             <artifactId>org.eclipse.xtend.lib</artifactId>
+            <version>2.26.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -64,6 +65,18 @@
             <plugin>
                 <groupId>org.eclipse.xtend</groupId>
                 <artifactId>xtend-maven-plugin</artifactId>
+                <version>2.26.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <javaSourceVersion>${maven.compiler.release}</javaSourceVersion>
+                            <outputDirectory>${project.build.directory}/generated-sources/xtend</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

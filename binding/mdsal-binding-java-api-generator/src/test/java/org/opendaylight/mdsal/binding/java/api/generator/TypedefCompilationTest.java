@@ -15,18 +15,17 @@ import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Test correct code generation.
- *
  */
 public class TypedefCompilationTest extends BaseCompilationTest {
     private static final String VAL = "_value";
@@ -223,50 +222,50 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef my-decimal-type
         assertFalse(myDecimalTypeClass.isInterface());
-        CompilationTestUtils.assertContainsField(myDecimalTypeClass, VAL, BigDecimal.class);
+        CompilationTestUtils.assertContainsField(myDecimalTypeClass, VAL, Decimal64.class);
         CompilationTestUtils.assertContainsFieldWithValue(myDecimalTypeClass, "serialVersionUID", Long.TYPE,
-            3143735729419861095L, BigDecimal.class);
+            3143735729419861095L, Decimal64.class);
         assertEquals(3, myDecimalTypeClass.getDeclaredFields().length);
-        CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, BigDecimal.class, "getValue");
-        expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, BigDecimal.class);
+        CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, Decimal64.class, "getValue");
+        expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalTypeClass, myDecimalTypeClass);
         assertEquals(2, myDecimalTypeClass.getDeclaredConstructors().length);
-        CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, BigDecimal.class, GET_VAL);
+        CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, Decimal64.class, GET_VAL);
         CompilationTestUtils.assertContainsDefaultMethods(myDecimalTypeClass);
         defInst = CompilationTestUtils.assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass,
             "getDefaultInstance", String.class);
         assertEquals(7, myDecimalTypeClass.getDeclaredMethods().length);
 
-        List<Range<BigDecimal>> decimalRangeConstraints = new ArrayList<>();
-        decimalRangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
-        arg = new BigDecimal("1.4");
+        List<Range<Decimal64>> decimalRangeConstraints = new ArrayList<>();
+        decimalRangeConstraints.add(Range.closed(Decimal64.valueOf("1.5"), Decimal64.valueOf("5.5")));
+        arg = Decimal64.valueOf("1.4");
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, decimalRangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance(new BigDecimal("3.14"));
+        obj = expectedConstructor.newInstance(Decimal64.valueOf("3.14"));
         assertEquals(obj, defInst.invoke(null, "3.14"));
 
         // typedef my-decimal-type2
         assertFalse(myDecimalType2Class.isInterface());
-        CompilationTestUtils.assertContainsField(myDecimalType2Class, VAL, BigDecimal.class);
+        CompilationTestUtils.assertContainsField(myDecimalType2Class, VAL, Decimal64.class);
         CompilationTestUtils.assertContainsFieldWithValue(myDecimalType2Class, "serialVersionUID", Long.TYPE,
-            -672265764962082714L, BigDecimal.class);
+            -672265764962082714L, Decimal64.class);
         assertEquals(3, myDecimalType2Class.getDeclaredFields().length);
-        CompilationTestUtils.assertContainsMethod(myDecimalType2Class, BigDecimal.class, "getValue");
-        expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, BigDecimal.class);
+        CompilationTestUtils.assertContainsMethod(myDecimalType2Class, Decimal64.class, "getValue");
+        expectedConstructor = CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, Decimal64.class);
         CompilationTestUtils.assertContainsConstructor(myDecimalType2Class, myDecimalType2Class);
         assertEquals(2, myDecimalType2Class.getDeclaredConstructors().length);
-        CompilationTestUtils.assertContainsMethod(myDecimalType2Class, BigDecimal.class, GET_VAL);
+        CompilationTestUtils.assertContainsMethod(myDecimalType2Class, Decimal64.class, GET_VAL);
         CompilationTestUtils.assertContainsDefaultMethods(myDecimalType2Class);
         defInst = CompilationTestUtils.assertContainsMethod(myDecimalType2Class, myDecimalType2Class,
             "getDefaultInstance", String.class);
         assertEquals(7, myDecimalType2Class.getDeclaredMethods().length);
 
-        List<Range<BigDecimal>> decimal2RangeConstraints = new ArrayList<>();
-        decimal2RangeConstraints.add(Range.closed(new BigDecimal("0"), new BigDecimal("1")));
-        arg = new BigDecimal("1.4");
+        List<Range<Decimal64>> decimal2RangeConstraints = new ArrayList<>();
+        decimal2RangeConstraints.add(Range.closed(Decimal64.valueOf("0.0"), Decimal64.valueOf("1.0")));
+        arg = Decimal64.valueOf("1.4");
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, decimal2RangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance(new BigDecimal("0.14"));
+        obj = expectedConstructor.newInstance(Decimal64.valueOf("0.14"));
         assertEquals(obj, defInst.invoke(null, "0.14"));
 
         // typedef union-ext1

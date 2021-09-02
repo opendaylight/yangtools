@@ -30,14 +30,16 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
 
     @Override
     public AnnotationTypeBuilder addAnnotation(final String packageName, final String name) {
-        if (packageName != null && name != null) {
-            final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(JavaTypeName.create(packageName, name));
-            if (!this.annotationBuilders.contains(builder)) {
-                this.annotationBuilders = LazyCollections.lazyAdd(this.annotationBuilders, builder);
+        final var typeName = JavaTypeName.create(packageName, name);
+        for (var builder : annotationBuilders) {
+            if (typeName.equals(builder.getIdentifier())) {
                 return builder;
             }
         }
-        return null;
+
+        final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(typeName);
+        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
+        return builder;
     }
 
     private boolean addParameter(final ParameterImpl param) {
@@ -68,7 +70,7 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
 
     @Override
     public AnnotationType build() {
-        return new AnnotationTypeImpl(getIdentifier(), this.annotationBuilders, this.parameters);
+        return new AnnotationTypeImpl(getIdentifier(), annotationBuilders, parameters);
     }
 
     @Override
@@ -92,26 +94,26 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
             for (final AnnotationTypeBuilder builder : annotationBuilders) {
                 a.add(builder.build());
             }
-            this.annotations = ImmutableList.copyOf(a);
+            annotations = ImmutableList.copyOf(a);
 
             final List<String> p = new ArrayList<>();
             for (final AnnotationType.Parameter parameter : parameters) {
                 p.add(parameter.getName());
             }
-            this.paramNames = ImmutableList.copyOf(p);
+            paramNames = ImmutableList.copyOf(p);
 
             this.parameters = parameters.isEmpty() ? Collections.emptyList() : Collections.unmodifiableList(parameters);
         }
 
         @Override
         public List<AnnotationType> getAnnotations() {
-            return this.annotations;
+            return annotations;
         }
 
         @Override
         public Parameter getParameter(final String paramName) {
             if (paramName != null) {
-                for (final AnnotationType.Parameter parameter : this.parameters) {
+                for (final AnnotationType.Parameter parameter : parameters) {
                     if (parameter.getName().equals(paramName)) {
                         return parameter;
                     }
@@ -122,17 +124,17 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
 
         @Override
         public List<Parameter> getParameters() {
-            return this.parameters;
+            return parameters;
         }
 
         @Override
         public List<String> getParameterNames() {
-            return this.paramNames;
+            return paramNames;
         }
 
         @Override
         public boolean containsParameters() {
-            return !this.parameters.isEmpty();
+            return !parameters.isEmpty();
         }
 
         @Override
@@ -153,35 +155,35 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
         ParameterImpl(final String name, final String value) {
             this.name = name;
             this.value = value;
-            this.values = Collections.emptyList();
+            values = Collections.emptyList();
         }
 
         ParameterImpl(final String name, final List<String> values) {
             this.name = name;
             this.values = values;
-            this.value = null;
+            value = null;
         }
 
         @Override
         public String getName() {
-            return this.name;
+            return name;
         }
 
         @Override
         public String getValue() {
-            return this.value;
+            return value;
         }
 
         @Override
         public List<String> getValues() {
-            return this.values;
+            return values;
         }
 
         @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + Objects.hashCode(this.name);
+            result = prime * result + Objects.hashCode(name);
             return result;
         }
 
@@ -197,18 +199,18 @@ final class AnnotationTypeBuilderImpl extends AbstractType implements Annotation
                 return false;
             }
             final ParameterImpl other = (ParameterImpl) obj;
-            return Objects.equals(this.name, other.name);
+            return Objects.equals(name, other.name);
         }
 
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();
             builder.append("ParameterImpl [name=");
-            builder.append(this.name);
+            builder.append(name);
             builder.append(", value=");
-            builder.append(this.value);
+            builder.append(value);
             builder.append(", values=");
-            builder.append(this.values);
+            builder.append(values);
             builder.append("]");
             return builder.toString();
         }

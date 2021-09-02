@@ -50,8 +50,8 @@ import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
+//import org.opendaylight.yangtools.yang.common.QName;
+//import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -413,9 +413,9 @@ class JavaFileTemplate {
 
                 if (node instanceof SchemaNode) {
                     final SchemaNode schema = (SchemaNode) node;
-                    sb.append("The schema path to identify an instance is\n");
-                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
-                    sb.append("</i>\n");
+//                    sb.append("The schema path to identify an instance is\n");
+//                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
+//                    sb.append("</i>\n");
 
                     if (hasBuilderClass(schema)) {
                         final String builderName = type.getName() + BindingMapping.BUILDER_SUFFIX;
@@ -455,24 +455,24 @@ class JavaFileTemplate {
         }
     }
 
-    private static void appendPath(final StringBuilder sb, final ModuleEffectiveStatement module,
-            final List<QName> path) {
-        if (!path.isEmpty()) {
-            // FIXME: this is module name, while when we switch, we end up using QName.toString() -- which is weird
-            sb.append(module.argument().getLocalName());
-            XMLNamespace currentNamespace = path.get(0).getNamespace();
-
-            for (QName pathElement : path) {
-                final XMLNamespace elementNamespace = pathElement.getNamespace();
-                if (!elementNamespace.equals(currentNamespace)) {
-                    sb.append(pathElement);
-                    currentNamespace = elementNamespace;
-                } else {
-                    sb.append(pathElement.getLocalName());
-                }
-            }
-        }
-    }
+//    private static void appendPath(final StringBuilder sb, final ModuleEffectiveStatement module,
+//            final List<QName> path) {
+//        if (!path.isEmpty()) {
+//            // FIXME: this is module name, while when we switch, we end up using QName.toString() -- which is weird
+//            sb.append(module.argument().getLocalName());
+//            XMLNamespace currentNamespace = path.get(0).getNamespace();
+//
+//            for (QName pathElement : path) {
+//                final XMLNamespace elementNamespace = pathElement.getNamespace();
+//                if (!elementNamespace.equals(currentNamespace)) {
+//                    sb.append(pathElement);
+//                    currentNamespace = elementNamespace;
+//                } else {
+//                    sb.append(pathElement.getLocalName());
+//                }
+//            }
+//        }
+//    }
 
     private static boolean hasBuilderClass(final SchemaNode schemaNode) {
         return schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode

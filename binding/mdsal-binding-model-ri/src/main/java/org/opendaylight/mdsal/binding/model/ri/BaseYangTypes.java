@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.model.ri;
 
-import java.math.BigDecimal;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -56,7 +56,7 @@ public final class BaseYangTypes {
     /**
      * {@code Type} representation of {@code decimal64} YANG type.
      */
-    public static final Type DECIMAL64_TYPE = Types.typeForClass(BigDecimal.class);
+    public static final Type DECIMAL64_TYPE = Types.typeForClass(Decimal64.class);
 
     /**
      * {@code Type} representation of {@code uint8} YANG type.

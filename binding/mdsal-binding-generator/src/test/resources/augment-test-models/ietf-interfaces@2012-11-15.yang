@@ -17,7 +17,6 @@ module ietf-interfaces {
 
     list interface {
       key "name";
-      unique "type location";
 
       leaf name {
         type string;

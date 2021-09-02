@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MultimapBuilder.SetMultimapBuilder;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -266,8 +267,9 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                 .yangPathArgumentChild(arg);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
+    @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "See FIXME below")
     public D deserialize(final NormalizedNode data) {
         checkArgument(data instanceof ChoiceNode);
         final ChoiceNode casted = (ChoiceNode) data;

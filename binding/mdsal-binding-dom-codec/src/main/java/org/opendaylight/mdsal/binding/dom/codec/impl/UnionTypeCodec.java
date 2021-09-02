@@ -83,14 +83,12 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
 
     @Override
     public Object serialize(final Object input) {
-        if (input != null) {
-            for (final UnionValueOptionContext valCtx : typeCodecs) {
-                final Object domValue = valCtx.serialize(input);
-                if (domValue != null) {
-                    return domValue;
-                }
+        for (final UnionValueOptionContext valCtx : typeCodecs) {
+            final Object domValue = valCtx.serialize(input);
+            if (domValue != null) {
+                return domValue;
             }
         }
-        return null;
+        throw new IllegalStateException("No codec matched value " + input);
     }
 }

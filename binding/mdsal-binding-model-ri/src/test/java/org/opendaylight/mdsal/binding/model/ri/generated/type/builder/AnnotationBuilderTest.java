@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -242,13 +244,14 @@ public class AnnotationBuilderTest {
         AnnotationTypeBuilder annotationTypeBuilder = new AnnotationTypeBuilderImpl(
             JavaTypeName.create("my.package", "MyName"));
 
-        assertNull(annotationTypeBuilder.addAnnotation("my.package", null));
-        assertNull(annotationTypeBuilder.addAnnotation(null, "MyName"));
+        assertThrows(NullPointerException.class, () -> annotationTypeBuilder.addAnnotation("my.package", null));
+        assertThrows(NullPointerException.class, () -> annotationTypeBuilder.addAnnotation(null, "MyName"));
 
         assertNotNull(annotationTypeBuilder.addAnnotation("java.lang", "Deprecated"));
 
-        assertNotNull(annotationTypeBuilder.addAnnotation("my.package2", "MyName2"));
-        assertNull(annotationTypeBuilder.addAnnotation("my.package2", "MyName2"));
+        final var builder = annotationTypeBuilder.addAnnotation("my.package2", "MyName2");
+        assertNotNull(builder);
+        assertSame(builder, annotationTypeBuilder.addAnnotation("my.package2", "MyName2"));
 
         AnnotationType annotationTypeInstance = annotationTypeBuilder.build();
 
