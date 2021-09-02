@@ -219,8 +219,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
         // First check if we can reuse the entire prototype
         if (!factory.canReuseCurrent(this, prototype, origSubstatements)) {
-            // FIXME: YANGTOOLS-1214: deduplicate this return
-            return tryToReuseSubstatements(factory, origEffective);
+            return internAlongCopyAxis(factory, tryToReuseSubstatements(factory, origEffective));
         }
 
         // We can reuse this statement let's see if all statements agree...
@@ -272,8 +271,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
         prototype.decRef();
 
         // Values are the effective copies, hence this efficiently deals with recursion.
-        // FIXME: YANGTOOLS-1214: deduplicate this return
-        return factory.createEffective(this, declared.stream(), effective.stream());
+        return internAlongCopyAxis(factory, factory.createEffective(this, declared.stream(), effective.stream()));
     }
 
     private @NonNull E tryToReuseSubstatements(final StatementFactory<A, D, E> factory, final @NonNull E original) {
@@ -295,6 +293,17 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             return factory.copyEffective(this, original);
         }
         return effective;
+    }
+
+    private @NonNull E internAlongCopyAxis(final StatementFactory<A, D, E> factory, final @NonNull E original) {
+        if (!isModified()) {
+            // FIXME: YANGTOOLS-1214: dedicated interface and implementations of these two methods
+            final Immutable state = factory.significantStateOf(original);
+            if (state != null) {
+                return prototype.unmodifiedEffectiveSource().attachEffectiveCopy(state, original);
+            }
+        }
+        return original;
     }
 
     private List<ReactorStmtCtx<?, ?, ?>> reusePrototypeReplicas() {
@@ -338,7 +347,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
 
     @Override
     ReactorStmtCtx<A, D, E> unmodifiedEffectiveSource() {
-        return isModified() ? this : prototype.unmodifiedEffectiveSource();
+//        return isModified() ? this : prototype.unmodifiedEffectiveSource();
     }
 
     @Override
