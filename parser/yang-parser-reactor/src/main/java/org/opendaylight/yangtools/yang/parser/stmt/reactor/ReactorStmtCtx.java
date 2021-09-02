@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -400,6 +401,22 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     abstract @NonNull E createEffective();
+
+    /**
+     * Attach an effective copy of this statement. This essentially acts as a map, where we make a few assumptions:
+     * <ul>
+     *   <li>{@code copy} and {@code this} statement share {@link #getOriginalCtx()} if it exists</li>
+     *   <li>{@code copy} did not modify any statements relative to {@code this}</li>
+     * </ul>
+     *
+     * @param state effective statement state, acting as a lookup key
+     * @param stmt New copy to append
+     * @return {@code stmt} or a previously-created instances with the same {@code state}
+     */
+    final @NonNull E attachEffectiveCopy(final @NonNull EffectiveStatementState state, final @NonNull E stmt) {
+        // FIXME: YANGTOOLS-1214: implementation
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Walk this statement's copy history and return the statement closest to original which has not had its effective
