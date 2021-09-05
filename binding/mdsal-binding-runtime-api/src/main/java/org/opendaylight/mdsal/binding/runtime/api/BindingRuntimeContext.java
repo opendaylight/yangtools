@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  * by additional models. Same goes for all possible augmentations.
  */
 @Beta
+// FIXME: refactor return to follow foo()/getFoo()/findFoo() naming
 public interface BindingRuntimeContext extends EffectiveModelContextProvider, Immutable {
     @NonNull BindingRuntimeTypes getTypes();
 
