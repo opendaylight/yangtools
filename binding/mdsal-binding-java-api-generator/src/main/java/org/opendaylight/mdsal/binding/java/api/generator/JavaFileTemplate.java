@@ -10,9 +10,12 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
+import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.GETTER_PREFIX;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSortedSet;
 import java.lang.reflect.Method;
 import java.util.AbstractMap;
@@ -43,10 +46,25 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple;
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single;
 import org.opendaylight.mdsal.binding.model.ri.Types;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 /**
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
@@ -125,7 +143,16 @@ class JavaFileTemplate {
      */
     static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
+
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
+    private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
+    private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
+    private static final DeclaredStatementFormatter YANG_FORMATTER = DeclaredStatementFormatter.builder()
+        .addIgnoredStatement(YangStmtMapping.CONTACT)
+        .addIgnoredStatement(YangStmtMapping.DESCRIPTION)
+        .addIgnoredStatement(YangStmtMapping.REFERENCE)
+        .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
+        .build();
     private static final Type AUGMENTATION_RET_TYPE;
 
     static {
@@ -369,6 +396,88 @@ class JavaFileTemplate {
             }
         }
         return false;
+    }
+
+    static void appendSnippet(final StringBuilder sb, final GeneratedType type) {
+        type.getYangSourceDefinition().ifPresent(def -> {
+            sb.append('\n');
+
+            if (def instanceof Single) {
+                final DocumentedNode node = ((Single) def).getNode();
+
+                sb.append("<p>\n")
+                    .append("This class represents the following YANG schema fragment defined in module <b>")
+                    .append(def.getModule().argument().getLocalName()).append("</b>\n")
+                    .append("<pre>\n");
+                appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
+                sb.append("</pre>");
+
+                if (node instanceof SchemaNode) {
+                    final SchemaNode schema = (SchemaNode) node;
+                    sb.append("The schema path to identify an instance is\n");
+                    appendPath(sb.append("<i>"), def.getModule(), schema.getPath().getPathFromRoot());
+                    sb.append("</i>\n");
+
+                    if (hasBuilderClass(schema)) {
+                        final String builderName = type.getName() + "Builder";
+
+                        sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
+                        .append("}.\n")
+                        .append("@see ").append(builderName).append('\n');
+                        if (node instanceof ListSchemaNode) {
+                            final var keyDef = ((ListSchemaNode) node).getKeyDefinition();
+                            if (!keyDef.isEmpty()) {
+                                sb.append("@see ").append(type.getName()).append("Key");
+                            }
+                            sb.append('\n');
+                        }
+                    }
+                }
+            } else if (def instanceof Multiple) {
+                sb.append("<pre>\n");
+                for (SchemaNode node : ((Multiple) def).getNodes()) {
+                    appendYangSnippet(sb, def.getModule(), ((EffectiveStatement<?, ?>) node).getDeclared());
+                }
+                sb.append("</pre>\n");
+            }
+        });
+    }
+
+    static String encodeJavadocSymbols(final String description) {
+        // FIXME: Use String.isBlank()?
+        return description == null || description.isEmpty() ? description
+            : TAIL_COMMENT_PATTERN.matcher(AMP_MATCHER.replaceFrom(description, "&amp;")).replaceAll("&#42;&#47;");
+    }
+
+    private static void appendYangSnippet(final StringBuilder sb, final ModuleEffectiveStatement module,
+        final DeclaredStatement<?> stmt) {
+        for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
+            sb.append(replaceAllIllegalChars(encodeAngleBrackets(encodeJavadocSymbols(str))));
+        }
+    }
+
+    private static void appendPath(final StringBuilder sb, final ModuleEffectiveStatement module,
+            final List<QName> path) {
+        if (!path.isEmpty()) {
+            // FIXME: this is module name, while when we switch, we end up using QName.toString() -- which is weird
+            sb.append(module.argument().getLocalName());
+            XMLNamespace currentNamespace = path.get(0).getNamespace();
+
+            for (QName pathElement : path) {
+                final XMLNamespace elementNamespace = pathElement.getNamespace();
+                if (!elementNamespace.equals(currentNamespace)) {
+                    sb.append(pathElement);
+                    currentNamespace = elementNamespace;
+                } else {
+                    sb.append(pathElement.getLocalName());
+                }
+            }
+        }
+    }
+
+    private static boolean hasBuilderClass(final SchemaNode schemaNode) {
+        return schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode
+                || schemaNode instanceof RpcDefinition || schemaNode instanceof NotificationDefinition;
     }
 
     private static boolean isSameProperty(final String getterName1, final String getterName2) {
