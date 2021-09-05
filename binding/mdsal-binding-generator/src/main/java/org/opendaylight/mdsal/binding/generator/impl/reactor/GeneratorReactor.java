@@ -11,11 +11,11 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.Maps;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +30,8 @@ import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -301,56 +299,38 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     }
 
     private @NonNull AbstractTypeAwareGenerator<?> strictResolvePath(final @NonNull PathExpression path) {
-        final EffectiveStatement<?, ?> stmt;
         try {
-            stmt = inferenceStack.resolvePathExpression(path);
+            inferenceStack.resolvePathExpression(path);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Failed to find leafref target " + path.getOriginalString(), e);
         }
-        return mapToGenerator(stmt);
+        return mapToGenerator();
     }
 
     private @Nullable AbstractTypeAwareGenerator<?> lenientResolveLeafref(final @NonNull PathExpression path) {
-        final EffectiveStatement<?, ?> stmt;
         try {
-            stmt = inferenceStack.resolvePathExpression(path);
+            inferenceStack.resolvePathExpression(path);
         } catch (IllegalArgumentException e) {
             LOG.debug("Ignoring unresolved path {}", path, e);
             return null;
         }
-        return mapToGenerator(stmt);
+        return mapToGenerator();
     }
 
     // Map a statement to the corresponding generator
-    private @NonNull AbstractTypeAwareGenerator<?> mapToGenerator(final EffectiveStatement<?, ?> stmt) {
-        if (leafGenerators == null) {
-            final Map<EffectiveStatement<?, ?>, AbstractTypeAwareGenerator<?>> map = new IdentityHashMap<>();
-            indexLeafGenerators(map, children);
-            leafGenerators = map;
-        }
+    private @NonNull AbstractTypeAwareGenerator<?> mapToGenerator() {
+        // Some preliminaries first: we need to be in the correct module to walk the path
+        final ModuleEffectiveStatement module = inferenceStack.currentModule();
+        final ModuleGenerator gen = verifyNotNull(generators.get(module.localQNameModule()),
+            "Cannot find generator for %s", module);
 
-        AbstractTypeAwareGenerator<?> match = leafGenerators.get(stmt);
-        if (match == null && stmt instanceof DerivableSchemaNode) {
-            final SchemaNode orig = ((DerivableSchemaNode) stmt).getOriginal().orElse(null);
-            if (orig instanceof EffectiveStatement) {
-                match = leafGenerators.get(orig);
-            }
+        // Now kick of the search
+        final List<EffectiveStatement<?, ?>> stmtPath = inferenceStack.toInference().statementPath();
+        final AbstractExplicitGenerator<?> found = gen.findGenerator(stmtPath);
+        if (found instanceof AbstractTypeAwareGenerator) {
+            return (AbstractTypeAwareGenerator<?>) found;
         }
-
-        return verifyNotNull(match, "Cannot resolve generator for %s", stmt);
-    }
-
-    private static void indexLeafGenerators(final Map<EffectiveStatement<?, ?>, AbstractTypeAwareGenerator<?>> map,
-            final Iterable<? extends Generator> parent) {
-        for (Generator child : parent) {
-            if (child instanceof AbstractTypeAwareGenerator) {
-                final AbstractTypeAwareGenerator<?> value = (AbstractTypeAwareGenerator<?>) child;
-                final EffectiveStatement<?, ?> key = value.statement();
-                final AbstractTypeAwareGenerator<?> prev = map.putIfAbsent(key, value);
-                verify(prev == null, "Conflict on %s between %s and %s", key, prev, value);
-            }
-            indexLeafGenerators(map, child);
-        }
+        throw new VerifyException("Statements " + stmtPath + " resulted in unexpected " + found);
     }
 
     // Note: unlike other methods, this method pushes matching child to the stack

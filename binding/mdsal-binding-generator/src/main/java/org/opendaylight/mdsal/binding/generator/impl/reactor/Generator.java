@@ -65,7 +65,7 @@ public abstract class Generator implements Iterable<Generator> {
     private String javaPackage;
 
     Generator() {
-        this.parent = null;
+        parent = null;
     }
 
     Generator(final AbstractCompositeGenerator<?> parent) {
@@ -97,14 +97,6 @@ public abstract class Generator implements Iterable<Generator> {
 
     boolean isEmpty() {
         return true;
-    }
-
-    @Nullable AbstractExplicitGenerator<?> findGenerator(final EffectiveStatement<?, ?> stmt) {
-        return null;
-    }
-
-    final @NonNull AbstractExplicitGenerator<?> getGenerator(final EffectiveStatement<?, ?> stmt) {
-        return verifyNotNull(findGenerator(stmt), "Cannot match statement %s in %s", stmt, this);
     }
 
     /**
