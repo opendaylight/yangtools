@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 /**
- * Helper interface aiding resolution of leafref chains.
+ * Helper interface aiding resolution of {@code type leafref} chains.
  */
 @Beta
 @FunctionalInterface
