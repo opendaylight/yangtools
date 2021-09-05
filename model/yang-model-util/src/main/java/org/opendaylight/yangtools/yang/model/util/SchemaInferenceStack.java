@@ -556,11 +556,25 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     @Override
     public TypeDefinition<?> resolveLeafref(final LeafrefTypeDefinition type) {
-        final SchemaInferenceStack tmp = copy();
+        return copy().dereferenceLeafref(type);
+    }
 
+    /**
+     * Resolve specified {@link LeafrefTypeDefinition} until a non-{@code leafref} type is found. After successful
+     * lookup this stack's state will point to the found type.
+     *
+     * <p>
+     * Note if this method throws, this stack may be in an undefined state.
+     *
+     * @param type leafref definition
+     * @return Resolved type
+     * @throws NullPointerException if {@code type} is null
+     * @throws IllegalArgumentException if the type definition cannot be resolved
+     */
+    public @NonNull TypeDefinition<?> dereferenceLeafref(final LeafrefTypeDefinition type) {
         LeafrefTypeDefinition current = type;
         while (true) {
-            final EffectiveStatement<?, ?> resolved = tmp.resolvePathExpression(current.getPathStatement());
+            final EffectiveStatement<?, ?> resolved = resolvePathExpression(current.getPathStatement());
             checkState(resolved instanceof TypeAware, "Unexpected result %s resultion of %s", resolved, type);
             final TypeDefinition<?> result = ((TypedDataSchemaNode) resolved).getType();
             if (result instanceof LeafrefTypeDefinition) {
