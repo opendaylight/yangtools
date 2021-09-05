@@ -12,8 +12,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.encodeAngleBrackets;
 import static org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil.replaceAllIllegalChars;
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME;
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.GETTER_PREFIX;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSortedSet;
@@ -153,12 +151,13 @@ class JavaFileTemplate {
         .addIgnoredStatement(YangStmtMapping.REFERENCE)
         .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
         .build();
+    private static final int GETTER_PREFIX_LENGTH = BindingMapping.GETTER_PREFIX.length();
     private static final Type AUGMENTATION_RET_TYPE;
 
     static {
         final Method m;
         try {
-            m = Augmentable.class.getDeclaredMethod(AUGMENTABLE_AUGMENTATION_NAME, Class.class);
+            m = Augmentable.class.getDeclaredMethod(BindingMapping.AUGMENTABLE_AUGMENTATION_NAME, Class.class);
         } catch (NoSuchMethodException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -419,7 +418,7 @@ class JavaFileTemplate {
                     sb.append("</i>\n");
 
                     if (hasBuilderClass(schema)) {
-                        final String builderName = type.getName() + "Builder";
+                        final String builderName = type.getName() + BindingMapping.BUILDER_SUFFIX;
 
                         sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
                         .append("}.\n")
@@ -427,7 +426,7 @@ class JavaFileTemplate {
                         if (node instanceof ListSchemaNode) {
                             final var keyDef = ((ListSchemaNode) node).getKeyDefinition();
                             if (!keyDef.isEmpty()) {
-                                sb.append("@see ").append(type.getName()).append("Key");
+                                sb.append("@see ").append(type.getName()).append(BindingMapping.KEY_SUFFIX);
                             }
                             sb.append('\n');
                         }
@@ -528,7 +527,7 @@ class JavaFileTemplate {
             return null;
         }
 
-        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(GETTER_PREFIX.length()));
+        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(GETTER_PREFIX_LENGTH));
         return new BuilderGeneratedProperty(fieldName, method);
     }
 }

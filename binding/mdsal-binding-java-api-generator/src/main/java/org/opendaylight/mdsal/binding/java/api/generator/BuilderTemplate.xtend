@@ -39,11 +39,6 @@ import org.opendaylight.yangtools.concepts.Builder
  * Template for generating JAVA builder classes.
  */
 class BuilderTemplate extends AbstractBuilderTemplate {
-    /**
-     * Constant used as suffix for builder name.
-     */
-    package static val BUILDER_STR = "Builder";
-
     static val BUILDER = JavaTypeName.create(Builder)
 
     val BuilderImplTemplate implTemplate

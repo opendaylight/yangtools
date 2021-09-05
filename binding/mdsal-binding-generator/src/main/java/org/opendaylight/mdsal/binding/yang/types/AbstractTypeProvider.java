@@ -454,8 +454,8 @@ abstract class AbstractTypeProvider {
 
             // Define a corresponding union builder. Typedefs are always anchored at a Java package root,
             // so we are placing the builder alongside the union.
-            final GeneratedTOBuilder unionBuilder = newGeneratedTOBuilder(
-                JavaTypeName.create(genTOBuilder.getPackageName(), genTOBuilder.getName() + "Builder"));
+            final GeneratedTOBuilder unionBuilder = newGeneratedTOBuilder(JavaTypeName.create(
+                genTOBuilder.getPackageName(), genTOBuilder.getName() + BindingMapping.BUILDER_SUFFIX));
             unionBuilder.setIsUnionBuilder(true);
             final MethodSignatureBuilder method = unionBuilder.addMethod("getDefaultInstance");
             method.setReturnType(returnType);

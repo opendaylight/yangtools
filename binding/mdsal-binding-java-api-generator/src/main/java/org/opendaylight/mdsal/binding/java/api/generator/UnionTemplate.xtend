@@ -13,6 +13,7 @@ import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.mdsal.binding.model.ri.BaseYangTypes.STRING_TYPE;
 import static org.opendaylight.mdsal.binding.model.ri.Types.STRING;
 import static org.opendaylight.mdsal.binding.model.ri.Types.getOuterClassName;
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BUILDER_SUFFIX
 
 import java.util.Base64;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
@@ -82,10 +83,10 @@ class UnionTemplate extends ClassTemplate {
 
     def typeBuilder() {
         val outerCls = getOuterClassName(type);
-        if(outerCls !== null) {
-            return outerCls + type.name + "Builder"
+        if (outerCls !== null) {
+            return outerCls + type.name + BUILDER_SUFFIX
         }
-        return type.name + "Builder"
+        return type.name + BUILDER_SUFFIX
     }
 
     private def unionConstructorsParentProperties() '''

@@ -62,13 +62,13 @@ public final class BuilderGenerator implements CodeGenerator {
 
     @Override
     public String getUnitName(final Type type) {
-        return type.getName() + BuilderTemplate.BUILDER_STR;
+        return type.getName() + BindingMapping.BUILDER_SUFFIX;
     }
 
     @VisibleForTesting
     static BuilderTemplate templateForType(final GeneratedType type) {
         final JavaTypeName origName = type.getIdentifier();
-        final JavaTypeName builderName = origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER_STR);
+        final JavaTypeName builderName = origName.createSibling(origName.simpleName() + BindingMapping.BUILDER_SUFFIX);
 
         return new BuilderTemplate(new CodegenGeneratedTypeBuilder(builderName)
             .addEnclosingTransferObject(new CodegenGeneratedTOBuilder(

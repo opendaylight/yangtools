@@ -34,6 +34,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.Types;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 
 public class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final Type LIST_STRING_TYPE  = Types.listTypeFor(Types.STRING);
@@ -279,7 +280,7 @@ public class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private static String getJavaBuilderFileName(final String name) {
-        return getJavaFileName(name + "Builder");
+        return getJavaFileName(name + BindingMapping.BUILDER_SUFFIX);
     }
 
     private String getFileContent(final String fileName) throws IOException {

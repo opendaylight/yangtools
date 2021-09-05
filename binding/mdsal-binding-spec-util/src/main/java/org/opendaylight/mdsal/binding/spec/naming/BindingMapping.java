@@ -61,6 +61,8 @@ public final class BindingMapping {
     public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
     public static final @NonNull String RPC_SERVICE_SUFFIX = "Service";
     public static final @NonNull String NOTIFICATION_LISTENER_SUFFIX = "Listener";
+    public static final @NonNull String BUILDER_SUFFIX = "Builder";
+    public static final @NonNull String KEY_SUFFIX = "Key";
     public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
     public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
     public static final @NonNull String AUGMENTATION_FIELD = "augmentation";

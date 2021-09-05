@@ -807,7 +807,7 @@ abstract class AbstractTypeObjectGenerator<T extends EffectiveStatement<?, ?>> e
         for (String part : unionName.localNameComponents()) {
             sb.append(part);
         }
-        return JavaTypeName.create(unionName.packageName(), sb.append("Builder").toString());
+        return JavaTypeName.create(unionName.packageName(), sb.append(BindingMapping.BUILDER_SUFFIX).toString());
     }
 
     // FIXME: we should not rely on TypeDefinition

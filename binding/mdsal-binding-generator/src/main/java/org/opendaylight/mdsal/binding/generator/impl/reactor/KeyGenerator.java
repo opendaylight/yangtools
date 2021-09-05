@@ -23,9 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement> {
-    // FIXME: this should be a well-known constant
-    private static final String SUFFIX = "Key";
-
     private final ListGenerator listGen;
 
     KeyGenerator(final KeyEffectiveStatement statement, final AbstractCompositeGenerator<?> parent,
@@ -41,7 +38,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
 
     @Override
     Member createMember(final CollisionDomain domain) {
-        return domain.addSecondary(this, listGen.getMember(), SUFFIX);
+        return domain.addSecondary(this, listGen.getMember(), BindingMapping.KEY_SUFFIX);
     }
 
     @Override
