@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.ActionNodeContainerMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DataNodeContainerMixin;
@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.U
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.WhenConditionMixin;
 
 abstract class AbstractListEffectiveStatement
-        extends DefaultWithDataTree<QName, ListStatement, ListEffectiveStatement>
+        extends WithSubstatements<QName, ListStatement, ListEffectiveStatement>
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
@@ -43,7 +43,6 @@ abstract class AbstractListEffectiveStatement
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
-    private final @NonNull Object substatements;
     private final @NonNull QName argument;
     private final @NonNull Object keyDefinition;
 
@@ -52,7 +51,6 @@ abstract class AbstractListEffectiveStatement
             final ImmutableList<QName> keyDefinition) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
-        this.substatements = maskList(substatements);
         this.keyDefinition = maskList(keyDefinition);
         this.flags = flags;
     }
@@ -61,14 +59,8 @@ abstract class AbstractListEffectiveStatement
             final int flags) {
         super(original);
         this.argument = requireNonNull(argument);
-        this.substatements = original.substatements;
         this.keyDefinition = original.keyDefinition;
         this.flags = flags;
-    }
-
-    @Override
-    public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return unmaskList(substatements);
     }
 
     @Override
