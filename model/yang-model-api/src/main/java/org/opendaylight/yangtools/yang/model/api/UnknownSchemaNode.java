@@ -29,15 +29,4 @@ public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
      * @return string with the name of unknown node.
      */
     String getNodeParameter();
-
-    /**
-     * Get extension definition which identifies this node.
-     *
-     * @return extension definition if exists, null otherwise
-     * @deprecated This method is can cause cyclic dependencies in the object graph. Use
-     *             {@link SchemaContext#getExtensions()} with {@link #getNodeType()} instead.
-     */
-    // FIXME: YANGTOOLS-1317: remove this method
-    @Deprecated(forRemoval = true, since = "7.0.8")
-    ExtensionDefinition getExtensionDefinition();
 }

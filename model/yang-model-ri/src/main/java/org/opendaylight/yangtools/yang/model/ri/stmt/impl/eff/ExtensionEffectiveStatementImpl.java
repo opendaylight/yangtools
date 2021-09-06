@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -26,40 +24,6 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 
 public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName, ExtensionStatement>
         implements ExtensionDefinition, ExtensionEffectiveStatement, DocumentedNodeMixin<QName, ExtensionStatement> {
-    private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
-        boolean check(final ExtensionEffectiveStatementImpl current) {
-            final Deque<ExtensionEffectiveStatementImpl> stack = get();
-            if (stack != null) {
-                for (ExtensionEffectiveStatementImpl s : stack) {
-                    if (s == current) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        void push(final ExtensionEffectiveStatementImpl current) {
-            Deque<ExtensionEffectiveStatementImpl> stack = get();
-            if (stack == null) {
-                stack = new ArrayDeque<>(1);
-                set(stack);
-            }
-
-            stack.push(current);
-        }
-
-        void pop() {
-            Deque<ExtensionEffectiveStatementImpl> stack = get();
-            stack.pop();
-            if (stack.isEmpty()) {
-                remove();
-            }
-        }
-    }
-
-    private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
-
     private final Object substatements;
 
     public ExtensionEffectiveStatementImpl(final ExtensionStatement declared,
@@ -105,28 +69,11 @@ public final class ExtensionEffectiveStatementImpl extends DefaultArgument<QName
 
     @Override
     public String toString() {
-        if (TOSTRING_DETECTOR.check(this)) {
-            return recursedToString();
-        }
-
-        TOSTRING_DETECTOR.push(this);
-        try {
-            return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
-                    + "argument=" + getArgument()
-                    + ", qname=" + getQName()
-                    + ", yin=" + isYinElement()
-                    + ", extensionSchemaNodes=" + getUnknownSchemaNodes()
-                    + "]";
-        } finally {
-            TOSTRING_DETECTOR.pop();
-        }
-    }
-
-    private String recursedToString() {
         return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
-                + "argument=" + getArgument()
-                + ", qname=" + getQName()
-                + ", yin=" + isYinElement()
-                + " <RECURSIVE> ]";
+            + "argument=" + getArgument()
+            + ", qname=" + getQName()
+            + ", yin=" + isYinElement()
+            + ", extensionSchemaNodes=" + getUnknownSchemaNodes()
+            + "]";
     }
 }
