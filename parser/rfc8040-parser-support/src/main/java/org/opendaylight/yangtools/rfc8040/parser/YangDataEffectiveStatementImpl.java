@@ -15,6 +15,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import java.util.Optional;
+import org.checkerframework.checker.units.qual.K;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -26,18 +27,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 @Beta
-final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
+final class YangDataEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<String, YangDataStatement>
         implements YangDataEffectiveStatement, YangDataSchemaNode {
     private final @NonNull QName argumentQName;
     private final @NonNull ContainerEffectiveStatement container;
 
     YangDataEffectiveStatementImpl(final Current<String, YangDataStatement> stmt,
              final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname) {
-        super(stmt, substatements);
+        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
         this.argumentQName = requireNonNull(qname);
 
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();

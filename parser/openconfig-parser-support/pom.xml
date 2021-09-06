@@ -58,6 +58,7 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-rfc7950</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
