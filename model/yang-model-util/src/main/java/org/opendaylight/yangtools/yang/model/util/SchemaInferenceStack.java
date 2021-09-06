@@ -57,6 +57,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.spi.AbstractEffectiveStatementInference;
@@ -816,10 +817,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull EffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
-        // TODO: 8.0.0: revisit this once we have TypedefNamespace working
-        final TypedefEffectiveStatement ret = parent.streamEffectiveSubstatements(TypedefEffectiveStatement.class)
-            .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
-            .findFirst()
+        final TypedefEffectiveStatement ret = parent.get(TypedefNamespace.class, nodeIdentifier)
             .orElseThrow(() -> new IllegalArgumentException("Typedef " + nodeIdentifier + " not present"));
         deque.push(ret);
         return ret;

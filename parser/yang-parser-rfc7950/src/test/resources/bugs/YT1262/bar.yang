@@ -1,0 +1,9 @@
+submodule bar {
+  belongs-to foo {
+    prefix foo;
+  }
+
+  typedef sdef {
+    type string;
+  }
+}
