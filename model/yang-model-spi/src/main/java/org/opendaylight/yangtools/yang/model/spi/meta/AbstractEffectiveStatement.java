@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -34,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
  * This finds immense value in catering the common case, for example effective statements which can, but typically
  * do not, contain substatements.
  *
- * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  * @param <D> Class representing declared version of this statement.
  */
 abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>

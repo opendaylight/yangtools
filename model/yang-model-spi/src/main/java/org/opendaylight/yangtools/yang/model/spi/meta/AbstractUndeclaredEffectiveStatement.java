@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -46,7 +47,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * Base stateless superclass form {@link SchemaTreeAwareEffectiveStatement}s. It maintains the contents of schema
      * tree namespace based of effective substatements.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
@@ -79,7 +80,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * Base stateless superclass form {@link DataTreeAwareEffectiveStatement}s. It maintains the contents of data tree
      * namespace based of effective substatements.
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
@@ -101,7 +102,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
     /**
      * Stateful version of {@link WithSchemaTree}. Schema tree namespace is eagerly instantiated (and checked).
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */
@@ -147,7 +148,7 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      * Stateful version of {@link WithDataTree}. Schema tree and data tree namespaces are eagerly instantiated
      * (and checked).
      *
-     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
      * @param <E> Class representing effective version of this statement.
      */

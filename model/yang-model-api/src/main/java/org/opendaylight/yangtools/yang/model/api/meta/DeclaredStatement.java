@@ -16,11 +16,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 
 /**
  * Represents declared statement.
  *
- * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ * @param <A> Argument type ({@link Empty} if statement does not have argument.)
  */
 public interface DeclaredStatement<A> extends ModelStatement<A> {
     /**
