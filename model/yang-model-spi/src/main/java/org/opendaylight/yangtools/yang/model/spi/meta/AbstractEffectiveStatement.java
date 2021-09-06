@@ -84,6 +84,12 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
 
     // TODO: below methods need to find a better place, this is just a temporary hideout as their public class is on
     //       its way out
+    /**
+     * Create a Map containing the contents of the schema tree. Retur
+     * @param substatements Substatements to index
+     * @return Index of the schema tree as a mutable Map
+     * @throws NullPointerException if {@code substatements} is null
+     */
     protected static @NonNull Map<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
             final Collection<? extends EffectiveStatement<?, ?>> substatements) {
         final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
