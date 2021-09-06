@@ -23,8 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -90,6 +92,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
@@ -184,6 +188,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIfFeatureEffe
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLocalKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyMaxElementsEffectiveStatement;
@@ -235,6 +240,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIfFeatureEf
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLengthEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLocalKeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularMaxElementsEffectiveStatement;
@@ -580,6 +586,29 @@ public final class EffectiveStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return substatements.isEmpty() ? new EmptyLengthEffectiveStatement(declared)
             : new RegularLengthEffectiveStatement(declared, substatements);
+    }
+
+    public static ListEffectiveStatement copyList(final ListEffectiveStatement original, final QName argument,
+            final int flags, final @Nullable ListSchemaNode newOriginal) {
+        if (original instanceof RegularListEffectiveStatement) {
+            return new RegularListEffectiveStatement((RegularListEffectiveStatement) original, argument, flags,
+                newOriginal);
+        } else if (original instanceof EmptyListEffectiveStatement) {
+            return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original, argument, flags,
+                newOriginal);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static ListEffectiveStatement createList(final ListStatement declared, final QName argument,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final ImmutableList<QName> keyDefinition, final @Nullable ElementCountConstraint elementCountConstraint,
+            final @Nullable ListSchemaNode original) {
+        return original == null && elementCountConstraint == null
+            ? new EmptyListEffectiveStatement(declared, argument, flags, substatements, keyDefinition)
+                : new RegularListEffectiveStatement(declared, argument, flags, substatements, keyDefinition,
+                    elementCountConstraint, original);
     }
 
     public static MandatoryEffectiveStatement createMandatory(final MandatoryStatement declared) {

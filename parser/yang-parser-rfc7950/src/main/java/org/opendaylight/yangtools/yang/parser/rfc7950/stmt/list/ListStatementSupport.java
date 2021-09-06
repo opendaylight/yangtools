@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -37,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -138,17 +137,8 @@ public final class ListStatementSupport
     @Override
     public ListEffectiveStatement copyEffective(final Current<QName, ListStatement> stmt,
             final ListEffectiveStatement original) {
-        final int flags = computeFlags(stmt, original.effectiveSubstatements());
-        if (original instanceof RegularListEffectiveStatement) {
-            return new RegularListEffectiveStatement((RegularListEffectiveStatement) original,
-                stmt.original(ListSchemaNode.class), stmt.getArgument(), flags);
-        } else if (original instanceof EmptyListEffectiveStatement) {
-            return new RegularListEffectiveStatement((EmptyListEffectiveStatement) original,
-                stmt.original(ListSchemaNode.class), stmt.getArgument(), flags);
-        } else {
-            // Safe fallback
-            return super.copyEffective(stmt, original);
-        }
+        return EffectiveStatements.copyList(original, stmt.getArgument(),
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(ListSchemaNode.class));
     }
 
     @Override
@@ -186,15 +176,10 @@ public final class ListStatementSupport
         EffectiveStmtUtils.checkUniqueTypedefs(stmt, substatements);
         EffectiveStmtUtils.checkUniqueUses(stmt, substatements);
 
-        final Optional<ElementCountConstraint> elementCountConstraint =
-            EffectiveStmtUtils.createElementCountConstraint(substatements);
-        final QName qname = stmt.getArgument();
-        final ListSchemaNode original = stmt.original(ListSchemaNode.class);
         try {
-            return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyListEffectiveStatement(stmt.declared(), qname, flags, substatements, keyDefinition)
-                    : new RegularListEffectiveStatement(stmt.declared(), qname, flags, substatements, keyDefinition,
-                        elementCountConstraint.orElse(null), original);
+            return EffectiveStatements.createList(stmt.declared(), stmt.getArgument(), flags, substatements,
+                keyDefinition, EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null),
+                stmt.original(ListSchemaNode.class));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Optional;
@@ -15,14 +15,15 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
-final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
-    EmptyListEffectiveStatement(final ListStatement declared, final QName argument, final int flags,
+public final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
+    public EmptyListEffectiveStatement(final ListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
         super(declared, argument, flags, substatements, keyDefinition);
     }
 
-    EmptyListEffectiveStatement(final EmptyListEffectiveStatement original, final QName argument, final int flags) {
+    public EmptyListEffectiveStatement(final EmptyListEffectiveStatement original, final QName argument,
+            final int flags) {
         super(original, argument, flags);
     }
 
