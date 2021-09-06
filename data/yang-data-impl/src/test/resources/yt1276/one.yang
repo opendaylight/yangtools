@@ -1,0 +1,10 @@
+module one {
+  namespace one;
+  prefix one;
+  yang-version 1.1;
+
+  container foo {
+      presence blah;
+  }
+}
+

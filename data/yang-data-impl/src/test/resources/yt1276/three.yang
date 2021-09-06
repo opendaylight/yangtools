@@ -1,0 +1,20 @@
+module three {
+  namespace three;
+  prefix three;
+  yang-version 1.1;
+
+  import one { prefix one; }
+  import two { prefix two; }
+
+  augment /one:foo/two:bar {
+    when "current()"; /* dummy */
+    leaf baz-mandatory {
+      type string;
+      mandatory true;
+    }
+    leaf baz-non-mandatory {
+      type string;
+    }
+  }
+}
+

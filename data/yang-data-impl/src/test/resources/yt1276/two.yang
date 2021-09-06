@@ -1,0 +1,13 @@
+module two {
+  namespace two;
+  prefix two;
+  yang-version 1.1;
+
+  import one { prefix one; }
+
+  augment /one:foo {
+    when "current()"; /* dummy */
+    container bar;
+  }
+}
+
