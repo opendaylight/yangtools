@@ -23,7 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespacedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**
  * Baseline stateless implementation of an EffectiveStatement. This class adds a few default implementations and
@@ -109,10 +111,20 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
     }
 
+    protected static @NonNull ImmutableMap<QName, TypedefEffectiveStatement> createTypedefNamespace(
+            final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        final Map<QName, TypedefEffectiveStatement> typedefs = new LinkedHashMap<>();
+
+        substatements.stream().filter(TypedefEffectiveStatement.class::isInstance)
+            .forEach(child -> putChild(typedefs, (TypedefEffectiveStatement) child, "typedef"));
+
+        return ImmutableMap.copyOf(typedefs);
+    }
+
     private static boolean indexDataTree(final Map<QName, DataTreeEffectiveStatement<?>> map,
             final EffectiveStatement<?, ?> stmt) {
         if (stmt instanceof DataTreeEffectiveStatement) {
-            putChild(map, (DataTreeEffectiveStatement<?>) stmt, "data");
+            putChild(map, (DataTreeEffectiveStatement<?>) stmt, "data tree");
             return true;
         } else if (stmt instanceof ChoiceEffectiveStatement) {
             // For choice statements go through all their cases and fetch their data children
@@ -132,13 +144,13 @@ abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
         return false;
     }
 
-    private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map, final T child,
-            final String tree) {
+    private static <T extends NamespacedEffectiveStatement<?>> void putChild(final Map<QName, T> map, final T child,
+            final String namespace) {
         final QName id = child.getIdentifier();
         final T prev = map.putIfAbsent(id, child);
         if (prev != null) {
             throw new SubstatementIndexingException(
-                "Cannot add " + tree + " tree child with name " + id + ", a conflicting child already exists");
+                "Cannot add " + namespace + " child with name " + id + ", a conflicting child already exists");
         }
     }
 }
