@@ -82,6 +82,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         return addedByUses;
     }
 
+    @Deprecated
     @Override
     public ExtensionDefinition getExtensionDefinition() {
         return extension;
