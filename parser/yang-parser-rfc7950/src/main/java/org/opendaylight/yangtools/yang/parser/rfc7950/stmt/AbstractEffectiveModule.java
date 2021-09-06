@@ -50,7 +50,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<UnqualifiedQName>,
         E extends DataTreeAwareEffectiveStatement<UnqualifiedQName, D>>
-        extends DefaultWithDataTree<UnqualifiedQName, D, E>
+        extends WithTypedefNamespace<UnqualifiedQName, D, E>
         implements ModuleLike, DocumentedNodeMixin<UnqualifiedQName, D>,
             NotificationNodeContainerCompat<UnqualifiedQName, D, E> {
     private final String prefix;
