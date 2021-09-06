@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 
 /**
  * Base stateless superclass for statements which (logically) always have an associated {@link DeclaredStatement}. This
@@ -87,7 +89,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
     }
 
     /**
-     * Base stateless superclass form {@link DataTreeAwareEffectiveStatement}s. It maintains the contents of data tree
+     * Base stateless superclass for {@link DataTreeAwareEffectiveStatement}s. It maintains the contents of data tree
      * namespace based of effective substatements.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -268,6 +270,32 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
      */
     public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
+        public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>,
+                E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
+            private final @NonNull ImmutableMap<QName, TypedefEffectiveStatement> typedefNamespace;
+
+            protected WithTypedefNamespace(final D declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, substatements);
+                this.typedefNamespace = createTypedefNamespace(substatements);
+            }
+
+            protected WithTypedefNamespace(final WithTypedefNamespace<A, D, E> original) {
+                super(original);
+                this.typedefNamespace = original.typedefNamespace;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected <K, V, N extends IdentifierNamespace<K, V>>
+            Optional<? extends Map<K, V>> getNamespaceContents(final Class<N> namespace) {
+                if (TypedefNamespace.class.equals(namespace)) {
+                    return Optional.of((Map<K, V>) typedefNamespace);
+                }
+                return super.getNamespaceContents(namespace);
+            }
+        }
+
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull Object substatements;
