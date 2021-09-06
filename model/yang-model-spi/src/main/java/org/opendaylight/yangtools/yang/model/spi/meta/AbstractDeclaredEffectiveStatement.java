@@ -227,16 +227,19 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
         public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
                 E extends SchemaTreeAwareEffectiveStatement<A, D>> extends DefaultWithSchemaTree<A, D, E> {
+            private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final D declared,
                     final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(declared, substatements);
+                super(declared);
                 this.substatements = maskList(substatements);
+                this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
             }
 
             protected WithSubstatements(final WithSubstatements<A, D, E> original) {
                 super(original);
+                this.schemaTree = original.schemaTree;
                 this.substatements = original.substatements;
             }
 
@@ -244,20 +247,21 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
             }
+
+            @Override
+            protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+                return schemaTree;
+            }
         }
 
-        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull D declared;
 
-        protected DefaultWithSchemaTree(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        protected DefaultWithSchemaTree(final D declared) {
             this.declared = requireNonNull(declared);
-            this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
         }
 
         protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
             this.declared = original.declared;
-            this.schemaTree = original.schemaTree;
         }
 
         @Override
@@ -266,8 +270,8 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         @Override
-        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
-            return schemaTree;
+        protected Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+            return Map.of();
         }
     }
 
@@ -283,16 +287,25 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
         public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
                 E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
+            private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+            private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
             private final @NonNull Object substatements;
 
             protected WithSubstatements(final D declared,
                     final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(declared, substatements);
+                super(declared);
                 this.substatements = maskList(substatements);
+
+                // Note we call schema.values() so we do not retain them, as that is just pure memory overhead
+                final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
+                this.schemaTree = ImmutableMap.copyOf(schema);
+                this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
             }
 
             protected WithSubstatements(final WithSubstatements<A, D, E> original) {
                 super(original);
+                this.schemaTree = original.schemaTree;
+                this.dataTree = original.dataTree;
                 this.substatements = original.substatements;
             }
 
@@ -300,24 +313,26 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
             public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
                 return unmaskList(substatements);
             }
+
+            @Override
+            protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+                return schemaTree;
+            }
+
+            @Override
+            protected final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
+                return dataTree;
+            }
         }
 
-        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
-        private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
         private final @NonNull D declared;
 
-        protected DefaultWithDataTree(final D declared,
-                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        protected DefaultWithDataTree(final D declared) {
             this.declared = requireNonNull(declared);
-            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
-            this.schemaTree = ImmutableMap.copyOf(schema);
-            this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
         }
 
         protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
             this.declared = original.declared;
-            this.schemaTree = original.schemaTree;
-            this.dataTree = original.dataTree;
         }
 
         @Override
@@ -326,13 +341,13 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         @Override
-        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
-            return schemaTree;
+        protected Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+            return ImmutableMap.of();
         }
 
         @Override
-        protected final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
-            return dataTree;
+        protected Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
+            return ImmutableMap.of();
         }
     }
 }
