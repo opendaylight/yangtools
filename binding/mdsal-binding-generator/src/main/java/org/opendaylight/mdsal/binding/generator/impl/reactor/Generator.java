@@ -99,11 +99,11 @@ public abstract class Generator implements Iterable<Generator> {
         return true;
     }
 
-    @Nullable Generator findGenerator(final EffectiveStatement<?, ?> stmt) {
+    @Nullable AbstractExplicitGenerator<?> findGenerator(final EffectiveStatement<?, ?> stmt) {
         return null;
     }
 
-    final @NonNull Generator getGenerator(final EffectiveStatement<?, ?> stmt) {
+    final @NonNull AbstractExplicitGenerator<?> getGenerator(final EffectiveStatement<?, ?> stmt) {
         return verifyNotNull(findGenerator(stmt), "Cannot match statement %s in %s", stmt, this);
     }
 

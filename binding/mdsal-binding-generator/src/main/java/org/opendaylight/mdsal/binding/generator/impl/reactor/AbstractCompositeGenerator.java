@@ -83,10 +83,13 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
     }
 
     @Override
-    final @Nullable Generator findGenerator(final EffectiveStatement<?, ?> stmt) {
+    final @Nullable AbstractExplicitGenerator<?> findGenerator(final EffectiveStatement<?, ?> stmt) {
         for (Generator gen : children) {
-            if (gen instanceof AbstractExplicitGenerator && ((AbstractExplicitGenerator<?>) gen).statement() == stmt) {
-                return gen;
+            if (gen instanceof AbstractExplicitGenerator) {
+                final AbstractExplicitGenerator<?> ret = (AbstractExplicitGenerator<?>) gen;
+                if (ret.statement() == stmt) {
+                    return ret;
+                }
             }
         }
         return null;
