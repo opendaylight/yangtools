@@ -1,0 +1,62 @@
+module foo {
+  namespace foo;
+  prefix foo;
+  yang-version 1.1;
+
+  include bar;
+
+  typedef fdef {
+    type string;
+  }
+
+  grouping grp {
+    typedef gdef {
+      type string;
+    }
+  }
+
+  container cont {
+    typedef cdef {
+      type string;
+    }
+
+    action act {
+      typedef adef {
+        type string;
+      }
+
+      input {
+        typedef idef {
+          type string;
+        }
+      }
+
+      output {
+        typedef odef {
+          type string;
+        }
+      }
+    }
+  }
+
+  list list {
+    typedef ldef {
+      type string;
+    }
+
+    config false;
+  }
+
+  notification not {
+    typedef ndef {
+      type string;
+    }
+  }
+
+  rpc rpc {
+    typedef rdef {
+      type string;
+    }
+  }
+}
+
