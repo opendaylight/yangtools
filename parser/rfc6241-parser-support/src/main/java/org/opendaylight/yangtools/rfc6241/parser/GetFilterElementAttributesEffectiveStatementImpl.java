@@ -8,30 +8,26 @@
 package org.opendaylight.yangtools.rfc6241.parser;
 
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesEffectiveStatement;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesStatement;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class GetFilterElementAttributesEffectiveStatementImpl
-        extends UnknownEffectiveStatementBase<Empty, GetFilterElementAttributesStatement>
+        extends AbstractEffectiveUnknownSchmemaNode<Empty, GetFilterElementAttributesStatement>
         implements GetFilterElementAttributesEffectiveStatement, GetFilterElementAttributesSchemaNode {
-    private final @NonNull QName qname;
-
     GetFilterElementAttributesEffectiveStatementImpl(final Current<Empty, GetFilterElementAttributesStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt, substatements);
-        qname = stmt.publicDefinition().getStatementName();
+        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
     }
 
     @Override
     public QName getQName() {
-        return qname;
+        return getNodeType();
     }
 
     @Override
