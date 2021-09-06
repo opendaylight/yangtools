@@ -13,15 +13,15 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiv
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
 final class OpenConfigVersionEffectiveStatementImpl
-        extends UnknownEffectiveStatementBase<SemVer, OpenConfigVersionStatement>
+        extends AbstractEffectiveUnknownSchmemaNode<SemVer, OpenConfigVersionStatement>
         implements OpenConfigVersionEffectiveStatement {
     OpenConfigVersionEffectiveStatementImpl(final Current<SemVer, OpenConfigVersionStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt, substatements);
+        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
     }
 
     @Override

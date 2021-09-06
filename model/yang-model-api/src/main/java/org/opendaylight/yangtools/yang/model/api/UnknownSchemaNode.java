@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownEffectiveStatement;
 
@@ -21,7 +22,7 @@ public interface UnknownSchemaNode extends SchemaNode, CopyableNode,
      *
      * @return QName with name the name of the unknown node.
      */
-    QName getNodeType();
+    @NonNull QName getNodeType();
 
     /**
      * Returns name of the unknown node.

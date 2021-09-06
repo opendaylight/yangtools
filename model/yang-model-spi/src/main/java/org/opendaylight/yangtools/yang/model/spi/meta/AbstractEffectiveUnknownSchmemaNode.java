@@ -13,32 +13,37 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 
 /**
- * A declared {@link AbstractDeclaredEffectiveStatement} with {@link DocumentedNode.WithStatus}.
+ * A declared {@link AbstractDeclaredEffectiveStatement} with {@link UnknownSchemaNode}.
  */
 @Beta
-public abstract class AbstractEffectiveDocumentedNodeWithStatus<A, D extends DeclaredStatement<A>>
+public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownStatement<A>>
         extends AbstractDeclaredEffectiveStatement<A, D>
-        implements DocumentedNodeMixin<A, D>, DocumentedNode.WithStatus {
+        implements DocumentedNodeMixin<A, D>, UnknownSchemaNode {
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final @NonNull D declared;
-    private final A argument;
+    private final @NonNull A argument;
+    private final boolean addedByUses;
+    private final boolean augmenting;
 
-    protected AbstractEffectiveDocumentedNodeWithStatus(final A argument, final @NonNull D declared,
+    protected AbstractEffectiveUnknownSchmemaNode(final @NonNull D declared, final A argument,
+            final CopyableNode history,
             final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        this.argument = argument;
+        this.argument = requireNonNull(argument);
         this.declared = requireNonNull(declared);
         this.substatements = requireNonNull(substatements);
+        this.augmenting = history.isAugmenting();
+        this.addedByUses = history.isAddedByUses();
     }
 
     @Override
@@ -56,6 +61,35 @@ public abstract class AbstractEffectiveDocumentedNodeWithStatus<A, D extends Dec
         return substatements;
     }
 
+    @Override
+    public final QName getNodeType() {
+        return statementDefinition().getStatementName();
+    }
+
+    @Override
+    public final String getNodeParameter() {
+        final String rawArgument = getDeclared().rawArgument();
+        return rawArgument == null ? "" : rawArgument;
+    }
+
+    @Deprecated
+    @Override
+    public final boolean isAddedByUses() {
+        return addedByUses;
+    }
+
+    @Deprecated
+    @Override
+    public final boolean isAugmenting() {
+        return augmenting;
+    }
+
+    @Override
+    public String toString() {
+        final QName type = getNodeType();
+        return type.getNamespace() + ":" + type.getLocalName() + " " + getNodeParameter();
+    }
+
     @SuppressWarnings("unchecked")
     public final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
         return Collection.class.cast(Collections2.filter(effectiveSubstatements(), type::isInstance));
@@ -64,15 +98,5 @@ public abstract class AbstractEffectiveDocumentedNodeWithStatus<A, D extends Dec
     @Override
     public final Status getStatus() {
         return findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
-    }
-
-    protected final <T> @Nullable T firstSubstatementOfType(final Class<T> type) {
-        return effectiveSubstatements().stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
-    }
-
-    protected final <R> R firstSubstatementOfType(final Class<?> type, final Class<R> returnType) {
-        return effectiveSubstatements().stream()
-                .filter(((Predicate<Object>)type::isInstance).and(returnType::isInstance))
-                .findFirst().map(returnType::cast).orElse(null);
     }
 }

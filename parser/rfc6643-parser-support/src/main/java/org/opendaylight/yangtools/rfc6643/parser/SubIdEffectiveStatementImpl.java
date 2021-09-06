@@ -15,14 +15,14 @@ import org.opendaylight.yangtools.rfc6643.model.api.SubIdStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractEffectiveUnknownSchmemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 
-final class SubIdEffectiveStatementImpl extends UnknownEffectiveStatementBase<Uint32, SubIdStatement>
+final class SubIdEffectiveStatementImpl extends AbstractEffectiveUnknownSchmemaNode<Uint32, SubIdStatement>
         implements SubIdEffectiveStatement, SubIdSchemaNode {
     SubIdEffectiveStatementImpl(final Current<Uint32, SubIdStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        super(stmt, substatements);
+        super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
     }
 
     @Override
