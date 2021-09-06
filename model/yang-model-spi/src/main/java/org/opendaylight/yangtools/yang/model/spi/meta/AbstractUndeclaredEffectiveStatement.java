@@ -108,34 +108,22 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      */
     public abstract static class DefaultWithSchemaTree<A, D extends DeclaredStatement<A>,
             E extends SchemaTreeAwareEffectiveStatement<A, D>> extends WithSchemaTree<A, D, E> {
-        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
-                E extends SchemaTreeAwareEffectiveStatement<A, D>> extends DefaultWithSchemaTree<A, D, E> {
-            private final @NonNull Object substatements;
-
-            protected WithSubstatements(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(substatements);
-                this.substatements = maskList(substatements);
-            }
-
-            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
-                super(original);
-                this.substatements = original.substatements;
-            }
-
-            @Override
-            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-                return unmaskList(substatements);
-            }
-        }
-
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull Object substatements;
 
         protected DefaultWithSchemaTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            this.substatements = maskList(substatements);
             this.schemaTree = ImmutableMap.copyOf(createSchemaTreeNamespace(substatements));
         }
 
         protected DefaultWithSchemaTree(final DefaultWithSchemaTree<A, D, E> original) {
             this.schemaTree = original.schemaTree;
+            this.substatements = original.substatements;
+        }
+
+        @Override
+        public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+            return unmaskList(substatements);
         }
 
         @Override
@@ -154,38 +142,26 @@ public abstract class AbstractUndeclaredEffectiveStatement<A, D extends Declared
      */
     public abstract static class DefaultWithDataTree<A, D extends DeclaredStatement<A>,
             E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
-        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
-                E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithDataTree<A, D, E> {
-            private final @NonNull Object substatements;
-
-            protected WithSubstatements(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-                super(substatements);
-                this.substatements = maskList(substatements);
-            }
-
-            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
-                super(original);
-                this.substatements = original.substatements;
-            }
-
-            @Override
-            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-                return unmaskList(substatements);
-            }
-        }
-
         private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
         private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
+        private final @NonNull Object substatements;
 
         protected DefaultWithDataTree(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
             final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
             this.schemaTree = ImmutableMap.copyOf(schema);
             this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+            this.substatements = maskList(substatements);
         }
 
         protected DefaultWithDataTree(final DefaultWithDataTree<A, D, E> original) {
             this.schemaTree = original.schemaTree;
             this.dataTree = original.dataTree;
+            this.substatements = original.substatements;
+        }
+
+        @Override
+        public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+            return unmaskList(substatements);
         }
 
         @Override
