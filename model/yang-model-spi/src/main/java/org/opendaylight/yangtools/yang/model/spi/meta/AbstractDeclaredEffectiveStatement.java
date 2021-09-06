@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeAwareEffectiveStat
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefNamespace;
 
 /**
  * Base stateless superclass for statements which (logically) always have an associated {@link DeclaredStatement}. This
@@ -87,7 +89,7 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
     }
 
     /**
-     * Base stateless superclass form {@link DataTreeAwareEffectiveStatement}s. It maintains the contents of data tree
+     * Base stateless superclass for {@link DataTreeAwareEffectiveStatement}s. It maintains the contents of data tree
      * namespace based of effective substatements.
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
@@ -107,6 +109,29 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         }
 
         protected abstract Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace();
+    }
+
+    /**
+     * Base stateless superclass for {@link DataTreeAwareEffectiveStatement}s which may also contain {@code typedef}
+     * statements and thus have a meaningful {@link TypedefNamespace}.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     * @param <E> Class representing effective version of this statement.
+     */
+    public abstract static class WithTypedefNamespace<A, D extends DeclaredStatement<A>,
+            E extends DataTreeAwareEffectiveStatement<A, D>> extends WithDataTree<A, D, E> {
+        @Override
+        @SuppressWarnings("unchecked")
+        protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
+                final Class<N> namespace) {
+            if (TypedefNamespace.class.equals(namespace)) {
+                return Optional.of((Map<K, V>) typedefNamespace());
+            }
+            return super.getNamespaceContents(namespace);
+        }
+
+        protected abstract Map<QName, TypedefEffectiveStatement> typedefNamespace();
     }
 
     /**
@@ -333,6 +358,78 @@ public abstract class AbstractDeclaredEffectiveStatement<A, D extends DeclaredSt
         @Override
         protected final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
             return dataTree;
+        }
+    }
+
+    /**
+     * Stateful version of {@link WithTypedefNamespace}. Typedef namespace is eagerly instantiated (and checked).
+     *
+     * @param <A> Argument type ({@link Empty} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     * @param <E> Class representing effective version of this statement.
+     */
+    public abstract static class DefaultWithTypedefNamespace<A, D extends DeclaredStatement<A>,
+            E extends DataTreeAwareEffectiveStatement<A, D>> extends WithTypedefNamespace<A, D, E> {
+        public abstract static class WithSubstatements<A, D extends DeclaredStatement<A>,
+                E extends DataTreeAwareEffectiveStatement<A, D>> extends DefaultWithTypedefNamespace<A, D, E> {
+            private final @NonNull Object substatements;
+
+            protected WithSubstatements(final D declared,
+                    final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+                super(declared, substatements);
+                this.substatements = maskList(substatements);
+            }
+
+            protected WithSubstatements(final WithSubstatements<A, D, E> original) {
+                super(original);
+                this.substatements = original.substatements;
+            }
+
+            @Override
+            public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+                return unmaskList(substatements);
+            }
+        }
+
+        private final @NonNull ImmutableMap<QName, TypedefEffectiveStatement> typedefNamespace;
+        private final @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTree;
+        private final @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTree;
+        private final @NonNull D declared;
+
+        protected DefaultWithTypedefNamespace(final D declared,
+                final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+            this.declared = requireNonNull(declared);
+            final Map<QName, SchemaTreeEffectiveStatement<?>> schema = createSchemaTreeNamespace(substatements);
+            this.schemaTree = ImmutableMap.copyOf(schema);
+            this.dataTree = createDataTreeNamespace(schema.values(), schemaTree);
+            this.typedefNamespace = createTypedefNamespace(substatements);
+        }
+
+        protected DefaultWithTypedefNamespace(final DefaultWithTypedefNamespace<A, D, E> original) {
+            this.declared = original.declared;
+            this.schemaTree = original.schemaTree;
+            this.dataTree = original.dataTree;
+            this.typedefNamespace = original.typedefNamespace;
+        }
+
+        @Override
+        public final D getDeclared() {
+            return declared;
+        }
+
+        @Override
+        protected final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace() {
+            return schemaTree;
+        }
+
+        @Override
+        protected final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace() {
+            return dataTree;
+        }
+
+        @Override
+        protected final Map<QName, TypedefEffectiveStatement> typedefNamespace() {
+            return typedefNamespace;
         }
     }
 }
