@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
-import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree;
+import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultWithDataTree.WithTypedefNamespace;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OperationContainerMixin;
 
 public final class DeclaredOutputEffectiveStatement
-        extends DefaultWithDataTree<QName, OutputStatement, OutputEffectiveStatement>
+        extends WithTypedefNamespace<QName, OutputStatement, OutputEffectiveStatement>
         implements OutputEffectiveStatement, OutputSchemaNode, OperationContainerMixin<OutputStatement> {
     private final @NonNull QName argument;
     private final int flags;
