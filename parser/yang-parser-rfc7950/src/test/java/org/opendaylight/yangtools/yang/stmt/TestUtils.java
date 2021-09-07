@@ -17,8 +17,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -27,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
@@ -95,11 +92,6 @@ public final class TestUtils {
                 .addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)))
                 .buildEffective()
                 .getModules().iterator().next();
-    }
-
-    @Deprecated(forRemoval = true)
-    public static Optional<? extends @NonNull Module> findModule(final SchemaContext context, final String moduleName) {
-        return context.getModules().stream().filter(module -> moduleName.equals(module.getName())).findAny();
     }
 
     public static ModuleImport findImport(final Collection<? extends ModuleImport> imports, final String prefix) {

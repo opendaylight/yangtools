@@ -317,8 +317,8 @@ public class YangParserWithContextTest {
         final StatementStreamSource test2 = sourceForResource("/context-augment-test/test2.yang");
         final StatementStreamSource test3 = sourceForResource("/context-augment-test/test3.yang");
 
-        final SchemaContext context = TestUtils.parseYangSources(resource, test1, test2, test3);
-        final Module t4 = TestUtils.findModule(context, "test4").get();
+        final Module t4 = TestUtils.parseYangSources(resource, test1, test2, test3).findModules("test4").iterator()
+            .next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) t4.getDataChildByName(QName.create(
                 t4.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(t4.getQNameModule(),

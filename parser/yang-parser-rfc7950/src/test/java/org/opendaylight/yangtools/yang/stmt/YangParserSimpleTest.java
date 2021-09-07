@@ -44,7 +44,7 @@ public class YangParserSimpleTest {
     @Before
     public void init() throws Exception {
         context = TestUtils.loadModules(getClass().getResource("/simple-test").toURI());
-        testModule = TestUtils.findModule(context, "simple-nodes").get();
+        testModule = context.findModules("simple-nodes").iterator().next();
     }
 
     @Test
