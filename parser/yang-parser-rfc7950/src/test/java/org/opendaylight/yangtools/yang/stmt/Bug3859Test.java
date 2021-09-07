@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 public class Bug3859Test {
     @Test
     public void test() throws Exception {
-        final Module bug3859 = TestUtils.findModule(
-            TestUtils.loadModules(getClass().getResource("/bugs/bug3859").toURI()), "reference-in-unknown").get();
-        assertNotNull(bug3859);
+        assertEquals(1, TestUtils.loadModules(getClass().getResource("/bugs/bug3859").toURI())
+            .findModules("reference-in-unknown").size());
     }
 }

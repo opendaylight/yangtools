@@ -26,12 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileListStmtTest extends AbstractYinModulesTest {
     @Test
     public void testListAndLeaves() {
-        final Module testModule = TestUtils.findModule(context, "config").get();
+        final Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(QName.create(

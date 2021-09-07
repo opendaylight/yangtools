@@ -17,13 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileRpcStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testRpc() {
-        Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
+        Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
 
         Collection<? extends RpcDefinition> rpcs = testModule.getRpcs();
         assertEquals(1, rpcs.size());

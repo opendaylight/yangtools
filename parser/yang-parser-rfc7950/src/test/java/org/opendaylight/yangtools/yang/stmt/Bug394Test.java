@@ -29,8 +29,8 @@ public class Bug394Test {
     @Test
     public void testParseList() throws Exception {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/bugs/bug394-retest").toURI());
-        final Module bug394 = TestUtils.findModule(context, "bug394").get();
-        final Module bug394_ext = TestUtils.findModule(context, "bug394-ext").get();
+        final Module bug394 = context.findModules("bug394").iterator().next();
+        final Module bug394_ext = context.findModules("bug394-ext").iterator().next();
 
         final ContainerSchemaNode logrecords = (ContainerSchemaNode) bug394.getDataChildByName(QName.create(
                 bug394.getQNameModule(), "logrecords"));

@@ -20,13 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testChoiceAndCases() {
-        final Module testModule = TestUtils.findModule(context, "config").get();
+        final Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(

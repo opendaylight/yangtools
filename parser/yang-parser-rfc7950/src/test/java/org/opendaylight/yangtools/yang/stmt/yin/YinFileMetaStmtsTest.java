@@ -10,17 +10,14 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URISyntaxException;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileMetaStmtsTest extends AbstractYinModulesTest {
-
     @Test
-    public void testMetaStatements() throws URISyntaxException {
-        Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
+    public void testMetaStatements() {
+        Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
         assertNotNull(testModule);
 
         assertEquals(Optional.of("IETF NETCONF (Network Configuration) Working Group"), testModule.getOrganization());

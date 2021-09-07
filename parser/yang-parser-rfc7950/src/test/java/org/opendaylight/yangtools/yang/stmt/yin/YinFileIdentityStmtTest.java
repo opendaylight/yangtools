@@ -14,19 +14,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileIdentityStmtTest extends AbstractYinModulesTest {
-
     @Test
-    public void testIdentity() throws URISyntaxException {
-        Module testModule = TestUtils.findModule(context, "config").get();
+    public void testIdentity() {
+        Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
