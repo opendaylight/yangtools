@@ -5,35 +5,37 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
+package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
+
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
-final class SlimLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
-    SlimLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final LeafListSchemaNode original, final ElementCountConstraint elementCountConstraint) {
+public final class RegularLeafListEffectiveStatement extends AbstractNonEmptyLeafListEffectiveStatement {
+    private final @NonNull ImmutableSet<String> defaults;
+
+    public RegularLeafListEffectiveStatement(final LeafListStatement declared, final QName argument, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final LeafListSchemaNode original,
+            final ImmutableSet<String> defaults, final ElementCountConstraint elementCountConstraint) {
         super(declared, argument, flags, substatements, original, elementCountConstraint);
+        this.defaults = requireNonNull(defaults);
     }
 
-    SlimLeafListEffectiveStatement(final SlimLeafListEffectiveStatement originalEffective,
+    public RegularLeafListEffectiveStatement(final RegularLeafListEffectiveStatement originalEffective,
             final LeafListSchemaNode original, final QName argument, final int flags) {
         super(originalEffective, original, argument, flags);
-    }
-
-    SlimLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
-            final LeafListSchemaNode original, final QName argument, final int flags) {
-        super(originalEffective, original, argument, flags);
+        this.defaults = originalEffective.defaults;
     }
 
     @Override
     public ImmutableSet<String> getDefaults() {
-        return ImmutableSet.of();
+        return defaults;
     }
 }

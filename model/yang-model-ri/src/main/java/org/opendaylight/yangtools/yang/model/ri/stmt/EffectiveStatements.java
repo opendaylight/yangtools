@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -89,6 +90,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
@@ -187,6 +190,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIdentityEffec
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyIncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.EmptyLocalKeyEffectiveStatement;
@@ -239,6 +243,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIdentityEff
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularIncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularLocalKeyEffectiveStatement;
@@ -268,6 +273,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularWhenEffecti
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RegularYinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.RpcEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.SlimLeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.TypedefEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredInputEffectiveStatement;
@@ -580,6 +586,39 @@ public final class EffectiveStatements {
             final @Nullable LeafSchemaNode original)  throws SubstatementIndexingException {
         return original == null ? new EmptyLeafEffectiveStatement(declared, argument, flags, substatements)
             : new RegularLeafEffectiveStatement(declared, argument, flags, substatements, original);
+    }
+
+    public static LeafListEffectiveStatement copyLeafList(final LeafListEffectiveStatement original,
+            final QName argument, final int flags, final @Nullable LeafListSchemaNode newOriginal) {
+        if (original instanceof RegularLeafListEffectiveStatement) {
+            return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original, newOriginal,
+                argument, flags);
+        } else if (original instanceof SlimLeafListEffectiveStatement) {
+            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original, newOriginal, argument,
+                flags);
+        } else if (original instanceof EmptyLeafListEffectiveStatement) {
+            // Promote to slim
+            return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original, newOriginal, argument,
+                flags);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
+    }
+
+    public static LeafListEffectiveStatement createLeafList(final LeafListStatement declared, final QName argument,
+            final int flags, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
+            final ImmutableSet<String> defaultValues, final @Nullable ElementCountConstraint elementCountConstraint,
+            final @Nullable LeafListSchemaNode original)
+                throws SubstatementIndexingException {
+        if (defaultValues.isEmpty()) {
+            return original == null && elementCountConstraint == null
+                ? new EmptyLeafListEffectiveStatement(declared, argument, flags, substatements)
+                    : new SlimLeafListEffectiveStatement(declared, argument, flags, substatements, original,
+                        elementCountConstraint);
+        }
+
+        return new RegularLeafListEffectiveStatement(declared, argument, flags, substatements, original, defaultValues,
+            elementCountConstraint);
     }
 
     public static LengthEffectiveStatement createLength(final LengthStatement declared,
