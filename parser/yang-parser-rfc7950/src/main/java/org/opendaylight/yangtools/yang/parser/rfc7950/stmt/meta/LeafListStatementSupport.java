@@ -5,17 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -30,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
@@ -101,21 +100,8 @@ public final class LeafListStatementSupport
     @Override
     public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
             final LeafListEffectiveStatement original) {
-        final int flags = computeFlags(stmt, original.effectiveSubstatements());
-        if (original instanceof RegularLeafListEffectiveStatement) {
-            return new RegularLeafListEffectiveStatement((RegularLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.getArgument(), flags);
-        } else if (original instanceof SlimLeafListEffectiveStatement) {
-            return new SlimLeafListEffectiveStatement((SlimLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.getArgument(), flags);
-        } else if (original instanceof EmptyLeafListEffectiveStatement) {
-            // Promote to slim
-            return new SlimLeafListEffectiveStatement((EmptyLeafListEffectiveStatement) original,
-                stmt.original(LeafListSchemaNode.class), stmt.getArgument(), flags);
-        } else {
-            // Safe fallback
-            return super.copyEffective(stmt, original);
-        }
+        return EffectiveStatements.copyLeafList(original, stmt.getArgument(),
+            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(LeafListSchemaNode.class));
     }
 
     @Override
@@ -125,7 +111,6 @@ public final class LeafListStatementSupport
                 findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
                 "Leaf-list is missing a 'type' statement");
 
-        final int flags = computeFlags(stmt, substatements);
         final ImmutableSet<String> defaultValues = substatements.stream()
                 .filter(DefaultEffectiveStatement.class::isInstance)
                 .map(DefaultEffectiveStatement.class::cast)
@@ -140,20 +125,10 @@ public final class LeafListStatementSupport
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
 
-        final Optional<ElementCountConstraint> elementCountConstraint =
-                EffectiveStmtUtils.createElementCountConstraint(substatements);
-
-        final LeafListSchemaNode original = stmt.original(LeafListSchemaNode.class);
-        final LeafListStatement declared = stmt.declared();
-        if (defaultValues.isEmpty()) {
-            return original == null && !elementCountConstraint.isPresent()
-                ? new EmptyLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements)
-                    : new SlimLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original,
-                        elementCountConstraint.orElse(null));
-        }
-
-        return new RegularLeafListEffectiveStatement(declared, stmt.getArgument(), flags, substatements, original,
-            defaultValues, elementCountConstraint.orElse(null));
+        return EffectiveStatements.createLeafList(stmt.declared(), stmt.getArgument(),
+            computeFlags(stmt, substatements), substatements, defaultValues,
+            EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null),
+            stmt.original(LeafListSchemaNode.class));
     }
 
     private static int computeFlags(final Current<?, ?> stmt,
