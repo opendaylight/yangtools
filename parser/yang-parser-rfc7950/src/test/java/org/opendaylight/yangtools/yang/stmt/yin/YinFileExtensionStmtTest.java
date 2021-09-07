@@ -17,13 +17,12 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileExtensionStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testExtensions() {
-        Module testModule = TestUtils.findModule(context, "config").get();
+        Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();

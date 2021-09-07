@@ -16,13 +16,11 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileLeafListStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testLeafList() {
-        final Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
+        final Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
 
         final LeafListSchemaNode leafList = (LeafListSchemaNode) testModule.findDataChildByName(
             QName.create(testModule.getQNameModule(), "netconf-state"),

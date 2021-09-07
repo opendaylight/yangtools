@@ -35,7 +35,7 @@ public class AugmentToExtensionTest {
         context = TestUtils.loadModules(getClass().getResource(
                 "/augment-to-extension-test/correct-path-into-unsupported-target").toURI());
 
-        final Module devicesModule = TestUtils.findModule(context, "augment-module").get();
+        final Module devicesModule = context.findModules("augment-module").iterator().next();
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(
             QName.create(devicesModule.getQNameModule(), "my-container"));
         for (final UsesNode usesNode : devicesContainer.getUses()) {
@@ -43,12 +43,11 @@ public class AugmentToExtensionTest {
         }
     }
 
-
     @Test
     public void testCorrectAugment() throws Exception {
         context = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/correct-augment").toURI());
 
-        final Module devicesModule = TestUtils.findModule(context, "augment-module").get();
+        final Module devicesModule = context.findModules("augment-module").iterator().next();
 
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
                 .create(devicesModule.getQNameModule(), "my-container"));
@@ -61,5 +60,4 @@ public class AugmentToExtensionTest {
 
         assertTrue(augmentationIsInContainer);
     }
-
 }

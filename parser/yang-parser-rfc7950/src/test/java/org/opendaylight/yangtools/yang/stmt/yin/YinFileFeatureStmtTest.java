@@ -13,8 +13,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Before;
@@ -22,16 +20,13 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
-import org.xml.sax.SAXException;
 
 public class YinFileFeatureStmtTest {
-
     private SchemaContext context;
 
     @Before
-    public void init() throws ReactorException, SAXException, IOException, URISyntaxException {
+    public void init() throws Exception {
         context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/feature-test/")
             .toURI());
         assertEquals(1, context.getModules().size());
@@ -39,7 +34,7 @@ public class YinFileFeatureStmtTest {
 
     @Test
     public void testFeature() {
-        Module testModule = TestUtils.findModule(context, "yang-with-features").get();
+        Module testModule = context.findModules("yang-with-features").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends FeatureDefinition> features = testModule.getFeatures();

@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * Test ANTLR4 grammar capability to parse unknown node in extension argument
@@ -24,19 +22,15 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * Note: Everything under unknown node is unknown node.
  */
 public class Bug1413Test {
-
     @Test
     public void test() throws Exception {
-        final Module bug1413 = TestUtils.findModule(
-            TestUtils.loadModules(getClass().getResource("/bugs/bug1413").toURI()), "bug1413").get();
-        assertNotNull(bug1413);
-
-        Collection<? extends ExtensionDefinition> extensions = bug1413.getExtensionSchemaNodes();
+        Collection<? extends ExtensionDefinition> extensions = TestUtils.loadModules(
+            getClass().getResource("/bugs/bug1413").toURI())
+                .findModules("bug1413").iterator().next().getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
 
         ExtensionDefinition info = extensions.iterator().next();
         assertEquals("text", info.getArgument());
         assertTrue(info.isYinElement());
     }
-
 }

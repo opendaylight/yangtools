@@ -16,12 +16,11 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileTypeDefStmtTest extends AbstractYinModulesTest {
     @Test
     public void testTypedef() {
-        Module testModule = TestUtils.findModule(context, "config").get();
+        Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends TypeDefinition<?>> typeDefs = testModule.getTypeDefinitions();
