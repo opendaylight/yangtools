@@ -65,7 +65,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testIPVersion() {
-        Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
+        Module tested = context.findModules("ietf-inet-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         assertEquals(14, typedefs.size());
 
@@ -96,7 +96,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testEnumeration() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
 
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
@@ -128,7 +128,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testIpAddress() {
-        Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
+        Module tested = context.findModules("ietf-inet-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-address");
         UnionTypeDefinition baseType = (UnionTypeDefinition) type.getBaseType();
@@ -155,7 +155,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testDomainName() {
-        Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
+        Module tested = context.findModules("ietf-inet-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition type = (StringTypeDefinition) TestUtils.findTypedef(typedefs, "domain-name");
         assertNotNull(type.getBaseType());
@@ -174,7 +174,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testInstanceIdentifier1() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
                 QName.create(tested.getQNameModule(), "inst-id-leaf1"));
         InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
@@ -185,7 +185,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testInstanceIdentifier2() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
                 QName.create(tested.getQNameModule(), "inst-id-leaf2"));
         InstanceIdentifierTypeDefinition leafType = (InstanceIdentifierTypeDefinition) leaf.getType();
@@ -194,7 +194,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testIdentity() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         Collection<? extends IdentitySchemaNode> identities = tested.getIdentities();
         assertEquals(5, identities.size());
         IdentitySchemaNode cryptoAlg = null;
@@ -226,7 +226,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testBitsType1() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
                 QName.create(tested.getQNameModule(), "mybits"));
         BitsTypeDefinition leafType = (BitsTypeDefinition) leaf.getType();
@@ -249,7 +249,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testBitsType2() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
 
@@ -281,7 +281,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testIanaTimezones() {
-        Module tested = TestUtils.findModule(context, "iana-timezones").get();
+        Module tested = context.findModules("iana-timezones").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
@@ -313,7 +313,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testObjectId128() {
-        Module tested = TestUtils.findModule(context, "ietf-yang-types").get();
+        Module tested = context.findModules("ietf-yang-types").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition testedType = (StringTypeDefinition) TestUtils.findTypedef(typedefs,
                 "object-identifier-128");
@@ -345,7 +345,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testIdentityref() {
-        Module tested = TestUtils.findModule(context, "custom-types-test").get();
+        Module tested = context.findModules("custom-types-test").iterator().next();
         Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
         IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();

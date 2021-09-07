@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
@@ -21,13 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileGroupingStmtTest extends AbstractYinModulesTest {
-
     @Test
-    public void testGrouping() throws URISyntaxException {
-        final Module testModule = TestUtils.findModule(context, "config").get();
+    public void testGrouping() {
+        final Module testModule = context.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();

@@ -44,8 +44,8 @@ public class YangParserIdentityTest {
     // prefix differs
     @Test
     public void testParsingImportPrefixIdentityTestModule() throws Exception {
-        Module module = TestUtils.findModule(StmtTestUtils.parseYangSources("/identity/import"),
-            "prefiximportidentitytest").get();
+        Module module = StmtTestUtils.parseYangSources("/identity/import").findModules("prefiximportidentitytest")
+            .iterator().next();
         Collection<? extends ModuleImport> imports = module.getImports();
         assertEquals(imports.size(), 1);
         ModuleImport dummy = TestUtils.findImport(imports, "dummy");

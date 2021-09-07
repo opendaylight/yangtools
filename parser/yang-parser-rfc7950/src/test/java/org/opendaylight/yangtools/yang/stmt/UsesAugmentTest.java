@@ -12,8 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,11 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class UsesAugmentTest {
-
     private static final QNameModule UG = QNameModule.create(
         XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:uses-grouping"), Revision.of("2013-07-30"));
     private static final QNameModule GD = QNameModule.create(
@@ -46,7 +41,7 @@ public class UsesAugmentTest {
     private SchemaContext context;
 
     @Before
-    public void init() throws ReactorException, IOException, YangSyntaxErrorException, URISyntaxException {
+    public void init() throws Exception {
         context = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
     }
 
@@ -108,7 +103,7 @@ public class UsesAugmentTest {
      */
     @Test
     public void testAugmentInUses() throws Exception {
-        final Module testModule = TestUtils.findModule(context, "uses-grouping").get();
+        final Module testModule = context.findModules("uses-grouping").iterator().next();
 
         // * notification pcreq
         final Collection<? extends NotificationDefinition> notifications = testModule.getNotifications();
@@ -411,7 +406,7 @@ public class UsesAugmentTest {
 
     @Test
     public void testTypedefs() throws Exception {
-        final Module testModule = TestUtils.findModule(context, "grouping-definitions").get();
+        final Module testModule = context.findModules("grouping-definitions").iterator().next();
         final Collection<? extends TypeDefinition<?>> types = testModule.getTypeDefinitions();
 
         TypeDefinition<?> intExt = null;
@@ -439,5 +434,4 @@ public class UsesAugmentTest {
         assertNotNull(pv);
         assertEquals(QName.create(GD, "union"), union.getQName());
     }
-
 }

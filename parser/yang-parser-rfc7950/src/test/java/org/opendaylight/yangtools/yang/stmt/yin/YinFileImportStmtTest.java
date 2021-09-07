@@ -13,19 +13,17 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileImportStmtTest extends AbstractYinModulesTest {
 
     @Test
-    public void testImport() throws ParseException {
-        Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
+    public void testImport() {
+        Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends ModuleImport> imports = testModule.getImports();

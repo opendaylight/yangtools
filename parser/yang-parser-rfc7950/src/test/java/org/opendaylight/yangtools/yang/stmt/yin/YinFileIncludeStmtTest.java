@@ -8,41 +8,22 @@
 package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import org.junit.Before;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
-import org.xml.sax.SAXException;
 
 public class YinFileIncludeStmtTest {
-    private SchemaContext context;
-
-    @Before
-    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
-        context = TestUtils.loadYinModules(getClass().getResource(
-            "/semantic-statement-parser/yin/include-belongs-to-test").toURI());
-        assertEquals(1, context.getModules().size());
-    }
-
     @Test
-    public void testInclude() throws URISyntaxException {
-        Module parentModule = TestUtils.findModule(context, "parent").get();
-        assertNotNull(parentModule);
+    public void testInclude() throws Exception {
+        Collection<? extends Submodule> submodules = TestUtils.loadYinModules(getClass().getResource(
+            "/semantic-statement-parser/yin/include-belongs-to-test").toURI()).findModules("parent").iterator().next()
+            .getSubmodules();
+        assertEquals(1, submodules.size());
 
-        assertEquals(1, parentModule.getSubmodules().size());
-        Iterator<? extends Submodule> submodulesIterator = parentModule.getSubmodules().iterator();
-
-        Submodule childModule = submodulesIterator.next() ;
-        assertNotNull(childModule);
+        Submodule childModule = submodules.iterator().next();
         assertEquals("child", childModule.getName());
         assertEquals(XMLNamespace.of("urn:opendaylight/parent"), childModule.getNamespace());
     }

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;

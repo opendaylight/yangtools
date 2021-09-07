@@ -21,13 +21,11 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testAugment() {
-        final Module testModule = TestUtils.findModule(context, "main-impl").get();
+        final Module testModule = context.findModules("main-impl").iterator().next();
         assertNotNull(testModule);
 
         final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();

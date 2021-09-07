@@ -86,9 +86,9 @@ public class YangParserTest {
     @Before
     public void init() throws Exception {
         context = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        foo = TestUtils.findModule(context, "foo").get();
-        bar = TestUtils.findModule(context, "bar").get();
-        baz = TestUtils.findModule(context, "baz").get();
+        foo = context.findModules("foo").iterator().next();
+        bar = context.findModules("bar").iterator().next();
+        baz = context.findModules("baz").iterator().next();
     }
 
     @Test

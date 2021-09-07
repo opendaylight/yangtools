@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureS
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportedVersionNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list.LeafListStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ConfigListWarningNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.ActionStatementSupport;
@@ -57,6 +56,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IdentityStatemen
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.IncludeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.InputStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.KeyStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.LeafListStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.LeafStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.LengthStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta.MandatoryStatementSupport;
