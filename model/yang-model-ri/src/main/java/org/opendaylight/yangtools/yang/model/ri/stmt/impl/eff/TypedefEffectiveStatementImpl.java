@@ -129,7 +129,7 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+        public <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,
                 final K identifier) {
             return TypedefEffectiveStatementImpl.this.get(namespace, identifier);
         }

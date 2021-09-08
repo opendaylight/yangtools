@@ -42,9 +42,8 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @param identifier Identifier of element.
      * @return Value if present
      */
-    //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
-    <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(@NonNull Class<N> namespace,
-            @NonNull K identifier);
+    <K, V, N extends IdentifierNamespace<K, V>> @NonNull Optional<V> get(@NonNull Class<N> namespace,
+        @NonNull K identifier);
 
     /**
      * Returns all local values from supplied namespace.

@@ -59,15 +59,15 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<V> get(final Class<N> namespace,
             final K identifier) {
-        // FIXME: 7.0.0: implement this
+        // FIXME: 8.0.0: implement this
         return Optional.empty();
     }
 
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        // FIXME: 7.0.0: implement this
+        // FIXME: 8.0.0: implement this
         return ImmutableMap.of();
     }
 
