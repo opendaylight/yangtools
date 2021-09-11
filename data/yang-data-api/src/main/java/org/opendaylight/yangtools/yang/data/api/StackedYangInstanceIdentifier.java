@@ -101,7 +101,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         final int toWalk = ourDepth - depth;
         YangInstanceIdentifier result = this;
         for (int i = 0; i < toWalk; ++i) {
-            result = result.getParent();
+            result = result.coerceParent();
         }
 
         return result;
