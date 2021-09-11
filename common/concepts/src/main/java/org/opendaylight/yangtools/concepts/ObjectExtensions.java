@@ -14,6 +14,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.AbstractList;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -147,6 +148,7 @@ public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends 
     }
 
     @Override
+    @SuppressFBWarnings("EI_EXPOSE_REP")
     public Set<Class<? extends E>> keySet() {
         return extensions;
     }
