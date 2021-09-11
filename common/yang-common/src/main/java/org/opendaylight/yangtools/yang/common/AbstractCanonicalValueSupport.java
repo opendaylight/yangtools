@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.Modifier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -26,7 +27,7 @@ import org.opendaylight.yangtools.concepts.Either;
 @Beta
 @NonNullByDefault
 public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>> implements CanonicalValueSupport<T> {
-    private static final ClassValue<Boolean> SUPPORTS = new ClassValue<Boolean>() {
+    private static final ClassValue<Boolean> SUPPORTS = new ClassValue<>() {
         @Override
         protected Boolean computeValue(final @Nullable Class<?> type) {
             // Every DerivedStringSupport representation class must:
@@ -56,11 +57,13 @@ public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>>
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "j.l.Class not recognized as immutable")
     public final Class<T> getRepresentationClass() {
         return representationClass;
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "j.l.Class not recognized as immutable")
     public final Class<T> getValidatedRepresentationClass() {
         return representationClass;
     }

@@ -19,4 +19,5 @@ module org.opendaylight.yangtools.yang.repo.api {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static com.github.spotbugs.annotations;
 }

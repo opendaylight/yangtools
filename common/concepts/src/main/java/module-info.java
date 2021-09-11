@@ -13,6 +13,7 @@ module org.opendaylight.yangtools.concepts {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static transitive com.google.errorprone.annotations;
     requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
 }

@@ -42,10 +42,10 @@ public final class DuplicateEntry implements Identifiable<YangInstanceIdentifier
     }
 
     public List<YangInstanceIdentifier> getHardLinks() {
-        return hardLinks;
+        return Collections.unmodifiableList(hardLinks);
     }
 
     public List<YangInstanceIdentifier> getDuplicates() {
-        return duplicates;
+        return Collections.unmodifiableList(duplicates);
     }
 }

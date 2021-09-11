@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Either;
 
@@ -47,6 +48,7 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "j.l.Class not recognized as immutable")
     public final Class<V> getValidatedRepresentationClass() {
         return validatedClass;
     }

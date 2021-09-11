@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * element -- which is desirable in some situations, as is the case in {@link SharedSingletonMap#entrySet()}.
  */
 @Beta
+@com.google.errorprone.annotations.Immutable
 public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable {
     private static final long serialVersionUID = 1L;
 

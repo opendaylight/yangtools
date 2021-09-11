@@ -40,6 +40,7 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
      * @param opName the String prefix for exception messages.
      * @param exceptionType the exception type to which to translate.
      */
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "j.l.Class not recognized as immutable")
     public ExceptionMapper(final String opName, final Class<X> exceptionType) {
         this.exceptionType = requireNonNull(exceptionType);
         this.opName = requireNonNull(opName);

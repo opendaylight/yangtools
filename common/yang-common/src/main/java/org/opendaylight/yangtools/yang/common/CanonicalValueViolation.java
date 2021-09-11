@@ -77,6 +77,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
             return cause.getMessage();
         }
 
+        @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Exception is expected to be unmodified")
         public final Exception getCause() {
             return cause;
         }

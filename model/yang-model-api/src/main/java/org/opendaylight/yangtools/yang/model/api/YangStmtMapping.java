@@ -280,11 +280,13 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "j.l.Class not recognized as immutable")
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return declaredType;
     }
 
     @Override
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "j.l.Class not recognized as immutable")
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
     }
