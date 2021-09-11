@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
+@com.google.errorprone.annotations.Immutable
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
         ImmutableList.of(), new HashCodeBuilder<>().build());
@@ -78,7 +79,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         }
         if (depth == path.size() - 1) {
             // Use the parent cache
-            return getParent();
+            return coerceParent();
         }
         return YangInstanceIdentifier.create(path.subList(0, depth));
     }

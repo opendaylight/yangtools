@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @param <E> the type of elements held in this collection
  */
 @Beta
+@com.google.errorprone.annotations.Immutable
 public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, Immutable {
     private static final EmptyDeque<?> INSTANCE = new EmptyDeque<>();
     private static final Object[] EMPTY_ARRAY = new Object[0];

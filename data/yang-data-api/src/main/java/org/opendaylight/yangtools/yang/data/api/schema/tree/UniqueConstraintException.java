@@ -39,6 +39,7 @@ public class UniqueConstraintException extends DataValidationFailedException imp
 
     // FIXME: 8.0.0: this maps to a list of 'non-unique' YangInstanceIdentifiers, really. we should be getting
     //               a list of YangErrorInfo containing them -- but what about Serializability then?
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "Map is assumed to be immutable")
     public UniqueConstraintException(final YangInstanceIdentifier path, final Map<Descendant, @Nullable Object> values,
             final String message) {
         super(path, message);

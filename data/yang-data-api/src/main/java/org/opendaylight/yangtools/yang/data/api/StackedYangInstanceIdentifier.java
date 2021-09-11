@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 
+@com.google.errorprone.annotations.Immutable
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     private static final long serialVersionUID = 1L;
     private static final Field PARENT_FIELD;
@@ -101,7 +102,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         final int toWalk = ourDepth - depth;
         YangInstanceIdentifier result = this;
         for (int i = 0; i < toWalk; ++i) {
-            result = result.getParent();
+            result = result.coerceParent();
         }
 
         return result;

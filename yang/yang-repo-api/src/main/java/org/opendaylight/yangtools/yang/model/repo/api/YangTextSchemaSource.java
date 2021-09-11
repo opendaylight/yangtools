@@ -17,11 +17,13 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
@@ -35,12 +37,13 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
         this.identifier = requireNonNull(identifier);
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
         checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename %s does not end with '%s'",
             RFC6020_YANG_FILE_EXTENSION, name);
 
         final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
-        final Entry<String, String> parsed = parseFilename(baseName);
+        final Entry<@NonNull String, @Nullable String> parsed = parseFilename(baseName);
         return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
     }
 

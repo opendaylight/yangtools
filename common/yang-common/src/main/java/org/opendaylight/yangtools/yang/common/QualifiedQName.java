@@ -28,6 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 @NonNullByDefault
+@com.google.errorprone.annotations.Immutable
 public final class QualifiedQName extends AbstractQName implements Comparable<QualifiedQName> {
     private static final long serialVersionUID = 1L;
     private static final Interner<QualifiedQName> INTERNER = Interners.newWeakInterner();

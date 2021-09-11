@@ -44,6 +44,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * node in the YANG module</li>
  * </ul>
  */
+@com.google.errorprone.annotations.Immutable
 public final class QName extends AbstractQName implements Comparable<QName> {
     /**
      * A {@link DataInput} which has an understanding of {@link QName}'s semantics.

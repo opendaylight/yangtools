@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
+@com.google.errorprone.annotations.Immutable
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
