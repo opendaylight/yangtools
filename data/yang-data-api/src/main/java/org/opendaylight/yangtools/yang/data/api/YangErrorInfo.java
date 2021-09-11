@@ -13,7 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 /**
  * An element of {@code error-info} container, as modeled in {@code errorInfoType} of
@@ -22,17 +22,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 @Beta
 @NonNullByDefault
 public final class YangErrorInfo {
-    private final NormalizedNode value;
+    private final DataContainerChild value;
 
-    private YangErrorInfo(final NormalizedNode value) {
+    private YangErrorInfo(final DataContainerChild value) {
         this.value = requireNonNull(value);
     }
 
-    public static YangErrorInfo of(final NormalizedNode value) {
+    public static YangErrorInfo of(final DataContainerChild value) {
         return new YangErrorInfo(value);
     }
 
-    public NormalizedNode value() {
+    public DataContainerChild value() {
         return value;
     }
 
