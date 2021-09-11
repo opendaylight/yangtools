@@ -22,6 +22,11 @@ import org.slf4j.LoggerFactory;
 final class PrettyTreeIndent {
     private static final Logger LOG = LoggerFactory.getLogger(PrettyTreeIndent.class);
     private static final int DEFAULT_INDENT = 4;
+    /**
+     * Size of indent table. The idea is to strike a balance between memory footprint and the number of operations we
+     * perform in {@link #indent(StringBuilder, int)}. Indentation up to {@value #INDENT_STRINGS_SIZE} result in a
+     * single operation.
+     */
     private static final int INDENT_STRINGS_SIZE = 16;
     private static final String[] INDENT_STRINGS;
 
