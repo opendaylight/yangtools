@@ -15,6 +15,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Map.Entry;
@@ -39,6 +40,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         this.identifier = requireNonNull(identifier);
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
         final String baseName;
         if (name.endsWith(YangConstants.RFC6020_YIN_FILE_EXTENSION)) {

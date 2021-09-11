@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -118,11 +119,13 @@ public final class TopologicalSort {
         private final Set<Edge> outEdges = new HashSet<>();
 
         @Override
+        @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "FIXME: fix this up")
         public Set<Edge> getInEdges() {
             return inEdges;
         }
 
         @Override
+        @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "FIXME: fix this up")
         public Set<Edge> getOutEdges() {
             return outEdges;
         }
@@ -178,18 +181,10 @@ public final class TopologicalSort {
                 return false;
             }
             EdgeImpl other = (EdgeImpl) obj;
-            if (from == null) {
-                if (other.from != null) {
-                    return false;
-                }
-            } else if (!from.equals(other.from)) {
+            if (!Objects.equals(from, other.from)) {
                 return false;
             }
-            if (to == null) {
-                if (other.to != null) {
-                    return false;
-                }
-            } else if (!to.equals(other.to)) {
+            if (!Objects.equals(to, other.to)) {
                 return false;
             }
             return true;

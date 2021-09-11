@@ -22,13 +22,14 @@ import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 @Beta
 public abstract class YangLocationPath implements YangExpr {
-    public abstract static class Step implements Serializable, YangPredicateAware {
+    public abstract static class Step implements Immutable, Serializable, YangPredicateAware {
         private static final long serialVersionUID = 1L;
 
         private final YangXPathAxis axis;

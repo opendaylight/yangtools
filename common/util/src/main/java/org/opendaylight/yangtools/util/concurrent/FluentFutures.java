@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.concurrent.Future;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -47,6 +48,7 @@ public final class FluentFutures {
      * @return An immediately-cancelled FluentFuture.
      */
     @SuppressWarnings("unchecked")
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Immutable constants")
     public static <T> FluentFuture<T> immediateCancelledFluentFuture() {
         return (FluentFuture<T>) CANCELLED_FUTURE;
     }
@@ -79,6 +81,7 @@ public final class FluentFutures {
      * @return An immediately-completed FluentFuture.
      */
     @SuppressWarnings("unchecked")
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Immutable constants")
     public static <@Nullable T> FluentFuture<T> immediateNullFluentFuture() {
         return (FluentFuture<T>) NULL_FUTURE;
     }
@@ -100,6 +103,7 @@ public final class FluentFutures {
      * @param result boolean result
      * @return An immediately-completed FluentFuture reporting specified {@code result}
      */
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Immutable constants")
     public static FluentFuture<Boolean> immediateBooleanFluentFuture(final boolean result) {
         return result ? TRUE_FUTURE : FALSE_FUTURE;
     }
@@ -109,6 +113,7 @@ public final class FluentFutures {
      *
      * @return An immediately-completed FluentFuture reporting {@link Boolean#TRUE}
      */
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Immutable constants")
     public static FluentFuture<Boolean> immediateTrueFluentFuture() {
         return TRUE_FUTURE;
     }
@@ -118,6 +123,7 @@ public final class FluentFutures {
      *
      * @return An immediately-completed FluentFuture reporting {@link Boolean#TRUE}
      */
+    @SuppressFBWarnings(value = "MS_EXPOSE_REP", justification = "Immutable constants")
     public static FluentFuture<Boolean> immediateFalseFluentFuture() {
         return FALSE_FUTURE;
     }
