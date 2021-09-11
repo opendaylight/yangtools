@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 
+@com.google.errorprone.annotations.Immutable
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     private static final long serialVersionUID = 1L;
     private static final Field PARENT_FIELD;

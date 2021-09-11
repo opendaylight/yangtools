@@ -52,6 +52,7 @@ public final class ObjectRegistry<T> {
         return streamRegistrations().map(ObjectRegistration::getInstance);
     }
 
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Cached instance")
     public Set<ObjectRegistration<? extends T>> getRegistrations() {
         return unmodifiableView;
     }

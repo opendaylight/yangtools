@@ -20,6 +20,7 @@ module org.opendaylight.yangtools.util {
     requires static transitive java.compiler;
     requires static transitive java.management;
     requires static transitive org.eclipse.jdt.annotation;
+    requires static transitive com.google.errorprone.annotations;
     requires static com.github.spotbugs.annotations;
     requires static org.checkerframework.checker.qual;
     requires static org.gaul.modernizer_maven_annotations;

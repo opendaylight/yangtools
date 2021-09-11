@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  */
 @Beta
 @NonNullByDefault
+@com.google.errorprone.annotations.Immutable
 public abstract class AbstractQName implements Identifier, WritableObject {
     private static final long serialVersionUID = 1L;
     private static final CharMatcher IDENTIFIER_START =

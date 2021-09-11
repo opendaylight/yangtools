@@ -32,6 +32,7 @@ package org.opendaylight.yangtools.concepts;
  * @author Robert Varga
  * @author Tony Tkacik
  */
+@com.google.errorprone.annotations.Immutable
 public interface Immutable extends MutationBehaviour<Immutable> {
 
 }
