@@ -602,8 +602,8 @@ public class GroupingTest {
         }
     }
 
-    private static @Nullable SchemaNode extractOriginal(final SchemaNode node) {
+    private static @Nullable DerivableSchemaNode<?> extractOriginal(final SchemaNode node) {
         assertThat(node, instanceOf(DerivableSchemaNode.class));
-        return ((DerivableSchemaNode) node).getOriginal().orElse(null);
+        return ((DerivableSchemaNode<?>) node).getOriginal().orElse(null);
     }
 }

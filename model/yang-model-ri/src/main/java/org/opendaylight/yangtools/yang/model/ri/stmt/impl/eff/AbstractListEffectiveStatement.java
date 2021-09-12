@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.W
 
 abstract class AbstractListEffectiveStatement
         extends WithTypedefNamespace<QName, ListStatement, ListEffectiveStatement>
-        implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
+        implements ListEffectiveStatement, ListSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             NotificationNodeContainerCompat<QName, ListStatement, ListEffectiveStatement>,
             DataSchemaNodeMixin<ListStatement>, UserOrderedMixin<QName, ListStatement>,
