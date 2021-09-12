@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
@@ -33,9 +32,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.P
 
 public final class ContainerEffectiveStatementImpl
         extends WithTypedefNamespace<QName, ContainerStatement, ContainerEffectiveStatement>
-        implements ContainerEffectiveStatement, ContainerSchemaNode, DerivableSchemaNode,
-            DataSchemaNodeMixin<ContainerStatement>, DataNodeContainerMixin<QName, ContainerStatement>,
-            ActionNodeContainerMixin<QName, ContainerStatement>,
+        implements ContainerEffectiveStatement, ContainerSchemaNode, DataSchemaNodeMixin<ContainerStatement>,
+            DataNodeContainerMixin<QName, ContainerStatement>, ActionNodeContainerMixin<QName, ContainerStatement>,
             ActionNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,
             NotificationNodeContainerMixin<QName, ContainerStatement>,
             NotificationNodeContainerCompat<QName, ContainerStatement, ContainerEffectiveStatement>,

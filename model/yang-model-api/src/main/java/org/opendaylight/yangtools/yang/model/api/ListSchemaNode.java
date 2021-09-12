@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
         NotificationNodeContainer, ActionNodeContainer, ElementCountConstraintAware, MustConstraintAware,
-        EffectiveStatementEquivalent<ListEffectiveStatement> {
+        DerivableSchemaNode<ListSchemaNode>, EffectiveStatementEquivalent<ListEffectiveStatement> {
     /**
      * Returns the list of leaf identifiers.
      *
