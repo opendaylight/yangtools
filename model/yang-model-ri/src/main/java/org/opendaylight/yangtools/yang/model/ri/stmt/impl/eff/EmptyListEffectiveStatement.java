@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
@@ -28,7 +28,7 @@ public final class EmptyListEffectiveStatement extends AbstractListEffectiveStat
     }
 
     @Override
-    public Optional<? extends SchemaNode> getOriginal() {
+    public Optional<ListSchemaNode> getOriginal() {
         return Optional.empty();
     }
 
