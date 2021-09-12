@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
@@ -19,8 +18,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 
 /**
  * Unit tests for RpcResultBuilder.
@@ -115,12 +112,11 @@ public class RpcResultBuilderTest {
     @Test
     public void testErrors() {
         final RpcResultBuilder<Object> rpcResultBuilder = RpcResultBuilder.status(true);
-        final RpcError rpcErrorShort = RpcResultBuilder.newError(RpcError.ErrorType.RPC, "tag", "msg");
-        final RpcError rpcErrorLong = RpcResultBuilder.newError(RpcError.ErrorType.RPC, "tag", "msg", "applicationTag",
+        final RpcError rpcErrorShort = RpcResultBuilder.newError(ErrorType.RPC, "tag", "msg");
+        final RpcError rpcErrorLong = RpcResultBuilder.newError(ErrorType.RPC, "tag", "msg", "applicationTag",
                 "info", null);
-        final RpcError rpcErrorShortWarn = RpcResultBuilder.newWarning(RpcError.ErrorType.RPC, "tag", "msg");
-        final RpcError rpcErrorLongWarn = RpcResultBuilder.newWarning(RpcError.ErrorType.RPC, "tag", "msg",
-                "applicationTag",
+        final RpcError rpcErrorShortWarn = RpcResultBuilder.newWarning(ErrorType.RPC, "tag", "msg");
+        final RpcError rpcErrorLongWarn = RpcResultBuilder.newWarning(ErrorType.RPC, "tag", "msg", "applicationTag",
                 "info", null);
         rpcResultBuilder.withRpcError(rpcErrorShort);
         final RpcResult<Object> rpcResult = rpcResultBuilder.build();
