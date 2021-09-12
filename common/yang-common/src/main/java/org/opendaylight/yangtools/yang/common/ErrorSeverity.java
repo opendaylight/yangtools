@@ -24,21 +24,19 @@ public enum ErrorSeverity {
     /**
      * An error preventing an operation from completing successfully.
      */
-    ERROR("error", RpcError.ErrorSeverity.ERROR),
+    ERROR("error"),
     /**
      * A warning not affecting an operation's ability to complete successfully.
      */
-    WARNING("warning", RpcError.ErrorSeverity.ERROR);
+    WARNING("warning");
 
     private static final Map<String, ErrorSeverity> BY_ELEMENT_BODY =
         Maps.uniqueIndex(Arrays.asList(values()), ErrorSeverity::elementBody);
 
-    private final RpcError.ErrorSeverity legacy;
     private final String elementBody;
 
-    ErrorSeverity(final String elementName, final RpcError.ErrorSeverity legacy) {
+    ErrorSeverity(final String elementName) {
         this.elementBody = requireNonNull(elementName);
-        this.legacy = requireNonNull(legacy);
     }
 
     /**
@@ -48,11 +46,6 @@ public enum ErrorSeverity {
      */
     public String elementBody() {
         return elementBody;
-    }
-
-    @Deprecated
-    public RpcError.ErrorSeverity toLegacy() {
-        return legacy;
     }
 
     public static @Nullable ErrorSeverity forElementBody(final String elementBody) {
