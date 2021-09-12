@@ -13,14 +13,12 @@ import java.util.Optional;
  * Schema Node which may be derived from other schema node using augmentation or uses statement.
  */
 // FIXME: 8.0.0: refactor this interface to take into account CopyableNode and AddedByUsesAware
-public interface DerivableSchemaNode extends DataSchemaNode {
+public interface DerivableSchemaNode<T extends DerivableSchemaNode<T>> extends DataSchemaNode {
     /**
      * If this node is added by uses, returns original node definition from
      * grouping where it was defined.
      *
-     * @return original node definition from grouping if this node is added by
-     *         uses, Optional.absent otherwise
+     * @return original node definition from grouping if this node is added by uses, absent otherwise
      */
-    // FIXME: 8.0.0: this should be a type capture as it always matches this node's type
-    Optional<? extends SchemaNode> getOriginal();
+    Optional<T> getOriginal();
 }

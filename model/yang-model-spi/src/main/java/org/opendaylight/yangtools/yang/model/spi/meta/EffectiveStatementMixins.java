@@ -399,8 +399,8 @@ public final class EffectiveStatementMixins {
      *
      * @param <D> Class representing declared version of this statement.
      */
-    public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>>
-            extends DerivableSchemaNode, DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>,
+    public interface OpaqueDataSchemaNodeMixin<D extends DeclaredStatement<QName>, S extends DerivableSchemaNode<S>>
+            extends DerivableSchemaNode<S>, DataSchemaNodeMixin<D>, DocumentedNodeMixin.WithStatus<QName, D>,
                     MandatoryMixin<QName, D>, MustConstraintMixin<QName, D>, WhenConditionMixin<QName, D> {
         @Override
         default QName getQName() {

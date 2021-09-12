@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,9 +31,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.U
 
 abstract class AbstractLeafListEffectiveStatement
         extends AbstractDeclaredEffectiveStatement.Default<QName, LeafListStatement>
-        implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode,
-            UserOrderedMixin<QName, LeafListStatement>, DataSchemaNodeMixin<LeafListStatement>,
-            MustConstraintMixin<QName, LeafListStatement> {
+        implements LeafListEffectiveStatement, LeafListSchemaNode, UserOrderedMixin<QName, LeafListStatement>,
+            DataSchemaNodeMixin<LeafListStatement>, MustConstraintMixin<QName, LeafListStatement> {
     private final @NonNull Object substatements;
     private final @NonNull QName argument;
     private final @NonNull TypeDefinition<?> type;

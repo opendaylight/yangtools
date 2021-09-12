@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
@@ -29,9 +28,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.M
 
 public final class ChoiceEffectiveStatementImpl
         extends DefaultWithDataTree<QName, ChoiceStatement, ChoiceEffectiveStatement>
-        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode,
-                   DataSchemaNodeMixin<ChoiceStatement>, AugmentationTargetMixin<QName, ChoiceStatement>,
-                   MandatoryMixin<QName, ChoiceStatement> {
+        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DataSchemaNodeMixin<ChoiceStatement>,
+            AugmentationTargetMixin<QName, ChoiceStatement>, MandatoryMixin<QName, ChoiceStatement> {
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
     private final @NonNull QName argument;
