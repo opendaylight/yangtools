@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.AugmentationTargetMixin;
@@ -18,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
-interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchemaNode, DerivableSchemaNode,
+interface CaseEffectiveStatementMixin extends CaseEffectiveStatement, CaseSchemaNode,
         DataSchemaNodeMixin<CaseStatement>, DocumentedNodeMixin.WithStatus<QName, CaseStatement>,
         DataNodeContainerMixin<QName, CaseStatement>, MustConstraintMixin<QName, CaseStatement>,
         AugmentationTargetMixin<QName, CaseStatement> {

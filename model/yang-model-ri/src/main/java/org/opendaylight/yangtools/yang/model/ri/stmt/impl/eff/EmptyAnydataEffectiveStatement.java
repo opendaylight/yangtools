@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveS
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.OpaqueDataSchemaNodeMixin;
 
 public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
-        implements AnydataEffectiveStatement, AnydataSchemaNode, OpaqueDataSchemaNodeMixin<AnydataStatement> {
+        implements AnydataEffectiveStatement, AnydataSchemaNode,
+            OpaqueDataSchemaNodeMixin<AnydataStatement, AnydataSchemaNode> {
     private final @NonNull QName argument;
     private final AnydataSchemaNode original;
     private final int flags;
