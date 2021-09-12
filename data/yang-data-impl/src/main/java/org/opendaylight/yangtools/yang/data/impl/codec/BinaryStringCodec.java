@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.RangeSet;
 import java.util.Base64;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
