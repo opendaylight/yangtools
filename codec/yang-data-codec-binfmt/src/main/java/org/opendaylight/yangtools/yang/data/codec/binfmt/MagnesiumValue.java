@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import java.io.DataOutput;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -187,8 +188,10 @@ final class MagnesiumValue {
      */
     // This is legacy compatibility. At some point we will remove support for writing these.
     static final byte BIGINTEGER     = 0x1E;
-
-    // 0x1F reserved
+    /**
+     * A {@link Decimal64}, encoded a single leading byte holding precision and a {@code long} holding the value.
+     */
+    static final byte DECIMAL64      = 0x1F;
 
     /**
      * Byte value {@code 0}.
