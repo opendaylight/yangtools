@@ -11,9 +11,9 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.math.BigDecimal;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -331,7 +331,7 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     private static @NonNull TypeEffectiveStatement<TypeStatement> createDecimal(final Current<QName, ?> ctx,
             final DecimalTypeDefinition baseType, final TypeStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
-        final RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> builder =
+        final RangeRestrictedTypeBuilder<DecimalTypeDefinition, Decimal64> builder =
                 RestrictedTypes.newDecima64Builder(baseType, typeEffectiveQName(ctx));
 
         for (EffectiveStatement<?, ?> stmt : substatements) {

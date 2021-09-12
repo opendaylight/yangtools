@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.math.BigDecimal;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -45,7 +45,7 @@ public abstract class AbstractYT1027Test {
     private static final QName INT64 = QName.create(DECIMAL, "int64");
     private static final QName UINT64 = QName.create(DECIMAL, "uint64");
 
-    static final LeafNode<?> DECIMAL_DATA = ImmutableNodes.leafNode(DECIMAL, new BigDecimal("1.1"));
+    static final LeafNode<?> DECIMAL_DATA = ImmutableNodes.leafNode(DECIMAL, Decimal64.valueOf("1.1"));
     static final LeafNode<?> INT64_DATA = ImmutableNodes.leafNode(INT64, 2L);
     static final LeafNode<?> UINT64_DATA = ImmutableNodes.leafNode(UINT64, Uint64.ONE);
 

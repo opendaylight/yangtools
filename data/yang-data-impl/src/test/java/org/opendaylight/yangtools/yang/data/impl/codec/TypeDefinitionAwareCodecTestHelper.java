@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -35,12 +35,7 @@ public final class TypeDefinitionAwareCodecTestHelper {
 
     public static void deserializeWithExpectedIllegalArgEx(final Codec<String, ?, IllegalArgumentException> codec,
             final @NonNull String param) {
-        try {
-            codec.deserialize(param);
-            fail("Expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // Expected ...
-        }
+        assertThrows(IllegalArgumentException.class, () -> codec.deserialize(param));
     }
 
     public static EnumTypeDefinition toEnumTypeDefinition(final String... enums) {

@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableMap;
-import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.function.Function;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -39,8 +39,8 @@ final class NumberUtil {
             return ((Uint32)o1).compareTo((Uint32) o2);
         } else if (o1 instanceof Uint64) {
             return ((Uint64)o1).compareTo((Uint64) o2);
-        } else if (o1 instanceof BigDecimal) {
-            return ((BigDecimal)o1).compareTo((BigDecimal) o2);
+        } else if (o1 instanceof Decimal64) {
+            return ((Decimal64)o1).compareTo((Decimal64) o2);
         } else {
             throw new IllegalArgumentException("Unsupported Number class " + o1.getClass());
         }
@@ -87,15 +87,15 @@ final class NumberUtil {
 
             return Long.valueOf(input.toString());
         });
-        b.put(BigDecimal.class, input -> {
-            if (input instanceof BigDecimal) {
+        b.put(Decimal64.class, input -> {
+            if (input instanceof Decimal64) {
                 return input;
             }
             if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long) {
-                return BigDecimal.valueOf(input.longValue());
+                return Decimal64.valueOf(input.longValue());
             }
 
-            return new BigDecimal(input.toString());
+            return Decimal64.valueOf(input.toString());
         });
         b.put(Uint8.class, input -> {
             if (input instanceof Uint8) {
