@@ -17,7 +17,7 @@ public class OperationFailedExceptionTest {
     @Test
     public void testOperationFailedException() {
         final Throwable cause = new Throwable("mock cause");
-        final RpcError rpcErrorShort = RpcResultBuilder.newError(ErrorType.RPC, "tag", "msg");
+        final RpcError rpcErrorShort = RpcResultBuilder.newError(ErrorType.RPC, new ErrorTag("tag"), "msg");
         final OperationFailedException operationFailedException1 = new OperationFailedException("error msg", cause,
                 rpcErrorShort);
         final OperationFailedException operationFailedException2 = new OperationFailedException("error msg",

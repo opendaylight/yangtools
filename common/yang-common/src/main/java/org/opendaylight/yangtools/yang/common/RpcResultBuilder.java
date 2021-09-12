@@ -65,16 +65,15 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         private static final long serialVersionUID = 1L;
 
         private final String applicationTag;
-        private final String tag;
+        private final ErrorTag tag;
         private final String info;
         private final ErrorSeverity severity;
         private final String message;
         private final ErrorType errorType;
         private final Throwable cause;
 
-        RpcErrorImpl(final ErrorSeverity severity, final ErrorType errorType,
-                final String tag, final String message, final String applicationTag, final String info,
-                final Throwable cause) {
+        RpcErrorImpl(final ErrorSeverity severity, final ErrorType errorType, final ErrorTag tag, final String message,
+                final String applicationTag, final String info, final Throwable cause) {
             this.severity = severity;
             this.errorType = errorType;
             this.tag = tag;
@@ -90,7 +89,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         }
 
         @Override
-        public String getTag() {
+        public ErrorTag getTag() {
             return tag;
         }
 
@@ -198,9 +197,9 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *
      * @return an RpcError
      */
-    public static @NonNull RpcError newError(final ErrorType errorType, final String tag, final String message) {
-        return new RpcErrorImpl(ErrorSeverity.ERROR, errorType,
-                tag != null ? tag : "operation-failed", message, null, null, null);
+    public static @NonNull RpcError newError(final ErrorType errorType, final ErrorTag tag, final String message) {
+        return new RpcErrorImpl(ErrorSeverity.ERROR, errorType, tag != null ? tag : ErrorTag.OPERATION_FAILED, message,
+            null, null, null);
     }
 
     /**
@@ -217,10 +216,10 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *
      * @return an RpcError
      */
-    public static @NonNull RpcError newError(final ErrorType errorType, final String tag, final String message,
+    public static @NonNull RpcError newError(final ErrorType errorType, final ErrorTag tag, final String message,
             final String applicationTag, final String info, final Throwable cause) {
-        return new RpcErrorImpl(ErrorSeverity.ERROR, errorType,
-                tag != null ? tag : "operation-failed", message, applicationTag, info, cause);
+        return new RpcErrorImpl(ErrorSeverity.ERROR, errorType, tag != null ? tag : ErrorTag.OPERATION_FAILED, message,
+            applicationTag, info, cause);
     }
 
     /**
@@ -233,7 +232,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *
      * @return an RpcError
      */
-    public static @NonNull RpcError newWarning(final ErrorType errorType, final String tag, final String message) {
+    public static @NonNull RpcError newWarning(final ErrorType errorType, final ErrorTag tag, final String message) {
         return new RpcErrorImpl(ErrorSeverity.WARNING, errorType, tag, message, null, null, null);
     }
 
@@ -251,10 +250,9 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *
      * @return an RpcError
      */
-    public static @NonNull RpcError newWarning(final ErrorType errorType, final String tag, final String message,
+    public static @NonNull RpcError newWarning(final ErrorType errorType, final ErrorTag tag, final String message,
             final String applicationTag, final String info, final Throwable cause) {
-        return new RpcErrorImpl(ErrorSeverity.WARNING, errorType, tag, message,
-                                 applicationTag, info, cause);
+        return new RpcErrorImpl(ErrorSeverity.WARNING, errorType, tag, message, applicationTag, info, cause);
     }
 
     /**
@@ -277,13 +275,10 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         return withResult(builder.build());
     }
 
-    private void addError(final ErrorSeverity severity, final ErrorType errorType,
-            final String tag, final String message, final String applicationTag, final String info,
-            final Throwable cause) {
-
-        addError(new RpcErrorImpl(severity, errorType,
-                                    tag != null ? tag : "operation-failed", message,
-                                    applicationTag, info, cause));
+    private void addError(final ErrorSeverity severity, final ErrorType errorType, final ErrorTag tag,
+            final String message, final String applicationTag, final String info, final Throwable cause) {
+        addError(new RpcErrorImpl(severity, errorType, tag != null ? tag : ErrorTag.OPERATION_FAILED, message,
+            applicationTag, info, cause));
     }
 
     private void addError(final RpcError error) {
@@ -303,7 +298,8 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *        {@link RpcError#getTag} for a list of suggested values.
      * @param message a string suitable for human display that describes the warning condition.
      */
-    public @NonNull RpcResultBuilder<T> withWarning(final ErrorType errorType, final String tag, final String message) {
+    public @NonNull RpcResultBuilder<T> withWarning(final ErrorType errorType, final ErrorTag tag,
+            final String message) {
         addError(ErrorSeverity.WARNING, errorType, tag, message, null, null, null);
         return this;
     }
@@ -320,7 +316,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *        and/or implementation-specific debugging information.
      * @param cause the exception that triggered the warning.
      */
-    public @NonNull RpcResultBuilder<T> withWarning(final ErrorType errorType, final String tag, final String message,
+    public @NonNull RpcResultBuilder<T> withWarning(final ErrorType errorType, final ErrorTag tag, final String message,
             final String applicationTag, final String info, final Throwable cause) {
         addError(ErrorSeverity.WARNING, errorType, tag, message, applicationTag, info, cause);
         return this;
@@ -345,7 +341,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *        {@link RpcError#getTag} for a list of suggested values.
      * @param message a string suitable for human display that describes the error condition.
      */
-    public @NonNull RpcResultBuilder<T> withError(final ErrorType errorType, final String tag, final String message) {
+    public @NonNull RpcResultBuilder<T> withError(final ErrorType errorType, final ErrorTag tag, final String message) {
         addError(ErrorSeverity.ERROR, errorType, tag, message, null, null, null);
         return this;
     }
@@ -375,7 +371,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *        and/or implementation-specific debugging information.
      * @param cause the exception that triggered the error.
      */
-    public @NonNull RpcResultBuilder<T> withError(final ErrorType errorType, final String tag, final String message,
+    public @NonNull RpcResultBuilder<T> withError(final ErrorType errorType, final ErrorTag tag, final String message,
             final String applicationTag, final String info, final Throwable cause) {
         addError(ErrorSeverity.ERROR, errorType, tag, message, applicationTag, info, cause);
         return this;
