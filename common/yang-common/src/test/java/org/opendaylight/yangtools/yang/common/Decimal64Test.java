@@ -97,13 +97,22 @@ public class Decimal64Test {
     }
 
     @Test
+    public void testFractionLimits() {
+        Decimal64.valueOf("922337203685477580.7");
+        Decimal64.valueOf("9.223372036854775807");
+
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("922337203685477580.71"));
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("9.2233720368547758071"));
+    }
+
+    @Test
     public void testParseTooLongString() {
         assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("1234567890123456789"));
     }
 
     @Test
     public void testParseTooLongDecimal() {
-        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0.123456789012345689"));
+        assertThrows(NumberFormatException.class, () -> Decimal64.valueOf("0.1234567890123456789"));
     }
 
     @Test
