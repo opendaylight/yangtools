@@ -112,7 +112,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
                 limit--;
             }
 
-            final int fracLimit = MAX_FRACTION_DIGITS - intLen;
+            final int fracLimit = MAX_FRACTION_DIGITS - intLen + 1;
             byte fracLen = 0;
             long fracPart = 0;
             for (; idx <= limit; idx++, fracLen++) {
