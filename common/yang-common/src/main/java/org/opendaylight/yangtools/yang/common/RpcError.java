@@ -48,8 +48,7 @@ public interface RpcError {
      * </pre>
      * @return a string if available or null otherwise.
      */
-    // FIXME: 8.0.0: return ErrorTag here
-    String getTag();
+    ErrorTag getTag();
 
     /**
      * Returns a short string that identifies the specific type of error condition as
