@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
@@ -29,7 +29,7 @@ final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveSta
     }
 
     @Override
-    public Optional<LeafSchemaNode> getOriginal() {
+    public Optional<LeafListSchemaNode> getOriginal() {
         return Optional.empty();
     }
 
