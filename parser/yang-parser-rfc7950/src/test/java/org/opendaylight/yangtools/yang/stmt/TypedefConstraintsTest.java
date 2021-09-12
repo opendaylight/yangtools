@@ -13,10 +13,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Range;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
 public class TypedefConstraintsTest {
-
     @Test
     public void decimalRangeConstraintsTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/stmt-test/constraints");
@@ -65,8 +64,8 @@ public class TypedefConstraintsTest {
         assertEquals(1, decRangeConstraints.size());
 
         final Range<?> range = decRangeConstraints.iterator().next();
-        assertEquals(new BigDecimal(1.5), range.lowerEndpoint());
-        assertEquals(new BigDecimal(5.5), range.upperEndpoint());
+        assertEquals(Decimal64.valueOf(1.5), range.lowerEndpoint());
+        assertEquals(Decimal64.valueOf(5.5), range.upperEndpoint());
 
         assertEquals(TypeDefinitions.DECIMAL64.bindTo(leafDecimal.getQName().getModule()), decType.getQName());
         assertNull(decType.getBaseType());

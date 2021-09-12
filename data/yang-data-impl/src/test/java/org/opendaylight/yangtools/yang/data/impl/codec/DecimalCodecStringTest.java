@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigDecimal;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -26,7 +26,7 @@ public class DecimalCodecStringTest {
     @Test
     public void testSerialize() {
         DecimalCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
-        assertEquals("serialize", "123.456", codec.serialize(new BigDecimal("123.456")));
+        assertEquals("123.456", codec.serialize(Decimal64.valueOf("123.456")));
     }
 
     @SuppressWarnings("unchecked")
@@ -34,7 +34,7 @@ public class DecimalCodecStringTest {
     public void testDeserialize() {
         DecimalCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
 
-        assertEquals("deserialize", new BigDecimal("123.456"), codec.deserialize("123.456"));
+        assertEquals(Decimal64.valueOf("123.456"), codec.deserialize("123.456"));
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "12o.3");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "");

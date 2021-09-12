@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Function;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -137,15 +138,15 @@ public class NumberUtilTest {
 
     @Test
     public void testConverterToBigDecimal() {
-        BigDecimal bigDecNum = new BigDecimal(20.0);
-        final Function<Number, BigDecimal> numberFunction = NumberUtil.converterTo(BigDecimal.class);
+        Decimal64 bigDecNum = Decimal64.valueOf(20.0);
+        final Function<Number, Decimal64> numberFunction = NumberUtil.converterTo(Decimal64.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 
         int intNum = 20;
         assertEquals(bigDecNum, numberFunction.apply(intNum));
 
         double doubleNum = 20.0;
-        bigDecNum = new BigDecimal("20.0");
+        bigDecNum = Decimal64.valueOf("20.0");
         assertEquals(bigDecNum, numberFunction.apply(doubleNum));
     }
 

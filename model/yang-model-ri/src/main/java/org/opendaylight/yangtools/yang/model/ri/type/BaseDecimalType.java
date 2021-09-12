@@ -12,16 +12,16 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeDefinition, BigDecimal>
+final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeDefinition, Decimal64>
         implements DecimalTypeDefinition {
     private static final ConstraintMetaDefinition BUILTIN_CONSTRAINT = new ConstraintMetaDefinition() {
 
@@ -46,7 +46,7 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         }
     };
 
-    private static final ImmutableList<RangeConstraint<BigDecimal>> IMPLICIT_RANGE_STATEMENTS = ImmutableList.of(
+    private static final ImmutableList<RangeConstraint<Decimal64>> IMPLICIT_RANGE_STATEMENTS = ImmutableList.of(
         createRangeConstraint("-922337203685477580.8", "922337203685477580.7"),
         createRangeConstraint("-92233720368547758.08", "92233720368547758.07"),
         createRangeConstraint("-9223372036854775.808", "9223372036854775.807"),
@@ -66,19 +66,19 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         createRangeConstraint("-92.23372036854775808", "92.23372036854775807"),
         createRangeConstraint("-9.223372036854775808", "9.223372036854775807"));
 
-    private static RangeConstraint<BigDecimal> createRangeConstraint(final String min, final String max) {
+    private static RangeConstraint<Decimal64> createRangeConstraint(final String min, final String max) {
         return new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(
-            Range.closed(new BigDecimal(min), new BigDecimal(max))));
+            Range.closed(Decimal64.valueOf(min), Decimal64.valueOf(max))));
     }
 
-    static RangeConstraint<BigDecimal> constraintsForDigits(final int fractionDigits) {
+    static RangeConstraint<Decimal64> constraintsForDigits(final int fractionDigits) {
         return verifyNotNull(IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1));
     }
 
     private final int fractionDigits;
 
     BaseDecimalType(final QName qname, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
-            final int fractionDigits, final RangeConstraint<BigDecimal> rangeConstraint) {
+            final int fractionDigits, final RangeConstraint<Decimal64> rangeConstraint) {
         super(qname, unknownSchemaNodes, rangeConstraint);
         this.fractionDigits = fractionDigits;
     }
