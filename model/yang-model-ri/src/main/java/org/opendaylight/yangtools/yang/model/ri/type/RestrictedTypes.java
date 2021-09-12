@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.annotations.Beta;
-import java.math.BigDecimal;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
@@ -111,11 +111,11 @@ public final class RestrictedTypes {
         };
     }
 
-    public static @NonNull RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> newDecima64Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<DecimalTypeDefinition, Decimal64> newDecima64Builder(
             final DecimalTypeDefinition baseType, final QName qname) {
         return new RangeRestrictedTypeBuilderWithBase<>(baseType, qname) {
             @Override
-            DecimalTypeDefinition buildType(final RangeConstraint<BigDecimal> rangeConstraint) {
+            DecimalTypeDefinition buildType(final RangeConstraint<@NonNull Decimal64> rangeConstraint) {
                 return new RestrictedDecimalType(getBaseType(), getQName(), getUnknownSchemaNodes(), rangeConstraint);
             }
         };

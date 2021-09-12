@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.math.BigDecimal;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
  * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
  */
 @Beta
-public final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
+public final class DecimalStringCodec extends TypeDefinitionAwareCodec<Decimal64, DecimalTypeDefinition>
         implements DecimalCodec<String> {
     private DecimalStringCodec(final DecimalTypeDefinition typeDef) {
-        super(typeDef, BigDecimal.class);
+        super(typeDef, Decimal64.class);
     }
 
     public static @NonNull DecimalStringCodec from(final DecimalTypeDefinition type) {
@@ -30,13 +30,13 @@ public final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecima
     }
 
     @Override
-    protected BigDecimal deserializeImpl(final String product) {
+    protected Decimal64 deserializeImpl(final String product) {
         // FIXME: run value validation
-        return new BigDecimal(product);
+        return Decimal64.valueOf(product);
     }
 
     @Override
-    protected @NonNull String serializeImpl(@NonNull final BigDecimal input) {
+    protected String serializeImpl(final Decimal64 input) {
         return input.toString();
     }
 }

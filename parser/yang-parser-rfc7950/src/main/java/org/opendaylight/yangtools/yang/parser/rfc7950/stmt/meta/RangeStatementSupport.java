@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -109,8 +109,7 @@ public final class RangeStatementSupport
         // Deal with decimal64, i.e. 'decimal-value' production of the RFC6020 ABNF
         if (value.indexOf('.') != -1) {
             try {
-                // FIXME: YANGTOOLS-556: Use Decimal64 here
-                return new BigDecimal(value);
+                return Decimal64.valueOf(value);
             } catch (NumberFormatException e) {
                 throw new SourceException(ctx, e, "Value %s is not a valid decimal number", value);
             }

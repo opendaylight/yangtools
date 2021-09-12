@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Preconditions;
-import java.math.BigDecimal;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
-public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> {
+public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition, Decimal64> {
     private Integer fractionDigits;
 
     DecimalTypeBuilder(final QName qname) {

@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.ri.type;
 
-import java.math.BigDecimal;
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
-final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<DecimalTypeDefinition, BigDecimal>
+final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<DecimalTypeDefinition, Decimal64>
         implements DecimalTypeDefinition {
     DerivedDecimalType(final DecimalTypeDefinition baseType, final QName qname, final Object defaultValue,
             final String description, final String reference, final Status status, final String units,

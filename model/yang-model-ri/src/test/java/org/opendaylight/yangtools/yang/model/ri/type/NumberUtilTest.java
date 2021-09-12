@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Function;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -42,11 +43,11 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForBigDecimal() {
-        final BigDecimal min = new BigDecimal(100.0);
-        final BigDecimal superMin = new BigDecimal(50.0);
-        final BigDecimal max = new BigDecimal(200.0);
-        final BigDecimal superMax = new BigDecimal(300.0);
+    public void testRangeCoveredForDecimal64() {
+        final Decimal64 min = Decimal64.valueOf(100.0);
+        final Decimal64 superMin = Decimal64.valueOf(50.0);
+        final Decimal64 max = Decimal64.valueOf(200.0);
+        final Decimal64 superMax = Decimal64.valueOf(300.0);
 
         assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
     }
@@ -137,15 +138,15 @@ public class NumberUtilTest {
 
     @Test
     public void testConverterToBigDecimal() {
-        BigDecimal bigDecNum = new BigDecimal(20.0);
-        final Function<Number, BigDecimal> numberFunction = NumberUtil.converterTo(BigDecimal.class);
+        Decimal64 bigDecNum = Decimal64.valueOf(20.0);
+        final Function<Number, Decimal64> numberFunction = NumberUtil.converterTo(Decimal64.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 
         int intNum = 20;
         assertEquals(bigDecNum, numberFunction.apply(intNum));
 
         double doubleNum = 20.0;
-        bigDecNum = new BigDecimal("20.0");
+        bigDecNum = Decimal64.valueOf("20.0");
         assertEquals(bigDecNum, numberFunction.apply(doubleNum));
     }
 
