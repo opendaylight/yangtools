@@ -44,8 +44,8 @@ package org.opendaylight.yangtools.yang.common;
  */
 public enum NetconfLayer {
     /**
-     * Content layer, for example configuration data. This layer is implied indirectly in constructs defined in
-     * {@link YangError} and corresponds to {@link ErrorType#APPLICATION}
+     * Content layer, for example configuration data. This layer is implied indirectly in all YANG-based validation and
+     * corresponds to {@link ErrorType#APPLICATION}
      */
     CONTENT,
     /**

@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 
 /**
  * A general base exception for an operation failure.

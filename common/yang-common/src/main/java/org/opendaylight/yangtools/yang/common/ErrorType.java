@@ -26,33 +26,31 @@ public enum ErrorType {
      * A {@link NetconfLayer#TRANSPORT} layer error. This typically happens on transport endpoints, where a protocol
      * plugin needs to report a NETCONF-equivalent condition.
      */
-    TRANSPORT("transport", NetconfLayer.TRANSPORT, RpcError.ErrorType.TRANSPORT),
+    TRANSPORT("transport", NetconfLayer.TRANSPORT),
     /**
      * A {@link NetconfLayer#RPC} layer error. This typically happens on request routers, where a request may end up
      * being resolved due to implementation-internal causes, such as timeouts and state loss.
      */
-    RPC("rpc", NetconfLayer.RPC, RpcError.ErrorType.RPC),
+    RPC("rpc", NetconfLayer.RPC),
     /**
      * A {@link NetconfLayer#OPERATIONS} layer error. These typically happen in a NETCONF protocol implementation.
      */
-    PROTOCOL("protocol", NetconfLayer.OPERATIONS, RpcError.ErrorType.PROTOCOL),
+    PROTOCOL("protocol", NetconfLayer.OPERATIONS),
     /**
      * A {@link NetconfLayer#CONTENT} layer error. These typically happen due to YANG data handling, such as
      * type checking and structural consistency.
      */
-    APPLICATION("application", NetconfLayer.CONTENT, RpcError.ErrorType.APPLICATION);
+    APPLICATION("application", NetconfLayer.CONTENT);
 
     private static final Map<String, ErrorType> BY_ELEMENT_BODY =
         Maps.uniqueIndex(Arrays.asList(values()), ErrorType::elementBody);
 
-    private final RpcError.ErrorType legacy;
     private final String elementBody;
     private final NetconfLayer layer;
 
-    ErrorType(final String elementName, final NetconfLayer layer, final RpcError.ErrorType legacy) {
+    ErrorType(final String elementName, final NetconfLayer layer) {
         this.elementBody = requireNonNull(elementName);
         this.layer = requireNonNull(layer);
-        this.legacy = requireNonNull(legacy);
     }
 
     /**
@@ -71,11 +69,6 @@ public enum ErrorType {
      */
     public final NetconfLayer layer() {
         return layer;
-    }
-
-    @Deprecated
-    public final RpcError.ErrorType toLegacy() {
-        return legacy;
     }
 
     public static @Nullable ErrorType forElementBody(final String elementBody) {
