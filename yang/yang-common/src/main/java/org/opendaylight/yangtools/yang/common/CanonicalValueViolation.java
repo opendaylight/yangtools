@@ -126,7 +126,7 @@ public abstract class CanonicalValueViolation implements Immutable, Serializable
     }
 
     public final Optional<String> getMessage() {
-        return nullableString(appTag());
+        return nullableString(message());
     }
 
     abstract @Nullable String appTag();
