@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.CharMatcher;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -25,10 +24,6 @@ import org.opendaylight.yangtools.concepts.WritableObject;
 @NonNullByDefault
 public abstract class AbstractQName implements Identifier, WritableObject {
     private static final long serialVersionUID = 1L;
-    private static final CharMatcher IDENTIFIER_START =
-            CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
-    private static final CharMatcher NOT_IDENTIFIER_PART =
-            IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
 
     private final String localName;
 
@@ -91,6 +86,7 @@ public abstract class AbstractQName implements Identifier, WritableObject {
     }
 
     private static boolean checkContent(final String localName) {
-        return IDENTIFIER_START.matches(localName.charAt(0)) && NOT_IDENTIFIER_PART.indexIn(localName, 1) == -1;
+        return YangNames.IDENTIFIER_START.matches(localName.charAt(0))
+            && YangNames.NOT_IDENTIFIER_PART.indexIn(localName, 1) == -1;
     }
 }
