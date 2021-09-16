@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.CharMatcher;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -21,6 +22,19 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 @NonNullByDefault
 public final class YangNames {
+    /**
+     * A {@link CharMatcher} matching the first character of a YANG {@code identifier} ABNF production,
+     * {@code (ALPHA / "_")}.
+     */
+    public static final CharMatcher IDENTIFIER_START =
+        CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
+    /**
+     * A {@link CharMatcher} NOT matching second and later characters of a YANG {@code identifier} ABNF production,
+     * {@code (ALPHA / DIGIT / "_" / "-" / ".")}.
+     */
+    public static final CharMatcher NOT_IDENTIFIER_PART =
+        IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
+
     private YangNames() {
         // Hidden on purpose
     }
