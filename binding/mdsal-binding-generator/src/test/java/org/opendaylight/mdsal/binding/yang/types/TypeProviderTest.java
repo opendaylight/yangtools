@@ -481,10 +481,4 @@ public class TypeProviderTest {
         final Type extType = provider.generatedTypeForExtendedDefinitionType(aesIdentityrefType, aesIdentityrefType);
         assertEquals(null, extType);
     }
-
-    @Test(expected = NullPointerException.class)
-    public void provideGeneratedTOBuilderForBitsTypeDefinitionWithNullTypedefTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        provider.provideGeneratedTOBuilderForBitsTypeDefinition(JavaTypeName.create("foo", "foo"), null, "foo");
-    }
 }
