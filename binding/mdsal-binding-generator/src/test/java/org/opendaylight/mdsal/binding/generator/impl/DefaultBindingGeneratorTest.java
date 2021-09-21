@@ -86,4 +86,27 @@ public class DefaultBindingGeneratorTest {
         assertEquals(1, enumsTypeArgs.length);
         assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs[0].getFullyQualifiedName());
     }
+
+    @Test
+    public void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseTypeTest() {
+        final var cttName = JavaTypeName.create(TEST_TYPE_PROVIDER, "ConstructionTypeTest");
+        final var ctt = TYPES.stream()
+            .filter(type -> type.getIdentifier().equals(cttName))
+            .findFirst()
+            .orElseThrow();
+
+        final var methods = ctt.getMethodDefinitions();
+        assertEquals(56, methods.size());
+
+        final var type = methods.stream().filter(method -> method.getName().equals("getAesIdentityrefType"))
+            .findFirst()
+            .orElseThrow()
+            .getReturnType();
+        assertThat(type, instanceOf(ParameterizedType.class));
+        final var pType = (ParameterizedType) type;
+        assertEquals(Types.CLASS, pType.getRawType());
+        final var pTypeArgs = pType.getActualTypeArguments();
+        assertEquals(1, pTypeArgs.length);
+        assertEquals(TEST_TYPE_PROVIDER + ".Aes", pTypeArgs[0].getFullyQualifiedName());
+    }
 }

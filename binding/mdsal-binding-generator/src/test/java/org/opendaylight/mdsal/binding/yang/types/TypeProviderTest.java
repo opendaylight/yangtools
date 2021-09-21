@@ -467,18 +467,4 @@ public class TypeProviderTest {
         final Type extType = provider.generatedTypeForExtendedDefinitionType(barItemLeafrefId, barItemLeafrefId);
         assertEquals(null, extType);
     }
-
-    @Test
-    public void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final Module baseYangTypes = resolveModule("test-type-provider");
-
-        final TypeDefinition<?> aesIdentityrefType = resolveTypeDefinitionFromModule(baseYangTypes,
-            "aes-identityref-type");
-
-        assertNotNull(aesIdentityrefType);
-        final Type extType = provider.generatedTypeForExtendedDefinitionType(aesIdentityrefType, aesIdentityrefType);
-        assertEquals(null, extType);
-    }
 }
