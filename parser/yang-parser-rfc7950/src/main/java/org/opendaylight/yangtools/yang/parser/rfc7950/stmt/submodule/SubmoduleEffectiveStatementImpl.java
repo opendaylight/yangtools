@@ -24,7 +24,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -55,7 +55,7 @@ final class SubmoduleEffectiveStatementImpl
     private ImmutableSet<Submodule> submodules;
     private boolean sealed;
 
-    SubmoduleEffectiveStatementImpl(final Current<UnqualifiedQName, SubmoduleStatement> stmt,
+    SubmoduleEffectiveStatementImpl(final Current<Unqualified, SubmoduleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(stmt, substatements, findSubmodulePrefix(stmt, substatements));
 
@@ -74,7 +74,7 @@ final class SubmoduleEffectiveStatementImpl
 
         final Optional<Revision> submoduleRevision = findFirstEffectiveSubstatementArgument(
             RevisionEffectiveStatement.class);
-        this.qnameModule = QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision).intern();
+        qnameModule = QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision).intern();
 
         /*
          * Because of possible circular chains of includes between submodules we can

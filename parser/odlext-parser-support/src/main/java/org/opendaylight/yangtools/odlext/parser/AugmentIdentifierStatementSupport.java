@@ -12,7 +12,8 @@ import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,8 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class AugmentIdentifierStatementSupport
-        extends AbstractStatementSupport<UnqualifiedQName, AugmentIdentifierStatement,
-                                         AugmentIdentifierEffectiveStatement> {
+        extends AbstractStatementSupport<Unqualified, AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement> {
     private static final SubstatementValidator VALIDATOR =
         SubstatementValidator.builder(OpenDaylightExtensionsStatements.AUGMENT_IDENTIFIER).build();
 
@@ -36,9 +36,9 @@ public final class AugmentIdentifierStatementSupport
     }
 
     @Override
-    public UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return UnqualifiedQName.of(value).intern();
+            return UnresolvedQName.unqualified(value).intern();
         } catch (IllegalArgumentException e) {
             throw new SourceException(ctx, e, "Invalid identifier \"%s\"", value);
         }
@@ -46,7 +46,7 @@ public final class AugmentIdentifierStatementSupport
 
     @Override
     protected AugmentIdentifierStatement createDeclared(
-            final StmtContext<UnqualifiedQName, AugmentIdentifierStatement, ?> ctx,
+            final StmtContext<Unqualified, AugmentIdentifierStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new AugmentIdentifierStatementImpl(ctx.getArgument(), substatements);
     }
@@ -59,7 +59,7 @@ public final class AugmentIdentifierStatementSupport
 
     @Override
     protected AugmentIdentifierEffectiveStatement createEffective(
-            final Current<UnqualifiedQName, AugmentIdentifierStatement> stmt,
+            final Current<Unqualified, AugmentIdentifierStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new AugmentIdentifierEffectiveStatementImpl(stmt.declared(), substatements);
     }

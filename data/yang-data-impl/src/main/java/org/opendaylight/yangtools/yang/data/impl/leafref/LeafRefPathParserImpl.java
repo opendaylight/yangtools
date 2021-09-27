@@ -16,7 +16,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
@@ -65,8 +65,8 @@ final class LeafRefPathParserImpl {
         //        where the typedef is referenced.  If a typedef is defined and
         //        referenced within a grouping, the namespace is affected by where
         //        the grouping is used (see Section 7.13).
-        this.leafrefModule = getBaseModule(leafrefType);
-        this.nodeModule = currentNode.getQName().getModule();
+        leafrefModule = getBaseModule(leafrefType);
+        nodeModule = currentNode.getQName().getModule();
     }
 
     LeafRefPath parseLeafRefPath(final PathExpression path) {
@@ -155,9 +155,9 @@ final class LeafRefPathParserImpl {
     private static QName resolve(final AbstractQName qname, final QNameModule localModule) {
         if (qname instanceof QName) {
             return (QName) qname;
-        } else if (qname instanceof UnqualifiedQName) {
+        } else if (qname instanceof Unqualified) {
             // Bind to namespace. Note we expect to perform frequent matching, hence we are interning the result
-            return ((UnqualifiedQName) qname).bindTo(localModule).intern();
+            return ((Unqualified) qname).bindTo(localModule).intern();
         } else {
             throw new IllegalStateException("Unhandled unresolved QName " + qname);
         }

@@ -17,8 +17,9 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
@@ -220,7 +221,7 @@ class PathExpressionParser {
     private static YangQNameExpr createChildExpr(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
         switch (qname.getChildCount()) {
             case 1:
-                return YangQNameExpr.of(UnqualifiedQName.of(qname.getText()).intern());
+                return YangQNameExpr.of(UnresolvedQName.unqualified(qname.getText()).intern());
             case 3:
                 return YangQNameExpr.of(parseQName(ctx, qname));
             default:
@@ -232,7 +233,7 @@ class PathExpressionParser {
             final List<YangExpr> predicates) {
         switch (qname.getChildCount()) {
             case 1:
-                return YangXPathAxis.CHILD.asStep(UnqualifiedQName.of(qname.getText()).intern(), predicates);
+                return YangXPathAxis.CHILD.asStep(UnresolvedQName.unqualified(qname.getText()).intern(), predicates);
             case 3:
                 return YangXPathAxis.CHILD.asStep(parseQName(ctx, qname), predicates);
             default:
@@ -240,7 +241,7 @@ class PathExpressionParser {
         }
     }
 
-    private static QName parseQName(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
+    private static @NonNull QName parseQName(final StmtContext<?, ?, ?> ctx, final Node_identifierContext qname) {
         return StmtContextUtils.parseNodeIdentifier(ctx, qname.getChild(0).getText(), qname.getChild(2).getText());
     }
 }

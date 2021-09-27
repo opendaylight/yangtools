@@ -14,21 +14,22 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
 
 /**
- * Externalizable proxy for {@link QualifiedQName}.
+ * Externalizable proxy for {@link Qualified}.
  */
 final class QQNv1 implements Externalizable {
     private static final long serialVersionUID = 1L;
 
-    private QualifiedQName qname;
+    private Qualified qname;
 
     @SuppressWarnings("checkstyle:redundantModifier")
     public QQNv1() {
         // For Externalizable
     }
 
-    QQNv1(final QualifiedQName qname) {
+    QQNv1(final Qualified qname) {
         this.qname = requireNonNull(qname);
     }
 
@@ -39,7 +40,7 @@ final class QQNv1 implements Externalizable {
 
     @Override
     public void readExternal(final ObjectInput in) throws IOException {
-        qname = QualifiedQName.readFrom(in);
+        qname = Qualified.readFrom(in);
     }
 
     Object readResolve() {

@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStepWithPredicates;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.NodeTypeStep;
@@ -117,11 +117,11 @@ public enum YangXPathAxis {
         return ResolvedQNameStep.of(this, qname, predicates);
     }
 
-    public final UnresolvedQNameStep asStep(final AbstractQName qname) {
+    public final UnresolvedQNameStep asStep(final UnresolvedQName qname) {
         return new UnresolvedQNameStep(this, qname);
     }
 
-    public final UnresolvedQNameStep asStep(final AbstractQName qname, final Collection<YangExpr> predicates) {
+    public final UnresolvedQNameStep asStep(final UnresolvedQName qname, final Collection<YangExpr> predicates) {
         return UnresolvedQNameStep.of(this, qname, predicates);
     }
 
