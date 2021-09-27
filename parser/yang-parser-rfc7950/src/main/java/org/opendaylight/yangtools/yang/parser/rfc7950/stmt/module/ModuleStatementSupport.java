@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -70,7 +71,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class ModuleStatementSupport
-        extends AbstractStatementSupport<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> {
+        extends AbstractStatementSupport<Unqualified, ModuleStatement, ModuleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
         .addAny(YangStmtMapping.ANYXML)
         .addAny(YangStmtMapping.AUGMENT)
@@ -147,16 +148,16 @@ public final class ModuleStatementSupport
     }
 
     @Override
-    public UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return UnqualifiedQName.of(value);
+            return UnresolvedQName.unqualified(value);
         } catch (IllegalArgumentException e) {
             throw new SourceException(e.getMessage(), ctx, e);
         }
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final String moduleName = stmt.getRawArgument();
 
         final XMLNamespace moduleNs = SourceException.throwIfNull(
@@ -179,7 +180,7 @@ public final class ModuleStatementSupport
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt) {
+    public void onLinkageDeclared(final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final XMLNamespace moduleNs = SourceException.throwIfNull(
             firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class), stmt,
             "Namespace of the module [%s] is missing", stmt.argument());
@@ -219,7 +220,7 @@ public final class ModuleStatementSupport
 
     @Override
     protected ImmutableList<? extends EffectiveStatement<?, ?>> buildEffectiveSubstatements(
-            final Current<UnqualifiedQName, ModuleStatement> stmt,
+            final Current<Unqualified, ModuleStatement> stmt,
             final List<? extends StmtContext<?, ?, ?>> substatements) {
         final ImmutableList<? extends EffectiveStatement<?, ?>> local =
                 super.buildEffectiveSubstatements(stmt, substatements);
@@ -245,7 +246,7 @@ public final class ModuleStatementSupport
     }
 
     @Override
-    protected ModuleStatement createDeclared(final StmtContext<UnqualifiedQName, ModuleStatement, ?> ctx,
+    protected ModuleStatement createDeclared(final StmtContext<Unqualified, ModuleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noNamespace(ctx);
@@ -260,7 +261,7 @@ public final class ModuleStatementSupport
     }
 
     @Override
-    protected ModuleEffectiveStatement createEffective(final Current<UnqualifiedQName, ModuleStatement> stmt,
+    protected ModuleEffectiveStatement createEffective(final Current<Unqualified, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noNamespace(stmt);
@@ -293,7 +294,7 @@ public final class ModuleStatementSupport
     }
 
     private static void addToSemVerModuleNamespace(
-            final Mutable<UnqualifiedQName, ModuleStatement, ModuleEffectiveStatement> stmt,
+            final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt,
             final SourceIdentifier moduleIdentifier) {
         final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(stmt.getRawArgument(),
             stmt.getFromNamespace(SemanticVersionNamespace.class, stmt));

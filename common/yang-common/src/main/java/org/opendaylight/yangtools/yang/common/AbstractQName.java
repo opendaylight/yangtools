@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -18,9 +17,9 @@ import org.opendaylight.yangtools.concepts.WritableObject;
 
 /**
  * Abstract superclass for sharing QName references, which can either be resolved {@link QName}s or unresolved
- * {@link UnqualifiedQName} and {@link QualifiedQName}s.
+ * {@link UnresolvedQName.Unqualified} and {@link UnresolvedQName.Qualified}s.
  */
-@Beta
+// FIXME: sealed to allow QName and UnresolvedQName only when we have JDK17+
 @NonNullByDefault
 public abstract class AbstractQName implements Identifier, WritableObject {
     private static final long serialVersionUID = 1L;

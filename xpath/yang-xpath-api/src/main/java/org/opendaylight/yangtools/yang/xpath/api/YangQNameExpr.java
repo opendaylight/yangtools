@@ -11,8 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 /**
  * An XPath QName expression. This is an exact QName, which cannot be converted to a string literal compatible with
@@ -60,14 +60,14 @@ public abstract class YangQNameExpr implements YangExpr, QNameReferent {
     public static final class Unresolved extends YangQNameExpr implements UnresolvedQNameReferent<Resolved> {
         private static final long serialVersionUID = 1L;
 
-        private final AbstractQName qname;
+        private final UnresolvedQName qname;
 
-        Unresolved(final AbstractQName qname) {
+        Unresolved(final UnresolvedQName qname) {
             this.qname = requireNonNull(qname);
         }
 
         @Override
-        public AbstractQName getQName() {
+        public UnresolvedQName getQName() {
             return qname;
         }
 
@@ -93,7 +93,7 @@ public abstract class YangQNameExpr implements YangExpr, QNameReferent {
         // Prevent instantiation
     }
 
-    public static Unresolved of(final AbstractQName qname) {
+    public static Unresolved of(final UnresolvedQName qname) {
         return new Unresolved(qname);
     }
 

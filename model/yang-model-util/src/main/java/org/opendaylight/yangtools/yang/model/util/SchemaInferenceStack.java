@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
@@ -141,17 +141,17 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private boolean clean;
 
     private SchemaInferenceStack(final EffectiveModelContext effectiveModel, final int expectedSize) {
-        this.deque = new ArrayDeque<>(expectedSize);
+        deque = new ArrayDeque<>(expectedSize);
         this.effectiveModel = requireNonNull(effectiveModel);
-        this.clean = true;
+        clean = true;
     }
 
     private SchemaInferenceStack(final SchemaInferenceStack source) {
-        this.deque = source.deque.clone();
-        this.effectiveModel = source.effectiveModel;
-        this.currentModule = source.currentModule;
-        this.groupingDepth = source.groupingDepth;
-        this.clean = source.clean;
+        deque = source.deque.clone();
+        effectiveModel = source.effectiveModel;
+        currentModule = source.currentModule;
+        groupingDepth = source.groupingDepth;
+        clean = source.clean;
     }
 
     private SchemaInferenceStack(final EffectiveModelContext effectiveModel,
@@ -166,8 +166,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private SchemaInferenceStack(final EffectiveModelContext effectiveModel) {
         this.effectiveModel = requireNonNull(effectiveModel);
-        this.deque = new ArrayDeque<>();
-        this.clean = true;
+        deque = new ArrayDeque<>();
+        clean = true;
     }
 
     /**
@@ -660,9 +660,9 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final QName qname;
         if (toResolve instanceof QName) {
             qname = (QName) toResolve;
-        } else if (toResolve instanceof UnqualifiedQName) {
+        } else if (toResolve instanceof Unqualified) {
             checkArgument(defaultNamespace != null, "Can not find target module of step %s", step);
-            qname = ((UnqualifiedQName) toResolve).bindTo(defaultNamespace);
+            qname = ((Unqualified) toResolve).bindTo(defaultNamespace);
         } else {
             throw new VerifyException("Unexpected child step QName " + toResolve);
         }
