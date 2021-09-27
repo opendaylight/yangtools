@@ -19,8 +19,11 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <S> Serializied (external) type
  * @param <D> Deserialized (internal) type
+ * @deprecated This is a base class for implementing IllegalArgumentCodec, without further use. It will be removed with
+ *             IllegalArgumentCodec.
  */
 @Beta
+@Deprecated(since = "8.0.0", forRemoval = true)
 public abstract class AbstractIllegalArgumentCodec<S, D> implements IllegalArgumentCodec<S, D> {
     @Override
     public final D deserialize(final S input) {

@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class AbstractIllegalArgumentCodecTest {
     private static final class TestCodec extends AbstractIllegalArgumentCodec<String, String> {
         @Override
