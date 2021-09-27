@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import java.net.URI;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 
 /**
  * Constant definitions present in RFC documents related to the YANG language.
@@ -141,8 +142,8 @@ public final class YangConstants {
 
     // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
     // UnqualifiedQName#bindTo()
-    private static final UnqualifiedQName DUMMY_OPERATION_INPUT = UnqualifiedQName.of("input");
-    private static final UnqualifiedQName DUMMY_OPERATION_OUTPUT = UnqualifiedQName.of("output");
+    private static final Unqualified DUMMY_OPERATION_INPUT = UnresolvedQName.unqualified("input");
+    private static final Unqualified DUMMY_OPERATION_OUTPUT = UnresolvedQName.unqualified("output");
 
     private YangConstants() {
         // Hidden on purpose

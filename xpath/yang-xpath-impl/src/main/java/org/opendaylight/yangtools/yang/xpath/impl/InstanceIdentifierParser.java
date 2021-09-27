@@ -20,7 +20,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.opendaylight.yangtools.yang.common.QualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser;
 import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.EqQuotedStringContext;
@@ -55,12 +55,12 @@ abstract class InstanceIdentifierParser {
 
         @Override
         YangQNameExpr createExpr(final String prefix, final String localName) {
-            return YangQNameExpr.of(QualifiedQName.of(prefix, localName));
+            return YangQNameExpr.of(UnresolvedQName.qualified(prefix, localName));
         }
 
         @Override
         QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
-            return YangXPathAxis.CHILD.asStep(QualifiedQName.of(prefix, localName), predicates);
+            return YangXPathAxis.CHILD.asStep(UnresolvedQName.qualified(prefix, localName), predicates);
         }
     }
 
@@ -88,7 +88,7 @@ abstract class InstanceIdentifierParser {
     private final YangXPathMathSupport mathSupport;
 
     InstanceIdentifierParser(final YangXPathMathMode mathMode) {
-        this.mathSupport = mathMode.getSupport();
+        mathSupport = mathMode.getSupport();
     }
 
     final Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {

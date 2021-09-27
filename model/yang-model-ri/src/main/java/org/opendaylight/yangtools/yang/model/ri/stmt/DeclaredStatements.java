@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -490,7 +490,7 @@ public final class DeclaredStatements {
             : new RegularModifierStatement(argument, substatements);
     }
 
-    public static ModuleStatement createModule(final String rawArgument, final UnqualifiedQName argument,
+    public static ModuleStatement createModule(final String rawArgument, final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new ModuleStatementImpl(rawArgument, argument, substatements);
     }
@@ -637,7 +637,7 @@ public final class DeclaredStatements {
         }
     }
 
-    public static SubmoduleStatement createSubmodule(final String rawArgument, final UnqualifiedQName argument,
+    public static SubmoduleStatement createSubmodule(final String rawArgument, final Unqualified argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         return new SubmoduleStatementImpl(rawArgument, argument, substatements);
     }

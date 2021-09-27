@@ -21,7 +21,7 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -52,7 +52,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final @NonNull QNameModule qnameModule;
     private final ImmutableList<Submodule> submodules;
 
-    ModuleEffectiveStatementImpl(final Current<UnqualifiedQName, ModuleStatement> stmt,
+    ModuleEffectiveStatementImpl(final Current<Unqualified, ModuleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final Collection<? extends Submodule> submodules, final QNameModule qnameModule) {
         super(stmt, substatements, findPrefix(stmt, substatements, "module", stmt.getRawArgument()));

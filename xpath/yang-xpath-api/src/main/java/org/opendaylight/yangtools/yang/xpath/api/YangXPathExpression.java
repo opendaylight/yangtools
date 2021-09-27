@@ -11,8 +11,8 @@ import com.google.common.annotations.Beta;
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QualifiedQName;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Qualified;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
@@ -24,11 +24,11 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * levels to which an XPath expression can be bound:
  * <ul>
  * <li>Unbound Expressions, which is a essentially a parse tree. No namespace binding has been performed, i.e. all
- *     node identifiers are in {@link QualifiedQName} or {@link UnqualifiedQName} form. This level is typically not used
- *     when dealing with YANG models directly, but can be useful for validating a String conforms to XPath syntax.
+ *     node identifiers are in {@link Qualified} or {@link Unqualified} form. This level is typically not used when
+ *     dealing with YANG models directly, but can be useful for validating a String conforms to XPath syntax.
  * </li>
- * <li>Qualified-bound Expressions, where all {@link QualifiedQName}s are resolved and bound to {@link QName}s, but
- *     {@link UnqualifiedQName}s are still present. This level corresponds to how far a YANG parser can interpret XPath
+ * <li>Qualified-bound Expressions, where all {@link Qualified}s are resolved and bound to {@link QName}s, but
+ *     {@link Unqualified}s are still present. This level corresponds to how far a YANG parser can interpret XPath
  *     expressions defined in {@code typedef} statements and statements which are not fully instantiated, i.e. are
  *     descendants of a {@code grouping} statement.
  * </li>
@@ -47,12 +47,15 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 @Beta
 public interface YangXPathExpression extends Immutable {
     /**
-     * A Qualified-bound expression. All {@link QualifiedQName}s are eliminated and replaced with {@link QName}s.
+     * A Qualified-bound expression. All {@link Qualified}s are eliminated and replaced with {@link QName}s.
      */
     interface QualifiedBound extends YangXPathExpression {
 
     }
 
+    /**
+     * An Unqualified-bound expression. All {@link Unqualified}s are eliminated and replaced with {@link QName}s.
+     */
     interface UnqualifiedBound extends QualifiedBound {
         @Override
         YangQNameExpr.Resolved interpretAsQName(YangLiteralExpr expr) throws XPathExpressionException;
