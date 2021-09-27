@@ -14,7 +14,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -33,7 +33,7 @@ public final class TypeDefinitionAwareCodecTestHelper {
         return clazz.cast(codec);
     }
 
-    public static void deserializeWithExpectedIllegalArgEx(final Codec<String, ?, IllegalArgumentException> codec,
+    public static void deserializeWithExpectedIllegalArgEx(final IllegalArgumentCodec<String, ?> codec,
             final @NonNull String param) {
         assertThrows(IllegalArgumentException.class, () -> codec.deserialize(param));
     }
