@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface ClassBasedPropertyBuilder<P, T extends ClassBasedPropertyBuilder<P, T>> extends Builder<P> {
     /**
      * Sets a value of property uniquely identified by its
