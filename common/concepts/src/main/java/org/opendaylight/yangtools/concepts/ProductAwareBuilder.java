@@ -13,7 +13,9 @@ package org.opendaylight.yangtools.concepts;
  * the mutable nature of Builders, this has to be done very carefully.
  *
  * @param <P> Product type
+ * @deprecated This interface never reached its intended use and is scheduled for removal.
  */
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface ProductAwareBuilder<P> extends Builder<P> {
     /**
      * Return the hash code of the product. This has to be equivalent
