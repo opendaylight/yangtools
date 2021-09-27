@@ -18,6 +18,7 @@ import com.google.common.annotations.Beta;
  * @param <X> Error exception type
  */
 @Beta
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface UncheckedCodec<P, I, X extends RuntimeException>
     extends UncheckedSerializer<I, P, X>, UncheckedDeserializer<P, I, X>, Codec<P, I, X> {
 

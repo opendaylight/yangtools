@@ -17,6 +17,7 @@ import com.google.common.annotations.Beta;
  * @param <X> Error exception type
  */
 @Beta
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface UncheckedSerializer<P, I, X extends RuntimeException> extends Deserializer<P, I, X> {
     @Override
     P deserialize(I input);

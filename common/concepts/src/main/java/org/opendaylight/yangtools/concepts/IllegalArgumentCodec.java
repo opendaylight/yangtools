@@ -18,5 +18,9 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface IllegalArgumentCodec<P, I> extends UncheckedCodec<P, I, IllegalArgumentException> {
+    @Override
+    P serialize(I input);
 
+    @Override
+    I deserialize(P input);
 }

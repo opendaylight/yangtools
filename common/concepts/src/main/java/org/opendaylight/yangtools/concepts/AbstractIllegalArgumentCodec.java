@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.concepts;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -20,5 +21,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public abstract class AbstractIllegalArgumentCodec<P, I> extends AbstractUncheckedCodec<P, I, IllegalArgumentException>
         implements IllegalArgumentCodec<P, I> {
+    @Override
+    protected abstract @NonNull I deserializeImpl(@NonNull P product);
 
+    // implementation is guarded from nulls and verified not to return null
+    @Override
+    protected abstract @NonNull P serializeImpl(@NonNull I input);
 }

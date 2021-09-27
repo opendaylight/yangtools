@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @Beta
 @NonNullByDefault
+@Deprecated(since = "7.0.9", forRemoval = true)
 public abstract class AbstractUncheckedCodec<P, I, X extends RuntimeException> extends AbstractCodec<P, I, X>
         implements UncheckedCodec<P, I, X> {
     @Override

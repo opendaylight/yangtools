@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <I> Input type
  * @param <X> Error exception type
  */
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface Serializer<P, I, X extends Exception> {
     /**
      * Convert an input into a product.

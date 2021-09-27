@@ -15,6 +15,7 @@ package org.opendaylight.yangtools.concepts;
  * @param <I> Input type
  * @param <X> Error exception type
  */
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface Codec<P, I, X extends Exception> extends Serializer<P, I, X>, Deserializer<I, P, X> {
     @Override
     I deserialize(P input) throws X;

@@ -23,6 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @Beta
 @NonNullByDefault
+@Deprecated(since = "7.0.9", forRemoval = true)
 public abstract class AbstractCodec<P, I, X extends Exception> implements Codec<P, I, X> {
     @Override
     public final @NonNull I deserialize(@NonNull final P input) throws X {

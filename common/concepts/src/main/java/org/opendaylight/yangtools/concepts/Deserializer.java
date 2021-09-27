@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <I> Input type
  * @param <X> Error exception type
  */
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface Deserializer<P, I, X extends Exception> {
     /**
      * Produce an object base on input.
