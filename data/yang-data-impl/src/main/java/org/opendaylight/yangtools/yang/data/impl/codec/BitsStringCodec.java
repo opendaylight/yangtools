@@ -46,7 +46,7 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
     }
 
     @Override
-    protected @NonNull Set<String> deserializeImpl(@NonNull final String product) {
+    protected Set<String> deserializeImpl(final String product) {
         final Set<String> strings = ImmutableSet.copyOf(SPLITTER.split(product));
 
         // Normalize strings to schema first, retaining definition order
