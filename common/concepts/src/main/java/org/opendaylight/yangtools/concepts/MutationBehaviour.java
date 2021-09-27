@@ -15,6 +15,8 @@ package org.opendaylight.yangtools.concepts;
  *
  * @param <T> Mutation Type
  */
+// FIXME: sealed to allow Mutable and Immutable only when we have JDK17+
+// FIXME: consider hiding this interface afterwards
 public interface MutationBehaviour<T extends MutationBehaviour<T>> {
-
+    // Marker interface only
 }
