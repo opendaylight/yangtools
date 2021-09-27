@@ -7,18 +7,39 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * An abstract base class enforcing nullness contract around {@link IllegalArgumentCodec} interface.
  *
- * @param <P> Product type
- * @param <I> Input type
+ * @param <S> Serializied (external) type
+ * @param <D> Deserialized (internal) type
  */
 @Beta
 @NonNullByDefault
-public abstract class AbstractIllegalArgumentCodec<P, I> extends AbstractUncheckedCodec<P, I, IllegalArgumentException>
-        implements IllegalArgumentCodec<P, I> {
+public abstract class AbstractIllegalArgumentCodec<S, D> implements IllegalArgumentCodec<S, D> {
+    @Override
+    public final D deserialize(final S input) {
+        return verifyResult(deserializeImpl(requireNonNull(input)), input);
+    }
 
+    @Override
+    public final S serialize(final D input) {
+        return verifyResult(serializeImpl(requireNonNull(input)), input);
+    }
+
+    // implementation is guarded from nulls and verified not to return null
+    protected abstract D deserializeImpl(S product);
+
+    // implementation is guarded from nulls and verified not to return null
+    protected abstract S serializeImpl(D input);
+
+    private <X> X verifyResult(final @Nullable X result, final Object input) {
+        return verifyNotNull(result, "Codec %s returned null on %s", this, input);
+    }
 }
