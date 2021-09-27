@@ -13,7 +13,8 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -41,7 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public final class SubmoduleStatementSupport
-        extends AbstractStatementSupport<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> {
+        extends AbstractStatementSupport<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.SUBMODULE)
             .addAny(YangStmtMapping.ANYXML)
@@ -113,24 +114,22 @@ public final class SubmoduleStatementSupport
     }
 
     @Override
-    public UnqualifiedQName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public Unqualified parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         try {
-            return UnqualifiedQName.of(value);
+            return UnresolvedQName.unqualified(value);
         } catch (IllegalArgumentException e) {
             throw new SourceException(e.getMessage(), ctx, e);
         }
     }
 
     @Override
-    public void onPreLinkageDeclared(
-            final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
+    public void onPreLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getRawArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
     }
 
     @Override
-    public void onLinkageDeclared(
-            final Mutable<UnqualifiedQName, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
+    public void onLinkageDeclared(final Mutable<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.getRawArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
 
@@ -153,7 +152,7 @@ public final class SubmoduleStatementSupport
     }
 
     @Override
-    protected SubmoduleStatement createDeclared(final StmtContext<UnqualifiedQName, SubmoduleStatement, ?> ctx,
+    protected SubmoduleStatement createDeclared(final StmtContext<Unqualified, SubmoduleStatement, ?> ctx,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBelongsTo(ctx);
@@ -168,7 +167,7 @@ public final class SubmoduleStatementSupport
     }
 
     @Override
-    protected SubmoduleEffectiveStatement createEffective(final Current<UnqualifiedQName, SubmoduleStatement> stmt,
+    protected SubmoduleEffectiveStatement createEffective(final Current<Unqualified, SubmoduleStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         if (substatements.isEmpty()) {
             throw noBelongsTo(stmt);

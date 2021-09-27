@@ -25,6 +25,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 @Beta
 public abstract class YangLocationPath implements YangExpr {
@@ -241,15 +242,15 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class UnresolvedQNameStep extends AbstractQNameStep<AbstractQName>
+    public static class UnresolvedQNameStep extends AbstractQNameStep<UnresolvedQName>
             implements UnresolvedQNameReferent<ResolvedQNameStep> {
         private static final long serialVersionUID = 1L;
 
-        UnresolvedQNameStep(final YangXPathAxis axis, final AbstractQName qname) {
+        UnresolvedQNameStep(final YangXPathAxis axis, final UnresolvedQName qname) {
             super(axis, qname);
         }
 
-        static UnresolvedQNameStep of(final YangXPathAxis axis, final AbstractQName qname,
+        static UnresolvedQNameStep of(final YangXPathAxis axis, final UnresolvedQName qname,
                 final Collection<YangExpr> predicates) {
             return predicates.isEmpty() ? new UnresolvedQNameStep(axis, qname)
                     : new UnresolvedQNameStepWithPredicates(axis, qname, ImmutableSet.copyOf(predicates));
@@ -266,7 +267,7 @@ public abstract class YangLocationPath implements YangExpr {
 
         private final ImmutableSet<YangExpr> predicates;
 
-        UnresolvedQNameStepWithPredicates(final YangXPathAxis axis, final AbstractQName qname,
+        UnresolvedQNameStepWithPredicates(final YangXPathAxis axis, final UnresolvedQName qname,
                 final ImmutableSet<YangExpr> predicates) {
             super(axis, qname);
             this.predicates = requireNonNull(predicates);

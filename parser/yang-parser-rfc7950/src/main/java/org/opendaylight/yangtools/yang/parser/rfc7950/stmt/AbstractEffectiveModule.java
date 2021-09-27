@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -59,17 +59,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
-public abstract class AbstractEffectiveModule<D extends DeclaredStatement<UnqualifiedQName>,
-        E extends DataTreeAwareEffectiveStatement<UnqualifiedQName, D>>
-        extends WithTypedefNamespace<UnqualifiedQName, D, E>
-        implements ModuleLike, DocumentedNodeMixin<UnqualifiedQName, D>,
-            NotificationNodeContainerCompat<UnqualifiedQName, D, E> {
+public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqualified>,
+        E extends DataTreeAwareEffectiveStatement<Unqualified, D>>
+        extends WithTypedefNamespace<Unqualified, D, E>
+        implements ModuleLike, DocumentedNodeMixin<Unqualified, D>, NotificationNodeContainerCompat<Unqualified, D, E> {
     private final String prefix;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
 
-    protected AbstractEffectiveModule(final Current<UnqualifiedQName, D> stmt,
+    protected AbstractEffectiveModule(final Current<Unqualified, D> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final String prefix) {
         super(stmt.declared(), substatements);
 
@@ -101,7 +100,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
     }
 
     @Override
-    public UnqualifiedQName argument() {
+    public Unqualified argument() {
         return getDeclared().argument();
     }
 
