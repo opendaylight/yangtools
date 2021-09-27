@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @Beta
 public interface ModuleEffectiveStatement
-        extends DataTreeAwareEffectiveStatement<UnqualifiedQName, ModuleStatement>, SchemaTreeRoot {
+        extends DataTreeAwareEffectiveStatement<Unqualified, ModuleStatement>, SchemaTreeRoot {
     /**
      * Namespace mapping all known prefixes in a module to their modules. Note this namespace includes the module
      * in which it is instantiated.

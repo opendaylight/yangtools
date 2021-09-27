@@ -40,8 +40,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.QualifiedQName;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -118,13 +117,13 @@ abstract class AntlrXPathParser implements YangXPathParser {
         @Override
         QNameStep createStep(final YangXPathAxis axis, final String localName,
                 final List<YangExpr> predicates) {
-            return axis.asStep(UnqualifiedQName.of(localName).intern(), predicates);
+            return axis.asStep(UnresolvedQName.unqualified(localName).intern(), predicates);
         }
 
         @Override
         QNameStep createStep(final YangXPathAxis axis, final String prefix, final String localName,
                 final List<YangExpr> predicates) {
-            return axis.asStep(QualifiedQName.of(prefix, localName).intern(), predicates);
+            return axis.asStep(UnresolvedQName.qualified(prefix, localName).intern(), predicates);
         }
 
         @Override
@@ -228,8 +227,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
     AntlrXPathParser(final YangXPathMathMode mathMode) {
         this.mathMode = requireNonNull(mathMode);
-        this.mathSupport = mathMode.getSupport();
-        this.functionSupport = new FunctionSupport(mathSupport);
+        mathSupport = mathMode.getSupport();
+        functionSupport = new FunctionSupport(mathSupport);
     }
 
     abstract QName createQName(String localName);

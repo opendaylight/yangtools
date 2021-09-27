@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractRefStatement;
 
-final class RefAugmentIdentifierStatement extends AbstractRefStatement<UnqualifiedQName, AugmentIdentifierStatement>
+final class RefAugmentIdentifierStatement extends AbstractRefStatement<Unqualified, AugmentIdentifierStatement>
         implements AugmentIdentifierStatement {
     RefAugmentIdentifierStatement(final AugmentIdentifierStatement delegate, final DeclarationReference ref) {
         super(delegate, ref);

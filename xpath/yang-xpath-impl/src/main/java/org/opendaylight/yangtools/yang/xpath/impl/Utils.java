@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.QualifiedQName;
-import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
@@ -32,10 +30,10 @@ final class Utils {
         final String text = expr.getLiteral();
         final int colon = text.indexOf(':');
 
-        final AbstractQName qname;
+        final UnresolvedQName qname;
         try {
-            qname = colon != -1 ? QualifiedQName.of(text.substring(0, colon), text.substring(colon + 1))
-                    : UnqualifiedQName.of(text);
+            qname = colon != -1 ? UnresolvedQName.qualified(text.substring(0, colon), text.substring(colon + 1))
+                    : UnresolvedQName.unqualified(text);
         } catch (IllegalArgumentException e) {
             throw wrapException(e, "Cannot interpret %s as a QName", expr);
         }
@@ -49,7 +47,7 @@ final class Utils {
         final int colon = text.indexOf(':');
         try {
             if (colon == -1) {
-                return YangQNameExpr.of(UnqualifiedQName.of(text).intern());
+                return YangQNameExpr.of(UnresolvedQName.unqualified(text).intern());
             }
 
             return YangQNameExpr.of(namespaceContext.createQName(text.substring(0, colon), text.substring(colon + 1)));
