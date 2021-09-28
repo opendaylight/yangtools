@@ -305,7 +305,7 @@ public final class Types {
 
         @Override
         public Restrictions getRestrictions() {
-            return this.restrictions;
+            return restrictions;
         }
     }
 
@@ -329,7 +329,7 @@ public final class Types {
 
         @Override
         public Restrictions getRestrictions() {
-            return this.restrictions;
+            return restrictions;
         }
     }
 
@@ -365,12 +365,12 @@ public final class Types {
         @Override
         public Type[] getActualTypeArguments() {
 
-            return this.actualTypes;
+            return actualTypes;
         }
 
         @Override
         public Type getRawType() {
-            return this.rawType;
+            return rawType;
         }
     }
 
@@ -389,8 +389,8 @@ public final class Types {
         }
     }
 
-    public static <T extends Number & Comparable<T>> DefaultRestrictions<T> getDefaultRestrictions(final T min,
-            final T max) {
+    // FIXME: 9.0.0: remove this method
+    public static <T extends Number & Comparable<T>> Restrictions getDefaultRestrictions(final T min, final T max) {
         return new DefaultRestrictions<>(min, max);
     }
 
