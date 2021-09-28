@@ -120,6 +120,23 @@ public final class CodeHelpers {
     }
 
     /**
+     * Append augmentation map of an Augmentable to a ToStringHelper. If augmentations are null or empt, this method
+     * does nothing.
+     *
+     * @param helper Helper to append to
+     * @param name Name of the augmentation value
+     * @param augmentable Augmentable object to
+     * @throws NullPointerException if any argument is null
+     */
+    public static void appendAugmentations(final ToStringHelper helper, final String name,
+            final Augmentable<?> augmentable) {
+        final var augments = augmentable.augmentations();
+        if (!augments.isEmpty()) {
+            helper.add(name, augments.values());
+        }
+    }
+
+    /**
      * Compile a list of pattern regular expressions and return them as an array. The list must hold at least two
      * expressions.
      *

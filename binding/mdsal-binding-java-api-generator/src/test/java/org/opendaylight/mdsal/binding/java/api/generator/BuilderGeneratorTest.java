@@ -222,7 +222,7 @@ public class BuilderGeneratorTest {
                 + " */\n"
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
-                + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
+                + "    CodeHelpers.appendAugmentations(helper, \"augmentation\", obj);\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
     }
@@ -241,7 +241,7 @@ public class BuilderGeneratorTest {
                 + "static String bindingToString(final test.@NonNull test obj) {\n"
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendValue(helper, \"test\", obj.gettest());\n"
-                + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
+                + "    CodeHelpers.appendAugmentations(helper, \"augmentation\", obj);\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenType("get" + TEST))).toString());
     }
@@ -261,7 +261,7 @@ public class BuilderGeneratorTest {
                 + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
                 + "    CodeHelpers.appendValue(helper, \"test1\", obj.gettest1());\n"
                 + "    CodeHelpers.appendValue(helper, \"test2\", obj.gettest2());\n"
-                + "    CodeHelpers.appendValue(helper, \"augmentation\", obj.augmentations().values());\n"
+                + "    CodeHelpers.appendAugmentations(helper, \"augmentation\", obj);\n"
                 + "    return helper.toString();\n"
                 + "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
     }

@@ -350,7 +350,7 @@ class InterfaceTemplate extends BaseTemplate {
                 «CODEHELPERS.importedName».appendValue(helper, "«property.name»", obj.«property.getterName»());
             «ENDFOR»
             «IF augmentable»
-                «CODEHELPERS.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", obj.augmentations().values());
+                «CODEHELPERS.importedName».appendAugmentations(helper, "«AUGMENTATION_FIELD»", obj);
             «ENDIF»
             return helper.toString();
         }
