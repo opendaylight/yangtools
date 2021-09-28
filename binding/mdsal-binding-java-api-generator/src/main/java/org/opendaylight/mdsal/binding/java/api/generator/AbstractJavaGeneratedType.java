@@ -81,9 +81,11 @@ abstract class AbstractJavaGeneratedType {
     }
 
     private String annotateReference(final String ref, final Type type, final String annotation) {
-        return type instanceof ParameterizedType ? getReferenceString(annotate(ref, annotation), type,
-                ((ParameterizedType) type).getActualTypeArguments())
-                : annotate(ref, annotation).toString();
+        if (type instanceof ParameterizedType) {
+            return getReferenceString(annotate(ref, annotation), type,
+                ((ParameterizedType) type).getActualTypeArguments());
+        }
+        return "byte[]".equals(ref) ? "byte @" + annotation + "[]" : annotate(ref, annotation).toString();
     }
 
     final String getFullyQualifiedReference(final Type type, final String annotation) {
