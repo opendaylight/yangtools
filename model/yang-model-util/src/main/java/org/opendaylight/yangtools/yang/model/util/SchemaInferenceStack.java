@@ -382,22 +382,27 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
      * @throws IllegalArgumentException if the corresponding choice cannot be found
      */
     public @NonNull ChoiceEffectiveStatement enterChoice(final QName nodeIdentifier) {
+        final QName nodeId = requireNonNull(nodeIdentifier);
         final EffectiveStatement<?, ?> parent = deque.peek();
         if (parent instanceof ChoiceEffectiveStatement) {
-            return enterChoice((ChoiceEffectiveStatement) parent, nodeIdentifier);
+            return enterChoice((ChoiceEffectiveStatement) parent, nodeId);
         }
 
         // Fall back to schema tree lookup. Note if it results in non-choice, we rewind before reporting an error
-        final SchemaTreeEffectiveStatement<?> result = enterSchemaTree(nodeIdentifier);
+        final SchemaTreeEffectiveStatement<?> result = enterSchemaTree(nodeId);
         if (result instanceof ChoiceEffectiveStatement) {
             return (ChoiceEffectiveStatement) result;
         }
         exit();
-        throw new IllegalArgumentException("Choice " + nodeIdentifier + " not present");
+
+        if (parent != null) {
+            throw notPresent(parent, "Choice", nodeId);
+        }
+        throw new IllegalArgumentException("Choice " + nodeId + " not present");
     }
 
     // choice -> choice transition, we have to deal with intermediate case nodes
-    private @NonNull ChoiceEffectiveStatement enterChoice(final ChoiceEffectiveStatement parent,
+    private @NonNull ChoiceEffectiveStatement enterChoice(final @NonNull ChoiceEffectiveStatement parent,
             final QName nodeIdentifier) {
         for (EffectiveStatement<?, ?> stmt : parent.effectiveSubstatements()) {
             if (stmt instanceof CaseEffectiveStatement) {
@@ -413,7 +418,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
                 }
             }
         }
-        throw new IllegalArgumentException("Choice " + nodeIdentifier + " not present");
+        throw notPresent(parent, "Choice", nodeIdentifier);
     }
 
     /**
@@ -744,7 +749,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
         final GroupingEffectiveStatement ret = parent.streamEffectiveSubstatements(GroupingEffectiveStatement.class)
             .filter(stmt -> nodeIdentifier.equals(stmt.argument()))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Grouping " + nodeIdentifier + " not present"));
+            .orElseThrow(() -> notPresent(parent, "Grouping", nodeIdentifier));
         deque.push(ret);
         ++groupingDepth;
         return ret;
@@ -770,8 +775,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private @NonNull SchemaTreeEffectiveStatement<?> pushSchema(
             final @NonNull SchemaTreeAwareEffectiveStatement<?, ?> parent, final @NonNull QName nodeIdentifier) {
-        final SchemaTreeEffectiveStatement<?> ret = parent.findSchemaTreeNode(nodeIdentifier).orElseThrow(
-            () -> new IllegalArgumentException("Schema tree child " + nodeIdentifier + " not present"));
+        final SchemaTreeEffectiveStatement<?> ret = parent.findSchemaTreeNode(nodeIdentifier)
+            .orElseThrow(() -> notPresent(parent, "Schema tree child ", nodeIdentifier));
         deque.push(ret);
         return ret;
     }
@@ -796,8 +801,8 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
 
     private @NonNull DataTreeEffectiveStatement<?> pushData(final @NonNull DataTreeAwareEffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
-        final DataTreeEffectiveStatement<?> ret = parent.findDataTreeNode(nodeIdentifier).orElseThrow(
-            () -> new IllegalArgumentException("Data tree child " + nodeIdentifier + " not present"));
+        final DataTreeEffectiveStatement<?> ret = parent.findDataTreeNode(nodeIdentifier)
+            .orElseThrow(() -> notPresent(parent, "Data tree child", nodeIdentifier));
         deque.push(ret);
         clean = false;
         return ret;
@@ -818,7 +823,7 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
     private @NonNull TypedefEffectiveStatement pushTypedef(final @NonNull EffectiveStatement<?, ?> parent,
             final @NonNull QName nodeIdentifier) {
         final TypedefEffectiveStatement ret = parent.get(TypedefNamespace.class, nodeIdentifier)
-            .orElseThrow(() -> new IllegalArgumentException("Typedef " + nodeIdentifier + " not present"));
+            .orElseThrow(() -> notPresent(parent, "Typedef", nodeIdentifier));
         deque.push(ret);
         return ret;
     }
@@ -983,5 +988,27 @@ public final class SchemaInferenceStack implements Mutable, EffectiveModelContex
             throw new IllegalStateException("Cannot execute on empty stack");
         }
         return obj;
+    }
+
+    private static @NonNull IllegalArgumentException notPresent(final @NonNull EffectiveStatement<?, ?> parent,
+            final @NonNull String name, final QName nodeIdentifier) {
+        return new IllegalArgumentException(name + " " + nodeIdentifier + " not present in " + describeParent(parent));
+    }
+
+    private static @NonNull String describeParent(final @NonNull EffectiveStatement<?, ?> parent) {
+        // Add just enough information to be useful without being overly-verbose. Note we want to expose namespace
+        // information, so that we understand what revisions we are dealing with
+        if (parent instanceof SchemaTreeEffectiveStatement) {
+            return "schema parent " + parent.argument();
+        } else if (parent instanceof GroupingEffectiveStatement) {
+            return "grouping " + parent.argument();
+        } else if (parent instanceof ModuleEffectiveStatement) {
+            final var module = (ModuleEffectiveStatement) parent;
+            return "module " + module.argument().bindTo(module.localQNameModule());
+        } else {
+            // Shorthand for QNames, should provide enough context
+            final Object arg = parent.argument();
+            return "parent " + (arg instanceof QName ? arg : parent);
+        }
     }
 }

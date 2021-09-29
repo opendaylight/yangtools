@@ -124,7 +124,7 @@ public class LeafrefStaticAnalysisTest {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "deref-non-existent"));
-        assertThrowsMissingXyzzy(stack, leaf);
+        assertThrowsMissingXyzzy(stack, leaf, "grouping (leafrefs)grp");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class LeafrefStaticAnalysisTest {
             QName.create(FOO, "deref-non-existent")).get();
         final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "deref-non-existent"));
-        assertThrowsMissingXyzzy(stack, leaf);
+        assertThrowsMissingXyzzy(stack, leaf, "schema parent (leafrefs)bar");
     }
 
     @Test
@@ -143,7 +143,7 @@ public class LeafrefStaticAnalysisTest {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
         stack.enterGrouping(grp.getQName());
         stack.enterSchemaTree(QName.create(FOO, "non-existent-deref"));
-        assertThrowsMissingXyzzy(stack, leaf);
+        assertThrowsMissingXyzzy(stack, leaf, "schema parent (leafrefs)foo");
     }
 
     @Test
@@ -152,7 +152,7 @@ public class LeafrefStaticAnalysisTest {
             QName.create(FOO, "non-existent-deref")).get();
         final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context, foo.getQName(), bar.getQName());
         stack.enterSchemaTree(QName.create(FOO, "non-existent-deref"));
-        assertThrowsMissingXyzzy(stack, leaf);
+        assertThrowsMissingXyzzy(stack, leaf, "schema parent (leafrefs)foo");
     }
 
     @Test
@@ -161,7 +161,7 @@ public class LeafrefStaticAnalysisTest {
                 QName.create(FOO, "indirect-with-current")).get();
         final SchemaInferenceStack stack = SchemaInferenceStack.ofDataTreePath(context,
             foo.getQName(), bar.getQName(), QName.create(FOO, "indirect-with-current"));
-        assertThrowsMissingChild(stack, leaf, "(leafrefs)n");
+        assertThrowsMissingChild(stack, leaf, "(leafrefs)n", "module (leafrefs)leafrefs");
     }
 
     private static void assertThrowsInvalidPath(final SchemaInferenceStack stack, final LeafSchemaNode leaf) {
@@ -172,13 +172,15 @@ public class LeafrefStaticAnalysisTest {
         assertEquals("Unexpected current GroupingEffectiveStatementImpl[qname=(leafrefs)grp]", cause.getMessage());
     }
 
-    private static void assertThrowsMissingXyzzy(final SchemaInferenceStack stack, final LeafSchemaNode leaf) {
-        assertThrowsMissingChild(stack, leaf, "(leafrefs)xyzzy");
+    private static void assertThrowsMissingXyzzy(final SchemaInferenceStack stack, final LeafSchemaNode leaf,
+            final String parentDesc) {
+        assertThrowsMissingChild(stack, leaf, "(leafrefs)xyzzy", parentDesc);
     }
 
     private static void assertThrowsMissingChild(final SchemaInferenceStack stack, final LeafSchemaNode leaf,
-            final String childName) {
-        assertEquals("Data tree child " + childName + " not present", assertThrowsIAE(stack, leaf).getMessage());
+            final String childName, final String parentDesc) {
+        assertEquals("Data tree child " + childName + " not present in " + parentDesc,
+            assertThrowsIAE(stack, leaf).getMessage());
     }
 
     private static IllegalArgumentException assertThrowsIAE(final SchemaInferenceStack stack,
