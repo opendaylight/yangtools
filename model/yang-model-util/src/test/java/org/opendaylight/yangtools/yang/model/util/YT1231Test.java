@@ -11,7 +11,9 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -27,14 +29,20 @@ public class YT1231Test {
     private static final QName BAZ = QName.create("foo", "baz");
     private static final QName XYZZY = QName.create("foo", "xyzzy");
 
+    private static EffectiveModelContext CONTEXT;
+
+    private final SchemaInferenceStack stack = SchemaInferenceStack.of(CONTEXT);
+
+    @BeforeClass
+    public static void beforeClass() {
+        CONTEXT = YangParserTestUtils.parseYangResource("/yt1231.yang");
+    }
+
     @Test
     public void testEnterDataTree() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1231.yang");
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
-
         // Trivial
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
-        assertSame(context.getModuleStatement(FOO.getModule()), stack.currentModule());
+        assertSame(CONTEXT.getModuleStatement(FOO.getModule()), stack.currentModule());
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
         assertEquals(Absolute.of(FOO, FOO), stack.toSchemaNodeIdentifier());
@@ -52,9 +60,6 @@ public class YT1231Test {
 
     @Test
     public void testEnterChoice() {
-        final EffectiveModelContext context = YangParserTestUtils.parseYangResource("/yt1231.yang");
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
-
         // Simple
         assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
         assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
@@ -70,5 +75,31 @@ public class YT1231Test {
         assertThat(stack.enterSchemaTree(BAR), instanceOf(CaseEffectiveStatement.class));
         assertThat(stack.enterChoice(BAZ), instanceOf(ChoiceEffectiveStatement.class));
         assertEquals(Absolute.of(FOO, BAR, BAR, BAZ), stack.toSchemaNodeIdentifier());
+    }
+
+    @Test
+    public void testEnterChoiceToRootContainer() {
+        assertEquals("Choice (foo)foo not present", assertEnterChoiceThrows(FOO));
+    }
+
+    @Test
+    public void testEnterChoiceToNestedContainer() {
+        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+        assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
+        assertEquals("Choice (foo)foo not present in schema parent (foo)foo", assertEnterChoiceThrows(FOO));
+    }
+
+    @Test
+    public void testEnterChoiceNonExistent() {
+        assertThat(stack.enterDataTree(FOO), instanceOf(ContainerEffectiveStatement.class));
+        assertEquals(Absolute.of(FOO), stack.toSchemaNodeIdentifier());
+        assertThat(stack.enterSchemaTree(BAR), instanceOf(ChoiceEffectiveStatement.class));
+
+        assertEquals("Choice (foo)foo not present in schema parent (foo)bar", assertEnterChoiceThrows(FOO));
+        assertEquals("Choice (foo)bar not present in schema parent (foo)bar", assertEnterChoiceThrows(BAR));
+    }
+
+    private String assertEnterChoiceThrows(final QName nodeIdentifier) {
+        return assertThrows(IllegalArgumentException.class, () -> stack.enterChoice(nodeIdentifier)).getMessage();
     }
 }

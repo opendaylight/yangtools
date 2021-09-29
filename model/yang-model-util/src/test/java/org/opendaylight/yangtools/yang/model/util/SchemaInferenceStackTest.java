@@ -79,9 +79,9 @@ public class SchemaInferenceStackTest {
     @Test
     public void enterGroupingNegativeTest() {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
-        assertNotExistentGrouping(stack);
+        assertNotExistentGrouping(stack, "module (uri:my-module?revision=2014-10-07)my-module");
         stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
-        assertNotExistentGrouping(stack);
+        assertNotExistentGrouping(stack, "schema parent (uri:my-module?revision=2014-10-07)my-container");
     }
 
     @Test
@@ -94,23 +94,21 @@ public class SchemaInferenceStackTest {
     @Test
     public void enterTypedefNegativeTest() {
         final SchemaInferenceStack stack = SchemaInferenceStack.of(context);
-        assertNotExistentTypedef(stack);
+        assertNotExistentTypedef(stack, "module (uri:my-module?revision=2014-10-07)my-module");
         stack.enterDataTree(QName.create(myModule.getQNameModule(), "my-container"));
-        assertNotExistentTypedef(stack);
+        assertNotExistentTypedef(stack, "schema parent (uri:my-module?revision=2014-10-07)my-container");
     }
 
-    private static void assertNotExistentGrouping(final SchemaInferenceStack stack) {
+    private static void assertNotExistentGrouping(final SchemaInferenceStack stack, final String parentDesc) {
         final QName nonExistent = QName.create(myModule.getQNameModule(), "non-existent");
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> stack.enterGrouping(nonExistent));
-        assertEquals("Grouping (uri:my-module?revision=2014-10-07)non-existent not present", ex.getMessage());
+        assertEquals("Grouping (uri:my-module?revision=2014-10-07)non-existent not present in " + parentDesc,
+            assertThrows(IllegalArgumentException.class, () -> stack.enterGrouping(nonExistent)).getMessage());
     }
 
-    private static void assertNotExistentTypedef(final SchemaInferenceStack stack) {
+    private static void assertNotExistentTypedef(final SchemaInferenceStack stack, final String parentDesc) {
         final QName nonExistent = QName.create(myModule.getQNameModule(), "non-existent");
-        final IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> stack.enterTypedef(nonExistent));
-        assertEquals("Typedef (uri:my-module?revision=2014-10-07)non-existent not present", ex.getMessage());
+        assertEquals("Typedef (uri:my-module?revision=2014-10-07)non-existent not present in " + parentDesc,
+            assertThrows(IllegalArgumentException.class, () -> stack.enterTypedef(nonExistent)).getMessage());
     }
 
     private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final String name) {
