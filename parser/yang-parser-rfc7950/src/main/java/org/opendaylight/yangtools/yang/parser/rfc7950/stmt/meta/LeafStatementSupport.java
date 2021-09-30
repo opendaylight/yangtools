@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -27,13 +28,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
+import org.opendaylight.yangtools.yang.model.ri.stmt.UndeclaredStatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -41,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LeafStatementSupport
-        extends AbstractSchemaTreeStatementSupport<LeafStatement, LeafEffectiveStatement> {
+        extends AbstractImplicitStatementSupport<LeafStatement, LeafEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.LEAF)
             .addOptional(YangStmtMapping.CONFIG)
@@ -88,6 +90,20 @@ public final class LeafStatementSupport
     @Override
     protected LeafEffectiveStatement createEffective(final Current<QName, LeafStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        validateEffective(stmt, substatements);
+        return EffectiveStatements.createLeaf(stmt.declared(), stmt.getArgument(), computeFlags(stmt, substatements),
+            substatements);
+    }
+
+    @Override
+    LeafEffectiveStatement createUndeclaredEffective(final UndeclaredCurrent<QName, LeafStatement> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        validateEffective(stmt, substatements);
+        return UndeclaredStatements.createLeaf(stmt.getArgument(), computeFlags(stmt, substatements), substatements);
+    }
+
+    private static void validateEffective(final @NonNull BoundStmtCtx<QName> stmt,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
             findFirstStatement(substatements, TypeEffectiveStatement.class), stmt,
             "Leaf is missing a 'type' statement");
@@ -95,9 +111,6 @@ public final class LeafStatementSupport
         SourceException.throwIf(
             EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(stmt.yangVersion(), typeStmt, dflt), stmt,
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
-
-        return EffectiveStatements.createLeaf(stmt.declared(), stmt.getArgument(), computeFlags(stmt, substatements),
-            substatements);
     }
 
     @Override
