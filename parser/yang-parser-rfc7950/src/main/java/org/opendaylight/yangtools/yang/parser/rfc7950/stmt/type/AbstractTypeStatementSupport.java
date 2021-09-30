@@ -12,6 +12,8 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -71,6 +73,7 @@ import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -82,9 +85,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement> {
+abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement>
+        implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement<TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.BASE)
@@ -176,6 +181,25 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         return dynamicBuiltInTypes.get(argument);
+    }
+
+    @Override
+    public final TypeEffectiveStatement<TypeStatement> createUndeclaredEffective(
+            final UndeclaredCurrent<QName, TypeStatement> stmt,
+            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(stmt,
+            statementsToBuild(stmt, effectiveSubstatements
+                .filter(StmtContext::isSupportedToBuildEffective)
+                .collect(Collectors.toUnmodifiableList())));
+
+        // First look up the proper base type
+        final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);
+        if (substatements.isEmpty()) {
+            return typeStmt;
+        }
+
+        // TODO: mirror the logic below
+        throw new UnsupportedOperationException("Non-empty undeclared type statements are not implemented yet");
     }
 
     @Override
