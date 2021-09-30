@@ -194,6 +194,7 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         substatements = addEffectiveSubstatement(ensureEffectiveSubstatements(), substatement);
+        afterAddEffectiveSubstatement(substatement);
     }
 
     @Override

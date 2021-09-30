@@ -310,21 +310,25 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void addEffectiveSubstatements(Collection<? extends Mutable<?, ?, ?>> statements);
 
         /**
-         * Adds a purely-effective statement to collection of substatements. The statement will report a {@code null}
+         * Create a purely-effective substatement. The statement will report a {@code null}
          * {@link EffectiveStatement#getDeclared()} object. A typical example of statements which require this mechanics
          * are {@code rpc} and {@code action} statements, which always have {@code input} and {@code output}
-         * substatements, even if those are not declared in YANG text.
+         * substatements, even if those are not declared in YANG text. The returned context is not added to this
+         * context's substatements. That needs to done once the statement is completely defined through
+         * {@link #addEffectiveSubstatement(Mutable)} -- which will trigger
+         * {@link StatementSupport#onFullDefinitionDeclared(Mutable)}.
          *
          * @param support Statement support of the statement being created
          * @param arg Effective argument. If specified as {@code null}, statement support will be consulted for the
          *            empty argument.
+         * @return A new statement
          * @throws IllegalArgumentException if {@code support} does not implement {@link UndeclaredStatementFactory}
          * @throws IllegalStateException if added in declared phase
          * @throws NullPointerException if {@code support} is null
          */
         @Beta
         <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            @NonNull Mutable<X, Y, Z> addUndeclaredSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
+            @NonNull Mutable<X, Y, Z> createUndeclaredSubstatement(StatementSupport<X, Y, Z> support, @Nullable X arg);
 
         @Beta
         void removeStatementFromEffectiveSubstatements(StatementDefinition statementDef);

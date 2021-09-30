@@ -132,7 +132,7 @@ public final class ActionStatementSupport extends
 
     private static void appendImplicitSubstatement(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt,
             final QName substatementName) {
-        stmt.addUndeclaredSubstatement(
-            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null);
+        stmt.addEffectiveSubstatement(stmt.createUndeclaredSubstatement(
+            verifyNotNull(stmt.getFromNamespace(StatementSupportNamespace.class, substatementName)), null));
     }
 }

@@ -86,6 +86,7 @@ abstract class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     @Override
     public final void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         effective = addEffectiveSubstatement(effective, substatement);
+        afterAddEffectiveSubstatement(substatement);
     }
 
     @Override
