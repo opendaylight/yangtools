@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
@@ -56,10 +57,30 @@ public final class YangDataStatementSupport
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<String, YangDataStatement, YangDataEffectiveStatement> ctx) {
-        // Parse and populate our argument to be picked up when we build the effecitve statement
+        // Parse and populate our argument to be picked up when we build the effective statement
         final String argument = SourceException.throwIfNull(ctx.argument(), ctx, "yang-data requires an argument");
         final QName qname = StmtContextUtils.parseIdentifier(ctx, argument);
         ctx.addToNs(YangDataArgumentNamespace.class, Empty.value(), qname);
+
+        // Support for 'operations' container semantics. For this we need to recognize when the model at hand matches
+        // RFC8040 ietf-restconf module. In ordered to do that we hook onto this particular definition:
+        //
+        //   rc:yang-data yang-api {
+        //     uses restconf;
+        //   }
+        //
+        // If we find it, we hook an inference action which performs the next step when the module is fully declared.
+        if (ctx.isSupportedToBuildEffective() && "yang-api".equals(ctx.argument())) {
+            final var stmts = ctx.declaredSubstatements();
+            if (stmts.size() == 1) {
+                final var stmt = stmts.iterator().next();
+                if (stmt.producesEffective(UsesEffectiveStatement.class) && "restconf".equals(stmt.rawArgument())) {
+                    // The rc:yang-data shape matches, but we are not sure about the module identity, that needs to be
+                    // done later multiple stages, the first one being initiated through this call.
+                    OperationsValidateModuleAction.applyTo(ctx.coerceParentContext());
+                }
+            }
+        }
     }
 
     @Override
