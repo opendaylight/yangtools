@@ -331,13 +331,12 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            Mutable<X, Y, Z> addUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
+            Mutable<X, Y, Z> createUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         requireNonNull(support);
         checkArgument(support instanceof UndeclaredStatementFactory, "Unsupported statement support %s", support);
 
         final var ret = new UndeclaredStmtCtx<>(this, support, arg);
         support.onStatementAdded(ret);
-        addEffectiveSubstatement(ret);
         return ret;
     }
 
@@ -350,6 +349,19 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         ensureCompletedExecution(stmt);
         resized.add(stmt);
         return resized;
+    }
+
+    static final void afterAddEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        // Undeclared statements still need to have 'onDeclarationFinished()' triggered
+        if (substatement instanceof UndeclaredStmtCtx) {
+            finishDeclaration((UndeclaredStmtCtx<?, ?, ?>) substatement);
+        }
+    }
+
+    // Split out to keep generics working without a warning
+    private static <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> void finishDeclaration(
+            final UndeclaredStmtCtx<X, Y, Z> substatement) {
+        substatement.definition().onDeclarationFinished(substatement, ModelProcessingPhase.FULL_DECLARATION);
     }
 
     @Override

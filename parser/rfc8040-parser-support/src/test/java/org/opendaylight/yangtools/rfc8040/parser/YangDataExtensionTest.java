@@ -16,11 +16,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,20 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
-public class YangDataExtensionTest {
+public class YangDataExtensionTest extends AbstractYangDataTest {
 
     private static final StatementStreamSource FOO_MODULE = sourceForResource(
             "/yang-data-extension-test/foo.yang");
@@ -61,33 +51,15 @@ public class YangDataExtensionTest {
             "/yang-data-extension-test/baz.yang");
     private static final StatementStreamSource FOOBAR_MODULE = sourceForResource(
             "/yang-data-extension-test/foobar.yang");
-    private static final StatementStreamSource IETF_RESTCONF_MODULE = sourceForResource(
-            "/yang-data-extension-test/ietf-restconf.yang");
 
     private static final Revision REVISION = Revision.of("2017-06-01");
     private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(XMLNamespace.of("foo"), REVISION);
     private static final QName MY_YANG_DATA_A = QName.create(FOO_QNAMEMODULE, "my-yang-data-a");
     private static final QName MY_YANG_DATA_B = QName.create(FOO_QNAMEMODULE, "my-yang-data-b");
 
-    private static CrossSourceStatementReactor reactor;
-
-    @BeforeClass
-    public static void createReactor() {
-        reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new YangDataStatementSupport(YangParserConfiguration.DEFAULT))
-                .build();
-    }
-
-    @AfterClass
-    public static void freeReactor() {
-        reactor = null;
-    }
-
     @Test
     public void testYangData() throws Exception {
-        final SchemaContext schemaContext = reactor.newBuild().addSources(FOO_MODULE, IETF_RESTCONF_MODULE)
+        final SchemaContext schemaContext = REACTOR.newBuild().addSources(FOO_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
@@ -119,7 +91,7 @@ public class YangDataExtensionTest {
 
     @Test
     public void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = reactor.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE)
+        final SchemaContext schemaContext = REACTOR.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
@@ -147,7 +119,7 @@ public class YangDataExtensionTest {
 
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = reactor.newBuild().setSupportedFeatures(ImmutableSet.of())
+        final SchemaContext schemaContext = REACTOR.newBuild().setSupportedFeatures(ImmutableSet.of())
                 .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
@@ -174,7 +146,7 @@ public class YangDataExtensionTest {
     public void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
         // i.e., it will not appear in the final SchemaContext
-        final SchemaContext schemaContext = reactor.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE)
+        final SchemaContext schemaContext = REACTOR.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
@@ -192,7 +164,7 @@ public class YangDataExtensionTest {
 
     @Test
     public void testYangDataWithMissingTopLevelContainer() {
-        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
+        final BuildAction build = REACTOR.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(MissingSubstatementException.class));
@@ -201,18 +173,10 @@ public class YangDataExtensionTest {
 
     @Test
     public void testYangDataWithTwoTopLevelContainers() {
-        final BuildAction build = reactor.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
+        final BuildAction build = REACTOR.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
         final ReactorException ex = assertThrows(ReactorException.class, () -> build.buildEffective());
         final Throwable cause = ex.getCause();
         assertThat(cause, instanceOf(InvalidSubstatementException.class));
         assertThat(cause.getMessage(), startsWith("yang-data requires exactly one data definition node, found 2"));
-    }
-
-    private static StatementStreamSource sourceForResource(final String resourceName) {
-        try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forResource(resourceName));
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new IllegalArgumentException("Failed to create source", e);
-        }
     }
 }

@@ -275,6 +275,7 @@ import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.SlimLeafListEffect
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.TypedefEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredInputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredOutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 
@@ -563,10 +564,15 @@ public final class EffectiveStatements {
 
     public static LeafEffectiveStatement copyLeaf(final LeafEffectiveStatement original, final QName argument,
             final int flags) {
-        checkArgument(original instanceof AbstractLeafEffectiveStatement, "Unsupported original %s", original);
-        final var orig = (AbstractLeafEffectiveStatement) original;
-        return argument.equals(orig.getDeclared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
-            : new RegularLeafEffectiveStatement(orig, argument, flags);
+        if (original instanceof AbstractLeafEffectiveStatement) {
+            final var orig = (AbstractLeafEffectiveStatement) original;
+            return argument.equals(orig.getDeclared().argument()) ? new EmptyLeafEffectiveStatement(orig, flags)
+                : new RegularLeafEffectiveStatement(orig, argument, flags);
+        } else if (original instanceof UndeclaredLeafEffectiveStatement) {
+            return new UndeclaredLeafEffectiveStatement((UndeclaredLeafEffectiveStatement) original, argument, flags);
+        } else {
+            throw new IllegalArgumentException("Unsupported original " + original);
+        }
     }
 
     public static LeafEffectiveStatement createLeaf(final LeafStatement declared, final QName argument, final int flags,

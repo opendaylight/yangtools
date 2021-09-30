@@ -187,7 +187,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     @Deprecated
     public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            Mutable<X, Y, Z> addUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
+            Mutable<X, Y, Z> createUndeclaredSubstatement(final StatementSupport<X, Y, Z> support, final X arg) {
         throw new UnsupportedOperationException();
     }
 

@@ -12,6 +12,8 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -71,6 +73,7 @@ import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
+import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
@@ -82,9 +85,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement> {
+abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStatement>
+        implements UndeclaredStatementFactory<QName, TypeStatement, TypeEffectiveStatement<TypeStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(YangStmtMapping.TYPE)
             .addOptional(YangStmtMapping.BASE)
@@ -99,23 +104,23 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             .addAny(YangStmtMapping.TYPE)
             .build();
 
-    private static final ImmutableMap<String, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =
-        ImmutableMap.<String, BuiltinEffectiveStatement>builder()
-            .put(TypeDefinitions.BINARY.getLocalName(), BuiltinEffectiveStatement.BINARY)
-            .put(TypeDefinitions.BOOLEAN.getLocalName(), BuiltinEffectiveStatement.BOOLEAN)
-            .put(TypeDefinitions.EMPTY.getLocalName(), BuiltinEffectiveStatement.EMPTY)
+    private static final ImmutableMap<QName, BuiltinEffectiveStatement> STATIC_BUILT_IN_TYPES =
+        ImmutableMap.<QName, BuiltinEffectiveStatement>builder()
+            .put(TypeDefinitions.BINARY, BuiltinEffectiveStatement.BINARY)
+            .put(TypeDefinitions.BOOLEAN, BuiltinEffectiveStatement.BOOLEAN)
+            .put(TypeDefinitions.EMPTY, BuiltinEffectiveStatement.EMPTY)
             // FIXME: this overlaps with DYNAMIC_BUILT_IN_TYPES. One of these is not needed, but we need to decide
             //        what to do. I think we should gradually use per-statement validators, hence go towards dynamic?
-            .put(TypeDefinitions.INSTANCE_IDENTIFIER.getLocalName(), BuiltinEffectiveStatement.INSTANCE_IDENTIFIER)
-            .put(TypeDefinitions.INT8.getLocalName(), BuiltinEffectiveStatement.INT8)
-            .put(TypeDefinitions.INT16.getLocalName(), BuiltinEffectiveStatement.INT16)
-            .put(TypeDefinitions.INT32.getLocalName(), BuiltinEffectiveStatement.INT32)
-            .put(TypeDefinitions.INT64.getLocalName(), BuiltinEffectiveStatement.INT64)
-            .put(TypeDefinitions.STRING.getLocalName(), BuiltinEffectiveStatement.STRING)
-            .put(TypeDefinitions.UINT8.getLocalName(), BuiltinEffectiveStatement.UINT8)
-            .put(TypeDefinitions.UINT16.getLocalName(), BuiltinEffectiveStatement.UINT16)
-            .put(TypeDefinitions.UINT32.getLocalName(), BuiltinEffectiveStatement.UINT32)
-            .put(TypeDefinitions.UINT64.getLocalName(), BuiltinEffectiveStatement.UINT64)
+            .put(TypeDefinitions.INSTANCE_IDENTIFIER, BuiltinEffectiveStatement.INSTANCE_IDENTIFIER)
+            .put(TypeDefinitions.INT8, BuiltinEffectiveStatement.INT8)
+            .put(TypeDefinitions.INT16, BuiltinEffectiveStatement.INT16)
+            .put(TypeDefinitions.INT32, BuiltinEffectiveStatement.INT32)
+            .put(TypeDefinitions.INT64, BuiltinEffectiveStatement.INT64)
+            .put(TypeDefinitions.STRING, BuiltinEffectiveStatement.STRING)
+            .put(TypeDefinitions.UINT8, BuiltinEffectiveStatement.UINT8)
+            .put(TypeDefinitions.UINT16, BuiltinEffectiveStatement.UINT16)
+            .put(TypeDefinitions.UINT32, BuiltinEffectiveStatement.UINT32)
+            .put(TypeDefinitions.UINT64, BuiltinEffectiveStatement.UINT64)
             .build();
 
     private final ImmutableMap<String, StatementSupport<?, ?, ?>> dynamicBuiltInTypes;
@@ -138,13 +143,13 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
             final Mutable<QName, TypeStatement, EffectiveStatement<QName, TypeStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final BuiltinEffectiveStatement builtin = STATIC_BUILT_IN_TYPES.get(stmt.getRawArgument());
+        final QName typeQName = stmt.getArgument();
+        final BuiltinEffectiveStatement builtin = STATIC_BUILT_IN_TYPES.get(typeQName);
         if (builtin != null) {
             stmt.addToNs(BaseTypeNamespace.class, Empty.value(), builtin);
             return;
         }
 
-        final QName typeQName = stmt.getArgument();
         final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
                 typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
@@ -176,6 +181,25 @@ abstract class AbstractTypeStatementSupport extends AbstractTypeSupport<TypeStat
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         return dynamicBuiltInTypes.get(argument);
+    }
+
+    @Override
+    public final TypeEffectiveStatement<TypeStatement> createUndeclaredEffective(
+            final UndeclaredCurrent<QName, TypeStatement> stmt,
+            final Stream<? extends StmtContext<?, ?, ?>> effectiveSubstatements) {
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements = buildEffectiveSubstatements(stmt,
+            statementsToBuild(stmt, effectiveSubstatements
+                .filter(StmtContext::isSupportedToBuildEffective)
+                .collect(Collectors.toUnmodifiableList())));
+
+        // First look up the proper base type
+        final TypeEffectiveStatement<TypeStatement> typeStmt = resolveType(stmt);
+        if (substatements.isEmpty()) {
+            return typeStmt;
+        }
+
+        // TODO: mirror the logic below
+        throw new UnsupportedOperationException("Non-empty undeclared type statements are not implemented yet");
     }
 
     @Override
