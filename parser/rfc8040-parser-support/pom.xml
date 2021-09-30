@@ -50,21 +50,14 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8040-model-api</artifactId>
         </dependency>
-
-
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-reactor</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-rfc7950</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-repo-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-parser-rfc7950</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
