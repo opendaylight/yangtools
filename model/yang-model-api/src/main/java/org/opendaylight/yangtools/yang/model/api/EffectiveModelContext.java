@@ -11,11 +11,14 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -41,6 +44,29 @@ public interface EffectiveModelContext extends SchemaContext, SchemaTreeRoot {
 
     default @NonNull Optional<ModuleEffectiveStatement> findModuleStatement(final QName moduleName) {
         return findModuleStatement(moduleName.getModule());
+    }
+
+    /**
+     * Returns module instances (from the context) with a concrete name. Returned collection is required to have its
+     * iteration order guarantee that the latest revision is encountered first.
+     *
+     * @param name string with the module name
+     * @return set of module instances with specified name.
+     */
+    default @NonNull Collection<@NonNull ModuleEffectiveStatement> findModuleStatements(final String name) {
+        return Collections2.transform(findModules(name), Module::asEffectiveStatement);
+    }
+
+    /**
+     * Returns module instance (from the context) with concrete namespace. Returned collection is required to have its
+     * iteration order guarantee that the latest revision is encountered first.
+     *
+     * @param namespace XMLNamespace instance with specified namespace
+     * @return module instance which has namespace equal to the {@code namespace} or {@code null} in other cases
+     */
+    default @NonNull Collection<@NonNull ModuleEffectiveStatement> findModuleStatements(
+            final XMLNamespace namespace) {
+        return Collections2.transform(findModules(namespace), Module::asEffectiveStatement);
     }
 
     default @NonNull ModuleEffectiveStatement getModuleStatement(final QNameModule moduleName) {
