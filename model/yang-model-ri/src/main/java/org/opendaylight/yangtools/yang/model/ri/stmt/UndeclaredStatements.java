@@ -14,9 +14,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredCaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredInputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredLeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff.UndeclaredOutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingException;
 
@@ -39,6 +41,11 @@ public final class UndeclaredStatements {
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
             throws SubstatementIndexingException {
         return new UndeclaredInputEffectiveStatement(substatements, argument, flags);
+    }
+
+    public static LeafEffectiveStatement createLeaf(final QName argument, final int flags,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new UndeclaredLeafEffectiveStatement(argument, flags, substatements);
     }
 
     public static OutputEffectiveStatement createOutput(final QName argument, final int flags,
