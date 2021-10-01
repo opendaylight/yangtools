@@ -1,0 +1,10 @@
+module old {
+  namespace old;
+  prefix old;
+
+  import new {
+    prefix new;
+  }
+
+  include sub;
+}
