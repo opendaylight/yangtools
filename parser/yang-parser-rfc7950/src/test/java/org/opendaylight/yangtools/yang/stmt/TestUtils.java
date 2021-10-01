@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -44,6 +45,18 @@ public final class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
     private TestUtils() {
+        // Hidden on purpose
+    }
+
+    public static @NonNull List<StatementStreamSource> loadSources(final String yangFilesDirectoryPath)
+            throws Exception {
+        final var files = new File(TestUtils.class.getResource(yangFilesDirectoryPath).toURI())
+            .listFiles(StmtTestUtils.YANG_FILE_FILTER);
+        final var sources = new ArrayList<StatementStreamSource>(files.length);
+        for (var file : files) {
+            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+        }
+        return sources;
     }
 
     public static EffectiveModelContext loadModules(final URI resourceDirectory)

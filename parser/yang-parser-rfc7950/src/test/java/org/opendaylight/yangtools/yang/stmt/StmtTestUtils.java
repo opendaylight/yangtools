@@ -191,49 +191,6 @@ public final class StmtTestUtils {
         return parseYangSources(config, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
-    public static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
-            final String yangLibsDirectoryPath)
-            throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
-        return parseYangSources(yangFilesDirectoryPath, yangLibsDirectoryPath, null);
-    }
-
-    public static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
-            final String yangLibsDirectoryPath, final Set<QName> supportedFeatures) throws URISyntaxException,
-            ReactorException, IOException, YangSyntaxErrorException {
-        final File yangsDir = new File(StmtTestUtils.class.getResource(yangFilesDirectoryPath).toURI());
-        final File libsDir = new File(StmtTestUtils.class.getResource(yangLibsDirectoryPath).toURI());
-
-        return parseYangSources(yangsDir.listFiles(YANG_FILE_FILTER), libsDir.listFiles(YANG_FILE_FILTER),
-                supportedFeatures);
-    }
-
-    private static EffectiveModelContext parseYangSources(final File[] yangFiles, final File[] libFiles,
-            final Set<QName> supportedFeatures) throws ReactorException, IOException, YangSyntaxErrorException {
-        final StatementStreamSource[] yangSources = new StatementStreamSource[yangFiles.length];
-        for (int i = 0; i < yangFiles.length; i++) {
-            yangSources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(yangFiles[i]));
-        }
-
-        final StatementStreamSource[] libSources = new StatementStreamSource[libFiles.length];
-        for (int i = 0; i < libFiles.length; i++) {
-            libSources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(libFiles[i]));
-        }
-
-        return parseYangSources(yangSources, libSources, supportedFeatures);
-    }
-
-    private static EffectiveModelContext parseYangSources(final StatementStreamSource[] yangSources,
-            final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
-
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(yangSources).addLibSources(libSources);
-        if (supportedFeatures != null) {
-            reactor.setSupportedFeatures(supportedFeatures);
-        }
-
-        return reactor.buildEffective();
-    }
-
     public static EffectiveModelContext parseYinSources(final String yinSourcesDirectoryPath)
             throws URISyntaxException, SAXException, IOException, ReactorException {
         return parseYinSources(yinSourcesDirectoryPath, YangParserConfiguration.DEFAULT);
