@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -45,6 +47,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 @Beta
 public final class ImportStatementSupport
@@ -86,13 +89,14 @@ public final class ImportStatementSupport
          * Based on this information, required modules are searched from library
          * sources.
          */
-        stmt.addRequiredSource(RevisionImport.getImportedSourceIdentifier(stmt));
+        final SourceIdentifier importId = RevisionImport.getImportedSourceIdentifier(stmt);
+        stmt.addRequiredSource(importId);
 
         final String moduleName = stmt.getArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
                 PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);
-        importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
+        final Prerequisite<Mutable<?, ?, ?>> rootPrereq = importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override
@@ -104,6 +108,16 @@ public final class ImportStatementSupport
                 final String impPrefix = SourceException.throwIfNull(
                     firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class), stmt,
                     "Missing prefix statement");
+
+                final Mutable<?, ?, ?> root = rootPrereq.resolve(ctx);
+                // Version 1 sources must not import-by-revision Version 1.1 modules
+                if (importId.getRevision().isPresent() && root.yangVersion() == YangVersion.VERSION_1) {
+                    final YangVersion importedVersion = importedModuleContext.yangVersion();
+                    if (importedVersion != YangVersion.VERSION_1) {
+                        throw new YangVersionLinkageException(stmt,
+                            "Cannot import by revision version %s module %s", importedVersion, moduleName);
+                    }
+                }
 
                 stmt.addToNs(ImpPrefixToNamespace.class, impPrefix, importedModuleNamespace);
             }

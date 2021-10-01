@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
+import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 @Beta
 public final class IncludeStatementSupport
@@ -96,6 +98,12 @@ public final class IncludeStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
+                final YangVersion modVersion = stmt.getRoot().yangVersion();
+                final YangVersion subVersion = includedSubModuleContext.yangVersion();
+                if (subVersion != modVersion) {
+                    throw new YangVersionLinkageException(stmt,
+                        "Cannot include a version %s submodule in a version %s module", subVersion, modVersion);
+                }
 
                 stmt.addToNs(IncludedModuleContext.class, revision != null
                         ? RevisionSourceIdentifier.create(submoduleName, revision.argument())
