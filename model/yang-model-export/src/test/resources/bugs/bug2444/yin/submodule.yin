@@ -1,5 +1,6 @@
 <submodule name="submodule" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
     xmlns:incl="include">
+    <yang-version value="1.1"/>
     <belongs-to module="include">
         <prefix value="incl" />
     </belongs-to>

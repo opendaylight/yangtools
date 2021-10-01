@@ -1,0 +1,6 @@
+module mod {
+  namespace mod;
+  prefix mod;
+
+  include sub;
+}

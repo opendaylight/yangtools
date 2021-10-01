@@ -1,4 +1,6 @@
 submodule submodule {
+    yang-version 1.1;
+
     belongs-to include {
         prefix incl;
     }

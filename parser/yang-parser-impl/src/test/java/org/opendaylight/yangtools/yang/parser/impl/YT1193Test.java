@@ -119,8 +119,9 @@ public class YT1193Test {
         assertReference(baz, YangStmtMapping.SUBMODULE, 1, 1);
 
         final Iterator<? extends DeclaredStatement<?>> it = baz.declaredSubstatements().iterator();
-        assertReference(it.next(), YangStmtMapping.BELONGS_TO, 2, 3);
-        assertReference(it.next(), YangStmtMapping.EXTENSION, 6, 3);
+        assertReference(it.next(), YangStmtMapping.YANG_VERSION, 2, 3);
+        assertReference(it.next(), YangStmtMapping.BELONGS_TO, 4, 3);
+        assertReference(it.next(), YangStmtMapping.EXTENSION, 8, 3);
         assertFalse(it.hasNext());
     }
 
