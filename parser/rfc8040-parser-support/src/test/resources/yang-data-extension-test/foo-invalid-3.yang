@@ -4,7 +4,6 @@ module foo {
 
     import ietf-restconf {
         prefix rc;
-        revision-date 2017-01-26;
     }
 
     revision 2017-06-01;
