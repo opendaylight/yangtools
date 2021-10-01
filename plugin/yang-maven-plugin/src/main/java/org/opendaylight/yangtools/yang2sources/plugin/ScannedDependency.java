@@ -41,7 +41,7 @@ abstract class ScannedDependency {
 
         @Override
         Collection<YangTextSchemaSource> sources() {
-            return ImmutableList.of(YangTextSchemaSource.forFile(file()));
+            return ImmutableList.of(YangTextSchemaSource.forPath(file().toPath()));
         }
     }
 
@@ -50,7 +50,7 @@ abstract class ScannedDependency {
 
         Zip(final File file, final Collection<String> entryNames) {
             super(file);
-            this.entryNames = ImmutableSet.copyOf(entryNames);
+            entryNames = ImmutableSet.copyOf(entryNames);
         }
 
         @Override
@@ -76,7 +76,7 @@ abstract class ScannedDependency {
     private final File file;
 
     ScannedDependency(final File file) {
-        this.file = requireNonNull(file);
+        file = requireNonNull(file);
     }
 
     static Collection<ScannedDependency> scanDependencies(final MavenProject project) throws IOException {
@@ -119,6 +119,7 @@ abstract class ScannedDependency {
         return entryNames.isEmpty() ? ImmutableList.of() : ImmutableList.of(new Zip(zipFile, entryNames));
     }
 
+    // FIXME: java.nio.file.Path
     final File file() {
         return file;
     }

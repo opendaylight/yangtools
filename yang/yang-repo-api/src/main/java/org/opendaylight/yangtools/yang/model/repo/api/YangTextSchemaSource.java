@@ -20,6 +20,8 @@ import com.google.common.io.Resources;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -75,27 +77,27 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * Create a new YangTextSchemaSource backed by a {@link File} with {@link SourceIdentifier} derived from the file
      * name.
      *
-     * @param file Backing File
+     * @param Path Backing path
      * @return A new YangTextSchemaSource
      * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
      * @throws NullPointerException if file is {@code null}
      */
-    public static @NonNull YangTextSchemaSource forFile(final File file) {
-        return forFile(file, identifierFromFilename(file.getName()));
+    public static @NonNull YangTextSchemaSource forPath(final Path path) {
+        return forPath(path, identifierFromFilename(path.toFile().getName()));
     }
 
     /**
      * Create a new YangTextSchemaSource backed by a {@link File} and specified {@link SourceIdentifier}.
      *
-     * @param file Backing File
+     * @param Path Backing path
      * @param identifier source identifier
      * @return A new YangTextSchemaSource
-     * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
      * @throws NullPointerException if any argument is {@code null}
+     * @throws IllegalArgumentException if the supplied path is not a regular file
      */
-    public static @NonNull YangTextSchemaSource forFile(final File file, final SourceIdentifier identifier) {
-        checkArgument(file.isFile(), "Supplied file %s is not a file", file);
-        return new YangTextFileSchemaSource(identifier, file);
+    public static @NonNull YangTextSchemaSource forPath(final Path path, final SourceIdentifier identifier) {
+        checkArgument(Files.isRegularFile(path), "Supplied path %s is not a regular file", path);
+        return new YangTextFileSchemaSource(identifier, path);
     }
 
     /**

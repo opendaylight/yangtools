@@ -83,15 +83,15 @@ class YangToSourcesProcessor {
             final Collection<File> excludedFiles, final List<CodeGeneratorArg> codeGeneratorArgs,
             final List<FileGeneratorArg> fileGeneratorsArgs,
             final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
-        this.buildContext = requireNonNull(buildContext, "buildContext");
-        this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
-        this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
-        this.codeGeneratorArgs = ImmutableList.copyOf(codeGeneratorArgs);
-        this.fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
-        this.project = requireNonNull(project);
-        this.inspectDependencies = inspectDependencies;
-        this.yangProvider = requireNonNull(yangProvider);
-        this.parserFactory = DEFAULT_PARSER_FACTORY;
+        buildContext = requireNonNull(buildContext, "buildContext");
+        yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
+        excludedFiles = ImmutableSet.copyOf(excludedFiles);
+        codeGeneratorArgs = ImmutableList.copyOf(codeGeneratorArgs);
+        fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
+        project = requireNonNull(project);
+        inspectDependencies = inspectDependencies;
+        yangProvider = requireNonNull(yangProvider);
+        parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
     @VisibleForTesting
@@ -178,7 +178,7 @@ class YangToSourcesProcessor {
         final Stopwatch watch = Stopwatch.createStarted();
         final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
             .map(file -> {
-                final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(file);
+                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
                 try {
                     return Map.entry(textSource,TextToIRTransformer.transformText(textSource));
                 } catch (YangSyntaxErrorException | IOException e) {
