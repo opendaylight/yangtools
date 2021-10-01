@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Optional;
@@ -60,26 +62,20 @@ public class Bug6874Test {
 
     @Test
     public void invalid10IncludeStmtTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-include-10");
-            fail("Test must fail: DESCRIPTION/REFERENCE are not valid for INCLUDE in Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final String msg = e.getCause().getMessage();
-            assertTrue(msg.startsWith("DESCRIPTION is not valid for INCLUDE")
-                || msg.startsWith("REFERENCE is not valid for INCLUDE"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-include-10")).getCause();
+        assertThat(ex.getMessage(), anyOf(
+            startsWith("DESCRIPTION is not valid for INCLUDE"),
+            startsWith("REFERENCE is not valid for INCLUDE")));
     }
 
     @Test
     public void invalid10ImportStmtTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-import-10");
-            fail("Test must fail: DESCRIPTION/REFERENCE are not valid for IMPORT in Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final String msg = e.getCause().getMessage();
-            assertTrue(msg.startsWith("DESCRIPTION is not valid for IMPORT")
-                || msg.startsWith("REFERENCE is not valid for IMPORT"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-import-10")).getCause();
+        assertThat(ex.getMessage(), anyOf(
+            startsWith("DESCRIPTION is not valid for IMPORT"),
+            startsWith("REFERENCE is not valid for IMPORT")));
     }
 
     @Test
