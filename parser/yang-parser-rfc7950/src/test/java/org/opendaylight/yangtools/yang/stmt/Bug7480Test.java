@@ -12,20 +12,28 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class Bug7480Test {
     @Test
     public void libSourcesTest() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug7480/files", "/bugs/bug7480/lib");
+        final SchemaContext context = parseYangSources("/bugs/bug7480/files", "/bugs/bug7480/lib");
         assertNotNull(context);
 
         final Collection<? extends Module> modules = context.getModules();
@@ -49,7 +57,7 @@ public class Bug7480Test {
     @Test
     public void missingRelevantImportTest() throws Exception {
         try {
-            StmtTestUtils.parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2");
+            parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2");
             fail("Test should fail due to missing import of required yang source from library");
         } catch (final SomeModifiersUnresolvedException e) {
             final String message = e.getSuppressed().length > 0 ? e.getSuppressed()[0].getCause().getMessage() : e
@@ -88,5 +96,24 @@ public class Bug7480Test {
                             "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
                 .buildEffective();
         assertNotNull(schemaContext);
+    }
+
+    private static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
+            final String yangLibsDirectoryPath) throws Exception {
+        return RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(loadSources(yangFilesDirectoryPath))
+            .addLibSources(loadSources(yangLibsDirectoryPath))
+            .buildEffective();
+    }
+
+    private static @NonNull List<StatementStreamSource> loadSources(final String yangFilesDirectoryPath)
+            throws Exception {
+        final var files = new File(StmtTestUtils.class.getResource(yangFilesDirectoryPath).toURI())
+            .listFiles(StmtTestUtils.YANG_FILE_FILTER);
+        final var sources = new ArrayList<StatementStreamSource>(files.length);
+        for (var file : files) {
+            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+        }
+        return sources;
     }
 }
