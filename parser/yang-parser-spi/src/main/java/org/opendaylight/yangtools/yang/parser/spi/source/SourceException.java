@@ -112,7 +112,6 @@ public class SourceException extends RuntimeException {
         this(stmt.sourceReference(), format, args);
     }
 
-
     /**
      * Create a new instance with the specified source and a formatted message. The message will be appended with
      * the source reference.
