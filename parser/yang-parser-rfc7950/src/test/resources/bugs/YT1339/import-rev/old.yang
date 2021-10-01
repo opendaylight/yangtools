@@ -1,0 +1,9 @@
+module old {
+  namespace old;
+  prefix old;
+
+  import new {
+    prefix new;
+    revision-date 2021-10-01;
+  }
+}
