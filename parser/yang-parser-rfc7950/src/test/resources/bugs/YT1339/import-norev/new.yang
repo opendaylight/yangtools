@@ -1,0 +1,6 @@
+module new {
+  namespace new;
+  prefix new;
+  yang-version 1.1;
+  revision 2021-10-01;
+}

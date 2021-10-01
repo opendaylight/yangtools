@@ -1,0 +1,10 @@
+submodule sub {
+  belongs-to old {
+    prefix old;
+  }
+
+  import new {
+    prefix new;
+    revision-date 2021-10-01;
+  }
+}
