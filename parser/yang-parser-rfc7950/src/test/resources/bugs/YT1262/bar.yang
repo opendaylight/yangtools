@@ -1,4 +1,6 @@
 submodule bar {
+  yang-version 1.1;
+
   belongs-to foo {
     prefix foo;
   }

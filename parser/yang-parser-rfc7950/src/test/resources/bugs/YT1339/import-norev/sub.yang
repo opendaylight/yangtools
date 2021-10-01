@@ -1,0 +1,9 @@
+submodule sub {
+  belongs-to old {
+    prefix old;
+  }
+
+  import new {
+    prefix new;
+  }
+}
