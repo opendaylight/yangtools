@@ -41,7 +41,7 @@ abstract class ScannedDependency {
 
         @Override
         Collection<YangTextSchemaSource> sources() {
-            return ImmutableList.of(YangTextSchemaSource.forFile(file()));
+            return ImmutableList.of(YangTextSchemaSource.forPath(file().toPath()));
         }
     }
 
@@ -119,6 +119,7 @@ abstract class ScannedDependency {
         return entryNames.isEmpty() ? ImmutableList.of() : ImmutableList.of(new Zip(zipFile, entryNames));
     }
 
+    // FIXME: java.nio.file.Path
     final File file() {
         return file;
     }

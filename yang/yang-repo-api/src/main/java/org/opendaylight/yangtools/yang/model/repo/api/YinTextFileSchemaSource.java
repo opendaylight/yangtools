@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -23,31 +23,31 @@ import org.opendaylight.yangtools.concepts.Delegator;
  *
  * @author Robert Varga
  */
-final class YinTextFileSchemaSource extends YinTextSchemaSource implements Delegator<File> {
-    private final @NonNull File file;
+final class YinTextFileSchemaSource extends YinTextSchemaSource implements Delegator<Path> {
+    private final @NonNull Path path;
 
-    YinTextFileSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull File file) {
+    YinTextFileSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull Path path) {
         super(identifier);
-        this.file = requireNonNull(file);
+        this.path = requireNonNull(path);
     }
 
     @Override
-    public File getDelegate() {
-        return file;
+    public Path getDelegate() {
+        return path;
     }
 
     @Override
     public InputStream openStream() throws IOException {
-        return Files.newInputStream(file.toPath());
+        return Files.newInputStream(path);
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("file", file);
+        return toStringHelper.add("path", path);
     }
 
     @Override
     public Optional<String> getSymbolicName() {
-        return Optional.of(file.toString());
+        return Optional.of(path.toString());
     }
 }

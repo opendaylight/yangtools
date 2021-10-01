@@ -13,6 +13,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,7 +81,7 @@ public final class StmtTestUtils {
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forFile(new File(
+            return YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
                 StmtTestUtils.class.getResource(resourceName).toURI())));
         } catch (IOException | YangSyntaxErrorException | URISyntaxException e) {
             throw new IllegalArgumentException("Failed to create source", e);
@@ -154,7 +155,7 @@ public final class StmtTestUtils {
 
         final Collection<YangStatementStreamSource> sources = new ArrayList<>(files.length);
         for (File file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
         }
 
         return parseYangSources(config, supportedFeatures, sources);
@@ -167,7 +168,7 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSources(final Collection<File> files,
             final YangParserConfiguration config) throws ReactorException, IOException, YangSyntaxErrorException {
-        return parseYangSources(config, null, files.toArray(new File[files.size()]));
+        return parseYangSources(config, null, files.toArray(new File[0]));
     }
 
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
