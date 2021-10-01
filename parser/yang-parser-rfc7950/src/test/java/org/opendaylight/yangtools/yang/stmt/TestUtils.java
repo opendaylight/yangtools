@@ -14,9 +14,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -44,6 +48,31 @@ public final class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
     private TestUtils() {
+    }
+
+    public static @NonNull List<StatementStreamSource> loadYangResourceStreams(final String resourceDirectory)
+            throws YangSyntaxErrorException, IOException {
+        final List<YangTextSchemaSource> sources;
+        try {
+            sources = Files.list(Path.of(StmtTestUtils.class.getResource(resourceDirectory).toURI()))
+                .filter(path -> {
+                    if (!path.getFileName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
+                        LOG.debug("Skipping {}", path);
+                        return false;
+                    }
+                    return true;
+                })
+                .map(path -> YangTextSchemaSource.forFile(path.toFile()))
+                .collect(Collectors.toUnmodifiableList());
+        } catch (IOException | URISyntaxException e) {
+            throw new IllegalArgumentException("Failed to process " + resourceDirectory, e);
+        }
+
+        final var streams = new ArrayList<StatementStreamSource>(sources.size());
+        for (var source : sources) {
+            streams.add(YangStatementStreamSource.create(source));
+        }
+        return streams;
     }
 
     public static EffectiveModelContext loadModules(final URI resourceDirectory)
