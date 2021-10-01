@@ -87,11 +87,11 @@ class YangToSourcesProcessor {
         this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
         this.codeGeneratorArgs = ImmutableList.copyOf(codeGeneratorArgs);
-        this.fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
+        fileGeneratorArgs = Maps.uniqueIndex(fileGeneratorsArgs, FileGeneratorArg::getIdentifier);
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
-        this.parserFactory = DEFAULT_PARSER_FACTORY;
+        parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
     @VisibleForTesting
@@ -178,7 +178,7 @@ class YangToSourcesProcessor {
         final Stopwatch watch = Stopwatch.createStarted();
         final List<Entry<YangTextSchemaSource, IRSchemaSource>> parsed = yangFilesInProject.parallelStream()
             .map(file -> {
-                final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(file);
+                final YangTextSchemaSource textSource = YangTextSchemaSource.forPath(file.toPath());
                 try {
                     return Map.entry(textSource,TextToIRTransformer.transformText(textSource));
                 } catch (YangSyntaxErrorException | IOException e) {

@@ -199,10 +199,11 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
+    //  FIXME: use Java.nio.file.Path
     public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final YangParserConfiguration config, final Collection<File> files) {
         return parseSources(config, supportedFeatures,
-            files.stream().map(YangTextSchemaSource::forFile).collect(Collectors.toList()));
+            files.stream().map(file -> YangTextSchemaSource.forPath(file.toPath())).collect(Collectors.toList()));
     }
 
     /**
