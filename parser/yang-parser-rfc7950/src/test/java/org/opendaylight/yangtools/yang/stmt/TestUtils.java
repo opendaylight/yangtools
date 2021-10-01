@@ -13,10 +13,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -44,21 +46,36 @@ public final class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
     private TestUtils() {
+        // Hidden on purpose
+    }
+
+    public static List<YangTextSchemaSource> listYangSources(final Path path) throws IOException {
+        return Files.list(path)
+            .filter(child -> {
+                if (!child.getFileName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
+                    LOG.info("Ignoring non-YANG file {}", child);
+                    return false;
+                }
+                return true;
+            })
+            .map(YangTextSchemaSource::forPath)
+            .collect(Collectors.toUnmodifiableList());
+    }
+
+    public static List<YangStatementStreamSource> listYangStreams(final Path path)
+            throws IOException, YangSyntaxErrorException {
+        final var sources = listYangSources(path);
+        final var streams = new ArrayList<YangStatementStreamSource>(sources.size());
+        for (var source : sources) {
+            streams.add(YangStatementStreamSource.create(source));
+        }
+        return streams;
     }
 
     public static EffectiveModelContext loadModules(final URI resourceDirectory)
             throws ReactorException, IOException, YangSyntaxErrorException {
         final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
-        File[] files = new File(resourceDirectory).listFiles();
-
-        for (File file : files) {
-            if (file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
-                reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
-            } else {
-                LOG.info("Ignoring non-yang file {}", file);
-            }
-        }
-
+        listYangStreams(Path.of(resourceDirectory)).forEach(reactor::addSource);
         return reactor.buildEffective();
     }
 
@@ -151,39 +168,24 @@ public final class TestUtils {
         return RFC7950Reactors.defaultReactor().newBuild().addSources(sources).buildEffective();
     }
 
-    public static EffectiveModelContext parseYangSources(final File... files)
+    public static EffectiveModelContext parseYangSources(final Path... paths)
             throws ReactorException, IOException, YangSyntaxErrorException {
 
-        StatementStreamSource[] sources = new StatementStreamSource[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(files[i]));
+        StatementStreamSource[] sources = new StatementStreamSource[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forPath(paths[i]));
         }
 
         return parseYangSources(sources);
     }
 
-    public static EffectiveModelContext parseYangSources(final Collection<File> files)
+    public static EffectiveModelContext parseYangSources(final Collection<Path> paths)
             throws ReactorException, IOException, YangSyntaxErrorException {
-        return parseYangSources(files.toArray(new File[files.size()]));
-    }
-
-    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
-            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-
-        URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
-        File testSourcesDir = new File(resourceDir.toURI());
-
-        return parseYangSources(testSourcesDir.listFiles(
-            (dir, name) -> name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)));
+        return parseYangSources(paths.toArray(new Path[0]));
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourceFilePath)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-
-        URL resourceFile = StmtTestUtils.class.getResource(yangSourceFilePath);
-        File testSourcesFile = new File(resourceFile.toURI());
-
-        return parseYangSources(testSourcesFile);
+        return parseYangSources(Path.of(StmtTestUtils.class.getResource(yangSourceFilePath).toURI()));
     }
 }

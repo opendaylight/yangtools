@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Test;
@@ -41,8 +44,8 @@ public class Bug5946Test {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources(new File(getClass()
-                .getResource("/bugs/bug5946/foo.yang").toURI()));
+        SchemaContext context = StmtTestUtils.parseYangSources(Path.of(
+            getClass().getResource("/bugs/bug5946/foo.yang").toURI()));
         assertNotNull(context);
 
         Collection<? extends UniqueEffectiveStatement> uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
@@ -79,14 +82,12 @@ public class Bug5946Test {
 
     @Test
     public void testInvalid() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources(new File(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI()));
-            fail("Should fail due to invalid argument of unique constraint");
-        } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Unique statement argument '/simple-unique/l1' contains schema node identifier '/simple-unique/l1'"
-                            + " which is not in the descendant node identifier form."));
-        }
+        final var ex = assertThrows(ReactorException.class, () -> StmtTestUtils.parseYangSources(
+            Path.of(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI())));
+        final var cause = ex.getCause();
+        assertThat(cause, instanceOf(OutOfMemoryError.class));
+        assertThat(cause.getMessage(), startsWith("Unique statement argument '/simple-unique/l1' contains schema node"
+            + " identifier '/simple-unique/l1' which is not in the descendant node identifier form."));
     }
 
     private static @NonNull Collection<? extends UniqueEffectiveStatement> getListConstraints(

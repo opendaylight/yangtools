@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,7 @@ public class Bug6180Test {
 
     @Test
     public void stringTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(Path.of(getClass().getResource(
                 "/bugs/bug6180/string-test.yang").toURI()));
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
@@ -43,7 +43,7 @@ public class Bug6180Test {
 
     @Test
     public void doubleQuotesTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(Path.of(getClass().getResource(
                 "/bugs/bug6180/double-quotes.yang").toURI()));
         assertNotNull(schemaContext);
         verifyDoubleQuotesExpression(schemaContext);
@@ -51,7 +51,7 @@ public class Bug6180Test {
 
     @Test
     public void doubleQuotesSinbleInsideTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(Path.of(getClass().getResource(
                 "/bugs/bug6180/double-quotes-single-inside.yang").toURI()));
         assertNotNull(schemaContext);
         verifySingleQuotesExpression(schemaContext);
@@ -59,7 +59,7 @@ public class Bug6180Test {
 
     @Test
     public void singleQuotesTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(Path.of(getClass().getResource(
                 "/bugs/bug6180/single-quotes.yang").toURI()));
         assertNotNull(schemaContext);
         verifyDoubleQuotesExpression(schemaContext);

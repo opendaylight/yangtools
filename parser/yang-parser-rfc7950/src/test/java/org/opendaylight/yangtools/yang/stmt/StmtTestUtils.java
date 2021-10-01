@@ -13,6 +13,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,7 +81,7 @@ public final class StmtTestUtils {
 
     public static YangStatementStreamSource sourceForResource(final String resourceName) {
         try {
-            return YangStatementStreamSource.create(YangTextSchemaSource.forFile(new File(
+            return YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
                 StmtTestUtils.class.getResource(resourceName).toURI())));
         } catch (IOException | YangSyntaxErrorException | URISyntaxException e) {
             throw new IllegalArgumentException("Failed to create source", e);
@@ -118,9 +119,8 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYangSource(final String yangSourcePath,
             final YangParserConfiguration config, final Set<QName> supportedFeatures)
                     throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-        final URL source = StmtTestUtils.class.getResource(yangSourcePath);
-        final File sourceFile = new File(source.toURI());
-        return parseYangSources(config, supportedFeatures, sourceFile);
+        return parseYangSources(config, supportedFeatures,
+            Path.of(StmtTestUtils.class.getResource(yangSourcePath).toURI()));
     }
 
     public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
@@ -143,31 +143,31 @@ public final class StmtTestUtils {
         return build.buildEffective();
     }
 
-    public static EffectiveModelContext parseYangSources(final File... files) throws ReactorException, IOException,
+    public static EffectiveModelContext parseYangSources(final Path... files) throws ReactorException, IOException,
             YangSyntaxErrorException {
         return parseYangSources(YangParserConfiguration.DEFAULT, null, files);
     }
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
-            final Set<QName> supportedFeatures, final File... files) throws  ReactorException, IOException,
+            final Set<QName> supportedFeatures, final Path... paths) throws  ReactorException, IOException,
             YangSyntaxErrorException {
 
-        final Collection<YangStatementStreamSource> sources = new ArrayList<>(files.length);
-        for (File file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+        final Collection<YangStatementStreamSource> sources = new ArrayList<>(paths.length);
+        for (Path path : paths) {
+            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forPath(path)));
         }
 
         return parseYangSources(config, supportedFeatures, sources);
     }
 
-    public static EffectiveModelContext parseYangSources(final Collection<File> files) throws ReactorException,
+    public static EffectiveModelContext parseYangSources(final Collection<Path> paths) throws ReactorException,
             IOException, YangSyntaxErrorException {
-        return parseYangSources(files, YangParserConfiguration.DEFAULT);
+        return parseYangSources(paths, YangParserConfiguration.DEFAULT);
     }
 
-    public static EffectiveModelContext parseYangSources(final Collection<File> files,
+    public static EffectiveModelContext parseYangSources(final Collection<Path> paths,
             final YangParserConfiguration config) throws ReactorException, IOException, YangSyntaxErrorException {
-        return parseYangSources(config, null, files.toArray(new File[files.size()]));
+        return parseYangSources(config, null, paths.toArray(new Path[0]));
     }
 
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
@@ -185,10 +185,8 @@ public final class StmtTestUtils {
             final Set<QName> supportedFeatures, final YangParserConfiguration config) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
 
-        final URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
-        final File testSourcesDir = new File(resourceDir.toURI());
-
-        return parseYangSources(config, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
+        return parseYangSources(config, supportedFeatures, TestUtils.listYangStreams(
+            Path.of(StmtTestUtils.class.getResource(yangSourcesDirectoryPath).toURI())));
     }
 
     public static EffectiveModelContext parseYangSources(final String yangFilesDirectoryPath,
@@ -207,16 +205,17 @@ public final class StmtTestUtils {
                 supportedFeatures);
     }
 
+    // FIXME: use java.nio.file.Path
     private static EffectiveModelContext parseYangSources(final File[] yangFiles, final File[] libFiles,
             final Set<QName> supportedFeatures) throws ReactorException, IOException, YangSyntaxErrorException {
         final StatementStreamSource[] yangSources = new StatementStreamSource[yangFiles.length];
         for (int i = 0; i < yangFiles.length; i++) {
-            yangSources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(yangFiles[i]));
+            yangSources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forPath(yangFiles[i].toPath()));
         }
 
         final StatementStreamSource[] libSources = new StatementStreamSource[libFiles.length];
         for (int i = 0; i < libFiles.length; i++) {
-            libSources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(libFiles[i]));
+            libSources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forPath(libFiles[i].toPath()));
         }
 
         return parseYangSources(yangSources, libSources, supportedFeatures);

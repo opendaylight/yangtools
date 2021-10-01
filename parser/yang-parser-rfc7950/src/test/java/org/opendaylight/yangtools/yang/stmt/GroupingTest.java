@@ -55,7 +55,7 @@ public class GroupingTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        CTX = TestUtils.parseYangSources("/model");
+        CTX = TestUtils.loadModules("/model");
         assertEquals(3, CTX.getModules().size());
 
         FOO = Iterables.getOnlyElement(CTX.findModules("foo"));

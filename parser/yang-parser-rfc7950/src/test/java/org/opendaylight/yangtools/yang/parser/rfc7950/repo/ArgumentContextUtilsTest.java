@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.ArgumentContextUtils.unescapeBackslash;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -81,8 +81,8 @@ public class ArgumentContextUtilsTest {
 
     @Test
     public void stringTestUnescape() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass()
-                .getResource("/unescape/string-test.yang").toURI()));
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
+            Path.of(getClass().getResource("/unescape/string-test.yang").toURI()));
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
         final Module module = schemaContext.getModules().iterator().next();
