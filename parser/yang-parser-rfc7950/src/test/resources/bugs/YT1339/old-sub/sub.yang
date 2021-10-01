@@ -1,0 +1,5 @@
+submodule sub {
+  belongs-to mod {
+    prefix mod;
+  }
+}
