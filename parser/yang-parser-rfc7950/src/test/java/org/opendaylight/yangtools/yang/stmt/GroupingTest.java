@@ -55,7 +55,7 @@ public class GroupingTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        CTX = TestUtils.parseYangSources("/model");
+        CTX = TestUtils.loadModules("/model");
         assertEquals(3, CTX.getModules().size());
 
         FOO = Iterables.getOnlyElement(CTX.findModules("foo"));
@@ -552,7 +552,7 @@ public class GroupingTest {
 
     @Test
     public void testAddedByUsesLeafTypeQName() throws Exception {
-        final EffectiveModelContext loadModules = TestUtils.parseYangSources("/added-by-uses-leaf-test");
+        final EffectiveModelContext loadModules = TestUtils.loadModules("/added-by-uses-leaf-test");
         assertEquals(2, loadModules.getModules().size());
 
         final Module foo = Iterables.getOnlyElement(loadModules.findModules("foo"));

@@ -7,40 +7,37 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug8831Test {
     @Test
     public void test() throws Exception {
-        final SchemaContext context = TestUtils.parseYangSources("/bugs/bug8831/valid");
-        assertNotNull(context);
+        assertNotNull(TestUtils.loadModules("/bugs/bug8831/valid"));
     }
 
     @Test
     public void invalidModelsTest() throws Exception {
-        try {
-            TestUtils.parseYangSource("/bugs/bug8831/invalid/inv-model.yang");
-            fail("Test should fails due to invalid yang 1.1 model");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(
-                    e.getCause().getMessage().contains("has default value 'any' marked with an if-feature statement"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.parseYangSource("/bugs/bug8831/invalid/inv-model.yang"));
+        final var cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), containsString("has default value 'any' marked with an if-feature statement"));
     }
 
     @Test
     public void invalidModelsTest2() throws Exception {
-        try {
-            TestUtils.parseYangSource("/bugs/bug8831/invalid/inv-model2.yang");
-            fail("Test should fails due to invalid yang 1.1 model");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(
-                    e.getCause().getMessage().contains("has default value 'any' marked with an if-feature statement"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.parseYangSource("/bugs/bug8831/invalid/inv-model2.yang"));
+        final var cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), containsString("has default value 'any' marked with an if-feature statement"));
     }
 }

@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.File;
+import java.nio.file.Path;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public class Bug7954Test {
     @Test
     public void testParsingTheSameModuleTwice() throws Exception {
-        final File yang = new File(getClass().getResource("/bugs/bug7954/foo.yang").toURI());
+        final Path yang = Path.of(getClass().getResource("/bugs/bug7954/foo.yang").toURI());
 
         try {
             StmtTestUtils.parseYangSources(yang, yang);
@@ -34,8 +34,8 @@ public class Bug7954Test {
 
     @Test
     public void testParsingTheSameSubmoduleTwice() throws Exception {
-        final File yang = new File(getClass().getResource("/bugs/bug7954/bar.yang").toURI());
-        final File childYang = new File(getClass().getResource("/bugs/bug7954/subbar.yang").toURI());
+        final Path yang = Path.of(getClass().getResource("/bugs/bug7954/bar.yang").toURI());
+        final Path childYang = Path.of(getClass().getResource("/bugs/bug7954/subbar.yang").toURI());
 
         try {
             StmtTestUtils.parseYangSources(yang, childYang, childYang);

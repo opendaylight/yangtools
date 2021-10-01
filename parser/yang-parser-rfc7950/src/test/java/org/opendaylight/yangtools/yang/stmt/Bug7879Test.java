@@ -25,7 +25,7 @@ public class Bug7879Test {
 
     @Test
     public void test() throws Exception {
-        final ModuleEffectiveStatement module = TestUtils.parseYangSources("/bugs/bug7879")
+        final ModuleEffectiveStatement module = TestUtils.loadModules("/bugs/bug7879")
             .getModuleStatement(QName.create(NS, "my-model"));
 
         final SchemaTreeEffectiveStatement<?> container = module.findSchemaTreeNode(

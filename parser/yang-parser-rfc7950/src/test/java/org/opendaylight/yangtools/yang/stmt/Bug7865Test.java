@@ -24,7 +24,7 @@ public class Bug7865Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext context = TestUtils.parseYangSources("/bugs/bug7865");
+        final SchemaContext context = TestUtils.loadModules("/bugs/bug7865");
         assertNotNull(context);
 
         final DataSchemaNode root = context.getDataChildByName(foo("root"));

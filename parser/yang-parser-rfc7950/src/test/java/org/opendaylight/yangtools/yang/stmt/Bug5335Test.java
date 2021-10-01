@@ -72,7 +72,7 @@ public class Bug5335Test {
 
     @Test
     public void correctTest2() throws Exception {
-        final EffectiveModelContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
+        final EffectiveModelContext context = TestUtils.loadModules("/bugs/bug5335/correct/case-2");
         final DataSchemaNode mandatoryLeaf = context.findDataTreeChild(ROOT, PRESENCE_CONTAINER_B,
             NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B).orElse(null);
         assertThat(mandatoryLeaf, instanceOf(LeafSchemaNode.class));
