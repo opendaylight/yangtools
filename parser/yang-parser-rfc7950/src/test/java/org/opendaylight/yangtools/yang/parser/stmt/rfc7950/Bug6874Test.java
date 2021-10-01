@@ -7,23 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -42,8 +45,7 @@ public class Bug6874Test {
 
     @Test
     public void valid11Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
-            "/rfc7950/include-import-stmt-test/valid-11");
+        final var schemaContext = StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/valid-11");
         assertNotNull(schemaContext);
 
         // Test for valid include statement
@@ -60,26 +62,22 @@ public class Bug6874Test {
 
     @Test
     public void invalid10IncludeStmtTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-include-10");
-            fail("Test must fail: DESCRIPTION/REFERENCE are not valid for INCLUDE in Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final String msg = e.getCause().getMessage();
-            assertTrue(msg.startsWith("DESCRIPTION is not valid for INCLUDE")
-                || msg.startsWith("REFERENCE is not valid for INCLUDE"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-include-10")).getCause();
+        assertThat(ex, instanceOf(InvalidSubstatementException.class));
+        assertThat(ex.getMessage(), anyOf(
+            startsWith("DESCRIPTION is not valid for INCLUDE"),
+            startsWith("REFERENCE is not valid for INCLUDE")));
     }
 
     @Test
     public void invalid10ImportStmtTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-import-10");
-            fail("Test must fail: DESCRIPTION/REFERENCE are not valid for IMPORT in Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final String msg = e.getCause().getMessage();
-            assertTrue(msg.startsWith("DESCRIPTION is not valid for IMPORT")
-                || msg.startsWith("REFERENCE is not valid for IMPORT"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/invalid-import-10")).getCause();
+        assertThat(ex, instanceOf(InvalidSubstatementException.class));
+        assertThat(ex.getMessage(), anyOf(
+            startsWith("DESCRIPTION is not valid for IMPORT"),
+            startsWith("REFERENCE is not valid for IMPORT")));
     }
 
     @Test
