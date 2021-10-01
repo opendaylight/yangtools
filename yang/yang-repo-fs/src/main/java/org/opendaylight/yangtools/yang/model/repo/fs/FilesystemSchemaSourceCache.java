@@ -218,16 +218,17 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             storeAsType(file, supportedType.cast(schemaSourceRepresentation));
         }
 
+        // FIXME: use java.nio.filePath
         protected abstract void storeAsType(File file, T cast);
 
-        public T restore(final SourceIdentifier sourceIdentifier, final File cachedSource) {
+        T restore(final SourceIdentifier sourceIdentifier, final File cachedSource) {
             checkArgument(cachedSource.isFile());
             checkArgument(cachedSource.exists());
             checkArgument(cachedSource.canRead());
             return restoreAsType(sourceIdentifier, cachedSource);
         }
 
-        protected abstract T restoreAsType(SourceIdentifier sourceIdentifier, File cachedSource);
+        abstract T restoreAsType(SourceIdentifier sourceIdentifier, File cachedSource);
     }
 
     private static final class YangTextSchemaStorageAdapter extends StorageAdapter<YangTextSchemaSource> {
@@ -249,8 +250,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         @Override
-        public YangTextSchemaSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            return YangTextSchemaSource.forFile(cachedSource, sourceIdentifier);
+        YangTextSchemaSource restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource) {
+            return YangTextSchemaSource.forPath(cachedSource.toPath(), sourceIdentifier);
         }
     }
 

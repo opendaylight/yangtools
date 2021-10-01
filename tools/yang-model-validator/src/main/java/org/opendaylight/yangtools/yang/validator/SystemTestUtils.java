@@ -97,10 +97,10 @@ final class SystemTestUtils {
         }
 
         for (File file : testFiles) {
-            parser.addSource(YangTextSchemaSource.forFile(file));
+            parser.addSource(YangTextSchemaSource.forPath(file.toPath()));
         }
         for (File file : libFiles) {
-            parser.addLibSource(YangTextSchemaSource.forFile(file));
+            parser.addLibSource(YangTextSchemaSource.forPath(file.toPath()));
         }
 
         return parser.buildEffectiveModel();

@@ -54,7 +54,7 @@ public final class TestUtils {
             .listFiles(StmtTestUtils.YANG_FILE_FILTER);
         final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
-            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
         }
         return sources;
     }
@@ -66,7 +66,7 @@ public final class TestUtils {
 
         for (File file : files) {
             if (file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
-                reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+                reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
             } else {
                 LOG.info("Ignoring non-yang file {}", file);
             }
@@ -93,7 +93,7 @@ public final class TestUtils {
 
         for (File file : new File(resourceDirectory).listFiles()) {
             reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSchemaSource.forFile(file))));
+                YinTextSchemaSource.forPath(file.toPath()))));
         }
 
         return reactor.buildEffective();
@@ -170,7 +170,7 @@ public final class TestUtils {
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(files[i]));
+            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forPath(files[i].toPath()));
         }
 
         return parseYangSources(sources);

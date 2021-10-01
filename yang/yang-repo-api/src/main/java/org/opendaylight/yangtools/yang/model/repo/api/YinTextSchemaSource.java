@@ -15,8 +15,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -94,9 +95,9 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         return new DelegatedYinTextSchemaSource(identifier, delegate);
     }
 
-    public static @NonNull YinTextSchemaSource forFile(final File file) {
-        checkArgument(file.isFile(), "Supplied file %s is not a file", file);
-        return new YinTextFileSchemaSource(identifierFromFilename(file.getName()), file);
+    public static @NonNull YinTextSchemaSource forPath(final Path path) {
+        checkArgument(Files.isRegularFile(path), "Supplied path %s is not a regular file", path);
+        return new YinTextFileSchemaSource(identifierFromFilename(path.toFile().getName()), path);
     }
 
     public static @NonNull YinTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
