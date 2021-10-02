@@ -41,8 +41,8 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SingletonSet;
@@ -79,7 +79,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 // FIXME: 7.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
-public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier> {
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final long serialVersionUID = 4L;

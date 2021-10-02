@@ -17,7 +17,10 @@ import org.eclipse.jdt.annotation.NonNull;
  * identified by the former contains all elements of the data set represented by later.
  *
  * @param <P> Path equivalence class
+ * @deprecated This interface does not completely capture the modeling intent. Use {@link HierarchicalIdentifier}
+ *             instead.
  */
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface Path<P extends Path<P>> {
     /**
      * Check if this path contains some other.
