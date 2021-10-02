@@ -13,7 +13,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
@@ -27,11 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-public class Bug6869Test {
+public class Bug6869Test extends AbstractYangTest {
     private static final QName ROOT = QName.create("foo", "root");
     private static final QName GRP_LEAF = QName.create("foo", "grp-leaf");
 
@@ -83,10 +81,6 @@ public class Bug6869Test {
 
     @Test
     public void invalidYang10Test() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> StmtTestUtils.parseYangSource("/rfc7950/bug6869/invalid10.yang"));
-        final Throwable cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("IF_FEATURE is not valid for IDENTITY"));
+        assertSourceException(startsWith("IF_FEATURE is not valid for IDENTITY"), "/rfc7950/bug6869/invalid10.yang");
     }
 }

@@ -8,80 +8,57 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
-public class Bug6867BasicTest {
+public class Bug6867BasicTest extends AbstractYangTest {
 
     @Test
     public void valid10Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/basic-test/valid-10.yang");
-        assertNotNull(schemaContext);
+        assertEffectiveModel("/rfc7950/basic-test/valid-10.yang");
     }
 
     @Test
     public void valid11Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/basic-test/valid-11.yang");
-        assertNotNull(schemaContext);
+        assertEffectiveModel("/rfc7950/basic-test/valid-11.yang");
     }
 
     @Test
-    public void invalid10Test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/basic-test/invalid-10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("NOTIFICATION is not valid for CONTAINER"));
-        }
+    public void invalid10Test() {
+        assertException(InvalidSubstatementException.class, startsWith("NOTIFICATION is not valid for CONTAINER"),
+            "/rfc7950/basic-test/invalid-10.yang");
     }
 
     @Test
-    public void invalid11Test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/basic-test/invalid-11.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("RPC is not valid for CONTAINER"));
-        }
+    public void invalid11Test() {
+        assertException(InvalidSubstatementException.class, startsWith("RPC is not valid for CONTAINER"),
+            "/rfc7950/basic-test/invalid-11.yang");
     }
 
     @Test
     public void anyData11Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/basic-test/anydata-11.yang");
-        assertNotNull(schemaContext);
+        assertEffectiveModel("/rfc7950/basic-test/anydata-11.yang");
     }
 
     @Test
-    public void anyData10Test() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/basic-test/anydata-10.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("anydata is not a YANG statement or use of extension"));
-        }
+    public void anyData10Test() {
+        assertSourceException(startsWith("anydata is not a YANG statement or use of extension"),
+            "/rfc7950/basic-test/anydata-10.yang");
     }
 
     @Test
     public void yangModelTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/model");
-        assertNotNull(schemaContext);
+        assertNotNull(StmtTestUtils.parseYangSources("/rfc7950/model"));
     }
 
     @Test
-    public void unsupportedVersionTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/basic-test/unsupported-version.yang");
-            fail("Test should fail due to unsupported Yang version");
-        } catch (final SomeModifiersUnresolvedException e) {
-            final Throwable cause = e.getCause();
-            assertNotNull(cause);
-            assertTrue(cause.getMessage().startsWith("Unsupported YANG version 2.3"));
-        }
+    public void unsupportedVersionTest() {
+        assertSourceException(startsWith("Unsupported YANG version 2.3"),
+            "/rfc7950/basic-test/unsupported-version.yang");
     }
 }
