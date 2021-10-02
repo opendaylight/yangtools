@@ -48,15 +48,29 @@ public final class TestUtils {
         // Hidden on purpose
     }
 
-    public static @NonNull List<StatementStreamSource> loadSources(final String yangFilesDirectoryPath)
+    public static @NonNull List<StatementStreamSource> loadSources(final String resourceDirectory)
             throws Exception {
-        final var files = new File(TestUtils.class.getResource(yangFilesDirectoryPath).toURI())
+        return loadSources(TestUtils.class, resourceDirectory);
+    }
+
+    public static @NonNull List<StatementStreamSource> loadSources(final Class<?> cls, final String resourceDirectory)
+            throws Exception {
+        final var files = new File(cls.getResource(resourceDirectory).toURI())
             .listFiles(StmtTestUtils.YANG_FILE_FILTER);
         final var sources = new ArrayList<StatementStreamSource>(files.length);
         for (var file : files) {
             sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
         }
         return sources;
+    }
+
+    public static EffectiveModelContext loadModules(final String resourceDirectory) throws Exception {
+        return loadModules(TestUtils.class, resourceDirectory);
+    }
+
+    public static EffectiveModelContext loadModules(final Class<?> cls, final String resourceDirectory)
+            throws Exception {
+        return loadModules(cls.getResource(resourceDirectory).toURI());
     }
 
     public static EffectiveModelContext loadModules(final URI resourceDirectory)
