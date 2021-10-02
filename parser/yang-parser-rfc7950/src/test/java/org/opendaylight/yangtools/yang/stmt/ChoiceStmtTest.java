@@ -10,34 +10,16 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class ChoiceStmtTest {
+public class ChoiceStmtTest extends AbstractModelTest {
     @Test
-    public void choiceAndCaseTest() throws ReactorException, YangSyntaxErrorException, URISyntaxException, IOException {
-        final SchemaContext result = StmtTestUtils.parseYangSources("/model");
-        assertNotNull(result);
-
-        final Module testModule = result.findModules("foo").iterator().next();
-        assertNotNull(testModule);
-
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "transfer"));
-        assertNotNull(container);
-
-        final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "how"));
-        assertNotNull(choice);
+    public void choiceAndCaseTest() {
+        final ContainerSchemaNode container = (ContainerSchemaNode) FOO.getDataChildByName(fooQName("transfer"));
+        final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName(fooQName("how"));
         assertEquals(5, choice.getCases().size());
 
         CaseSchemaNode caseNode = choice.findCaseNodes("input").iterator().next();
