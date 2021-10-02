@@ -16,7 +16,7 @@ package org.opendaylight.yangtools.concepts;
  * instance of the tree-like structure they are defined on. This property is expressed through
  * {@link #contains(HierarchicalIdentifier)}.
  */
-public interface HierarchicalIdentifier<T extends HierarchicalIdentifier<T>> extends Identifier, Path<T> {
+public interface HierarchicalIdentifier<T extends HierarchicalIdentifier<T>> extends Identifier {
     /**
      * Check if this identifier contains some other identifier. If we take HierarchicalIdentifier to be similar to a
      * {@link java.nio.file.Path}, this is method is the equivalent of {@code other.startsWith(this)}.
@@ -25,6 +25,5 @@ public interface HierarchicalIdentifier<T extends HierarchicalIdentifier<T>> ext
      * @return True if this identifier contains the other identifier
      * @throws NullPointerException if {@code other} is null
      */
-    @Override
     boolean contains(T other);
 }
