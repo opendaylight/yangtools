@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 
@@ -24,9 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 public class Bug1413Test {
     @Test
     public void test() throws Exception {
-        Collection<? extends ExtensionDefinition> extensions = TestUtils.loadModules(
-            getClass().getResource("/bugs/bug1413").toURI())
-                .findModules("bug1413").iterator().next().getExtensionSchemaNodes();
+        var extensions = TestUtils.loadModules("/bugs/bug1413").findModules("bug1413").iterator().next()
+            .getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
 
         ExtensionDefinition info = extensions.iterator().next();

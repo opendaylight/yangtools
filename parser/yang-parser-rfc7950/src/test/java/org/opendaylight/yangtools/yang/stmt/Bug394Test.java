@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 public class Bug394Test {
     @Test
     public void testParseList() throws Exception {
-        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/bugs/bug394-retest").toURI());
+        final SchemaContext context = TestUtils.loadModules("/bugs/bug394-retest");
         final Module bug394 = context.findModules("bug394").iterator().next();
         final Module bug394_ext = context.findModules("bug394-ext").iterator().next();
 
@@ -40,9 +40,7 @@ public class Bug394Test {
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, nodes.size());
 
-        final Collection<QName> extensions = bug394_ext.getExtensionSchemaNodes()
-            .stream().map(ExtensionDefinition::getQName).collect(Collectors.toUnmodifiableList());
-        assertEquals(3, extensions.size());
+        assertEquals(3, bug394_ext.getExtensionSchemaNodes().size());
 
         final Iterator<? extends UnrecognizedStatement> it = nodes.iterator();
         assertTrue(extensions.contains(it.next().statementDefinition().getStatementName()));

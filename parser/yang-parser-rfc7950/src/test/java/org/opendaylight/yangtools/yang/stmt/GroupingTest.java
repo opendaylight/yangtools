@@ -491,7 +491,7 @@ public class GroupingTest extends AbstractModelTest {
 
     @Test
     public void testAddedByUsesLeafTypeQName() throws Exception {
-        final EffectiveModelContext loadModules = TestUtils.parseYangSources("/added-by-uses-leaf-test");
+        final EffectiveModelContext loadModules = TestUtils.loadModules("/added-by-uses-leaf-test");
         assertEquals(2, loadModules.getModules().size());
 
         final Module foo = Iterables.getOnlyElement(loadModules.findModules("foo"));
