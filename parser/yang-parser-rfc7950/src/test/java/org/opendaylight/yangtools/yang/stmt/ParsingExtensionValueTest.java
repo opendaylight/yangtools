@@ -10,11 +10,9 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -24,10 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public class ParsingExtensionValueTest {
     @Test
     public void extensionTest() {
-        final ReactorException ex = assertThrows(ReactorException.class,
-            () -> TestUtils.loadModules(getClass().getResource("/extensions").toURI()));
-        assertEquals(SomeModifiersUnresolvedException.class, ex.getClass());
-        final Throwable cause = ex.getCause();
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class, () -> TestUtils.loadModules("/extensions"));
+        final var cause = ex.getCause();
         assertThat(cause, instanceOf(SourceException.class));
         assertThat(cause.getMessage(), startsWith("ext:id is not a YANG statement or use of extension"));
     }
