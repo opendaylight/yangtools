@@ -20,25 +20,25 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-public class Bug7879Test {
+public class Bug7879Test extends AbstractYangTest {
     private static final XMLNamespace NS = XMLNamespace.of("my-model-ns");
 
     @Test
     public void test() throws Exception {
-        final ModuleEffectiveStatement module = TestUtils.loadModules("/bugs/bug7879")
-            .getModuleStatement(QName.create(NS, "my-model"));
+        final ModuleEffectiveStatement module = assertEffectiveModelDir("/bugs/bug7879")
+            .getModuleStatement(qn("my-model"));
 
         final SchemaTreeEffectiveStatement<?> container = module.findSchemaTreeNode(
-            qN("my-alarm"), qN("my-content"), qN("my-event-container")).orElse(null);
+            qn("my-alarm"), qn("my-content"), qn("my-event-container")).orElse(null);
         assertThat(container, instanceOf(ContainerSchemaNode.class));
 
         final SchemaTreeEffectiveStatement<?> leaf = module.findSchemaTreeNode(
-            qN("my-alarm"), qN("my-content"), qN("my-event-value")).orElse(null);
+            qn("my-alarm"), qn("my-content"), qn("my-event-value")).orElse(null);
         assertThat(leaf, instanceOf(LeafSchemaNode.class));
         assertEquals(Optional.of("new description"), ((LeafSchemaNode) leaf).getDescription());
     }
 
-    private static QName qN(final String localName) {
+    private static QName qn(final String localName) {
         return QName.create(NS, localName);
     }
 }

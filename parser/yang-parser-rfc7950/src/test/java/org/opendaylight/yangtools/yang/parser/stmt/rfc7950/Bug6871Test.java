@@ -7,40 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OutputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6871Test {
-
+public class Bug6871Test extends AbstractYangTest {
     @Test
     public void testValidYang11Model() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6871/foo.yang");
-        assertNotNull(schemaContext);
+        final Module foo = assertEffectiveModel("/rfc7950/bug6871/foo.yang")
+            .findModule("foo", Revision.of("2016-12-14")).orElseThrow();
 
-        final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-14")).get();
-
-        final Collection<? extends NotificationDefinition> notifications = foo.getNotifications();
+        final var notifications = foo.getNotifications();
         assertEquals(1, notifications.size());
         final NotificationDefinition myNotification = notifications.iterator().next();
-        Collection<? extends MustDefinition> mustConstraints = myNotification.getMustConstraints();
+        var mustConstraints = myNotification.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
-        final Collection<? extends RpcDefinition> rpcs = foo.getRpcs();
+        final var rpcs = foo.getRpcs();
         assertEquals(1, rpcs.size());
         final RpcDefinition myRpc = rpcs.iterator().next();
 
@@ -56,18 +48,10 @@ public class Bug6871Test {
     }
 
     @Test
-    public void testInvalidYang10Model() throws Exception {
-        assertException("/rfc7950/bug6871/foo10.yang", "MUST is not valid for NOTIFICATION");
-        assertException("/rfc7950/bug6871/bar10.yang", "MUST is not valid for INPUT");
-        assertException("/rfc7950/bug6871/baz10.yang", "MUST is not valid for OUTPUT");
-    }
-
-    private static void assertException(final String sourcePath, final String exceptionMessage) throws Exception {
-        try {
-            StmtTestUtils.parseYangSource(sourcePath);
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final ReactorException ex) {
-            assertTrue(ex.getCause().getMessage().startsWith(exceptionMessage));
-        }
+    public void testInvalidYang10Model() {
+        assertInvalidSubstatementException(startsWith("MUST is not valid for NOTIFICATION"),
+            "/rfc7950/bug6871/foo10.yang");
+        assertInvalidSubstatementException(startsWith("MUST is not valid for INPUT"), "/rfc7950/bug6871/bar10.yang");
+        assertInvalidSubstatementException(startsWith("MUST is not valid for OUTPUT"), "/rfc7950/bug6871/baz10.yang");
     }
 }

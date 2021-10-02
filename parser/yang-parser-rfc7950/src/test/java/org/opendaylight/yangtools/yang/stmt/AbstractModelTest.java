@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 /**
  * Abstract base class for tests of the model context available in {@code src/test/resources/model}.
  */
-public abstract class AbstractModelTest {
+public abstract class AbstractModelTest extends AbstractYangTest {
     private static final QNameModule FOO_NS =
         QNameModule.create(XMLNamespace.of("urn:opendaylight.foo"), Revision.of("2013-02-27"));
     private static final QNameModule BAR_NS =
@@ -36,7 +36,7 @@ public abstract class AbstractModelTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        CTX = TestUtils.loadModules("/model");
+        CTX = assertEffectiveModelDir("/model");
         assertEquals(3, CTX.getModules().size());
 
         FOO = CTX.findModules("foo").iterator().next();

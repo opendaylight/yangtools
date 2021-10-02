@@ -14,10 +14,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 
-public class TwoRevisionsTest {
+public class TwoRevisionsTest extends AbstractYangTest {
     @Test
     public void testTwoRevisions() throws Exception {
-        var it = TestUtils.loadModules("/ietf").findModuleStatements("network-topology").iterator();
+        var it = assertEffectiveModelDir("/ietf").findModuleStatements("network-topology").iterator();
         assertTrue(it.hasNext());
         assertEquals(Revision.ofNullable("2013-10-21"), it.next().localQNameModule().getRevision());
         assertTrue(it.hasNext());

@@ -11,9 +11,9 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class Bug3859Test {
+public class Bug3859Test extends AbstractYangTest {
     @Test
     public void test() throws Exception {
-        assertEquals(1, TestUtils.loadModules("/bugs/bug3859").findModules("reference-in-unknown").size());
+        assertEquals(1, assertEffectiveModelDir("/bugs/bug3859").findModules("reference-in-unknown").size());
     }
 }

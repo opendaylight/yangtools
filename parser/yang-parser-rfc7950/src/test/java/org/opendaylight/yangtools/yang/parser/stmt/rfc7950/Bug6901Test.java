@@ -5,109 +5,70 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
-public class Bug6901Test {
-
+public class Bug6901Test extends AbstractYangTest {
     @Test
     public void ifFeature11EnumBitTest() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6901/foo.yang");
-        assertNotNull(schemaContext);
+        assertEffectiveModel("/rfc7950/bug6901/foo.yang");
     }
 
     @Test
-    public void ifFeatureOnDefaultValueEnumTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-enum.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."));
-        }
+    public void ifFeatureOnDefaultValueEnumTest() {
+        assertSourceException(
+            startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."),
+            "/rfc7950/bug6901/invalid-foo-enum.yang");
     }
 
     @Test
-    public void ifFeatureOnDefaultValueEnumTest2() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-enum-2.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."));
-        }
+    public void ifFeatureOnDefaultValueEnumTest2() {
+        assertSourceException(
+            startsWith("Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."),
+            "/rfc7950/bug6901/invalid-foo-enum-2.yang");
     }
 
     @Test
-    public void ifFeatureOnDefaultValueEnumTest3() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-enum-3.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."));
-        }
+    public void ifFeatureOnDefaultValueEnumTest3() {
+        assertSourceException(startsWith(
+            "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."),
+            "/rfc7950/bug6901/invalid-foo-enum-3.yang");
     }
 
     @Test
-    public void ifFeatureOnDefaultValueBitTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-bit.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Typedef '(foo)bits-typedef-2' has default value 'two' marked with an if-feature statement."));
-        }
+    public void ifFeatureOnDefaultValueBitTest() {
+        assertSourceException(
+            startsWith("Typedef '(foo)bits-typedef-2' has default value 'two' marked with an if-feature statement."),
+            "/rfc7950/bug6901/invalid-foo-bit.yang");
     }
 
     @Test
-    public void ifFeatureOnDefaultValueUnionTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-union.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo)union-leaf' has default value 'two' marked with an if-feature statement."));
-        }
+    public void ifFeatureOnDefaultValueUnionTest() {
+        assertSourceException(
+            startsWith("Leaf '(foo)union-leaf' has default value 'two' marked with an if-feature statement."),
+            "/rfc7950/bug6901/invalid-foo-union.yang");
     }
 
     @Test
-    public void unsupportedFeatureTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-enum.yang");
-            fail("Test should fail due to invalid Yang 1.1");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(
-                    e.getCause().getMessage().contains("has default value 'two' marked with an if-feature statement"));
-        }
+    public void unsupportedFeatureTest() {
+        assertSourceException(containsString("has default value 'two' marked with an if-feature statement"),
+            "/rfc7950/bug6901/invalid-foo-enum.yang");
     }
 
     @Test
-    public void ifFeature10EnumTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-10-enum.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("IF_FEATURE is not valid for ENUM"));
-        }
+    public void ifFeature10EnumTest() {
+        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for ENUM"),
+            "/rfc7950/bug6901/invalid-foo-10-enum.yang");
     }
 
     @Test
-    public void ifFeature10BitTest() throws Exception {
-        try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-10-bit.yang");
-            fail("Test should fail due to invalid Yang 1.0");
-        } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("IF_FEATURE is not valid for BIT"));
-        }
+    public void ifFeature10BitTest() {
+        assertInvalidSubstatementException(startsWith("IF_FEATURE is not valid for BIT"),
+            "/rfc7950/bug6901/invalid-foo-10-bit.yang");
     }
 }
