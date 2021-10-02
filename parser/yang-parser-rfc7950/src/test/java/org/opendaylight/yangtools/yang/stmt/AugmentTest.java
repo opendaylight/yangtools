@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,12 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.InputSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
@@ -45,13 +46,17 @@ public class AugmentTest {
     private static final QName Q1 = QName.create(BAR, "ifEntry");
     private static final QName Q2 = QName.create(BAZ, "augment-holder");
 
-    @Test
-    public void testAugmentParsing() throws Exception {
-        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
-            .toURI());
+    private static EffectiveModelContext AUGMENT_IN_AUGMENT;
 
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        AUGMENT_IN_AUGMENT = TestUtils.loadModules("/augment-test/augment-in-augment");
+    }
+
+    @Test
+    public void testAugmentParsing() {
         // foo.yang
-        final Module module1 = context.findModules("foo").iterator().next();
+        final Module module1 = AUGMENT_IN_AUGMENT.findModules("foo").iterator().next();
         Collection<? extends AugmentationSchemaNode> augmentations = module1.getAugmentations();
         assertEquals(1, augmentations.size());
         final AugmentationSchemaNode augment = augmentations.iterator().next();
@@ -98,7 +103,7 @@ public class AugmentTest {
         assertFalse(odl.isAugmenting());
 
         // baz.yang
-        final Module module3 = context.findModules("baz").iterator().next();
+        final Module module3 = AUGMENT_IN_AUGMENT.findModules("baz").iterator().next();
         augmentations = module3.getAugmentations();
         assertEquals(3, augmentations.size());
         AugmentationSchemaNode augment1 = null;
@@ -134,10 +139,8 @@ public class AugmentTest {
     }
 
     @Test
-    public void testAugmentResolving() throws Exception {
-        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
-            .toURI());
-        final Module module2 = context.findModules("bar").iterator().next();
+    public void testAugmentResolving() {
+        final Module module2 = AUGMENT_IN_AUGMENT.findModules("bar").iterator().next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
                 module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
@@ -179,10 +182,8 @@ public class AugmentTest {
     }
 
     @Test
-    public void testAugmentedChoice() throws Exception {
-        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
-            .toURI());
-        final Module module2 = context.findModules("bar").iterator().next();
+    public void testAugmentedChoice() {
+        final Module module2 = AUGMENT_IN_AUGMENT.findModules("bar").iterator().next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
                 module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
@@ -254,7 +255,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentRpc() throws Exception {
-        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
+        final EffectiveModelContext context = TestUtils.loadModules("/augment-test/rpc");
         final XMLNamespace NS_BAR = XMLNamespace.of("urn:opendaylight:bar");
         final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
         final Revision revision = Revision.of("2013-10-11");
@@ -322,8 +323,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentInUsesResolving() throws Exception {
-        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-uses")
-            .toURI());
+        final EffectiveModelContext context = TestUtils.loadModules("/augment-test/augment-in-uses");
         assertEquals(1, context.getModules().size());
 
         final Module test = context.getModules().iterator().next();

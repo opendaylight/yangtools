@@ -14,7 +14,6 @@ import org.junit.Test;
 public class Bug3859Test {
     @Test
     public void test() throws Exception {
-        assertEquals(1, TestUtils.loadModules(getClass().getResource("/bugs/bug3859").toURI())
-            .findModules("reference-in-unknown").size());
+        assertEquals(1, TestUtils.loadModules("/bugs/bug3859").findModules("reference-in-unknown").size());
     }
 }
