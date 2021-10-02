@@ -18,16 +18,20 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EffectiveModulesAndSubmodulesTest {
-
+    private static final Logger LOG = LoggerFactory.getLogger(EffectiveModulesAndSubmodulesTest.class);
     private static final StatementStreamSource ROOT_MODULE = sourceForResource(
             "/stmt-test/submodules/root-module.yang");
     private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
@@ -65,8 +69,8 @@ public class EffectiveModulesAndSubmodulesTest {
                     break;
                 default:
             }
-            StmtTestUtils.printReferences(module, false, "");
-            StmtTestUtils.printChilds(module.getChildNodes(), "      ");
+            printReferences(module, false, "");
+            printChilds(module.getChildNodes(), "      ");
         }
 
         assertNotNull(root);
@@ -196,5 +200,22 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(imported, foundImported3);
 
         assertFalse(root.equals(imported));
+    }
+
+    private static void printReferences(final ModuleLike module, final boolean isSubmodule, final String indent) {
+        LOG.debug("{}{} {}", indent, isSubmodule ? "Submodule" : "Module", module.getName());
+        for (final Submodule submodule : module.getSubmodules()) {
+            printReferences(submodule, true, indent + "      ");
+            printChilds(submodule.getChildNodes(), indent + "            ");
+        }
+    }
+
+    private static void printChilds(final Collection<? extends DataSchemaNode> childNodes, final String indent) {
+        for (final DataSchemaNode child : childNodes) {
+            LOG.debug("{}{} {}", indent, "Child", child.getQName().getLocalName());
+            if (child instanceof DataNodeContainer) {
+                printChilds(((DataNodeContainer) child).getChildNodes(), indent + "      ");
+            }
+        }
     }
 }
