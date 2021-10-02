@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -38,11 +38,11 @@ public class UsesAugmentTest {
     private static final QNameModule GD = QNameModule.create(
         XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:grouping-definitions"), Revision.of("2013-09-04"));
 
-    private SchemaContext context;
+    private static SchemaContext CONTEXT;
 
-    @Before
-    public void init() throws Exception {
-        context = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        CONTEXT = TestUtils.loadModules("/grouping-test");
     }
 
     /*
@@ -103,7 +103,7 @@ public class UsesAugmentTest {
      */
     @Test
     public void testAugmentInUses() throws Exception {
-        final Module testModule = context.findModules("uses-grouping").iterator().next();
+        final Module testModule = CONTEXT.findModules("uses-grouping").iterator().next();
 
         // * notification pcreq
         final Collection<? extends NotificationDefinition> notifications = testModule.getNotifications();
@@ -406,7 +406,7 @@ public class UsesAugmentTest {
 
     @Test
     public void testTypedefs() throws Exception {
-        final Module testModule = context.findModules("grouping-definitions").iterator().next();
+        final Module testModule = CONTEXT.findModules("grouping-definitions").iterator().next();
         final Collection<? extends TypeDefinition<?>> types = testModule.getTypeDefinitions();
 
         TypeDefinition<?> intExt = null;
