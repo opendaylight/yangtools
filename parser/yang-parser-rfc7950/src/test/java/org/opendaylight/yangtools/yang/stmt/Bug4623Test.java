@@ -12,15 +12,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.common.collect.Range;
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -29,17 +28,18 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 public class Bug4623Test {
+    private static Module TYPES;
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        // given
+        TYPES = TestUtils.loadModules("/bugs/bug4623").findModules("types").iterator().next();
+    }
 
     @Test
-    public void testStringTypeWithUnknownSchemaNodeAtTheEndOfTypeDefinition() throws Exception {
-        // given
-        final File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
-        final File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
-
+    public void testStringTypeWithUnknownSchemaNodeAtTheEndOfTypeDefinition() {
         // when
-        final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
-
-        final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
+        final LeafSchemaNode leaf = (LeafSchemaNode) TYPES.getDataChildByName(
             QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
 
         // then
@@ -67,15 +67,9 @@ public class Bug4623Test {
     }
 
     @Test
-    public void testStringTypeWithUnknownSchemaNodeBetweenStringRestrictionStatements() throws Exception {
-        // given
-        final File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
-        final File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
-
+    public void testStringTypeWithUnknownSchemaNodeBetweenStringRestrictionStatements() {
         // when
-        final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
-
-        final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
+        final LeafSchemaNode leaf = (LeafSchemaNode) TYPES.getDataChildByName(
                 QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
 
         // then
@@ -103,15 +97,9 @@ public class Bug4623Test {
     }
 
     @Test
-    public void testStringTypeWithUnknownSchemaNodeOnTheStartOfTypeDefinition() throws Exception {
-        // given
-        final File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
-        final File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
-
+    public void testStringTypeWithUnknownSchemaNodeOnTheStartOfTypeDefinition() {
         // when
-        final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
-
-        final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
+        final LeafSchemaNode leaf = (LeafSchemaNode) TYPES.getDataChildByName(
                 QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
@@ -149,9 +137,5 @@ public class Bug4623Test {
         assertEquals("unknown", unknownSchemaNode.argument());
         assertEquals(QName.create("urn:simple.extension.typedefs", "unknown"),
             unknownSchemaNode.statementDefinition().getStatementName());
-    }
-
-    private static Module typesModule(final SchemaContext context) {
-        return context.findModules("types").iterator().next();
     }
 }

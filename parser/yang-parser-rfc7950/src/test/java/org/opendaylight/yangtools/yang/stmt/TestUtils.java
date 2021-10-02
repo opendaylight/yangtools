@@ -12,8 +12,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -133,8 +132,7 @@ public final class TestUtils {
     public static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
         assertEquals(expected, node.isAugmenting());
         if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node)
-                    .getChildNodes()) {
+            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
                 checkIsAugmenting(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
@@ -144,29 +142,16 @@ public final class TestUtils {
         }
     }
 
-    public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
-            throws ReactorException {
-        return RFC7950Reactors.defaultReactor().newBuild().addSources(sources).buildEffective();
-    }
-
-    public static EffectiveModelContext parseYangSources(final File... files)
-            throws ReactorException, IOException, YangSyntaxErrorException {
-
-        StatementStreamSource[] sources = new StatementStreamSource[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forPath(files[i].toPath()));
+    public static EffectiveModelContext parseYangSource(final String... yangSourceFilePath) throws Exception {
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild();
+        for (var resourcePath : yangSourceFilePath) {
+            reactor.addSource(sourceForResource(resourcePath));
         }
-
-        return parseYangSources(sources);
+        return reactor.buildEffective();
     }
 
-    public static EffectiveModelContext parseYangSource(final String yangSourceFilePath)
-            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-
-        URL resourceFile = StmtTestUtils.class.getResource(yangSourceFilePath);
-        File testSourcesFile = new File(resourceFile.toURI());
-
-        return parseYangSources(testSourcesFile);
+    public static YangStatementStreamSource sourceForResource(final String resourceName) throws Exception {
+        return YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
+            TestUtils.class.getResource(resourceName).toURI())));
     }
 }

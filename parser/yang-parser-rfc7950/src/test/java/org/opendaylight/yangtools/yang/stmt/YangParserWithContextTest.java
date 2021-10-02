@@ -311,14 +311,11 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testAugment() throws ReactorException {
-        final StatementStreamSource resource = sourceForResource("/context-augment-test/test4.yang");
-        final StatementStreamSource test1 = sourceForResource("/context-augment-test/test1.yang");
-        final StatementStreamSource test2 = sourceForResource("/context-augment-test/test2.yang");
-        final StatementStreamSource test3 = sourceForResource("/context-augment-test/test3.yang");
-
-        final Module t4 = TestUtils.parseYangSources(resource, test1, test2, test3).findModules("test4").iterator()
-            .next();
+    public void testAugment() throws Exception {
+        final Module t4 = TestUtils.parseYangSource(
+            "/context-augment-test/test1.yang", "/context-augment-test/test2.yang",
+            "/context-augment-test/test3.yang", "/context-augment-test/test4.yang")
+            .findModules("test4").iterator().next();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) t4.getDataChildByName(QName.create(
                 t4.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(t4.getQNameModule(),

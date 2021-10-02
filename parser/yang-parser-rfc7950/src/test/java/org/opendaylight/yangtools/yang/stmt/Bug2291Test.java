@@ -9,20 +9,12 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug2291Test {
-
     @Test
     public void testRevisionWithExt() throws Exception {
-        File extdef = new File(getClass().getResource("/bugs/bug2291/bug2291-ext.yang").toURI());
-        File bug = new File(getClass().getResource("/bugs/bug2291/bug2291.yang").toURI());
-        File inet = new File(getClass().getResource("/ietf/ietf-inet-types@2010-09-24.yang").toURI());
-
-        SchemaContext context = TestUtils.parseYangSources(extdef, bug, inet);
-        assertNotNull(context);
+        assertNotNull(TestUtils.parseYangSource("/bugs/bug2291/bug2291-ext.yang", "/bugs/bug2291/bug2291.yang",
+            "/ietf/ietf-inet-types@2010-09-24.yang"));
     }
-
 }

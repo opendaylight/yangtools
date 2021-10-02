@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +46,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -60,12 +60,8 @@ import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class YangParserTest extends AbstractModelTest {
     @Test
@@ -572,40 +568,28 @@ public class YangParserTest extends AbstractModelTest {
     }
 
     @Test
-    public void unknownStatementInSubmoduleHeaderTest() throws IOException, URISyntaxException, ReactorException {
-        final StatementStreamSource yang1 = sourceForResource("/yang-grammar-test/revisions-extension.yang");
-        final StatementStreamSource yang2 = sourceForResource("/yang-grammar-test/submodule-header-extension.yang");
-        TestUtils.parseYangSources(yang1, yang2);
+    public void unknownStatementInSubmoduleHeaderTest() throws Exception {
+        TestUtils.parseYangSource(
+            "/yang-grammar-test/revisions-extension.yang",
+            "/yang-grammar-test/submodule-header-extension.yang");
     }
 
     @Test
-    public void unknownStatementBetweenRevisionsTest() throws ReactorException {
-        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(sourceForResource("/yang-grammar-test/revisions-extension.yang"))
-                .addSource(sourceForResource("/yang-grammar-test/submodule-header-extension.yang"))
-                .buildEffective();
-        assertNotNull(result);
+    public void unknownStatementBetweenRevisionsTest() throws Exception {
+        TestUtils.parseYangSource(
+            "/yang-grammar-test/revisions-extension.yang",
+            "/yang-grammar-test/submodule-header-extension.yang");
     }
 
     @Test
     public void unknownStatementsInStatementsTest() {
-        // FIXME: use a utility for this loading
-        final StatementStreamSource yangFile1 = sourceForResource(
-                "/yang-grammar-test/stmtsep-in-statements.yang");
-        final StatementStreamSource yangFile2 = sourceForResource(
-                "/yang-grammar-test/stmtsep-in-statements2.yang");
-        final StatementStreamSource yangFile3 = sourceForResource(
-                "/yang-grammar-test/stmtsep-in-statements-sub.yang");
-
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(yangFile1, yangFile2, yangFile3);
-        // TODO: change test or create new module in order to respect new statement parser validations
-        try {
-            final SchemaContext result = reactor.buildEffective();
-        } catch (final ReactorException e) {
-            assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
-            assertTrue(e.getCause() instanceof SourceException);
-            assertTrue(e.getCause().getMessage().startsWith("aaa is not a YANG statement or use of extension"));
-        }
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.parseYangSource(
+                "/yang-grammar-test/stmtsep-in-statements.yang",
+                "/yang-grammar-test/stmtsep-in-statements2.yang",
+                "/yang-grammar-test/stmtsep-in-statements-sub.yang"));
+        final var cause = ex.getCause();
+        assertThat(cause, instanceOf(SourceException.class));
+        assertThat(cause.getMessage(), startsWith("aaa is not a YANG statement or use of extension"));
     }
 }
