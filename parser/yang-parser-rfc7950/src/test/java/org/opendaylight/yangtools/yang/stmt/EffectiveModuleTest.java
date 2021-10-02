@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -33,9 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class EffectiveModuleTest {
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(XMLNamespace.of("root-ns"));
@@ -44,14 +40,12 @@ public class EffectiveModuleTest {
     private static final Revision REVISION = Revision.of("2000-01-01");
 
     @Test
-    public void effectiveBuildTest() throws SourceException, ReactorException {
-        final Module rootModule = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(
-                    sourceForResource("/semantic-statement-parser/effective-module/root.yang"),
-                    sourceForResource("/semantic-statement-parser/effective-module/imported.yang"),
-                    sourceForResource("/semantic-statement-parser/effective-module/submod.yang"))
-                .buildEffective()
-                .findModules("root").iterator().next();
+    public void effectiveBuildTest() throws Exception {
+        final Module rootModule = TestUtils.parseYangSource(
+            "/semantic-statement-parser/effective-module/root.yang",
+            "/semantic-statement-parser/effective-module/imported.yang",
+            "/semantic-statement-parser/effective-module/submod.yang")
+            .findModules("root").iterator().next();
         assertNotNull(rootModule);
 
         assertEquals("root-pref", rootModule.getPrefix());
