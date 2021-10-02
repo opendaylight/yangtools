@@ -24,7 +24,7 @@ public class YangParserNegativeTest {
     @Test
     public void testInvalidImport() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile1.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/testfile1.yang"));
 
         final Throwable rootCause = Throwables.getRootCause(ex);
         assertThat(rootCause, isA(InferenceException.class));
@@ -35,7 +35,7 @@ public class YangParserNegativeTest {
     @Test
     public void testTypeNotFound() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile2.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/testfile2.yang"));
         final Throwable rootCause = Throwables.getRootCause(ex);
         assertThat(rootCause, isA(InferenceException.class));
         assertThat(rootCause.getMessage(),
@@ -45,7 +45,7 @@ public class YangParserNegativeTest {
     @Test
     public void testInvalidAugmentTarget() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(),
+            () -> TestUtils.parseYangSource(
                 "/negative-scenario/testfile0.yang", "/negative-scenario/testfile3.yang"));
         final Throwable rootCause = Throwables.getRootCause(ex);
         assertThat(rootCause, isA(InferenceException.class));
@@ -56,7 +56,7 @@ public class YangParserNegativeTest {
     @Test
     public void testInvalidRefine() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile4.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/testfile4.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), containsString("Error in module 'test4' in the refine of uses "
@@ -67,7 +67,7 @@ public class YangParserNegativeTest {
     @Test
     public void testInvalidLength() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile5.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/testfile5.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), containsString("Invalid length constraint [4..10]"));
@@ -128,7 +128,7 @@ public class YangParserNegativeTest {
     @Test
     public void testDuplicityInAugmentTarget1() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(),
+            () -> TestUtils.parseYangSource(
                 "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(InferenceException.class));
@@ -139,7 +139,7 @@ public class YangParserNegativeTest {
     @Test
     public void testDuplicityInAugmentTarget2() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(),
+            () -> TestUtils.parseYangSource(
                 "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang"));
         final Throwable rootCause = Throwables.getRootCause(ex);
         assertThat(rootCause, isA(SubstatementIndexingException.class));
@@ -150,7 +150,7 @@ public class YangParserNegativeTest {
     @Test
     public void testMandatoryInAugment() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(),
+            () -> TestUtils.parseYangSource(
                 "/negative-scenario/testfile8.yang", "/negative-scenario/testfile7.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(InferenceException.class));

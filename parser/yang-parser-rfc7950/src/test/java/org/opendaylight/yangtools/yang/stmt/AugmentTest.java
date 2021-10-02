@@ -67,7 +67,7 @@ public class AugmentTest {
         final Collection<? extends DataSchemaNode> augmentChildren = augment.getChildNodes();
         assertEquals(4, augmentChildren.size());
         for (final DataSchemaNode dsn : augmentChildren) {
-            TestUtils.checkIsAugmenting(dsn, false);
+            checkIsAugmenting(dsn, false);
         }
 
         final LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augment.getDataChildByName(QName.create(
@@ -150,7 +150,7 @@ public class AugmentTest {
         // augment "/br:interfaces/br:ifEntry" {
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(BAZ,
                 "augment-holder"));
-        TestUtils.checkIsAugmenting(augmentHolder, true);
+        checkIsAugmenting(augmentHolder, true);
         assertEquals(Q2, augmentHolder.getQName());
 
         // foo.yang
@@ -190,7 +190,7 @@ public class AugmentTest {
                 module2.getQNameModule(), "ifEntry"));
         final ContainerSchemaNode augmentedHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(
                 BAZ, "augment-holder"));
-        TestUtils.checkIsAugmenting(augmentedHolder, true);
+        checkIsAugmenting(augmentedHolder, true);
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
@@ -340,5 +340,25 @@ public class AugmentTest {
         assertEquals(1, node.getChildNodes().size());
         final LeafSchemaNode id = (LeafSchemaNode) node.getDataChildByName(QName.create(test.getQNameModule(), "id"));
         assertTrue(id.isAugmenting());
+    }
+
+    /**
+     * Test if node has augmenting flag set to expected value. In case this is  DataNodeContainer/ChoiceNode, check its
+     * child nodes/case nodes too.
+     *
+     * @param node node to check
+     * @param expected expected value
+     */
+    private static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
+        assertEquals(expected, node.isAugmenting());
+        if (node instanceof DataNodeContainer) {
+            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+                checkIsAugmenting(child, expected);
+            }
+        } else if (node instanceof ChoiceSchemaNode) {
+            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
+                checkIsAugmenting(caseNode, expected);
+            }
+        }
     }
 }
