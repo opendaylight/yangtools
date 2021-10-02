@@ -163,16 +163,6 @@ public final class TestUtils {
         }
     }
 
-    public static List<Module> findModules(final Collection<? extends Module> modules, final String moduleName) {
-        List<Module> result = new ArrayList<>();
-        for (Module module : modules) {
-            if (module.getName().equals(moduleName)) {
-                result.add(module);
-            }
-        }
-        return result;
-    }
-
     public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
             throws ReactorException {
         return RFC7950Reactors.defaultReactor().newBuild().addSources(sources).buildEffective();
