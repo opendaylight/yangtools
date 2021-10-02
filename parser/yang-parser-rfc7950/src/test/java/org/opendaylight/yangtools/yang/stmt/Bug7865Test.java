@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
-public class Bug7865Test {
+public class Bug7865Test extends AbstractYangTest {
     @Test
     public void test() throws Exception {
-        final EffectiveModelContext context = TestUtils.loadModules("/bugs/bug7865");
+        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug7865");
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
         assertTrue(root instanceof ContainerSchemaNode);
         final Collection<? extends UnrecognizedStatement> unknownSchemaNodes = ((ContainerSchemaNode) root)

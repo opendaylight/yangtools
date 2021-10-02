@@ -27,13 +27,13 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-public class Bug4623Test {
+public class Bug4623Test extends AbstractYangTest {
     private static Module TYPES;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         // given
-        TYPES = TestUtils.loadModules("/bugs/bug4623").findModules("types").iterator().next();
+        TYPES = assertEffectiveModelDir("/bugs/bug4623").findModules("types").iterator().next();
     }
 
     @Test
@@ -103,8 +103,6 @@ public class Bug4623Test {
                 QName.create(XMLNamespace.of("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
-        assertNotNull(leaf);
-
         final TypeDefinition<?> type = leaf.getType();
         assertNotNull(type);
         assertEquals(0, type.getUnknownSchemaNodes().size());
@@ -112,17 +110,14 @@ public class Bug4623Test {
 
         final LengthConstraint lengthConstraints =
                 ((StringTypeDefinition) type).getLengthConstraint().get();
-        final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
-
-        assertNotNull(lengthConstraints);
-        assertNotNull(patternConstraints);
         assertEquals(1, lengthConstraints.getAllowedRanges().asRanges().size());
-        assertFalse(patternConstraints.size() == 0);
 
         final Range<Integer> lengthConstraint = lengthConstraints.getAllowedRanges().span();
         assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
         assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
+        final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
+        assertEquals(1, patternConstraints.size());
         final PatternConstraint patternConstraint = patternConstraints.get(0);
         assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
     }

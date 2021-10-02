@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
  * <p>
  * Note: Everything under unknown node is unknown node.
  */
-public class Bug1413Test {
+public class Bug1413Test extends AbstractYangTest {
     @Test
     public void test() throws Exception {
-        var extensions = TestUtils.loadModules("/bugs/bug1413").findModules("bug1413").iterator().next()
+        var extensions = assertEffectiveModelDir("/bugs/bug1413").findModules("bug1413").iterator().next()
             .getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
 
