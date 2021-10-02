@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -70,23 +69,9 @@ public final class TestUtils {
 
     public static EffectiveModelContext loadModules(final Class<?> cls, final String resourceDirectory)
             throws Exception {
-        return loadModules(cls.getResource(resourceDirectory).toURI());
-    }
-
-    public static EffectiveModelContext loadModules(final URI resourceDirectory)
-            throws ReactorException, IOException, YangSyntaxErrorException {
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
-        File[] files = new File(resourceDirectory).listFiles();
-
-        for (File file : files) {
-            if (file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
-                reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forPath(file.toPath())));
-            } else {
-                LOG.info("Ignoring non-yang file {}", file);
-            }
-        }
-
-        return reactor.buildEffective();
+        return RFC7950Reactors.defaultReactor().newBuild()
+            .addSources(loadSources(cls, resourceDirectory))
+            .buildEffective();
     }
 
     public static EffectiveModelContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
@@ -178,11 +163,6 @@ public final class TestUtils {
         }
 
         return parseYangSources(sources);
-    }
-
-    public static EffectiveModelContext parseYangSources(final Collection<File> files)
-            throws ReactorException, IOException, YangSyntaxErrorException {
-        return parseYangSources(files.toArray(new File[files.size()]));
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourceFilePath)
