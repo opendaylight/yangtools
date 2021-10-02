@@ -11,10 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collection;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -22,29 +19,12 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class OrderingTest {
-
-    private SchemaContext context;
-    private Module foo;
-    private Module bar;
-    private Module baz;
-
-    @Before
-    public void setup() throws ReactorException, IOException, YangSyntaxErrorException, URISyntaxException {
-        context = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        foo = context.findModules("foo").iterator().next();
-        bar = context.findModules("bar").iterator().next();
-        baz = context.findModules("baz").iterator().next();
-    }
-
+public class OrderingTest extends AbstractModelTest {
     @Test
     public void testOrderingTypedef() throws Exception {
-        final Collection<? extends TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> typedefs = BAR.getTypeDefinitions();
         final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
             "string-ext4", "multiple-pattern-string", "my-decimal-type", "my-union", "my-union-ext", "nested-union2"
         };
@@ -61,7 +41,7 @@ public class OrderingTest {
     @Test
     public void testOrderingChildNodes() throws Exception {
         AugmentationSchemaNode augment1 = null;
-        for (final AugmentationSchemaNode as : foo.getAugmentations()) {
+        for (final AugmentationSchemaNode as : FOO.getAugmentations()) {
             if (as.getChildNodes().size() == 5) {
                 augment1 = as;
                 break;
@@ -83,7 +63,7 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes1() throws Exception {
-        final Collection<? extends DataSchemaNode> childNodes = foo.getChildNodes();
+        final Collection<? extends DataSchemaNode> childNodes = FOO.getChildNodes();
         final String[] expectedOrder = { "int32-leaf", "string-leaf", "multiple-pattern-string-leaf",
             "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
             "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data", "how", "address", "port",
@@ -101,7 +81,7 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes2() throws Exception {
-        final Collection<? extends GroupingDefinition> groupings = baz.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = BAZ.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition target = groupings.iterator().next();
 
