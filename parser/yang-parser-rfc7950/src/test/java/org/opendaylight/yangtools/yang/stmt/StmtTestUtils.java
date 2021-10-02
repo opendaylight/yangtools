@@ -21,14 +21,10 @@ import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.ModuleLike;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
@@ -88,24 +84,6 @@ public final class StmtTestUtils {
         }
     }
 
-    public static void printReferences(final ModuleLike module, final boolean isSubmodule, final String indent) {
-        LOG.debug("{}{} {}", indent, isSubmodule ? "Submodule" : "Module", module.getName());
-        for (final Submodule submodule : module.getSubmodules()) {
-            printReferences(submodule, true, indent + "      ");
-            printChilds(submodule.getChildNodes(), indent + "            ");
-        }
-    }
-
-    public static void printChilds(final Collection<? extends DataSchemaNode> childNodes, final String indent) {
-
-        for (final DataSchemaNode child : childNodes) {
-            LOG.debug("{}{} {}", indent, "Child", child.getQName().getLocalName());
-            if (child instanceof DataNodeContainer) {
-                printChilds(((DataNodeContainer) child).getChildNodes(), indent + "      ");
-            }
-        }
-    }
-
     public static EffectiveModelContext parseYangSource(final String yangSourcePath) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSource(yangSourcePath, YangParserConfiguration.DEFAULT, null);
@@ -119,9 +97,8 @@ public final class StmtTestUtils {
     public static EffectiveModelContext parseYangSource(final String yangSourcePath,
             final YangParserConfiguration config, final Set<QName> supportedFeatures)
                     throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-        final URL source = StmtTestUtils.class.getResource(yangSourcePath);
-        final File sourceFile = new File(source.toURI());
-        return parseYangSources(config, supportedFeatures, sourceFile);
+        return parseYangSources(config, supportedFeatures,
+            new File(StmtTestUtils.class.getResource(yangSourcePath).toURI()));
     }
 
     public static EffectiveModelContext parseYangSources(final StatementStreamSource... sources)
