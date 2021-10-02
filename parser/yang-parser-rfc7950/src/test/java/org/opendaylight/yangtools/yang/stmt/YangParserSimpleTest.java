@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -38,19 +38,19 @@ public class YangParserSimpleTest {
     private static final QNameModule SN = QNameModule.create(NS, Revision.of("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
 
-    private SchemaContext context;
-    private Module testModule;
+    private static SchemaContext CONTEXT;
+    private static Module MODULE;
 
-    @Before
-    public void init() throws Exception {
-        context = TestUtils.loadModules(getClass().getResource("/simple-test").toURI());
-        testModule = context.findModules("simple-nodes").iterator().next();
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        CONTEXT = TestUtils.loadModules("/simple-test");
+        MODULE = CONTEXT.findModules("simple-nodes").iterator().next();
     }
 
     @Test
     public void testParseAnyXml() {
-        final AnyxmlSchemaNode data = (AnyxmlSchemaNode) testModule.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "data"));
+        final AnyxmlSchemaNode data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
+            QName.create(MODULE.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
         assertEquals("RegularAnyxmlEffectiveStatement{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data}",
@@ -94,8 +94,8 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseAnyData() {
-        final AnydataSchemaNode anydata = (AnydataSchemaNode) testModule.findDataChildByName(
-                QName.create(testModule.getQNameModule(), "data2")).orElse(null);
+        final AnydataSchemaNode anydata = (AnydataSchemaNode) MODULE.findDataChildByName(
+                QName.create(MODULE.getQNameModule(), "data2")).orElse(null);
 
         assertNotNull("'anydata data not found'", anydata);
         assertEquals("RegularAnydataEffectiveStatement{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data2}",
@@ -140,8 +140,8 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseContainer() {
-        final ContainerSchemaNode nodes = (ContainerSchemaNode) testModule
-                .getDataChildByName(QName.create(testModule.getQNameModule(), "nodes"));
+        final ContainerSchemaNode nodes = (ContainerSchemaNode) MODULE
+                .getDataChildByName(QName.create(MODULE.getQNameModule(), "nodes"));
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
         assertEquals(Optional.of("nodes collection"), nodes.getDescription());
@@ -195,12 +195,12 @@ public class YangParserSimpleTest {
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
         final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "added"));
+            MODULE.getQNameModule(), "added"));
         assertEquals(QName.create(SN, "added"), added.getQName());
         assertEquals(QName.create(SN, "mytype"), added.getType().getQName());
 
         final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
-            testModule.getQNameModule(), "links"));
+            MODULE.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 
         final Collection<? extends GroupingDefinition> groupings = nodes.getGroupings();
