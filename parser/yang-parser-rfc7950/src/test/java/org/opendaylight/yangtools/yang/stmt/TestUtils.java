@@ -195,16 +195,6 @@ public final class TestUtils {
         return parseYangSources(files.toArray(new File[files.size()]));
     }
 
-    public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath)
-            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
-
-        URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
-        File testSourcesDir = new File(resourceDir.toURI());
-
-        return parseYangSources(testSourcesDir.listFiles(
-            (dir, name) -> name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)));
-    }
-
     public static EffectiveModelContext parseYangSource(final String yangSourceFilePath)
             throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 

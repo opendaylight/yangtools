@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -14,16 +18,26 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class AugmentToExtensionTest {
-    private SchemaContext context;
-
-    @Test(expected = SomeModifiersUnresolvedException.class)
+    @Test
     public void testIncorrectPath() throws Exception {
-        context = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/incorrect-path").toURI());
+        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
+            () -> TestUtils.loadModules("/augment-to-extension-test/incorrect-path"));
+        final var cause = ex.getCause();
+
+        // FIXME: this should not be here
+        assertThat(cause, instanceOf(InferenceException.class));
+        assertThat(cause.getMessage(), startsWith("Yang model processing phase EFFECTIVE_MODEL failed [at "));
+
+        final var firstCause = cause.getCause();
+        assertThat(firstCause, instanceOf(InferenceException.class));
+        assertThat(firstCause.getMessage(), startsWith("Augment target "
+            + "'Descendant{qnames=[(uri:augment-module?revision=2014-10-07)my-extension-name-a, input]}'"
+            + " not found [at "));
     }
 
     /*
@@ -31,11 +45,9 @@ public class AugmentToExtensionTest {
      */
     @Test
     public void testCorrectPathIntoUnsupportedTarget() throws Exception {
-
-        context = TestUtils.loadModules(getClass().getResource(
-                "/augment-to-extension-test/correct-path-into-unsupported-target").toURI());
-
-        final Module devicesModule = context.findModules("augment-module").iterator().next();
+        final Module devicesModule =
+            TestUtils.loadModules("/augment-to-extension-test/correct-path-into-unsupported-target")
+            .findModules("augment-module").iterator().next();
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(
             QName.create(devicesModule.getQNameModule(), "my-container"));
         for (final UsesNode usesNode : devicesContainer.getUses()) {
@@ -45,9 +57,8 @@ public class AugmentToExtensionTest {
 
     @Test
     public void testCorrectAugment() throws Exception {
-        context = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/correct-augment").toURI());
-
-        final Module devicesModule = context.findModules("augment-module").iterator().next();
+        final Module devicesModule = TestUtils.loadModules("/augment-to-extension-test/correct-augment")
+            .findModules("augment-module").iterator().next();
 
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
                 .create(devicesModule.getQNameModule(), "my-container"));

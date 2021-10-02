@@ -31,8 +31,7 @@ public class Bug1412Test {
 
     @Test
     public void test() throws Exception {
-        final Module bug1412 = TestUtils.loadModules(getClass().getResource("/bugs/bug1412").toURI())
-            .findModules("bug1412").iterator().next();
+        final Module bug1412 = TestUtils.loadModules("/bugs/bug1412").findModules("bug1412").iterator().next();
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
                 bug1412.getQNameModule(), "node"));
