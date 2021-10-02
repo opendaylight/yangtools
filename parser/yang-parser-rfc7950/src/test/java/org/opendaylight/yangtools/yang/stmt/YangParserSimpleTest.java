@@ -28,30 +28,26 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-public class YangParserSimpleTest {
+public class YangParserSimpleTest extends AbstractYangTest {
     private static final XMLNamespace NS = XMLNamespace.of("urn:opendaylight:simple-nodes");
     private static final QNameModule SN = QNameModule.create(NS, Revision.of("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
 
-    private static SchemaContext CONTEXT;
     private static Module MODULE;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        CONTEXT = TestUtils.loadModules("/simple-test");
-        MODULE = CONTEXT.findModules("simple-nodes").iterator().next();
+        MODULE = assertEffectiveModelDir("/simple-test").findModules("simple-nodes").iterator().next();
     }
 
     @Test
     public void testParseAnyXml() {
         final AnyxmlSchemaNode data = (AnyxmlSchemaNode) MODULE.getDataChildByName(
             QName.create(MODULE.getQNameModule(), "data"));
-        assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
         assertEquals("RegularAnyxmlEffectiveStatement{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data}",
                 data.toString());

@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.type.TypeDefinitions;
 
-public class AugmentTest {
+public class AugmentTest extends AbstractYangTest {
     private static final QNameModule FOO = QNameModule.create(
         XMLNamespace.of("urn:opendaylight.foo"), Revision.of("2013-10-13"));
     private static final QNameModule BAR = QNameModule.create(
@@ -50,7 +50,7 @@ public class AugmentTest {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AUGMENT_IN_AUGMENT = TestUtils.loadModules("/augment-test/augment-in-augment");
+        AUGMENT_IN_AUGMENT = assertEffectiveModelDir("/augment-test/augment-in-augment");
     }
 
     @Test
@@ -255,7 +255,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentRpc() throws Exception {
-        final EffectiveModelContext context = TestUtils.loadModules("/augment-test/rpc");
+        final EffectiveModelContext context = assertEffectiveModelDir("/augment-test/rpc");
         final XMLNamespace NS_BAR = XMLNamespace.of("urn:opendaylight:bar");
         final XMLNamespace NS_FOO = XMLNamespace.of("urn:opendaylight:foo");
         final Revision revision = Revision.of("2013-10-11");
@@ -323,7 +323,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentInUsesResolving() throws Exception {
-        final EffectiveModelContext context = TestUtils.loadModules("/augment-test/augment-in-uses");
+        final EffectiveModelContext context = assertEffectiveModelDir("/augment-test/augment-in-uses");
         assertEquals(1, context.getModules().size());
 
         final Module test = context.getModules().iterator().next();

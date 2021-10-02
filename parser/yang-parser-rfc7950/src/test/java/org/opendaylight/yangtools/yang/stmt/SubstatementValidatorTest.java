@@ -7,66 +7,48 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class SubstatementValidatorTest {
+public class SubstatementValidatorTest extends AbstractYangTest {
     @Test
     public void noException() throws Exception {
-        assertEquals(3, TestUtils.loadModules("/augment-test/augment-in-augment").getModules().size());
+        assertEquals(3, assertEffectiveModelDir("/augment-test/augment-in-augment").getModules().size());
     }
 
     @Test
     public void undesirableElementException() throws Exception {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModules("/substatement-validator/undesirable-element"));
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(InvalidSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("TYPE is not valid for REVISION. Error in module undesirable "
-            + "(QNameModule{ns=urn:opendaylight.undesirable, rev=2015-11-11}) [at "));
+        assertInvalidSubstatementExceptionDir("/substatement-validator/undesirable-element",
+            startsWith("TYPE is not valid for REVISION. Error in module undesirable "
+                + "(QNameModule{ns=urn:opendaylight.undesirable, rev=2015-11-11}) [at "));
     }
 
     @Test
     public void maximalElementCountException() throws Exception {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModules("/substatement-validator/maximal-element"));
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(InvalidSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("Maximal count of DESCRIPTION for AUGMENT is 1, detected 2. Error in "
-            + "module baz (QNameModule{ns=urn:opendaylight.baz, rev=2015-11-11}) [at "));
+        assertInvalidSubstatementExceptionDir("/substatement-validator/maximal-element",
+            startsWith("Maximal count of DESCRIPTION for AUGMENT is 1, detected 2. Error in module baz "
+                + "(QNameModule{ns=urn:opendaylight.baz, rev=2015-11-11}) [at "));
     }
 
     @Test
     public void missingElementException() {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModules("/substatement-validator/missing-element"));
-        final var cause = ex.getCause();
         // FIXME: should be MissingSubstatementException?
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("Missing prefix statement [at "));
+        assertSourceExceptionDir("/substatement-validator/missing-element",
+            startsWith("Missing prefix statement [at "));
     }
 
     @Test
     public void bug6173Test() throws Exception {
-        assertEquals(1, TestUtils.loadModules("/substatement-validator/empty-element").getModules().size());
+        assertEquals(1, assertEffectiveModelDir("/substatement-validator/empty-element").getModules().size());
     }
 
     @Test
     public void bug4310test() throws Exception {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModules("/substatement-validator/bug-4310"));
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(MissingSubstatementException.class));
-        assertThat(cause.getMessage(), startsWith("TYPE is missing TYPE. Minimal count is 1. Error in module bug4310 "
-            + "(QNameModule{ns=urn:opendaylight.bug4310}) [at "));
+        assertExceptionDir("/substatement-validator/bug-4310", MissingSubstatementException.class,
+            startsWith("TYPE is missing TYPE. Minimal count is 1. Error in module bug4310 "
+                + "(QNameModule{ns=urn:opendaylight.bug4310}) [at "));
     }
 }

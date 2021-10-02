@@ -27,11 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
  * <p>
  * Note: Everything under unknown node is unknown node.
  */
-public class Bug1412Test {
-
+public class Bug1412Test extends AbstractYangTest {
     @Test
     public void test() throws Exception {
-        final Module bug1412 = TestUtils.loadModules("/bugs/bug1412").findModules("bug1412").iterator().next();
+        final Module bug1412 = assertEffectiveModelDir("/bugs/bug1412").findModules("bug1412").iterator().next();
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
                 bug1412.getQNameModule(), "node"));
@@ -41,8 +40,8 @@ public class Bug1412Test {
         final UnrecognizedStatement action = unknownNodes.iterator().next();
 
         final QNameModule qm = QNameModule.create(XMLNamespace.of("urn:test:bug1412"), Revision.of("2014-07-25"));
-        QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");
-        assertEquals(expectedNodeType, action.statementDefinition().getStatementName());
+        assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action"),
+            action.statementDefinition().getStatementName());
         assertEquals("hello", action.argument());
 
         unknownNodes = action.declaredSubstatements(UnrecognizedStatement.class);
@@ -65,24 +64,23 @@ public class Bug1412Test {
         }
 
         assertNotNull(info);
-        assertNotNull(description);
-        assertNotNull(actionPoint);
-        assertNotNull(output);
-
-        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info");
-        assertEquals(expectedNodeType, info.statementDefinition().getStatementName());
+        assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info"),
+            info.statementDefinition().getStatementName());
         assertEquals("greeting", info.argument());
 
-        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "description");
-        assertEquals(expectedNodeType, description.statementDefinition().getStatementName());
+        assertNotNull(description);
+        assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "description"),
+            description.statementDefinition().getStatementName());
         assertEquals("say greeting", description.argument());
 
-        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint");
-        assertEquals(expectedNodeType, actionPoint.statementDefinition().getStatementName());
+        assertNotNull(actionPoint);
+        assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint"),
+            actionPoint.statementDefinition().getStatementName());
         assertEquals("entry", actionPoint.argument());
 
-        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output");
-        assertEquals(expectedNodeType, output.statementDefinition().getStatementName());
+        assertNotNull(output);
+        assertEquals(QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output"),
+            output.statementDefinition().getStatementName());
         assertEquals(Empty.getInstance(), output.argument());
     }
 }
