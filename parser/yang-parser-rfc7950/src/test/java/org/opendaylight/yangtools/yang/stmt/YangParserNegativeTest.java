@@ -76,7 +76,7 @@ public class YangParserNegativeTest {
     @Test
     public void testInvalidRange() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile6.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/testfile6.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), startsWith("Invalid range constraint: [[5..20]]"));
@@ -85,7 +85,7 @@ public class YangParserNegativeTest {
     @Test
     public void testDuplicateContainer() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/duplicity/container.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), containsString("Error in module 'container': cannot add "
@@ -96,7 +96,7 @@ public class YangParserNegativeTest {
     @Test
     public void testDuplicateContainerList() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-list.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/duplicity/container-list.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), containsString("Error in module 'container-list': cannot add "
@@ -107,7 +107,7 @@ public class YangParserNegativeTest {
     @Test
     public void testDuplicateContainerLeaf() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-leaf.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/duplicity/container-leaf.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), containsString("Error in module 'container-leaf': cannot add "
@@ -118,7 +118,7 @@ public class YangParserNegativeTest {
     @Test
     public void testDuplicateTypedef() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/typedef.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/duplicity/typedef.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(SourceException.class));
         assertThat(cause.getMessage(), startsWith(
@@ -161,7 +161,7 @@ public class YangParserNegativeTest {
     @Test
     public void testInvalidListKeyDefinition() {
         final SomeModifiersUnresolvedException ex = assertThrows(SomeModifiersUnresolvedException.class,
-            () -> TestUtils.loadModuleResources(getClass(), "/negative-scenario/invalid-list-key-def.yang"));
+            () -> TestUtils.parseYangSource("/negative-scenario/invalid-list-key-def.yang"));
         final Throwable cause = ex.getCause();
         assertThat(cause, isA(InferenceException.class));
         assertThat(cause.getMessage(), startsWith(
