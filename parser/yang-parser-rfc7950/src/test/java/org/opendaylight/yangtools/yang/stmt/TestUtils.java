@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -17,17 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
@@ -69,17 +62,16 @@ public final class TestUtils {
             .buildEffective();
     }
 
-    public static EffectiveModelContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
-            throws IOException, ReactorException, YangSyntaxErrorException {
-        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
-
-        for (String resourceName : resourceNames) {
-            reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(refClass,
-                resourceName)));
+    public static EffectiveModelContext parseYangSource(final String... yangSourceFilePath) throws Exception {
+        final var reactor = RFC7950Reactors.defaultReactor().newBuild();
+        for (var resourcePath : yangSourceFilePath) {
+            reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
+                TestUtils.class.getResource(resourceName).toURI()))));
         }
-
         return reactor.buildEffective();
     }
+
+    // FIXME: these remain unaudited
 
     public static EffectiveModelContext loadYinModules(final URI resourceDirectory)
             throws ReactorException, SAXException, IOException {
@@ -118,40 +110,5 @@ public final class TestUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Test if node has augmenting flag set to expected value. In case this is
-     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
-     *
-     * @param node
-     *            node to check
-     * @param expected
-     *            expected value
-     */
-    public static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
-        assertEquals(expected, node.isAugmenting());
-        if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
-                checkIsAugmenting(child, expected);
-            }
-        } else if (node instanceof ChoiceSchemaNode) {
-            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
-                checkIsAugmenting(caseNode, expected);
-            }
-        }
-    }
-
-    public static EffectiveModelContext parseYangSource(final String... yangSourceFilePath) throws Exception {
-        final var reactor = RFC7950Reactors.defaultReactor().newBuild();
-        for (var resourcePath : yangSourceFilePath) {
-            reactor.addSource(sourceForResource(resourcePath));
-        }
-        return reactor.buildEffective();
-    }
-
-    public static YangStatementStreamSource sourceForResource(final String resourceName) throws Exception {
-        return YangStatementStreamSource.create(YangTextSchemaSource.forPath(Path.of(
-            TestUtils.class.getResource(resourceName).toURI())));
     }
 }
