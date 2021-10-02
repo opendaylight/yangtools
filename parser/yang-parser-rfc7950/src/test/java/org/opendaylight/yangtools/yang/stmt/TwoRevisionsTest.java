@@ -8,17 +8,20 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 public class TwoRevisionsTest {
     @Test
     public void testTwoRevisions() throws Exception {
-        Collection<? extends Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI())
-                .getModules();
-        //FIXME: following assert needs module revisions .equals() solution first
-        assertEquals(2, TestUtils.findModules(modules, "network-topology").size());
+        var it = TestUtils.loadModules("/ietf").findModuleStatements("network-topology").iterator();
+        assertTrue(it.hasNext());
+        assertEquals(Revision.ofNullable("2013-10-21"), it.next().localQNameModule().getRevision());
+        assertTrue(it.hasNext());
+        assertEquals(Revision.ofNullable("2013-07-12"), it.next().localQNameModule().getRevision());
+        assertFalse(it.hasNext());
     }
 }

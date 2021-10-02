@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 /**
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 public class Bug394Test {
     @Test
     public void testParseList() throws Exception {
-        final SchemaContext context = TestUtils.loadModules("/bugs/bug394-retest");
+        final EffectiveModelContext context = TestUtils.loadModules("/bugs/bug394-retest");
         final Module bug394 = context.findModules("bug394").iterator().next();
         final Module bug394_ext = context.findModules("bug394-ext").iterator().next();
 
