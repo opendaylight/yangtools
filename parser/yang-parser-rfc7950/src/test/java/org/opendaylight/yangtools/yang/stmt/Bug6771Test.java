@@ -28,7 +28,7 @@ public class Bug6771Test {
 
     @Test
     public void augmentTest() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/bug6771/augment.yang")
+        final ModuleEffectiveStatement module = TestUtils.parseYangSource("/bugs/bug6771/augment.yang")
             .getModuleStatement(NS);
 
         verifyLeafType(module, ROOT, CONT_B, LEAF_CONT_B);
@@ -37,7 +37,7 @@ public class Bug6771Test {
 
     @Test
     public void choiceCaseTest() throws Exception {
-        final ModuleEffectiveStatement module = StmtTestUtils.parseYangSource("/bugs/bug6771/choice-case.yang")
+        final ModuleEffectiveStatement module = TestUtils.parseYangSource("/bugs/bug6771/choice-case.yang")
             .getModuleStatement(NS);
 
         final QName myChoice = QName.create(NS, "my-choice");
@@ -55,7 +55,7 @@ public class Bug6771Test {
 
     @Test
     public void groupingTest() throws Exception {
-        verifyLeafType(StmtTestUtils.parseYangSource("/bugs/bug6771/grouping.yang").getModuleStatement(NS),
+        verifyLeafType(TestUtils.parseYangSource("/bugs/bug6771/grouping.yang").getModuleStatement(NS),
             ROOT, CONT_B, LEAF_CONT_B);
     }
 

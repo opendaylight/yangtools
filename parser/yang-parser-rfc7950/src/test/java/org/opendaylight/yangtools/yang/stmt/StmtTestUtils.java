@@ -84,6 +84,8 @@ public final class StmtTestUtils {
         }
     }
 
+    @Deprecated(forRemoval = true)
+    // TestUtils.parseYangSource() instead, but callers need also further cleanup
     public static EffectiveModelContext parseYangSource(final String yangSourcePath) throws ReactorException,
             URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSource(yangSourcePath, YangParserConfiguration.DEFAULT, null);
