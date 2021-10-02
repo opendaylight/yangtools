@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -78,17 +78,17 @@ public class YangParserTest {
     private static final QNameModule BAZ = QNameModule.create(XMLNamespace.of("urn:opendaylight.baz"),
         Revision.of("2013-02-27"));
 
-    private SchemaContext context;
-    private Module foo;
-    private Module bar;
-    private Module baz;
+    private static SchemaContext CONTEXT;
+    private static Module foo;
+    private static Module bar;
+    private static Module baz;
 
-    @Before
-    public void init() throws Exception {
-        context = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        foo = context.findModules("foo").iterator().next();
-        bar = context.findModules("bar").iterator().next();
-        baz = context.findModules("baz").iterator().next();
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        CONTEXT = TestUtils.loadModules("/model");
+        foo = CONTEXT.findModules("foo").iterator().next();
+        bar = CONTEXT.findModules("bar").iterator().next();
+        baz = CONTEXT.findModules("baz").iterator().next();
     }
 
     @Test
