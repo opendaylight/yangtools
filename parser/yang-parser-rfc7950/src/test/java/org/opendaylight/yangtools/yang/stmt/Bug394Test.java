@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 /**
  * Test antlr grammar capability to parse nested unknown nodes.
  */
-public class Bug394Test {
+public class Bug394Test extends AbstractYangTest {
     @Test
     public void testParseList() throws Exception {
-        final EffectiveModelContext context = TestUtils.loadModules("/bugs/bug394-retest");
+        final EffectiveModelContext context = assertEffectiveModelDir("/bugs/bug394-retest");
         final Module bug394 = context.findModules("bug394").iterator().next();
         final Module bug394_ext = context.findModules("bug394-ext").iterator().next();
 

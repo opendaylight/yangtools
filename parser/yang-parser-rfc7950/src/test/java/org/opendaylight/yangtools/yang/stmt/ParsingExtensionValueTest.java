@@ -7,24 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Test for testing of extensions and their arguments.
  */
-public class ParsingExtensionValueTest {
+public class ParsingExtensionValueTest extends AbstractYangTest {
     @Test
     public void extensionTest() {
-        final var ex = assertThrows(SomeModifiersUnresolvedException.class, () -> TestUtils.loadModules("/extensions"));
-        final var cause = ex.getCause();
-        assertThat(cause, instanceOf(SourceException.class));
-        assertThat(cause.getMessage(), startsWith("ext:id is not a YANG statement or use of extension"));
+        assertSourceExceptionDir("/extensions", startsWith("ext:id is not a YANG statement or use of extension"));
     }
 }
