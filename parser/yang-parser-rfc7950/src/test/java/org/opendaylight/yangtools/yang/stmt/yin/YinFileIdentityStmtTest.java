@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class YinFileIdentityStmtTest extends AbstractYinModulesTest {
     @Test
     public void testIdentity() {
-        Module testModule = context.findModules("config").iterator().next();
+        Module testModule = CONTEXT.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();

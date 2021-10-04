@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class YinFileLeafListStmtTest extends AbstractYinModulesTest {
     @Test
     public void testLeafList() {
-        final Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
+        final Module testModule = CONTEXT.findModules("ietf-netconf-monitoring").iterator().next();
 
         final LeafListSchemaNode leafList = (LeafListSchemaNode) testModule.findDataChildByName(
             QName.create(testModule.getQNameModule(), "netconf-state"),

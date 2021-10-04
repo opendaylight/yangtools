@@ -14,9 +14,11 @@ import static org.junit.Assert.assertFalse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
+@NotThreadSafe
 public class Bug6878Test {
 
     @Test

@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 public class YinFileListStmtTest extends AbstractYinModulesTest {
     @Test
     public void testListAndLeaves() {
-        final Module testModule = context.findModules("config").iterator().next();
+        final Module testModule = CONTEXT.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(QName.create(

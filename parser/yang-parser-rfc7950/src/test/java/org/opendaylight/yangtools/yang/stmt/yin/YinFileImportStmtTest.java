@@ -23,7 +23,7 @@ public class YinFileImportStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testImport() {
-        Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
+        Module testModule = CONTEXT.findModules("ietf-netconf-monitoring").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends ModuleImport> imports = testModule.getImports();

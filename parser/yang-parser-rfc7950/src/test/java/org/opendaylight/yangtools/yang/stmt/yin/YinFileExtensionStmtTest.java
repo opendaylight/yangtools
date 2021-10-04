@@ -22,7 +22,7 @@ public class YinFileExtensionStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testExtensions() {
-        Module testModule = context.findModules("config").iterator().next();
+        Module testModule = CONTEXT.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         Collection<? extends ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();

@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 public class YinFileUsesStmtTest extends AbstractYinModulesTest {
     @Test
     public void testUses() {
-        final Module testModule = context.findModules("main-impl").iterator().next();
+        final Module testModule = CONTEXT.findModules("main-impl").iterator().next();
 
         final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());

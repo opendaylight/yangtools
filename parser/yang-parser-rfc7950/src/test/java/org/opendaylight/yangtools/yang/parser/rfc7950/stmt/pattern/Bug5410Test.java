@@ -17,8 +17,10 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Test;
 
+@NotThreadSafe
 public class Bug5410Test {
     @Test
     public void testCaret() {

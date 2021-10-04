@@ -19,7 +19,9 @@ import static org.mockito.Mockito.doReturn;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -41,6 +43,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
+@Ignore
+@NotThreadSafe
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class PathExpressionParserTest {
     @Mock

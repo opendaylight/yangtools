@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class YinFileHeaderStmtsTest extends AbstractYinModulesTest {
     @Test
     public void testYinFileHeader() {
-        Module testModule = context.findModules("config").iterator().next();
+        Module testModule = CONTEXT.findModules("config").iterator().next();
         assertEquals(YangVersion.VERSION_1, testModule.getYangVersion());
         assertEquals(XMLNamespace.of("urn:opendaylight:params:xml:ns:yang:controller:config"),
             testModule.getNamespace());

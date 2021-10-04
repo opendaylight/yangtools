@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 public class YinFileRpcStmtTest extends AbstractYinModulesTest {
     @Test
     public void testRpc() {
-        Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
+        Module testModule = CONTEXT.findModules("ietf-netconf-monitoring").iterator().next();
 
         Collection<? extends RpcDefinition> rpcs = testModule.getRpcs();
         assertEquals(1, rpcs.size());

@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
     @Test
     public void testAugment() {
-        final Module testModule = context.findModules("main-impl").iterator().next();
+        final Module testModule = CONTEXT.findModules("main-impl").iterator().next();
         assertNotNull(testModule);
 
         final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();

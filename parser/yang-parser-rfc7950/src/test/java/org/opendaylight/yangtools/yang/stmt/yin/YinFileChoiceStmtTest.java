@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
     @Test
     public void testChoiceAndCases() {
-        final Module testModule = context.findModules("config").iterator().next();
+        final Module testModule = CONTEXT.findModules("config").iterator().next();
         assertNotNull(testModule);
 
         final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(

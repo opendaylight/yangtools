@@ -15,9 +15,11 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
+@NotThreadSafe
 public class YT1133Test {
     @Test
     @SuppressWarnings("checkstyle:regexpSinglelineJava")

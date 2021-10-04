@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class YinFileMetaStmtsTest extends AbstractYinModulesTest {
     @Test
     public void testMetaStatements() {
-        Module testModule = context.findModules("ietf-netconf-monitoring").iterator().next();
+        Module testModule = CONTEXT.findModules("ietf-netconf-monitoring").iterator().next();
         assertNotNull(testModule);
 
         assertEquals(Optional.of("IETF NETCONF (Network Configuration) Working Group"), testModule.getOrganization());
