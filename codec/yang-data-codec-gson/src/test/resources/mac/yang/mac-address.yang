@@ -1,0 +1,26 @@
+module mac-address {
+
+  namespace "http://example.com/mac-address";
+  prefix "ma";
+
+  typedef mac-type {
+    type string {
+      pattern '^[0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){7}$';
+    }
+    description
+        "The datapath-id type represents an OpenFlow
+        datapath identifier. The lower 48-bits are for
+        a MAC address, while the upper 16-bits are
+        implementer-defined.";
+  }
+
+  container data {
+    leaf mac {
+      type mac-type;
+      description
+        "Datapath unique ID. The lower 48-bits are for
+        a MAC address, while the upper 16-bits are
+        implementer-defined.";
+    }
+  }
+}
