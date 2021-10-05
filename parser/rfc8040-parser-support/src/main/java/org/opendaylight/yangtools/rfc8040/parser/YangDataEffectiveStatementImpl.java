@@ -15,7 +15,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.Map;
 import java.util.Optional;
-import org.checkerframework.checker.units.qual.K;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -39,7 +38,7 @@ final class YangDataEffectiveStatementImpl extends AbstractEffectiveUnknownSchme
     YangDataEffectiveStatementImpl(final Current<String, YangDataStatement> stmt,
              final ImmutableList<? extends EffectiveStatement<?, ?>> substatements, final QName qname) {
         super(stmt.declared(), stmt.argument(), stmt.history(), substatements);
-        this.argumentQName = requireNonNull(qname);
+        argumentQName = requireNonNull(qname);
 
         container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
 
