@@ -15,14 +15,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5531Test {
     @Test
     public void test() throws Exception {
-        SchemaContext schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug5531");
+        EffectiveModelContext schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug5531");
 
         assertNotNull(schema);
         assertNotNull(schema.getModules());
@@ -32,7 +32,7 @@ public class Bug5531Test {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         // write small module of size less than 8kB
-        for (Module module : schema.getModules()) {
+        for (ModuleEffectiveStatement module : schema.getModuleStatements().values()) {
             YinExportUtils.writeModuleAsYinText(module, bufferedOutputStream);
         }
 

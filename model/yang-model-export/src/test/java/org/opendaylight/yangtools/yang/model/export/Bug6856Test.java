@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -25,7 +26,7 @@ public class Bug6856Test {
 
     @Test
     public void testImplicitInputAndOutputInRpc() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class,
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class,
             "/bugs/bug-6856/foo.yang");
         assertNotNull(schemaContext);
 
@@ -33,7 +34,7 @@ public class Bug6856Test {
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         final Module fooModule = schemaContext.findModule("foo", Revision.of("2017-02-28")).get();
-        YinExportUtils.writeModuleAsYinText(fooModule, bufferedOutputStream);
+        YinExportUtils.writeModuleAsYinText(fooModule.asEffectiveStatement(), bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
         assertNotNull(output);
@@ -53,7 +54,7 @@ public class Bug6856Test {
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         final Module barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).get();
-        YinExportUtils.writeModuleAsYinText(barModule, bufferedOutputStream);
+        YinExportUtils.writeModuleAsYinText(barModule.asEffectiveStatement(), bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
         assertNotNull(output);
