@@ -79,7 +79,7 @@ public class SimpleModuleTest {
             throws Exception {
         final File outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
         try (OutputStream output = new FileOutputStream(outFile)) {
-            YinExportUtils.writeModuleAsYinText(module, output);
+            YinExportUtils.writeModuleAsYinText(module.asEffectiveStatement(), output);
         }
         return outFile;
     }

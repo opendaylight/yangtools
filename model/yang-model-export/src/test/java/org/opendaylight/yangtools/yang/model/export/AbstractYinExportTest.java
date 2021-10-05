@@ -18,8 +18,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 abstract class AbstractYinExportTest {
     final void exportYinModules(final String yangDir, final String yinDir) throws IOException, SAXException,
             XMLStreamException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory(yangDir);
+        final EffectiveModelContext schemaContext = YangParserTestUtils.parseYangResourceDirectory(yangDir);
         final Collection<? extends Module> modules = schemaContext.getModules();
         assertNotEquals(0, modules.size());
 
@@ -50,13 +50,13 @@ abstract class AbstractYinExportTest {
         }
     }
 
-    private void readAndValidateModule(final SchemaContext schemaContext, final Module module, final String yinDir)
-            throws XMLStreamException, IOException, SAXException {
+    private void readAndValidateModule(final EffectiveModelContext schemaContext, final Module module,
+            final String yinDir) throws XMLStreamException, IOException, SAXException {
         final String fileName = YinExportUtils.wellFormedYinName(module.getName(), module.getRevision());
         validateOutput(yinDir, fileName, export(module));
     }
 
-    private void readAndValidateSubmodule(final SchemaContext schemaContext, final Module module,
+    private void readAndValidateSubmodule(final EffectiveModelContext schemaContext, final Module module,
             final Submodule submodule, final String yinDir) throws XMLStreamException, IOException, SAXException {
         final String fileName = YinExportUtils.wellFormedYinName(submodule.getName(), submodule.getRevision());
         validateOutput(yinDir, fileName, export(module, submodule));
@@ -64,14 +64,14 @@ abstract class AbstractYinExportTest {
 
     private static String export(final Module module) throws XMLStreamException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        YinExportUtils.writeModuleAsYinText(module, bos);
-        return new String(bos.toByteArray(), StandardCharsets.UTF_8);
+        YinExportUtils.writeModuleAsYinText(module.asEffectiveStatement(), bos);
+        return bos.toString(StandardCharsets.UTF_8);
     }
 
     private static String export(final Module module, final Submodule submodule) throws XMLStreamException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        YinExportUtils.writeSubmoduleAsYinText(module, submodule, bos);
-        return new String(bos.toByteArray(), StandardCharsets.UTF_8);
+        YinExportUtils.writeSubmoduleAsYinText(module.asEffectiveStatement(), submodule.asEffectiveStatement(), bos);
+        return bos.toString(StandardCharsets.UTF_8);
     }
 
     private static void assertXMLEquals(final String fileName, final Document expectedXMLDoc, final String output)

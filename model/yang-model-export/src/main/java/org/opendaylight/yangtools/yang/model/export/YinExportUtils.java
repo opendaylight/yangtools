@@ -71,7 +71,7 @@ public final class YinExportUtils {
      * @deprecated Prefer {@link #writeModuleAsYinText(ModuleEffectiveStatement, OutputStream)}.
      */
     @Beta
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void writeModuleAsYinText(final Module module, final OutputStream output) throws XMLStreamException {
         writeModuleAsYinText(module.asEffectiveStatement(), output);
     }
@@ -105,7 +105,7 @@ public final class YinExportUtils {
      *             OutputStream)}.
      */
     @Beta
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static void writeSubmoduleAsYinText(final Module parentModule, final Submodule submodule,
             final OutputStream output) throws XMLStreamException {
         writeSubmoduleAsYinText(parentModule.asEffectiveStatement(), submodule.asEffectiveStatement(), output);
