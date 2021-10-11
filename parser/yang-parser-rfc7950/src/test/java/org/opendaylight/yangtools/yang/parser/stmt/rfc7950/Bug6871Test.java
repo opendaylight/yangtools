@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 public class Bug6871Test extends AbstractYangTest {
     @Test
-    public void testValidYang11Model() throws Exception {
+    public void testValidYang11Model() {
         final Module foo = assertEffectiveModel("/rfc7950/bug6871/foo.yang")
             .findModule("foo", Revision.of("2016-12-14")).orElseThrow();
 

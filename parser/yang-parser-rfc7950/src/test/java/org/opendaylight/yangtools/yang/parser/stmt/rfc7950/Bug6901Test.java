@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 public class Bug6901Test extends AbstractYangTest {
     @Test
-    public void ifFeature11EnumBitTest() throws Exception {
+    public void ifFeature11EnumBitTest() {
         assertEffectiveModel("/rfc7950/bug6901/foo.yang");
     }
 

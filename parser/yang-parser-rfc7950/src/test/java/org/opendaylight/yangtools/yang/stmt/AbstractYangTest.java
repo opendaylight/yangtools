@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
+import com.google.common.base.Throwables;
 import org.eclipse.jdt.annotation.NonNull;
 import org.hamcrest.Matcher;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -25,16 +26,28 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Abstract base class containing useful utilities and assertions.
  */
 public abstract class AbstractYangTest {
-    public static @NonNull EffectiveModelContext assertEffectiveModel(final String... yangResourceName)
-            throws Exception {
-        final var ret = TestUtils.parseYangSource(yangResourceName);
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public static @NonNull EffectiveModelContext assertEffectiveModel(final String... yangResourceName) {
+        final EffectiveModelContext ret;
+        try {
+            ret = TestUtils.parseYangSource(yangResourceName);
+        } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new AssertionError("Failed to assemble effective model", e);
+        }
         assertNotNull(ret);
         return ret;
     }
 
-    public static @NonNull EffectiveModelContext assertEffectiveModelDir(final String resourceDirName)
-            throws Exception {
-        final var ret =  TestUtils.loadModules(resourceDirName);
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public static @NonNull EffectiveModelContext assertEffectiveModelDir(final String resourceDirName) {
+        final EffectiveModelContext ret;
+        try {
+            ret = TestUtils.loadModules(resourceDirName);
+        } catch (Exception e) {
+            Throwables.throwIfUnchecked(e);
+            throw new AssertionError("Failed to assemble effective model of " + resourceDirName, e);
+        }
         assertNotNull(ret);
         return ret;
     }

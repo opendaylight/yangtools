@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class YT1346Test extends AbstractYangTest {
     @Test
-    public void testUsesAugmentUsesException() throws Exception {
+    public void testUsesAugmentUsesException() {
         assertEffectiveModel("/bugs/YT1346/foo.yang");
     }
 }

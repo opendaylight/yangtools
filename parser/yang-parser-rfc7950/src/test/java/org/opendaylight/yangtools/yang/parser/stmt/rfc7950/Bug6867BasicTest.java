@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -17,14 +16,13 @@ import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6867BasicTest extends AbstractYangTest {
-
     @Test
-    public void valid10Test() throws Exception {
+    public void valid10Test() {
         assertEffectiveModel("/rfc7950/basic-test/valid-10.yang");
     }
 
     @Test
-    public void valid11Test() throws Exception {
+    public void valid11Test() {
         assertEffectiveModel("/rfc7950/basic-test/valid-11.yang");
     }
 
@@ -41,7 +39,7 @@ public class Bug6867BasicTest extends AbstractYangTest {
     }
 
     @Test
-    public void anyData11Test() throws Exception {
+    public void anyData11Test() {
         assertEffectiveModel("/rfc7950/basic-test/anydata-11.yang");
     }
 

@@ -30,7 +30,7 @@ public class Bug6897Test extends AbstractYangTest {
     private static final String FOO_NS = "foo";
 
     @Test
-    public void notificationsInDataContainersTest() throws Exception {
+    public void notificationsInDataContainersTest() {
         final var context = assertEffectiveModel("/rfc7950/notifications-in-data-nodes/foo.yang");
 
         assertContainsNotifications(context, "root", "grp-notification", "aug-notification");

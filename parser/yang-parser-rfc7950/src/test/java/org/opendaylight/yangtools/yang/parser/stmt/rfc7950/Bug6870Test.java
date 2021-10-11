@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.stmt.AbstractYangTest;
 
 public class Bug6870Test extends AbstractYangTest {
     @Test
-    public void valid11Test() throws Exception {
+    public void valid11Test() {
         final var context = assertEffectiveModel("/rfc7950/bug6870/foo.yang");
         assertModifier(context, ModifierKind.INVERT_MATCH, QName.create("foo", "root"), QName.create("foo", "my-leaf"));
         assertModifier(context, null, QName.create("foo", "root"), QName.create("foo", "my-leaf-2"));
