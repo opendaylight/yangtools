@@ -792,6 +792,10 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         }
 
         // Propagate towards parent if there is one
+        sweepParent();
+    }
+
+    private void sweepParent() {
         final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
         if (parent != null) {
             parent.sweepOnChildDecrement();
@@ -815,12 +819,9 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
 
         // parent is potentially reclaimable
         if (noParentRef()) {
-            LOG.trace("Cleanup {} of parent {}", refcount, this);
+            LOG.trace("Cleanup {} of parent {}", refs, this);
             if (sweepState()) {
-                final ReactorStmtCtx<?, ?, ?> parent = getParentContext();
-                if (parent != null) {
-                    parent.sweepOnChildDecrement();
-                }
+                sweepParent();
             }
         }
     }
