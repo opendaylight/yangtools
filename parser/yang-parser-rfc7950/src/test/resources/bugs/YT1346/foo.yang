@@ -1,0 +1,22 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  extension ext {
+    argument arg;
+  }
+
+  grouping foo {
+    container foo;
+  }
+
+  grouping bar {
+    foo:ext bar;
+  }
+
+  uses foo {
+    augment foo {
+      uses bar;
+    }
+  }
+}
