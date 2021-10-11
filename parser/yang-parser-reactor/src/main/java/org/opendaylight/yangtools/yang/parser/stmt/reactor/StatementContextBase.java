@@ -806,8 +806,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
         checkEffectiveModelCompleted(stmt);
-        checkArgument(stmt instanceof StatementContextBase, "Unsupported statement %s", stmt);
-        return childCopyOf((StatementContextBase<?, ?, ?>) stmt, type, targetModule);
+        if (stmt instanceof StatementContextBase) {
+            return childCopyOf((StatementContextBase<?, ?, ?>) stmt, type, targetModule);
+        } else if (stmt instanceof ReplicaStatementContext) {
+            return ((ReplicaStatementContext<?, ?, ?>) stmt).replicaAsChildOf(this);
+        } else {
+            throw new IllegalArgumentException("Unsupported statement " + stmt);
+        }
     }
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
