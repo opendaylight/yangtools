@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9161d6ed_3af85a3a",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/mac/yang/mac-address.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2021-10-12T18:39:20Z",
+      "side": 1,
+      "message": "See https://github.com/YangModels/yang/blob/master/standard/ietf/RFC/ietf-yang-types%402013-07-15.yang#L403-L417",
+      "range": {
+        "startLine": 6,
+        "startChar": 10,
+        "endLine": 6,
+        "endChar": 18
+      },
+      "revId": "7ba3de40b2311961224dd7224fd7f737930130bf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
