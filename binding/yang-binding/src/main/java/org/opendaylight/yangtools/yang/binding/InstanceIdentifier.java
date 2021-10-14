@@ -26,8 +26,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Path;
+import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 /**
@@ -61,8 +60,8 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  * <p>
  * This would be the same as using a path like so, "/nodes/node/openflow:1" to refer to the openflow:1 node
  */
-public class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>,
-        Immutable, Serializable {
+public class InstanceIdentifier<T extends DataObject>
+        implements HierarchicalIdentifier<InstanceIdentifier<? extends DataObject>> {
     private static final long serialVersionUID = 3L;
 
     /*
