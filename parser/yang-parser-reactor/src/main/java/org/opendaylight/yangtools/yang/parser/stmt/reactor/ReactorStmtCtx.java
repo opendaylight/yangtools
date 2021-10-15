@@ -237,11 +237,6 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
         return QName.create(StmtContextUtils.getRootModuleQName(root), root.getRawArgument());
     }
 
-    @Override
-    public final EffectiveStatement<?, ?> original() {
-        return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-    }
-
     //
     // In the next two methods we are looking for an effective statement. If we already have an effective instance,
     // defer to it's implementation of the equivalent search. Otherwise we search our substatement contexts.
