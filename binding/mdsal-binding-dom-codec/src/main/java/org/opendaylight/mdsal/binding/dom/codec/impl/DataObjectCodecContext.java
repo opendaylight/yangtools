@@ -269,12 +269,18 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     }
 
     private DataContainerCodecPrototype<?> loadChildPrototype(final Class<?> childClass) {
-        final DataSchemaNode nonNullChild = childNonNull(
+        final DataSchemaNode childSchema = childNonNull(
             factory().getRuntimeContext().findChildSchemaDefinition(getSchema(), namespace(), childClass), childClass,
             "Node %s does not have child named %s", getSchema(), childClass);
-        return DataContainerCodecPrototype.from(createBindingArg(childClass, nonNullChild), nonNullChild, factory());
+        return DataContainerCodecPrototype.from(createBindingArg(childClass, childSchema), childSchema, factory());
     }
 
+    // FIXME: MDSAL-697: move this method into BindingRuntimeContext
+    //                   This method is only called from loadChildPrototype() and exists only to be overridden by
+    //                   CaseNodeCodecContext. Since we are providing childClass and our schema to BindingRuntimeContext
+    //                   and receiving childSchema from it via findChildSchemaDefinition, we should be able to receive
+    //                   the equivalent of Map.Entry<Item, DataSchemaNode>, along with the override we create here. One
+    //                   more input we may need to provide is our bindingClass().
     @SuppressWarnings("unchecked")
     Item<?> createBindingArg(final Class<?> childClass, final DataSchemaNode childSchema) {
         return Item.of((Class<? extends DataObject>) childClass);

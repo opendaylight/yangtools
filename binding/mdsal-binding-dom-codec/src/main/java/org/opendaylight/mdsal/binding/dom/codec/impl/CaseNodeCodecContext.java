@@ -28,8 +28,9 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     Item<?> createBindingArg(final Class<?> childClass, final DataSchemaNode childSchema) {
+        // FIXME: MDSAL-697: see overridden method for further guidance
         return childSchema.isAddedByUses() ? Item.of((Class)getBindingClass(), (Class)childClass)
-                : Item.of((Class<? extends DataObject>) childClass);
+            : super.createBindingArg(childClass, childSchema);
     }
 
     @Override
