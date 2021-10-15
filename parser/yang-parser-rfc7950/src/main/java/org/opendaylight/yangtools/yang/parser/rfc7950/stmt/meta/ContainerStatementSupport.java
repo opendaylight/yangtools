@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -116,7 +115,7 @@ public final class ContainerStatementSupport
 
         try {
             return EffectiveStatements.createContainer(stmt.declared(), stmt.getArgument(),
-                createFlags(stmt, substatements), substatements, stmt.original(ContainerSchemaNode.class));
+                createFlags(stmt, substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -126,7 +125,7 @@ public final class ContainerStatementSupport
     public ContainerEffectiveStatement copyEffective(final Current<QName, ContainerStatement> stmt,
             final ContainerEffectiveStatement original) {
         return EffectiveStatements.copyContainer(original, stmt.getArgument(),
-            createFlags(stmt, original.effectiveSubstatements()), stmt.original(ContainerSchemaNode.class));
+            createFlags(stmt, original.effectiveSubstatements()));
     }
 
     private static int createFlags(final Current<?, ?> stmt,

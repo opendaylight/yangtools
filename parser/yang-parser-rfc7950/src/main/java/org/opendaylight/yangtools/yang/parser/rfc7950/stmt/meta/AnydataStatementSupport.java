@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -64,14 +63,14 @@ public final class AnydataStatementSupport
     protected AnydataEffectiveStatement createEffective(final Current<QName, AnydataStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createAnydata(stmt.declared(), stmt.getArgument(),
-            createFlags(stmt, substatements), substatements, stmt.original(AnydataSchemaNode.class));
+            createFlags(stmt, substatements), substatements);
     }
 
     @Override
     public AnydataEffectiveStatement copyEffective(final Current<QName, AnydataStatement> stmt,
             final AnydataEffectiveStatement original) {
         return EffectiveStatements.copyAnydata(original, stmt.getArgument(),
-            createFlags(stmt, original.effectiveSubstatements()), stmt.original(AnydataSchemaNode.class));
+            createFlags(stmt, original.effectiveSubstatements()));
     }
 
     private static int createFlags(final Current<?, ?> stmt,

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
  * The 'list' statement is used to define an interior data node in the schema tree. A list entry is uniquely identified
  * by the values of the list's keys, if defined.
  */
-public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DerivableSchemaNode<ListSchemaNode>,
+public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
         NotificationNodeContainer, ActionNodeContainer, ElementCountConstraintAware, MustConstraintAware,
         EffectiveStatementEquivalent<ListEffectiveStatement> {
     /**

@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MandatoryMixin;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.MustConstraintMixin;
 
-public abstract class AbstractLeafEffectiveStatement
+public final class LeafEffectiveStatementImpl
         extends AbstractDeclaredEffectiveStatement.Default<QName, LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DataSchemaNodeMixin<LeafStatement>,
             MandatoryMixin<QName, LeafStatement>, MustConstraintMixin<QName, LeafStatement> {
@@ -39,48 +39,48 @@ public abstract class AbstractLeafEffectiveStatement
     private final @NonNull TypeDefinition<?> type;
     private final int flags;
 
-    AbstractLeafEffectiveStatement(final LeafStatement declared, final QName argument, final int flags,
+    public LeafEffectiveStatementImpl(final LeafStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
         this.argument = requireNonNull(argument);
         this.substatements = maskList(substatements);
         this.flags = flags;
         // TODO: lazy instantiation?
-        this.type = buildType();
+        type = buildType();
     }
 
-    AbstractLeafEffectiveStatement(final AbstractLeafEffectiveStatement original, final QName argument,
+    public LeafEffectiveStatementImpl(final LeafEffectiveStatementImpl original, final QName argument,
             final int flags) {
         super(original);
         this.argument = requireNonNull(argument);
-        this.substatements = original.substatements;
+        substatements = original.substatements;
         this.flags = flags;
         // FIXME: share with original?
-        this.type = buildType();
+        type = buildType();
     }
 
     @Override
-    public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return unmaskList(substatements);
     }
 
     @Override
-    public final int flags() {
+    public int flags() {
         return flags;
     }
 
     @Override
-    public final QName argument() {
+    public QName argument() {
         return argument;
     }
 
     @Override
-    public final TypeDefinition<?> getType() {
+    public TypeDefinition<?> getType() {
         return type;
     }
 
     @Override
-    public final LeafEffectiveStatement asEffectiveStatement() {
+    public LeafEffectiveStatement asEffectiveStatement() {
         return this;
     }
 

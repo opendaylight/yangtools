@@ -11,40 +11,29 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 
 public final class RegularListEffectiveStatement extends AbstractListEffectiveStatement {
     private final ElementCountConstraint elementCountConstraint;
-    private final ListSchemaNode original;
 
     public RegularListEffectiveStatement(final ListStatement declared, final QName argument, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final ImmutableList<QName> keyDefinition, final ElementCountConstraint elementCountConstraint,
-            final ListSchemaNode original) {
+            final ImmutableList<QName> keyDefinition, final ElementCountConstraint elementCountConstraint) {
         super(declared, argument, flags, substatements, keyDefinition);
         this.elementCountConstraint = elementCountConstraint;
-        this.original = original;
     }
 
-    public RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective, final QName argument,
-            final int flags, final ListSchemaNode original) {
-        super(originalEffective, argument, flags);
-        this.elementCountConstraint = originalEffective.elementCountConstraint;
-        this.original = original;
+    public RegularListEffectiveStatement(final RegularListEffectiveStatement original, final QName argument,
+            final int flags) {
+        super(original, argument, flags);
+        elementCountConstraint = original.elementCountConstraint;
     }
 
-    public RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective,
-            final QName argument, final int flags, final ListSchemaNode original) {
-        super(originalEffective, argument, flags);
-        this.elementCountConstraint = null;
-        this.original = original;
-    }
-
-    @Override
-    public Optional<ListSchemaNode> getOriginal() {
-        return Optional.ofNullable(original);
+    public RegularListEffectiveStatement(final EmptyListEffectiveStatement original, final QName argument,
+            final int flags) {
+        super(original, argument, flags);
+        elementCountConstraint = null;
     }
 
     @Override

@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -138,7 +137,7 @@ public final class ListStatementSupport
     public ListEffectiveStatement copyEffective(final Current<QName, ListStatement> stmt,
             final ListEffectiveStatement original) {
         return EffectiveStatements.copyList(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(ListSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
@@ -178,8 +177,7 @@ public final class ListStatementSupport
 
         try {
             return EffectiveStatements.createList(stmt.declared(), stmt.getArgument(), flags, substatements,
-                keyDefinition, EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null),
-                stmt.original(ListSchemaNode.class));
+                keyDefinition, EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null));
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

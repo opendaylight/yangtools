@@ -16,7 +16,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -123,7 +122,7 @@ public final class ChoiceStatementSupport
     public ChoiceEffectiveStatement copyEffective(final Current<QName, ChoiceStatement> stmt,
             final ChoiceEffectiveStatement original) {
         return EffectiveStatements.copyChoice(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(ChoiceSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
@@ -148,7 +147,7 @@ public final class ChoiceStatementSupport
 
         try {
             return EffectiveStatements.createChoice(stmt.declared(), stmt.getArgument(),
-                computeFlags(stmt, substatements), substatements, defaultCase, stmt.original(ChoiceSchemaNode.class));
+                computeFlags(stmt, substatements), substatements, defaultCase);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
