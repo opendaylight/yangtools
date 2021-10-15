@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -78,7 +77,7 @@ public final class LeafStatementSupport
     public LeafEffectiveStatement copyEffective(final Current<QName, LeafStatement> stmt,
             final LeafEffectiveStatement original) {
         return EffectiveStatements.copyLeaf(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(LeafSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
@@ -93,7 +92,7 @@ public final class LeafStatementSupport
             "Leaf '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         return EffectiveStatements.createLeaf(stmt.declared(), stmt.getArgument(), computeFlags(stmt, substatements),
-            substatements, stmt.original(LeafSchemaNode.class));
+            substatements);
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

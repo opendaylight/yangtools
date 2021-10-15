@@ -14,7 +14,6 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -101,7 +100,7 @@ public final class LeafListStatementSupport
     public LeafListEffectiveStatement copyEffective(final Current<QName, LeafListStatement> stmt,
             final LeafListEffectiveStatement original) {
         return EffectiveStatements.copyLeafList(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(LeafListSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
@@ -127,8 +126,7 @@ public final class LeafListStatementSupport
 
         return EffectiveStatements.createLeafList(stmt.declared(), stmt.getArgument(),
             computeFlags(stmt, substatements), substatements, defaultValues,
-            EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null),
-            stmt.original(LeafListSchemaNode.class));
+            EffectiveStmtUtils.createElementCountConstraint(substatements).orElse(null));
     }
 
     private static int computeFlags(final Current<?, ?> stmt,

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement
  * Interface describing YANG 'leaf-list' statement.
  */
 public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware, ElementCountConstraintAware,
-        DerivableSchemaNode<LeafListSchemaNode>, EffectiveStatementEquivalent<LeafListEffectiveStatement> {
+        EffectiveStatementEquivalent<LeafListEffectiveStatement> {
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries
      * within this leaf-list are determined by the user or the system. If not

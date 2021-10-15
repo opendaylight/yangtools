@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 
@@ -26,12 +25,6 @@ public final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffec
     public EmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement original, final QName argument,
             final int flags) {
         super(original, argument, flags);
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public Optional<LeafListSchemaNode> getOriginal() {
-        return Optional.empty();
     }
 
     @Override

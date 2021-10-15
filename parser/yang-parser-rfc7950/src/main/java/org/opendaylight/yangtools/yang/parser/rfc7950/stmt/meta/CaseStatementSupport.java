@@ -15,7 +15,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -107,14 +106,14 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement copyDeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
         return EffectiveStatements.copyCase(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(CaseSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
     protected CaseEffectiveStatement copyUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final CaseEffectiveStatement original) {
         return EffectiveStatements.copyCase(original, stmt.getArgument(),
-            computeFlags(stmt, original.effectiveSubstatements()), stmt.original(CaseSchemaNode.class));
+            computeFlags(stmt, original.effectiveSubstatements()));
     }
 
     @Override
@@ -122,7 +121,7 @@ public final class CaseStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
             return EffectiveStatements.createCase(stmt.declared(), stmt.getArgument(),
-                computeFlags(stmt, substatements), substatements, stmt.original(CaseSchemaNode.class));
+                computeFlags(stmt, substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
@@ -132,8 +131,7 @@ public final class CaseStatementSupport
     protected CaseEffectiveStatement createUndeclaredEffective(final Current<QName, CaseStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         try {
-            return EffectiveStatements.createCase(stmt.getArgument(), computeFlags(stmt, substatements),
-                substatements, stmt.original(CaseSchemaNode.class));
+            return EffectiveStatements.createCase(stmt.getArgument(), computeFlags(stmt, substatements), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
