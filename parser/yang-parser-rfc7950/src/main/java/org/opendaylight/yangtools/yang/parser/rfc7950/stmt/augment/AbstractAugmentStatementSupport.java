@@ -11,12 +11,9 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -60,7 +57,6 @@ abstract class AbstractAugmentStatementSupport
             (copy, current, substatements) ->
                 copy.getArgument().equals(current.getArgument())
                 && copy.moduleName().getModule().equals(current.moduleName().getModule())
-                && Objects.equals(copy.original(), current.original())
             ), config, validator);
     }
 
@@ -138,7 +134,6 @@ abstract class AbstractAugmentStatementSupport
     }
 
     @Override
-    @SuppressFBWarnings(value = "BC_UNCONFIRMED_CAST", justification = "Cast of original(), should be always safe")
     protected final AugmentEffectiveStatement createEffective(
             final Current<SchemaNodeIdentifier, AugmentStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
@@ -148,7 +143,7 @@ abstract class AbstractAugmentStatementSupport
 
         try {
             return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements, (AugmentationSchemaNode) stmt.original());
+                stmt.moduleName().getModule(), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

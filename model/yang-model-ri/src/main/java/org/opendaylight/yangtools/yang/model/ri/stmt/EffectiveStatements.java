@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -342,9 +341,9 @@ public final class EffectiveStatements {
 
     public static AugmentEffectiveStatement createAugment(final AugmentStatement declared,
             final SchemaNodeIdentifier argument, final int flags, final QNameModule rootModuleQName,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final @Nullable AugmentationSchemaNode original) throws SubstatementIndexingException {
-        return new AugmentEffectiveStatementImpl(declared, argument, flags, rootModuleQName, substatements, original);
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements)
+                throws SubstatementIndexingException {
+        return new AugmentEffectiveStatementImpl(declared, argument, flags, rootModuleQName, substatements);
     }
 
     public static BaseEffectiveStatement createBase(final BaseStatement declared,
