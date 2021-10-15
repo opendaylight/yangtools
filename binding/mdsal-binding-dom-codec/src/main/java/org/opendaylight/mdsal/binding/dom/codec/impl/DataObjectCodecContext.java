@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -48,9 +47,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,60 +269,10 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     }
 
     private DataContainerCodecPrototype<?> loadChildPrototype(final Class<?> childClass) {
-        final DataSchemaNode origDef = factory().getRuntimeContext().getSchemaDefinition(childClass);
-        // Direct instantiation or use in same module in which grouping
-        // was defined.
-        DataSchemaNode sameName;
-        try {
-            sameName = getSchema().dataChildByName(origDef.getQName());
-        } catch (final IllegalArgumentException e) {
-            LOG.trace("Failed to find schema for {}", origDef, e);
-            sameName = null;
-        }
-        final DataSchemaNode childSchema;
-        if (sameName != null) {
-            // Check if it is:
-            // - exactly same schema node, or
-            // - instantiated node was added via uses statement and is instantiation of same grouping
-            if (origDef.equals(sameName) || origDef.equals(getRootOriginalIfPossible(sameName))) {
-                childSchema = sameName;
-            } else {
-                // Node has same name, but clearly is different
-                childSchema = null;
-            }
-        } else {
-            // We are looking for instantiation via uses in other module
-            final QName instantiedName = origDef.getQName().bindTo(namespace());
-            final DataSchemaNode potential = getSchema().dataChildByName(instantiedName);
-            // We check if it is really instantiated from same definition as class was derived
-            if (potential != null && origDef.equals(getRootOriginalIfPossible(potential))) {
-                childSchema = potential;
-            } else {
-                childSchema = null;
-            }
-        }
-        final DataSchemaNode nonNullChild =
-                childNonNull(childSchema, childClass, "Node %s does not have child named %s", getSchema(), childClass);
+        final DataSchemaNode nonNullChild = childNonNull(
+            factory().getRuntimeContext().findChildSchemaDefinition(getSchema(), namespace(), childClass), childClass,
+            "Node %s does not have child named %s", getSchema(), childClass);
         return DataContainerCodecPrototype.from(createBindingArg(childClass, nonNullChild), nonNullChild, factory());
-    }
-
-    private static SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
-        Optional<SchemaNode> previous = Optional.empty();
-        Optional<SchemaNode> next = getOriginalIfPossible(data);
-        while (next.isPresent()) {
-            previous = next;
-            next = getOriginalIfPossible(next.get());
-        }
-        return previous.orElse(null);
-    }
-
-    private static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
-        if (node instanceof DerivableSchemaNode) {
-            @SuppressWarnings("unchecked")
-            final Optional<SchemaNode> ret  = (Optional<SchemaNode>) ((DerivableSchemaNode) node).getOriginal();
-            return ret;
-        }
-        return Optional.empty();
     }
 
     @SuppressWarnings("unchecked")

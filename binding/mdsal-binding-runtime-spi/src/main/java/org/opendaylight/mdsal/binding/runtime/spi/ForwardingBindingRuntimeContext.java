@@ -21,6 +21,7 @@ import org.opendaylight.mdsal.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -50,6 +51,12 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     @Override
     public DataSchemaNode getSchemaDefinition(final Class<?> cls) {
         return delegate().getSchemaDefinition(cls);
+    }
+
+    @Override
+    public DataSchemaNode findChildSchemaDefinition(final DataNodeContainer parentSchema,
+            final QNameModule parentNamespace, final Class<?> childClass) {
+        return delegate().findChildSchemaDefinition(parentSchema, parentNamespace, childClass);
     }
 
     @Override

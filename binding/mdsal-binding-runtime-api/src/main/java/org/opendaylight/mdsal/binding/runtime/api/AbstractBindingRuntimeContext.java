@@ -35,6 +35,7 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilde
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -88,6 +89,59 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
             cls);
         checkArgument(!Action.class.isAssignableFrom(cls), "Supplied class must not be an action (%s is)", cls);
         return (DataSchemaNode) getTypes().findSchema(Type.of(cls)).orElse(null);
+    }
+
+    @Override
+    public final DataSchemaNode findChildSchemaDefinition(final DataNodeContainer parentSchema,
+            final QNameModule parentNamespace, final Class<?> childClass) {
+        final DataSchemaNode origDef = getSchemaDefinition(childClass);
+        // Direct instantiation or use in same module in which grouping was defined.
+        DataSchemaNode sameName;
+        try {
+            sameName = parentSchema.dataChildByName(origDef.getQName());
+        } catch (final IllegalArgumentException e) {
+            LOG.trace("Failed to find schema for {}", origDef, e);
+            sameName = null;
+        }
+
+        final DataSchemaNode childSchema;
+        if (sameName != null) {
+            // Check if it is:
+            // - exactly same schema node, or
+            // - instantiated node was added via uses statement and is instantiation of same grouping
+            if (origDef.equals(sameName) || origDef.equals(getRootOriginalIfPossible(sameName))) {
+                childSchema = sameName;
+            } else {
+                // Node has same name, but clearly is different
+                childSchema = null;
+            }
+        } else {
+            // We are looking for instantiation via uses in other module
+            final QName instantiedName = origDef.getQName().bindTo(parentNamespace);
+            final DataSchemaNode potential = parentSchema.dataChildByName(instantiedName);
+            // We check if it is really instantiated from same definition as class was derived
+            if (potential != null && origDef.equals(getRootOriginalIfPossible(potential))) {
+                childSchema = potential;
+            } else {
+                childSchema = null;
+            }
+        }
+
+        return childSchema;
+    }
+
+    private static @Nullable SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
+        SchemaNode previous = null;
+        SchemaNode next = getOriginalIfPossible(data);
+        while (next != null) {
+            previous = next;
+            next = getOriginalIfPossible(next);
+        }
+        return previous;
+    }
+
+    private static @Nullable SchemaNode getOriginalIfPossible(final SchemaNode node) {
+        return node instanceof DerivableSchemaNode ? ((DerivableSchemaNode) node).getOriginal().orElse(null) : null;
     }
 
     @Override
