@@ -122,11 +122,6 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Optional<AugmentationSchemaNode> getOriginalDefinition() {
-        return delegate.getOriginalDefinition();
-    }
-
-    @Override
     public Collection<? extends ActionDefinition> getActions() {
         return delegate.getActions();
     }
