@@ -126,16 +126,12 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     private static @Nullable SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
         SchemaNode previous = null;
-        SchemaNode next = getOriginalIfPossible(data);
+        SchemaNode next = originalNodeOf(data);
         while (next != null) {
             previous = next;
-            next = getOriginalIfPossible(next);
+            next = originalNodeOf(next);
         }
         return previous;
-    }
-
-    private static @Nullable SchemaNode getOriginalIfPossible(final SchemaNode node) {
-        return node instanceof DerivableSchemaNode ? ((DerivableSchemaNode) node).getOriginal().orElse(null) : null;
     }
 
     @Override
