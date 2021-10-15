@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -146,7 +145,7 @@ abstract class AbstractAugmentStatementSupport
 
         try {
             return EffectiveStatements.createAugment(stmt.declared(), stmt.getArgument(), flags,
-                stmt.moduleName().getModule(), substatements, stmt.original(AugmentationSchemaNode.class));
+                stmt.moduleName().getModule(), substatements);
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }

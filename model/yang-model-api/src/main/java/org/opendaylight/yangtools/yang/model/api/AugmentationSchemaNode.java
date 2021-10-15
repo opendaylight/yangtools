@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -31,13 +30,4 @@ public interface AugmentationSchemaNode extends DataNodeContainer, NotificationN
     default SchemaNodeIdentifier getTargetPath() {
         return asEffectiveStatement().argument();
     }
-
-    /**
-     * Returns Augmentation Definition from which this augmentation is derived
-     * if augmentation was added transitively via augmented uses.
-     *
-     * @return Augmentation Definition from which this augmentation is derived
-     *         if augmentation was added transitively via augmented uses.
-     */
-    Optional<AugmentationSchemaNode> getOriginalDefinition();
 }

@@ -42,7 +42,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
 
     public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
             final Collection<? extends DataSchemaNode> realChildSchemas) {
-        this.delegate = requireNonNull(augmentSchema);
+        delegate = requireNonNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
         final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
@@ -50,7 +50,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
             m.put(realChildSchema.getQName(), realChildSchema);
         }
 
-        this.mappedChildSchemas = ImmutableMap.copyOf(m);
+        mappedChildSchemas = ImmutableMap.copyOf(m);
     }
 
     /**
@@ -117,11 +117,6 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     @Override
     public Collection<? extends UsesNode> getUses() {
         return delegate.getUses();
-    }
-
-    @Override
-    public Optional<AugmentationSchemaNode> getOriginalDefinition() {
-        return delegate.getOriginalDefinition();
     }
 
     @Override
