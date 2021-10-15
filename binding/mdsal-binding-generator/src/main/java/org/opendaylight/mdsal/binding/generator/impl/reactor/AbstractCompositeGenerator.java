@@ -317,6 +317,20 @@ abstract class AbstractCompositeGenerator<T extends EffectiveStatement<?, ?>> ex
             } else if (stmt instanceof TypedefEffectiveStatement) {
                 tmp.add(new TypedefGenerator((TypedefEffectiveStatement) stmt, this));
             } else if (stmt instanceof AugmentEffectiveStatement) {
+                // FIXME: MDSAL-695: So here we are ignoring any augment which is not in a module, while the 'uses'
+                //                   processing takes care of the rest. There are two problems here:
+                //
+                //                   1) this could be an augment introduced through uses -- in this case we are picking
+                //                      confusing it with this being its declaration site, we should probably be
+                //                      ignoring it, but then
+                //
+                //                   2) we are losing track of AugmentEffectiveStatement for which we do not generate
+                //                      interfaces -- and recover it at runtime through explicit walk along the
+                //                      corresponding AugmentationSchemaNode.getOriginalDefinition() pointer
+                //
+                //                   So here is where we should decide how to handle this augment, and make sure we
+                //                   retain information about this being an alias. That will serve as the base for keys
+                //                   in the augment -> original map we provide to BindingRuntimeTypes.
                 if (this instanceof ModuleGenerator) {
                     tmpAug.add(new ModuleAugmentGenerator((AugmentEffectiveStatement) stmt, this));
                 }

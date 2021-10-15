@@ -161,6 +161,31 @@ public final class BindingRuntimeTypes implements EffectiveModelContextProvider,
         return Optional.ofNullable(schemaToType.get(schema));
     }
 
+    public Optional<Type> findOriginalAugmentationType(final AugmentationSchemaNode augment) {
+        // If the augment statement does not contain any child nodes, we did not generate an augmentation, as it would
+        // be plain littering.
+        // FIXME: MDSAL-695: this check is rather costly (involves filtering), can we just rely on the not being found
+        //                   in the end? all we are saving is essentially two map lookups after all...
+        if (augment.getChildNodes().isEmpty()) {
+            return Optional.empty();
+        }
+
+        // FIXME: MDSAL-695: We should have enough information from mdsal-binding-generator to receive a (sparse) Map
+        //                   for current -> original lookup. When combined with schemaToType, this amounts to the
+        //                   inverse view of what 'typeToSchema' holds
+        AugmentationSchemaNode current = augment;
+        while (true) {
+            // If this augmentation has been added through 'uses foo { augment bar { ... } }', we need to invert that
+            // walk and arrive at the original declaration site, as that is where we generated 'grouping foo's
+            // augmentation. That site may have a different module, hence the augment namespace may be different.
+            final Optional<AugmentationSchemaNode> original = current.getOriginalDefinition();
+            if (original.isEmpty()) {
+                return findType(current);
+            }
+            current = original.orElseThrow();
+        }
+    }
+
     public Multimap<Type, Type> getChoiceToCases() {
         return choiceToCases;
     }

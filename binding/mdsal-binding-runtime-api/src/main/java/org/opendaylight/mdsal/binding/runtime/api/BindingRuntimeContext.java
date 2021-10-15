@@ -134,6 +134,14 @@ public interface BindingRuntimeContext extends EffectiveModelContextProvider, Im
 
     @NonNull Class<?> getClassForSchema(SchemaNode childSchema);
 
+    /**
+     * Return the mapping of a particular {@link DataNodeContainer}'s available augmentations. This method deals with
+     * resolving {@code uses foo { augment bar { ... } } } scenarios by returning the augmentation created for
+     * {@code grouping foo}'s Binding representation.
+     *
+     * @param container {@link DataNodeContainer} to examine
+     * @return a mapping from local {@link AugmentationIdentifier}s to their corresponding Binding augmentations
+     */
     @NonNull ImmutableMap<AugmentationIdentifier, Type> getAvailableAugmentationTypes(DataNodeContainer container);
 
     @NonNull Class<?> getIdentityClass(QName input);
