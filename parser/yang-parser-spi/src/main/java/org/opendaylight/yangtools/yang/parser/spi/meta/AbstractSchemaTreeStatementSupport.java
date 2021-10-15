@@ -72,7 +72,6 @@ public abstract class AbstractSchemaTreeStatementSupport<D extends DeclaredState
      *   <li>{@link Current#argument()} does not change</li>
      *   <li>{@link Current#history()} does not change as far as {@link CopyableNode} is concerned</li>
      *   <li>{@link Current#effectiveConfig()} does not change</li>
-     *   <li>{@link Current#original()} does not change</li>
      * </ul>
      *
      * <p>

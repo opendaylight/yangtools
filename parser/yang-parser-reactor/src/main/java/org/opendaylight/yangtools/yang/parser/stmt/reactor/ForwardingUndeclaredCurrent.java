@@ -39,12 +39,6 @@ final class ForwardingUndeclaredCurrent<A, D extends DeclaredStatement<A>> exten
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public EffectiveStatement<?, ?> original() {
-        return delegate.original();
-    }
-
-    @Override
     public QName argumentAsTypeQName() {
         return delegate.argumentAsTypeQName();
     }

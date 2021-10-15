@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.model.ri.stmt.impl.eff;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -37,31 +35,22 @@ public final class AugmentEffectiveStatementImpl
             ActionNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerMixin<SchemaNodeIdentifier, AugmentStatement>,
             WhenConditionMixin<SchemaNodeIdentifier, AugmentStatement> {
-    private final @Nullable AugmentationSchemaNode original;
     private final @NonNull SchemaNodeIdentifier argument;
     private final @NonNull QNameModule rootModuleQName;
     private final int flags;
 
     public AugmentEffectiveStatementImpl(final AugmentStatement declared, final SchemaNodeIdentifier argument,
             final int flags, final QNameModule rootModuleQName,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
-            final @Nullable AugmentationSchemaNode original) {
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, substatements);
         this.argument = requireNonNull(argument);
         this.rootModuleQName = requireNonNull(rootModuleQName);
         this.flags = flags;
-        this.original = original;
     }
 
     @Override
     public @NonNull SchemaNodeIdentifier argument() {
         return argument;
-    }
-
-    @Override
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public Optional<AugmentationSchemaNode> getOriginalDefinition() {
-        return Optional.ofNullable(original);
     }
 
     @Override
