@@ -95,39 +95,33 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     public final DataSchemaNode findChildSchemaDefinition(final DataNodeContainer parentSchema,
             final QNameModule parentNamespace, final Class<?> childClass) {
         final DataSchemaNode origDef = getSchemaDefinition(childClass);
-        // Direct instantiation or use in same module in which grouping was defined.
-        DataSchemaNode sameName;
-        try {
-            sameName = parentSchema.dataChildByName(origDef.getQName());
-        } catch (final IllegalArgumentException e) {
-            LOG.trace("Failed to find schema for {}", origDef, e);
-            sameName = null;
+        if (origDef == null) {
+            // Weird, the child does not have an associated definition
+            return null;
         }
 
-        final DataSchemaNode childSchema;
+        // Direct instantiation or use in same module in which grouping was defined.
+        final QName origName = origDef.getQName();
+        final DataSchemaNode sameName = parentSchema.dataChildByName(origName);
         if (sameName != null) {
             // Check if it is:
             // - exactly same schema node, or
             // - instantiated node was added via uses statement and is instantiation of same grouping
             if (origDef.equals(sameName) || origDef.equals(getRootOriginalIfPossible(sameName))) {
-                childSchema = sameName;
-            } else {
-                // Node has same name, but clearly is different
-                childSchema = null;
+                return sameName;
             }
-        } else {
-            // We are looking for instantiation via uses in other module
-            final QName instantiedName = origDef.getQName().bindTo(parentNamespace);
-            final DataSchemaNode potential = parentSchema.dataChildByName(instantiedName);
-            // We check if it is really instantiated from same definition as class was derived
-            if (potential != null && origDef.equals(getRootOriginalIfPossible(potential))) {
-                childSchema = potential;
-            } else {
-                childSchema = null;
-            }
+
+            // Node has same name, but clearly is different
+            return null;
         }
 
-        return childSchema;
+        // We are looking for instantiation via uses in other module
+        final DataSchemaNode potential = parentSchema.dataChildByName(origName.bindTo(parentNamespace));
+        // We check if it is really instantiated from same definition as class was derived
+        if (potential != null && origDef.equals(getRootOriginalIfPossible(potential))) {
+            return potential;
+        }
+        return null;
     }
 
     private static @Nullable SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
