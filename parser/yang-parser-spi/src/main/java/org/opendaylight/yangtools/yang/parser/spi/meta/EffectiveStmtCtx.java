@@ -110,12 +110,6 @@ public interface EffectiveStmtCtx extends CommonStmtCtx, StmtContextCompat, Immu
 
         @NonNull QName moduleName();
 
-        @Nullable EffectiveStatement<?, ?> original();
-
-        default <T> @Nullable T original(final @NonNull Class<T> type) {
-            return type.cast(original());
-        }
-
         // FIXME: 7.0.0: this method should be moved to stmt.type in some shape or form
         @NonNull QName argumentAsTypeQName();
 
