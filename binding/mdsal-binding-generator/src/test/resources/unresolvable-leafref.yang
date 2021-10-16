@@ -1,0 +1,11 @@
+module unresolvable-leafref {
+  namespace foo;
+  prefix foo;
+
+  leaf unresolvable-leafref {
+    type leafref {
+      path "/somewhere/i/belong";
+    }
+  }
+}
+

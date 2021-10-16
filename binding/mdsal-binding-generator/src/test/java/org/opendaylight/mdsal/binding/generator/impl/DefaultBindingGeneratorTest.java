@@ -11,6 +11,7 @@ package org.opendaylight.mdsal.binding.generator.impl;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.util.List;
 import org.junit.AfterClass;
@@ -200,6 +201,22 @@ public class DefaultBindingGeneratorTest {
         final var pattern = patterns.get(0);
         assertEquals("", pattern.getRegularExpressionString());
         assertEquals("^(?:)$", pattern.getJavaPatternString());
+    }
+
+    @Test
+    public void testUnresolvedLeafref() {
+        assertEquals(Types.objectType(), assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "Grp"),
+            "getUnresolvableLeafref").getReturnType());
+    }
+
+    @Test
+    public void javaTypeForSchemaDefinitionInvalidLeafrefPathTest() {
+        final var ctx = YangParserTestUtils.parseYangResources(TypeProviderTest.class, "/unresolvable-leafref.yang");
+        final var ex = assertThrows(IllegalArgumentException.class, () -> DefaultBindingGenerator.generateFor(ctx));
+        assertEquals("Failed to find leafref target /somewhere/i/belong", ex.getMessage());
+        final var cause = ex.getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertEquals("Data tree child (foo)somewhere not present", cause.getMessage());
     }
 
     private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {

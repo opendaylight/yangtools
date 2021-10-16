@@ -199,18 +199,4 @@ public class TypeProviderTest {
         assertEquals("java.lang", resultType.getPackageName());
         assertEquals("Object", resultType.getName());
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void javaTypeForSchemaDefinitionInvalidLeafrefPathTest() {
-        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
-        final Module module = resolveModule("test-type-provider-b");
-
-        final QName leafrefNode = QName.create(module.getQNameModule(), "unreslovable-leafref");
-        final DataSchemaNode condLeaf = module.findDataChildByName(leafrefNode).get();
-        assertTrue(condLeaf instanceof LeafSchemaNode);
-        final LeafSchemaNode leaf = (LeafSchemaNode) condLeaf;
-        final TypeDefinition<?> leafType = leaf.getType();
-
-        provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-    }
 }
