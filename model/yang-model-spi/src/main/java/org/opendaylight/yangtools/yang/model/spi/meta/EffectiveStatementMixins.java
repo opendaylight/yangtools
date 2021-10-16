@@ -98,10 +98,13 @@ public final class EffectiveStatementMixins {
      *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @param <D> Class representing declared version of this statement.
+     * @deprecated See deprecation notice in {@link AddedByUsesAware}
      */
+    @Deprecated(since = "7.0.9")
     public interface AddedByUsesMixin<A, D extends DeclaredStatement<A>>
             extends EffectiveStatementWithFlags<A, D>, AddedByUsesAware {
         @Override
+        @Deprecated(since = "7.0.9")
         default boolean isAddedByUses() {
             return (flags() & FlagsBuilder.ADDED_BY_USES) != 0;
         }
@@ -487,6 +490,7 @@ public final class EffectiveStatementMixins {
             static final int MANDATORY            = 0x0004;
 
             static final int AUGMENTING           = 0x0010;
+            @Deprecated(since = "7.0.9")
             static final int ADDED_BY_USES        = 0x0020;
             private static final int MASK_HISTORY = 0x0030;
 
