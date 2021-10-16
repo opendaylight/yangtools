@@ -25,24 +25,18 @@ import org.opendaylight.mdsal.binding.generator.BindingGeneratorUtil;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
@@ -94,19 +88,6 @@ public class TypeProviderTest {
         return (LeafSchemaNode) node;
     }
 
-    private static LeafListSchemaNode provideLeafListNodeFromTopLevelContainer(final Module module,
-            final String containerName, final String leafListNodeName) {
-        final QName containerNode = QName.create(module.getQNameModule(), containerName);
-        final DataSchemaNode rootNode = module.findDataChildByName(containerNode).get();
-        assertTrue(rootNode instanceof DataNodeContainer);
-
-        final DataNodeContainer rootContainer = (DataNodeContainer) rootNode;
-        final QName leafListNode = QName.create(module.getQNameModule(), leafListNodeName);
-        final DataSchemaNode node = rootContainer.findDataChildByName(leafListNode).get();
-        assertTrue(node instanceof LeafListSchemaNode);
-        return (LeafListSchemaNode) node;
-    }
-
     @Test
     public void javaTypeForSchemaDefinitionExtTypeTest() {
         final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
@@ -150,36 +131,6 @@ public class TypeProviderTest {
         final Range<?> constraint = rangeConstraints.get().getAllowedRanges().asRanges().iterator().next();
         assertEquals((byte) 1, constraint.lowerEndpoint());
         assertEquals((byte) 100, constraint.upperEndpoint());
-    }
-
-    @Test
-    public void javaTypeForSchemaDefinitionEmptyStringPatternTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final Module testTypeProvider = resolveModule("test-type-provider");
-        final TypeDefinition<?> emptyPatternString = resolveTypeDefinitionFromModule(testTypeProvider,
-            "empty-pattern-string");
-
-        assertNotNull(emptyPatternString);
-        final Restrictions restrictions = BindingGeneratorUtil.getRestrictions(emptyPatternString);
-
-        Type result = provider.javaTypeForSchemaDefinitionType(emptyPatternString, emptyPatternString, restrictions);
-        assertNotNull(result);
-        assertTrue(result instanceof GeneratedTransferObject);
-
-        result = provider.generatedTypeForExtendedDefinitionType(emptyPatternString, emptyPatternString);
-        assertNotNull(result);
-        assertTrue(result instanceof GeneratedTransferObject);
-    }
-
-    private static TypeDefinition<?> resolveTypeDefinitionFromModule(final Module module, final String typedefName) {
-        TypeDefinition<?> result = null;
-        for (final TypeDefinition<?> typedef : module.getTypeDefinitions()) {
-            if (typedef.getQName().getLocalName().equals(typedefName)) {
-                result = typedef;
-            }
-        }
-        return result;
     }
 
     @Test
@@ -261,210 +212,5 @@ public class TypeProviderTest {
         final TypeDefinition<?> leafType = leaf.getType();
 
         provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-    }
-
-    @Test
-    public void javaTypeForSchemaDefinitionIdentityrefExtTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "foo", "crypto");
-        final TypeDefinition<?> leafType = leaf.getType();
-
-        final Type result = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-        assertNotNull(result);
-        assertTrue(result instanceof ParameterizedType);
-    }
-
-    @Test
-    public void javaTypeForSchemaDefinitionForExtUnionWithSimpleTypesTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "use-of-unions",
-            "simple-int-types-union");
-        final TypeDefinition<?> leafType = leaf.getType();
-
-        final Type result = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-        assertNotNull(result);
-        assertTrue(result instanceof GeneratedTransferObject);
-        assertEquals("YangUnion", result.getName());
-        //TODO: write additional asserts to compare whole GeneratedTrasnferObject against yang union definition
-    }
-
-    @Test
-    public void javaTypeForSchemaDefinitionForExtComplexUnionWithInnerUnionTypesTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "use-of-unions",
-            "complex-union");
-        final TypeDefinition<?> leafType = leaf.getType();
-
-        final Type result = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-        assertNotNull(result);
-        assertTrue(result instanceof GeneratedTransferObject);
-        assertEquals("ComplexUnion", result.getName());
-        //TODO: write additional asserts to compare whole GeneratedTrasnferObject against yang union definition
-    }
-
-    @Test
-    public void javaTypeForSchemaDefinitionForExtUnionWithInnerUnionAndSimpleTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-        final LeafSchemaNode leaf = provideLeafNodeFromTopLevelContainer(TEST_TYPE_PROVIDER, "use-of-unions",
-            "complex-string-int-union");
-        final TypeDefinition<?> leafType = leaf.getType();
-
-        final Type result = provider.javaTypeForSchemaDefinitionType(leafType, leaf);
-        assertNotNull(result);
-        assertTrue(result instanceof GeneratedTransferObject);
-        assertEquals("ComplexStringIntUnion", result.getName());
-        //TODO: write additional asserts to compare whole GeneratedTrasnferObject against yang union definition
-    }
-
-    @Test
-    public void provideGeneratedTOBuilderForUnionTypeDefWithInnerUnionTypesTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final TypeDefinition<?> unionTypeDef = resolveTypeDefinitionFromModule(TEST_TYPE_PROVIDER, "complex-union");
-
-        assertNotNull(unionTypeDef);
-        assertTrue(unionTypeDef.getBaseType() instanceof UnionTypeDefinition);
-        GeneratedTOBuilder unionTypeBuilder = provider.provideGeneratedTOBuilderForUnionTypeDef(
-            JavaTypeName.create("test.package.name", BindingMapping.getClassName(unionTypeDef.getQName())),
-            (UnionTypeDefinition)unionTypeDef.getBaseType(), unionTypeDef);
-
-        assertNotNull(unionTypeBuilder);
-
-        GeneratedTransferObject unionType = unionTypeBuilder.build();
-        assertEquals("ComplexUnion", unionType.getName());
-    }
-
-    @Test
-    public void provideGeneratedTOBuilderForUnionTypeDefWithInnerUnionAndSimpleTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final TypeDefinition<?> unionTypeDef = resolveTypeDefinitionFromModule(TEST_TYPE_PROVIDER,
-            "complex-string-int-union");
-
-        assertNotNull(unionTypeDef);
-        assertTrue(unionTypeDef.getBaseType() instanceof UnionTypeDefinition);
-        final GeneratedTOBuilder unionTypeBuilder = provider.provideGeneratedTOBuilderForUnionTypeDef(
-            JavaTypeName.create("test.package.name", BindingMapping.getClassName(unionTypeDef.getQName())),
-            (UnionTypeDefinition)unionTypeDef.getBaseType(), unionTypeDef);
-
-        assertNotNull(unionTypeBuilder);
-
-        final GeneratedTransferObject unionType = unionTypeBuilder.build();
-        assertEquals("ComplexStringIntUnion", unionType.getName());
-    }
-
-    @Test
-    public void generatedTypeForExtendedDefinitionTypeTest() {
-        final AbstractTypeProvider provider = new CodegenTypeProvider(SCHEMA_CONTEXT);
-
-        final Module baseYangTypes = resolveModule("base-yang-types");
-
-        Type yangBoolean = null;
-        Type yangEmpty = null;
-        Type yangEnumeration = null;
-        Type yangInt8 = null;
-        Type yangInt8Restricted = null;
-        Type yangInt16 = null;
-        Type yangInt32 = null;
-        Type yangInt64 = null;
-        Type yangString = null;
-        Type yangDecimal = null;
-        Type yangUint8 = null;
-        Type yangUint16 = null;
-        Type yangUint32 = null;
-        Type yangUint64 = null;
-        Type yangUnion = null;
-        Type yangBinary = null;
-        Type yangBits = null;
-        Type yangInstanceIdentifier = null;
-
-        for (final TypeDefinition<?> typedef : baseYangTypes.getTypeDefinitions()) {
-            final Type type = provider.generatedTypeForExtendedDefinitionType(typedef, typedef);
-            if (type instanceof GeneratedTransferObject) {
-                if (type.getName().equals("YangBoolean")) {
-                    yangBoolean = type;
-                } else if (type.getName().equals("YangEmpty")) {
-                    yangEmpty = type;
-                } else if (type.getName().equals("YangInt8")) {
-                    yangInt8 = type;
-                } else if (type.getName().equals("YangInt8Restricted")) {
-                    yangInt8Restricted = type;
-                } else if (type.getName().equals("YangInt16")) {
-                    yangInt16 = type;
-                } else if (type.getName().equals("YangInt32")) {
-                    yangInt32 = type;
-                } else if (type.getName().equals("YangInt64")) {
-                    yangInt64 = type;
-                } else if (type.getName().equals("YangString")) {
-                    yangString = type;
-                } else if (type.getName().equals("YangDecimal64")) {
-                    yangDecimal = type;
-                } else if (type.getName().equals("YangUint8")) {
-                    yangUint8 = type;
-                } else if (type.getName().equals("YangUint16")) {
-                    yangUint16 = type;
-                } else if (type.getName().equals("YangUint32")) {
-                    yangUint32 = type;
-                } else if (type.getName().equals("YangUint64")) {
-                    yangUint64 = type;
-                } else if (type.getName().equals("YangUnion")) {
-                    yangUnion = type;
-                } else if (type.getName().equals("YangBinary")) {
-                    yangBinary = type;
-                } else if (type.getName().equals("YangInstanceIdentifier")) {
-                    yangInstanceIdentifier = type;
-                } else if (type.getName().equals("YangBits")) {
-                    yangBits = type;
-                }
-            } else if (type instanceof Enumeration) {
-                if (type.getName().equals("YangEnumeration")) {
-                    yangEnumeration = type;
-                }
-            }
-        }
-
-        assertNotNull(yangBoolean);
-        assertNotNull(yangEmpty);
-        assertNotNull(yangEnumeration);
-        assertNotNull(yangInt8);
-        assertNotNull(yangInt8Restricted);
-        assertNotNull(yangInt16);
-        assertNotNull(yangInt32);
-        assertNotNull(yangInt64);
-        assertNotNull(yangString);
-        assertNotNull(yangDecimal);
-        assertNotNull(yangUint8);
-        assertNotNull(yangUint16);
-        assertNotNull(yangUint32);
-        assertNotNull(yangUint64);
-        assertNotNull(yangUnion);
-        assertNotNull(yangBinary);
-        assertNotNull(yangBits);
-        assertNotNull(yangInstanceIdentifier);
-    }
-
-    @Test
-    public void generatedTypeForExtendedDefinitionTypeWithInnerExtendedTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final Module baseYangTypes = resolveModule("test-type-provider");
-        final TypeDefinition<?> extYangInt8Typedef = resolveTypeDefinitionFromModule(baseYangTypes,
-            "extended-yang-int8");
-        assertNotNull(extYangInt8Typedef);
-        final Type extType = provider.generatedTypeForExtendedDefinitionType(extYangInt8Typedef, extYangInt8Typedef);
-        assertNotNull(extType);
-        assertTrue(extType instanceof GeneratedTransferObject);
-    }
-
-    @Test
-    public void generatedTypeForExtendedDefinitionTypeWithLeafrefBaseTypeTest() {
-        final AbstractTypeProvider provider = new RuntimeTypeProvider(SCHEMA_CONTEXT);
-
-        final Module baseYangTypes = resolveModule("test-type-provider");
-        final TypeDefinition<?> barItemLeafrefId = resolveTypeDefinitionFromModule(baseYangTypes,
-            "bar-item-leafref-id");
-        assertNotNull(barItemLeafrefId);
-        final Type extType = provider.generatedTypeForExtendedDefinitionType(barItemLeafrefId, barItemLeafrefId);
-        assertEquals(null, extType);
     }
 }
