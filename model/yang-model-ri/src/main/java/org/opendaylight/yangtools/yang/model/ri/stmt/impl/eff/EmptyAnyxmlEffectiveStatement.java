@@ -54,6 +54,7 @@ public class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatemen
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public final Optional<AnyxmlSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

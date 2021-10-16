@@ -22,6 +22,7 @@ public final class EmptyLeafEffectiveStatement extends AbstractLeafEffectiveStat
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<LeafSchemaNode> getOriginal() {
         return Optional.empty();
     }

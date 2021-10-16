@@ -55,6 +55,7 @@ public class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatem
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public final Optional<AnydataSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

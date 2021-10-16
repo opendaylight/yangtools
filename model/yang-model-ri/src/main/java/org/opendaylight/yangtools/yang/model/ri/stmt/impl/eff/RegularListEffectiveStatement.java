@@ -31,18 +31,19 @@ public final class RegularListEffectiveStatement extends AbstractListEffectiveSt
     public RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective, final QName argument,
             final int flags, final ListSchemaNode original) {
         super(originalEffective, argument, flags);
-        this.elementCountConstraint = originalEffective.elementCountConstraint;
+        elementCountConstraint = originalEffective.elementCountConstraint;
         this.original = original;
     }
 
     public RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective,
             final QName argument, final int flags, final ListSchemaNode original) {
         super(originalEffective, argument, flags);
-        this.elementCountConstraint = null;
+        elementCountConstraint = null;
         this.original = original;
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<ListSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

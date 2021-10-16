@@ -11,12 +11,14 @@ import java.util.Optional;
 
 /**
  * Schema Node which may be derived from other schema node using augmentation or uses statement.
+ *
+ * @deprecated This interface's sole purpose is to aid MD-SAL binding generator, which is now in a position to provide
+ *             to implement its logic without this interface.
  */
-// FIXME: 8.0.0: refactor this interface to take into account CopyableNode and AddedByUsesAware
+@Deprecated(since = "7.0.9", forRemoval = true)
 public interface DerivableSchemaNode<T extends DerivableSchemaNode<T>> extends DataSchemaNode {
     /**
-     * If this node is added by uses, returns original node definition from
-     * grouping where it was defined.
+     * If this node is added by uses, returns original node definition from grouping where it was defined.
      *
      * @return original node definition from grouping if this node is added by uses, absent otherwise
      */
