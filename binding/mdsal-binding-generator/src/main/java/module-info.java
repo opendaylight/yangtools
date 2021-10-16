@@ -29,7 +29,6 @@ module org.opendaylight.mdsal.binding.generator {
     requires org.opendaylight.yangtools.yang.model.ri;
     requires org.opendaylight.yangtools.yang.model.util;
     requires org.opendaylight.yangtools.odlext.model.api;
-    requires org.opendaylight.yangtools.util;
     requires org.slf4j;
 
     // Annotations
