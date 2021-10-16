@@ -11,16 +11,17 @@ import com.google.common.annotations.Beta;
 
 /**
  * Trait interface for {@link SchemaNode}s, which have the {@link #isAddedByUses()} method.
+ *
+ * @deprecated The only user of this trait is MD-SAL's binding component. As such, we provide enough information in
+ *             EffectiveStatement tree to reconstruct this information.
  */
 @Beta
-//FIXME: 8.0.0: refactor this interface to take into account DerivableSchemaNode
+@Deprecated(since = "7.0.9")
 public interface AddedByUsesAware {
     /**
-     * Returns <code>true</code> if this node was added by uses statement,
-     * otherwise returns <code>false</code>.
+     * Returns {@code true} if this node was added by uses statement, otherwise returns {@code false}.
      *
-     * @return <code>true</code> if this node was added by uses statement,
-     *         otherwise returns <code>false</code>
+     * @return {@code true} if this node was added by uses statement, otherwise returns {@code false}
      */
     boolean isAddedByUses();
 }

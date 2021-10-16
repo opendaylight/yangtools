@@ -33,6 +33,7 @@ public abstract class AbstractEffectiveUnknownSchmemaNode<A, D extends UnknownSt
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final @NonNull D declared;
     private final @NonNull A argument;
+    @Deprecated(since = "7.0.9")
     private final boolean addedByUses;
     private final boolean augmenting;
 
