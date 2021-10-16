@@ -18,12 +18,10 @@ import java.util.Optional;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.AbstractEnumerationBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenEnumerationBuilder;
 import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.binding.RegexPatterns;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -107,11 +105,6 @@ final class CodegenTypeProvider extends AbstractTypeProvider {
     @Override
     public GeneratedTOBuilder newGeneratedTOBuilder(final JavaTypeName identifier) {
         return new CodegenGeneratedTOBuilder(identifier);
-    }
-
-    @Override
-    public GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
-        return new CodegenGeneratedTypeBuilder(identifier);
     }
 
     @Override

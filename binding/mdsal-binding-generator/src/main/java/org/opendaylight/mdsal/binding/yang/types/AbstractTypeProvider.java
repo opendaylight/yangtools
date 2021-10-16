@@ -39,7 +39,6 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.mdsal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.mdsal.binding.model.ri.BaseYangTypes;
@@ -96,10 +95,6 @@ abstract class AbstractTypeProvider {
         resolveTypeDefsFromContext();
     }
 
-    public Map<Module, Set<GeneratedType>> getAdditionalTypes() {
-        return additionalTypes;
-    }
-
     /**
      * Resolve of YANG Type Definition to it's java counter part. If the Type Definition contains one of YANG primitive
      * types the method will return {@code java.lang.} counterpart. (For example if YANG type is int32 the Java
@@ -138,96 +133,6 @@ abstract class AbstractTypeProvider {
     public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode,
             final Restrictions restrictions) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Converts <code>typeDefinition</code> to concrete JAVA <code>Type</code>.
-     *
-     * @param typeDefinition
-     *            type definition which should be converted to JAVA
-     *            <code>Type</code>
-     * @return JAVA <code>Type</code> which represents
-     *         <code>typeDefinition</code>
-     * @throws IllegalArgumentException
-     *             <ul>
-     *             <li>if <code>typeDefinition</code> equal null</li>
-     *             <li>if Q name of <code>typeDefinition</code></li>
-     *             <li>if name of <code>typeDefinition</code></li>
-     *             </ul>
-     */
-    public GeneratedType generatedTypeForExtendedDefinitionType(final TypeDefinition<?> typeDefinition,
-            final SchemaNode parentNode) {
-        Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
-        if (typeDefinition.getQName() == null) {
-            throw new IllegalArgumentException("Type Definition cannot have unspecified QName (QName cannot be NULL!)");
-        }
-        Preconditions.checkArgument(typeDefinition.getQName().getLocalName() != null,
-                "Type Definitions Local Name cannot be NULL!");
-
-        final TypeDefinition<?> baseTypeDef = baseTypeDefForExtendedType(typeDefinition);
-        if (baseTypeDef instanceof LeafrefTypeDefinition || baseTypeDef instanceof IdentityrefTypeDefinition) {
-            /*
-             * This is backwards compatibility baggage from way back when. The problem at hand is inconsistency between
-             * the fact that identity is mapped to a Class, which is also returned from leaves which specify it like
-             * this:
-             *
-             *     identity iden;
-             *
-             *     container foo {
-             *         leaf foo {
-             *             type identityref {
-             *                 base iden;
-             *             }
-             *         }
-             *     }
-             *
-             * This results in getFoo() returning Class<? extends Iden>, which looks fine on the surface, but gets more
-             * dicey when we throw in:
-             *
-             *     typedef bar-ref {
-             *         type identityref {
-             *             base iden;
-             *         }
-             *     }
-             *
-             *     container bar {
-             *         leaf bar {
-             *             type bar-ref;
-             *         }
-             *     }
-             *
-             * Now we have competing requirements: typedef would like us to use encapsulation to capture the defined
-             * type, while getBar() wants us to retain shape with getFoo(), as it should not matter how the identityref
-             * is formed.
-             *
-             * In this particular case getFoo() won just after the Binding Spec was frozen, hence we do not generate
-             * an encapsulation for identityref typedefs.
-             *
-             * In case you are thinking we could get by having foo-ref map to a subclass of Iden, that is not a good
-             * option, as it would look as though it is the product of a different construct:
-             *
-             *     identity bar-ref {
-             *         base iden;
-             *     }
-             *
-             * Leading to a rather nice namespace clash and also slight incompatibility with unknown third-party
-             * sub-identities of iden.
-             *
-             * The story behind leafrefs is probably similar, but that needs to be ascertained.
-             */
-            return null;
-        }
-
-        final Module module = findParentModule(schemaContext, parentNode);
-        if (module != null) {
-            final Map<Optional<Revision>, Map<String, GeneratedType>> modulesByDate = genTypeDefsContextMap.get(
-                module.getName());
-            final Map<String, GeneratedType> genTOs = modulesByDate.get(module.getRevision());
-            if (genTOs != null) {
-                return genTOs.get(typeDefinition.getQName().getLocalName());
-            }
-        }
-        return null;
     }
 
     /**
@@ -326,8 +231,6 @@ abstract class AbstractTypeProvider {
     public abstract AbstractEnumerationBuilder newEnumerationBuilder(JavaTypeName identifier);
 
     public abstract GeneratedTOBuilder newGeneratedTOBuilder(JavaTypeName identifier);
-
-    public abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
 
     /**
      * Converts the pattern constraints to the list of the strings which represents these constraints.
@@ -514,7 +417,7 @@ abstract class AbstractTypeProvider {
      * @param typedef type definition which should be of type {@link UnionTypeDefinition}
      * @return generated TO builder with the list of enclosed generated TO builders
      */
-    public GeneratedTOBuilder provideGeneratedTOBuilderForUnionTypeDef(final JavaTypeName typeName,
+    private GeneratedTOBuilder provideGeneratedTOBuilderForUnionTypeDef(final JavaTypeName typeName,
             final UnionTypeDefinition typedef, final TypeDefinition<?> parentNode) {
         final List<GeneratedTOBuilder> builders = provideGeneratedTOBuildersForUnionTypeDef(typeName, typedef,
             parentNode);
@@ -539,7 +442,7 @@ abstract class AbstractTypeProvider {
      *             <li>if Qname of <code>typedef</code> is null</li>
      *             </ul>
      */
-    public List<GeneratedTOBuilder> provideGeneratedTOBuildersForUnionTypeDef(final JavaTypeName typeName,
+    private List<GeneratedTOBuilder> provideGeneratedTOBuildersForUnionTypeDef(final JavaTypeName typeName,
             final UnionTypeDefinition typedef, final SchemaNode parentNode) {
         requireNonNull(typedef, "Type Definition cannot be NULL!");
         requireNonNull(typedef.getQName(), "Type definition QName cannot be NULL!");
@@ -783,7 +686,6 @@ abstract class AbstractTypeProvider {
         return BindingMapping.normalizePackageName(builder.toString());
     }
 
-
     /**
      * Converts <code>typeDef</code> which should be of the type <code>BitsTypeDefinition</code>
      * to <code>GeneratedTOBuilder</code>. All the bits of the typeDef are added to returning generated TO as
@@ -798,7 +700,7 @@ abstract class AbstractTypeProvider {
      *             <li>if <code>basePackageName</code> equals null</li>
      *             </ul>
      */
-    public GeneratedTOBuilder provideGeneratedTOBuilderForBitsTypeDefinition(final JavaTypeName typeName,
+    private GeneratedTOBuilder provideGeneratedTOBuilderForBitsTypeDefinition(final JavaTypeName typeName,
             final BitsTypeDefinition typeDef, final String moduleName) {
         final GeneratedTOBuilder genTOBuilder = newGeneratedTOBuilder(typeName);
         genTOBuilder.setSchemaPath(typeDef.getPath());
@@ -999,7 +901,7 @@ abstract class AbstractTypeProvider {
         return name.substring(0, dollar + 1) + newSuffix;
     }
 
-    public static void addUnitsToGenTO(final GeneratedTOBuilder to, final String units) {
+    private static void addUnitsToGenTO(final GeneratedTOBuilder to, final String units) {
         if (!Strings.isNullOrEmpty(units)) {
             to.addConstant(Types.STRING, "_UNITS", "\"" + units + "\"");
             final GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("UNITS");
