@@ -20,24 +20,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 public interface AugmentationSchemaNode extends DataNodeContainer, NotificationNodeContainer, ActionNodeContainer,
         WhenConditionAware, WithStatus, EffectiveStatementEquivalent<AugmentEffectiveStatement> {
     /**
-     * Returns augmentation schema path.
+     * Returns augmentation target path.
      *
-     * @return SchemaNodeIdentifier that identifies a node in the schema tree. This node
-     *         is called the augment's target node. The target node MUST be
-     *         either a container, list, choice, case, input, output, or
-     *         notification node. It is augmented with the nodes defined as
-     *         child nodes of this AugmentationSchema.
+     * @return SchemaNodeIdentifier that identifies a node in the schema tree. This node is called the augment's target
+     *         node. The target node MUST be either a container, list, choice, case, input, output, or anotification
+     *         node. It is augmented with the nodes defined as child nodes of this AugmentationSchema.
      */
     default SchemaNodeIdentifier getTargetPath() {
         return asEffectiveStatement().argument();
     }
 
     /**
-     * Returns Augmentation Definition from which this augmentation is derived
-     * if augmentation was added transitively via augmented uses.
+     * Returns Augmentation Definition from which this augmentation is derived if augmentation was added transitively
+     * via augmented uses.
      *
-     * @return Augmentation Definition from which this augmentation is derived
-     *         if augmentation was added transitively via augmented uses.
+     * @return Augmentation Definition from which this augmentation is derived if augmentation was added transitively
+     *         via augmented uses.
+     * @deprecated This method has only a single user, who should be able to do without it.
      */
+    @Deprecated(since = "7.0.9", forRemoval = true)
     Optional<AugmentationSchemaNode> getOriginalDefinition();
 }

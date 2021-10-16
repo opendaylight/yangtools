@@ -54,8 +54,9 @@ public final class AugmentEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<AugmentationSchemaNode> getOriginalDefinition() {
-        return Optional.ofNullable(this.original);
+        return Optional.ofNullable(original);
     }
 
     @Override
