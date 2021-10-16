@@ -87,6 +87,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
+        @Deprecated(since = "7.0.9", forRemoval = true)
         final SchemaPath implicitSchemaPathParent() {
             return SchemaPath.ROOT;
         }
@@ -142,6 +143,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
+        @Deprecated(since = "7.0.9", forRemoval = true)
         final SchemaPath implicitSchemaPathParent() {
             return SchemaPath.SAME;
         }
@@ -244,10 +246,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
     }
 
+    @Deprecated(since = "7.0.9", forRemoval = true)
     private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, SchemaPath> SCHEMAPATH_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, SchemaPath.class, "schemaPath");
 
     // Cached SchemaPath.
+    @Deprecated(since = "7.0.9", forRemoval = true)
     private volatile SchemaPath schemaPath;
     // Cached hashCode
     private volatile int hash;
@@ -288,7 +292,9 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * Create the {@link SchemaPath} equivalent of this identifier.
      *
      * @return SchemaPath equivalent.
+     * @deprecated This method is scheduled for removal along with {@link SchemaPath}.
      */
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public final @NonNull SchemaPath asSchemaPath() {
         final SchemaPath ret = schemaPath;
         return ret != null ? ret : loadSchemaPath();
@@ -311,12 +317,14 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return MoreObjects.toStringHelper(className()).add("qnames", toStringQNames()).toString();
     }
 
+    @Deprecated(since = "7.0.9", forRemoval = true)
     abstract @NonNull SchemaPath implicitSchemaPathParent();
 
     abstract @NonNull Object pathObject();
 
     abstract @NonNull String className();
 
+    @Deprecated(since = "7.0.9", forRemoval = true)
     private @NonNull SchemaPath loadSchemaPath() {
         final SchemaPath newPath = implicitSchemaPathParent().createChild(getNodeIdentifiers());
         return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;

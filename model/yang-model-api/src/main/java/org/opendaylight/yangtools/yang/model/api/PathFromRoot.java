@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
+@Deprecated(since = "7.0.9", forRemoval = true)
 final class PathFromRoot extends AbstractList<QName> implements Immutable {
     private static final QName[] EMPTY_QNAMES = new QName[0];
     private static final VarHandle QNAMES;
