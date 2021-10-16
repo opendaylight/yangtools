@@ -11,7 +11,10 @@ package org.opendaylight.mdsal.binding.generator.impl;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.AfterClass;
@@ -25,14 +28,17 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.ri.Types;
-import org.opendaylight.mdsal.binding.yang.types.TypeProviderTest;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * General test suite revolving around {@link DefaultBindingGenerator}. This class holds tests originally aimed at
  * specific implementation methods, but now they really are all about integration testing.
+ *
+ * @author Lukas Sedlak
+ * @author Robert Varga
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultBindingGeneratorTest {
@@ -44,13 +50,17 @@ public class DefaultBindingGeneratorTest {
         "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.b.model.rev140915";
     public static final JavaTypeName CONSTRUCTION_TYPE_TEST =
         JavaTypeName.create(TEST_TYPE_PROVIDER, "ConstructionTypeTest");
+    public static final JavaTypeName TEST_TYPE_PROVIDER_B_DATA =
+        JavaTypeName.create(TEST_TYPE_PROVIDER_B, "TestTypeProviderBData");
+    public static final JavaTypeName TEST_TYPE_PROVIDER_FOO =
+        JavaTypeName.create(TEST_TYPE_PROVIDER, "Foo");
 
     public static EffectiveModelContext SCHEMA_CONTEXT;
     public static List<GeneratedType> TYPES;
 
     @BeforeClass
     public static void beforeClass() {
-        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResources(TypeProviderTest.class,
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResources(DefaultBindingGeneratorTest.class,
             "/base-yang-types.yang", "/test-type-provider-b.yang", "/test-type-provider.yang");
         TYPES = DefaultBindingGenerator.generateFor(SCHEMA_CONTEXT);
     }
@@ -63,7 +73,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     public void javaTypeForSchemaDefinitionLeafrefToEnumTypeTest() {
-        final var bData = assertGeneratedType(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "TestTypeProviderBData"));
+        final var bData = assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA);
         final var bDataMethods = bData.getMethodDefinitions();
         assertEquals(8, bDataMethods.size());
 
@@ -84,13 +94,8 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     public void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseTypeTest() {
-        final var type = assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getAesIdentityrefType").getReturnType();
-        assertThat(type, instanceOf(ParameterizedType.class));
-        final var pType = (ParameterizedType) type;
-        assertEquals(Types.CLASS, pType.getRawType());
-        final var pTypeArgs = pType.getActualTypeArguments();
-        assertEquals(1, pTypeArgs.length);
-        assertEquals(TEST_TYPE_PROVIDER + ".Aes", pTypeArgs[0].getFullyQualifiedName());
+        assertEquals(Types.parameterizedTypeFor(Types.CLASS, Type.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "Aes"))),
+            assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getAesIdentityrefType").getReturnType());
     }
 
     @Test
@@ -182,14 +187,9 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     public void javaTypeForSchemaDefinitionIdentityrefExtTypeTest() {
-        final var type = assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "Foo"), "getCrypto")
-            .getReturnType();
-        assertThat(type, instanceOf(ParameterizedType.class));
-        final var param = (ParameterizedType) type;
-        assertEquals(JavaTypeName.create(Class.class), param.getIdentifier());
-        final var params = param.getActualTypeArguments();
-        assertEquals(1, params.length);
-        assertEquals(Types.wildcardTypeFor(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg")), params[0]);
+        assertEquals(Types.parameterizedTypeFor(Types.CLASS,
+            Types.wildcardTypeFor(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg"))),
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getCrypto").getReturnType());
     }
 
     @Test
@@ -205,18 +205,85 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     public void testUnresolvedLeafref() {
-        assertEquals(Types.objectType(), assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "Grp"),
-            "getUnresolvableLeafref").getReturnType());
+        assertSame(Types.objectType(),
+            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "Grp"), "getUnresolvableLeafref")
+                .getReturnType());
     }
 
     @Test
     public void javaTypeForSchemaDefinitionInvalidLeafrefPathTest() {
-        final var ctx = YangParserTestUtils.parseYangResources(TypeProviderTest.class, "/unresolvable-leafref.yang");
+        final var ctx = YangParserTestUtils.parseYangResource("/unresolvable-leafref.yang");
         final var ex = assertThrows(IllegalArgumentException.class, () -> DefaultBindingGenerator.generateFor(ctx));
         assertEquals("Failed to find leafref target /somewhere/i/belong", ex.getMessage());
         final var cause = ex.getCause();
         assertThat(cause, instanceOf(IllegalArgumentException.class));
         assertEquals("Data tree child (foo)somewhere not present", cause.getMessage());
+    }
+
+    @Test
+    public void javaTypeForSchemaDefinitionConditionalLeafrefTest() {
+        // Note: previous incarnation did not resolve this, as the expression (pointed to a list)
+        assertSame(assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, "getConditionalLeafref").getReturnType());
+    }
+
+    @Test
+    public void javaTypeForSchemaDefinitionLeafrefExtTypeTest() {
+        assertSame(assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")),
+            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "Bar"), "getLeafrefValue").getReturnType());
+        assertSame(assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, "getId").getReturnType());
+    }
+
+    @Test
+    public void javaTypeForSchemaDefinitionEnumExtTypeTest() {
+        final var expected = assertGeneratedType(JavaTypeName.create(BASE_YANG_TYPES, "YangEnumeration"));
+        assertThat(expected, instanceOf(Enumeration.class));
+        var enumValues = ((Enumeration) expected).getValues();
+        assertEquals(2, enumValues.size());
+        assertEquals("a", enumValues.get(0).getName());
+        assertEquals("A", enumValues.get(0).getMappedName());
+        assertEquals("b", enumValues.get(1).getName());
+        assertEquals("B", enumValues.get(1).getMappedName());
+
+        assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveEnumLeaf").getReturnType());
+
+        // Note: this part of the test contained invalid assertion that the return would be java.lang.Enum
+        final var type = assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveDirectUseOfEnum").getReturnType();
+        assertEquals(TEST_TYPE_PROVIDER_FOO.createEnclosed("ResolveDirectUseOfEnum"), type.getIdentifier());
+        assertThat(expected, instanceOf(Enumeration.class));
+        enumValues = ((Enumeration) type).getValues();
+        assertEquals(3, enumValues.size());
+        assertEquals("x", enumValues.get(0).getName());
+        assertEquals("X", enumValues.get(0).getMappedName());
+        assertEquals("y", enumValues.get(1).getName());
+        assertEquals("Y", enumValues.get(1).getMappedName());
+        assertEquals("z", enumValues.get(2).getName());
+        assertEquals("Z", enumValues.get(2).getMappedName());
+    }
+
+    @Test
+    public void javaTypeForSchemaDefinitionRestrictedExtTypeTest() {
+        final var expected = assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8Restricted"));
+        assertEquals(1, expected.getProperties().size());
+        final var rangeConstraints = expected.getRestrictions().getRangeConstraint();
+        assertTrue(rangeConstraints.isPresent());
+        final var it = rangeConstraints.orElseThrow().getAllowedRanges().asRanges().iterator();
+        assertTrue(it.hasNext());
+        final var constraint = it.next();
+        assertEquals((byte) 1, constraint.lowerEndpoint());
+        assertEquals((byte) 100, constraint.upperEndpoint());
+        assertFalse(it.hasNext());
+
+        assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getRestrictedInt8Type").getReturnType());
+    }
+
+    @Test
+    public void javaTypeForSchemaDefinitionExtTypeTest() {
+        final var expected = assertGTO(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
+        assertEquals(1, expected.getProperties().size());
+
+        assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getYangInt8Type").getReturnType());
     }
 
     private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {
