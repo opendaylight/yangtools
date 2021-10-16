@@ -7,6 +7,11 @@
 //
 parser grammar YangStatementParser;
 
+// This ANTLR4 grammar serves as the lexer for the actual YANG parser, which
+// is built on top of it in Java code. The reason for this split is that we
+// need to perform string interpretation in a way which takes into account
+// yang-version, since RFC7950 (YANG 1.1) is stricter (and saner) when it comes
+// to escaping and similar.
 options {
     tokenVocab = YangStatementLexer;
 }
@@ -33,7 +38,7 @@ argument :
     // Quoted string and concatenations thereof. We are sacrificing brewity
     // here to eliminate the need for another parser construct. Quoted strings
     // account for about 50% of all arguments encountered -- hence the added
-    // parse tree indirection is very visible.
+    // parse tree indirection is very visible in terms of memory usage.
     (DQUOT_STRING? DQUOT_END | SQUOT_STRING? SQUOT_END)
     (SEP* PLUS SEP* (DQUOT_STRING? DQUOT_END | SQUOT_STRING? SQUOT_END))*
     |
@@ -54,7 +59,7 @@ unquotedString :
     // having one level for each such concatenation. For a test case imagine
     // how "a*b/c*d*e**f" would get parsed with a recursive grammar.
     //
-    // Now we cannot do much aboud tokenization, but we can statically express
+    // Now we cannot do much about tokenization, but we can statically express
     // the shape we are looking for:
 
     //   so an unquoted string may optionally start with a single SLASH or any

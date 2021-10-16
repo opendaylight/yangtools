@@ -41,7 +41,7 @@ PLUS : '+' -> type(PLUS);
 //   Note that inside a quoted string (Section 6.1.3), these character
 //   pairs are never interpreted as the start or end of a comment.
 //
-// What constitutes 'end of the line' is not specified in RFC7950, hence
+// What constitutes 'end of the line' is not specified in RFC6020, hence
 // we are using RFC7950-clarified definition. Note we also need to handle
 // the case of EOF, as the user may not have included a newline.
 LINE_COMMENT : '//' .*? '\r'? ('\n' | EOF) -> skip;
