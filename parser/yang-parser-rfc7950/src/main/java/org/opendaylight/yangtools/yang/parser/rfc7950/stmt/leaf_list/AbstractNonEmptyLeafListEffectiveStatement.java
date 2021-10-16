@@ -31,18 +31,19 @@ abstract class AbstractNonEmptyLeafListEffectiveStatement extends AbstractLeafLi
     AbstractNonEmptyLeafListEffectiveStatement(final AbstractNonEmptyLeafListEffectiveStatement originalEffecive,
             final LeafListSchemaNode original, final Immutable path, final int flags) {
         super(originalEffecive, path, flags);
-        this.elementCountConstraint = originalEffecive.elementCountConstraint;
+        elementCountConstraint = originalEffecive.elementCountConstraint;
         this.original = original;
     }
 
     AbstractNonEmptyLeafListEffectiveStatement(final EmptyLeafListEffectiveStatement originalEffective,
             final LeafListSchemaNode original, final Immutable path, final int flags) {
         super(originalEffective, path, flags);
-        this.elementCountConstraint = null;
+        elementCountConstraint = null;
         this.original = original;
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public final Optional<LeafListSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

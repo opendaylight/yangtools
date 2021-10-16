@@ -32,18 +32,19 @@ final class RegularListEffectiveStatement extends AbstractListEffectiveStatement
     RegularListEffectiveStatement(final RegularListEffectiveStatement originalEffective, final ListSchemaNode original,
             final Immutable path, final int flags) {
         super(originalEffective, path, flags);
-        this.elementCountConstraint = originalEffective.elementCountConstraint;
+        elementCountConstraint = originalEffective.elementCountConstraint;
         this.original = original;
     }
 
     RegularListEffectiveStatement(final EmptyListEffectiveStatement originalEffective, final ListSchemaNode original,
             final Immutable path, final int flags) {
         super(originalEffective, path, flags);
-        this.elementCountConstraint = null;
+        elementCountConstraint = null;
         this.original = original;
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<ListSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

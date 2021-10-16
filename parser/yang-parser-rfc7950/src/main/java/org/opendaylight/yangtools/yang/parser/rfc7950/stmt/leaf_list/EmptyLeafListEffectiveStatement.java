@@ -29,6 +29,7 @@ final class EmptyLeafListEffectiveStatement extends AbstractLeafListEffectiveSta
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<LeafListSchemaNode> getOriginal() {
         return Optional.empty();
     }

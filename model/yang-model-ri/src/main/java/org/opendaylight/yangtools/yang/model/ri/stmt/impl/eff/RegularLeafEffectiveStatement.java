@@ -31,6 +31,7 @@ public final class RegularLeafEffectiveStatement extends AbstractLeafEffectiveSt
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<LeafSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

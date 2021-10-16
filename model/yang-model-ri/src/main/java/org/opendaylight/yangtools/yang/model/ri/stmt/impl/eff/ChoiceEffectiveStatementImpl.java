@@ -54,8 +54,8 @@ public final class ChoiceEffectiveStatementImpl
         super(origEffective);
         this.path = requireNonNull(path);
         this.flags = flags;
-        this.defaultCase = origEffective.defaultCase;
-        this.original = newOriginal;
+        defaultCase = origEffective.defaultCase;
+        original = newOriginal;
     }
 
     @Override
@@ -74,6 +74,7 @@ public final class ChoiceEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<ChoiceSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

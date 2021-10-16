@@ -28,6 +28,7 @@ final class EmptyListEffectiveStatement extends AbstractListEffectiveStatement {
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<? extends SchemaNode> getOriginal() {
         return Optional.empty();
     }

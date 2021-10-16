@@ -56,6 +56,7 @@ public final class DeclaredCaseEffectiveStatement
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<CaseSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }

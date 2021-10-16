@@ -80,6 +80,7 @@ public final class ContainerEffectiveStatementImpl
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public Optional<ContainerSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }
