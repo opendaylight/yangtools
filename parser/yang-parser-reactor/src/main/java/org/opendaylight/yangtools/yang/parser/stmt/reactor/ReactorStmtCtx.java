@@ -244,6 +244,7 @@ abstract class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extends Effec
     }
 
     @Override
+    @Deprecated(since = "7.0.9", forRemoval = true)
     public final EffectiveStatement<?, ?> original() {
         return getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
     }
