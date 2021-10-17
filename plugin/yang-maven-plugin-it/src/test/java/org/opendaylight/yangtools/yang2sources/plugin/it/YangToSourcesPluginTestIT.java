@@ -111,7 +111,9 @@ public class YangToSourcesPluginTestIT {
     static Verifier setUp(final String project, final boolean ignoreF)
             throws VerificationException, URISyntaxException, IOException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/" + project + "pom.xml");
-        final Verifier verifier = new Verifier(new File(path.toURI()).getParent());
+        final String parent = new File(path.toURI()).getParent();
+
+        final Verifier verifier = new Verifier(parent);
         if (ignoreF) {
             verifier.addCliOption("-fn");
         }
@@ -122,6 +124,11 @@ public class YangToSourcesPluginTestIT {
             verifier.addCliOption(maybeSettings.get());
         }
         verifier.setMavenDebug(true);
+
+        // Do NOT fork, so failsafe sees the execution
+        verifier.setForkJvm(false);
+        verifier.setSystemProperty("maven.multiModuleProjectDirectory", parent);
+
         verifier.executeGoal("generate-sources");
         return verifier;
     }
