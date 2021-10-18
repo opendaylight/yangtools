@@ -21,6 +21,11 @@
     <artifactId>yang-maven-plugin-it</artifactId>
     <version>8.0.0-SNAPSHOT</version>
 
+    <properties>
+        <!-- We are doing abhorrent things here unpacking our dependencies, which confuses analysis, just skip it -->
+        <odlparent.dependency.skip>true</odlparent.dependency.skip>
+    <dependencies>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
@@ -33,42 +38,37 @@
             <artifactId>guava</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-      <testResources>
-        <testResource>
-          <directory>${basedir}/src/test/resources</directory>
-          <filtering>true</filtering>
-        </testResource>
-      </testResources>
+        <testResources>
+            <testResource>
+                <directory>${basedir}/src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
-          <plugin>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-testResources</id>
-                <phase>process-test-resources</phase>
-                <goals>
-                  <goal>testResources</goal>
-                </goals>
-                <configuration>
-                  <useDefaultDelimiters>false</useDefaultDelimiters>
-                  <delimiters>
-                    <delimiter>@</delimiter>
-                  </delimiters>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
             <plugin>
-                <artifactId>maven-failsafe-plugin</artifactId>
+                <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>default-testResources</id>
+                        <phase>process-test-resources</phase>
                         <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
+                            <goal>testResources</goal>
                         </goals>
+                        <configuration>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+                            <delimiters>
+                                <delimiter>@</delimiter>
+                            </delimiters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -94,14 +94,71 @@
                 </configuration>
                 <executions>
                     <execution>
-                      <phase>pre-integration-test</phase>
-                      <goals>
-                          <goal>effective-settings</goal>
-                      </goals>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>effective-settings</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <!-- We want to pass argLine down to maven invocations, not to failsafe -->
+                            <argLine>-DitArgPath='@{argLine}'</argLine>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>merge-reports</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}/test-classes/test-parent</directory>
+                                    <includes>
+                                        <include>*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Okay, this is rather ugly, but is needed to fool JaCoCo to generate an XML report -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>fake-classes</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>org.opendaylight.yangtools</includeGroupIds>
+                            <includes>**/*.class</includes>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>
