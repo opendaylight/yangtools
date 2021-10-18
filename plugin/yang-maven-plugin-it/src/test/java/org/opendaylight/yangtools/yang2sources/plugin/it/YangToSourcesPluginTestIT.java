@@ -25,9 +25,36 @@ import java.util.Optional;
 import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class YangToSourcesPluginTestIT {
+    private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesPluginTestIT.class);
+    private static final String MAVEN_OPTS = "MAVEN_OPTS";
+    private static final String DESTFILE = "destfile=";
+
+    private static String ARGLINE_PREFIX;
+    private static String ARGLINE_SUFFIX;
+
+    @BeforeClass
+    public static void beforeClass() {
+        final String argLine = System.getProperty("itArgPath");
+        if (argLine == null || argLine.isBlank()) {
+            return;
+        }
+
+        final int destFileIndex = argLine.indexOf(DESTFILE);
+        if (destFileIndex == -1) {
+            LOG.warn("Cannot find \"{} in \"{}\", disabling integration", DESTFILE, argLine);
+            return;
+        }
+
+        ARGLINE_PREFIX = argLine.substring(0, destFileIndex + DESTFILE.length());
+        final int commaIndex = argLine.indexOf(',', ARGLINE_PREFIX.length());
+        ARGLINE_SUFFIX = commaIndex == -1 ? "" : argLine.substring(commaIndex);
+    }
 
     // TODO Test yang files in transitive dependencies
 
@@ -111,17 +138,29 @@ public class YangToSourcesPluginTestIT {
     static Verifier setUp(final String project, final boolean ignoreF)
             throws VerificationException, URISyntaxException, IOException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/" + project + "pom.xml");
-        final Verifier verifier = new Verifier(new File(path.toURI()).getParent());
+        final File parent = new File(path.toURI()).getParentFile();
+        final Verifier verifier = new Verifier(parent.toString());
         if (ignoreF) {
             verifier.addCliOption("-fn");
         }
 
-        final Optional<String> maybeSettings = getEffectiveSettingsXML();
-        if (maybeSettings.isPresent()) {
+        getEffectiveSettingsXML().ifPresent(settings -> {
             verifier.addCliOption("-gs");
-            verifier.addCliOption(maybeSettings.get());
-        }
+            verifier.addCliOption(settings);
+        });
+
+        verifier.setForkJvm(true);
         verifier.setMavenDebug(true);
+
+        if (ARGLINE_PREFIX != null) {
+            final String argLine =
+                ARGLINE_PREFIX + parent.getParent() + "/" + parent.getName() + ".exec" + ARGLINE_SUFFIX;
+            final String mavenOpts = System.getenv(MAVEN_OPTS);
+            final String newMavenOpts = mavenOpts == null ? argLine : mavenOpts + " " + argLine;
+            LOG.debug("Adjusted {} to \"{}\"", MAVEN_OPTS, newMavenOpts);
+            verifier.setEnvironmentVariable(MAVEN_OPTS, newMavenOpts);
+        }
+
         verifier.executeGoal("generate-sources");
         return verifier;
     }
