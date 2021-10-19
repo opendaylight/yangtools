@@ -76,9 +76,9 @@ public interface DataNodeContainer {
      *
      * @param name QName of child
      * @return child node of this DataNodeContainer if child with given name is present, null otherwise
+     * @throws NullPointerException if {@code name} is null
      * @deprecated Use {@link #dataChildByName(QName)} or {@link #findDataChildByName(QName)} instead. This method will
      *             be repurposed to assert existence in the next major release.
-     * @throws NullPointerException if {@code name} is null
      */
     @Deprecated(forRemoval = true)
     default @Nullable DataSchemaNode getDataChildByName(final QName name) {
