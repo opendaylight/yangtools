@@ -13,7 +13,7 @@ package org.opendaylight.yangtools.yang.binding;
  * interface. In case they do, {@link EventInstantAware#eventInstant()} returns the time when this notification was
  * generated.
  */
-// FIXME: 6.0.0: narrow implementedInterface()
-public interface Notification extends BaseNotification {
-
+public interface Notification<T extends Notification<T> & DataObject> extends BaseNotification {
+    @Override
+    Class<T> implementedInterface();
 }

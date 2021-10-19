@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.model.ri;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
@@ -37,7 +38,6 @@ public class BindingTypesTest {
         assertEquals("IDENTIFIABLE", typeForClass(Identifiable.class), BindingTypes.IDENTIFIABLE);
         assertEquals("IDENTIFIER", typeForClass(Identifier.class), BindingTypes.IDENTIFIER);
         assertEquals("INSTANCE_IDENTIFIER", typeForClass(InstanceIdentifier.class), BindingTypes.INSTANCE_IDENTIFIER);
-        assertEquals("NOTIFICATION", typeForClass(Notification.class), BindingTypes.NOTIFICATION);
         assertEquals("NOTIFICATION_LISTENER", typeForClass(NotificationListener.class),
             BindingTypes.NOTIFICATION_LISTENER);
         assertEquals("RPC_SERVICE", typeForClass(RpcService.class), BindingTypes.RPC_SERVICE);
@@ -73,5 +73,17 @@ public class BindingTypesTest {
     public void testAugmentation() {
         final ParameterizedType augmentationType = BindingTypes.augmentation(Types.objectType());
         assertEquals("Augmentation", augmentationType.getName());
+    }
+
+    @Test
+    public void testNotificationNull() {
+        assertThrows(NullPointerException.class, () -> BindingTypes.notification(null));
+    }
+
+    @Test
+    public void testNotification() {
+        final ParameterizedType notificationType = BindingTypes.notification(Types.objectType());
+        assertEquals(Types.typeForClass(Notification.class), notificationType.getRawType());
+        assertArrayEquals(new Object[] { Types.objectType() }, notificationType.getActualTypeArguments());
     }
 }

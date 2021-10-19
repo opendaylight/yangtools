@@ -80,7 +80,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return Binding representation of Notification
      */
-    @Nullable Notification fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data);
+    @Nullable Notification<?> fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data);
 
     /**
      * Translates supplied NormalizedNode Notification into Binding data, optionally taking an instant
@@ -92,7 +92,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return Binding representation of Notification
      */
     @Beta
-    @Nullable Notification fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data,
+    @Nullable Notification<?> fromNormalizedNodeNotification(@NonNull Absolute path, @NonNull ContainerNode data,
             @Nullable Instant eventInstant);
 
     /**
@@ -134,7 +134,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing notification data
      * @return NormalizedNode representation of notification
      */
-    @NonNull ContainerNode toNormalizedNodeNotification(@NonNull Notification data);
+    @NonNull ContainerNode toNormalizedNodeNotification(@NonNull Notification<?> data);
 
     /**
      * Translates supplied Binding RPC input or output into NormalizedNode data.

@@ -58,7 +58,7 @@ final class NotificationGenerator extends AbstractCompositeGenerator<Notificatio
     private Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
         final AbstractCompositeGenerator<?> parent = getParent();
         if (parent instanceof ModuleGenerator) {
-            return BindingTypes.NOTIFICATION;
+            return BindingTypes.notification(builder);
         }
 
         final Type parentType = Type.of(parent.typeName());

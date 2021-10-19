@@ -89,7 +89,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
-    @NonNull BindingStreamEventWriter newNotificationWriter(@NonNull Class<? extends Notification> notification,
+    @NonNull BindingStreamEventWriter newNotificationWriter(@NonNull Class<? extends Notification<?>> notification,
             @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**

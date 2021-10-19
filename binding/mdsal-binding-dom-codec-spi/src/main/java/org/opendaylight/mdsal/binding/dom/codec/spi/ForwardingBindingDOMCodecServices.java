@@ -67,7 +67,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public ContainerNode toNormalizedNodeNotification(final Notification data) {
+    public ContainerNode toNormalizedNodeNotification(final Notification<?> data) {
         return delegate().toNormalizedNodeNotification(data);
     }
 
@@ -95,12 +95,12 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public Notification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
+    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data) {
         return delegate().fromNormalizedNodeNotification(path, data);
     }
 
     @Override
-    public Notification fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
+    public Notification<?> fromNormalizedNodeNotification(final Absolute path, final ContainerNode data,
             final Instant eventInstant) {
         return delegate().fromNormalizedNodeNotification(path, data, eventInstant);
     }
@@ -135,7 +135,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification> notification,
+    public BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification<?>> notification,
             final NormalizedNodeStreamWriter streamWriter) {
         return delegate().newNotificationWriter(notification, streamWriter);
     }

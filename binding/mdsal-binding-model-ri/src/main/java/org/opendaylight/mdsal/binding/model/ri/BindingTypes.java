@@ -51,7 +51,6 @@ public final class BindingTypes {
     public static final ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
     public static final ConcreteType TYPE_OBJECT = typeForClass(TypeObject.class);
     public static final ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
-    public static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     public static final ConcreteType NOTIFICATION_LISTENER = typeForClass(NotificationListener.class);
     public static final ConcreteType QNAME = typeForClass(QName.class);
     public static final ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
@@ -79,6 +78,7 @@ public final class BindingTypes {
     private static final ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
+    private static final ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final ConcreteType OPAQUE_OBJECT = typeForClass(OpaqueObject.class);
     private static final ConcreteType RPC_RESULT = typeForClass(RpcResult.class);
 
@@ -115,10 +115,22 @@ public final class BindingTypes {
     }
 
     /**
+     * Type specializing {@link Notification} for a particular type.
+     *
+     * @param concreteType The concrete type of this notification
+     * @return A parameterized type corresponding to {@code Notification<ConcreteType>}
+     * @throws NullPointerException if any argument is is null
+     */
+    public static ParameterizedType notification(final Type concreteType) {
+        return parameterizedTypeFor(NOTIFICATION, concreteType);
+    }
+
+    /**
      * Type specializing {@link InstanceNotification} for a particular type.
      *
+     * @param concreteType The concrete type of this notification
      * @param parent Type of parent defining the notification
-     * @return A parameterized type corresponding to {@code InstanceNotification<Parent>}
+     * @return A parameterized type corresponding to {@code InstanceNotification<ConcreteType, Parent>}
      * @throws NullPointerException if {@code parent} is is null
      */
     public static ParameterizedType instanceNotification(final Type concreteType, final Type parent) {
@@ -128,9 +140,10 @@ public final class BindingTypes {
     /**
      * Type specializing {@link InstanceNotification} for a particular type.
      *
+     * @param concreteType The concrete type of this notification
      * @param parent Type of parent defining the notification
      * @param keyType Type of parent's key
-     * @return A parameterized type corresponding to {@code KeyedInstanceNotification<ParentKey, Parent>}
+     * @return A parameterized type corresponding to {@code KeyedInstanceNotification<ConcreteType, ParentKey, Parent>}
      * @throws NullPointerException if any argument is is null
      */
     public static ParameterizedType keyedListNotification(final Type concreteType, final Type parent,
