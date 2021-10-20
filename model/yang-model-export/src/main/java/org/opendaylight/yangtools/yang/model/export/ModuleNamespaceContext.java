@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableListMultimap.Builder;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.Q
 
 final class ModuleNamespaceContext implements NamespaceContext {
     private static final Entry<String, String> YIN_PREFIX_AND_NAMESPACE =
-            new SimpleImmutableEntry<>(XMLConstants.DEFAULT_NS_PREFIX, YangConstants.RFC6020_YIN_NAMESPACE_STRING);
+            Map.entry(XMLConstants.DEFAULT_NS_PREFIX, YangConstants.RFC6020_YIN_NAMESPACE_STRING);
 
     private final ListMultimap<@NonNull String, @NonNull String> namespaceToPrefix;
     private final Map<String, @NonNull ModuleEffectiveStatement> prefixToModule;
@@ -106,7 +105,7 @@ final class ModuleNamespaceContext implements NamespaceContext {
 
         final String prefix = moduleToPrefix.get(module);
         checkArgument(prefix != null, "Module %s does not map to a prefix", module);
-        return new SimpleImmutableEntry<>(prefix, module.getNamespace().toString());
+        return Map.entry(prefix, module.getNamespace().toString());
     }
 
     Map<String, String> prefixesAndNamespaces() {
