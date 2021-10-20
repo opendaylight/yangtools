@@ -217,7 +217,8 @@ public class DefaultBindingGeneratorTest {
         assertEquals("Failed to find leafref target /somewhere/i/belong", ex.getMessage());
         final var cause = ex.getCause();
         assertThat(cause, instanceOf(IllegalArgumentException.class));
-        assertEquals("Data tree child (foo)somewhere not present", cause.getMessage());
+        assertEquals("Data tree child (foo)somewhere not present in module (foo)unresolvable-leafref",
+            cause.getMessage());
     }
 
     @Test
