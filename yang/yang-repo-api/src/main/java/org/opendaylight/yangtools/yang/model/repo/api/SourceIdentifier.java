@@ -67,7 +67,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     }
 
     /**
-     * Return an interned reference to a equivalent SemVerSourceIdentifier.
+     * Return an interned reference to an equivalent SourceIdentifier.
      *
      * @return Interned reference, or this object if it was interned.
      */
