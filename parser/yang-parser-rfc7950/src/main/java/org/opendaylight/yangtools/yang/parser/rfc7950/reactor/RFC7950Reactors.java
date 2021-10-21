@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
@@ -111,7 +110,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
@@ -283,7 +281,7 @@ public final class RFC7950Reactors {
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangParserConfiguration config) {
-        return addExtensions(vanillaReactorBuilder(config), config);
+        return vanillaReactorBuilder(config);
     }
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
@@ -293,15 +291,7 @@ public final class RFC7950Reactors {
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangXPathParserFactory xpathFactory, final YangParserConfiguration config) {
-        return addExtensions(vanillaReactorBuilder(xpathFactory, config), config);
-    }
-
-    private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
-            final @NonNull CustomCrossSourceStatementReactorBuilder builder, final YangParserConfiguration config) {
-        return builder
-                // Semantic version support
-                .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, new OpenConfigVersionSupport(config))
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR);
+        return vanillaReactorBuilder(xpathFactory, config);
     }
 
     /**
