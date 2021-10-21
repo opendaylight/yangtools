@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
@@ -27,17 +26,6 @@ public interface ModuleLike extends DataNodeContainer, DocumentedNode, Immutable
      * @return string with the name of the module
      */
     String getName();
-
-    /**
-     * Returns the semantic version of YANG module. If the semantic version is not specified, default semantic version
-     * of module is returned.
-     *
-     * @return SemVer semantic version of YANG module which is specified as argument of
-     *         {@code (urn:opendaylight:yang:extension:semantic-version?revision=2016-02-02)semantic-version} statement
-     * @deprecated Semantic version imports are deprecated.
-     */
-    @Deprecated(since = "8.0.4", forRemoval = true)
-    Optional<SemVer> getSemanticVersion();
 
     /**
      * Returns the prefix of the module.

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
+package org.opendaylight.yangtools.openconfig.parser;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -19,9 +19,7 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class OpenConfigVersionSupport
@@ -36,12 +34,6 @@ public final class OpenConfigVersionSupport
     @Override
     public SemVer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return SemVer.valueOf(value);
-    }
-
-    @Override
-    public void onLinkageDeclared(
-            final Mutable<SemVer, OpenConfigVersionStatement, OpenConfigVersionEffectiveStatement> stmt) {
-        stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.argument());
     }
 
     @Override
