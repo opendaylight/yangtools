@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
  * Source-specific mapping of prefixes to source identifier with specified semantic version.
  */
 @Beta
+@Deprecated(since = "7.0.11", forRemoval = true)
 public interface ImportPrefixToSemVerSourceIdentifier extends ParserNamespace<String, SemVerSourceIdentifier> {
     NamespaceBehaviour<String, SemVerSourceIdentifier, @NonNull ImportPrefixToSemVerSourceIdentifier> BEHAVIOUR =
         NamespaceBehaviour.rootStatementLocal(ImportPrefixToSemVerSourceIdentifier.class);
