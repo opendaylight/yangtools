@@ -29,5 +29,6 @@ public enum ImportResolutionMode {
      * This mode is considered experimental and may be subject to change.
      */
     @Beta
+    @Deprecated(since = "7.0.10", forRemoval = true)
     OPENCONFIG_SEMVER;
 }
