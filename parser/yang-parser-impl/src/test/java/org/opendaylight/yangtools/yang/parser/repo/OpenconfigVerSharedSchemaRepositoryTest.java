@@ -16,46 +16,11 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.ir.IRSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToIRTransformer;
 
 public class OpenconfigVerSharedSchemaRepositoryTest {
-
-    @Test
-    public void testSemVerSharedSchemaRepository() throws Exception {
-        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
-                "openconfig-ver-shared-schema-repo-test");
-
-        final SettableSchemaProvider<IRSchemaSource> bar = getImmediateYangSourceProviderFromResource(
-                "/openconfig-version/openconfigver-shared-schema-repository/bar@2016-01-01.yang");
-        bar.register(sharedSchemaRepository);
-        bar.setResult();
-        final SettableSchemaProvider<IRSchemaSource> foo = getImmediateYangSourceProviderFromResource(
-                "/openconfig-version/openconfigver-shared-schema-repository/foo.yang");
-        foo.register(sharedSchemaRepository);
-        foo.setResult();
-        final SettableSchemaProvider<IRSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
-                "/openconfig-version/openconfigver-shared-schema-repository/openconfig-extensions.yang");
-        semVer.register(sharedSchemaRepository);
-        semVer.setResult();
-
-        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory(
-            SchemaContextFactoryConfiguration.builder().setStatementParserMode(StatementParserMode.SEMVER_MODE)
-            .build());
-
-        final ListenableFuture<EffectiveModelContext> inetAndTopologySchemaContextFuture =
-                fact.createEffectiveModelContext(bar.getId(), foo.getId(), semVer.getId());
-        assertTrue(inetAndTopologySchemaContextFuture.isDone());
-        assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
-
-        final ListenableFuture<EffectiveModelContext> barSchemaContextFuture = fact.createEffectiveModelContext(
-            bar.getId(), semVer.getId());
-        assertTrue(barSchemaContextFuture.isDone());
-        assertSchemaContext(barSchemaContextFuture.get(), 2);
-    }
 
     @Test
     public void testSharedSchemaRepository() throws Exception {

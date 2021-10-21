@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
@@ -18,13 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
@@ -47,11 +43,8 @@ final class AssembleSources implements AsyncFunction<List<IRSchemaSource>, Effec
         this.parserFactory = parserFactory;
         this.config = config;
         switch (config.getStatementParserMode()) {
-            case SEMVER_MODE:
-                this.getIdentifier = AssembleSources::getSemVerIdentifier;
-                break;
             default:
-                this.getIdentifier = IRSchemaSource::getIdentifier;
+                getIdentifier = IRSchemaSource::getIdentifier;
         }
     }
 
@@ -64,9 +57,7 @@ final class AssembleSources implements AsyncFunction<List<IRSchemaSource>, Effec
 
         LOG.debug("Resolving dependency reactor {}", deps);
 
-        final StatementParserMode statementParserMode = config.getStatementParserMode();
-        final DependencyResolver res = statementParserMode == StatementParserMode.SEMVER_MODE
-                ? SemVerDependencyResolver.create(deps) : RevisionDependencyResolver.create(deps);
+        final DependencyResolver res = RevisionDependencyResolver.create(deps);
         if (!res.getUnresolvedSources().isEmpty()) {
             LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(),
                 res.getUnsatisfiedImports());
@@ -93,16 +84,6 @@ final class AssembleSources implements AsyncFunction<List<IRSchemaSource>, Effec
             throw new SchemaResolutionException("Failed to resolve required models", e);
         }
 
-        return immediateFluentFuture(schemaContext);
-    }
-
-    private static SemVerSourceIdentifier getSemVerIdentifier(final IRSchemaSource source) {
-        final SourceIdentifier identifier = source.getIdentifier();
-        final SemVer semver = YangModelDependencyInfo.findSemanticVersion(source.getRootStatement(), identifier);
-        if (identifier instanceof SemVerSourceIdentifier && semver == null) {
-            return (SemVerSourceIdentifier) identifier;
-        }
-
-        return SemVerSourceIdentifier.create(identifier.getName(), identifier.getRevision(), semver);
+        return FluentFutures.immediateFluentFuture(schemaContext);
     }
 }
