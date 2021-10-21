@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 
@@ -38,13 +37,6 @@ public interface ModuleImport extends DocumentedNode, EffectiveStatementEquivale
      * @return Revision of module to import
      */
     Optional<Revision> getRevision();
-
-    /**
-     * Returns the semantic version to import.
-     *
-     * @return Semantic version of module to import
-     */
-    Optional<SemVer> getSemanticVersion();
 
     /**
      * Returns the prefix associated with the imported module.

@@ -11,13 +11,11 @@ import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredEffectiveStatement.DefaultArgument.WithSubstatements;
 import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.DocumentedNodeMixin;
@@ -25,26 +23,17 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.D
 public final class ImportEffectiveStatementImpl extends WithSubstatements<String, ImportStatement>
         implements ImportEffectiveStatement, ModuleImport, DocumentedNodeMixin<String, ImportStatement> {
     private final @Nullable Revision revision;
-    private final @Nullable SemVer semVer;
 
     public ImportEffectiveStatementImpl(final ImportStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final @NonNull SourceIdentifier importedSource) {
         super(declared, substatements);
         revision = importedSource.getRevision().orElse(null);
-        semVer = importedSource instanceof SemVerSourceIdentifier
-            ? ((SemVerSourceIdentifier) importedSource).getSemanticVersion().orElse(null)
-                : null;
     }
 
     @Override
     public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
-    }
-
-    @Override
-    public Optional<SemVer> getSemanticVersion() {
-        return Optional.ofNullable(semVer);
     }
 
     @Override
