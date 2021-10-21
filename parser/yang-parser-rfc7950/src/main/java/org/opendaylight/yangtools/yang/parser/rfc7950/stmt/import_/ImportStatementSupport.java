@@ -134,11 +134,7 @@ public final class ImportStatementSupport
 
     @Override
     public void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
-        if (semanticVersioning) {
-            SemanticVersionImport.onLinkageDeclared(stmt);
-        } else {
-            RevisionImport.onLinkageDeclared(stmt);
-        }
+        RevisionImport.onLinkageDeclared(stmt);
     }
 
     @Override

@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
@@ -51,8 +50,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -214,10 +211,6 @@ public final class ModuleStatementSupport
         stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, moduleName);
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
-
-        if (semanticVersioning) {
-            addToSemVerModuleNamespace(stmt, moduleIdentifier);
-        }
     }
 
     @Override
@@ -292,13 +285,5 @@ public final class ModuleStatementSupport
 
     private static SourceException noNamespace(final @NonNull CommonStmtCtx stmt) {
         return new SourceException("No namespace declared in module", stmt);
-    }
-
-    private static void addToSemVerModuleNamespace(
-            final Mutable<Unqualified, ModuleStatement, ModuleEffectiveStatement> stmt,
-            final SourceIdentifier moduleIdentifier) {
-        final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(stmt.getRawArgument(),
-            stmt.getFromNamespace(SemanticVersionNamespace.class, stmt));
-        stmt.addToNs(SemanticVersionModuleNamespace.class, id, stmt);
     }
 }

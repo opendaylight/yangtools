@@ -16,7 +16,6 @@ import com.google.common.collect.Sets;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.YangNamespaceContextNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentImplicitHandlingNamespace;
@@ -111,8 +110,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
@@ -120,7 +117,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
@@ -285,7 +281,7 @@ public final class RFC7950Reactors {
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangParserConfiguration config) {
-        return addExtensions(vanillaReactorBuilder(config), config);
+        return vanillaReactorBuilder(config);
     }
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
@@ -295,18 +291,7 @@ public final class RFC7950Reactors {
 
     public static @NonNull CustomCrossSourceStatementReactorBuilder defaultReactorBuilder(
             final YangXPathParserFactory xpathFactory, final YangParserConfiguration config) {
-        return addExtensions(vanillaReactorBuilder(xpathFactory, config), config);
-    }
-
-    private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
-            final @NonNull CustomCrossSourceStatementReactorBuilder builder, final YangParserConfiguration config) {
-        return builder
-                // Semantic version support
-                .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, new OpenConfigVersionSupport(config))
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR)
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionModuleNamespace.BEHAVIOUR)
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE,
-                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR);
+        return vanillaReactorBuilder(xpathFactory, config);
     }
 
     /**
