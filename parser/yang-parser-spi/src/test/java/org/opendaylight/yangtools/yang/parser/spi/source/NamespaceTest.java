@@ -22,7 +22,6 @@ public class NamespaceTest {
         assertNotNull(ImpPrefixToNamespace.BEHAVIOUR);
         assertNotNull(ImportedModuleContext.BEHAVIOUR);
         assertNotNull(ImportPrefixToModuleCtx.BEHAVIOUR);
-        assertNotNull(ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR);
         assertNotNull(IncludedSubmoduleNameToModuleCtx.BEHAVIOUR);
         assertNotNull(IncludedModuleContext.BEHAVIOUR);
         assertNotNull(ModuleCtxToModuleQName.BEHAVIOUR);

@@ -111,8 +111,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SchemaTreeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
@@ -120,7 +118,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
@@ -302,11 +299,7 @@ public final class RFC7950Reactors {
             final @NonNull CustomCrossSourceStatementReactorBuilder builder, final YangParserConfiguration config) {
         return builder
                 // Semantic version support
-                .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, new OpenConfigVersionSupport(config))
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR)
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionModuleNamespace.BEHAVIOUR)
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE,
-                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR);
+                .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, new OpenConfigVersionSupport(config));
     }
 
     /**

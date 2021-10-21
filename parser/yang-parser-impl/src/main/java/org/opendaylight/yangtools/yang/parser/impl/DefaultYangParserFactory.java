@@ -37,8 +37,7 @@ import org.osgi.service.component.annotations.Reference;
 @Singleton
 @Component(immediate = true)
 public final class DefaultYangParserFactory implements YangParserFactory {
-    private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(
-        ImportResolutionMode.DEFAULT, ImportResolutionMode.OPENCONFIG_SEMVER);
+    private static final List<ImportResolutionMode> SUPPORTED_MODES = List.of(ImportResolutionMode.DEFAULT);
 
     private final ConcurrentMap<YangParserConfiguration, CrossSourceStatementReactor> reactors =
         new ConcurrentHashMap<>(2);
