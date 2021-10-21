@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -411,8 +410,7 @@ public class SchemaContextProxyTest {
         final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
         doReturn(Set.of(mockedContainer)).when(moduleConfig).getChildNodes();
 
-        final Collection<? extends DataSchemaNode> dataDefinitions =
-                filteringSchemaContextProxy.getDataDefinitions();
+        final Collection<? extends DataSchemaNode> dataDefinitions = filteringSchemaContextProxy.getDataDefinitions();
         assertTrue(dataDefinitions.contains(mockedContainer));
     }
 
@@ -596,12 +594,6 @@ public class SchemaContextProxyTest {
                 @Override
                 public String getPrefix() {
                     return module.getName();
-                }
-
-                @Override
-                @Deprecated(since = "8.0.4", forRemoval = true)
-                public Optional<SemVer> getSemanticVersion() {
-                    return module.getSemanticVersion();
                 }
 
                 @Override
