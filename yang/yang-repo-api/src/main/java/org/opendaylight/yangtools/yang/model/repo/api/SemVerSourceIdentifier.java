@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
 @Beta
+@Deprecated(since = "7.0.10", forRemoval = true)
 public final class SemVerSourceIdentifier extends SourceIdentifier {
     private static final long serialVersionUID = 1L;
     private final SemVer semVer;

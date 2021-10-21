@@ -66,6 +66,7 @@ public interface FileGenerator {
          * be satisfied by module which exports the latest compatible revision. Imports which do not specify semantic
          * version will be resolved just as they would be via {@link #REVISION_EXACT_OR_LATEST}.
          */
+        @Deprecated(since = "7.0.10", forRemoval = true)
         SEMVER_LATEST,
     }
 }

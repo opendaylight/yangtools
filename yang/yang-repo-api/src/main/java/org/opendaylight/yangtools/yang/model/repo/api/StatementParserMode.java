@@ -16,8 +16,9 @@ public enum StatementParserMode {
      */
     DEFAULT_MODE,
     /**
-     * Semantic version mode of statement parser. If it is enabled, module
-     * imports are processed on the basis of semantic versions.
+     * Semantic version mode of statement parser. If it is enabled, module imports are processed on the basis of
+     * semantic versions.
      */
+    @Deprecated(since = "7.0.11", forRemoval = true)
     SEMVER_MODE
 }
