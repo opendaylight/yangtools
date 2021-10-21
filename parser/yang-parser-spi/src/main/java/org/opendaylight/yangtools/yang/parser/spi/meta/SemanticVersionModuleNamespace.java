@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
  * used only in case the semantic versioning is enabled, otherwise it is empty.
  */
 @Beta
+@Deprecated(since = "7.0.11", forRemoval = true)
 public interface SemanticVersionModuleNamespace
     extends StatementNamespace<SemVerSourceIdentifier, ModuleStatement, ModuleEffectiveStatement> {
     NamespaceBehaviour<SemVerSourceIdentifier, StmtContext<?, ModuleStatement, ModuleEffectiveStatement>,

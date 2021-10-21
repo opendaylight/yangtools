@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
  * Namespace class for storing semantic version of yang modules.
  */
 @Beta
+@Deprecated(since = "7.0.11", forRemoval = true)
 public interface SemanticVersionNamespace extends ParserNamespace<StmtContext<?, ?, ?>, SemVer> {
     NamespaceBehaviour<StmtContext<?, ?, ?>, SemVer, @NonNull SemanticVersionNamespace> BEHAVIOUR =
             NamespaceBehaviour.global(SemanticVersionNamespace.class);
