@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
@@ -183,11 +182,6 @@ abstract class DependencyResolver {
         @Override
         public String getPrefix() {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Optional<SemVer> getSemanticVersion() {
-            return Optional.empty();
         }
 
         @Override
