@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.api;
 
-import com.google.common.annotations.Beta;
-
 /**
  * Enumeration of various ways of resolving {@code import} statements.
  */
@@ -19,16 +17,5 @@ public enum ImportResolutionMode {
      * based on exact match of {@code revision-date} statement. In case it is not specified, latest available revision
      * is used.
      */
-    DEFAULT,
-    /**
-     * Semantic version-based method. This method disregards {@code revision-date} statements and relies on
-     * <a href="https://github.com/openconfig/public/blob/master/release/models/openconfig-extensions.yang">
-     * openconfig-version extension</a>.
-     *
-     * <p>
-     * This mode is considered experimental and may be subject to change.
-     */
-    @Beta
-    @Deprecated(since = "7.0.10", forRemoval = true)
-    OPENCONFIG_SEMVER;
+    DEFAULT;
 }

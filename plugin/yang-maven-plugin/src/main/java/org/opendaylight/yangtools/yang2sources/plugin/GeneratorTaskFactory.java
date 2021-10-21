@@ -16,19 +16,12 @@ import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 
 @NonNullByDefault
 abstract class GeneratorTaskFactory extends ParserConfigAware {
-    private static final YangParserConfiguration SEMVER_CONFIG = YangParserConfiguration.builder()
-        .importResolutionMode(org.opendaylight.yangtools.yang.parser.api.ImportResolutionMode.OPENCONFIG_SEMVER)
-        .build();
-
     private final YangParserConfiguration parserConfig;
 
     GeneratorTaskFactory(final ImportResolutionMode importMode) {
         switch (importMode) {
             case REVISION_EXACT_OR_LATEST:
                 parserConfig = YangParserConfiguration.DEFAULT;
-                break;
-            case SEMVER_LATEST:
-                parserConfig = SEMVER_CONFIG;
                 break;
             default:
                 throw new LinkageError("Unhandled import mode " + importMode);
