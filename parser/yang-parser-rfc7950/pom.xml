@@ -78,10 +78,6 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-xpath-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>openconfig-model-api</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>

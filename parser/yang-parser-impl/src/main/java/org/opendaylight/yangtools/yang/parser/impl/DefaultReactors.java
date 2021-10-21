@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.odlext.parser.InstanceTargetStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.RpcContextReferenceStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.openconfig.parser.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
@@ -120,53 +121,47 @@ public final class DefaultReactors {
     private static @NonNull CustomCrossSourceStatementReactorBuilder addExtensions(
             final @NonNull CustomCrossSourceStatementReactorBuilder builder, final YangParserConfiguration config) {
         return builder
-                // OpenDaylight extensions
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new AugmentIdentifierStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ContextInstanceStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new ContextReferenceStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new InstanceTargetStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new RpcContextReferenceStatementSupport(config))
+            // OpenDaylight extensions
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AugmentIdentifierStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ContextInstanceStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ContextReferenceStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new InstanceTargetStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new RpcContextReferenceStatementSupport(config))
 
-                // RFC6241 get-filter-element-attributes support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new GetFilterElementAttributesStatementSupport(config))
+            // RFC6241 get-filter-element-attributes support
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new GetFilterElementAttributesStatementSupport(config))
 
-                // RFC6536 default-deny-{all,write} support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new DefaultDenyAllStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new DefaultDenyWriteStatementSupport(config))
+            // RFC6536 default-deny-{all,write} support
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefaultDenyAllStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefaultDenyWriteStatementSupport(config))
 
-                // RFC6643 extensions
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DisplayHintStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MaxAccessStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefValStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ImpliedStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AliasStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new OidStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new SubIdStatementSupport(config))
+            // RFC6643 extensions
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DisplayHintStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MaxAccessStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new DefValStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new ImpliedStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AliasStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new OidStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new SubIdStatementSupport(config))
 
-                // RFC7952 annotation support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AnnotationStatementSupport(config))
+            // RFC7952 annotation support
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new AnnotationStatementSupport(config))
 
-                // RFC8040 yang-data support
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new YangDataStatementSupport(config))
+            // RFC8040 yang-data support
+            .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataArgumentNamespace.BEHAVIOUR)
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new YangDataStatementSupport(config))
 
-                // RFC8528 mount-point support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MountPointStatementSupport(config))
+            // RFC8528 mount-point support
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new MountPointStatementSupport(config))
 
-                // RFC8639 subscription-state-notification support
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new SubscriptionStateNotificationStatementSupport(config))
+            // RFC8639 subscription-state-notification support
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                new SubscriptionStateNotificationStatementSupport(config))
 
-                // OpenConfig extensions support (except openconfig-version)
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new EncryptedValueStatementSupport(config))
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new HashedValueStatementSupport(config));
+            // OpenConfig extensions support
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new EncryptedValueStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new HashedValueStatementSupport(config))
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, new OpenConfigVersionSupport(config));
     }
 }

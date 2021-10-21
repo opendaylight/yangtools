@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -96,7 +95,6 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.YANG_VERSION)
-        .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
         .build();
     private static final SubstatementValidator RFC7950_VALIDATOR = SubstatementValidator.builder(YangStmtMapping.MODULE)
         .addAny(YangStmtMapping.ANYDATA)
@@ -126,7 +124,6 @@ public final class ModuleStatementSupport
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .addMandatory(YangStmtMapping.YANG_VERSION)
-        .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
         .build();
 
     private ModuleStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {

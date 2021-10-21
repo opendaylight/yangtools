@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -61,12 +60,7 @@ public final class ExtensionStatementSupport
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
         super.onStatementDefinitionDeclared(stmt);
 
-        QName stmtName = stmt.getArgument();
-        if (OpenConfigStatements.OPENCONFIG_VERSION.getStatementName().isEqualWithoutRevision(stmtName)) {
-            stmtName = stmtName.withoutRevision();
-        }
-
-        stmt.addContext(ExtensionNamespace.class, stmtName, stmt);
+        stmt.addContext(ExtensionNamespace.class, stmt.getArgument(), stmt);
 
         final StmtContext<QName, ?, ?> argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
             ArgumentStatement.class);
