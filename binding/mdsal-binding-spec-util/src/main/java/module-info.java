@@ -19,4 +19,5 @@ module org.opendaylight.mdsal.binding.spec.util {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
+    requires static org.checkerframework.checker.qual;
 }
