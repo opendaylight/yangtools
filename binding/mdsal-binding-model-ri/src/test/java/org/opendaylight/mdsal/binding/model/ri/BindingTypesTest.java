@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.model.ri;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.opendaylight.mdsal.binding.model.ri.Types.typeForClass;
 
 import org.junit.Test;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.binding.NotificationListener;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 
 public class BindingTypesTest {
-
     @Test
     public void staticBindingTypesTest() {
         assertEquals("AUGMENTABLE", typeForClass(Augmentable.class), BindingTypes.AUGMENTABLE);
@@ -43,14 +43,14 @@ public class BindingTypesTest {
         assertEquals("RPC_SERVICE", typeForClass(RpcService.class), BindingTypes.RPC_SERVICE);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testAugmentableNull() {
-        BindingTypes.augmentable(null);
+        assertThrows(NullPointerException.class, () -> BindingTypes.augmentable(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testChildOfNull() {
-        BindingTypes.childOf(null);
+        assertThrows(NullPointerException.class, () -> BindingTypes.childOf(null));
     }
 
     @Test
@@ -64,14 +64,14 @@ public class BindingTypesTest {
         assertNotNull(BindingTypes.childOf(Types.objectType()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testAugmentationNull() {
-        BindingTypes.augmentation(null);
+        assertThrows(NullPointerException.class, () -> BindingTypes.augmentation(null));
     }
 
     @Test
     public void testAugmentation() {
-        ParameterizedType augmentationType = BindingTypes.augmentation(Types.objectType());
+        final ParameterizedType augmentationType = BindingTypes.augmentation(Types.objectType());
         assertEquals("Augmentation", augmentationType.getName());
     }
 }
