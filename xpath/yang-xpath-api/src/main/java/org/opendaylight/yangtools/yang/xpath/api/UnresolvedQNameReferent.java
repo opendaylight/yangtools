@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName;
 
 /**
  * A {@link QNameReferent} referencing an unresolved QName.
@@ -15,7 +16,7 @@ import com.google.common.annotations.Beta;
  * @author Robert Varga
  */
 @Beta
-public interface UnresolvedQNameReferent<T extends ResolvedQNameReferent> extends
-        QNameReferentBehavior<UnresolvedQNameReferent<T>> {
-
+public interface UnresolvedQNameReferent extends QNameReferent {
+    @Override
+    UnresolvedQName getQName();
 }

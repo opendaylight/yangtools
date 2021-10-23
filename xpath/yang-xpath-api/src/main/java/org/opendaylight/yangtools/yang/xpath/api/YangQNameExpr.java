@@ -57,7 +57,7 @@ public abstract class YangQNameExpr implements YangExpr, QNameReferent {
         }
     }
 
-    public static final class Unresolved extends YangQNameExpr implements UnresolvedQNameReferent<Resolved> {
+    public static final class Unresolved extends YangQNameExpr implements UnresolvedQNameReferent {
         private static final long serialVersionUID = 1L;
 
         private final UnresolvedQName qname;

@@ -243,7 +243,7 @@ public abstract class YangLocationPath implements YangExpr {
     }
 
     public static class UnresolvedQNameStep extends AbstractQNameStep<UnresolvedQName>
-            implements UnresolvedQNameReferent<ResolvedQNameStep> {
+            implements UnresolvedQNameReferent {
         private static final long serialVersionUID = 1L;
 
         UnresolvedQNameStep(final YangXPathAxis axis, final UnresolvedQName qname) {

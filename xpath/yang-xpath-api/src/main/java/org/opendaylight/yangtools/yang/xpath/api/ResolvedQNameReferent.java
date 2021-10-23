@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * @author Robert Varga
  */
 @Beta
-public interface ResolvedQNameReferent extends QNameReferentBehavior<ResolvedQNameReferent> {
+public interface ResolvedQNameReferent extends QNameReferent {
     /**
      * Return the referenced QName.
      *
