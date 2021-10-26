@@ -19,19 +19,14 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
-        ImmutableList.of(), new HashCodeBuilder<>().build());
+        ImmutableList.of());
     private static final long serialVersionUID = 1L;
 
     private final ImmutableList<PathArgument> path;
     private transient volatile YangInstanceIdentifier parent;
 
-    FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path, final int hash) {
-        super(hash);
+    FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path) {
         this.path = requireNonNull(path, "path must not be null.");
-    }
-
-    static @NonNull FixedYangInstanceIdentifier create(final Iterable<? extends PathArgument> path, final int hash) {
-        return new FixedYangInstanceIdentifier(ImmutableList.copyOf(path), hash);
     }
 
     @Override
@@ -110,21 +105,21 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
     @Override
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
-        if (skipFromRoot == path.size()) {
-            return EMPTY_INSTANCE;
-        }
-
-        final ImmutableList<PathArgument> newPath = path.subList(skipFromRoot, path.size());
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : newPath) {
-            hash.addArgument(a);
-        }
-
-        return new FixedYangInstanceIdentifier(newPath, hash.build());
+        return skipFromRoot == path.size() ? EMPTY_INSTANCE
+            : new FixedYangInstanceIdentifier(path.subList(skipFromRoot, path.size()));
     }
 
     private Object readResolve() throws ObjectStreamException {
         return path.isEmpty() ? EMPTY_INSTANCE : this;
+    }
+
+    @Override
+    int computeHashCode() {
+        int hash = 1;
+        for (var pathArgument : path) {
+            hash = HashCodeBuilder.nextHashCode(hash, pathArgument);
+        }
+        return hash;
     }
 
     @Override
