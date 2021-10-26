@@ -40,6 +40,7 @@
         <module>features</module>
 
         <module>benchmarks</module>
+        <module>bnd-parent</module>
         <module>bundle-parent</module>
         <module>codec</module>
         <module>common</module>
