@@ -21,7 +21,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  */
 @Beta
 @NonNullByDefault
+// FIXME: 8.0.0: Split this into two interfaces + scenery:
+//               - yang.common.ErrorInfoRepresentation
+//               - make NormalizedNodeContainer implement ErrorInfoRepresentation
 public final class YangErrorInfo {
+    // FIXME: 8.0.0: implies it extends ErrorInfoRepresentation, but ... perhaps NormalizedErrorInfo
     private final DataContainerChild value;
 
     private YangErrorInfo(final DataContainerChild value) {
@@ -32,6 +36,7 @@ public final class YangErrorInfo {
         return new YangErrorInfo(value);
     }
 
+    // FIXME: 8.0.0: yang.common version returns ErrorInfoRepresentation
     public DataContainerChild value() {
         return value;
     }

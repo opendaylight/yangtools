@@ -29,6 +29,9 @@ import org.opendaylight.yangtools.yang.common.ErrorType;
 @Value.Style(stagedBuilder = true, allowedClasspathAnnotations = {
     SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
 })
+// FIXME: 8.0.0: Split this interface into two:
+//               - yang.common.NetconfError, which does not have a builder sets up the stage
+//               - data.api.schema.NormalizedNetconfError
 public interface YangNetconfError {
     /**
      * Return this error's severity.
@@ -72,6 +75,7 @@ public interface YangNetconfError {
      *
      * @return Triggering path, or null.
      */
+    // FIXME: 8.0.0: yang.common returns concepts.HierarchicalIdentifier<?>
     @Nullable YangInstanceIdentifier path();
 
     /**
@@ -79,5 +83,6 @@ public interface YangNetconfError {
      *
      * @return Additional info.
      */
+    // FIXME: 8.0.0: return NetconfErrorInfoRepresentation
     List<YangErrorInfo> info();
 }
