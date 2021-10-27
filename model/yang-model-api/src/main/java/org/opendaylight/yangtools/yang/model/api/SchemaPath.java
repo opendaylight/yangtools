@@ -119,6 +119,22 @@ public abstract class SchemaPath implements Immutable {
         hash = tmp;
     }
 
+    public static @NonNull SchemaPath of(final SchemaNodeIdentifier path) {
+        if ((path instanceof Absolute) || (path instanceof Descendant)) {
+            return of((Descendant) path);
+        } else {
+            throw new IllegalStateException("Unexpected path " + requireNonNull(path));
+        }
+    }
+
+    public static @NonNull SchemaPath of(final Absolute path) {
+        return SchemaPath.ROOT.createChild(path.getNodeIdentifiers());
+    }
+
+    public static @NonNull SchemaPath of(final Descendant path) {
+        return SchemaPath.SAME.createChild(path.getNodeIdentifiers());
+    }
+
     /**
      * Constructs new instance of this class with the concrete path.
      *
