@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 /**
  * AugmentationSchema represents augment definition. The "augment" statement allows a module or submodule to add

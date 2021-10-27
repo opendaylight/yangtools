@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.ri.stmt.impl.decl;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithArgument.WithSubstatements;
 
 public final class DeviationStatementImpl extends WithSubstatements<Absolute> implements DeviationStatement {
