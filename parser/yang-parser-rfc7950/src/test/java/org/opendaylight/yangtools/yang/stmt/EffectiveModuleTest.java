@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Absolute;
 
 public class EffectiveModuleTest {
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(XMLNamespace.of("root-ns"));
