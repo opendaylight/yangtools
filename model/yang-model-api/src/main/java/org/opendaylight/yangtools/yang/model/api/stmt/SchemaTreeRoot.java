@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.model.api.stmt.DefaultMethodHelper
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier;
 
 /**
  * Common interface implemented by entities which act as the root of the {@code schema tree} and are able to resolve an

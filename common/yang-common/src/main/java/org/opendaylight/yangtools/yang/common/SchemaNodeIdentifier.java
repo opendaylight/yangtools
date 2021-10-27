@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api.stmt;
+package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -21,13 +21,14 @@ import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
  * Represents unique path to every schema node inside the schema node identifier namespace. This concept is defined
  * in <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950</a>.
  */
+// NOTE: While the "Identifier" part of the name and the strucutre of this class would suggest it,  it is (probably)
+//       not appropriate to burden this class with Serializable. While it is well-defined, serializing QNames is
+//       Not Fun(tm) and is better served externally.
 public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * An absolute schema node identifier.
