@@ -79,6 +79,11 @@ public abstract class UnresolvedQName extends AbstractQName {
         }
 
         @Override
+        public Qualified withPrefix(final String newPrefix) {
+            return prefix.equals(newPrefix) ? this : new Qualified(newPrefix, getLocalName());
+        }
+
+        @Override
         @SuppressWarnings("checkstyle:parameterName")
         public int compareTo(final Qualified o) {
             return getLocalName().compareTo(o.getLocalName());
@@ -149,6 +154,11 @@ public abstract class UnresolvedQName extends AbstractQName {
         @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION", justification = "Non-grok of @Nullable")
         public @Nullable String getPrefix() {
             return null;
+        }
+
+        @Override
+        public Qualified withPrefix(final String newPrefix) {
+            return new Qualified(newPrefix, getLocalName());
         }
 
         @Override
@@ -235,4 +245,12 @@ public abstract class UnresolvedQName extends AbstractQName {
      * @return This QName's prefix
      */
     public abstract @Nullable String getPrefix();
+
+    /**
+     * Return a {@link Qualified} object bound to specified {@code prefix}.
+     *
+     * @return a {@link Qualified} object bound to specified {@code prefix}
+     * @throws NullPointerException if {@code newPrefix} is null
+     */
+    public abstract Qualified withPrefix(String newPrefix);
 }
