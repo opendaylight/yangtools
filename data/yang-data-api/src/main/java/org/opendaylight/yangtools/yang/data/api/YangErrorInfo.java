@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.ErrorInfo;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 /**
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  */
 @Beta
 @NonNullByDefault
-public final class YangErrorInfo {
+public final class YangErrorInfo implements ErrorInfo<YangErrorInfo> {
     private final DataContainerChild value;
 
     private YangErrorInfo(final DataContainerChild value) {
@@ -30,6 +31,11 @@ public final class YangErrorInfo {
 
     public static YangErrorInfo of(final DataContainerChild value) {
         return new YangErrorInfo(value);
+    }
+
+    @Override
+    public Class<YangErrorInfo> representation() {
+        return YangErrorInfo.class;
     }
 
     public DataContainerChild value() {
