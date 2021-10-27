@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
+import org.opendaylight.yangtools.yang.common.SchemaNodeIdentifier.Descendant;
 
 /**
  * Exception thrown when a {@code unique} statement restrictions are violated.
