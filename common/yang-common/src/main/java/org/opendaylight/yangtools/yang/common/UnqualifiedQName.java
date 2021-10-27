@@ -56,6 +56,16 @@ public final class UnqualifiedQName extends AbstractQName implements Comparable<
     }
 
     /**
+     * Return a {@link QualifiedQName} object bound to specified {@code prefix}.
+     *
+     * @return a {@link QualifiedQName} object bound to specified {@code prefix}
+     * @throws NullPointerException if {@code newPrefix} is null
+     */
+    public QualifiedQName withPrefix(final String newPrefix) {
+        return new QualifiedQName(newPrefix, getLocalName());
+    }
+
+    /**
      * Read an UnqualifiedQName from a DataInput. The format is expected to match the output format of
      * {@link #writeTo(DataOutput)}.
      *
