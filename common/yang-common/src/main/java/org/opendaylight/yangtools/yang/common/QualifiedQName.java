@@ -34,7 +34,7 @@ public final class QualifiedQName extends AbstractQName implements Comparable<Qu
 
     private final String prefix;
 
-    private QualifiedQName(final String prefix, final String localName) {
+    QualifiedQName(final String prefix, final String localName) {
         super(localName);
         this.prefix = requireNonNull(prefix);
     }
