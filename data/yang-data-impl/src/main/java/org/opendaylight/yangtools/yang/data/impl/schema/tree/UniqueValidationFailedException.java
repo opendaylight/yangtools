@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangErrorInfo;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintException;
@@ -21,9 +25,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.UniqueConstraintExce
  */
 final class UniqueValidationFailedException extends SchemaValidationFailedException implements YangNetconfErrorAware {
     private static final long serialVersionUID = 1L;
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Best effort on serialization")
+    private final YangErrorInfo<?, ?> info;
 
-    UniqueValidationFailedException(final String message) {
+    UniqueValidationFailedException(final String message, final YangErrorInfo<?, ?> info) {
         super(message);
+        this.info = requireNonNull(info);
     }
 
     @Override
@@ -33,8 +40,7 @@ final class UniqueValidationFailedException extends SchemaValidationFailedExcept
             .type(ErrorType.APPLICATION)
             .tag(ErrorTag.OPERATION_FAILED)
             .appTag("data-not-unique")
-            // FIXME: 8.0.0: we are missing path information which should be filled in here. Constructor call site needs
-            //               to provide that.
+            .info(info)
             .build());
     }
 }

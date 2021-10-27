@@ -11,18 +11,16 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
 import org.opendaylight.yangtools.yang.common.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.ImmutableYangNetconfError;
+import org.opendaylight.yangtools.yang.data.api.YangErrorInfo;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfError;
 import org.opendaylight.yangtools.yang.data.api.YangNetconfErrorAware;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Descendant;
 
 /**
  * Exception thrown when a {@code unique} statement restrictions are violated.
@@ -35,19 +33,16 @@ public class UniqueConstraintException extends DataValidationFailedException imp
 
     // Note: this cannot be an ImmutableMap because we must support null values
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Best effort on serialization")
-    private final Map<Descendant, @Nullable Object> values;
+    private final @NonNull YangErrorInfo<?, ?> info;
 
-    // FIXME: 8.0.0: this maps to a list of 'non-unique' YangInstanceIdentifiers, really. we should be getting
-    //               a list of YangErrorInfo containing them -- but what about Serializability then?
-    public UniqueConstraintException(final YangInstanceIdentifier path, final Map<Descendant, @Nullable Object> values,
-            final String message) {
+    public UniqueConstraintException(final YangInstanceIdentifier path, final String message,
+            final YangErrorInfo<?, ?> info) {
         super(path, message);
-        this.values = requireNonNull(values);
+        this.info = requireNonNull(info);
     }
 
-    // FIXME: 8.0.0: this should be completely nonnull, there is no point in reporting missing values
-    public final Map<Descendant, @Nullable Object> values() {
-        return Collections.unmodifiableMap(values);
+    public final @NonNull YangErrorInfo<?, ?> getInfo() {
+        return info;
     }
 
     @Override
@@ -57,7 +52,7 @@ public class UniqueConstraintException extends DataValidationFailedException imp
             .type(ErrorType.APPLICATION)
             .tag(ErrorTag.OPERATION_FAILED)
             .appTag("data-not-unique")
-            // FIXME: 8.0.0: and then we need to append YangErrorInfo here
+            .info(info)
             .build());
     }
 }
