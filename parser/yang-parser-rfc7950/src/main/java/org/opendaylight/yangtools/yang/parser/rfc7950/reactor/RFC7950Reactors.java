@@ -209,7 +209,9 @@ public final class RFC7950Reactors {
     }
 
     private static StatementSupportBundle stmtDefBundle(final StatementSupportBundle linkageBundle,
-            final YangParserConfiguration config) {
+            final XPathSupport xpathSupport, final YangParserConfiguration config) {
+        final CaseStatementSupport rfc6020case = CaseStatementSupport.rfc6020Instance(config);
+        final CaseStatementSupport rfc7950case = CaseStatementSupport.rfc7950Instance(config);
         final InputStatementSupport rfc6020input = InputStatementSupport.rfc6020Instance(config);
         final InputStatementSupport rfc7950input = InputStatementSupport.rfc7950Instance(config);
         final OutputStatementSupport rfc6020output = OutputStatementSupport.rfc6020Instance(config);
@@ -226,7 +228,6 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1, IdentityStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, IdentityStatementSupport.rfc7950Instance(config))
             .addSupport(IdentityNamespace.BEHAVIOUR)
-            .addSupport(new DefaultStatementSupport(config))
             .addSupport(new StatusStatementSupport(config))
             .addSupport(BaseTypeNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, new TypeStatementRFC6020Support(config))
@@ -242,7 +243,6 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1, PatternStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, PatternStatementSupport.rfc7950Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, new ModifierStatementSupport(config))
-            .addSupport(new RangeStatementSupport(config))
             .addSupport(new KeyStatementSupport(config))
             .addVersionSpecificSupport(VERSION_1, ContainerStatementSupport.rfc6020Instance(config))
             .addVersionSpecificSupport(VERSION_1_1, ContainerStatementSupport.rfc7950Instance(config))
@@ -264,6 +264,39 @@ public final class RFC7950Reactors {
             .addSupport(new FractionDigitsStatementSupport(config))
             .addSupport(new BaseStatementSupport(config))
             .addSupport(StatementDefinitionNamespace.BEHAVIOUR)
+            .addSupport(new LeafStatementSupport(config))
+            .addSupport(new ConfigStatementSupport(config))
+            .addSupport(new DeviationStatementSupport(config))
+            .addVersionSpecificSupport(VERSION_1, new DeviateStatementRFC6020Support(config))
+            .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRFC7950Support(config))
+            .addVersionSpecificSupport(VERSION_1, ChoiceStatementSupport.rfc6020Instance(config, rfc6020case))
+            .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementSupport.rfc7950Instance(config, rfc7950case))
+            .addVersionSpecificSupport(VERSION_1, rfc6020case)
+            .addVersionSpecificSupport(VERSION_1_1, rfc7950case)
+            .addSupport(new MustStatementSupport(xpathSupport, config))
+            .addSupport(new MandatoryStatementSupport(config))
+            .addSupport(new AnyxmlStatementSupport(config))
+            .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementSupport(config))
+            .addSupport(FeatureNamespace.BEHAVIOUR)
+            .addVersionSpecificSupport(VERSION_1, new IfFeatureStatementRFC6020Support(config))
+            .addVersionSpecificSupport(VERSION_1_1, new IfFeatureStatementRFC7950Support(config))
+            .addSupport(GroupingNamespace.BEHAVIOUR)
+            .addSupport(new ErrorMessageStatementSupport(config))
+            .addSupport(new ErrorAppTagStatementSupport(config))
+            .addVersionSpecificSupport(VERSION_1, LeafListStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, LeafListStatementSupport.rfc7950Instance(config))
+            .addSupport(new PresenceStatementSupport(config))
+            .addSupport(new MaxElementsStatementSupport(config))
+            .addSupport(new MinElementsStatementSupport(config))
+            .addSupport(new OrderedByStatementSupport(config))
+            .addSupport(new WhenStatementSupport(xpathSupport, config))
+            .addSupport(RefineTargetNamespace.BEHAVIOUR)
+            .addVersionSpecificSupport(VERSION_1, RefineStatementSupport.rfc6020Instance(config))
+            .addVersionSpecificSupport(VERSION_1_1, RefineStatementSupport.rfc7950Instance(config))
+            .addSupport(new FeatureStatementSupport(config))
+            .addSupport(new PositionStatementSupport(config))
+            .addSupport(new ValueStatementSupport(config))
+            .addSupport(YangNamespaceContextNamespace.BEHAVIOUR)
             .build();
     }
 
@@ -354,9 +387,8 @@ public final class RFC7950Reactors {
             final @NonNull XPathSupport xpathSupport, final YangParserConfiguration config) {
         final StatementSupportBundle preLinkageBundle = preLinkageBundle(config);
         final StatementSupportBundle linkageBundle = linkageBundle(preLinkageBundle, config);
-        final StatementSupportBundle stmtDefBundle = stmtDefBundle(linkageBundle, config);
-        final StatementSupportBundle fullDeclarationBundle =
-            fullDeclarationBundle(stmtDefBundle, xpathSupport, config);
+        final StatementSupportBundle stmtDefBundle = stmtDefBundle(linkageBundle, xpathSupport, config);
+        final StatementSupportBundle fullDeclarationBundle = fullDeclarationBundle(stmtDefBundle, config);
 
         return new CustomCrossSourceStatementReactorBuilder(SUPPORTED_VERSIONS)
                 .addAllSupports(ModelProcessingPhase.INIT, INIT_BUNDLE)
@@ -379,49 +411,15 @@ public final class RFC7950Reactors {
     }
 
     private static @NonNull StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
-            final XPathSupport xpathSupport, final YangParserConfiguration config) {
-        final CaseStatementSupport rfc6020case = CaseStatementSupport.rfc6020Instance(config);
-        final CaseStatementSupport rfc7950case = CaseStatementSupport.rfc7950Instance(config);
-
+            final YangParserConfiguration config) {
         return StatementSupportBundle.derivedFrom(stmtDefBundle)
-            .addSupport(new LeafStatementSupport(config))
-            .addSupport(new ConfigStatementSupport(config))
-            .addSupport(new DeviationStatementSupport(config))
-            .addVersionSpecificSupport(VERSION_1, new DeviateStatementRFC6020Support(config))
-            .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRFC7950Support(config))
-            .addVersionSpecificSupport(VERSION_1, ChoiceStatementSupport.rfc6020Instance(config, rfc6020case))
-            .addVersionSpecificSupport(VERSION_1_1, ChoiceStatementSupport.rfc7950Instance(config, rfc7950case))
-            .addVersionSpecificSupport(VERSION_1, rfc6020case)
-            .addVersionSpecificSupport(VERSION_1_1, rfc7950case)
-            .addSupport(new MustStatementSupport(xpathSupport, config))
-            .addSupport(new MandatoryStatementSupport(config))
-            .addSupport(new AnyxmlStatementSupport(config))
-            .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementSupport(config))
-            .addSupport(FeatureNamespace.BEHAVIOUR)
-            .addVersionSpecificSupport(VERSION_1, new IfFeatureStatementRFC6020Support(config))
-            .addVersionSpecificSupport(VERSION_1_1, new IfFeatureStatementRFC7950Support(config))
-            .addSupport(GroupingNamespace.BEHAVIOUR)
-            .addSupport(SourceGroupingNamespace.BEHAVIOUR)
-            .addSupport(new UsesStatementSupport(config))
-            .addSupport(new ErrorMessageStatementSupport(config))
-            .addSupport(new ErrorAppTagStatementSupport(config))
-            .addVersionSpecificSupport(VERSION_1, LeafListStatementSupport.rfc6020Instance(config))
-            .addVersionSpecificSupport(VERSION_1_1, LeafListStatementSupport.rfc7950Instance(config))
-            .addSupport(new PresenceStatementSupport(config))
-            .addSupport(new MaxElementsStatementSupport(config))
-            .addSupport(new MinElementsStatementSupport(config))
-            .addSupport(new OrderedByStatementSupport(config))
-            .addSupport(new WhenStatementSupport(xpathSupport, config))
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, new AugmentStatementRFC6020Support(config))
             .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRFC7950Support(config))
-            .addSupport(RefineTargetNamespace.BEHAVIOUR)
-            .addVersionSpecificSupport(VERSION_1, RefineStatementSupport.rfc6020Instance(config))
-            .addVersionSpecificSupport(VERSION_1_1, RefineStatementSupport.rfc7950Instance(config))
-            .addSupport(new FeatureStatementSupport(config))
-            .addSupport(new PositionStatementSupport(config))
-            .addSupport(new ValueStatementSupport(config))
-            .addSupport(YangNamespaceContextNamespace.BEHAVIOUR)
+            .addSupport(SourceGroupingNamespace.BEHAVIOUR)
+            .addSupport(new UsesStatementSupport(config))
+            .addSupport(new DefaultStatementSupport(config))
+            .addSupport(new RangeStatementSupport(config))
             .build();
     }
 }
