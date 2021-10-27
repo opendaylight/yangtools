@@ -13,6 +13,8 @@ import static java.util.Objects.requireNonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 // FIXME: YANGTOOLS-1150: this should go into yang-reactor-api
 @NonNullByDefault
@@ -34,12 +36,55 @@ public enum ModelProcessingPhase {
      * are processed.
      *
      * <p>
-     * At end of this phase all source related contexts should be bind to their imports and includes to allow
+     * At the end of this phase all source related contexts should be bind to their imports and includes to allow
      * visibility of custom defined statements in subsequent phases.
      */
     SOURCE_LINKAGE(SOURCE_PRE_LINKAGE, ExecutionOrder.SOURCE_LINKAGE),
+
+    /**
+     * Supported statement discovery phase.
+     *
+     * <p>
+     * In this phase of processing we load up all supported statements, with the notable exception of statements which
+     * need to understand the type system linkage. Examples of that are:
+     * <ul>
+     *   <li>{@code default}, which needs to understand whether the type is a {@code uint8} or an {@code identityref}
+     *   </li>
+     *   <li>{@code range}, which needs to understand what values {@code min} and {@code max} refer to</li>
+     * </ul>
+     *
+     * <p>
+     * At the end of this phase all statements which can affect inference namespaces and overall YANG semantics must
+     * have been processed and semantically cross-linked so that the binding of {@code leaf} and {@code leaf-list}
+     * statements to YANG built-in types can be ascertained without the need to execute inference actions.
+     */
     STATEMENT_DEFINITION(SOURCE_LINKAGE, ExecutionOrder.STATEMENT_DEFINITION),
+
+    /**
+     * Full declaration resolution phase.
+     *
+     * <p>
+     * In this phase of processing we load the few remaining statements excluded from {@link #STATEMENT_DEFINITION}
+     * phase.
+     *
+     * <p>
+     * At the end of this phase all of the sources are processed to the extent we understand YANG statements, be it
+     * RFC7950 and/or any extension statements which are registered, and we are in the position to create
+     * {@link DeclaredStatement} trees for each of the sources.
+     */
     FULL_DECLARATION(STATEMENT_DEFINITION, ExecutionOrder.FULL_DECLARATION),
+
+    /**
+     * Effective model resolution phase.
+     *
+     * <p>
+     * This is the final processing phase, where we resolve the effective YANG semantics of the loaded sources. This
+     * includes processing effects of {@code uses}, {@code augment}, {@code deviate} and similar statements.
+     *
+     * <p>
+     * At the end of this phase we have processed all such effects and have all information required to create
+     * {@link EffectiveStatement} trees for each of the sources.
+     */
     EFFECTIVE_MODEL(FULL_DECLARATION, ExecutionOrder.EFFECTIVE_MODEL);
 
     /**
