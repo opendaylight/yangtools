@@ -49,8 +49,8 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
             final String message) {
         super(requireNonNull(message));
         this.errorType = requireNonNull(errorType);
-        this.errorAppTag = constraint.getErrorAppTag().orElse(null);
-        this.errorMessage = constraint.getErrorMessage().orElse(null);
+        errorAppTag = constraint.getErrorAppTag().orElse(null);
+        errorMessage = constraint.getErrorMessage().orElse(null);
     }
 
     @Override
@@ -59,8 +59,8 @@ public class YangInvalidValueException extends IllegalArgumentException implemen
             .severity(ErrorSeverity.ERROR)
             .type(errorType)
             .tag(ErrorTag.INVALID_VALUE)
-            .message(errorMessage)
             .appTag(errorAppTag)
+            .message(errorMessage)
             .build());
     }
 }
