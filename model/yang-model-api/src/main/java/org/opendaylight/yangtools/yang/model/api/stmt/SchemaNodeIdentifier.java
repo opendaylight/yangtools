@@ -292,7 +292,10 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      * Create the {@link SchemaPath} equivalent of this identifier.
      *
      * @return SchemaPath equivalent.
-     * @deprecated This method is scheduled for removal along with {@link SchemaPath}.
+     * @deprecated This method is scheduled for removal along with {@link SchemaPath}. This method performs memoization,
+     *             which should not be needed most of the time. If you need memoization, you probably can do better, as
+     *             you probably want to attach more state. If you just need a SchemaPath, use
+     *             {@link SchemaPath#of(SchemaNodeIdentifier)} instead.
      */
     @Deprecated(since = "7.0.9", forRemoval = true)
     public final @NonNull SchemaPath asSchemaPath() {
