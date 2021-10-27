@@ -19,12 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * Represents unique path to every schema node inside the schema node identifier namespace. This concept is defined
@@ -87,12 +85,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        @Deprecated(since = "7.0.9", forRemoval = true)
-        final SchemaPath implicitSchemaPathParent() {
-            return SchemaPath.ROOT;
-        }
-
-        @Override
         final String className() {
             return "Absolute";
         }
@@ -140,12 +132,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         public static @NonNull Descendant of(final Collection<QName> nodeIdentifiers) {
             final ImmutableList<QName> qnames = checkQNames(nodeIdentifiers);
             return qnames.size() == 1 ? of(qnames.get(0)) : new DescandantMultiple(qnames);
-        }
-
-        @Override
-        @Deprecated(since = "7.0.9", forRemoval = true)
-        final SchemaPath implicitSchemaPathParent() {
-            return SchemaPath.SAME;
         }
 
         @Override
@@ -246,13 +232,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
     }
 
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, SchemaPath> SCHEMAPATH_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, SchemaPath.class, "schemaPath");
-
-    // Cached SchemaPath.
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    private volatile SchemaPath schemaPath;
     // Cached hashCode
     private volatile int hash;
 
@@ -288,21 +267,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return local.get(local.size() - 1);
     }
 
-    /**
-     * Create the {@link SchemaPath} equivalent of this identifier.
-     *
-     * @return SchemaPath equivalent.
-     * @deprecated This method is scheduled for removal along with {@link SchemaPath}. This method performs memoization,
-     *             which should not be needed most of the time. If you need memoization, you probably can do better, as
-     *             you probably want to attach more state. If you just need a SchemaPath, use
-     *             {@link SchemaPath#of(SchemaNodeIdentifier)} instead.
-     */
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    public final @NonNull SchemaPath asSchemaPath() {
-        final SchemaPath ret = schemaPath;
-        return ret != null ? ret : loadSchemaPath();
-    }
-
     @Override
     public final int hashCode() {
         final int local;
@@ -320,18 +284,9 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return MoreObjects.toStringHelper(className()).add("qnames", toStringQNames()).toString();
     }
 
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    abstract @NonNull SchemaPath implicitSchemaPathParent();
-
     abstract @NonNull Object pathObject();
 
     abstract @NonNull String className();
-
-    @Deprecated(since = "7.0.9", forRemoval = true)
-    private @NonNull SchemaPath loadSchemaPath() {
-        final SchemaPath newPath = implicitSchemaPathParent().createChild(getNodeIdentifiers());
-        return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
-    }
 
     private List<?> toStringQNames() {
         final List<QName> ids = getNodeIdentifiers();
