@@ -19,19 +19,22 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
-        ImmutableList.of(), new HashCodeBuilder<>().build());
+        ImmutableList.of());
     private static final long serialVersionUID = 1L;
 
     private final ImmutableList<PathArgument> path;
     private transient volatile YangInstanceIdentifier parent;
 
-    FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path, final int hash) {
-        super(hash);
+    FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path) {
         this.path = requireNonNull(path, "path must not be null.");
     }
 
-    static @NonNull FixedYangInstanceIdentifier create(final Iterable<? extends PathArgument> path, final int hash) {
-        return new FixedYangInstanceIdentifier(ImmutableList.copyOf(path), hash);
+    static @NonNull FixedYangInstanceIdentifier of(final ImmutableList<PathArgument> path) {
+        return path.isEmpty() ? EMPTY_INSTANCE : new FixedYangInstanceIdentifier(path);
+    }
+
+    static @NonNull FixedYangInstanceIdentifier of(final List<PathArgument> path) {
+        return path.isEmpty() ? EMPTY_INSTANCE : new FixedYangInstanceIdentifier(ImmutableList.copyOf(path));
     }
 
     @Override
@@ -110,17 +113,8 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
     @Override
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
-        if (skipFromRoot == path.size()) {
-            return EMPTY_INSTANCE;
-        }
-
-        final ImmutableList<PathArgument> newPath = path.subList(skipFromRoot, path.size());
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : newPath) {
-            hash.addArgument(a);
-        }
-
-        return new FixedYangInstanceIdentifier(newPath, hash.build());
+        return skipFromRoot == path.size() ? EMPTY_INSTANCE
+            : new FixedYangInstanceIdentifier(path.subList(skipFromRoot, path.size()));
     }
 
     private Object readResolve() throws ObjectStreamException {
@@ -128,11 +122,12 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     }
 
     @Override
-    boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
-        if (other instanceof FixedYangInstanceIdentifier) {
-            return path.equals(((FixedYangInstanceIdentifier) other).path);
+    int computeHashCode() {
+        int ret = 1;
+        for (PathArgument arg : path) {
+            ret = HashCodeBuilder.nextHashCode(ret, arg);
         }
-        return super.pathArgumentsEqual(other);
+        return ret;
     }
 
     @Override

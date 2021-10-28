@@ -13,6 +13,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
+// FIXME: sealed once we have JDK17+
 abstract class PathArgumentList extends AbstractList<PathArgument> {
     @Override
     public abstract @NonNull UnmodifiableIterator<PathArgument> iterator();
