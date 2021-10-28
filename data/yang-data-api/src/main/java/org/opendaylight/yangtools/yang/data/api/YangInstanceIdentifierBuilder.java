@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -22,22 +21,18 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
-    private final HashCodeBuilder<PathArgument> hash;
     private final List<PathArgument> path;
 
     YangInstanceIdentifierBuilder() {
-        this.hash = new HashCodeBuilder<>();
-        this.path = new ArrayList<>();
+        path = new ArrayList<>();
     }
 
-    YangInstanceIdentifierBuilder(final List<PathArgument> prefix, final int hash) {
-        this.path = new ArrayList<>(prefix);
-        this.hash = new HashCodeBuilder<>(hash);
+    YangInstanceIdentifierBuilder(final List<PathArgument> prefix) {
+        path = new ArrayList<>(prefix);
     }
 
     private @NonNull InstanceIdentifierBuilder addArgument(final PathArgument arg) {
         path.add(arg);
-        hash.addArgument(arg);
         return this;
     }
 
@@ -54,7 +49,6 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
     @Override
     public InstanceIdentifierBuilder append(final Collection<? extends PathArgument> args) {
         path.addAll(args);
-        args.forEach(hash::addArgument);
         return this;
     }
 
@@ -70,6 +64,6 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
 
     @Override
     public YangInstanceIdentifier build() {
-        return FixedYangInstanceIdentifier.create(path, hash.build());
+        return FixedYangInstanceIdentifier.of(path);
     }
 }

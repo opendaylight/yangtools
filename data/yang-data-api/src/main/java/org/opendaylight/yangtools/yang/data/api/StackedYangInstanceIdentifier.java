@@ -22,6 +22,7 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     private static final long serialVersionUID = 1L;
@@ -49,9 +50,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     private transient volatile StackedPathArguments pathArguments;
     private transient volatile StackedReversePathArguments reversePathArguments;
 
-    StackedYangInstanceIdentifier(final YangInstanceIdentifier parent, final PathArgument pathArgument,
-            final int hash) {
-        super(hash);
+    StackedYangInstanceIdentifier(final YangInstanceIdentifier parent, final PathArgument pathArgument) {
         this.parent = requireNonNull(parent);
         this.pathArgument = requireNonNull(pathArgument);
     }
@@ -164,6 +163,11 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     }
 
     @Override
+    int computeHashCode() {
+        return HashCodeBuilder.nextHashCode(parent.hashCode(), pathArgument);
+    }
+
+    @Override
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
         if (other instanceof StackedYangInstanceIdentifier) {
             final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) other;
@@ -190,7 +194,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         if (parent instanceof FixedYangInstanceIdentifier) {
             p = (FixedYangInstanceIdentifier) parent;
         } else {
-            p = FixedYangInstanceIdentifier.create(parent.getPathArguments(), parent.hashCode());
+            p = FixedYangInstanceIdentifier.of(parent.getPathArguments());
         }
         outputStream.writeObject(p);
     }
