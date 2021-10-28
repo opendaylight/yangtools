@@ -23,6 +23,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
@@ -43,7 +45,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -76,20 +77,27 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-// FIXME: 7.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
-//               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
-//               to represent these.
 public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier> {
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final long serialVersionUID = 4L;
 
-    private final int hash;
+    private static final VarHandle HASH;
+
+    static {
+        try {
+            HASH = MethodHandles.lookup().findVarHandle(YangInstanceIdentifier.class, "hash", int.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private int hash;
     private transient volatile String toStringCache = null;
 
-    // Package-private to prevent outside subclassing
-    YangInstanceIdentifier(final int hash) {
-        this.hash = hash;
+    YangInstanceIdentifier() {
+        // Package-private to prevent outside subclassing
     }
 
     /**
@@ -174,21 +182,11 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
     public abstract PathArgument getLastPathArgument();
 
     public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
-        if (Iterables.isEmpty(path)) {
-            return empty();
-        }
-
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : path) {
-            hash.addArgument(a);
-        }
-
-        return FixedYangInstanceIdentifier.create(path, hash.build());
+        return Iterables.isEmpty(path) ? empty() : new FixedYangInstanceIdentifier(ImmutableList.copyOf(path));
     }
 
     public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
-        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument),
-            HashCodeBuilder.nextHashCode(1, pathArgument));
+        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument));
     }
 
     public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
@@ -266,7 +264,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
      * @return Instance Identifier with additional path argument added to the end.
      */
     public final @NonNull YangInstanceIdentifier node(final PathArgument arg) {
-        return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hash, arg));
+        return new StackedYangInstanceIdentifier(this, arg);
     }
 
     /**
@@ -370,11 +368,12 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
          * Used lists, maps are immutable. Path Arguments (elements) are also
          * immutable, since the PathArgument contract requires immutability.
          */
-        return hash;
+        final int local = (int) HASH.getAcquire(this);
+        return local != 0 ? local : loadHashCode();
     }
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
-            justification = "https://github.com/spotbugs/spotbugs/issues/811")
+        justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static int hashCode(final Object value) {
         if (value == null) {
             return 0;
@@ -396,6 +395,14 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
 
         return Objects.hashCode(value);
     }
+
+    private int loadHashCode() {
+        final int computed = computeHashCode();
+        HASH.setRelease(this, computed);
+        return computed;
+    }
+
+    abstract int computeHashCode();
 
     final Object writeReplace() {
         return new YIDv1(this);
@@ -430,7 +437,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
     public static @NonNull InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
-        return new YangInstanceIdentifierBuilder(origin.getPathArguments(), origin.hashCode());
+        return new YangInstanceIdentifierBuilder(origin.getPathArguments());
     }
 
     /**
