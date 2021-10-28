@@ -8,8 +8,11 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -21,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -234,14 +238,9 @@ public final class CompilationTestUtils {
      */
     static void assertContainsRestrictionCheck(final Constructor<?> constructor, final String errorMsg,
             final Object... args) throws ReflectiveOperationException {
-        try {
-            constructor.newInstance(args);
-            fail("constructor invocation should fail");
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(errorMsg, cause.getMessage());
-        }
+        final var cause = assertThrows(InvocationTargetException.class, () -> constructor.newInstance(args)).getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertEquals(errorMsg, cause.getMessage());
     }
 
     /**
@@ -254,14 +253,9 @@ public final class CompilationTestUtils {
      */
     static void assertContainsRestrictionCheck(final Object obj, final Method method, final String errorMsg,
             final Object... args) throws ReflectiveOperationException {
-        try {
-            method.invoke(obj, args);
-            fail("method invocation should fail");
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(errorMsg, cause.getMessage());
-        }
+        final var cause = assertThrows(InvocationTargetException.class, () -> method.invoke(obj, args)).getCause();
+        assertThat(cause, instanceOf(IllegalArgumentException.class));
+        assertEquals(errorMsg, cause.getMessage());
     }
 
     /**
@@ -271,8 +265,7 @@ public final class CompilationTestUtils {
      * @param ifc expected interface
      */
     static void assertImplementsIfc(final Class<?> clazz, final Class<?> ifc) {
-        Class<?>[] interfaces = clazz.getInterfaces();
-        List<Class<?>> ifcsList = Arrays.asList(interfaces);
+        List<Class<?>> ifcsList = Arrays.asList(clazz.getInterfaces());
         if (!ifcsList.contains(ifc)) {
             throw new AssertionError(clazz + " should implement " + ifc);
         }
@@ -298,7 +291,7 @@ public final class CompilationTestUtils {
     static void assertImplementsParameterizedIfc(final Class<?> clazz, final String ifcName,
             final String genericTypeName) {
         ParameterizedType ifcType = null;
-        for (java.lang.reflect.Type ifc : clazz.getGenericInterfaces()) {
+        for (Type ifc : clazz.getGenericInterfaces()) {
             if (ifc instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) ifc;
                 if (ifcName.equals(pt.getRawType().toString())) {
@@ -308,9 +301,13 @@ public final class CompilationTestUtils {
         }
         assertNotNull(ifcType);
 
-        java.lang.reflect.Type[] typeArguments = ifcType.getActualTypeArguments();
-        assertEquals(1, typeArguments.length);
-        assertEquals("interface " + genericTypeName, typeArguments[0].toString());
+        Type[] typeArg = ifcType.getActualTypeArguments();
+        assertEquals(1, typeArg.length);
+        Type typeArgument = typeArg[0];
+        assertThat(typeArgument, instanceOf(Class.class));
+        Class<?> argClass = (Class<?>) typeArgument;
+        assertEquals(genericTypeName, argClass.getName());
+        assertTrue(argClass.isInterface());
     }
 
     /**
