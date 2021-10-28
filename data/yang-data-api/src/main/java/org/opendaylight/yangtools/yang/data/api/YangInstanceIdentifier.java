@@ -23,6 +23,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
@@ -36,7 +38,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -80,12 +81,22 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
 public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier> {
-    private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final long serialVersionUID = 4L;
+    private static final VarHandle TO_STRING_CACHE;
+
+    static {
+        try {
+            TO_STRING_CACHE = MethodHandles.lookup().findVarHandle(YangInstanceIdentifier.class, "toStringCache",
+                String.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
 
     private final int hash;
-    private transient volatile String toStringCache = null;
+    @SuppressWarnings("unused")
+    private transient String toStringCache = null;
 
     // Package-private to prevent outside subclassing
     YangInstanceIdentifier(final int hash) {
@@ -343,22 +354,24 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
          * The cache is thread-safe - if multiple computations occurs at the
          * same time, cache will be overwritten with same result.
          */
-        String ret = toStringCache;
-        if (ret == null) {
-            final StringBuilder builder = new StringBuilder("/");
-            PathArgument prev = null;
-            for (PathArgument argument : getPathArguments()) {
-                if (prev != null) {
-                    builder.append('/');
-                }
-                builder.append(argument.toRelativeString(prev));
-                prev = argument;
-            }
+        final String ret = (String) TO_STRING_CACHE.getAcquire(this);
+        return ret != null ? ret : loadToString();
+    }
 
-            ret = builder.toString();
-            TOSTRINGCACHE_UPDATER.lazySet(this, ret);
+    private String loadToString() {
+        final StringBuilder builder = new StringBuilder("/");
+        PathArgument prev = null;
+        for (PathArgument argument : getPathArguments()) {
+            if (prev != null) {
+                builder.append('/');
+            }
+            builder.append(argument.toRelativeString(prev));
+            prev = argument;
         }
-        return ret;
+
+        final String ret = builder.toString();
+        final String witness = (String) TO_STRING_CACHE.compareAndExchangeRelease(this, null, ret);
+        return witness == null ? ret : witness;
     }
 
     @Override
