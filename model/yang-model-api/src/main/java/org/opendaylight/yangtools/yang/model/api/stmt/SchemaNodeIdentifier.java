@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
  * Represents unique path to every schema node inside the schema node identifier namespace. This concept is defined
- * in <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950</a>.
+ * in <a href="https://tools.ietf.org/html/rfc7950#section-6.5">RFC7950, section 6.5</a>.
  */
 public abstract class SchemaNodeIdentifier implements Immutable {
     /**
