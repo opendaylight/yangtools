@@ -43,7 +43,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -76,30 +75,29 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-// FIXME: 7.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
-//               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
-//               to represent these.
+// FIXME: sealed once we have JDK17+
 public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<YangInstanceIdentifier> {
     private static final long serialVersionUID = 4L;
     private static final VarHandle TO_STRING_CACHE;
+    private static final VarHandle HASH;
 
     static {
+        final var lookup = MethodHandles.lookup();
         try {
-            TO_STRING_CACHE = MethodHandles.lookup().findVarHandle(YangInstanceIdentifier.class, "toStringCache",
-                String.class);
+            HASH = lookup.findVarHandle(YangInstanceIdentifier.class, "hash", int.class);
+            TO_STRING_CACHE = lookup.findVarHandle(YangInstanceIdentifier.class, "toStringCache", String.class);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
-
-    private final int hash;
+    @SuppressWarnings("unused")
+    private int hash;
     @SuppressWarnings("unused")
     private transient String toStringCache = null;
 
-    // Package-private to prevent outside subclassing
-    YangInstanceIdentifier(final int hash) {
-        this.hash = hash;
+    YangInstanceIdentifier() {
+        // Package-private to prevent outside subclassing
     }
 
     /**
@@ -114,9 +112,9 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
 
     abstract @NonNull YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
 
-    abstract @Nullable Collection<PathArgument> tryPathArguments();
+    abstract @Nullable List<PathArgument> tryPathArguments();
 
-    abstract @Nullable Collection<PathArgument> tryReversePathArguments();
+    abstract @Nullable List<PathArgument> tryReversePathArguments();
 
     /**
      * Check if this instance identifier has empty path arguments, e.g. it is
@@ -184,21 +182,11 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
     public abstract PathArgument getLastPathArgument();
 
     public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
-        if (Iterables.isEmpty(path)) {
-            return empty();
-        }
-
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : path) {
-            hash.addArgument(a);
-        }
-
-        return FixedYangInstanceIdentifier.create(path, hash.build());
+        return Iterables.isEmpty(path) ? empty() : new FixedYangInstanceIdentifier(ImmutableList.copyOf(path));
     }
 
     public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
-        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument),
-            HashCodeBuilder.nextHashCode(1, pathArgument));
+        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument));
     }
 
     public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
@@ -240,23 +228,12 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
     }
 
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
-        return Iterables.elementsEqual(getPathArguments(), other.getPathArguments());
+        return getPathArguments().equals(other.getPathArguments());
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangInstanceIdentifier)) {
-            return false;
-        }
-        YangInstanceIdentifier other = (YangInstanceIdentifier) obj;
-        if (this.hashCode() != obj.hashCode()) {
-            return false;
-        }
-
-        return pathArgumentsEqual(other);
+    public final boolean equals(final Object obj) {
+        return this == obj || obj instanceof YangInstanceIdentifier && pathArgumentsEqual((YangInstanceIdentifier) obj);
     }
 
     /**
@@ -276,7 +253,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
      * @return Instance Identifier with additional path argument added to the end.
      */
     public final @NonNull YangInstanceIdentifier node(final PathArgument arg) {
-        return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hash, arg));
+        return new StackedYangInstanceIdentifier(this, arg);
     }
 
     /**
@@ -382,7 +359,8 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
          * Used lists, maps are immutable. Path Arguments (elements) are also
          * immutable, since the PathArgument contract requires immutability.
          */
-        return hash;
+        final int local = (int) HASH.getAcquire(this);
+        return local != 0 ? local : loadHashCode();
     }
 
     private static int hashCode(final Object value) {
@@ -406,6 +384,14 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
 
         return Objects.hashCode(value);
     }
+
+    private int loadHashCode() {
+        final int computed = computeHashCode();
+        HASH.setRelease(this, computed);
+        return computed;
+    }
+
+    abstract int computeHashCode();
 
     final Object writeReplace() {
         return new YIDv1(this);
@@ -440,7 +426,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
     public static @NonNull InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
-        return new YangInstanceIdentifierBuilder(origin.getPathArguments(), origin.hashCode());
+        return new YangInstanceIdentifierBuilder(origin.getPathArguments());
     }
 
     /**
