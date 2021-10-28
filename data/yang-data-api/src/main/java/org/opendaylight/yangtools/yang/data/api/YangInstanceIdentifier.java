@@ -23,6 +23,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
@@ -43,7 +45,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.HierarchicalIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -84,12 +85,22 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final long serialVersionUID = 4L;
 
-    private final int hash;
+    private static final VarHandle HASH;
+
+    static {
+        try {
+            HASH = MethodHandles.lookup().findVarHandle(YangInstanceIdentifier.class, "hash", int.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private int hash;
     private transient volatile String toStringCache = null;
 
-    // Package-private to prevent outside subclassing
-    YangInstanceIdentifier(final int hash) {
-        this.hash = hash;
+    YangInstanceIdentifier() {
+        // Package-private to prevent outside subclassing
     }
 
     /**
@@ -174,21 +185,11 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
     public abstract PathArgument getLastPathArgument();
 
     public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
-        if (Iterables.isEmpty(path)) {
-            return empty();
-        }
-
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : path) {
-            hash.addArgument(a);
-        }
-
-        return FixedYangInstanceIdentifier.create(path, hash.build());
+        return Iterables.isEmpty(path) ? empty() : new FixedYangInstanceIdentifier(ImmutableList.copyOf(path));
     }
 
     public static @NonNull YangInstanceIdentifier create(final PathArgument pathArgument) {
-        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument),
-            HashCodeBuilder.nextHashCode(1, pathArgument));
+        return new FixedYangInstanceIdentifier(ImmutableList.of(pathArgument));
     }
 
     public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
@@ -266,7 +267,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
      * @return Instance Identifier with additional path argument added to the end.
      */
     public final @NonNull YangInstanceIdentifier node(final PathArgument arg) {
-        return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hash, arg));
+        return new StackedYangInstanceIdentifier(this, arg);
     }
 
     /**
@@ -370,8 +371,17 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
          * Used lists, maps are immutable. Path Arguments (elements) are also
          * immutable, since the PathArgument contract requires immutability.
          */
-        return hash;
+        final int local = (int) HASH.getAcquire(this);
+        return local != 0 ? local : loadHashCode();
     }
+
+    private int loadHashCode() {
+        final int computed = computeHashCode();
+        HASH.setRelease(this, computed);
+        return computed;
+    }
+
+    abstract int computeHashCode();
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
@@ -430,7 +440,7 @@ public abstract class YangInstanceIdentifier implements HierarchicalIdentifier<Y
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
     public static @NonNull InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
-        return new YangInstanceIdentifierBuilder(origin.getPathArguments(), origin.hashCode());
+        return new YangInstanceIdentifierBuilder(origin.getPathArguments());
     }
 
     /**
