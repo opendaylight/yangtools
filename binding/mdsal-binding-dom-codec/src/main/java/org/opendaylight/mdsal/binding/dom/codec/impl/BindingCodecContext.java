@@ -25,7 +25,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.time.Instant;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -157,9 +156,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     @Inject
     public BindingCodecContext(final BindingRuntimeContext context) {
         this.context = requireNonNull(context, "Binding Runtime Context is required.");
-        this.root = SchemaRootCodecContext.create(this);
-        this.identityCodec = new IdentityCodec(context);
-        this.instanceIdentifierCodec = new InstanceIdentifierCodec(this);
+        root = SchemaRootCodecContext.create(this);
+        identityCodec = new IdentityCodec(context);
+        instanceIdentifierCodec = new InstanceIdentifierCodec(this);
     }
 
     @Override
@@ -202,7 +201,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
         final List<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
         final DataContainerCodecContext<?,?> codecContext = getCodecContextNode(path, yangArgs);
-        return new SimpleEntry<>(YangInstanceIdentifier.create(yangArgs), codecContext.createWriter(domWriter));
+        return Map.entry(YangInstanceIdentifier.create(yangArgs), codecContext.createWriter(domWriter));
     }
 
     @Override
@@ -516,7 +515,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
         }
-        return new SimpleEntry<>(writeCtx.getKey(),result.getResult());
+        return Map.entry(writeCtx.getKey(), result.getResult());
     }
 
     @Override
@@ -538,7 +537,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
         final DataObject lazyObj = codec.deserialize(data);
         final InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
-        return new SimpleEntry<>(bindingPath, lazyObj);
+        return Map.entry(bindingPath, lazyObj);
     }
 
     @Override
