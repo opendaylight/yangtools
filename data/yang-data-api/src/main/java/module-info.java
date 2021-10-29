@@ -22,6 +22,7 @@ module org.opendaylight.yangtools.yang.data.api {
     requires org.slf4j;
 
     // Annotations
+    requires static transitive java.compiler;
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static org.immutables.value.annotations;
